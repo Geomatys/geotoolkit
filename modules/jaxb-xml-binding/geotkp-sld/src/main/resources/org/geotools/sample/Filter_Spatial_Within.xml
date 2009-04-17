@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Add xmlns="http://www.opengis.net/ogc">
+   <PropertyName>feature_property_name</PropertyName>
+   <Literal>456</Literal>
+</Add>
+

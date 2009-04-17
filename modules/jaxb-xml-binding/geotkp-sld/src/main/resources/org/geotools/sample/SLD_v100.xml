@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<StyledLayerDescriptor version="1.0.0"
+    xmlns="http://www.opengis.net/sld" 
+    xmlns:sld="http://www.opengis.net/sld" 
+    xmlns:xlink="http://www.w3.org/1999/xlink" 
+    xmlns:ogc="http://www.opengis.net/ogc" 
+    xmlns:gml="http://www.opengis.net/gml">
+    
+    <Name>SLD : name</Name>
+    <Title>SLD : title</Title>
+    <Abstract>SLD : abstract</Abstract>
+    
+    <!-- Named Layer ####################################################### -->
+    <NamedLayer>
+        
+        <Name>Named layer : name</Name>
+        
+        <LayerFeatureConstraints>
+            <FeatureTypeConstraint>
+                <FeatureTypeName>Feature type : name</FeatureTypeName>
+                <ogc:Filter>
+                    <ogc:PropertyIsGreaterThanOrEqualTo>
+                        <ogc:PropertyName>num_lanes</ogc:PropertyName>
+                        <ogc:Literal>4</ogc:Literal>
+                    </ogc:PropertyIsGreaterThanOrEqualTo>
+                </ogc:Filter>
+                <Extent><Name>Ext : Name 1</Name><Value>Ext : Value 1</Value></Extent>
+                <Extent><Name>Ext : Name 2</Name><Value>Ext : Value 2</Value></Extent>
+                <Extent><Name>Ext : Name 3</Name><Value>Ext : Value 3</Value></Extent>
+            </FeatureTypeConstraint>
+        </LayerFeatureConstraints>
+        
+        <NamedStyle>
+            <Name>Named style : name</Name>
+        </NamedStyle>
+        
+    </NamedLayer>
+    
+    
+    <!-- User Layer ######################################################## -->
+    <UserLayer>
+        
+        <Name>User layer : name</Name>
+        
+        <RemoteOWS>
+           <Service>WFS</Service>
+           <OnlineResource 
+                xlink:type="simple" 
+                xlink:href="http://some.site.com/WFS?"/>
+        </RemoteOWS>
+
+        
+        <LayerFeatureConstraints>
+            <FeatureTypeConstraint>
+                <FeatureTypeName>Feature type : name</FeatureTypeName>
+                <ogc:Filter>
+                    <ogc:PropertyIsGreaterThanOrEqualTo>
+                        <ogc:PropertyName>num_lanes</ogc:PropertyName>
+                        <ogc:Literal>4</ogc:Literal>
+                    </ogc:PropertyIsGreaterThanOrEqualTo>
+                </ogc:Filter>
+                <Extent><Name>Ext : Name 1</Name><Value>Ext : Value 1</Value></Extent>
+                <Extent><Name>Ext : Name 2</Name><Value>Ext : Value 2</Value></Extent>
+            </FeatureTypeConstraint>
+        </LayerFeatureConstraints>
+        
+        <UserStyle>
+            
+            <Name>User style : name</Name>
+            <Title>User style : title</Title>
+            <Abstract>User style : abstract</Abstract>
+            <IsDefault>true</IsDefault>
+            
+            <FeatureTypeStyle>
+                <Name>FTS 1 : name</Name>
+                <Title>FTS 1 : title</Title>
+                <Abstract>FTS 1 : abstract</Abstract>
+                
+                <FeatureTypeName>A feature type name</FeatureTypeName>
+                
+                <SemanticTypeIdentifier>generic:line</SemanticTypeIdentifier>
+                <SemanticTypeIdentifier>generic:polygon</SemanticTypeIdentifier>
+                <SemanticTypeIdentifier>generic:point</SemanticTypeIdentifier>
+                <SemanticTypeIdentifier>generic:text</SemanticTypeIdentifier>
+                <SemanticTypeIdentifier>generic:raster</SemanticTypeIdentifier>
+                
+            </FeatureTypeStyle>
+            
+            <FeatureTypeStyle>
+                <Name>FTS 2 : name</Name>
+                <Title>FTS 2 : title</Title>
+                <Abstract>FTS 2 : abstract</Abstract>
+                
+                <FeatureTypeName>A feature type name</FeatureTypeName>
+                
+                <SemanticTypeIdentifier>generic:any</SemanticTypeIdentifier>
+                
+                <Rule>
+                    <Name>Rule 1 : name</Name>
+                    <Title>Rule 1  : title</Title>
+                    <Abstract>Rule 1 : abstract</Abstract>
+                    
+                    <LegendGraphic>
+                        <Graphic>
+                            <Mark>
+                                <WellKnownName>square</WellKnownName>
+                                <Fill><CssParameter name="fill"><ogc:Literal>#808080</ogc:Literal></CssParameter></Fill>
+                                <Stroke><CssParameter name="stroke"><ogc:Literal>#404040</ogc:Literal></CssParameter></Stroke>
+                            </Mark>
+                            <Size><ogc:Literal>16</ogc:Literal></Size>
+                        </Graphic>
+                    </LegendGraphic>
+                    
+                    <ElseFilter/>
+                    
+                    <MinScaleDenominator>0.0</MinScaleDenominator>
+                    <MaxScaleDenominator>1.7976931348623157E308</MaxScaleDenominator>
+                </Rule>
+                
+                <Rule>
+                    <Name>Rule 2 name</Name>
+                    <Title>Rule 2 title</Title>
+                    <Abstract>Rule 2 abstract</Abstract>
+                    
+                    <LegendGraphic>
+                        <Graphic>
+                            <Mark>
+                                <WellKnownName>square</WellKnownName>
+                                <Fill><CssParameter name="fill"><ogc:Literal>#808080</ogc:Literal></CssParameter></Fill>
+                                <Stroke><CssParameter name="stroke"><ogc:Literal>#404040</ogc:Literal></CssParameter></Stroke>
+                            </Mark>
+                            <Size><ogc:Literal>16</ogc:Literal></Size>
+                        </Graphic>
+                    </LegendGraphic>
+                    
+                    <ogc:Filter>
+                        <ogc:PropertyIsGreaterThanOrEqualTo>
+                            <ogc:PropertyName>num_lanes</ogc:PropertyName>
+                            <ogc:Literal>4</ogc:Literal>
+                        </ogc:PropertyIsGreaterThanOrEqualTo>
+                    </ogc:Filter>
+                    
+                    <MinScaleDenominator>0.0</MinScaleDenominator>
+                    <MaxScaleDenominator>1.7976931348623157E308</MaxScaleDenominator>
+                    
+                    <!-- Point symbol ###################################### -->
+                    <PointSymbolizer>
+                        <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
+                        <Graphic>
+                            <Mark>
+                                <WellKnownName>square</WellKnownName>
+                                <Fill>
+                                    <CssParameter name="fill"><ogc:Literal>#808080</ogc:Literal></CssParameter>
+                                    <CssParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                                </Fill>
+                                <Stroke>
+                                    <CssParameter name="stroke"><ogc:Literal>#404040</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-dashoffset"><ogc:Literal>0.0</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-linecap"><ogc:Literal>butt</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-linejoin"><ogc:Literal>bevel</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-width"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                                </Stroke>
+                            </Mark>
+                            <Opacity><ogc:Literal>0.7</ogc:Literal></Opacity>
+                            <Size><ogc:Literal>32</ogc:Literal></Size>
+                            <Rotation><ogc:Literal>110</ogc:Literal></Rotation>
+                        </Graphic>
+                    </PointSymbolizer>
+                    
+                    <!-- Line symbol ####################################### -->
+                    <LineSymbolizer>
+                        <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
+                        <Stroke>
+                            <CssParameter name="stroke"><ogc:Literal>#FF0000</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-dasharray">3.0 6.0</CssParameter>
+                            <CssParameter name="stroke-dashoffset"><ogc:Literal>0.0</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-linecap"><ogc:Literal>butt</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-linejoin"><ogc:Literal>bevel</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-width"><ogc:Literal>3.0</ogc:Literal></CssParameter>
+                        </Stroke>
+                    </LineSymbolizer>
+                    
+                    <!-- Polygon symbol #################################### -->
+                    <PolygonSymbolizer>
+                        <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
+                        <Fill>
+                            <CssParameter name="fill"><ogc:Literal>#0000FF</ogc:Literal></CssParameter>
+                            <CssParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                        </Fill>
+                        <Stroke>
+                            <CssParameter name="stroke"><ogc:Literal>#FF0000</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-dasharray">3.0 6.0</CssParameter>
+                            <CssParameter name="stroke-dashoffset"><ogc:Literal>0.0</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-linecap"><ogc:Literal>butt</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-linejoin"><ogc:Literal>bevel</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                            <CssParameter name="stroke-width"><ogc:Literal>3.0</ogc:Literal></CssParameter>
+                        </Stroke>
+                    </PolygonSymbolizer>
+                    
+                    <!-- Text symbol ####################################### -->
+                    <TextSymbolizer>
+                        <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
+                        <Label><ogc:Literal>the feature field name</ogc:Literal></Label>
+                        <Font>
+                            <CssParameter name="font-size"><ogc:Literal>8</ogc:Literal></CssParameter>
+                            <CssParameter name="font-style"><ogc:Literal>normal</ogc:Literal></CssParameter>
+                            <CssParameter name="font-weight"><ogc:Literal>normal</ogc:Literal></CssParameter>
+                        </Font>
+                        
+                        <LabelPlacement>
+                            <PointPlacement>
+                                <AnchorPoint>
+                                    <AnchorPointX><ogc:Literal>0.5</ogc:Literal></AnchorPointX>
+                                    <AnchorPointY><ogc:Literal>0.5</ogc:Literal></AnchorPointY>
+                                </AnchorPoint>
+                                <Displacement>
+                                    <DisplacementX><ogc:Literal>0</ogc:Literal></DisplacementX>
+                                    <DisplacementY><ogc:Literal>0</ogc:Literal></DisplacementY>
+                                </Displacement>
+                                <Rotation><ogc:Literal>0</ogc:Literal></Rotation>
+                            </PointPlacement>
+                        </LabelPlacement>
+                        
+                        <Halo>
+                            <Radius><ogc:Literal>12.0</ogc:Literal></Radius>
+                            <Fill>
+                                <CssParameter name="fill"><ogc:Literal>#FFAFAF</ogc:Literal></CssParameter>
+                                <CssParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                            </Fill>
+                        </Halo>
+                        
+                        <Fill>
+                            <CssParameter name="fill"><ogc:Literal>#FFC800</ogc:Literal></CssParameter>
+                            <CssParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                        </Fill>
+                    </TextSymbolizer>
+                    
+                    <!-- Raster symbol ##################################### -->
+                    <RasterSymbolizer>
+                        <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
+                        <Opacity><ogc:Literal>0.5</ogc:Literal></Opacity>
+                        
+                        <ChannelSelection>
+                            <GrayChannel>
+                                <SourceChannelName>chanel2</SourceChannelName>
+                                <ContrastEnhancement><GammaValue>1.0</GammaValue></ContrastEnhancement>
+                            </GrayChannel>
+                        </ChannelSelection>
+                        
+                        <OverlapBehavior><RANDOM/></OverlapBehavior>
+                        <ContrastEnhancement><GammaValue>1.0</GammaValue></ContrastEnhancement>
+                        <ShadedRelief><BrightnessOnly>true</BrightnessOnly></ShadedRelief>
+                        
+                        <ImageOutline>
+                            <LineSymbolizer>
+                                <Geometry><ogc:PropertyName>geom</ogc:PropertyName></Geometry>
+                                <Stroke>
+                                    <CssParameter name="stroke"><ogc:Literal>#FF0000</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-dasharray">3.0 6.0</CssParameter>
+                                    <CssParameter name="stroke-dashoffset"><ogc:Literal>0.0</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-linecap"><ogc:Literal>butt</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-linejoin"><ogc:Literal>bevel</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-opacity"><ogc:Literal>1.0</ogc:Literal></CssParameter>
+                                    <CssParameter name="stroke-width"><ogc:Literal>3.0</ogc:Literal></CssParameter>
+                                </Stroke>
+                            </LineSymbolizer>
+                        </ImageOutline>
+                    </RasterSymbolizer>
+                    
+                </Rule>
+                
+            </FeatureTypeStyle>
+            
+        </UserStyle>
+        
+    </UserLayer>
+    
+</StyledLayerDescriptor>

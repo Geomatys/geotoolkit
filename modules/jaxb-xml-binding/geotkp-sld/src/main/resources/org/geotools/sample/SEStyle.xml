@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AnchorPoint xmlns:ogc="http://www.opengis.net/ogc" xmlns:se="http://www.opengis.net/se">
+    <se:AnchorPointX>
+       <ogc:Literal>5.0</ogc:Literal>
+    </se:AnchorPointX>
+    <se:AnchorPointY>
+        <ogc:Literal>10.0</ogc:Literal>
+    </se:AnchorPointY>
+</AnchorPoint>
