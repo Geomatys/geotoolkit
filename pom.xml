@@ -211,6 +211,33 @@
         <artifactId>gtm-main</artifactId>
         <version>${geomodified.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-coverage</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-coverageio</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-cql</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
+
+      <!-- Batik SVG -->
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-transcoder</artifactId>
+        <version>1.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-svggen</artifactId>
+        <version>1.7</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
