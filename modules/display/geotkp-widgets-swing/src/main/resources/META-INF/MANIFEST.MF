@@ -1,0 +1,3 @@
+
+Name: org/geotools/gui/swing/map/map2d/stream/JStreamNavMap.class
+Java-Bean: False
