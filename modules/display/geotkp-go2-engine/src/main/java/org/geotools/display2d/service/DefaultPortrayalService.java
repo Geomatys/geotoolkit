@@ -203,8 +203,10 @@ public class DefaultPortrayalService implements PortrayalService{
         canvas.setBackground(background);
         canvas.setMonitor(monitor);
 
-        for(Object key : hints.keySet()){
-            canvas.setRenderingHint((HintKey)key, hints.get(key));
+        if(hints != null){
+            for(Object key : hints.keySet()){
+                canvas.setRenderingHint((HintKey)key, hints.get(key));
+            }
         }
 
         try {

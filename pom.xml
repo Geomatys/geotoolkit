@@ -226,6 +226,11 @@
         <artifactId>gtm-cql</artifactId>
         <version>${geomodified.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-referencing</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
 
       <!-- Batik SVG -->
       <dependency>

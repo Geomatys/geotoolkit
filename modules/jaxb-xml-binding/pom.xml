@@ -96,9 +96,9 @@
   <!-- =========================================================== -->
   <modules>
     <!--module>geotkp-ogc</module>
-    <module>geotkp-gml</module>
+    <module>geotkp-gml</module-->
     <module>geotkp-sld</module>
-    <module>geotkp-se</module>
+    <!--module>geotkp-se</module>
     <module>geotkp-wms</module-->
   </modules>
 

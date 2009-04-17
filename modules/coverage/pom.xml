@@ -95,8 +95,8 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <!--module>geotkp-wms</module>
-    <module>geotkp-world-image</module-->
+    <module>geotkp-wms</module>
+    <module>geotkp-world-image</module>
   </modules>
 
 </project>
