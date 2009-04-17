@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <TITLE>package org.geotools.renderer.array</TITLE>
+  </HEAD>
+  <BODY>
+    Private package for storing arrays of two-dimensional
+    coordinates points as floating point numbers. <STRONG>This package is for
+    internal use only</STRONG>; it should not be used directly.
+
+    In its simplest form, {@link org.geotools.renderer.array.DefaultArray}
+    objects just wrap <CODE>float[]</CODE> arrays containing (<var>x</var>,<var>y</var>)
+    coordinates. More sophisticated subclasses can compress data in order to store big
+    coordinate arrays with less memory. This package is designed to work with vectorial
+    map. For example, a {@link org.geotools.renderer.array.PointArray} object may be used
+    for storing one polygon representing a land contour or an isobath. A
+    {@link org.geotools.renderer.array.PointArray} may be compressed by invoking its
+    {@link org.geotools.renderer.array.PointArray#getFinal} method with a non-null
+    {@link org.geotools.renderer.geom.CompressionLevel} argument. <STRONG>Note that
+    compression is destructive</STRONG>: it will result in a lost of coordinates
+    precision. The lost is minimized if every point is equally spaced.</P>
+
+    <P ALIGN="justify">{@link org.geotools.renderer.array.PointArray} has an iterator
+    allowing forward-only iteration through coordinate points. It does not
+    allow random access or backward iteration. This limitation makes it easier
+    to implements compression algorithms.</P>
+  </BODY>
+</HTML>

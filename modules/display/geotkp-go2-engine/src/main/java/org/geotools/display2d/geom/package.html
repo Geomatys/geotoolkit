@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <TITLE>package org.geotools.renderer.geom</TITLE>
+  </HEAD>
+  <BODY>
+    {@link java.awt.Shape} implementations used for the
+    rendering of geographic features. Some classes in this package are just
+    ordinary <A HREF="http://java.sun.com/products/java-media/2D/">Java2D</A>
+    shapes (for example {@link org.geotools.renderer.geom.Arrow2D}, which can
+    be used for rendering wind fields). Some other are more elaborated: they
+    extend {@link org.geotools.renderer.geom.Geometry}, which has support for
+    setting the
+    {@linkplain org.geotools.renderer.geom.Geometry#setCoordinateSystem coordinate system},
+    {@linkplain org.geotools.renderer.geom.Geometry#setRenderingResolution rendering resolution},
+    etc. Those classes are not designed for spatial analysis or topology: they are
+    <strong>not</strong> a replacement for <A HREF="http://www.vividsolutions.com/JTS/jts_frame.htm">JTS</A>,
+    neither an implementation of ISO-19107. They are rather wrapper around arbitrary source
+    of (<var>x</var>,<var>y</var>) coordinates to be rendered.</P>
+
+    <TABLE>
+      <TR>
+        <TD ALIGN="center"><IMG SRC="doc-files/Arrow2D.png"><BR>{@link org.geotools.renderer.geom.Arrow2D}</TD>
+        <TD ALIGN="center"><IMG SRC="doc-files/screenshot.png"><BR>{@link org.geotools.renderer.geom.GeometryCollection}</TD>
+      </TR>
+    </TABLE>
+  </BODY>
+</HTML>

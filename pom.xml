@@ -239,6 +239,13 @@
         <version>1.7</version>
       </dependency>
 
+      <!-- Jasper report -->
+      <dependency>
+        <groupId>jasperreports</groupId>
+        <artifactId>jasperreports</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

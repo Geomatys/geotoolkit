@@ -96,10 +96,10 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotkp-engine-core</module>
-    <!--module>geotkp-go2-engine</module>
+    <module>geotkp-go2-engine</module>
     <module>geotkp-go2-extension</module>
-    <module>geotkp-go3</module>
-    <module>geotkp-jasper-report</module-->
+    <!--module>geotkp-go3</module-->
+    <module>geotkp-jasper-report</module>
     <module>geotkp-render</module>
     <module>geotkp-style</module>
     <!--module>geotkp-widgets-swing</module-->
