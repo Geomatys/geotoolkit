@@ -95,8 +95,8 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <!--module>geotkp-display</module>
-    <module>geotkp-go2-engine</module>
+    <module>geotkp-engine-core</module>
+    <!--module>geotkp-go2-engine</module>
     <module>geotkp-go2-extension</module>
     <module>geotkp-go3</module>
     <module>geotkp-jasper-report</module>

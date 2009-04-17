@@ -119,6 +119,12 @@
   <!--                                                             -->
   <!--     Reference: http://repo1.maven.org/maven2/               -->
   <!-- =========================================================== -->
+
+  <properties>
+    <geomodified.version>2.6-SNAPSHOT</geomodified.version>
+    <geotoolkit.version>3.00-SNAPSHOT</geotoolkit.version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <!-- GeoAPI and its dependencies -->
@@ -191,6 +197,21 @@
         <version>4.5</version>
         <scope>test</scope>
       </dependency>
+
+      <!-- GeotoolKit -->
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>gto-referencing</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+
+      <!-- Remaining dependencies to geomodified -->
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-main</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <TITLE>package org.geotools.geometry.array</TITLE>
+  </HEAD>
+  <BODY>
+    Implementations of {@link org.opengis.spatialschema.geometry.geometry.PointArray}
+    interface. A minimal {@code PointArray} interface is defined in ISO 19107. This
+    package extends the minimal interface with services targeted for rendering purposes.
+ 
+    <P ALIGN="justify">This package provides various classes for storing arrays of two-dimensional
+    {@linkplain org.opengis.spatialschema.geometry.DirectPosition positions}. Each class is a
+    compromise between various constraints like JTS compatibility, memory consumption and speed.
+    
+    The simplest implementation is {@link org.geotools.geometry.array.DefaultArray}, which just
+    wraps a <CODE>float[]</CODE> array containing (<var>x</var>,<var>y</var>) coordinates. More
+    sophisticated subclasses can compress data in order to hold big coordinate arrays with less
+    memory.</P>
+
+    <P ALIGN="justify">{@link org.geotools.geometry.array.PointArray2D} has an iterator allowing
+    forward-only iteration through coordinate points. It does not allow random access or backward
+    iteration. This limitation makes it easier to implements compression algorithms. As a general
+    rule, users should avoid random access as much as possible.</P>
+  </BODY>
+</HTML>
