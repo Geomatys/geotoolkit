@@ -100,9 +100,9 @@
     <module>geotkp-go2-extension</module>
     <module>geotkp-go3</module>
     <module>geotkp-jasper-report</module>
-    <module>geotkp-render</module>
+    <module>geotkp-render</module-->
     <module>geotkp-style</module>
-    <module>geotkp-widgets-swing</module-->
+    <!--module>geotkp-widgets-swing</module-->
   </modules>
 
 </project>
