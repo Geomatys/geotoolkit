@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>modules-pending</artifactId>
+    <version>3.00-SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit</groupId>
+  <artifactId>jaxb-xml-binding-pending</artifactId>
+  <packaging>pom</packaging>
+  <name>Jaxb-bindings-pending</name>
+
+  <description>
+    Projects group for jaxb bindings.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Administrator</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies to be inherited by all modules.            -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>gto-utility</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>gto-metadata</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>gto-referencing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>gto-coverage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+
+  <!-- =========================================================== -->
+  <!--     Modules included in the build                           -->
+  <!-- =========================================================== -->
+  <modules>
+    <!--module>geotkp-ogc</module>
+    <module>geotkp-gml</module>
+    <module>geotkp-sld</module>
+    <module>geotkp-se</module>
+    <module>geotkp-wms</module-->
+  </modules>
+
+</project>

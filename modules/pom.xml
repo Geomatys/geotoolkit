@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotoolkit-pending</artifactId>
+    <version>3.00-SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit</groupId>
+  <artifactId>modules-pending</artifactId>
+  <packaging>pom</packaging>
+  <name>Modules-pending</name>
+
+  <description>
+    The modules that are components of the Geotoolkit pending library.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Administrator</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies to be inherited by all modules.            -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>net.java.dev.jsr-275</groupId>
+      <artifactId>jsr-275</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>gto-test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+  <!-- =========================================================== -->
+  <!--     Build Configuration                                     -->
+  <!--         copies all JARs in a single directory.              -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>gto-jar-collector</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>collect</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+        Deploys the test JAR files in addition to the regular one.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <!-- =========================================================== -->
+  <!--     Modules for the build in approximate dependency order   -->
+  <!-- =========================================================== -->
+  <modules>
+    <module>coverage</module>
+    <module>display</module>
+    <module>jaxb-xml-binding</module>
+  </modules>
+
+
+</project>
