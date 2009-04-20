@@ -1,0 +1,5 @@
+org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer
+org.geotoolkit.display2d.style.renderer.PolygonSymbolizerRenderer
+org.geotoolkit.display2d.style.renderer.PointSymbolizerRenderer
+org.geotoolkit.display2d.style.renderer.TextSymbolizerRenderer
+org.geotoolkit.display2d.style.renderer.RasterSymbolizerRenderer

@@ -28,9 +28,9 @@
 #
 # Image operation descriptors :
 #
-descriptor  org.geotools.display2d.style.raster.ShadedReliefDescriptor;
+descriptor  org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 
 #
 # "rendered" factory objects
 #
-rendered  org.geotools.display2d.style.raster.ShadedReliefCRIF      org.geotools  org.geotools.ShadedRelief       ShadedRelief
+rendered  org.geotoolkit.display2d.style.raster.ShadedReliefCRIF      org.geotoolkit  org.geotoolkit.ShadedRelief       ShadedRelief

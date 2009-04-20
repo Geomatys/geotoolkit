@@ -1,5 +1,0 @@
-org.geotools.display2d.style.renderer.LineSymbolizerRenderer
-org.geotools.display2d.style.renderer.PolygonSymbolizerRenderer
-org.geotools.display2d.style.renderer.PointSymbolizerRenderer
-org.geotools.display2d.style.renderer.TextSymbolizerRenderer
-org.geotools.display2d.style.renderer.RasterSymbolizerRenderer
