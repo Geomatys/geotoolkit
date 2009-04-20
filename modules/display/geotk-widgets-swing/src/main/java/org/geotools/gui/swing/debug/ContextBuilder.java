@@ -1043,10 +1043,10 @@ public class ContextBuilder {
         MapLayer layer;
 
         try {
-            WebMapServer wms = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms?"),WebMapServer.Version.v130);
-//            WebMapServer wms = new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1");
-//            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"Bathymetry,Countries");
-            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"BlueMarble");
+//            WebMapServer wms = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms?"),WebMapServer.Version.v130);
+            WebMapServer wms = new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1");
+            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"Bathymetry,Countries");
+//            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"BlueMarble");
 //            wmsLayer.setName("Builtup+areas,Bathymetry,Countries,Topography,Coastlines,Waterbodies,Inundated,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Settlements,Spot+elevations,Airports,Ocean+features");
 //            wmsLayer.setDescription(SF.description("wms layer", ""));
 //            wmsLayer.setOutputFormat("image/png");

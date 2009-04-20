@@ -20,10 +20,13 @@ public class AbstractRequest implements Request{
 
     protected AbstractRequest(String serverURL){
 
-        if(!serverURL.endsWith("?")){
-            this.serverURL = serverURL + "?";
-        }else{
+        final int lastblock = serverURL.lastIndexOf("/");
+        final String block = serverURL.substring(lastblock);
+
+        if(block.contains("?")){
             this.serverURL = serverURL;
+        }else{
+            this.serverURL = serverURL + "?";
         }
 
     }
@@ -35,6 +38,11 @@ public class AbstractRequest implements Request{
         sb.append(serverURL);
         
         if(!requestParameters.isEmpty()){
+
+            if(!(serverURL.endsWith("?") || serverURL.endsWith("&"))){
+                sb.append("&");
+            }
+
             String key = keys.get(0);
             sb.append(key).append('=').append(requestParameters.get(key));
             
