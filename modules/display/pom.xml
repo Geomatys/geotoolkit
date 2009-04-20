@@ -102,7 +102,7 @@
     <module>geotk-jasper-report</module>
     <module>geotk-render</module>
     <module>geotk-style</module>
-    <!--module>geotk-widgets-swing</module-->
+    <module>geotk-widgets-swing</module>
   </modules>
 
 </project>
