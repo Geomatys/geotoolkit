@@ -23,8 +23,8 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit</groupId>
-  <artifactId>geotkp-widgets-swing-pending</artifactId>
+  <groupId>org.geotoolkit.pending</groupId>
+  <artifactId>geotk-widgets-swing-pending</artifactId>
   <packaging>jar</packaging>
   <name>Widgets-swing-pending</name>
   <url>http://maven.geotools.fr/reports/modules/unsupported/widgets-swing-pending/</url>
@@ -81,32 +81,32 @@
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotkp-render</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-render</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotkp-display</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-display</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotkp-go2</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-go2</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotkp-go2-style-extension</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-go2-style-extension</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotkp-style</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-style</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -24,8 +24,8 @@
   <!-- ==================================================== -->
   <!--     Project description (including license)          -->
   <!-- ==================================================== -->
-  <groupId>org.geotoolkit</groupId>
-  <artifactId>geotoolkit-pending</artifactId>
+  <groupId>org.geotoolkit.pending</groupId>
+  <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
   <version>3.00-SNAPSHOT</version>
   <name>Geotoolkit-pending</name>

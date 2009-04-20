@@ -14,8 +14,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>coverage-pending</artifactId>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>coverage</artifactId>
     <version>3.00-SNAPSHOT</version>
   </parent>
 
@@ -23,8 +23,8 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit</groupId>
-  <artifactId>geotkp-world-image</artifactId>
+  <groupId>org.geotoolkit.pending</groupId>
+  <artifactId>geotk-world-image</artifactId>
   <packaging>jar</packaging>
   <name>WorldImage datasource module</name>
   <url>http://maven.geotools.fr/reports/modules/plugin/image/</url>

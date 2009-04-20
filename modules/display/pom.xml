@@ -12,8 +12,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>modules-pending</artifactId>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>modules</artifactId>
     <version>3.00-SNAPSHOT</version>
   </parent>
 
@@ -21,10 +21,10 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit</groupId>
-  <artifactId>display-pending</artifactId>
+  <groupId>org.geotoolkit.pending</groupId>
+  <artifactId>display</artifactId>
   <packaging>pom</packaging>
-  <name>Display-pending</name>
+  <name>Display</name>
 
   <description>
     Projects group for pending renderer and widgets.
@@ -95,14 +95,14 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotkp-engine-core</module>
-    <module>geotkp-go2-engine</module>
-    <module>geotkp-go2-extension</module>
-    <!--module>geotkp-go3</module-->
-    <module>geotkp-jasper-report</module>
-    <module>geotkp-render</module>
-    <module>geotkp-style</module>
-    <!--module>geotkp-widgets-swing</module-->
+    <module>geotk-engine-core</module>
+    <module>geotk-go2-engine</module>
+    <module>geotk-go2-extension</module>
+    <!--module>geotk-go3</module-->
+    <module>geotk-jasper-report</module>
+    <module>geotk-render</module>
+    <module>geotk-style</module>
+    <!--module>geotk-widgets-swing</module-->
   </modules>
 
 </project>
