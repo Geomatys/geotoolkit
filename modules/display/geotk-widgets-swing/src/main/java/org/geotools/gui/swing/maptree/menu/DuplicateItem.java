@@ -30,7 +30,7 @@ import org.geotools.gui.swing.contexttree.JContextTree;
 import org.geotools.gui.swing.resource.IconBundle;
 import org.geotools.gui.swing.maptree.TreePopupItem;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * Duplicate item for treetable.

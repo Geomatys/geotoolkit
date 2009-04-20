@@ -33,7 +33,7 @@ import org.geotools.gui.swing.propertyedit.LayerGeneralPanel;
 import org.geotools.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotools.gui.swing.propertyedit.PropertyPane;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * Default popup control for property page of MapLayer, use for JContextTreePopup

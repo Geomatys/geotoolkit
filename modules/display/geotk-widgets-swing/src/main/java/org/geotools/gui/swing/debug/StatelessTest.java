@@ -18,8 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.geotools.display.exception.PortrayalException;
-import org.geotools.display2d.service.DefaultPortrayalService;
+
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.gui.swing.contexttree.JContextTree;
 import org.geotools.gui.swing.contexttree.JContextTreePopup;
@@ -41,9 +40,12 @@ import org.geotools.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotools.gui.swing.propertyedit.PropertyPane;
 import org.geotools.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotools.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
-import org.geotools.map.MapBuilder;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**

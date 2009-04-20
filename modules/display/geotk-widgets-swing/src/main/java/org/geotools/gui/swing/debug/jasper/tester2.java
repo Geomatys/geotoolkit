@@ -35,9 +35,9 @@ import net.sf.jasperreports.view.JasperViewer;
 
 import org.geotools.gui.swing.debug.ContextBuilder;
 import org.geotools.gui.swing.report.JRConfigTree;
-import org.geotools.map.MapContext;
-import org.geotools.report.JRMapper;
-import org.geotools.report.JRMappedDataSource;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.report.JRMapper;
+import org.geotoolkit.report.JRMappedDataSource;
 
 /**
  *

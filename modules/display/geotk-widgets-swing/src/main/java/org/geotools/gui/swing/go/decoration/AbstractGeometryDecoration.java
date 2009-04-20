@@ -31,15 +31,17 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.geotools.display2d.canvas.J2DCanvas;
-import org.geotools.display.canvas.ReferencedCanvas2D;
-import org.geotools.display2d.canvas.DefaultRenderingContext2D;
-import org.geotools.display2d.primitive.DefaultProjectedGeometry;
-import org.geotools.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
+import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+
 import org.geotools.gui.swing.map.map2d.Map2D;
 import org.geotools.gui.swing.map.map2d.decoration.MapDecoration;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotools.display2d.canvas.RenderingContext2D;
+
 import org.opengis.referencing.operation.TransformException;
 
 /**

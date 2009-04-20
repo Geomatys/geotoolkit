@@ -18,7 +18,7 @@ package org.geotools.gui.swing.filter;
 
 import javax.swing.JComponent;
 
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.Filter;
 
 /**

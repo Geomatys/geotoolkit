@@ -20,8 +20,9 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.map.MapContext;
+
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapContext;
 
 /**
  * a specific mutabletreenode for jcontexttree

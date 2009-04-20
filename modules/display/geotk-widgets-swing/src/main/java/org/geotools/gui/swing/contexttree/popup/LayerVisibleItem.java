@@ -25,7 +25,7 @@ import javax.swing.tree.TreePath;
 
 import org.geotools.gui.swing.contexttree.ContextTreeNode;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 
 

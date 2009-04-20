@@ -19,8 +19,8 @@ package org.geotools.gui.swing.go.control.information;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
 import com.vividsolutions.jts.geom.LinearRing;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
@@ -34,11 +34,12 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotools.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
+
 import org.geotools.gui.swing.go.CanvasHandler;
 import org.geotools.gui.swing.go.GoMap2D;
 import org.geotools.gui.swing.go.control.navigation.MouseNavigatonListener;
-import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 
 /**
  * Panoramic handler

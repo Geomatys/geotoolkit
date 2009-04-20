@@ -15,14 +15,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotools.display.canvas.control.FailOnErrorMonitor;
-import org.geotools.display.exception.PortrayalException;
-import org.geotools.display2d.canvas.GO2Hints;
-import org.geotools.display2d.service.DefaultPortrayalService;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.MapContext;
+import org.geotoolkit.display.canvas.control.FailOnErrorMonitor;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.map.MapContext;
 
 /**
  *

@@ -18,17 +18,17 @@ package org.geotools.gui.swing.go;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotools.display2d.canvas.J2DCanvas;
-import org.geotools.display.canvas.ReferencedCanvas2D;
-import org.geotools.display2d.canvas.SwingVolatileGeoComponent;
-import org.geotools.display2d.container.ContextContainer2D;
-import org.geotools.display2d.container.DefaultContextContainer2D;
-import org.geotools.gui.swing.go.CanvasHandler;
-import org.geotools.gui.swing.map.map2d.AbstractMap2D;
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
+import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 
-import org.geotools.display2d.canvas.GO2Hints;
+import org.geotools.gui.swing.map.map2d.AbstractMap2D;
+
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;

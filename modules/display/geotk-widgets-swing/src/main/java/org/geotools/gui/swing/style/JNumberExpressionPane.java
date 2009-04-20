@@ -27,7 +27,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
 /**

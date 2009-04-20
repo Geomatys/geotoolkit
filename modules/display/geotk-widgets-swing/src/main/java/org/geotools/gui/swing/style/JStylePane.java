@@ -28,8 +28,8 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
-import org.geotools.style.MutableStyle;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyle;
 import org.jdesktop.swingx.JXTitledPanel;
 
 /**

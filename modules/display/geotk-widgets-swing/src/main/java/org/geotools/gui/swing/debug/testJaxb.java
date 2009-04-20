@@ -10,14 +10,14 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import org.geotools.map.ContextListener;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotools.sld.MutableStyledLayerDescriptor;
-import org.geotools.style.CollectionChangeEvent;
-import org.geotools.style.MutableStyle;
-import org.geotools.style.xml.Specification.StyledLayerDescriptor;
-import org.geotools.style.xml.XMLUtilities;
+import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.xml.Specification.StyledLayerDescriptor;
+import org.geotoolkit.style.xml.XMLUtilities;
 import org.opengis.sld.NamedLayer;
 
 /**

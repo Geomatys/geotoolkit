@@ -39,7 +39,7 @@ import org.geotools.data.FeatureStore;
 import org.geotools.data.Query;
 import org.geotools.gui.swing.resource.IconBundle;
 import org.geotools.gui.swing.propertyedit.model.FeatureSourceModel;
-import org.geotools.map.FeatureMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.Highlighter;

@@ -38,7 +38,8 @@ import org.geotools.gui.swing.contexttree.popup.LayerPropertyItem;
 import org.geotools.gui.swing.contexttree.popup.PasteItem;
 import org.geotools.gui.swing.contexttree.popup.SeparatorItem;
 import org.geotools.gui.swing.map.map2d.Map2D;
-import org.geotools.map.MapContext;
+
+import org.geotoolkit.map.MapContext;
 
 /**
  * JContextTree is used to handle MapContexts and their MapLayers. this component

@@ -15,11 +15,11 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
-import org.geotools.display.exception.PortrayalException;
-import org.geotools.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.MapContext;
 
 /**
  *

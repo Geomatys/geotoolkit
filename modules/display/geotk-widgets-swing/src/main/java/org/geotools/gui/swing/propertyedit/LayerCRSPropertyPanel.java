@@ -38,7 +38,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.geotools.gui.swing.crschooser.JCRSList;
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;

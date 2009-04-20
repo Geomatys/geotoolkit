@@ -47,16 +47,17 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.jdesktop.swingx.JXTree;
 
-import org.geotools.display2d.service.DefaultGlyphService;
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.ContextListener;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.style.CollectionChangeEvent;
-import org.geotools.style.MutableStyleFactory;
-import org.geotoolkit.util.SimpleInternationalString;
 
-import org.geotools.style.DefaultStyleFactory;
+import org.geotoolkit.display2d.service.DefaultGlyphService;
+import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.style.DefaultStyleFactory;
+
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;

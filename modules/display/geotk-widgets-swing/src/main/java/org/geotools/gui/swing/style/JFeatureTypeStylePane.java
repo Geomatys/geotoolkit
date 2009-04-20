@@ -30,8 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
-import org.geotools.style.MutableFeatureTypeStyle;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.style.SemanticType;
 

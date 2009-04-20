@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Fill;
 
 /**

@@ -34,16 +34,16 @@ import java.util.Set;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.display2d.canvas.AbstractGraphicVisitor;
-import org.geotools.display.canvas.GraphicVisitor;
-import org.geotools.display.canvas.ReferencedCanvas2D;
-import org.geotools.display.canvas.VisitFilter;
-import org.geotools.display2d.primitive.GraphicCoverageJ2D;
-import org.geotools.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
+import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotools.gui.swing.go.CanvasHandler;
 import org.geotools.gui.swing.go.GoMap2D;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;

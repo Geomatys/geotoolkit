@@ -39,7 +39,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-import org.geotools.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.canvas.GO2Hints;
 import org.geotools.gui.swing.go.control.JConfigBar;
 import org.geotools.gui.swing.go.control.JCoordinateBar;
 import org.geotools.gui.swing.go.control.JInformationBar;
@@ -63,7 +63,7 @@ import org.geotools.gui.swing.maptree.menu.LayerFeatureItem;
 import org.geotools.gui.swing.maptree.menu.LayerPropertyItem;
 import org.geotools.gui.swing.maptree.menu.SeparatorItem;
 import org.geotools.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.MapContext;
 
 /**
  *

@@ -33,12 +33,12 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotools.coverage.io.CoverageReadParam;
 import org.geotools.coverage.io.CoverageReader;
-import org.geotools.display.canvas.GraphicVisitor;
-import org.geotools.display.canvas.ReferencedCanvas2D;
-import org.geotools.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotools.map.CoverageMapLayer;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.display.primitive.Graphic;

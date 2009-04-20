@@ -24,8 +24,8 @@ import javax.measure.unit.Unit;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.geotools.display2d.canvas.RenderingContext2D;
-import org.geotools.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotools.gui.swing.go.decoration.AbstractGeometryDecoration;
 
 import org.opengis.referencing.operation.TransformException;

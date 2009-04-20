@@ -29,7 +29,7 @@ import org.geotools.gui.swing.propertyedit.JPropertyDialog;
 import org.geotools.gui.swing.propertyedit.LayerFeaturePropertyPanel;
 import org.geotools.gui.swing.propertyedit.PropertyPane;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 
 /**

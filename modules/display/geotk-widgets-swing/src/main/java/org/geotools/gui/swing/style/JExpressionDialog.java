@@ -36,8 +36,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;

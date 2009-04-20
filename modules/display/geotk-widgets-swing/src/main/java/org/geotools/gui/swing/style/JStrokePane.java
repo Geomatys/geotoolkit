@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
 import org.geotools.gui.swing.style.JSimpleDialog;
 import org.geotools.gui.swing.style.JGraphicFillPane;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.GraphicStroke;
 import org.opengis.style.Stroke;

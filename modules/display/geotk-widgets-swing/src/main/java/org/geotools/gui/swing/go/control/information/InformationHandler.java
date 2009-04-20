@@ -26,7 +26,7 @@ import java.awt.geom.Area;
 import java.util.List;
 import javax.swing.event.MouseInputListener;
 
-import org.geotools.display.canvas.VisitFilter;
+import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotools.gui.swing.go.GoMap2D;
 import org.geotools.gui.swing.go.extractor.MapContextExtractor;
 import org.geotools.gui.swing.go.control.navigation.AbstractNavigationHandler;

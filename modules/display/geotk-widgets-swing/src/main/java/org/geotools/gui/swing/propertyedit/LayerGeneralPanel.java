@@ -38,8 +38,8 @@ import org.geotools.data.AbstractDataStore;
 import org.geotools.data.DataStore;
 import org.geotools.data.ServiceInfo;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * layer general information panel

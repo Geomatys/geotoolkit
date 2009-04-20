@@ -15,8 +15,8 @@
  */
 package org.geotools.gui.swing.go;
 
-import org.geotools.display2d.canvas.J2DCanvas;
-import org.geotools.gui.swing.go.CanvasHandler;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+
 import org.geotools.gui.swing.map.map2d.Map2D;
 
 /**

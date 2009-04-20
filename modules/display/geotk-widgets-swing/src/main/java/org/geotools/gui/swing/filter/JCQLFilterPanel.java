@@ -32,8 +32,8 @@ import org.geotools.gui.swing.resource.IconBundle;
 import org.geotools.gui.swing.misc.FilterToCQL;
 import org.geotools.gui.swing.misc.FilterToCQLException;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 

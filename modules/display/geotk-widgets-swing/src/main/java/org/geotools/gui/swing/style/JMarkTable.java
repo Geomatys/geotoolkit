@@ -39,8 +39,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapLayer;
-import org.geotools.style.StyleConstants;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.StyleConstants;
 
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;

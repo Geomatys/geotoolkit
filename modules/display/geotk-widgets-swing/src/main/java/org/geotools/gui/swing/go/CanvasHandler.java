@@ -16,7 +16,8 @@
 package org.geotools.gui.swing.go;
 
 import java.awt.Component;
-import org.geotools.display.canvas.ReferencedCanvas2D;
+
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 
 /**
  *

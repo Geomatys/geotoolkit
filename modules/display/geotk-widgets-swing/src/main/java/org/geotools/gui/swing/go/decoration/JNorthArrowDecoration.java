@@ -25,10 +25,10 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.swing.JComponent;
-import org.geotools.display.exception.PortrayalException;
-import org.geotools.display2d.ext.northarrow.DefaultNorthArrowTemplate;
-import org.geotools.display2d.ext.northarrow.J2DNorthArrowUtilities;
-import org.geotools.display2d.ext.northarrow.NorthArrowTemplate;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
+import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
+import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
 import org.geotools.gui.swing.map.map2d.Map2D;
 import org.geotools.gui.swing.map.map2d.decoration.MapDecoration;
 

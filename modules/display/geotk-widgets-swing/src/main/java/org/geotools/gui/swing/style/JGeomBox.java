@@ -25,8 +25,8 @@ import javax.swing.JComboBox;
 
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 

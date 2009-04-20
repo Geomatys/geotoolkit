@@ -29,7 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
 /**

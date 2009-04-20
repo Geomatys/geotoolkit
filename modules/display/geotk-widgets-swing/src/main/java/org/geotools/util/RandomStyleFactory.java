@@ -29,15 +29,17 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotools.data.FeatureSource;
 
-import org.geotools.style.MutableFeatureTypeStyle;
-import org.geotools.style.MutableRule;
-import org.geotools.style.MutableStyle;
-import org.geotools.style.StyleConstants;
-import org.geotools.style.MutableStyleFactory;
+import org.geotoolkit.factory.Factory;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.MutableStyleFactory;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -67,7 +69,7 @@ import org.opengis.style.Symbolizer;
  */
 public class RandomStyleFactory extends Factory {
 
-    private MutableStyleFactory SF = (MutableStyleFactory)FactoryFinder.getStyleFactory(null);
+    private MutableStyleFactory SF = new DefaultStyleFactory();
     private FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private final String[] POINT_SHAPES = {"square", "circle", "triangle", "star", "cross", "x"};
     private final int[] SIZES = {8, 10, 12, 14, 16};

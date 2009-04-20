@@ -20,11 +20,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.geotools.geometry.jts.JTS;
-import org.geotools.map.MapBuilder;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 

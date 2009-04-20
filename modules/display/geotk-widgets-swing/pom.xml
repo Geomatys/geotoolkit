@@ -14,8 +14,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>display-pending</artifactId>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>display</artifactId>
     <version>3.00-SNAPSHOT</version>
   </parent>
 
@@ -88,7 +88,7 @@
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-display</artifactId>
+      <artifactId>geotk-engine-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -111,75 +111,75 @@
     </dependency>
 
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-sld</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-sld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-world-image</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>gto-widgets-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jasperreport</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-wms</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-api</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-coverage</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-image</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-main</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-cql</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-postgis</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-shapefile</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-widgets-swing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-jasperreport</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-wfs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-wms</artifactId>
-      <version>${project.version}</version>
+      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.geotools.display.exception.PortrayalException;
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotools.gui.swing.contexttree.JContextTree;
 import org.geotools.gui.swing.contexttree.JContextTreePopup;
 import org.geotools.gui.swing.contexttree.column.VisibleTreeTableColumn;
@@ -39,7 +39,7 @@ import org.geotools.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotools.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotools.gui.swing.debug.ContextBuilder;
 import org.geotools.gui.swing.go.J2DMapVolatile;
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.MapContext;
 import org.opengis.referencing.operation.TransformException;
 
 /**

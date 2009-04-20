@@ -28,10 +28,12 @@ import javax.swing.tree.TreePath;
 import org.geotools.gui.swing.contexttree.column.TreeTableColumn;
 import org.geotools.gui.swing.contexttree.node.SubNodeGroup;
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.ContextListener;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.style.CollectionChangeEvent;
+
+import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.CollectionChangeEvent;
+
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 import org.jdesktop.swingx.treetable.TreeTableModel;

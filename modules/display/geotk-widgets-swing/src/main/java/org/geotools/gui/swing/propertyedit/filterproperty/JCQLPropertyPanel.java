@@ -19,7 +19,7 @@ package org.geotools.gui.swing.propertyedit.filterproperty;
 import org.geotools.data.DefaultQuery;
 import org.geotools.gui.swing.filter.JCQLFilterPanel;
 import org.geotools.gui.swing.propertyedit.PropertyPane;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * CQL property panel

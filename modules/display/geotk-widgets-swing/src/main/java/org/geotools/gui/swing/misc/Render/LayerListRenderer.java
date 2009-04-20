@@ -27,7 +27,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * layer list renderer

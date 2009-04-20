@@ -22,7 +22,7 @@ import org.geotools.gui.swing.contexttree.renderer.DefaultCellRenderer;
 import org.geotools.gui.swing.contexttree.renderer.HeaderInfo;
 import org.geotools.gui.swing.resource.IconBundle;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * Default visibility column

@@ -38,8 +38,8 @@ import javax.swing.SwingConstants;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
-import org.geotools.map.MapLayer;
-import org.geotools.style.MutableRule;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableRule;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.filter.Filter;
 

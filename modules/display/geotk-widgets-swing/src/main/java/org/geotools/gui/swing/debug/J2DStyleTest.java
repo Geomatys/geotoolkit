@@ -26,15 +26,15 @@ import javax.swing.JScrollPane;
 
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.display2d.style.CachedExternal;
-import org.geotools.display2d.style.CachedGraphic;
-import org.geotools.display2d.style.CachedMark;
+import org.geotoolkit.display2d.style.CachedExternal;
+import org.geotoolkit.display2d.style.CachedGraphic;
+import org.geotoolkit.display2d.style.CachedMark;
 import org.geotoolkit.metadata.iso.citation.DefaultOnLineResource;
-import org.geotools.style.DefaultStyleFactory;
-import org.geotools.style.StyleConstants;
-import org.geotools.style.MutableStyleFactory;
-import org.geotools.style.xml.Specification;
-import org.geotools.style.xml.XMLUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.xml.Specification;
+import org.geotoolkit.style.xml.XMLUtilities;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;

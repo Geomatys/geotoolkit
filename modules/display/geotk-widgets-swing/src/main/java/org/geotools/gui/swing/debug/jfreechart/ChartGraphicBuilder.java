@@ -7,11 +7,11 @@ package org.geotools.gui.swing.debug.jfreechart;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.geotools.display.canvas.ReferencedCanvas2D;
-import org.geotools.display2d.primitive.GraphicJ2D;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.GraphicBuilder;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.display.canvas.Canvas;
 
 /**

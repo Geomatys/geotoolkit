@@ -39,7 +39,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.style.ExternalGraphic;
 

@@ -18,8 +18,7 @@ package org.geotools.gui.swing.map.map2d;
 
 import java.awt.Component;
 
-import java.util.SortedSet;
-import org.geotools.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotools.gui.swing.map.map2d.decoration.MapDecoration;
 import org.geotools.gui.swing.map.map2d.decoration.InformationDecoration;
 

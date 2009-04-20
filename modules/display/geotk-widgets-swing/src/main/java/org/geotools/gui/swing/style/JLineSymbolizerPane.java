@@ -26,8 +26,8 @@ import javax.swing.GroupLayout.Alignment;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotools.map.MapLayer;
-import org.geotools.style.StyleConstants;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.StyleConstants;
 
 import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.style.LineSymbolizer;

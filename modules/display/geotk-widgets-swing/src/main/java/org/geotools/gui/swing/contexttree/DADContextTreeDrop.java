@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.tree.TreePath;
 
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.MapContext;
 import org.jdesktop.swingx.JXTreeTable;
 
 /**

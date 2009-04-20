@@ -28,7 +28,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.filter.FilterFactory;

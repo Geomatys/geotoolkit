@@ -30,7 +30,7 @@ import org.geotools.gui.swing.propertyedit.ContextGeneralPanel;
 import org.geotools.gui.swing.propertyedit.JPropertyDialog;
 import org.geotools.gui.swing.propertyedit.PropertyPane;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.MapContext;
 
 /**
  * Default popup control for property page of MapContext, use for JContextTreePopup 

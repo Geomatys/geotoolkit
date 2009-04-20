@@ -35,15 +35,17 @@ import javax.swing.tree.TreePath;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyleFactory;
+
 import org.geotools.gui.swing.contexttree.column.TreeTableColumn;
 import org.geotools.gui.swing.contexttree.node.SubNodeGroup;
 import org.geotools.gui.swing.contexttree.renderer.DefaultContextTreeHeaderRenderer;
 import org.geotools.gui.swing.contexttree.renderer.HeaderInfo;
 import org.geotools.gui.swing.misc.FacilitiesFactory;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.style.MutableStyleFactory;
+
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.treetable.TreeTableModel;
 

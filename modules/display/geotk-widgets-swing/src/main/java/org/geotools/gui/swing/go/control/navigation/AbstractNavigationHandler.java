@@ -23,7 +23,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import org.geotools.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotools.gui.swing.go.GoMap2D;
 import org.geotools.gui.swing.map.map2d.decoration.InformationDecoration.LEVEL;
 

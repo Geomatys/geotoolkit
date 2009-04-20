@@ -21,7 +21,7 @@ import javax.swing.ImageIcon;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * a specific mutabletreenode for jcontexttree

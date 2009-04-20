@@ -33,8 +33,8 @@ import javax.swing.TransferHandler;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
 
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.jdesktop.swingx.JXTreeTable;
 
 /**

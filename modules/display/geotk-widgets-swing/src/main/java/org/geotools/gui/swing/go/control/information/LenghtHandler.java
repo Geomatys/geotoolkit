@@ -33,7 +33,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotools.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotools.gui.swing.go.CanvasHandler;
 import org.geotools.gui.swing.go.GoMap2D;
 import org.geotools.gui.swing.go.control.navigation.MouseNavigatonListener;

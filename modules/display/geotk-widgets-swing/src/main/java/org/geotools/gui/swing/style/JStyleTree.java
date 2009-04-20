@@ -57,12 +57,13 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.geotools.display2d.service.DefaultGlyphService;
 import org.geotools.gui.swing.resource.IconBundle;
+
+import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
-import org.geotools.style.MutableFeatureTypeStyle;
-import org.geotools.style.MutableRule;
-import org.geotools.style.MutableStyle;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.style.Symbolizer;
 

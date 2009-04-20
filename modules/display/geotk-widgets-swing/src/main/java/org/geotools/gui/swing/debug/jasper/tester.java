@@ -14,8 +14,8 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.gui.swing.debug.ContextBuilder;
-import org.geotools.map.MapContext;
-import org.geotools.report.JRExportService;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.report.JRExportService;
 
 /**
  *

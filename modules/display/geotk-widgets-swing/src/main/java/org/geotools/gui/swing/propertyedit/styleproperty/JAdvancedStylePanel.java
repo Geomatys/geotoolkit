@@ -41,10 +41,11 @@ import org.geotools.gui.swing.style.JStylePane;
 import org.geotools.gui.swing.style.JStyleTree;
 import org.geotools.gui.swing.style.JTextSymbolizerPane;
 import org.geotools.gui.swing.style.StyleElementEditor;
-import org.geotools.map.MapLayer;
-import org.geotools.style.MutableFeatureTypeStyle;
-import org.geotools.style.MutableRule;
-import org.geotools.style.MutableStyle;
+
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;

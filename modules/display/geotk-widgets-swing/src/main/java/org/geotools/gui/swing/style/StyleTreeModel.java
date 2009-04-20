@@ -20,13 +20,14 @@ import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
-import org.geotools.style.DefaultStyleFactory;
-import org.geotools.style.MutableFeatureTypeStyle;
-import org.geotools.style.MutableRule;
-import org.geotools.style.MutableStyle;
-import org.geotools.style.MutableStyleFactory;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
 
 import org.geotools.util.RandomStyleFactory;
+
 import org.opengis.style.Symbolizer;
 
 /**

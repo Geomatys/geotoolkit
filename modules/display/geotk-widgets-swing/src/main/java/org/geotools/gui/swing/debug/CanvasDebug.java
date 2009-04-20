@@ -14,20 +14,23 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.gui.swing.go.J2DMapVolatile;
 import org.geotools.gui.swing.go.control.JCoordinateBar;
 import org.geotools.gui.swing.go.control.JNavigationBar;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.map.MapBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotools.style.DefaultStyleFactory;
-import org.geotools.style.MutableStyle;
-import org.geotools.style.MutableStyleFactory;
 import org.geotools.util.RandomStyleFactory;
+
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

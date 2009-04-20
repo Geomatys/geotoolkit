@@ -30,8 +30,8 @@ import javax.swing.tree.TreePath;
 import org.geotools.gui.swing.contexttree.JContextTree;
 import org.geotools.gui.swing.resource.IconBundle;
 import org.geotools.gui.swing.resource.MessageBundle;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * Paste item for treetable

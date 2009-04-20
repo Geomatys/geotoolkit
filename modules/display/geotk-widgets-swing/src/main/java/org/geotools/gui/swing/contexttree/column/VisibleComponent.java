@@ -26,7 +26,7 @@ import javax.swing.JCheckBox;
 
 import org.geotools.gui.swing.contexttree.renderer.RenderAndEditComponent;
 import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.MapLayer;
 
 /**
  * Component used to present layer visibility

@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 
-import org.geotools.display.canvas.AbstractCanvas;
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotools.gui.swing.go.GoMap2D;
 import org.geotools.gui.swing.map.map2d.Map2D;
 import org.geotools.gui.swing.map.map2d.decoration.MapDecoration;

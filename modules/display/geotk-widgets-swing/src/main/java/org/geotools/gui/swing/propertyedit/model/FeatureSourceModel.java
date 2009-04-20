@@ -33,8 +33,8 @@ import org.geotools.data.FeatureStore;
 import org.geotools.data.Query;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
