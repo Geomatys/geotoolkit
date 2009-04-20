@@ -33,6 +33,7 @@ import org.geotoolkit.style.xml.GTtoSE110Transformer;
 import org.geotoolkit.style.xml.JAXBStatics;
 import org.geotoolkit.style.xml.NamespacePrefixMapperImpl;
 import org.geotoolkit.style.xml.OGC110toGTTransformer;
+import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -313,7 +314,8 @@ public class OGCforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR EXPRESSION //////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    @Test
     public void testExpAdd() throws JAXBException{
         
         //Read test
@@ -347,7 +349,8 @@ public class OGCforSLD110Test extends TestCase{
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_ADD);
     }
-    
+
+    @Test
     public void testExpDiv() throws JAXBException{
         
         //Read test
@@ -381,7 +384,8 @@ public class OGCforSLD110Test extends TestCase{
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_DIV);
     }
-    
+
+    @Test
     public void testExpFunction() throws JAXBException{
         final String valueName = "sin";
         
@@ -411,7 +415,8 @@ public class OGCforSLD110Test extends TestCase{
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_FUNCTION);
     }
-    
+
+    @Test
     public void testExpLiteral() throws JAXBException{
         
         //Read test
@@ -437,7 +442,8 @@ public class OGCforSLD110Test extends TestCase{
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_LITERAL);
     }
-    
+
+    @Test
     public void testExpMul() throws JAXBException{
         
         //Read test
@@ -471,7 +477,8 @@ public class OGCforSLD110Test extends TestCase{
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_MUL);
     }
-    
+
+    @Test
     public void testExpPropertyName() throws JAXBException{
         
         //Read test
@@ -497,7 +504,8 @@ public class OGCforSLD110Test extends TestCase{
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_PROPERTYNAME);
     }
-    
+
+    @Test
     public void testExpSub() throws JAXBException{
         
         //Read test
@@ -537,7 +545,8 @@ public class OGCforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR COMPARISON FILTERS //////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    @Test
     public void testFilterComparisonPropertyIsBetween() throws JAXBException{
         
         //Read test
@@ -575,7 +584,8 @@ public class OGCforSLD110Test extends TestCase{
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISBETWEEN);
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsEqualTo() throws JAXBException{
         
         //Read test
@@ -610,7 +620,8 @@ public class OGCforSLD110Test extends TestCase{
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISEQUAL);
         
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsGreaterThan() throws JAXBException{
         
         //Read test
@@ -645,7 +656,8 @@ public class OGCforSLD110Test extends TestCase{
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISGREATER);
         
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsGreaterThanOrEqual() throws JAXBException{
         
         //Read test
@@ -679,7 +691,8 @@ public class OGCforSLD110Test extends TestCase{
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISGREATEROREQUAL);
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsLessThan() throws JAXBException{
         
         //Read test
@@ -713,7 +726,8 @@ public class OGCforSLD110Test extends TestCase{
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLESS);
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsLessThanOrEqual() throws JAXBException{
         
         //Read test
@@ -747,7 +761,8 @@ public class OGCforSLD110Test extends TestCase{
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLESSOREQUAL);
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsLike() throws JAXBException{
         
         //Read test
@@ -794,7 +809,8 @@ public class OGCforSLD110Test extends TestCase{
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLIKE);
         
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsNotEqualTo() throws JAXBException{
         
         //Read test
@@ -829,7 +845,8 @@ public class OGCforSLD110Test extends TestCase{
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISNOTEQUAL);
         
     }
-    
+
+    @Test
     public void testFilterComparisonPropertyIsNull() throws JAXBException{
         
         //Read test
@@ -866,7 +883,8 @@ public class OGCforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR LOGIC FILTERS ///////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    @Test
     public void testFilterLogicalAnd() throws JAXBException{
        
         //Read test
@@ -919,7 +937,8 @@ public class OGCforSLD110Test extends TestCase{
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_AND);
         
     }
-    
+
+    @Test
     public void testFilterLogicalOr() throws JAXBException{
         
         //Read test
@@ -972,7 +991,8 @@ public class OGCforSLD110Test extends TestCase{
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_OR);
         
     }
-    
+
+    @Test
     public void testFilterLogicalNot() throws JAXBException{
      
         //Read test
@@ -1018,47 +1038,58 @@ public class OGCforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR SPATIAL FILTERS /////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    @Test
     public void testFilterSpatialBBOX() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialBeyond() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialContains() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialCrosses() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialDWithin() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialDisjoint() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialEquals() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialIntersects() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialOverlaps() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialTouches() throws JAXBException{
         
     }
-    
+
+    @Test
     public void testFilterSpatialWithin() throws JAXBException{
         
     }

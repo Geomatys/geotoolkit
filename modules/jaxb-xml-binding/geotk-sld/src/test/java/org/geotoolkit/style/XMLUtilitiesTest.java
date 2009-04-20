@@ -55,6 +55,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.geotoolkit.style.xml.Specification;
+import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
@@ -81,33 +82,33 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
 
-    private final XMLUtilities util = new XMLUtilities();
+    private static final XMLUtilities util = new XMLUtilities();
 
-    private File FILE_SLD_V100 = null;
-    private File FILE_SLD_V110 = null;
-    private File FILE_STYLE_V100 = null;
-    private File FILE_STYLE_V110 = null;
-    private File FILE_FTS_V100 = null;
-    private File FILE_FTS_V110 = null;
-    private File FILE_RULE_V100 = null;
-    private File FILE_RULE_V110 = null;
-    private File FILE_FILTER_V100 = null;
-    private File FILE_FILTER_V110 = null;
+    private static File FILE_SLD_V100 = null;
+    private static File FILE_SLD_V110 = null;
+    private static File FILE_STYLE_V100 = null;
+    private static File FILE_STYLE_V110 = null;
+    private static File FILE_FTS_V100 = null;
+    private static File FILE_FTS_V110 = null;
+    private static File FILE_RULE_V100 = null;
+    private static File FILE_RULE_V110 = null;
+    private static File FILE_FILTER_V100 = null;
+    private static File FILE_FILTER_V110 = null;
 
-    private File TEST_FILE_SLD_V100 = null;
-    private File TEST_FILE_SLD_V110 = null;
-    private File TEST_FILE_STYLE_V100 = null;
-    private File TEST_FILE_STYLE_V110 = null;
-    private File TEST_FILE_FTS_V100 = null;
-    private File TEST_FILE_FTS_V110 = null;
-    private File TEST_FILE_RULE_V100 = null;
-    private File TEST_FILE_RULE_V110 = null;
-    private File TEST_FILE_FILTER_V100 = null;
-    private File TEST_FILE_FILTER_V110 = null;
+    private static File TEST_FILE_SLD_V100 = null;
+    private static File TEST_FILE_SLD_V110 = null;
+    private static File TEST_FILE_STYLE_V100 = null;
+    private static File TEST_FILE_STYLE_V110 = null;
+    private static File TEST_FILE_FTS_V100 = null;
+    private static File TEST_FILE_FTS_V110 = null;
+    private static File TEST_FILE_RULE_V100 = null;
+    private static File TEST_FILE_RULE_V110 = null;
+    private static File TEST_FILE_FILTER_V100 = null;
+    private static File TEST_FILE_FILTER_V110 = null;
 
 
 
-    public XMLUtilitiesTest(){
+    static{
 
         try {
             FILE_SLD_V100 = new File( XMLUtilitiesTest.class.getResource("/org/geotoolkit/sample/SLD_v100.xml").toURI()  );
@@ -154,6 +155,7 @@ public class XMLUtilitiesTest extends TestCase{
         
     }
 
+    @Test
     public void testSLDReading() throws JAXBException{
         MutableStyledLayerDescriptor sld;
         sld = util.readSLD(FILE_SLD_V100, org.geotoolkit.style.xml.Specification.StyledLayerDescriptor.V_1_0_0);
@@ -162,12 +164,14 @@ public class XMLUtilitiesTest extends TestCase{
         assertNotNull(sld);
     }
 
+    @Test
     public void testSLDWriting() throws JAXBException{
         MutableStyledLayerDescriptor sld = createSLD();
         util.writeSLD(TEST_FILE_SLD_V100, sld, Specification.StyledLayerDescriptor.V_1_0_0);
         util.writeSLD(TEST_FILE_SLD_V110, sld, Specification.StyledLayerDescriptor.V_1_1_0);
     }
 
+    @Test
     public void testStyleReading() throws JAXBException{
         MutableStyle style;
         style = util.readStyle(FILE_STYLE_V100, Specification.SymbologyEncoding.SLD_1_0_0);
@@ -176,12 +180,14 @@ public class XMLUtilitiesTest extends TestCase{
         assertNotNull(style);
     }
 
+    @Test
     public void testStyleWriting() throws JAXBException{
         MutableStyle style = createSEStyle();
         util.writeStyle(TEST_FILE_STYLE_V100, style, Specification.StyledLayerDescriptor.V_1_0_0);
         util.writeStyle(TEST_FILE_STYLE_V110, style, Specification.StyledLayerDescriptor.V_1_1_0);
     }
 
+    @Test
     public void testFTSReading() throws JAXBException{
         MutableFeatureTypeStyle fts;
         fts = util.readFeatureTypeStyle(FILE_FTS_V100, Specification.SymbologyEncoding.SLD_1_0_0);
@@ -190,12 +196,14 @@ public class XMLUtilitiesTest extends TestCase{
         assertNotNull(fts);
     }
 
+    @Test
     public void testFTSWriting() throws JAXBException{
         MutableFeatureTypeStyle fts = createFTS();
         util.writeFeatureTypeStyle(TEST_FILE_FTS_V100, fts, Specification.SymbologyEncoding.SLD_1_0_0);
         util.writeFeatureTypeStyle(TEST_FILE_FTS_V110, fts, Specification.SymbologyEncoding.V_1_1_0);
     }
 
+    @Test
     public void testRuleReading() throws JAXBException{
         MutableRule rule;
         rule = util.readRule(FILE_RULE_V100, Specification.SymbologyEncoding.SLD_1_0_0);
@@ -204,12 +212,14 @@ public class XMLUtilitiesTest extends TestCase{
         assertNotNull(rule);
     }
 
+    @Test
     public void testRuleWriting() throws JAXBException{
         MutableRule rule = createRule();
         util.writeRule(TEST_FILE_RULE_V100, rule, Specification.SymbologyEncoding.SLD_1_0_0);
         util.writeRule(TEST_FILE_RULE_V110, rule, Specification.SymbologyEncoding.V_1_1_0);
     }
 
+    @Test
     public void testFilterReading() throws JAXBException{
         Filter filter;
         filter = util.readFilter(FILE_FILTER_V100, Specification.Filter.V_1_0_0);
@@ -218,6 +228,7 @@ public class XMLUtilitiesTest extends TestCase{
         assertNotNull(filter);
     }
 
+    @Test
     public void testFilterWriting() throws JAXBException{
         Filter filter = createFilter();
         util.writeFilter(TEST_FILE_FILTER_V100, filter, Specification.Filter.V_1_0_0);
@@ -227,7 +238,7 @@ public class XMLUtilitiesTest extends TestCase{
 
 
     //-------------for tests----------------------------------------------------
-    private MutableStyledLayerDescriptor createSLD(){
+    private static MutableStyledLayerDescriptor createSLD(){
         MutableStyledLayerDescriptor geoSLD = SLD_FACTORY.createSLD();
         geoSLD.setVersion("1.1.0");
         geoSLD.setName("the sld name");
@@ -274,7 +285,7 @@ public class XMLUtilitiesTest extends TestCase{
         return geoSLD;
     }
 
-    private MutableStyle createSEStyle(){
+    private static MutableStyle createSEStyle(){
         final MutableStyle style = STYLE_FACTORY.style();
         final MutableFeatureTypeStyle fts1 = STYLE_FACTORY.featureTypeStyle();
         final MutableFeatureTypeStyle fts2 = STYLE_FACTORY.featureTypeStyle();
@@ -323,7 +334,7 @@ public class XMLUtilitiesTest extends TestCase{
         return style;
     }
 
-    private MutableFeatureTypeStyle createFTS(){
+    private static MutableFeatureTypeStyle createFTS(){
         final MutableFeatureTypeStyle fts2 = STYLE_FACTORY.featureTypeStyle();
         final MutableRule rule2 = STYLE_FACTORY.rule();
 
@@ -347,7 +358,7 @@ public class XMLUtilitiesTest extends TestCase{
         return fts2;
     }
 
-    private MutableRule createRule(){
+    private static MutableRule createRule(){
         final MutableRule rule2 = STYLE_FACTORY.rule();
 
         //rule 2----------------------------------------------------------------
@@ -363,7 +374,7 @@ public class XMLUtilitiesTest extends TestCase{
         return rule2;
     }
 
-    private PointSymbolizer createPointSymbolizer(){
+    private static PointSymbolizer createPointSymbolizer(){
         String name = "Point symbolizer name";
         Description desc = STYLE_FACTORY.description("Point symbolizer title", "Point symbolizer description");
         Unit uom = NonSI.PIXEL;
@@ -382,7 +393,7 @@ public class XMLUtilitiesTest extends TestCase{
         return STYLE_FACTORY.pointSymbolizer(name,geom,desc,uom,graphic);
     }
 
-    private LineSymbolizer createLineSymbolizer(){
+    private static LineSymbolizer createLineSymbolizer(){
         String name = "the line symbolizer name";
         Description desc = STYLE_FACTORY.description("Line symbolizer title", "Line symbolizer description");
         Unit uom = SI.METER;
@@ -394,7 +405,7 @@ public class XMLUtilitiesTest extends TestCase{
         return STYLE_FACTORY.lineSymbolizer(name,geom,desc,uom,stroke, offset);
     }
 
-    private PolygonSymbolizer createPolygonSymbolizer(){
+    private static PolygonSymbolizer createPolygonSymbolizer(){
         String name = "Polygon symbolizer name";
         Description desc = STYLE_FACTORY.description("Polygon symbolizer title", "Polygon symbolizer description");
         Unit uom = NonSI.FOOT;
@@ -408,7 +419,7 @@ public class XMLUtilitiesTest extends TestCase{
         return STYLE_FACTORY.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
     }
 
-    private TextSymbolizer createTextSymbolizer(){
+    private static TextSymbolizer createTextSymbolizer(){
         String name = "Text symbolizer name";
         Description desc = STYLE_FACTORY.description("Text symbolizer title", "Text symbolizer description");
         Unit uom = NonSI.FOOT;
@@ -423,7 +434,7 @@ public class XMLUtilitiesTest extends TestCase{
         return STYLE_FACTORY.textSymbolizer(name,geom,desc,uom,label, font, placement, halo, fill);
     }
 
-    private RasterSymbolizer createRasterSymbolizer(){
+    private static RasterSymbolizer createRasterSymbolizer(){
         String name = "Raster symbolizer name";
         Description desc = STYLE_FACTORY.description("Raster symbolizer title", "Raster symbolizer description");
         Unit uom = SI.METER;
@@ -443,7 +454,7 @@ public class XMLUtilitiesTest extends TestCase{
         return STYLE_FACTORY.rasterSymbolizer(name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
     }
 
-    private PropertyIsBetween createFilter(){
+    private static PropertyIsBetween createFilter(){
        FilterFactory ff = CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
        Expression field = ff.property("aFiled");
        Expression lower = ff.literal(50d);

@@ -31,6 +31,7 @@ import org.geotoolkit.style.xml.GTtoSE110Transformer;
 import org.geotoolkit.style.xml.NamespacePrefixMapperImpl;
 import org.geotoolkit.style.xml.SE110toGTTransformer;
 
+import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.LineSymbolizer;
@@ -168,7 +169,8 @@ public class SEforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR STYLE ORDERING //////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    @Test
     public void testStyle() throws JAXBException{
         
         //Read test
@@ -201,7 +203,8 @@ public class SEforSLD110Test extends TestCase{
         MARSHALLER.marshal(pvt, TEST_FILE_SE_STYLE);
         
     }
-    
+
+    @Test
     public void testFTS() throws JAXBException{
         
         //Read test
@@ -251,7 +254,8 @@ public class SEforSLD110Test extends TestCase{
         MARSHALLER.marshal(new ObjectFactory().createCoverageStyle(pvt), TEST_FILE_SE_FTS);
         
     }
-    
+
+    @Test
     public void testRule() throws JAXBException{
         
         //Read test
@@ -296,7 +300,8 @@ public class SEforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR SYMBOLIZERS /////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    @Test
     public void testPointSymbolizer() throws JAXBException{
         
         //Read test
@@ -344,7 +349,8 @@ public class SEforSLD110Test extends TestCase{
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_POINT);
         
     }
-    
+
+    @Test
     public void testLineSymbolizer() throws JAXBException{
         
         //Read test
@@ -376,7 +382,8 @@ public class SEforSLD110Test extends TestCase{
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_LINE);
         
     }
-    
+
+    @Test
     public void testPolygonSymbolizer() throws JAXBException{
         
         //Read test
@@ -412,7 +419,8 @@ public class SEforSLD110Test extends TestCase{
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_POLYGON);
         
     }
-    
+
+    @Test
     public void testTextSymbolizer() throws JAXBException{
         
         //Read test
@@ -451,7 +459,8 @@ public class SEforSLD110Test extends TestCase{
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_TEXT);
         
     }
-    
+
+    @Test
     public void testRasterSymbolizer() throws JAXBException{
         
         //Read test

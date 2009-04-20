@@ -89,7 +89,7 @@
             
             <IsDefault>true</IsDefault>
             
-            <se:OnlineResource xlink:href="http://hg.geotoolkit.org/gt_modified/raw-file/tip/modules/plugin/sld/src/main/resources/org/geotoolkit/sample/SE_fts_v110.xml"/>
+            <se:OnlineResource xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/raw-file/tip/modules/jaxb-xml-binding/geotk-sld/src/main/resources/org/geotoolkit/sample/SE_fts_v110.xml"/>
             
             <se:CoverageStyle>
                 <se:Name>FTS 2 name</se:Name>
@@ -98,7 +98,7 @@
                     <se:Abstract>FTS 2 abstract</se:Abstract>
                 </se:Description>
                 
-                <se:OnlineResource xlink:href="http://hg.geotoolkit.org/gt_modified/raw-file/tip/modules/plugin/sld/src/main/resources/org/geotoolkit/sample/SE_rule_v110.xml"/>
+                <se:OnlineResource xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/raw-file/tip/modules/jaxb-xml-binding/geotk-sld/src/main/resources/org/geotoolkit/sample/SE_rule_v110.xml"/>
                 
                 <se:Rule>
                     <se:Name>Rule 2 name</se:Name>

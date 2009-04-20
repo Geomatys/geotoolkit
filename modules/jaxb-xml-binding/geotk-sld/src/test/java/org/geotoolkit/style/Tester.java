@@ -41,6 +41,7 @@ import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.style.xml.JAXBSLDUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
+import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnLineResource;
@@ -89,21 +90,22 @@ public class Tester {
         SLD_UTILITIES = new JAXBSLDUtilities(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
     }
 
-    public static void main(String[] args) {
+    @Test
+    public void marshalltests() {
         
         testSLDMarshall_V100( new File("sld_v100.xml") );
         testSLDMarshall_V110( new File("sld_v110.xml") );
         
-        try { testSLDUnMarshall_V100(new File(Tester.class.getResource("/org/geotoolkit/sample/SLD100.xml").toURI()));
+        try { testSLDUnMarshall_V100(new File(Tester.class.getResource("/org/geotoolkit/sample/SLD_v100.xml").toURI()));
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
         
-        try { testSLDUnMarshall_V110(new File(Tester.class.getResource("/org/geotoolkit/sample/SLD110.xml").toURI()));
+        try { testSLDUnMarshall_V110(new File(Tester.class.getResource("/org/geotoolkit/sample/SLD_v110.xml").toURI()));
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
         
     }
    
     
-    //--------------------- V1.0.0 ---------------------------------------------   
+    //--------------------- V1.0.0 ---------------------------------------------
     private static void testSLDMarshall_V100(File file) {
         StyledLayerDescriptor geoSLD = createSLD();
         org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V100(geoSLD);
@@ -118,20 +120,18 @@ public class Tester {
     
     
     
-    //--------------------- V1.1.0 ---------------------------------------------   
+    //--------------------- V1.1.0 ---------------------------------------------
     private static void testSLDMarshall_V110(File file) {
         StyledLayerDescriptor geoSLD = createSLD();
         org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V110(geoSLD);
         SLD_UTILITIES.marshall_V110(sld, file);
     }
-    
+
     private static void testSLDUnMarshall_V110(File file) {        
         org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V110(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transform_V110(sld);
         showSLD(geoSLD);
     }
-    
-    
     
     
     private static StyledLayerDescriptor createSLD(){
@@ -180,7 +180,7 @@ public class Tester {
         
         return geoSLD;
     }
-    
+
     private static MutableStyle createSEStyle(){
         final MutableStyle style = STYLE_FACTORY.style();
         final MutableFeatureTypeStyle fts1 = STYLE_FACTORY.featureTypeStyle();
@@ -229,7 +229,7 @@ public class Tester {
                
         return style;
     }
-    
+
     private static PointSymbolizer createPointSymbolizer(){
         String name = "Point symbolizer name";
         Description desc = STYLE_FACTORY.description("Point symbolizer title", "Point symbolizer description");
@@ -248,7 +248,7 @@ public class Tester {
                 
         return STYLE_FACTORY.pointSymbolizer(name,geom,desc,uom,graphic);
     }
-    
+
     private static LineSymbolizer createLineSymbolizer(){
         String name = "the line symbolizer name";
         Description desc = STYLE_FACTORY.description("Line symbolizer title", "Line symbolizer description");
@@ -260,7 +260,7 @@ public class Tester {
         
         return STYLE_FACTORY.lineSymbolizer(name,geom,desc,uom,stroke, offset);
     }
-    
+
     private static PolygonSymbolizer createPolygonSymbolizer(){
         String name = "Polygon symbolizer name";
         Description desc = STYLE_FACTORY.description("Polygon symbolizer title", "Polygon symbolizer description");
@@ -274,7 +274,7 @@ public class Tester {
         
         return STYLE_FACTORY.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
     }
-    
+
     private static TextSymbolizer createTextSymbolizer(){
         String name = "Text symbolizer name";
         Description desc = STYLE_FACTORY.description("Text symbolizer title", "Text symbolizer description");
@@ -289,7 +289,7 @@ public class Tester {
         
         return STYLE_FACTORY.textSymbolizer(name,geom,desc,uom,label, font, placement, halo, fill);
     }
-    
+
     private static RasterSymbolizer createRasterSymbolizer(){
         String name = "Raster symbolizer name";
         Description desc = STYLE_FACTORY.description("Raster symbolizer title", "Raster symbolizer description");

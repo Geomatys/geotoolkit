@@ -22,6 +22,7 @@ import org.geotoolkit.style.xml.GTtoSLD100Transformer;
 import org.geotoolkit.style.xml.NamespacePrefixMapperImpl;
 import org.geotoolkit.style.xml.SLD100toGTTransformer;
 
+import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
@@ -112,6 +113,7 @@ public class SLD100Test extends TestCase{
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR STYLE ORDERING //////////////
     ////////////////////////////////////////////////////////////////////////////
     
+    @Test
     public void testSLD() throws JAXBException{
         
         //Read test-------------------------------------------------------------
