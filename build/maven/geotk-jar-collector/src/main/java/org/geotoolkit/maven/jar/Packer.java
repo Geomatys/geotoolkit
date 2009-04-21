@@ -281,7 +281,7 @@ public final class Packer {
                 "geotk-display-" + VERSION + ".jar",
                 "geotk-widgets-swing-" + VERSION + ".jar",
                 "jlfgr-1.0.jar",
-                "swingx-0.9.5-2.jar"
+                "swingx-0.9.7.jar"
         });
         try {
             packer.createJars();
