@@ -64,7 +64,7 @@ import org.opengis.style.Rule;
 
 public class JContextTree extends JScrollPane {
 
-    private static final DataFlavor LAYER_FLAVOR = new DataFlavor(org.geotools.map.MapLayer.class, "geo/layer");
+    private static final DataFlavor LAYER_FLAVOR = new DataFlavor(org.geotoolkit.map.MapLayer.class, "geo/layer");
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
     private static final ImageIcon ICON_LAYER_UNVISIBLE = IconBundle.getInstance().getIcon("16_maplayer_unvisible");

@@ -176,11 +176,11 @@
       <version>${geomodified.version}</version>
     </dependency>
 
-    <dependency>
+    <!--pendency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-wfs</artifactId>
       <version>${geomodified.version}</version>
-    </dependency>
+    </dependency-->
 
     <dependency>
       <groupId>net.java.dev.timingframework</groupId>

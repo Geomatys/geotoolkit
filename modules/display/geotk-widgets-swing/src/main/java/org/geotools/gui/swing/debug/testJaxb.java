@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotools.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.xml.Specification.StyledLayerDescriptor;
