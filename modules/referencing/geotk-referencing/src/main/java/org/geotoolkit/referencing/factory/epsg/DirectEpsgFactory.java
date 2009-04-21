@@ -102,11 +102,6 @@ import org.geotoolkit.util.Version;
  * Because the primary distribution format for the EPSG database is MS-Access, this class uses
  * SQL statements formatted for the MS-Access syntax. For usage with an other database software,
  * a dialect-specific subclass must be used.
- * <p>
- * <ul>
- *   <li>{@link AnsiDialectEpsgFactory}</li>
- *   <li>{@link OracleDialectEpsgFactory}</li>
- * </ul>
  *
  * @author Yann Cézard (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)

@@ -58,22 +58,21 @@ import org.geotoolkit.internal.io.Installation;
 
 
 /**
- * Base class for EPSG factories to be registered in {@link AuthorityFactoryFinder}.
+ * The EPSG factory registered in {@link AuthorityFactoryFinder}.
  * This class has the following responsibilities:
  * <p>
  * <ul>
- *   <li>Aquire a {@linkplain DataSource data source} (using JNDI or otherwise).</li>
+ *   <li>Aquire a {@linkplain DataSource data source} using a
+ *       {@linkplain #CONFIGURATION_FILE configuration file}, JNDI or otherwise.</li>
  *   <li>Specify a {@linkplain DirectEpsgFactory worker class} that will talk to the database
  *       in the event of a cache miss. The class will be specific to the dialect of SQL used
  *       by the database hosting the EPSG tables.</li>
  * </ul>
  * <p>
  * Note that we are working with <strong>the same</strong> tables as defined by EPSG. The only
- * thing that changes is the database used to host these tables.
- * <p>
- * The database version is given in the {@linkplain Citation#getEdition edition attribute}
- * of the {@linkplain AuthorityFactory#getAuthority authority}. It is recommanded to make
- * the database read-only.
+ * thing that changes is the database used to host these tables, and optionally the schema and
+ * table names. The EPSG database version can be determined by the {@linkplain Citation#getEdition
+ * edition attribute} of the {@linkplain AuthorityFactory#getAuthority authority}.
  * <p>
  * Users should not creates instance of this class directly. They should invoke one of
  * <code>{@linkplain AuthorityFactoryFinder}.getFooAuthorityFactory("EPSG")</code> methods
@@ -142,16 +141,6 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     public static final String CONFIGURATION_FILE = "EPSG-DataSource.properties";
 
     /**
-     * The default JDBC {@linkplain DataSource data source} name in JNDI.
-     * This is the name used if no other name were specified through the
-     * {@link Hints#EPSG_DATA_SOURCE EPSG_DATA_SOURCE} hint and if no
-     * {@linkplain #CONFIGURATION_FILE configuration file} were found.
-     *
-     * @see #getDataSource
-     */
-    public static final String DATASOURCE_NAME = "jdbc/EPSG";
-
-    /**
      * The factories to be given to the backing store.
      */
     private final ReferencingFactoryContainer factories;
@@ -162,10 +151,18 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     private DataSource datasource;
 
     /**
-     * Properties read from the {@value #CONFIGURATION_FILE} file, or {@code null} if none.
+     * Property read from the {@value #CONFIGURATION_FILE} file, or {@code null} if none.
      * {@code schema} is the name of the schema in the database where to look for the tables.
+     * {@code user} and {@code password} are the values to be given to
+     * {@link DataSource#getConnection(String,String)}, while
+     * <p>
+     * This property is defined automatically before {@link #createDataSource(Properties)}
+     * is invoked, and is used by {@link #createBackingStore(Hints)}. Subclasses can change
+     * this value in their {@code createDataSource} implementation.
+     *
+     * @since 3.0
      */
-    private String schema, user, password;
+    protected String schema, user, password;
 
     /**
      * The map used for adapting the SQL statements to a particular dialect. This map is
@@ -177,8 +174,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     /**
      * Constructs an authority factory using the default set of factories. The instance
      * created by this method will use the connection parameters specified in the
-     * {@value #CONFIGURATION_FILE} if such file is found, or will search for an EPSG
-     * database registered in JNDI under the {@value #DATASOURCE_NAME} name otherwise.
+     * {@value #CONFIGURATION_FILE} if such file is found.
      */
     public ThreadedEpsgFactory() {
         this(EMPTY_HINTS);
@@ -299,19 +295,24 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *     <li>If that value is an instance of {@link String}, then a
      *         {@linkplain InitialContext#lookup(String) JNDI lookup} is performed for that name.</li>
      *   </ul>
-     *   <li>Otherwise if a {@code "EPSG-DataSource.properties"} file is found in the current directory
-     *       or in the user home directory, or if a {@code "EPSG/DataSource.properties"} file is found
-     *       in the Geotoolkit application data directory, then the properties in that file are used for
-     *       etablishing a connection. See {@link #CONFIGURATION_FILE} for more informations.</li>
+     *   <li>Otherwise if at least one of the following files exist, then the first one is used for
+     *       etablishing a connection. See {@link #CONFIGURATION_FILE} for more informations.
+     *       <ul>
+     *         <li>{@code "EPSG-DataSource.properties"} in the current directory</li>
+     *         <li>{@code "EPSG-DataSource.properties"} in the user's home directory</li>
+     *         <li>{@code "EPSG/DataSource.properties"} in the Geotoolkit application data directory</li>
+     *       </ul>
+     *   </li>
      *   <li>Otherwise the factory is assumed not available.</li>
      * </ul>
      *
-     * @return The data source.
+     * @return The data source. Should never be {@code null}.
      * @throws SQLException if the connection to the database failed.
      * @throws FactoryException if the operation failed for an other reason (for example an I/O
      *         error while reading the configuration file, or a failure to lookup the JNDI name).
      */
     protected synchronized DataSource getDataSource() throws FactoryException, SQLException {
+        DataSource datasource = this.datasource;
         if (datasource == null) {
             schema = user = password = null;
             final Object hint = hints.get(Hints.EPSG_DATA_SOURCE);
@@ -327,15 +328,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                     password = p.getProperty("password");
                 }
                 datasource = createDataSource(p);
-                if (datasource != null) {
-                    return datasource;
-                }
-            }
-            /*
-             * Fetches the DataSource from JNDI. The EPSG_DATA_SOURCE hint may or may not be null
-             * at this point. In the later case, DATASOURCE_NAME will be used as the default.
-             */
-            if (hint instanceof DataSource) {
+            } else if (hint instanceof DataSource) {
                 datasource = (DataSource) hint;
             } else try {
                 final Object source;
@@ -345,7 +338,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 if (hint instanceof Name) {
                     source = context.lookup((Name) hint);
                 } else {
-                    String name = (hint != null) ? hint.toString() : DATASOURCE_NAME;
+                    String name = hint.toString();
                     name = JNDI.fixName(context, name);
                     source = context.lookup(name);
                 }
@@ -358,6 +351,10 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 throw new FactoryException(Errors.format(
                         Errors.Keys.CANT_GET_DATASOURCE_$1, hint), exception);
             }
+            if (datasource == null) {
+                throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
+            }
+            this.datasource = datasource;
         }
         return datasource;
     }
@@ -365,12 +362,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     /**
      * Creates a default data source, optionnaly using the given configuration. This method is
      * invoked by {@link #getDataSource()} when no explicit value was provided for {@link
-     * Hints#EPSG_DATA_SOURCE}. The call occurs before {@code getDataSource()} requests JNDI
-     * for the default {@linkplain #DATASOURCE_NAME data source name}.
-     * <p>
-     * If a {@linkplain #CONFIGURATION_FILE configuration file} file has been found, its content
-     * is given as the sole argument to this method. Otherwise the {@code properties} argument
-     * is null.
+     * Hints#EPSG_DATA_SOURCE}. If a {@linkplain #CONFIGURATION_FILE configuration file} file
+     * has been found, its content is given as the sole argument to this method. Otherwise the
+     * {@code properties} argument is null.
      * <p>
      * The default implementation returns a data source backed by the {@code "URL"} property
      * (to be given to {@link java.sql.DriverManager#getConnection(String)}) if this property

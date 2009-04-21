@@ -574,7 +574,7 @@ public abstract class Factory {
      * @param shutdown {@code false} for normal disposal, or {@code true} if this method is invoked
      *        during the process of a JVM shutdown. In the later case this method may dispose
      *        resources more aggressively. For example
-     *        {@link org.geotoolkit.referencing.factory.epsg.ThreadedJavadbEpsgFactory}
+     *        {@link org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory}
      *        may shutdown the JavaDB embedded database.
      *
      * @since 3.0

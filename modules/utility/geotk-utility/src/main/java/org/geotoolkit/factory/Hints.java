@@ -234,11 +234,12 @@ public class Hints extends RenderingHints {
      * Possible values:
      * <p>
      * <ul>
-     *   <li>{@link String} - used with JNDI to locate datasource. This hint has no effect if
+     *   <li>{@link javax.sql.DataSource} - used as is.</li>
+     *   <li>{@link javax.naming.Name} - used with JNDI to locate data source. This hint has no
+     *       effect if there is no {@linkplain javax.naming.InitialContext JNDI initial context}
+     *       setup.</li>
+     *   <li>{@link String} - used with JNDI to locate data source. This hint has no effect if
      *       there is no {@linkplain javax.naming.InitialContext JNDI initial context} setup.</li>
-     *   <li>{@linkplain javax.sql.DataSource} - used as is.</li>
-     *   <li>missing - default to
-     *       {@value org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory#DATASOURCE_NAME}.</li>
      * </ul>
      *
      * @since 2.4

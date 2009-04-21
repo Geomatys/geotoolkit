@@ -32,7 +32,7 @@ import javax.sql.DataSource;
  * @since 3.0
  * @module
  */
-public final class DefaultDataSource implements DataSource {
+public class DefaultDataSource implements DataSource {
     /**
      * The URL to use for connecting to the database.
      */
