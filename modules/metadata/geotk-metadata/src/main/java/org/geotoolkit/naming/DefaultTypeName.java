@@ -44,7 +44,7 @@ public class DefaultTypeName extends DefaultLocalName implements TypeName {
      * Empty constructor to be used by JAXB only. Despite its "final" declaration,
      * the {@link #name} field will be set by JAXB during unmarshalling.
      */
-    DefaultTypeName() {
+    private DefaultTypeName() {
     }
 
     /**

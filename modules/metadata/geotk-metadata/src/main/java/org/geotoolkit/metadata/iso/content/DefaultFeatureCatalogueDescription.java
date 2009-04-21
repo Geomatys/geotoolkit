@@ -46,6 +46,7 @@ import org.opengis.metadata.content.FeatureCatalogueDescription;
     "compliant",
     "languages",
     "includedWithDataset",
+    "featureTypes",
     "featureCatalogueCitations"
 })
 @XmlRootElement(name = "MD_FeatureCatalogueDescription")
@@ -161,7 +162,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
      * @todo annotate the org.geotoolkit.util package before.
      */
     @Override
-/// @XmlElement(name = "featureTypes")
+    @XmlElement(name = "featureTypes")
     public synchronized Collection<GenericName> getFeatureTypes() {
         return featureTypes = nonNullCollection(featureTypes, GenericName.class);
     }

@@ -253,6 +253,9 @@ public class MarshallerPool {
         final Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setAdapter(anchors);
         unmarshaller.setAdapter(anchors.international);
+        for (final RegisterableAdapter adapter : adapters) {
+            adapter.register(unmarshaller);
+        }
         return unmarshaller;
     }
 

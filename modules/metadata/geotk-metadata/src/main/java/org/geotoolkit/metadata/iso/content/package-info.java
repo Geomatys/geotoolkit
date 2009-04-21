@@ -50,6 +50,7 @@
     @XmlJavaTypeAdapter(ImagingConditionAdapter.class),
     @XmlJavaTypeAdapter(IdentifierAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(GenericNameAdapter.class),
     @XmlJavaTypeAdapter(RecordTypeAdapter.class),
 
     // Primitive type handling
@@ -75,9 +76,10 @@ import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
 import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.text.LocaleAdapter;
 import org.geotoolkit.internal.jaxb.text.RecordTypeAdapter;
+import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
+import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.code.ImagingConditionAdapter;
 import org.geotoolkit.internal.jaxb.code.CoverageContentTypeAdapter;
 import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
 import org.geotoolkit.internal.jaxb.metadata.IdentifierAdapter;
 import org.geotoolkit.internal.jaxb.metadata.RangeDimensionAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;

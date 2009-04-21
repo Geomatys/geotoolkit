@@ -20,7 +20,6 @@
 package org.geotoolkit.naming;
 
 import java.util.List;
-import java.util.Locale; // For javadoc
 import java.util.Iterator;
 
 import org.opengis.util.NameSpace;
@@ -74,6 +73,14 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
     }
 
     /**
+     * Empty constructor to be used by JAXB only. Despite its "final" declaration,
+     * the {@link #parsedNames} field will be set by JAXB during unmarshalling.
+     */
+    private DefaultScopedName() {
+        parsedNames = null;
+    }
+
+    /**
      * Creates a new scoped names from the given list of local names. This constructor is
      * not public because it does not check if the given local names have the proper scope.
      *
@@ -85,7 +92,7 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
 
     /**
      * Constructs a scoped name from the specified list of strings. If any of the given names is an
-     * instance of {@link InternationalString}, then its {@link InternationalString#toString(Locale)
+     * instance of {@link InternationalString}, then its {@link InternationalString#toString(java.util.Locale)
      * toString(null)} method will be invoked for fetching an unlocalized name. Otherwise the
      * {@link CharSequence#toString toString()} method will be used.
      *

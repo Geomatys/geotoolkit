@@ -125,9 +125,16 @@ public abstract class AbstractName implements GenericName, Serializable {
      * the {@linkplain List#size size} of the list returned by the {@link #getParsedNames} method.
      */
     @Override
-    @XmlElement(name = "depth", required = true)
     public int depth() {
         return getParsedNames().size();
+    }
+
+    /**
+     * A getter for JAXB only, which will invoke this method using reflection.
+     */
+    @XmlElement(name = "depth", required = true)
+    private int getDepth() {
+        return depth();
     }
 
     /**

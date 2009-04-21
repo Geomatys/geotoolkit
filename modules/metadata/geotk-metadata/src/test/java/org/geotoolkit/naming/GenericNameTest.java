@@ -17,7 +17,13 @@
 package org.geotoolkit.naming;
 
 import java.util.Arrays;
+import java.io.StringWriter;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.JAXBException;
+
+import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 import org.opengis.util.GenericName;
+import org.geotoolkit.xml.MarshallerPool;
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 
 import org.junit.*;
@@ -106,5 +112,35 @@ public class GenericNameTest {
         assertEquals("codespace",               name.tip().scope().name().tip().scope().name().toString());
         assertSame(name, name.toFullyQualifiedName());
         assertSame(name, name.tip().toFullyQualifiedName());
+    }
+
+    /**
+     * Tests XML marshalling.
+     *
+     * @throws JAXBException Should not happen.
+     */
+    @Test
+    @Ignore // Because of infinite recursivity (todo)
+    public void testXML() throws JAXBException {
+        final String[] parsed = new String[] {
+            "myScope","myName"
+        };
+        GenericName name = new DefaultScopedName(null, Arrays.asList(parsed));
+        assertSame(name, name.toFullyQualifiedName());
+        assertEquals("myScope:myName", name.toString());
+        /*
+         * The name can not be marshalled directly (it has no @XmlRootElement).
+         * We need to wrap it in an other metadata object.
+         */
+        final DefaultFeatureCatalogueDescription metadata = new DefaultFeatureCatalogueDescription();
+        metadata.getFeatureTypes().add(name);
+
+        final MarshallerPool pool = new MarshallerPool(metadata.getClass());
+        final Marshaller marshaller = pool.acquireMarshaller();
+        final StringWriter out = new StringWriter();
+        marshaller.marshal(metadata, out);
+        pool.release(marshaller);
+
+        System.out.println(out);
     }
 }

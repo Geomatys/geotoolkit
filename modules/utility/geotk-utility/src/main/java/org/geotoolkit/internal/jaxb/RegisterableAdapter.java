@@ -17,6 +17,7 @@
 package org.geotoolkit.internal.jaxb;
 
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
 
 
@@ -46,4 +47,17 @@ public interface RegisterableAdapter {
      * @throws JAXBException If the given marshaller can not be configured.
      */
     void register(Marshaller marshaller) throws JAXBException;
+
+    /**
+     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Typical implementations will be as below:
+     *
+     * {@preformat java
+     *     unmarshaller.setAdapter(MyParent.class, this);
+     * }
+     *
+     * @param unmarshaller The unmarshaller to be configured.
+     * @throws JAXBException If the given unmarshaller can not be configured.
+     */
+    void register(Unmarshaller unmarshaller) throws JAXBException;
 }

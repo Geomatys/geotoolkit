@@ -17,6 +17,7 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
@@ -58,6 +59,16 @@ public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter imp
     @Override
     public void register(final Marshaller marshaller) {
         marshaller.setAdapter(ReferenceSystemAdapter.class, this);
+    }
+
+    /**
+     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     *
+     * @param unmarshaller The marshaller to be configured.
+     */
+    @Override
+    public void register(final Unmarshaller unmarshaller) {
+        unmarshaller.setAdapter(ReferenceSystemAdapter.class, this);
     }
 
     /**
