@@ -1,0 +1,59 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.internal.image.jai;
+
+import javax.media.jai.JAI;
+import javax.media.jai.CRIFImpl;
+import javax.media.jai.ImageLayout;
+import java.awt.image.RenderedImage;
+import java.awt.image.renderable.ParameterBlock;
+import java.awt.RenderingHints;
+
+import org.geotoolkit.image.jai.SilhouetteMask;
+
+
+/**
+ * The factory for the {@link SilhouetteMask} operation.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.0
+ *
+ * @since 3.0
+ * @module
+ */
+public final class SilhouetteMaskCRIF extends CRIFImpl {
+    /**
+     * Constructs a default factory.
+     */
+    public SilhouetteMaskCRIF() {
+    }
+
+    /**
+     * Creates a {@link RenderedImage} representing the results of an imaging
+     * operation for a given {@link ParameterBlock} and {@link RenderingHints}.
+     *
+     * @param param The parameter to be given to the image operation.
+     * @param hints An optional set of hints, or {@code null}.
+     */
+    @Override
+    public RenderedImage create(final ParameterBlock param, final RenderingHints hints) {
+        final RenderedImage image = (RenderedImage) param.getSource(0);
+        final ImageLayout  layout = (ImageLayout) hints.get(JAI.KEY_IMAGE_LAYOUT);
+        final double[] background = (double[]) param.getObjectParameter(0);
+        return new SilhouetteMask(image, layout, hints, background);
+    }
+}

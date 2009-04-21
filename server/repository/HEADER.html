@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <title>Maven repository for Geotoolkit binaries and dependencies</title>
+  </head>
+  <body>
+    <h1>Maven repository for Geotoolkit binaries and dependencies</h1>
+
+    <p align="justify">This directory contains <a href="http://www.geotoolkit.org/">Geotoolkit</a> binaries and
+    some dependencies not found in the <a href="http://repo1.maven.org/maven2/">standard public repository</a>.
+    This is a complement (not a replacement) for the above repository. The directory layout is understood by
+    <a href="http://maven.apache.org/">Maven 2</a>, a project management tool used by the Geotoolkit project.
+    Users are free to link their own project to this repository in order to get automatic downloads of
+    Geotoolkit binaries.</p>
+
+    <p align="justify">This repository contains also <a href="http://www.geotools.org/">GeoTools</a> binaries
+    in which some modules have been deleted and replaced by Maven dependencies to the Geotoolkit equivalent
+    modules. They are provided as a convenience for those who want functionalities not yet ported to Geotoolkit,
+    but without garanteed: some tests are known to fail. Those modified GeoTools modules and JAR file names are
+    prefixed with "<code>gts-</code>", to distinguish them from the official GeoTools distribution which prefix
+    them with "<code>gt-</code>".</p>
+  </body>
+</html>

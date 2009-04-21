@@ -1,0 +1,195 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2007-2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.referencing.factory.web;
+
+import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.cs.CSAuthorityFactory;
+import org.opengis.referencing.datum.DatumAuthorityFactory;
+import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
+
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
+import org.geotoolkit.referencing.factory.AuthorityFactoryAdapter;
+import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+
+
+/**
+ * Wraps {@linkplain AllAuthoritiesFactory all factories} in a {@code "http://www.opengis.net/"}
+ * name space. Exemple of complete URL:
+ *
+ * {@preformat text
+ *     http://www.opengis.net/gml/srs/epsg.xml#4326
+ * }
+ *
+ * @author Martin Desruisseaux (IRD)
+ * @version 3.0
+ *
+ * @since 2.4
+ * @module
+ */
+public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
+        CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
+{
+    /**
+     * The base URL, which is {@value}.
+     */
+    public static final String BASE_URL = "http://www.opengis.net/gml/srs/";
+
+    /**
+     * Creates a default wrapper.
+     */
+    public HTTP_AuthorityFactory() {
+        this(EMPTY_HINTS);
+    }
+
+    /**
+     * Creates a wrapper using the specified hints. For strict compliance with OGC
+     * definition of CRS defined by URL, the supplied hints should contains at least the
+     * {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint
+     * with value {@link Boolean#FALSE FALSE}.
+     *
+     * @param userHints The hints to be given to backing factories.
+     */
+    public HTTP_AuthorityFactory(final Hints userHints) {
+        this(AllAuthoritiesFactory.getInstance(removeIgnoredHints(userHints, "http")));
+    }
+
+    /**
+     * Creates a wrapper around the specified factory. The supplied factory is given unchanged
+     * to the {@linkplain AuthorityFactoryAdapter#AuthorityFactoryAdapter(AuthorityFactory)
+     * super class constructor}.
+     *
+     * @param factory The factory on which to delegate object creation.
+     */
+    public HTTP_AuthorityFactory(final AllAuthoritiesFactory factory) {
+        super(factory);
+    }
+
+    /**
+     * Overrides the {@code FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint if it should keep its standard
+     * value while {@code FactoryRegistry} is checking if the hints of a factory are suitable for
+     * user's requirement.
+     */
+    static Hints removeIgnoredHints(Hints hints, final String authority) {
+        if (!forceAxisOrderHonoring(hints, authority)) {
+            hints = (hints != null ? hints : EMPTY_HINTS).clone();
+            hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.FALSE);
+        }
+        return hints;
+    }
+
+    /**
+     * Returns {@code true} if {@link Hints#FORCE_AXIS_ORDER_HONORING}
+     * contains a value for the specified authority.
+     *
+     * @param  hints The hints to use (may be {@code null}).
+     * @param  authority The authority factory under creation.
+     * @return {@code true} if the given authority is enumerated in the
+     *         {@code FORCE_AXIS_ORDER_HONORING} hint.
+     */
+    static boolean forceAxisOrderHonoring(final Hints hints, final String authority) {
+        Object value = null;
+        if (hints != null) {
+            value = hints.get(Hints.FORCE_AXIS_ORDER_HONORING);
+        }
+        if (value instanceof CharSequence) {
+            final String list = value.toString();
+            int i = 0;
+            while ((i = list.indexOf(authority, i)) >= 0) {
+                if (i==0 || !Character.isJavaIdentifierPart(list.charAt(i - 1))) {
+                    final int j = i + authority.length();
+                    if (j==list.length() || !Character.isJavaIdentifierPart(list.charAt(j))) {
+                        // Found the authority in the list: we need to use the user's setting.
+                        return true;
+                    }
+                }
+                i++;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the authority, which contains the {@code "http://www.opengis.net"} identifier.
+     */
+    @Override
+    public Citation getAuthority() {
+        return Citations.HTTP_OGC;
+    }
+
+    /**
+     * Removes the URL base ({@value #BASE_URL}) from the specified code
+     * before to pass it to the wrapped factories.
+     *
+     * @param  code The code given to this factory.
+     * @return The code to give to the underlying factories.
+     * @throws FactoryException if the code can't be converted.
+     */
+    @Override
+    protected String toBackingFactoryCode(String code) throws FactoryException {
+        code = code.trim();
+        final int length = BASE_URL.length();
+        if (code.regionMatches(true, 0, BASE_URL, 0, length)) {
+            code = code.substring(length);
+            if (code.indexOf('/') < 0) {
+                final int split = code.indexOf('#');
+                if (split >= 0 && code.indexOf('#', split+1) < 0) {
+                    String authority = code.substring(0, split).trim();
+                    final int ext = authority.lastIndexOf('.');
+                    if (ext > 0) {
+                        // Removes the extension part (typically ".xml")
+                        authority = authority.substring(0, ext);
+                    }
+                    code = code.substring(split + 1).trim();
+                    code = authority + DefaultNameSpace.DEFAULT_SEPARATOR + code;
+                    return code;
+                }
+            }
+        }
+        throw new NoSuchAuthorityCodeException(Errors.format(
+                Errors.Keys.ILLEGAL_ARGUMENT_$2, "code", code), BASE_URL, code);
+    }
+
+    /**
+     * Returns {@code true} if this factory meets the requirements specified by a map of hints.
+     * This information is for {@link org.geotoolkit.factory.FactoryRegistry} usage only.
+     *
+     * @since 3.0
+     */
+    @Override
+    protected boolean hasCompatibleHints(final Hints hints) {
+        return super.hasCompatibleHints(removeIgnoredHints(hints, "http"));
+    }
+
+    /**
+     * Sets the ordering of this factory relative to other factories. By default
+     * {@code HTTP_AuthorityFactory} positions itself last.
+     *
+     * @since 3.0
+     */
+    @Override
+    protected void setOrdering(final Organizer organizer) {
+        super.setOrdering(organizer);
+        organizer.after(AbstractAuthorityFactory.class, true);
+    }
+}

@@ -1,0 +1,1057 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2001-2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.util;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.lang.reflect.Array;
+
+import org.geotoolkit.lang.Static;
+
+
+/**
+ * Simple operations on arrays. This class provides a central place for inserting and deleting
+ * elements in an array, as well as resizing the array.
+ * <p>
+ * The {@code resize} methods provided in this class are very similar to the {@code copyOf}
+ * methods provided in {@link Arrays} since Java 6, except that they do not copy anything if
+ * the given array already has the requested length.
+ *
+ * @author Martin Desruisseaux (IRD)
+ * @version 3.0
+ *
+ * @see Arrays
+ *
+ * @since 2.0
+ * @module
+ */
+@Static
+public final class XArrays {
+    /**
+     * Do not allow instantiation of this class.
+     */
+    private XArrays() {
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but with the
+     * specified {@code length}, truncating or padding with {@code null} if necessary.
+     * <ul>
+     *   <li><p>If the given {@code length} is longer than the length of the given {@code array},
+     *       then the returned array will contain all the elements of {@code array} at index
+     *       <var>i</var> &lt; {@code array.length}. Elements at index <var>i</var> &gt;=
+     *       {@code array.length} are initialized to {@code null}.</p></li>
+     *
+     *   <li><p>If the given {@code length} is shorter than the length of the given {@code array},
+     *       then the returned array will contain only the elements of {@code array} at index
+     *       <var>i</var> &lt; {@code length}. Remainding elements are not copied.</p></li>
+     *
+     *   <li><p>If the given {@code length} is equal to the length of the given {@code array},
+     *       then {@code array} is returned unchanged. <strong>No copy</strong> is performed.
+     *       This behavior is what make this method different than {@link Arrays#copyOf}.</p></li>
+     *
+     * @param  <E> The array elements.
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(Object[],int)
+     */
+    public static <E> E[] resize(final E[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(double[],int)
+     */
+    public static double[] resize(final double[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(float[],int)
+     */
+    public static float[] resize(final float[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(long[],int)
+     */
+    public static long[] resize(final long[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(int[],int)
+     */
+    public static int[] resize(final int[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(short[],int)
+     */
+    public static short[] resize(final short[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(byte[],int)
+     */
+    public static byte[] resize(final byte[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+   /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with zeros if necessary.
+     *
+     * @param  array  Array to copy.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(char[],int)
+    */
+    public static char[] resize(final char[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Returns an array containing the same elements as the given {@code array} but
+     * specified {@code length}, truncating or padding with {@code false} if necessary.
+     *
+     * @param  array  Array to resize.
+     * @param  length Length of the desired array.
+     * @return A new array of the requested length, or {@code array} if the original
+     *         array already have the requested length.
+     *
+     * @see Arrays#copyOf(boolean[],int)
+     */
+    public static boolean[] resize(final boolean[] array, final int length) {
+        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param <E>     The type of array elements.
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    private static <E> E doRemove(final E array, final int first, final int length) {
+        if (length == 0) {
+            return array;
+        }
+        int arrayLength = Array.getLength(array);
+        @SuppressWarnings("unchecked")
+        final E newArray = (E) Array.newInstance(array.getClass().getComponentType(), arrayLength -= length);
+        System.arraycopy(array, 0,            newArray, 0,                 first);
+        System.arraycopy(array, first+length, newArray, first, arrayLength-first);
+        return newArray;
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param <E>     The type of array elements.
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static <E> E[] remove(final E[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static double[] remove(final double[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static float[] remove(final float[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static long[] remove(final long[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static int[] remove(final int[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static short[] remove(final short[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static byte[] remove(final byte[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static char[] remove(final char[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Removes elements from the middle of an array.
+     *
+     * @param array   Array from which to remove elements.
+     * @param first   Index of the first element to remove from the given {@code array}.
+     * @param length  Number of elements to remove.
+     * @return        Array with the same elements than the given {@code array} except for the
+     *                removed elements, or {@code array} if {@code length} is 0.
+     */
+    public static boolean[] remove(final boolean[] array, final int first, final int length) {
+        return doRemove(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made
+     * up of {@code null} elements.
+     *
+     * @param <E>     The type of array elements.
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    private static <E> E doInsert(final E array, final int first, final int length) {
+        if (length == 0) {
+            return array;
+        }
+        final int arrayLength = Array.getLength(array);
+        @SuppressWarnings("unchecked")
+        final E newArray = (E) Array.newInstance(array.getClass().getComponentType(), arrayLength + length);
+        System.arraycopy(array, 0,     newArray, 0,            first            );
+        System.arraycopy(array, first, newArray, first+length, arrayLength-first);
+        return newArray;
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made
+     * up of {@code null} elements.
+     *
+     * @param <E>     The type of array elements.
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static <E> E[] insert(final E[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static double[] insert(final double[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static float[] insert(final float[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static long[] insert(final long[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static int[] insert(final int[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static short[] insert(final short[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static byte[] insert(final byte[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to zero.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static char[] insert(final char[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
+     * initialized to {@code false}.
+     *
+     * @param array   Array in which to insert spaces.
+     * @param first   Index where the first space should be inserted. All {@code array} elements
+     *                having an index equal to or higher than {@code index} will be moved forward.
+     * @param length  Number of spaces to insert.
+     * @return        Array containing the {@code array} elements with the additional space
+     *                inserted, or {@code array} if {@code length} is 0.
+     */
+    public static boolean[] insert(final boolean[] array, final int first, final int length) {
+        return doInsert(array, first, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param <E>     The type of array elements.
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    private static <E> E doInsert(final E src, final int srcOff,
+                                  final E dst, final int dstOff, final int length)
+    {
+        if (length == 0) {
+            return dst;
+        }
+        final int dstLength = Array.getLength(dst);
+        @SuppressWarnings("unchecked")
+        final E newArray = (E) Array.newInstance(dst.getClass().getComponentType(), dstLength+length);
+        System.arraycopy(dst, 0,      newArray, 0,             dstOff          );
+        System.arraycopy(src, srcOff, newArray, dstOff,        length          );
+        System.arraycopy(dst, dstOff, newArray, dstOff+length, dstLength-dstOff);
+        return newArray;
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param <E>     The type of array elements.
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static <E> E[] insert(final E[] src, final int srcOff,
+                                 final E[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static double[] insert(final double[] src, final int srcOff,
+                                  final double[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static float[] insert(final float[] src, final int srcOff,
+                                 final float[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static long[] insert(final long[] src, final int srcOff,
+                                final long[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static int[] insert(final int[] src, final int srcOff,
+                               final int[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static short[] insert(final short[] src, final int srcOff,
+                                 final short[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static byte[] insert(final byte[] src, final int srcOff,
+                                final byte[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static char[] insert(final char[] src, final int srcOff,
+                                final char[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Inserts an array part into another array.
+     *
+     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
+     * @param dst     Array in which to insert {@code src} data.
+     * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
+     *                All elements of {@code dst} whose index is equal to or greater than
+     *                {@code dstOff} will be moved forward.
+     * @param length  Number of {@code src} elements to insert.
+     * @return        Array which contains the merge of {@code src} and {@code dst}. This method
+     *                returns directly {@code dst} when {@code length} is zero, but never return
+     *                {@code src}.
+     */
+    public static boolean[] insert(final boolean[] src, final int srcOff,
+                                   final boolean[] dst, final int dstOff, final int length)
+    {
+        return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Returns a copy of the given array where each value has been casted to the {@code float} type.
+     *
+     * @param  data The array to copy, or {@code null}.
+     * @return A copy of the given array with values casted to the {@code float} type, or
+     *         {@code null} if the given array was null.
+     */
+    public static float[] copyAsFloats(final double[] data) {
+        if (data == null) return null;
+        final float[] result = new float[data.length];
+        for (int i=0; i<data.length; i++) {
+            result[i] = (float) data[i];
+        }
+        return result;
+    }
+
+    /**
+     * Returns a copy of the given array where each value has been
+     * {@linkplain Math#round(double) rounded} to the {@code int} type.
+     *
+     * @param  data The array to copy, or {@code null}.
+     * @return A copy of the given array with values rounded to the {@code int} type, or
+     *         {@code null} if the given array was null.
+     */
+    public static int[] copyAsInts(final double[] data) {
+        if (data == null) return null;
+        final int[] result = new int[data.length];
+        for (int i=0; i<data.length; i++) {
+            result[i] = (int) Math.round(data[i]);
+        }
+        return result;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * This method is usefull in assertions.
+     *
+     * @param <E>         The type of array elements.
+     * @param array       The array to test for order.
+     * @param comparator  The comparator to use for comparing order.
+     * @param strict      {@code true} if elements should be strictly sorted (i.e. equal
+     *                    elements are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static <E> boolean isSorted(final E[] array, final Comparator<E> comparator, final boolean strict) {
+        for (int i=1; i<array.length; i++) {
+            final int c = comparator.compare(array[i], array[i-1]);
+            if (strict ? c <= 0 : c < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * Since {@code NaN} values are unordered, they may appears anywhere in the array; they
+     * will be ignored. This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final double[] array, final boolean strict) {
+        int previous = 0;
+        for (int i=1; i<array.length; i++) {
+            final double e = array[i];
+            final double p = array[previous];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+            if (!Double.isNaN(e)) {
+                previous = i;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * Since {@code NaN} values are unordered, they may appears anywhere in the array; they
+     * will be ignored. This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final float[] array, final boolean strict) {
+        int previous = 0;
+        for (int i=1; i<array.length; i++) {
+            final float e = array[i];
+            final float p = array[previous];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+            if (!Float.isNaN(e)) {
+                previous = i;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final long[] array, final boolean strict) {
+        for (int i=1; i<array.length; i++) {
+            final long e = array[i];
+            final long p = array[i-1];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final int[] array, final boolean strict) {
+        for (int i=1; i<array.length; i++) {
+            final int e = array[i];
+            final int p = array[i-1];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final short[] array, final boolean strict) {
+        for (int i=1; i<array.length; i++) {
+            final short e = array[i];
+            final short p = array[i-1];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final byte[] array, final boolean strict) {
+        for (int i=1; i<array.length; i++) {
+            final byte e = array[i];
+            final byte p = array[i-1];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all elements in the specified array are in increasing order.
+     * This method is usefull in assertions.
+     *
+     * @param array  The array to test for order.
+     * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
+     *               are not allowed}, or {@code false} otherwise.
+     * @return {@code true} if all elements in the given array are sorted in increasing order.
+     */
+    public static boolean isSorted(final char[] array, final boolean strict) {
+        for (int i=1; i<array.length; i++) {
+            final char e = array[i];
+            final char p = array[i-1];
+            if (strict ? e <= p : e < p) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all values in the specified array are equal to the specified
+     * value, which may be {@link Double#NaN}.
+     *
+     * @param array The array to check.
+     * @param value The expected value.
+     * @return {@code true} if all elements in the given array are equal to the given value.
+     */
+    public static boolean allEquals(final double[] array, final double value) {
+        if (Double.isNaN(value)) {
+            for (int i=0; i<array.length; i++) {
+                if (!Double.isNaN(array[i])) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i=0; i<array.length; i++) {
+                if (array[i] != value) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if all values in the specified array are equal to the specified
+     * value, which may be {@link Float#NaN}.
+     *
+     * @param array The array to check.
+     * @param value The expected value.
+     * @return {@code true} if all elements in the given array are equal to the given value.
+     */
+    public static boolean allEquals(final float[] array, final float value) {
+        if (Float.isNaN(value)) {
+            for (int i=0; i<array.length; i++) {
+                if (!Float.isNaN(array[i])) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i=0; i<array.length; i++) {
+                if (array[i] != value) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if the specified array contains at least one
+     * {@link Double#NaN NaN} value.
+     *
+     * @param array The array to check.
+     * @return {@code true} if the given array contains at least one NaN value.
+     */
+    public static boolean hasNaN(final double[] array) {
+        for (int i=0; i<array.length; i++) {
+            if (Double.isNaN(array[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if the specified array contains at least one
+     * {@link Float#NaN NaN} value.
+     *
+     * @param array The array to check.
+     * @return {@code true} if the given array contains at least one NaN value.
+     */
+    public static boolean hasNaN(final float[] array) {
+        for (int i=0; i<array.length; i++) {
+            if (Float.isNaN(array[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if the specified array contains the specified value, ignoring case.
+     * This method should be used only for very small arrays.
+     *
+     * @param  array The array to search in. May be {@code null}.
+     * @param  value The value to search.
+     * @return {@code true} if the array contains the value.
+     */
+    public static boolean containsIgnoreCase(final String[] array, final String value) {
+        if (array != null) {
+            for (final String element : array) {
+                if (value.equalsIgnoreCase(element)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if the specified array contains the specified value. This method
+     * should be used only for very small arrays, or for searches to be performed only once,
+     * because it performs a linear search. If more than one search need to be done on the
+     * same array, consider using {@link java.util.HashSet} instead.
+     *
+     * @param  array The array to search in. May be {@code null} and may contains null elements.
+     * @param  value The value to search. May be {@code null}.
+     * @return {@code true} if the array contains the value.
+     */
+    public static boolean contains(final Object[] array, final Object value) {
+        if (array != null) {
+            for (final Object element : array) {
+                if (Utilities.equals(element, value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if at least one element in the first array is {@linkplain Object#equals
+     * equals} to an element in the second array. The element doesn't need to be at the same index
+     * in both array.
+     * <p>
+     * This method should be used only for very small arrays since it may be very slow. If the
+     * arrays are large or if an array will be involved in more than one search, consider using
+     * {@link java.util.HashSet} instead.
+     *
+     * @param array1 The first array.
+     * @param array2 The second array.
+     * @return {@code true} if both array have at least one element in common.
+     */
+    public static boolean intersects(final Object[] array1, final Object[] array2) {
+        for (final Object element : array1) {
+            if (contains(array2, element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

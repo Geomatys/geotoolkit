@@ -1,0 +1,26 @@
+org.geotoolkit.coverage.processing.operation.Absolute
+org.geotoolkit.coverage.processing.operation.AddConst
+org.geotoolkit.coverage.processing.operation.Convolve
+# org.geotoolkit.coverage.processing.operation.Crop
+org.geotoolkit.coverage.processing.operation.DivideByConst
+org.geotoolkit.coverage.processing.operation.Exp
+# org.geotoolkit.coverage.processing.operation.FilteredSubsample
+org.geotoolkit.coverage.processing.operation.GradientMagnitude
+org.geotoolkit.coverage.processing.operation.Interpolate
+org.geotoolkit.coverage.processing.operation.Invert
+org.geotoolkit.coverage.processing.operation.Log
+org.geotoolkit.coverage.processing.operation.MaxFilter
+org.geotoolkit.coverage.processing.operation.MedianFilter
+org.geotoolkit.coverage.processing.operation.MinFilter
+org.geotoolkit.coverage.processing.operation.MultiplyConst
+org.geotoolkit.coverage.processing.operation.NodataFilter
+org.geotoolkit.coverage.processing.operation.Recolor
+org.geotoolkit.coverage.processing.operation.Resample
+org.geotoolkit.coverage.processing.operation.Rescale
+# org.geotoolkit.coverage.processing.operation.Scale
+org.geotoolkit.coverage.processing.operation.SelectSampleDimension
+# org.geotoolkit.coverage.processing.operation.SubsampleAverage
+org.geotoolkit.coverage.processing.operation.SubtractConst
+org.geotoolkit.coverage.processing.operation.SubtractFromConst
+# org.geotoolkit.coverage.processing.operation.Extrema
+# org.geotoolkit.coverage.processing.operation.Histogram

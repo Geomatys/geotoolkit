@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>referencing</artifactId>
+    <version>SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit</groupId>
+  <artifactId>geotk-referencing</artifactId>
+  <packaging>jar</packaging>
+  <name>Referencing core</name>
+
+  <description>
+    Implementations of Coordinate Reference Systems (CRS),
+    conversion and transformation services derived from ISO 19111.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Rueben Schulz</name>
+      <id>rschulz</id>
+      <organization>University of British Columbia</organization>
+      <roles>
+        <role>Java developper</role>
+        <role>Tester</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Jan Jezek</name>
+      <id>jezekjan</id>
+      <organization>Help Service Remote Sensing</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Jody Garnett</name>
+      <id>jive</id>
+      <email>jive@users.sourceforge.net</email>
+      <organization>Refractions Research</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Rémi Eve</name>
+      <organization>
+        Institut de Recherche pour le Développement (IRD)
+      </organization>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Yann Cézard</name>
+      <organization>Université de Montpellier II</organization>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Simone Giannecchinir</name>
+      <email>simone.giannecchini@geo-solutions.it</email>
+      <organization>GeoSolutions S.A.S.</organization>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Daniele Franzoni</name>
+      <organization>SATA srl, Italy</organization>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Matthias Basler</name>
+      <email>matthiasbasier@users.sourceforge.net</email>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>David Heath</name>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Beate Stollberg</name>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+      <organization>
+        Institute for Environment and Sustainability
+      </organization>
+    </contributor>
+    <contributor>
+      <name>Tara Athan</name>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Larry Reeder</name>
+      <roles>
+        <role>Tester</role>
+      </roles>
+    </contributor>
+  </contributors>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>java3d</groupId>
+      <artifactId>vecmath</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

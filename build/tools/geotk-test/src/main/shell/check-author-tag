@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# ---------------------------------------------------------------
+# Checks for @author tag in source code. All occurences found are
+# listed, without duplicated.
+# ---------------------------------------------------------------
+
+find . -name "*.java" -exec grep "@author" '{}' \; | sort --ignore-leading-blanks --unique

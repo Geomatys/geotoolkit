@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faqs title="Summary of changes compared to GeoTools 2.6" toplink="false">
+  <part id="general">
+    <title>General</title>
+    <faq id="mercurial">
+      <question>
+        Migrated to Mercurial versioning system
+      </question>
+      <answer>
+        <p>Geotoolkit uses the mercurial distributed version control system whereas GeoTools 2
+        uses the a centralized version control system Subversion. Since it is expected that many uses
+        will want to use a modified version of the library, either because they have local changes
+        particular to their own work or because they do not agree with a technical decision made
+        by the Geotoolkit project, it was considered useful to move to a distributed versioning
+        system. Mercurial was selected because it combined an easy to use command-line interface,
+        good support by the NetBeans IDE, and because already in use for the development of major
+        software projects such as Java itself, OpenOffice, OpenSolaris, NetBeans, Firefox and
+        Python.</p>
+      </answer>
+    </faq>
+
+    <faq id="java">
+      <question>
+        Upgraded to Java 6
+      </question>
+      <answer>
+        <p>Geotoolkit targets Java 6 while GeoTools 2 targets the older Java 5. This allowed
+        Geotoolkit to integrate the use of the new annotations defined in the new version. The code
+        in several methods saw significant speed improvements due to the leveraging of new API
+        defined in Java 6. The transition fixed the compilation errors when using Java 6. The
+        dependency to the JAXB JAR was removed since this is now part of the Java runtime itself.</p>
+      </answer>
+    </faq>
+
+    <faq id="cleanup">
+      <question>
+        Major cleanup of the code
+      </question>
+      <answer>
+        <p>In the transition to Geotoolkit almost all of the several thousand <code>javac</code> and
+        <code>javadoc</code> warnings were fixed. The build was made more robust so that the
+        <code>javadoc</code> could be built and the site fully deployed.</p>
+      </answer>
+    </faq>
+
+    <faq id="dependencies">
+      <question>
+        Reduced dependencies
+      </question>
+      <answer>
+        <p>The last remaining trace of <cite>Java Advanced Imaging</cite> (JAI) dependencies were
+        removed from the referencing module. <cite>Log4J</cite> and <cite>commons-logging</cite>
+        dependencies were also removed from the core modules and provided instead as independent
+        plugins. JAXB annotations rely only on the library provided in Java 6.</p>
+      </answer>
+    </faq>
+
+    <faq id="directories">
+      <question>
+        Directory structure changed
+      </question>
+      <answer>
+        <p>GeoTools 2 organized the modules in <code>library</code>, <code>plugin</code>,
+        <code>extension</code> and <code>unsupported</code> sub-directories. In Geotoolkit
+        those directories are gone. They are replaced by "general topic" directories like
+        <code>metadata</code>, <code>referencing</code> and <code>coverage</code>. Each of
+        those directories regroup the core library and the plugins related to their topic.
+        For example the <code>referencing</code> directory contains the core referencing
+        library and all EPSG plugins.</p>
+
+        <p>Note that there is no concept of "unsupported modules" in this structure. Since
+        we migrated to Mercurial versioning system, experimental work can be done on a clone
+        of the public repository.</p>
+      </answer>
+    </faq>
+
+    <faq id="bundles">
+      <question>
+        Bundles (everything in one big JAR)
+      </question>
+      <answer>
+        <p>In addition to the usual compressed JAR files deployed to the Maven repository,
+        the build process creates also bundles. When using those bundles, most of Geotoolkit
+        code and dependency (including GeoAPI) are available in a single JAR file.</p>
+
+        <p><a href="../../../download.html">More about Geotoolkit bundles</a>.</p>
+      </answer>
+    </faq>
+
+    <faq id="tools">
+      <question>
+        Centralized command-line tools
+      </question>
+      <answer>
+        <p>GeoTools 2 contains a number of command-line tools scattered through the class hierarchy.
+        Some of them are quite useful but largely ignored. In Geotoolkit, all command-line tools are
+        centralized in the <code>org.geotoolkit.console</code> package. The amount of main classes
+        has been reduced by regrouping functionalities in only a few (but more powerfull) main classes.
+        Their capabilities are better documented with help screen and usage examples.</p>
+      </answer>
+    </faq>
+
+    <faq id="validators">
+      <question>
+        More tests with GeoAPI validators
+      </question>
+      <answer>
+        <p>Together with the development of Geotoolkit, a set of implementation-independant
+        validators has been commited to GeoAPI. Those validators (and some related classes) can
+        be shared by other projects than Geotoolkit. Objects that are created during Geotoolkit
+        test suite can be checked by those validators, which perform a more extensive object
+        inspection than GeoTools 2 ever had.</p>
+
+        <p><a href="http://geoapi.sourceforge.net/conformance/index.html">More about GeoAPI
+        conformance module</a>.</p>
+      </answer>
+    </faq>
+
+    <faq id="bugs">
+      <question>
+        Bug fixes
+      </question>
+      <answer>
+        <p>A partial list of bug fixes is provided in the
+        <a href="http://jira.codehaus.org/browse/GEOT-2117">GEOT-2117</a> task. This list is only
+        partial since many fixes were applied when the bugs were noticed, without corresponding
+        JIRA tasks.</p>
+      </answer>
+    </faq>
+
+    <faq id="daily">
+      <question>
+        Automated daily builds
+      </question>
+      <answer>
+        <p>Geotoolkit is built fully every day by the Hudson build tool. The build includes running
+        the complete test suite and performing an analysis of the code base. Successful builds are
+        then deployed to the maven repository. Hudson provides a
+        <a href="http://hudson.geomatys.com/job/Geotoolkit/">web page</a> which lists the
+        information for the recent daily builds.</p>
+      </answer>
+    </faq>
+  </part>
+
+
+  <!-- ========================================================================================= -->
+
+
+  <part id="metadata">
+    <title>Metadata and utilities</title>
+    <faq id="split">
+      <question>
+        Splitted metadata and utilities
+      </question>
+      <answer>
+        <p>In GeoTools 2, the metadata module was also a home for a large set of utility classes,
+        including a growing set of collection implementations, the factory registry, <cite>etc.</cite>
+        In Geotoolkit the utility classes moved to their own module, and the metadata module is now
+        focusing specifically on metadata.</p>
+      </answer>
+    </faq>
+
+    <faq id="collection">
+      <question>
+        <code>org.geotools.util</code> splitted
+      </question>
+      <answer>
+        <p>In GeoTools 2, the <code>org.geotools.util</code> package has grew considerably.
+        In Geotoolkit it has been splitted. The numerous collection implementations moved to
+        the <code>org.geotoolkit.util.collection</code> subpackage.
+        The <code>GenericName</code> implementations and related classes moved to a new
+        package, <code>org.geotoolkit.naming</code>.</p>
+      </answer>
+    </faq>
+
+    <faq id="renaming">
+      <question>
+        Metadata implementation classes renamed
+      </question>
+      <answer>
+        <p>In GeoTools 2, some implementation classes begin with the <code>Default</code> prefix and
+        some other ones end with the <code>Impl</code> suffix. The former was the usage in the referencing
+        module while the later was the usage in the metadata module.</p>
+
+        <p>In Geotoolkit a more consistent naming scheme is applied. The prefix approach has been preferred
+        to the suffix one because it is a slightly more etablished practice in the standard JDK, and it
+        leads more naturally to different prefix. <code>Default</code> and <code>Abstract</code> are the
+        most common, but there is also a few others. For example <code>General</code> is used in order
+        to communicate that a particular implementation can work with an arbitrary number of dimensions,
+        as opposed to implementations specialized in the 2D or 3D case.</p>
+
+        <p>While it sound like a massive esthetical change, this one is easily handled by an
+        <a href="index.html">automatic migration tool</a>.</p>
+      </answer>
+    </faq>
+
+    <faq id="factories">
+      <question>
+        Factory registry slightly simplified
+      </question>
+      <answer>
+        <p>Support of system properties has been removed (it was there mostly for GeoTools 2.0
+        compatibility). Management of default hints has been simplified in the hope to get ride
+        of the bugs that caused developers to still use the system properties.</p>
+
+        <p>Ordering based on priority level has been removed. They are replaced by the pair-wise
+        ordering mechanism bundled in Java <code>ServiceRegistry</code> class, and controlled in
+        Geotoolkit by the <code>Factory.Organizer</code> inner class.</p>
+      </answer>
+    </faq>
+
+    <faq id="cache">
+      <question>
+        <code>ObjectCache</code> rewritten
+      </question>
+      <answer>
+        <p><code>ObjectCache</code> and related classes have been removed. They are replaced by
+        <code>Cache</code>, which offer in a unique place the union of the <code>ObjectCache</code>
+        concurrency (improved by the removal of a global lock) and the <code>SoftValueHashMap</code>
+        capability to turn strong references into soft of weak ones.</p>
+      </answer>
+    </faq>
+
+    <faq id="statistics">
+      <question>
+        Statistics implements the Kahan summation algorithm
+      </question>
+      <answer>
+        <p><code>Statistics</code>, <code>Plane</code> and <code>Line</code> classes now compute
+        their sums using the <a href="http://en.wikipedia.org/wiki/Kahan_summation_algorithm">Kahan
+        summation algorithm</a> for reducing the numerical errors.</p>
+      </answer>
+    </faq>
+  </part>
+
+
+  <!-- ========================================================================================= -->
+
+
+  <part id="referencing">
+    <title>Referencing</title>
+    <faq id="epsg">
+      <question>
+        Improvements in EPSG factories
+      </question>
+      <answer>
+        <p><cite>Threaded EPSG factories</cite> were added to GeoTools 2, but this work has been
+        done in a context that resulted in lot of code duplication. In Geotoolkit that work has
+        been entirely rewriten, code duplication removed, some global locks removed for higher
+        concurrency and some deadlocks removed. In addition the EPSG factory has been made
+        compatible with PostgreSQL 8.3 and tested against latest EPSG database.</p>
+
+        <p>The EPSG factory benefits also from new capabitilies of the referencing module,
+        notably NADCON support and a slightly wider range of projections.</p>
+      </answer>
+    </faq>
+
+    <faq id="projections">
+      <question>
+        Major refactoring of the projection package
+      </question>
+      <answer>
+        <p>In GeoTools 2, <code>MapProjection</code> was a base class doing the full projection
+        process, including the conversion of (<var>longitude</var>, <var>latitude</var>) from
+        degrees to radians, scaling the projection result to the Earth's dimension and applying
+        the easting/northing offsets.</p>
+
+        <p>In Geotoolkit all the above steps, which are linear, are delegated to affine transforms.
+        Consequently the base class is now concerned exclusively about the non-linear part, defined
+        as projections on an ellipse having a semi-major axis length of 1. The base class has been
+        renamed <code>UnitaryProjection</code> to reflect that fact.</p>
+
+        <p>The advantage of this approach is that affine transforms are easy to concatenate. With
+        this new architecture, it is easier for Geotoolkit to find the most efficient transformation
+        path in a <var>inverse projection</var> - <var>forward projection</var> concatenation, for
+        example when going from a Mercator projection to an other Mercator projection on the same
+        ellipsoid. It is also much easier to implement projections having non-standard orientation,
+        like <cite>South Orientated</cite> projections.</p>
+
+        <p>Developers who use the projections through the factory API are not affected by this
+        change, except for the performance and accuracy improvement in some cases. However vendors
+        who created their own implementations of <code>MapProjection</code> will need to adapt
+        their code.</p>
+      </answer>
+    </faq>
+
+    <faq id="parameters">
+      <question>
+        Projection parameters are no longer mixed
+      </question>
+      <answer>
+        <p>Some parameter have different names depending on the map projection that use them,
+        while serving the same purpose. For example "<cite>False northing</cite>" used in Lambert
+        Conic Conformal (1SP) is called "<cite>Northing at false origin</cite>" in the 2SP case.</p>
+
+        <p>GeoTools 2 put all parameter names in the same bag. For example the two above names
+        are declared for the same parameter no matter the projection using it. In Geotoolkit,
+        parameter names are declared on a case-by-case basis with only the relevant name for
+        a given projection. Concequently WKT parsing in Geotoolkit is stricter regarding the
+        parameter names, and WKT formatting writes the correct names (GeoTools 2 writes the
+        wrong names in many cases).</p>
+      </answer>
+    </faq>
+
+    <faq id="poles">
+      <question>
+        Less <code>ProjectionException</code> thrown
+      </question>
+      <answer>
+        <p>In GeoTools 2, any attempt to project a point outside the projection valid area result
+        in an exception being thrown. In Geotoolkit, <cite>not-a-number</cite> (NaN) or infinite
+        values are returned when appropriate. For example applying the Mercator projection on the
+        North pole or the South pole now result in +∞ or -∞ respectively, while applying the
+        projection on a latitude further than 90°N or 90°S result in <code>NaN</code>.</p>
+
+        <p>The inverse projections are kept consistent with the forward projections. For example in
+        the Mercator case, the inverse projection of +∞ or -∞ results in 90° and -90° respectively.
+        This is verified by new test cases added to the build process.</p>
+
+        <p>Note that <code>ProjectionException</code> may still be thrown in some cases,
+        for example if an iterative calculation does not converge.</p>
+      </answer>
+    </faq>
+
+    <faq id="providers">
+      <question>
+        <code>MathTransform</code> providers moved
+      </question>
+      <answer>
+        <p>In GeoTools 2, <code>MathTransformProvider</code> were defined as static inner classes
+        named <code>Provider</code> and defined in the <code>MathTransform</code> class that they
+        build. Unfortunatly experience has show that math transforms and their providers do not
+        always have a one-to-one relationship. For example "Mercator1SP" and "Mercator2SP"
+        are two ways (and consequently two distinct providers) to define the same math transform.
+        In Geotoolkit providers are defined in their own package, and their class name match the
+        OGC name.</p>
+      </answer>
+    </faq>
+
+    <faq id="nadcon">
+      <question>
+        More functional NADCON grids
+      </question>
+      <answer>
+        <p>In GeoTools 2 the user had to manually download the NADCON grids, save the files in a
+        directory of his choice and specify this directory to GeoTools by running the main method
+        of <code>NadconTransform</code>. In Geotoolkit a Graphical User Interface is provided in
+        the <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module for
+        performing all those steps automatically. It also provides a central place where the user
+        can choose and download all data used by Geotoolkit, not just NADCON grids.</p>
+
+        <p>In addition the downloaded NADCON grids are now automatically used by the EPSG-backed
+        coordinate operation factory. Consequently the transformation of coordinates over the
+        United States using NADCON grids is now available almost "out of the box", requirying
+        only the execution of a graphical setup program.</p>
+      </answer>
+    </faq>
+  </part>
+
+
+  <!-- ========================================================================================= -->
+
+
+  <part id="coverage">
+    <title>Coverage</title>
+    <faq id="imageworker">
+      <question>
+        <code>ImageWorker</code> trimmed down
+      </question>
+      <answer>
+        <p>API has been trimmed down, with fewer methods and less overloaded flavors of them. In
+        particular every <code>ImageWorker</code> method related to I/O operations was removed,
+        since their functionalities are expected to move in some Image I/O framework (to be
+        determined). Various methods doing almost the same thing like <code>retainFirstBand()</code>,
+        <code>retainFirstBands(int)</code>, <code>retainLastBand()</code>, <cite>etc.</cite> were
+        consolidated in a single methods like <code>retainBands(int,int)</code>.</p>
+
+        <p>In addition all methods returning <code>this</code> for <cite>chain method calls</cite>
+        purpose are now declared with <code>void</code> return type - so chain method calls are not
+        supported anymore. This was done in order to reduce the risk of confusion, given the large
+        amount of getter methods returning many different kind of values, and because we may want
+        to return some meaningful values in the future. For example the <code>rescaleTo(int)</code>
+        method could return the scales and offsets coefficients that it computed.</p>
+      </answer>
+    </faq>
+  </part>
+
+
+  <!-- ========================================================================================= -->
+
+
+  <part id="display">
+    <title>Display</title>
+    <faq id="axis">
+      <question>
+        <code>Axis2D</code> package moved
+      </question>
+      <answer>
+        <p>The package <code>org.geotools.axis</code> moved to <code>org.geotoolkit.display.axis</code>
+        to better emphase that it is mostly a drawing tool. The coordinates changed from <code>float</code>
+        type to <code>double</code> type.</p>
+      </answer>
+    </faq>
+  </part>
+
+
+  <!-- ========================================================================================= -->
+
+
+  <part id="other">
+    <title>Other</title>
+    <faq id="xml">
+      <question>
+        XML marshalling and unmarshalling
+      </question>
+      <answer>
+        <p>XML marshalling and unmarshalling in Geotoolkit are totally different than what
+        they were in GeoTools 2. Geotoolkit uses the JAXB implementation bundled in Java 6
+        while GeoTools uses an Eclipse-based technology. In Geotoolkit, developers marshall
+        and unmarshall directly the metadata and referencing classes they use instead than
+        intermediate classes generated automatically from the XML schema.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

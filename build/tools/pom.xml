@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit.project</groupId>
+    <artifactId>build</artifactId>
+    <version>SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit.project</groupId>
+  <artifactId>tools</artifactId>
+  <packaging>pom</packaging>
+  <name>Tools</name>
+
+  <description>
+    Projects group for miscellaneous tools that are not Maven plugins.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Administrator</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Modules included in the build                           -->
+  <!--                                                             -->
+  <!-- We don't include "geotk-provided" in the list because we    -->
+  <!-- don't want it to be processed in the aggregated javadoc.    -->
+  <!-- We can't use the javadoc "exclude package" option since     -->
+  <!-- we don't want to exclude the real classes defined in an     -->
+  <!-- other module. Concequently "geotk-provided" needs to be     -->
+  <!-- deployed manually. Hopefully the changes in that module     -->
+  <!-- are exceptional enough.                                     -->
+  <!--                                                             -->
+  <!-- See: http://jira.codehaus.org/browse/MJAVADOC-134           -->
+  <!--      http://jira.codehaus.org/browse/MJAVADOC-227           -->
+  <!-- =========================================================== -->
+  <modules>
+<!-- module>geotk-provided</module -->
+    <module>geotk-test</module>
+    <module>geotk-migrate</module>
+  </modules>
+
+</project>

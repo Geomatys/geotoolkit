@@ -1,0 +1,8 @@
+Referencing core
+
+  Implementations of Coordinate Reference Systems (CRS), conversion and transformation services
+  derived from ISO 19111. For a list of plugins, see the {{{../index.html}parent project}}.
+
+  * Getting started
+
+  * {{{../faq.html}Frequently Asked Questions}}

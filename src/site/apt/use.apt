@@ -1,0 +1,209 @@
+Introduction to Geotoolkit
+
+  The Geotoolkit library provides a toolkit of data structures and methods which can be used by
+  Java applications. While using Geotoolkit requires only adding a bundle JAR file to the classpath
+  and calling public methods of the library, discovering the contents of the library, understanding
+  the underlying concepts, and learning to use the Geotoolkit classes and methods can take quite
+  some time. Geotoolkit performs very complex tasks such as converting coordinates from one
+  coordinate system into another and no library can simplify the concepts and mathematics behind the
+  operations. Geotoolkit is hard because geospatial manipulation is hard.
+
+  Generally, users of Geotoolkit should interact only with the factory system, the GeoAPI interfaces
+  and the utility classes in Geotoolkit. The factory system enables users to create new objects
+  which conform to the interfaces declared by GeoAPI. Those interfaces allow users to manipulate the
+  objects conformant to the specifications provided by ISO and the OGC. The Geotoolkit utility
+  classes provide convenience way to perform some common operations on those objects.
+
+  The first few examples below, in order to remain simple and introduce only a few concepts at a
+  time, do not work through the factory system (why not!?).
+
+* Requirements
+
+  Before trying these examples, it is important to make sure that the requirements are met. The
+  Java Developer Kit which provides the <<<javac>>> command and the runtime environment which
+  provides the <<<java>>> command must both conform to Java version 6. These examples use the JDK
+  and JRE provided by Sun Microsystems on the
+  {{{http://java.sun.com/javase/downloads/index.jsp}download page}}, update 7 or newer.
+
+  The examples presume the user has downloaded the Referencing bundle available from the
+  {{{http://hudson.geomatys.com/job/Geotoolkit/}nightly build page}} and used the <<<unpack200>>>
+  command to expand the download into a JAR file named <<<geotk-referencing-bundle.jar>>>, for
+  example, using the following command:
+
+-----------------------------------------------------------------------------------
+unpack200 geotk-referencing-SNAPSHOT.pack.gz geotk-referencing-bundle.jar
+-----------------------------------------------------------------------------------
+
+  These examples do not require that JAI be installed into the Java Runtime Environment.
+
+
+
+* First Light
+
+  This example merely ensures that we can run the code. The example simply prints out the Well-Known
+  Text\ (WKT) representation of the Coordinate Reference System used by the Global Positioning
+  System.
+
+  The following text file should be created and named <<<FirstGeotk.java>>>.
+
+-----------------------------------------------------------------------------------
+/*
+ * The Geotoolkit project provides this file for any use, modification, or redistribution
+ * that anyone may desire but without warranty of any kind, neither exprssed nor implied,
+ * and no expression of merchantibility or fitness for any particular purpose.
+ */
+
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
+public class FirstGeotk {
+
+    public static void main(String[] args){
+
+        System.out.println(DefaultGeographicCRS.WGS84);
+
+    }
+
+}
+-----------------------------------------------------------------------------------
+
+  The file can then be compiled with the Java compiler <<<javac>>> using the command:
+
+-----------------------------------------------------------------------------------
+javac -cp geotk-referencing-bundle.jar FirstGeotk.java
+-----------------------------------------------------------------------------------
+
+  The compiled class can then be run with the command:
+
+-----------------------------------------------------------------------------------
+java -cp geotk-referencing-bundle.jar FirstGeotk
+-----------------------------------------------------------------------------------
+
+  which should result in a print out of a WKT representation of the WGS84 CRS:
+
+-----------------------------------------------------------------------------------
+GEOGCS["WGS84(DD)",
+  DATUM["WGS84",
+    SPHEROID["WGS84", 6378137.0, 298.257223563]],
+  PRIMEM["Greenwich", 0.0],
+  UNIT["degree", 0.017453292519943295],
+  AXIS["Geodetic longitude", EAST],
+  AXIS["Geodetic latitude", NORTH]]
+-----------------------------------------------------------------------------------
+
+  Getting this far is good news; it means that things are working correctly.
+
+
+* A Trivial Application
+
+  The first example application in this introduction will be quite simple.
+  This simple example uses the <<<org.geotoolkit.referencing.CRS>>> utility class to convert a
+  coordinate from the values for one Coordinate Reference System into another. The Java class given
+  below, which can be downloaded {{{}here}}, describes a location on the surface of the earth using
+  a <<<DirectPosition>>> and then converts that description of the location into a different
+  description of the same location but using a differnent coordinate system.
+
+-----------------------------------------------------------------------------------
+/*
+ * The Geotoolkit project provides this file for any use, modification, or redistribution
+ * that anyone may desire but without warranty of any kind, neither exprssed nor implied,
+ * and no expression of merchantibility or fitness for any particular purpose.
+ */
+
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
+public class SecondGeotk {
+
+    public static void main(String[] args){
+
+        System.out.println("THIS CLASS IS NOT YET WRITTEN");
+
+    }
+
+}
+-----------------------------------------------------------------------------------
+
+  which can be compiled and run with:
+
+-----------------------------------------------------------------------------------
+javac -cp geotk-referencing-bundle.jar SecondGeotk.java
+java  -cp geotk-referencing-bundle.jar SecondGeotk
+-----------------------------------------------------------------------------------
+
+
+
+
+* Metadata Example
+
+  The Metadata module provides both a foundation for the rest of the library and a way to create
+  and manipulate metadata records. This trivial example shows how to build and use a
+  <<<RecordType>>> data structure is:
+
+-----------------------------------------------------------------------------------
+SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
+SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
+SimpleLiteral type       = new SimpleLiteral("clearinghouse");
+
+List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+subject.add(new SimpleLiteral("Ocean elevation NASA/JPL/JASON-1"));
+subject.add(new SimpleLiteral("Ocean elevation 2"));
+
+SimpleLiteral modified   = new SimpleLiteral("2007-11-15 21:26:49");
+SimpleLiteral Abstract   = new SimpleLiteral("Jason-1 follows the highly "
+                                            +"successful TOPEX/Poseidon mission.");
+SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/Metadata_P7540_T8020_D1098.xml");
+SimpleLiteral spatial    = new SimpleLiteral("northlimit=66.0; eastlimit=180; "
+                                            +"southlimit=-66.0; westlimit=-180;");
+
+List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+bbox.add(new WGS84BoundingBoxType(180, -66.0, -180, 66.0));
+
+RecordType record = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
+-----------------------------------------------------------------------------------
+
+  The <<<RecordType>>> can then be marshalled into an XML String with:
+
+-----------------------------------------------------------------------------------
+StringWriter sw = new StringWriter();
+recordMarshaller.marshal(record, sw);
+
+String result = sw.toString();
+-----------------------------------------------------------------------------------
+
+  which would yield the following text (with some minor reformatting):
+
+-----------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<csw:Record xmlns:gml="http://www.opengis.net/gml"
+            xmlns:ogc="http://www.opengis.net/ogc"
+            xmlns:ows="http://www.opengis.net/ows"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+            xmlns:dct="http://purl.org/dc/terms/">
+    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>
+    <dc:title>(JASON-1)</dc:title>
+    <dc:type>clearinghouse</dc:type>
+    <dc:subject>Ocean elevation NASA/JPL/JASON-1</dc:subject>
+    <dc:subject>Ocean elevation 2</dc:subject>
+    <dct:modified>2007-11-15 21:26:49</dct:modified>
+    <dct:abstract>Jason-1 follows the highly successful TOPEX/Poseidon mission.</dct:abstract>
+    <dct:references>http://keel.esri.com/Metadata_P7540_T8020_D1098.xml</dct:references>
+    <dct:spatial>northlimit=66.0; eastlimit=180; southlimit=-66.0; westlimit=-180;</dct:spatial>
+    <ows:WGS84BoundingBox dimensions="2">
+        <ows:LowerCorner>180.0 -66.0</ows:LowerCorner>
+        <ows:UpperCorner>-180.0 66.0</ows:UpperCorner>
+    </ows:WGS84BoundingBox>
+</csw:Record>
+-----------------------------------------------------------------------------------
+
+
+
+* Where do I go from here?
+
+  The examples given in this introduction are admitedly simplistic. We have unfortunately not yet
+  developed extensive documentation for the project. For now, the best way to proceed is to read
+  the javadoc API documentation for both GeoAPI and for Geotoolkit. The unit tests for the various
+  modules provide further usage examples of the library.
+
+
+

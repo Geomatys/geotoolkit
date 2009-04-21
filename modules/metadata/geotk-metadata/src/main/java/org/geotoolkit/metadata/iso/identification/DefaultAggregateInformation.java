@@ -1,0 +1,168 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2004-2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    This package contains documentation from OpenGIS specifications.
+ *    OpenGIS consortium's work is fully acknowledged here.
+ */
+package org.geotoolkit.metadata.iso.identification;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.identification.AggregateInformation;
+import org.opengis.metadata.identification.AssociationType;
+import org.opengis.metadata.identification.InitiativeType;
+import org.geotoolkit.metadata.iso.MetadataEntity;
+
+
+/**
+ * Aggregate dataset information.
+ *
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.0
+ *
+ * @since 3.0
+ * @module
+ */
+@XmlType(name = "MD_AggregateInformation", propOrder={
+    "aggregateDataSetName", "aggregateDataSetIdentifier", "associationType", "initiativeType"
+})
+@XmlRootElement(name = "MD_AggregateInformation")
+public class DefaultAggregateInformation extends MetadataEntity implements AggregateInformation {
+    /**
+     * Serial number for compatibility with different versions.
+     */
+    private static final long serialVersionUID = 5520234916010871192L;
+
+    /**
+     * Citation information about the aggregate dataset.
+     */
+    private Citation aggregateDataSetName;
+
+    /**
+     * Identification information about aggregate dataset.
+     */
+    private Identifier aggregateDataSetIdentifier;
+
+    /**
+     * Association type of the aggregate dataset.
+     */
+    private  AssociationType associationType;
+
+    /**
+     * Type of initiative under which the aggregate dataset was produced.
+     */
+    private InitiativeType initiativeType;
+
+    /**
+     * Constructs an initially empty Aggregate dataset information.
+     */
+    public DefaultAggregateInformation() {
+    }
+
+    /**
+     * Constructs a metadata entity initialized with the values from the specified metadata.
+     *
+     * @param source The metadata to copy.
+     */
+    public DefaultAggregateInformation(final AggregateInformation source) {
+        super(source);
+    }
+
+    /**
+     * Citation information about the aggregate dataset.
+     *
+     * @return Citation information about the aggregate dataset, or {@code null}.
+     */
+    @Override
+    @XmlElement(name = "aggregateDataSetName", required = false)
+    public Citation getAggregateDataSetName() {
+        return aggregateDataSetName;
+    }
+
+    /**
+     * Sets the citation information about the aggregate dataset.
+     *
+     * @param newValue The new citation.
+     */
+    public synchronized void setAggregateDataSetName(final Citation newValue) {
+        checkWritePermission();
+        aggregateDataSetName = newValue;
+    }
+
+    /**
+     * Identification information about aggregate dataset.
+     *
+     * @return Identification information about aggregate dataset, or {@code null}.
+     */
+    @Override
+    @XmlElement(name = "aggregateDataSetIdentifier", required = false)
+    public Identifier getAggregateDataSetIdentifier() {
+        return aggregateDataSetIdentifier;
+    }
+
+    /**
+     * Sets the identification information about aggregate dataset.
+     *
+     * @param newValue The new identifier.
+     */
+    public synchronized void setAggregateDataSetIdentifier(final Identifier newValue) {
+        aggregateDataSetIdentifier = newValue;
+    }
+
+    /**
+     * Association type of the aggregate dataset.
+     *
+     * @return Association type of the aggregate dataset.
+     */
+    @Override
+    @XmlElement(name = "associationType", required = false)
+    public AssociationType getAssociationType() {
+        return associationType;
+    }
+
+    /**
+     * Sets the association type of the aggregate dataset.
+     *
+     * @param newValue The new association type.
+     */
+    public synchronized void setAssociationType(final AssociationType newValue) {
+        associationType = newValue;
+    }
+
+    /**
+     * Type of initiative under which the aggregate dataset was produced.
+     *
+     * @return Type of initiative under which the aggregate dataset was produced, or {@code null}.
+     */
+    @Override
+    @XmlElement(name = "initiativeType", required = false)
+    public InitiativeType getInitiativeType() {
+        return initiativeType;
+    }
+
+    /**
+     * Sets the type of initiative under which the aggregate dataset was produced.
+     *
+     * @param newValue The new initiative.
+     */
+    public synchronized void setInitiativeType(final InitiativeType newValue) {
+        initiativeType = newValue;
+    }
+}

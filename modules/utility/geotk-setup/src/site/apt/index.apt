@@ -1,0 +1,19 @@
+Geotoolkit installer
+
+  Most of the Geotoolkit library can work out of the box without any installation or setup.
+  However they are some exceptions to this general rule. Some coordinate operations require a
+  large amount of data, and not all those data are distributed with Geotoolkit. For example the
+  {{{http://www.epsg.org}EPSG database}} is bundled in Geotoolkit because it is considered a
+  fundamental piece of referencing service applicable to many Coordinate Reference Systems in use
+  around the world. On the other hand, {{{http://www.ngs.noaa.gov/TOOLS/Nadcon/Nadcon.html}NADCON}}
+  grids are large (about 2 Mb, including approximatively 1 Mb for Alaska alone) while applicable to
+  only one country.
+
+  Optional data like NADCON need to be saved in some specific directory. By default Geotoolkit searchs
+  the data in the "<<<~/.geotoolkit>>>" directory, where "<<<~>>>" is the user home directory. However
+  this directory can be modified at user convenience through a graphical user interface provided by
+  this module. To launch the application, run the following from the command line:
+
++----------------------------------------
+java -jar geotk-setup.jar
++----------------------------------------

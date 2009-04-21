@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Geotoolkit">
+  <bannerLeft>
+    <name>Geotoolkit</name>
+    <href>http://www.geotoolkit.org/</href>
+  </bannerLeft>
+
+  <body>
+    <!-- ==================================================== -->
+    <!--     Links to appears just below the right banner     -->
+    <!-- ==================================================== -->
+    <links>
+      <item name="OGC"     href="http://www.opengeospatial.org/"/>
+      <item name="OSGEO"   href="http://www.osgeo.org/"         />
+      <item name="GeoAPI"  href="http://geoapi.sourceforge.net/"/>
+      <item name="Javadoc" href="http://javadoc.geotoolkit.org/"/>
+    </links>
+
+    <!-- ==================================================== -->
+    <!--     Menus to appears on the left side of each page   -->
+    <!-- ==================================================== -->
+    <menu name="Quick links" inherit="none">
+      <item name="Download" href="http://www.geotoolkit.org/download.html"/>
+      <item name="Javadoc"  href="http://javadoc.geotoolkit.org"/>
+      <item name="FAQ"      href="http://www.geotoolkit.org/faq.html"/>
+    </menu>
+
+    <menu ref="modules"/> <!-- Replaced by menu for submodules. -->
+    <menu ref="reports"/> <!-- Replaced by menus for any configured reports (mailing lists, etc.) -->
+
+  </body>
+</project>

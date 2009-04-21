@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# ---------------------------------------------------------------
+# Checks for @module tag in source code. Only source files to be
+# part of aggregated javadoc should contain this tag.  The other
+# files should not.
+# ---------------------------------------------------------------
+
+if ! cd modules
+then exit 1; fi
+
+echo "Files missing @module javadoc tag:"
+find . -regex ".*/src/main/java/.*\\.java" -exec grep --files-without-match "@module" '{}' \;
+
+echo
+echo "Files having extra @module javadoc tag:"
+find . -regex ".*/src/test/java/.*\\.java" -exec grep --files-with-match "@module" '{}' \;
+
+if ! cd ../build
+then exit 1; fi
+
+find . -name "*.java" -exec grep --files-with-match "@module" '{}' \; | grep -v "maven/geotk-javadoc/"

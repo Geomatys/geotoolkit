@@ -1,0 +1,136 @@
+Migrate from GeoTools to Geotoolkit
+
+  The Geotoolkit migrate module provides a tool to perform the straightforward changes to a 
+  Java code base to migrate that Java code from GeoTools to Geotoolkit. This helper tools
+  renames classes and packages but does not handle changes in method signature. Once this tool is
+  run, there will likely be remaining changes which will have to be ported by hand.
+  
+  The tool makes the following changes. For every occurence of:
+
+   * <<<import org.geotools.gt.GT>>>
+
+  where <<<gt>>> is any GeoTools package and <<<GT>>> is any GeoTools class in that package,
+  then <<if and only if>> that particular <<<GT>>> class has been ported to Geotoolkit, the
+  following is applied:
+
+   [[1]] The above statement is replaced by:
+
+          * <<<import org.geotoolkit.gto.GTO>>>
+
+         where <<<gto>>> and <<<GTO>>> are usually identical to the above GeoTools names (<<<gt>>>
+         and <<<GT>>> respectively), but not always. For example the package of <<<WeakHashMap>>>
+         is <<<org.geotools.util>>> in GeoTools, but <<<org.geotoolkit.util.collection>>> in Geotoolkit.
+
+   [[2]] Every occurence of the <<<GT>>> class name are replaced by the <<<GTO>>> class name in the
+         source file. This operation does nothing in the common case where the class name is the same
+         in Geotoolkit than in GeoTools.
+
+  Note that those changes apply to GeoTools classes only; the {{{http://geoapi.sourceforge.net/index.html}GeoAPI}}
+  interfaces are the same. Any code that use only the GeoAPI interfaces should be able to switch smoothly between
+  GeoTools and Geotoolkit.
+
+* Usage
+
+  The latest JAR is available from the
+  {{{http://maven.geotoolkit.org/org/geotoolkit/geotk-migrate/SNAPSHOT/geotk-migrate-SNAPSHOT.jar}Maven repository}}.
+  It can be saved in any directory. Once downloaded, the migration tools is launched as below:
+
++---------------------------------------------------
+cd [ROOT DIRECTORY OF SOURCE CODE]
+java -jar [PATH TO THE JAR]/geotk-migrate.jar [OPTION]
++---------------------------------------------------
+
+  where the <<<[OPTION]>>> can be:
+
+   * <<<--pretend>>>  Lists the files that would be changed but do not touch them.
+
+   * <<<--migrate>>>  Migrates GeoTools source code in place.
+
+  The migrated files will overwrite the old ones - make sure to backup your files
+  before to run <<<geotk-migrate>>> with the <<<--migrate>>> option. Or yet better,
+  run this tool in a SVN or Mercurial local repository, so the changes can easily
+  be inspected and reverted if needed.
+
+
+* Notable changes.
+
+  See the {{{changes.html}summary of changes since GeoTools}} for an overview of conceptual
+  changes. On the compilation side, some of the most common changes not handled by the
+  <<<geotk-migrate>>> tools are listed below.
+
+
+** Missing <<<NumberRange>>> constructor
+
+   Because of usage of <parameterized types>, expressions like:
+
+--------------------------------------------------
+NumberRange range = new NumberRange(lower, upper);
+--------------------------------------------------
+
+   need to replace the constructor call by a call to the static method factory:
+
+--------------------------------------------------------------
+NumberRange<Integer> range = NumberRange.create(lower, upper);
+--------------------------------------------------------------
+
+   The <<<<Integer>>>> declaration is optional but recommanded, and may need to be changed to
+   <<<<Double>>>> or other types depending on the type of the <<<lower>>> and <<<upper>>>
+   arguments.
+
+
+
+** Missing <<<DefaultParameterDescriptor>>> constructor
+
+   Because of usage of <parameterized types>, expressions like:
+
+-------------------------------------------------------------------------------------------------
+ParameterDescriptor descriptor = new DefaultParameterDescriptor(name, validValues, defaultValue);
+-------------------------------------------------------------------------------------------------
+
+   need an explicit declaration of the value class, as below. It is usually just a matter of
+   adding something like <<<String.class>>> in the arguments.
+
+-------------------------------------------------------------------------------------------------------------
+ParameterDescriptor descriptor = new DefaultParameterDescriptor(name, valueClass, validValues, defaultValue);
+-------------------------------------------------------------------------------------------------------------
+
+
+
+** Missing <<<ReferencingFactoryContainer.createProjectedCRS>>> method.
+
+   Because of the removal of deprecated methods, expressions like:
+
+----------------------------------------------------------------------------------------------------
+ReferencingFactoryContainer factories = ...
+ProjectedCRS crs = factories.createProjectedCRS(properties, geographicCRS, conversion, cartesianCS);
+----------------------------------------------------------------------------------------------------
+
+   need to replace the call to the <<<ReferencingFactoryContainer>>> method by
+   a call to the same method in <<<CRSFactory>>>:
+
+----------------------------------------------------------------------------------------------------
+CRSFactory factory = factories.getCRSFactory(); // Note: an alternative is to use FactoryFinder.
+ProjectedCRS crs = factory.createProjectedCRS(properties, geographicCRS, conversion, cartesianCS);
+----------------------------------------------------------------------------------------------------
+
+
+
+** Missing <<<ProjectedCRS>>> constructor
+
+   Because of the removal of deprecated methods, expressions like:
+
+------------------------------------------------------------------------------------------------------
+ProjectedCRS crs = new DefaultProjectedCRS(properties, geographicCRS, method, transform, cartesianCS);
+------------------------------------------------------------------------------------------------------
+
+   need to bundle the <<<method>>> and <<<transform>>> arguments in an <<<DefiningConversion>>>
+   object:
+
+-----------------------------------------------------------------------------------------------
+Conversion conversion = new DefiningConversion("my conversion", method, transform);
+ProjectedCRS crs = new DefaultProjectedCRS(properties, geographicCRS, conversion, cartesianCS);
+-----------------------------------------------------------------------------------------------
+
+   The same applies to constructions using a <<<ParameterValueGroup>>> argument instead than <<<MathTransform>>>,
+   or to constructions performed with the <<<ReferencingFactoryContainer.createProjectedCRS>>> overloaded method,
+   or to constructions performed with the <<<CRSFactory>>> and <<<CoordinateOperationFactory>>> interfaces.

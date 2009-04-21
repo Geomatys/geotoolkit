@@ -1,0 +1,3 @@
+org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory
+org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory
+org.geotoolkit.referencing.operation.AuthorityBackedFactory

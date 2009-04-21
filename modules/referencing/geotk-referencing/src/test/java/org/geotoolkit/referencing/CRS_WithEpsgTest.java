@@ -1,0 +1,427 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2007-2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.referencing;
+
+import java.util.Set;
+import java.util.Locale;
+
+import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
+import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
+
+import org.junit.*;
+import static org.junit.Assume.assumeTrue;
+
+
+/**
+ * Tests if the CRS utility class is functioning correctly when using EPSG database.
+ *
+ * @author Jody Garnett (Refractions)
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Andrea Aime (TOPP)
+ * @version 3.0
+ *
+ * @since 2.4
+ */
+@Depend(CRS_Test.class)
+public class CRS_WithEpsgTest extends ReferencingTestCase {
+    /**
+     * Tests the (latitude, longitude) axis order for EPSG:4326.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testCorrectAxisOrder() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        assertEquals(2, cs.getDimension());
+
+        CoordinateSystemAxis axis0 = cs.getAxis(0);
+        assertEquals("Lat", axis0.getAbbreviation());
+
+        CoordinateSystemAxis axis1 = cs.getAxis(1);
+        assertEquals("Long", axis1.getAbbreviation());
+    }
+
+    /**
+     * Tests the (longitude, latitude) axis order for EPSG:4326.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testForcedAxisOrder() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        assertEquals(2, cs.getDimension());
+
+        CoordinateSystemAxis axis0 = cs.getAxis(0);
+        assertEquals("Long", axis0.getAbbreviation());
+
+        CoordinateSystemAxis axis1 = cs.getAxis(1);
+        assertEquals("Lat", axis1.getAbbreviation());
+
+        final CoordinateReferenceSystem standard = CRS.decode("EPSG:4326");
+        assertFalse("Should not be (long,lat) axis order.", CRS.equalsIgnoreMetadata(crs, standard));
+    }
+
+    /**
+     * Tests again EPSG:4326, but forced to (longitude, latitude) axis order.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testSystemPropertyToForceXY() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        assertNull(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
+        assertNull(Hints.putSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+        final CoordinateReferenceSystem crs;
+        try {
+            crs = CRS.decode("EPSG:4326");
+
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            assertEquals(2, cs.getDimension());
+
+            final CoordinateSystemAxis axis0 = cs.getAxis(0);
+            assertEquals("forceXY did not work", "Long", axis0.getAbbreviation());
+
+            final CoordinateSystemAxis axis1 = cs.getAxis(1);
+            assertEquals("forceXY did not work", "Lat", axis1.getAbbreviation());
+        } catch (AssertionError failure) {
+            // A debugging help in case of test failure.
+            System.err.println(">>> INFORMATION ON TEST FAILURE");
+            OrderedAxisAuthorityFactoryTest.printCurrentFactoryList();
+            throw failure;
+        } finally {
+            assertEquals(Boolean.TRUE, Hints.removeSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
+        }
+    }
+
+    /**
+     * Tests {@link CRS#lookupIdentifier}.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testFind() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        CoordinateReferenceSystem crs = getED50("ED50");
+        assertEquals("Should find without scan thanks to the name.", "EPSG:4230",
+                     CRS.lookupIdentifier(crs, false));
+        assertEquals(Integer.valueOf(4230), CRS.lookupEpsgCode(crs, false));
+
+        crs = getED50("ED50 with unknown name");
+        assertNull("Should not find the CRS without a scan.",
+                   CRS.lookupIdentifier(crs, false));
+        assertEquals(null, CRS.lookupEpsgCode(crs, false));
+
+        assertEquals("With scan allowed, should find the CRS.", "EPSG:4230",
+                     CRS.lookupIdentifier(crs, true));
+        assertEquals(Integer.valueOf(4230), CRS.lookupEpsgCode(crs, true));
+    }
+
+    /**
+     * Returns a ED50 CRS with the specified name.
+     */
+    private static CoordinateReferenceSystem getED50(final String name) throws FactoryException {
+        final String wkt =
+                "GEOGCS[\"" + name + "\",\n" +
+                "  DATUM[\"European Datum 1950\",\n" +
+                "  SPHEROID[\"International 1924\", 6378388.0, 297.0]],\n" +
+                "PRIMEM[\"Greenwich\", 0.0],\n" +
+                "UNIT[\"degree\", 0.017453292519943295]]";
+        return CRS.parseWKT(wkt);
+    }
+
+    /**
+     * Tests the {@link CRS#parseWKT} method.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testWKT() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        String wkt = "GEOGCS[\"WGS 84\",\n"
+                   + "  DATUM[\"WGS_1984\",\n"
+                   + "    SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],\n"
+                   + "    TOWGS84[0,0,0,0,0,0,0], AUTHORITY[\"EPSG\",\"6326\"]],\n"
+                   + "  PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],\n"
+                   + "  UNIT[\"DMSH\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9108\"]],\n"
+                   + "  AXIS[\"Lat\",NORTH], AXIS[\"Long\",EAST],\n"
+                   + "  AUTHORITY[\"EPSG\",\"4326\"]]";
+        CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
+        assertNotNull(crs);
+    }
+
+    /**
+     * Makes sure that the transform between two EPSG:4326 is the identity transform.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testFindMathTransformIdentity() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        CoordinateReferenceSystem crs1default = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs2default = CRS.decode("EPSG:4326");
+        MathTransform tDefault = CRS.findMathTransform(crs1default, crs2default);
+        assertTrue("WSG84 transformed to WSG84 should be Identity", tDefault.isIdentity());
+
+        CoordinateReferenceSystem crs1force = CRS.decode("EPSG:4326",true);
+        CoordinateReferenceSystem crs2force = CRS.decode("EPSG:4326",true);
+        MathTransform tForce = CRS.findMathTransform(crs1force, crs2force);
+        assertTrue("WSG84 transformed to WSG84 should be Identity", tForce.isIdentity());
+    }
+
+    /**
+     * Makes sure that the authority factory has the proper name.
+     */
+    @Test
+    public void testAuthority() {
+        assumeTrue(isEpsgFactoryAvailable());
+        CRSAuthorityFactory factory;
+        Citation authority;
+
+        // Tests the official factory.
+        factory   = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
+        authority = factory.getAuthority();
+        assertNotNull(authority);
+        assertEquals("European Petroleum Survey Group", authority.getTitle().toString(Locale.US));
+        assertTrue(Citations.identifierMatches(authority, "EPSG"));
+
+        // Tests the modified factory.
+        factory   = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        authority = factory.getAuthority();
+        assertNotNull(authority);
+        assertTrue(Citations.identifierMatches(authority, "EPSG"));
+    }
+
+    /**
+     * Tests the vendor name.
+     */
+    @Test
+    public void testVendor() {
+        assumeTrue(isEpsgFactoryAvailable());
+        CRSAuthorityFactory factory;
+        Citation vendor;
+
+        factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        vendor  = factory.getVendor();
+        assertNotNull(vendor);
+        assertEquals("Geotoolkit", vendor.getTitle().toString(Locale.US));
+        assertFalse(Citations.identifierMatches(vendor, "EPSG"));
+    }
+
+    /**
+     * Tests the amount of codes available.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testCodes() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        final Set codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
+        assertNotNull(codes);
+        assertTrue(codes.size() >= 3000);
+    }
+
+    /**
+     * A random CRS for fun.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test26910() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
+        assertNotNull(crs);
+        assertSame(crs, factory.createObject("EPSG:26910"));
+    }
+
+    /**
+     * UDIG requires this to work.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test4326() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
+        assertNotNull(crs);
+        assertSame(crs, factory.createObject("EPSG:4326"));
+    }
+
+    /**
+     * UDIG requires this to work.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test4269() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
+        assertNotNull(crs);
+        assertSame(crs, factory.createObject("EPSG:4269"));
+    }
+
+    /**
+     * A random CRS for fun.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test26910Lower() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        CoordinateReferenceSystem crs = CRS.decode("epsg:26910");
+        assertNotNull(crs);
+    }
+
+    /**
+     * A random CRS for fun.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test26986Lower() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
+        assertNotNull(crs);
+    }
+
+    /**
+     * WFS requires this to work.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test4326Lower() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        CoordinateReferenceSystem crs = CRS.decode("epsg:4326");
+        assertNotNull(crs);
+    }
+
+    /**
+     * WFS requires this to work.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test26742Lower() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
+        assertNotNull(crs);
+    }
+
+    /**
+     * WFS requires this to work.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void test4269Lower() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        CoordinateReferenceSystem crs = CRS.decode("epsg:4269");
+        assertNotNull(crs);
+    }
+
+    /**
+     * Tests {@link CRS#getHorizontalCRS} from a compound CRS.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testHorizontalFromCompound() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        // retrives "NTF (Paris) / France II + NGF Lallemand"
+        CoordinateReferenceSystem compound = CRS.decode("EPSG:7401");
+        CoordinateReferenceSystem horizontal = CRS.getHorizontalCRS(compound);
+        // compares with "NTF (Paris) / France II"
+        assertEquals(CRS.decode("EPSG:27582"), horizontal);
+    }
+
+    /**
+     * Tests {@link CRS#getHorizontalCRS} from a Geographic 3D CR.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testHorizontalFromGeodetic() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        // retrives "WGS 84 (geographic 3D)"
+        CoordinateReferenceSystem compound = CRS.decode("EPSG:4327");
+        CoordinateReferenceSystem horizontal = CRS.getHorizontalCRS(compound);
+        // the horizonal version is basically 4326, but it won't compare positively
+        // with 4326, not even using CRS.equalsIgnoreMetadata(), so we check the axis directly
+        CoordinateSystem cs = horizontal.getCoordinateSystem();
+        assertEquals(2, cs.getDimension());
+        assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
+        assertEquals(AxisDirection.EAST, cs.getAxis(1).getDirection());
+    }
+
+    /**
+     * Tests the number of CRS that can be created. This test will be executed only if this test
+     * suite is run with the {@link #verbose} is set to {@code true}.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testSuccess() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        if (!verbose) {
+            return;
+        }
+        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
+        int total = codes.size();
+        int count = 0;
+        for (final String code : codes) {
+            CoordinateReferenceSystem crs;
+            try {
+                crs = factory.createCoordinateReferenceSystem(code);
+                assertNotNull(crs);
+                count++;
+            } catch (FactoryException e) {
+                System.err.println("WARNING (CRS: "+code+" ):" + e.getMessage());
+            }
+        }
+        System.out.println("Success: " + count + "/" + total + " (" + (count*100)/total + "%)");
+    }
+}
