@@ -38,7 +38,7 @@ public final class Packer {
     /**
      * The Geotoolkit version.
      */
-    static final String VERSION = "3.00-SNAPSHOT";
+    static final String VERSION = "SNAPSHOT";
 
     /**
      * The sub-directory containing JAR files.
