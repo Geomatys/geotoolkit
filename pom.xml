@@ -201,7 +201,7 @@
       <!-- GeotoolKit -->
       <dependency>
         <groupId>org.geotoolkit</groupId>
-        <artifactId>gto-referencing</artifactId>
+        <artifactId>geotk-referencing</artifactId>
         <version>${geotoolkit.version}</version>
       </dependency>
 
@@ -471,8 +471,8 @@
             <taglet><tagletClass>org.geotoolkit.maven.taglet.Preformat</tagletClass></taglet>
           </taglets>
           <tagletArtifact>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>gto-javadoc</artifactId>
+            <groupId>org.geotoolkit.project</groupId>
+            <artifactId>geotk-javadoc</artifactId>
             <version>${project.version}</version>
           </tagletArtifact>
 

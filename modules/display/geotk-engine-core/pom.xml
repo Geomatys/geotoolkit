@@ -90,7 +90,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>gto-referencing</artifactId>
+            <artifactId>geotk-referencing</artifactId>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>

@@ -48,7 +48,7 @@
   <dependencies>
       <dependency>
           <groupId>org.geotoolkit</groupId>
-          <artifactId>gto-metadata</artifactId>
+          <artifactId>geotk-metadata</artifactId>
           <version>SNAPSHOT</version>
       </dependency>
   </dependencies>

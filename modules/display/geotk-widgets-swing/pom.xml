@@ -70,13 +70,13 @@
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-coverageio</artifactId>
+      <artifactId>geotk-coverageio</artifactId>
       <version>${geotoolkit.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-epsg-postgresql</artifactId>
+      <artifactId>geotk-epsg-postgresql</artifactId>
       <version>${geotoolkit.version}</version>
     </dependency>
 
@@ -124,7 +124,7 @@
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-widgets-swing</artifactId>
+      <artifactId>geotk-widgets-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
 

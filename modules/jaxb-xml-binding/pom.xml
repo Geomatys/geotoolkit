@@ -70,22 +70,22 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-utility</artifactId>
+      <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-metadata</artifactId>
+      <artifactId>geotk-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-referencing</artifactId>
+      <artifactId>geotk-referencing</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-coverage</artifactId>
+      <artifactId>geotk-coverage</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

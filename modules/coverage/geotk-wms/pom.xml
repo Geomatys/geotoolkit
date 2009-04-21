@@ -100,7 +100,7 @@
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-epsg-postgresql</artifactId>
+      <artifactId>geotk-epsg-postgresql</artifactId>
       <version>${geotoolkit.version}</version>
       <scope>test</scope>
     </dependency>

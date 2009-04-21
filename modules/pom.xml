@@ -69,8 +69,8 @@
       <artifactId>jsr-275</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>gto-test</artifactId>
+      <groupId>org.geotoolkit.project</groupId>
+      <artifactId>geotk-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -84,8 +84,8 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>gto-jar-collector</artifactId>
+        <groupId>org.geotoolkit.project</groupId>
+        <artifactId>geotk-jar-collector</artifactId>
         <version>${project.version}</version>
         <executions>
           <execution>
