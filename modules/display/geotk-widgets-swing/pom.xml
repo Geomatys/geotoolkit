@@ -74,11 +74,11 @@
       <version>${geotoolkit.version}</version>
     </dependency>
 
-    <dependency>
+    <!--dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-epsg-postgresql</artifactId>
       <version>${geotoolkit.version}</version>
-    </dependency>
+    </dependency-->
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>

@@ -98,12 +98,12 @@
       <artifactId>gtm-referencing</artifactId>
     </dependency>
 
-    <dependency>
+    <!--dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-epsg-postgresql</artifactId>
       <version>${geotoolkit.version}</version>
       <scope>test</scope>
-    </dependency>
+    </dependency-->
   </dependencies>
 
 
