@@ -21,6 +21,7 @@ package org.geotoolkit.naming;
 
 import java.util.List;
 import java.util.Iterator;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -281,6 +282,7 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
      * Returns the sequence of local name for this {@linkplain GenericName generic name}.
      */
     @Override
+    @XmlElement(name = "parsedName", required = true)
     public List<? extends LocalName> getParsedNames() {
         return parsedNames;
     }

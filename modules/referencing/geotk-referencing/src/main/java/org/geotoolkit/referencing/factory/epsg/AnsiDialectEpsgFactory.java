@@ -172,6 +172,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     final void autoconfig(final DatabaseMetaData metadata) throws SQLException {
         for (int i=SENTINAL.length; --i>=0;) {
             final String table = SENTINAL[i];
+            final String quote = metadata.getIdentifierQuoteString();
             final ResultSet result = metadata.getTables(null, schema, table, null);
             if (!result.next()) {
                 result.close();
@@ -179,12 +180,11 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
             }
             final String schema = result.getString("TABLE_SCHEM");
             result.close();
-            if (schema != null) {
-                setSchema(schema, !table.startsWith(TABLE_PREFIX));
+            if (schema != null && !schema.equals(this.schema)) {
+                setSchema(schema, quote, !table.startsWith(TABLE_PREFIX));
             }
             if (i == 0) {
-                final String quote = metadata.getIdentifierQuoteString();
-                useOriginalTableNames(quote, quote);
+                useOriginalTableNames(quote);
             }
             break;
         }
@@ -200,20 +200,20 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * is removed from the table names only if {@code removePrefix} is {@code true}.
      *
      * @param schema The database schema in which the epsg tables are stored.
+     * @param quote  The identifier quotes.
      * @param removePrefix {@code true} if the "{@code epsg_}" prefix should be removed from
      *        the table names.
      */
-    final void setSchema(String schema, final boolean removePrefix) {
+    final void setSchema(String schema, final String quote, final boolean removePrefix) {
         schema = schema.trim();
         if (schema.length() == 0) {
             throw new IllegalArgumentException(schema);
         }
         String old = this.schema;
-        if (schema.equals(old)) {
-            return;
-        }
-        old = (old != null) ? old + '.' : "";
+        old = (old != null) ? quote + old + quote + '.' : "";
         final String prefix = removePrefix ? TABLE_PREFIX : "";
+        final StringBuilder buffer = new StringBuilder(quote).append(schema).append(quote).append('.');
+        final int base = buffer.length();
         for (final Map.Entry<String,String> entry : toANSI.entrySet()) {
             if (isTableName(entry.getKey())) {
                 String name = entry.getValue();
@@ -223,7 +223,8 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
                 if (name.startsWith(prefix)) {
                     name = name.substring(prefix.length());
                 }
-                name = schema + '.' + name;
+                buffer.setLength(base);
+                name = buffer.append(name).toString();
                 entry.setValue(name);
             }
         }
@@ -240,10 +241,9 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * it will be preserved. It is better to set the schema (if desired) before to
      * invoke this method.
      *
-     * @param open The identifier quote to put before the table name (usually {@code "}).
-     * @param close The identifier quote to put after the table name (usually {@code "}).
+     * @param open The identifier quote (usually {@code "}).
      */
-    private void useOriginalTableNames(final String open, final String close) {
+    private void useOriginalTableNames(final String quote) {
         for (final Map.Entry<String,String> entry : toANSI.entrySet()) {
             String original = entry.getKey();
             if (!isTableName(original)) {
@@ -259,10 +259,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
             }
             String name = entry.getValue();
             name = name.substring(0, name.indexOf('.') + 1);
-            if (name.contains(open)) {
-                name = "";
-            }
-            name = name + open + original + close;
+            name = name + quote + original + quote;
             entry.setValue(name);
         }
     }

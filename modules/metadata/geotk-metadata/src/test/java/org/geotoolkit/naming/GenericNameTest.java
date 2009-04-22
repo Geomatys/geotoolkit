@@ -21,15 +21,16 @@ import java.io.StringWriter;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 import org.opengis.util.GenericName;
+
 import org.geotoolkit.xml.MarshallerPool;
-import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
+import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.opengis.test.Validators.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 
 
 /**

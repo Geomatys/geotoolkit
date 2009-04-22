@@ -18,6 +18,7 @@ package org.geotoolkit.xml;
 
 import org.geotoolkit.lang.Static;
 
+
 /**
  * Utility class for some XML-related methods.
  *
@@ -38,7 +39,6 @@ public final class XML {
     /**
      * Returns the preferred prefix for the given namespace URI, assuming that the namespace is
      * not {@code null}.
-     * It is the public entry for {@link OGCNamespacePrefixMapper#getPreferredPrefix(String, String)}.
      *
      * @param  namespace  The namespace URI for which the prefix needs to be found.
      * @param  suggestion The suggested prefix, returned if the given namespace is not recognized.

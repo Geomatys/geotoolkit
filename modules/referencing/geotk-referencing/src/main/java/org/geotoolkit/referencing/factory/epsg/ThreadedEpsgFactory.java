@@ -442,7 +442,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
             }
         }
         if (schema != null) {
-            factory.setSchema(schema, true);
+            factory.setSchema(schema, metadata.getIdentifierQuoteString(), true);
         }
         factory.autoconfig(metadata);
         dialect = factory.toANSI;

@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Iterator;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -130,14 +129,6 @@ public abstract class AbstractName implements GenericName, Serializable {
     }
 
     /**
-     * A getter for JAXB only, which will invoke this method using reflection.
-     */
-    @XmlElement(name = "depth", required = true)
-    private int getDepth() {
-        return depth();
-    }
-
-    /**
      * Returns the size of the backing array. This is used only has a hint for optimizations
      * in attempts to share internal arrays. The {@link DefaultScopedName} class is the only
      * one to override this method. For other classes, the {@link #depth} can be assumed.
@@ -152,7 +143,6 @@ public abstract class AbstractName implements GenericName, Serializable {
      * {@linkplain #scope scope}.
      */
     @Override
-    @XmlElement(name = "parsedName", required = true)
     public abstract List<? extends LocalName> getParsedNames();
 
     /**
