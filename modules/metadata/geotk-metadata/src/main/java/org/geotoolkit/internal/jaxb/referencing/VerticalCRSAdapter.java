@@ -37,7 +37,7 @@ public final class VerticalCRSAdapter extends MetadataAdapter<VerticalCRSAdapter
     /**
      * Empty constructor for JAXB only.
      */
-    private VerticalCRSAdapter() {
+    public VerticalCRSAdapter() {
     }
 
     /**

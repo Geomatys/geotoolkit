@@ -99,4 +99,12 @@ public final class TimePeriod {
     private String getID() {
         return "extent";
     }
+
+    /**
+     * Returns a string representation for debugging and formatting error message.
+     */
+    @Override
+    public String toString() {
+        return "TimePeriod[" + beginPosition + " ... " + endPosition + ']';
+    }
 }

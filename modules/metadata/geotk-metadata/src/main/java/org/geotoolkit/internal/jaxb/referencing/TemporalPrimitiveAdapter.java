@@ -16,10 +16,18 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+import java.text.DateFormat;
+import java.text.ParseException;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalPrimitive;
+
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 
 
@@ -27,10 +35,6 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * JAXB adapter for {@link TemporalPrimitive}, in order to integrate the value in an element
  * complying with OGC/ISO standard. Note that the CRS is formatted using the GML schema,
  * not the ISO 19139 one.
- * <p>
- * The current implementation is not functional, but is nevertheless declared because this
- * is a required dependency for metadata annotation. This class needs to be subclassed in
- * a temporal module.
  *
  * @author Guilhem Legal (Geomatys)
  * @version 3.0
@@ -38,11 +42,22 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.0
  * @module
  */
-public class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrimitiveAdapter,TemporalPrimitive> {
+public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrimitiveAdapter,TemporalPrimitive> {
+    /**
+     * The temporal factory, or {@code null} if none.
+     *
+     * @todo Remove after we added a FactoryFinder.getTemporalFactory(Hints) method.
+     */
+    private static final TemporalFactory factory;
+    static {
+        final Iterator<TemporalFactory> it = ServiceLoader.load(TemporalFactory.class).iterator();
+        factory = it.hasNext() ? it.next() : null;
+    }
+
     /**
      * Empty constructor for JAXB.
      */
-    protected TemporalPrimitiveAdapter() {
+    public TemporalPrimitiveAdapter() {
     }
 
     /**
@@ -50,7 +65,7 @@ public class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrimitiveA
      *
      * @param metadata The metadata value to marshall.
      */
-    protected TemporalPrimitiveAdapter(final TemporalPrimitive metadata) {
+    private TemporalPrimitiveAdapter(final TemporalPrimitive metadata) {
         super(metadata);
     }
 
@@ -74,7 +89,7 @@ public class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrimitiveA
      * @todo Add other TemporalPrimitive than Period.
      */
     @XmlElement(name = "TimePeriod")
-    public TimePeriod getTemporalPrimitive() {
+    public TimePeriod getTimePeriod() {
         final TemporalPrimitive metadata = this.metadata;
         if (metadata instanceof Period) {
             return new TimePeriod((Period) metadata);
@@ -88,7 +103,19 @@ public class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrimitiveA
      *
      * @param period The adapter to set.
      */
-    public void setTemporalPrimitive(final TimePeriod period) {
-        // Empty in this implementation. Needs to be overloaded by subclasses.
+    public void setTimePeriod(final TimePeriod period) {
+        metadata = null; // Cleaned first in case of failure.
+        if (period != null) {
+            final DateFormat df = XmlUtilities.getDateFormat();
+            final Date begin, end;
+            try {
+                begin = df.parse(period.beginPosition);
+                end   = df.parse(period.endPosition);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "TimePeriod", period));
+            }
+            metadata = factory.getPeriod(begin, end);
+        }
     }
 }
