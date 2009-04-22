@@ -112,7 +112,7 @@
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-sld</artifactId>
+      <artifactId>geotk-xml-sld</artifactId>
       <version>${project.version}</version>
     </dependency>
 

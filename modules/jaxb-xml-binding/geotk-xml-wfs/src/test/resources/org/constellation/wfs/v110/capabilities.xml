@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wfs:WFS_Capabilities updateSequence="0" version="1.1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" xmlns:wfs="http://www.opengis.net/wfs" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ows:ServiceIdentification>
+        <ows:Title>XtraServer Basic Web Feature Service for access to 3D city model (OWS-6 City dataset)</ows:Title>
+        <ows:Abstract>XtraServer BasicWFS is an OGC/BasicWFS by interactive instruments, Germany.</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword>UTDS-CityGML</ows:Keyword>
+        </ows:Keywords>
+        <ows:ServiceType>WFS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.1.0</ows:ServiceTypeVersion>
+        <ows:Fees>none</ows:Fees>
+        <ows:AccessConstraints>OWS-6</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <ows:ServiceProvider>
+        <ows:ProviderName>interactive instruments GmbH</ows:ProviderName>
+        <ows:ProviderSite/>
+        <ows:ServiceContact>
+            <ows:IndividualName>Clemens Portele</ows:IndividualName>
+            <ows:PositionName>Managing Director</ows:PositionName>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice>+49 228 9141073</ows:Voice>
+                    <ows:Facsimile>+49 228 9141090</ows:Facsimile>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:City>Bonn</ows:City>
+                    <ows:AdministrativeArea>NRW</ows:AdministrativeArea>
+                    <ows:PostalCode>53115</ows:PostalCode>
+                    <ows:Country>Germany</ows:Country>
+                    <ows:ElectronicMailAddress>portele@interactive-instruments.de</ows:ElectronicMailAddress>
+                </ows:Address>
+                <ows:OnlineResource xlink:href="http://www.interactive-instruments.de/"/>
+                <ows:HoursOfService>0900 - 1800 GMT+1, Mon thru Fri</ows:HoursOfService>
+            </ows:ContactInfo>
+            <ows:Role>PointOfContact</ows:Role>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://services.interactive-instruments.de/ows6/cgi-bin/ows6city-wfs.exe?"/>
+                    <ows:Post xlink:href="http://services.interactive-instruments.de/ows6/cgi-bin/ows6city-wfs.exe"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="AcceptVersions">
+                <ows:Value>1.1.0</ows:Value>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:Parameter>
+            <ows:Parameter name="AcceptFormats">
+                <ows:Value>text/xml</ows:Value>
+            </ows:Parameter>
+            <ows:Parameter name="Sections">
+                <ows:Value>ServiceIdentification</ows:Value>
+                <ows:Value>ServiceProvider</ows:Value>
+                <ows:Value>OperationsMetadata</ows:Value>
+                <ows:Value>FeatureTypeList</ows:Value>
+                <ows:Value>Filter_Capabilities</ows:Value>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="DescribeFeatureType">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://services.interactive-instruments.de/ows6/cgi-bin/ows6city-wfs.exe?"/>
+                    <ows:Post xlink:href="http://services.interactive-instruments.de/ows6/cgi-bin/ows6city-wfs.exe"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="outputFormat">
+                <ows:Value>text/xml; subtype=gml/3.1.1</ows:Value>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="GetFeature">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://services.interactive-instruments.de/ows6/cgi-bin/ows6city-wfs.exe?"/>
+                    <ows:Post xlink:href="http://services.interactive-instruments.de/ows6/cgi-bin/ows6city-wfs.exe"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="resultType">
+                <ows:Value>results</ows:Value>
+                <ows:Value>hits</ows:Value>
+            </ows:Parameter>
+            <ows:Parameter name="outputFormat">
+                <ows:Value>text/xml; subtype=gml/3.1.1</ows:Value>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Parameter name="srsName">
+            <ows:Value>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</ows:Value>
+            <ows:Value>urn:ogc:def:crs:EPSG::4979</ows:Value>
+        </ows:Parameter>
+        <ows:Constraint name="SupportsSOAP">
+            <ows:Value>true</ows:Value>
+        </ows:Constraint>
+    </ows:OperationsMetadata>
+    <wfs:FeatureTypeList>
+        <wfs:FeatureType xmlns:utds="http://www.opengis.net/ows-6/utds/0.3">
+            <wfs:Name>utds:Building</wfs:Name>
+            <wfs:Title></wfs:Title>
+            <wfs:DefaultSRS>urn:ogc:def:crs:EPSG::4979</wfs:DefaultSRS>
+            <wfs:OtherSRS>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</wfs:OtherSRS>
+            <ows:WGS84BoundingBox>
+                <ows:LowerCorner>29.8 -90.1</ows:LowerCorner>
+                <ows:UpperCorner>30 -89.9</ows:UpperCorner>
+            </ows:WGS84BoundingBox>
+        </wfs:FeatureType>
+        <wfs:FeatureType xmlns:utds="http://www.opengis.net/ows-6/utds/0.3">
+            <wfs:Name>utds:AircraftTransportationComplex</wfs:Name>
+            <wfs:Title></wfs:Title>
+            <wfs:DefaultSRS>urn:ogc:def:crs:EPSG::4979</wfs:DefaultSRS>
+            <wfs:OtherSRS>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</wfs:OtherSRS>
+            <ows:WGS84BoundingBox>
+                <ows:LowerCorner>29.8 -90.1</ows:LowerCorner>
+                <ows:UpperCorner>30 -89.9</ows:UpperCorner>
+            </ows:WGS84BoundingBox>
+        </wfs:FeatureType>
+        <wfs:FeatureType xmlns:utds="http://www.opengis.net/ows-6/utds/0.3">
+            <wfs:Name>utds:Fence</wfs:Name>
+            <wfs:Title></wfs:Title>
+            <wfs:DefaultSRS>urn:ogc:def:crs:EPSG::4979</wfs:DefaultSRS>
+            <wfs:OtherSRS>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</wfs:OtherSRS>
+            <ows:WGS84BoundingBox>
+                <ows:LowerCorner>29.8 -90.1</ows:LowerCorner>
+                <ows:UpperCorner>30 -89.9</ows:UpperCorner>
+            </ows:WGS84BoundingBox>
+        </wfs:FeatureType>
+    </wfs:FeatureTypeList>
+    <ogc:Filter_Capabilities>
+        <ogc:Spatial_Capabilities>
+            <ogc:GeometryOperands>
+                <ogc:GeometryOperand>gml:Envelope</ogc:GeometryOperand>
+                <ogc:GeometryOperand>gml:Point</ogc:GeometryOperand>
+                <ogc:GeometryOperand>gml:LineString</ogc:GeometryOperand>
+                <ogc:GeometryOperand>gml:Polygon</ogc:GeometryOperand>
+            </ogc:GeometryOperands>
+            <ogc:SpatialOperators>
+                <ogc:SpatialOperator name="BBOX"/>
+                <ogc:SpatialOperator name="Equals"/>
+                <ogc:SpatialOperator name="Disjoint"/>
+                <ogc:SpatialOperator name="Intersects"/>
+                <ogc:SpatialOperator name="Touches"/>
+                <ogc:SpatialOperator name="Crosses"/>
+                <ogc:SpatialOperator name="Within"/>
+                <ogc:SpatialOperator name="Contains"/>
+                <ogc:SpatialOperator name="Overlaps"/>
+                <ogc:SpatialOperator name="Beyond"/>
+                <ogc:SpatialOperator name="DWithin"/>
+            </ogc:SpatialOperators>
+        </ogc:Spatial_Capabilities>
+        <ogc:Scalar_Capabilities>
+            <ogc:LogicalOperators/>
+            <ogc:ComparisonOperators>
+                <ogc:ComparisonOperator>LessThan</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>GreaterThan</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>LessThanEqualTo</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>GreaterThanEqualTo</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>EqualTo</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>NotEqualTo</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>Like</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>Between</ogc:ComparisonOperator>
+                <ogc:ComparisonOperator>NullCheck</ogc:ComparisonOperator>
+            </ogc:ComparisonOperators>
+            <ogc:ArithmeticOperators>
+                <ogc:SimpleArithmetic/>
+            </ogc:ArithmeticOperators>
+        </ogc:Scalar_Capabilities>
+        <ogc:Id_Capabilities>
+            <ogc:FID/>
+            <ogc:EID/>
+        </ogc:Id_Capabilities>
+    </ogc:Filter_Capabilities>
+</wfs:WFS_Capabilities>

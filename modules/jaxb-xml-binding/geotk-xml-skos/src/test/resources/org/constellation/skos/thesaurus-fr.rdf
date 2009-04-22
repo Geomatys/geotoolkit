@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rdf:RDF xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <skos:Concept rdf:about="http://www.geomatys.com/test/bonjour">
+        <skos:prefLabel>bonjour</skos:prefLabel>
+        <skos:altLabel>salut</skos:altLabel>
+        <skos:definition>Un terme de politesse pour saluer son interlocuteur.</skos:definition>
+    </skos:Concept>
+    <skos:Concept rdf:about="http://www.geomatys.com/test/pluie">
+        <skos:prefLabel>pluie</skos:prefLabel>
+        <skos:altLabel>averse</skos:altLabel>
+        <skos:altLabel>précipitation</skos:altLabel>
+        <skos:definition>Un evenement meteorologique qui fais tomber de l'eau sur la terre.</skos:definition>
+    </skos:Concept>
+    <skos:Concept rdf:about="http://www.geomatys.com/test/livre">
+        <skos:prefLabel>livre</skos:prefLabel>
+        <skos:altLabel>bouquin</skos:altLabel>
+        <skos:altLabel>ouvrage</skos:altLabel>
+        <skos:definition>Une reliure de papier avec des chose plus ou moins interesante ecrite dessus.</skos:definition>
+    </skos:Concept>
+</rdf:RDF>

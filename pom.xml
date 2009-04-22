@@ -204,6 +204,26 @@
         <artifactId>geotk-referencing</artifactId>
         <version>${geotoolkit.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-utility</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-metadata</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-metadata-fra</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-coverage</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
 
       <!-- Remaining dependencies to geomodified -->
       <dependency>
@@ -249,6 +269,18 @@
         <groupId>jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
         <version>3.1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.opengis</groupId>
+        <artifactId>onm</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.vividsolutions</groupId>
+        <artifactId>jts</artifactId>
+        <version>1.9</version>
       </dependency>
 
     </dependencies>
