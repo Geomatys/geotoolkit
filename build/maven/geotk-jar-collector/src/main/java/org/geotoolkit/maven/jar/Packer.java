@@ -268,15 +268,13 @@ public final class Packer {
             return;
         }
         final Packer packer = new Packer(targetDirectory);
-        packer.addPack(null, "metadata", new String[] {
+        packer.addPack(null, "referencing", new String[] {
                 "vecmath-1.3.1.jar",
                 "jsr-275-1.0-beta-2.jar",
                 "geoapi-2.3-SNAPSHOT.jar",
                 "geoapi-pending-2.3-SNAPSHOT.jar",
                 "geotk-utility-" + VERSION + ".jar",
-                "geotk-metadata-" + VERSION + ".jar"
-        });
-        packer.addPack("metadata", "referencing", new String[] {
+                "geotk-metadata-" + VERSION + ".jar",
                 "geotk-referencing-" + VERSION + ".jar"
         });
         packer.addPack("referencing", "coverage", new String[] {
