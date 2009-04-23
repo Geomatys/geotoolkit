@@ -124,9 +124,15 @@ public final class Packer {
          * start the writting process. Files in the META-INF/services directory need to be merged.
          */
         for (final Map.Entry<String,PackOutput> entry : outputs.entrySet()) {
+            String name = entry.getKey();
+            final StringBuilder buffer = new StringBuilder("geotk-bundle-");
+            if (name.length() != 0) {
+                buffer.append(name).append('-');
+            }
+            name = buffer.append(VERSION).append(".jar").toString();
             final PackOutput pack = entry.getValue();
             pack.createPackInputs(inputs);
-            pack.open(new File(outDirectory, "geotk-" + entry.getKey() + '-' + VERSION + ".jar"));
+            pack.open(new File(outDirectory, name));
         }
         /*
          * Iterates through the individual jars and merge them in single, bigger JAR file.
@@ -277,7 +283,7 @@ public final class Packer {
                 "geotk-coverage-" + VERSION + ".jar",
                 "geotk-coverageio-" + VERSION + ".jar"
         });
-        packer.addPack("coverage", "widgets", new String[] {
+        packer.addPack("coverage", "", new String[] {
                 "geotk-display-" + VERSION + ".jar",
                 "geotk-widgets-swing-" + VERSION + ".jar",
                 "jlfgr-1.0.jar",
