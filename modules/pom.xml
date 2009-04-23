@@ -117,9 +117,9 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
-    <module>coverage</module>
-    <module>display</module>
     <module>jaxb-xml-binding</module>
+    <module>display</module>
+    <module>coverage</module>
   </modules>
 
 

@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-style</artifactId>
   <packaging>jar</packaging>
-  <name>Style and Styled Layer Descriptor</name>
+  <name>Rendering style</name>
     
   <description>
     The style module contains a thread safe and mutable implementation of

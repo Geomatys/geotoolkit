@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-widgets-swing-pending</artifactId>
   <packaging>jar</packaging>
-  <name>Widgets-swing-pending</name>
+  <name>Swing widgets pending</name>
   <url>http://maven.geotools.fr/reports/modules/unsupported/widgets-swing-pending/</url>
 
   <scm>

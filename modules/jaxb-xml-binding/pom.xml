@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>jaxb-xml-binding</artifactId>
   <packaging>pom</packaging>
-  <name>Jaxb-bindings</name>
+  <name>Bindings</name>
 
   <description>
     Projects group for jaxb bindings.

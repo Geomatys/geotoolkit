@@ -17,7 +17,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jasperreport</artifactId>
     <packaging>jar</packaging>
-    <name>Jasper-Report integration</name>
+    <name>Rendering engine GO2 JasperReport extension</name>
     <description>Integration of jasper report using the GO2 renderer</description>
     <licenses>
         <license>

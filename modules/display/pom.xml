@@ -95,13 +95,13 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-style</module>
+    <module>geotk-render</module>
     <module>geotk-engine-core</module>
     <module>geotk-go2-engine</module>
     <module>geotk-go2-extension</module>
     <!--module>geotk-go3</module-->
     <module>geotk-jasper-report</module>
-    <module>geotk-render</module>
-    <module>geotk-style</module>
     <module>geotk-widgets-swing</module>
   </modules>
 

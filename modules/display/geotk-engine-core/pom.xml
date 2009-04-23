@@ -24,7 +24,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-engine-core</artifactId>
     <packaging>jar</packaging>
-    <name>Engine-abstract-core</name>
+    <name>Rendering engine abstract</name>
     <url>http://maven.geotools.fr/reports/modules/unsupported/display/</url>
 
     <scm>

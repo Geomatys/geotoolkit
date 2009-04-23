@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-world-image</artifactId>
   <packaging>jar</packaging>
-  <name>WorldImage datasource module</name>
+  <name>Format World Image</name>
   <url>http://maven.geotools.fr/reports/modules/plugin/image/</url>
 
   <scm>

@@ -1,6 +1,6 @@
 
 
-package org.geotoolkit.wms;
+package org.geotoolkit.wms.xml;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
-import org.geotoolkit.internal.jaxb.backend.AbstractWMSCapabilities;
+
 import org.opengis.metadata.citation.OnLineResource;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -24,7 +24,7 @@ import org.xml.sax.InputSource;
  *
  * @author Johann Sorel (Geomatys)
  */
- class XMLUtilities {
+ public class WMSBindingUtilities {
 
     private static final JAXBContext jaxbContext111;
     private static final JAXBContext jaxbContext130;
@@ -32,7 +32,7 @@ import org.xml.sax.InputSource;
     static{
         JAXBContext temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.backend.v111.WMT_MS_Capabilities.class);
+            temp = JAXBContext.newInstance(org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
@@ -40,14 +40,14 @@ import org.xml.sax.InputSource;
 
         temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.backend.v130.WMSCapabilities.class);
+            temp = JAXBContext.newInstance(org.geotoolkit.wms.xml.v130.WMSCapabilities.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
         jaxbContext130 = temp;
     }
 
-     static AbstractWMSCapabilities unmarshall(Object source, WebMapServer.Version version) throws JAXBException{
+     public static AbstractWMSCapabilities unmarshall(Object source, WMSVersion version) throws JAXBException{
          
          final Unmarshaller unMarshaller;
          switch(version){
@@ -85,7 +85,7 @@ import org.xml.sax.InputSource;
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logger.getLogger(XMLUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WMSBindingUtilities.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             }
 

@@ -6,9 +6,11 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.internal.jaxb.backend.AbstractWMSCapabilities;
 import org.geotoolkit.wms.v111.GetMap111;
 import org.geotoolkit.wms.v130.GetMap130;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.geotoolkit.wms.xml.WMSBindingUtilities;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 /**
  *
@@ -16,32 +18,16 @@ import org.geotoolkit.wms.v130.GetMap130;
  */
 public class WebMapServer {
 
-    public static enum Version{
-        v111("1.1.1"),
-        v130("1.3.0");
-
-        private final String code;
-
-        Version(String code){
-            this.code = code;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-    };
-
-    private final Version version;
+    private final WMSVersion version;
     private final URL serverURL;
     private AbstractWMSCapabilities capabilities;
 
     public WebMapServer(URL serverURL, String version) {
-        final Version vers;
+        final WMSVersion vers;
         if(version.equals("1.1.1")){
-            vers = Version.v111;
+            vers = WMSVersion.v111;
         }else if(version.equals("1.3.0")){
-            vers = Version.v130;
+            vers = WMSVersion.v130;
         }else{
             throw new IllegalArgumentException("Unknowned version : "+ version);
         }
@@ -50,7 +36,7 @@ public class WebMapServer {
         this.serverURL = serverURL;
     }
 
-    public WebMapServer(URL serverURL, Version version) {
+    public WebMapServer(URL serverURL, WMSVersion version) {
         this.version = version;
         this.serverURL = serverURL;
     }
@@ -66,11 +52,11 @@ public class WebMapServer {
 
             sb.append("REQUEST=GetCapabilities");
             sb.append("&SERVICE=WMS");
-            sb.append("&VERSION=").append(version.code);
+            sb.append("&VERSION=").append(version.getCode());
             System.out.println(sb.toString());
             try {
                 URL url = new URL(sb.toString());
-                capabilities = XMLUtilities.unmarshall(url, version);
+                capabilities = WMSBindingUtilities.unmarshall(url, version);
             } catch (Exception ex) {
                 Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -79,7 +65,7 @@ public class WebMapServer {
         return capabilities;
     }
 
-    public Version getVersion() {
+    public WMSVersion getVersion() {
         return version;
     }
 
