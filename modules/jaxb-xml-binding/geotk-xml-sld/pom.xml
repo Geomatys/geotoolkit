@@ -66,5 +66,15 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
     <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-gml</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-ogc</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
     </dependencies>
 </project>
