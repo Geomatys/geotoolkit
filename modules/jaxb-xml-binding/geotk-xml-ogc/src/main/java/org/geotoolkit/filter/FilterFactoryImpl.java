@@ -33,53 +33,53 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 // constellation dependencies
-import org.geotoolkit.ogc.xml.ExpressionType;
+import org.geotoolkit.ogc.xml.v110.ExpressionType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.ogc.xml.AndType;
-import org.geotoolkit.ogc.xml.ArithmeticOperatorsType;
-import org.geotoolkit.ogc.xml.BBOXType;
-import org.geotoolkit.ogc.xml.BeyondType;
-import org.geotoolkit.ogc.xml.ComparisonOperatorsType;
-import org.geotoolkit.ogc.xml.ContainsType;
-import org.geotoolkit.ogc.xml.CrossesType;
-import org.geotoolkit.ogc.xml.DWithinType;
-import org.geotoolkit.ogc.xml.DisjointType;
-import org.geotoolkit.ogc.xml.EqualsType;
-import org.geotoolkit.ogc.xml.FeatureIdType;
-import org.geotoolkit.ogc.xml.FunctionNameType;
-import org.geotoolkit.ogc.xml.FunctionNamesType;
-import org.geotoolkit.ogc.xml.FunctionType;
-import org.geotoolkit.ogc.xml.GmlObjectIdType;
-import org.geotoolkit.ogc.xml.IdCapabilitiesType;
-import org.geotoolkit.ogc.xml.IntersectsType;
-import org.geotoolkit.ogc.xml.LiteralType;
-import org.geotoolkit.ogc.xml.LowerBoundaryType;
-import org.geotoolkit.ogc.xml.NotType;
-import org.geotoolkit.ogc.xml.OrType;
-import org.geotoolkit.ogc.xml.OverlapsType;
-import org.geotoolkit.ogc.xml.PropertyIsBetweenType;
-import org.geotoolkit.ogc.xml.PropertyIsEqualToType;
-import org.geotoolkit.ogc.xml.PropertyIsGreaterThanOrEqualToType;
-import org.geotoolkit.ogc.xml.PropertyIsGreaterThanType;
-import org.geotoolkit.ogc.xml.PropertyIsLessThanOrEqualToType;
-import org.geotoolkit.ogc.xml.PropertyIsLessThanType;
-import org.geotoolkit.ogc.xml.PropertyIsLikeType;
-import org.geotoolkit.ogc.xml.PropertyIsNotEqualToType;
-import org.geotoolkit.ogc.xml.PropertyIsNullType;
-import org.geotoolkit.ogc.xml.PropertyNameType;
-import org.geotoolkit.ogc.xml.ScalarCapabilitiesType;
-import org.geotoolkit.ogc.xml.SortPropertyType;
-import org.geotoolkit.ogc.xml.SpatialCapabilitiesType;
-import org.geotoolkit.ogc.xml.SpatialOperatorType;
-import org.geotoolkit.ogc.xml.SpatialOperatorsType;
-import org.geotoolkit.ogc.xml.TouchesType;
-import org.geotoolkit.ogc.xml.UpperBoundaryType;
-import org.geotoolkit.ogc.xml.WithinType;
+import org.geotoolkit.ogc.xml.v110.AndType;
+import org.geotoolkit.ogc.xml.v110.ArithmeticOperatorsType;
+import org.geotoolkit.ogc.xml.v110.BBOXType;
+import org.geotoolkit.ogc.xml.v110.BeyondType;
+import org.geotoolkit.ogc.xml.v110.ComparisonOperatorsType;
+import org.geotoolkit.ogc.xml.v110.ContainsType;
+import org.geotoolkit.ogc.xml.v110.CrossesType;
+import org.geotoolkit.ogc.xml.v110.DWithinType;
+import org.geotoolkit.ogc.xml.v110.DisjointType;
+import org.geotoolkit.ogc.xml.v110.EqualsType;
+import org.geotoolkit.ogc.xml.v110.FeatureIdType;
+import org.geotoolkit.ogc.xml.v110.FunctionNameType;
+import org.geotoolkit.ogc.xml.v110.FunctionNamesType;
+import org.geotoolkit.ogc.xml.v110.FunctionType;
+import org.geotoolkit.ogc.xml.v110.GmlObjectIdType;
+import org.geotoolkit.ogc.xml.v110.IdCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.IntersectsType;
+import org.geotoolkit.ogc.xml.v110.LiteralType;
+import org.geotoolkit.ogc.xml.v110.LowerBoundaryType;
+import org.geotoolkit.ogc.xml.v110.NotType;
+import org.geotoolkit.ogc.xml.v110.OrType;
+import org.geotoolkit.ogc.xml.v110.OverlapsType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLessThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLessThanType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsNotEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110.ScalarCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.SortPropertyType;
+import org.geotoolkit.ogc.xml.v110.SpatialCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.SpatialOperatorType;
+import org.geotoolkit.ogc.xml.v110.SpatialOperatorsType;
+import org.geotoolkit.ogc.xml.v110.TouchesType;
+import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
+import org.geotoolkit.ogc.xml.v110.WithinType;
 
 // GeoAPI dependencies
 import org.opengis.feature.type.Name;
@@ -652,7 +652,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public FilterCapabilities capabilities(String version, ScalarCapabilities scalar, SpatialCapabilities spatial, IdCapabilities id) {
-        return new org.geotoolkit.ogc.xml.FilterCapabilities(scalar, spatial, id);
+        return new org.geotoolkit.ogc.xml.v110.FilterCapabilities(scalar, spatial, id);
     }
 
     public PropertyName property(Name name) {

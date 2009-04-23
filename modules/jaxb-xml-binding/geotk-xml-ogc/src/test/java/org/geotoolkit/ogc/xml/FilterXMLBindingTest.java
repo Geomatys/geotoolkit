@@ -17,6 +17,9 @@
 package org.geotoolkit.ogc.xml;
 
 // J2SE dependencies
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.OverlapsType;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.*;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import java.io.StringReader;
@@ -54,7 +57,7 @@ public class FilterXMLBindingTest {
     @Before
     public void setUp() throws JAXBException {
         pool = new MarshallerPool(
-                "org.geotoolkit.ogc.xml:" +
+                "org.geotoolkit.ogc.xml.v110:" +
                 "org.geotoolkit.gml.xml.v311");
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();

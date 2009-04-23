@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.jaxb.v110.gml.FeatureCollectionType;
+import org.geotoolkit.gml.xml.v311.FeatureCollectionType;
 
 
 /**

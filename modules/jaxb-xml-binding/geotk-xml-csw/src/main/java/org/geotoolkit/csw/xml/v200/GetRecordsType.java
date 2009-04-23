@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.GetRecordsRequest;
-import org.geotoolkit.ogc.xml.FilterType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
 
 
 /**

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.SortByType;
+import org.geotoolkit.ogc.xml.v110.SortByType;
 
 
 /**

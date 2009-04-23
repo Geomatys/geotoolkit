@@ -18,10 +18,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.jaxb.v110.ogc.BinaryOperatorType;
-import org.geotoolkit.internal.jaxb.v110.ogc.ExpressionType;
-import org.geotoolkit.internal.jaxb.v110.ogc.LiteralType;
-import org.geotoolkit.internal.jaxb.v110.ogc.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
+import org.geotoolkit.ogc.xml.v110.ExpressionType;
+import org.geotoolkit.ogc.xml.v110.LiteralType;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 
 
 /**

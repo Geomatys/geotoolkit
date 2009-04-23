@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.QueryConstraint;
-import org.geotoolkit.ogc.xml.FilterType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.util.Utilities;
 
 

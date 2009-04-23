@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.jaxb.v110.ogc.FilterType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
 
 
 /**

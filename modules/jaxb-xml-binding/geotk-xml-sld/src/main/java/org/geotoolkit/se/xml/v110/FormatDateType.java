@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -94,6 +95,21 @@ public class FormatDateType
      */
     public void setPattern(String value) {
         this.pattern = value;
+    }
+
+    @Override
+    public Object evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(Object object, Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(ExpressionVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
