@@ -47,46 +47,46 @@ import org.geotoolkit.internal.jaxb.v110.ogc.PropertyNameType;
 import org.geotoolkit.internal.jaxb.v110.ogc.SpatialOpsType;
 import org.geotoolkit.internal.jaxb.v110.ogc.UnaryLogicOpType;
 import org.geotoolkit.internal.jaxb.v110.ogc.UpperBoundaryType;
-import org.geotoolkit.internal.jaxb.v110.se.AnchorPointType;
-import org.geotoolkit.internal.jaxb.v110.se.CategorizeType;
-import org.geotoolkit.internal.jaxb.v110.se.ChannelSelectionType;
-import org.geotoolkit.internal.jaxb.v110.se.ColorMapType;
-import org.geotoolkit.internal.jaxb.v110.se.ColorReplacementType;
-import org.geotoolkit.internal.jaxb.v110.se.ContrastEnhancementType;
-import org.geotoolkit.internal.jaxb.v110.se.CoverageStyleType;
-import org.geotoolkit.internal.jaxb.v110.se.DescriptionType;
-import org.geotoolkit.internal.jaxb.v110.se.DisplacementType;
-import org.geotoolkit.internal.jaxb.v110.se.ExternalGraphicType;
-import org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType;
-import org.geotoolkit.internal.jaxb.v110.se.FillType;
-import org.geotoolkit.internal.jaxb.v110.se.FontType;
-import org.geotoolkit.internal.jaxb.v110.se.GeometryType;
-import org.geotoolkit.internal.jaxb.v110.se.GraphicFillType;
-import org.geotoolkit.internal.jaxb.v110.se.GraphicStrokeType;
-import org.geotoolkit.internal.jaxb.v110.se.GraphicType;
-import org.geotoolkit.internal.jaxb.v110.se.HaloType;
-import org.geotoolkit.internal.jaxb.v110.se.ImageOutlineType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolateType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolationPointType;
-import org.geotoolkit.internal.jaxb.v110.se.LabelPlacementType;
-import org.geotoolkit.internal.jaxb.v110.se.LegendGraphicType;
-import org.geotoolkit.internal.jaxb.v110.se.LinePlacementType;
-import org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.MarkType;
-import org.geotoolkit.internal.jaxb.v110.se.MethodType;
-import org.geotoolkit.internal.jaxb.v110.se.ModeType;
-import org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType;
-import org.geotoolkit.internal.jaxb.v110.se.ParameterValueType;
-import org.geotoolkit.internal.jaxb.v110.se.PointPlacementType;
-import org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.RuleType;
-import org.geotoolkit.internal.jaxb.v110.se.ShadedReliefType;
-import org.geotoolkit.internal.jaxb.v110.se.StrokeType;
-import org.geotoolkit.internal.jaxb.v110.se.SvgParameterType;
-import org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.ThreshholdsBelongToType;
+import org.geotoolkit.se.xml.v110.AnchorPointType;
+import org.geotoolkit.se.xml.v110.CategorizeType;
+import org.geotoolkit.se.xml.v110.ChannelSelectionType;
+import org.geotoolkit.se.xml.v110.ColorMapType;
+import org.geotoolkit.se.xml.v110.ColorReplacementType;
+import org.geotoolkit.se.xml.v110.ContrastEnhancementType;
+import org.geotoolkit.se.xml.v110.CoverageStyleType;
+import org.geotoolkit.se.xml.v110.DescriptionType;
+import org.geotoolkit.se.xml.v110.DisplacementType;
+import org.geotoolkit.se.xml.v110.ExternalGraphicType;
+import org.geotoolkit.se.xml.v110.FeatureTypeStyleType;
+import org.geotoolkit.se.xml.v110.FillType;
+import org.geotoolkit.se.xml.v110.FontType;
+import org.geotoolkit.se.xml.v110.GeometryType;
+import org.geotoolkit.se.xml.v110.GraphicFillType;
+import org.geotoolkit.se.xml.v110.GraphicStrokeType;
+import org.geotoolkit.se.xml.v110.GraphicType;
+import org.geotoolkit.se.xml.v110.HaloType;
+import org.geotoolkit.se.xml.v110.ImageOutlineType;
+import org.geotoolkit.se.xml.v110.InterpolateType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
+import org.geotoolkit.se.xml.v110.LabelPlacementType;
+import org.geotoolkit.se.xml.v110.LegendGraphicType;
+import org.geotoolkit.se.xml.v110.LinePlacementType;
+import org.geotoolkit.se.xml.v110.LineSymbolizerType;
+import org.geotoolkit.se.xml.v110.MarkType;
+import org.geotoolkit.se.xml.v110.MethodType;
+import org.geotoolkit.se.xml.v110.ModeType;
+import org.geotoolkit.se.xml.v110.OnlineResourceType;
+import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.geotoolkit.se.xml.v110.PointPlacementType;
+import org.geotoolkit.se.xml.v110.PointSymbolizerType;
+import org.geotoolkit.se.xml.v110.PolygonSymbolizerType;
+import org.geotoolkit.se.xml.v110.RasterSymbolizerType;
+import org.geotoolkit.se.xml.v110.RuleType;
+import org.geotoolkit.se.xml.v110.ShadedReliefType;
+import org.geotoolkit.se.xml.v110.StrokeType;
+import org.geotoolkit.se.xml.v110.SvgParameterType;
+import org.geotoolkit.se.xml.v110.TextSymbolizerType;
+import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
@@ -186,13 +186,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
     
     private static final String VERSION = "1.1.0";
     
-    private final org.geotoolkit.internal.jaxb.v110.sld.ObjectFactory sld_factory_v110;
-    private final org.geotoolkit.internal.jaxb.v110.se.ObjectFactory se_factory;
+    private final org.geotoolkit.sld.xml.v110.ObjectFactory sld_factory_v110;
+    private final org.geotoolkit.se.xml.v110.ObjectFactory se_factory;
     private final org.geotoolkit.internal.jaxb.v110.ogc.ObjectFactory ogc_factory;
     
     public GTtoSE110Transformer(){
-        this.sld_factory_v110 = new org.geotoolkit.internal.jaxb.v110.sld.ObjectFactory();
-        this.se_factory = new org.geotoolkit.internal.jaxb.v110.se.ObjectFactory();
+        this.sld_factory_v110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
+        this.se_factory = new org.geotoolkit.se.xml.v110.ObjectFactory();
         this.ogc_factory = new org.geotoolkit.internal.jaxb.v110.ogc.ObjectFactory();
     }
 
@@ -510,8 +510,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT Style in Jaxb UserStyle
      */
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.UserStyle visit(Style style, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.UserStyle userStyle = sld_factory_v110.createUserStyle();
+    public org.geotoolkit.sld.xml.v110.UserStyle visit(Style style, Object data) {
+        org.geotoolkit.sld.xml.v110.UserStyle userStyle = sld_factory_v110.createUserStyle();
         userStyle.setName(style.getName());
         userStyle.setDescription(visit(style.getDescription(), null));
         userStyle.setIsDefault(style.isDefault());
@@ -1091,7 +1091,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT onlineResource in jaxb online resource.
      */
     @Override
-    public org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType visit(OnLineResource onlineResource, Object data) {
+    public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnLineResource onlineResource, Object data) {
         OnlineResourceType ort = se_factory.createOnlineResourceType();
         try {
             ort.setHref(onlineResource.getLinkage().toURL().toString());
@@ -1115,7 +1115,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public ColorMapType visit(ColorMap colorMap, Object data) {
 //TODO Fix that when better undestanding raster functions.
-        org.geotoolkit.internal.jaxb.v110.se.ColorMapType cmt = se_factory.createColorMapType();
+        org.geotoolkit.se.xml.v110.ColorMapType cmt = se_factory.createColorMapType();
         
         final Function fct = colorMap.getFunction();
         if(fct instanceof Categorize){
@@ -1250,8 +1250,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT channel type in jaxb channel type.
      */
     @Override
-    public org.geotoolkit.internal.jaxb.v110.se.SelectedChannelType visit(SelectedChannelType selectChannelType, Object data) {
-        org.geotoolkit.internal.jaxb.v110.se.SelectedChannelType sct = se_factory.createSelectedChannelType();
+    public org.geotoolkit.se.xml.v110.SelectedChannelType visit(SelectedChannelType selectChannelType, Object data) {
+        org.geotoolkit.se.xml.v110.SelectedChannelType sct = se_factory.createSelectedChannelType();
         sct.setContrastEnhancement( visit(selectChannelType.getContrastEnhancement(), null) );
         sct.setSourceChannelName( selectChannelType.getChannelName() );
         return sct;

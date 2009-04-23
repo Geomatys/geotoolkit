@@ -15,19 +15,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.jaxb.v110.se.CategorizeType;
-import org.geotoolkit.internal.jaxb.v110.se.ChangeCaseType;
-import org.geotoolkit.internal.jaxb.v110.se.ConcatenateType;
-import org.geotoolkit.internal.jaxb.v110.se.FormatDateType;
-import org.geotoolkit.internal.jaxb.v110.se.FormatNumberType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolateType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolationPointType;
-import org.geotoolkit.internal.jaxb.v110.se.MapItemType;
-import org.geotoolkit.internal.jaxb.v110.se.RecodeType;
-import org.geotoolkit.internal.jaxb.v110.se.StringLengthType;
-import org.geotoolkit.internal.jaxb.v110.se.StringPositionType;
-import org.geotoolkit.internal.jaxb.v110.se.SubstringType;
-import org.geotoolkit.internal.jaxb.v110.se.TrimType;
+import org.geotoolkit.se.xml.v110.CategorizeType;
+import org.geotoolkit.se.xml.v110.ChangeCaseType;
+import org.geotoolkit.se.xml.v110.ConcatenateType;
+import org.geotoolkit.se.xml.v110.FormatDateType;
+import org.geotoolkit.se.xml.v110.FormatNumberType;
+import org.geotoolkit.se.xml.v110.InterpolateType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
+import org.geotoolkit.se.xml.v110.MapItemType;
+import org.geotoolkit.se.xml.v110.RecodeType;
+import org.geotoolkit.se.xml.v110.StringLengthType;
+import org.geotoolkit.se.xml.v110.StringPositionType;
+import org.geotoolkit.se.xml.v110.SubstringType;
+import org.geotoolkit.se.xml.v110.TrimType;
 
 
 /**

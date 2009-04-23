@@ -77,9 +77,9 @@ public final class XMLUtilities {
     private final MutableStyleFactory styleFactory;
     private final MutableSLDFactory sldFactory;
 
-    private final org.geotoolkit.internal.jaxb.v100.sld.ObjectFactory factory_sld_100 = new org.geotoolkit.internal.jaxb.v100.sld.ObjectFactory();
-    private final org.geotoolkit.internal.jaxb.v110.sld.ObjectFactory factory_sld_110 = new org.geotoolkit.internal.jaxb.v110.sld.ObjectFactory();
-    private final org.geotoolkit.internal.jaxb.v110.se.ObjectFactory factory_se_110 = new org.geotoolkit.internal.jaxb.v110.se.ObjectFactory();
+    private final org.geotoolkit.sld.xml.v100.ObjectFactory factory_sld_100 = new org.geotoolkit.sld.xml.v100.ObjectFactory();
+    private final org.geotoolkit.sld.xml.v110.ObjectFactory factory_sld_110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
+    private final org.geotoolkit.se.xml.v110.ObjectFactory factory_se_110 = new org.geotoolkit.se.xml.v110.ObjectFactory();
     private final org.geotoolkit.internal.jaxb.v100.ogc.ObjectFactory factory_ogc_100 = new org.geotoolkit.internal.jaxb.v100.ogc.ObjectFactory();
     private final org.geotoolkit.internal.jaxb.v110.ogc.ObjectFactory factory_ogc_110 = new org.geotoolkit.internal.jaxb.v110.ogc.ObjectFactory();
     
@@ -91,7 +91,7 @@ public final class XMLUtilities {
     static{
         JAXBContext temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor.class);
+            temp = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
@@ -99,7 +99,7 @@ public final class XMLUtilities {
         
         temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor.class);
+            temp = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
@@ -198,7 +198,7 @@ public final class XMLUtilities {
     
     private final void marshallV100(final Object target, final Object jaxElement, 
             final NamespacePrefixMapperImpl namespace) throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor.class);
+        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
         final Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",namespace);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -216,7 +216,7 @@ public final class XMLUtilities {
      */
     private final void marshallV100(final Object target, final Object jaxElement, 
             final NamespacePrefixMapperImpl namespace, boolean isformatted) throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor.class);
+        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
         final Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",namespace);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -226,7 +226,7 @@ public final class XMLUtilities {
     
     private final void marshallV110(final Object target, final Object jaxElement, 
             final NamespacePrefixMapperImpl namespace) throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor.class);
+        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
         final Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",namespace);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -254,15 +254,15 @@ public final class XMLUtilities {
         switch(version){
             case V_1_0_0 :
                 obj = unmarshallV100(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor){
-                    return TRANSFORMER_GT_V100.visit( (org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor) obj);
+                if(obj instanceof org.geotoolkit.sld.xml.v100.StyledLayerDescriptor){
+                    return TRANSFORMER_GT_V100.visit( (org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor){
-                    return TRANSFORMER_GT_V110.visit( (org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor) obj);
+                if(obj instanceof org.geotoolkit.sld.xml.v110.StyledLayerDescriptor){
+                    return TRANSFORMER_GT_V110.visit( (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD v1.1.0");
                 }
@@ -350,15 +350,15 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v100.sld.UserStyle){
-                    return TRANSFORMER_GT_V100.visitUserStyle( (org.geotoolkit.internal.jaxb.v100.sld.UserStyle) obj);
+                if(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle){
+                    return TRANSFORMER_GT_V100.visitUserStyle( (org.geotoolkit.sld.xml.v100.UserStyle) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD UserStyle v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v110.sld.UserStyle){
-                    return TRANSFORMER_GT_V110.visitUserStyle( (org.geotoolkit.internal.jaxb.v110.sld.UserStyle) obj);
+                if(obj instanceof org.geotoolkit.sld.xml.v110.UserStyle){
+                    return TRANSFORMER_GT_V110.visitUserStyle( (org.geotoolkit.sld.xml.v110.UserStyle) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD UserStyle v1.1.0");
                 }
@@ -414,18 +414,18 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v100.sld.FeatureTypeStyle){
-                    return TRANSFORMER_GT_V100.visitFTS( (org.geotoolkit.internal.jaxb.v100.sld.FeatureTypeStyle) obj);
+                if(obj instanceof org.geotoolkit.sld.xml.v100.FeatureTypeStyle){
+                    return TRANSFORMER_GT_V100.visitFTS( (org.geotoolkit.sld.xml.v100.FeatureTypeStyle) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD FeatureTypeStyle v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType){
+                if(obj instanceof org.geotoolkit.se.xml.v110.FeatureTypeStyleType){
                     return TRANSFORMER_GT_V110.visitFTS(obj);
                 }else if(obj instanceof JAXBElement<?>&& (
-                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType ||
-                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType ) ){
+                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.OnlineResourceType ||
+                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.FeatureTypeStyleType ) ){
                     return TRANSFORMER_GT_V110.visitFTS( ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC SE FeatureTypeStyle v1.1.0");
@@ -452,16 +452,16 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 if (TRANSFORMER_XML_V100 == null) TRANSFORMER_XML_V100 = new GTtoSLD100Transformer();
-                org.geotoolkit.internal.jaxb.v100.sld.FeatureTypeStyle jaxfts = TRANSFORMER_XML_V100.visit(fts, null);
+                org.geotoolkit.sld.xml.v100.FeatureTypeStyle jaxfts = TRANSFORMER_XML_V100.visit(fts, null);
                 marshallV100(target,jaxfts,SLD_NAMESPACE);
                 break;
             case V_1_1_0 :
                 if (TRANSFORMER_XML_V110 == null) TRANSFORMER_XML_V110 = new GTtoSLD110Transformer();
                 jax = TRANSFORMER_XML_V110.visit(fts, null);
-                if(jax instanceof org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType){
-                    jax = factory_se_110.createFeatureTypeStyle((org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType) jax);
-                }else if(jax instanceof org.geotoolkit.internal.jaxb.v110.se.CoverageStyleType){
-                    jax = factory_se_110.createCoverageStyle( (org.geotoolkit.internal.jaxb.v110.se.CoverageStyleType) jax);
+                if(jax instanceof org.geotoolkit.se.xml.v110.FeatureTypeStyleType){
+                    jax = factory_se_110.createFeatureTypeStyle((org.geotoolkit.se.xml.v110.FeatureTypeStyleType) jax);
+                }else if(jax instanceof org.geotoolkit.se.xml.v110.CoverageStyleType){
+                    jax = factory_se_110.createCoverageStyle( (org.geotoolkit.se.xml.v110.CoverageStyleType) jax);
                 }
                 marshallV110(target,jax,SE_NAMESPACE);
                 break;
@@ -487,18 +487,18 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v100.sld.Rule){
-                    return TRANSFORMER_GT_V100.visitRule( (org.geotoolkit.internal.jaxb.v100.sld.Rule) obj);
+                if(obj instanceof org.geotoolkit.sld.xml.v100.Rule){
+                    return TRANSFORMER_GT_V100.visitRule( (org.geotoolkit.sld.xml.v100.Rule) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD Rule v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v110.se.RuleType){
+                if(obj instanceof org.geotoolkit.se.xml.v110.RuleType){
                     return TRANSFORMER_GT_V110.visitRule(obj);
                 }else if(obj instanceof JAXBElement<?> && (
-                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType ||
-                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.internal.jaxb.v110.se.RuleType ) ){
+                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.OnlineResourceType ||
+                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.RuleType ) ){
                     return TRANSFORMER_GT_V110.visitRule( ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC SE Rule v1.1.0");
@@ -525,14 +525,14 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 if (TRANSFORMER_XML_V100 == null) TRANSFORMER_XML_V100 = new GTtoSLD100Transformer();
-                org.geotoolkit.internal.jaxb.v100.sld.Rule jaxRule = TRANSFORMER_XML_V100.visit(rule, null);
+                org.geotoolkit.sld.xml.v100.Rule jaxRule = TRANSFORMER_XML_V100.visit(rule, null);
                 marshallV100(target,jaxRule,SLD_NAMESPACE);
                 break;
             case V_1_1_0 :
                 if (TRANSFORMER_XML_V110 == null) TRANSFORMER_XML_V110 = new GTtoSLD110Transformer();
                 jax = TRANSFORMER_XML_V110.visit(rule, null);
-                if(jax instanceof org.geotoolkit.internal.jaxb.v110.se.RuleType){
-                    jax = factory_se_110.createRule( (org.geotoolkit.internal.jaxb.v110.se.RuleType) jax);
+                if(jax instanceof org.geotoolkit.se.xml.v110.RuleType){
+                    jax = factory_se_110.createRule( (org.geotoolkit.se.xml.v110.RuleType) jax);
                 }
                 marshallV110(target,jax,SE_NAMESPACE);
                 break;

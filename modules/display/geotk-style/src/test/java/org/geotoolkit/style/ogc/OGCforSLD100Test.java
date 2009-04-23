@@ -25,7 +25,7 @@ import org.geotoolkit.internal.jaxb.v100.ogc.PropertyIsLikeType;
 import org.geotoolkit.internal.jaxb.v100.ogc.PropertyIsNullType;
 import org.geotoolkit.internal.jaxb.v100.ogc.PropertyNameType;
 import org.geotoolkit.internal.jaxb.v100.ogc.UnaryLogicOpType;
-import org.geotoolkit.internal.jaxb.v100.sld.ParameterValueType;
+import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.geotoolkit.sld.xml.GTtoSE100Transformer;
 import org.geotoolkit.sld.xml.JAXBStatics;
 import org.geotoolkit.sld.xml.NamespacePrefixMapperImpl;
@@ -146,7 +146,7 @@ public class OGCforSLD100Test extends TestCase{
     
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
             UNMARSHALLER = jaxbContext.createUnmarshaller();
             MARSHALLER = jaxbContext.createMarshaller();
             MARSHALLER.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);

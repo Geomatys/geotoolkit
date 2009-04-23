@@ -42,15 +42,15 @@ import org.opengis.style.Style;
  */
 public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVisitor {
 
-    private final org.geotoolkit.internal.jaxb.v100.sld.ObjectFactory sld_factory;
+    private final org.geotoolkit.sld.xml.v100.ObjectFactory sld_factory;
 
     public GTtoSLD100Transformer() {
-        this.sld_factory = new org.geotoolkit.internal.jaxb.v100.sld.ObjectFactory();
+        this.sld_factory = new org.geotoolkit.sld.xml.v100.ObjectFactory();
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor visit(StyledLayerDescriptor sld, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor versionned = sld_factory.createStyledLayerDescriptor();
+    public org.geotoolkit.sld.xml.v100.StyledLayerDescriptor visit(StyledLayerDescriptor sld, Object data) {
+        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor versionned = sld_factory.createStyledLayerDescriptor();
         versionned.setName(sld.getName());
 //        versionned.setVersion(sld.getVersion());
         if (sld.getDescription() != null) {
@@ -79,8 +79,8 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.NamedLayer visit(NamedLayer layer, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.NamedLayer named = sld_factory.createNamedLayer();
+    public org.geotoolkit.sld.xml.v100.NamedLayer visit(NamedLayer layer, Object data) {
+        org.geotoolkit.sld.xml.v100.NamedLayer named = sld_factory.createNamedLayer();
         named.setName(layer.getName());
         named.setLayerFeatureConstraints( visit(layer.getConstraints(),null) );
         
@@ -98,8 +98,8 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.UserLayer visit(UserLayer layer, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.UserLayer user = sld_factory.createUserLayer();
+    public org.geotoolkit.sld.xml.v100.UserLayer visit(UserLayer layer, Object data) {
+        org.geotoolkit.sld.xml.v100.UserLayer user = sld_factory.createUserLayer();
         user.setName(layer.getName());
         
         if(layer.getConstraints() instanceof LayerFeatureConstraints){
@@ -125,8 +125,8 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.NamedStyle visit(NamedStyle style, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.NamedStyle named = sld_factory.createNamedStyle();
+    public org.geotoolkit.sld.xml.v100.NamedStyle visit(NamedStyle style, Object data) {
+        org.geotoolkit.sld.xml.v100.NamedStyle named = sld_factory.createNamedStyle();
         named.setName(style.getName());
         return named;
     }
@@ -137,8 +137,8 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.LayerFeatureConstraints visit(LayerFeatureConstraints constraints, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
+    public org.geotoolkit.sld.xml.v100.LayerFeatureConstraints visit(LayerFeatureConstraints constraints, Object data) {
+        org.geotoolkit.sld.xml.v100.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
         
         for( FeatureTypeConstraint fc : constraints.constraints() ){
             cons.getFeatureTypeConstraint().add( visit(fc,null) );
@@ -148,13 +148,13 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.CoverageConstraint visit(CoverageConstraint constraint, Object data) {
+    public org.geotoolkit.sld.xml.v110.CoverageConstraint visit(CoverageConstraint constraint, Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store coverage constraints.");
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.FeatureTypeConstraint visit(FeatureTypeConstraint constraint, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
+    public org.geotoolkit.sld.xml.v100.FeatureTypeConstraint visit(FeatureTypeConstraint constraint, Object data) {
+        org.geotoolkit.sld.xml.v100.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
         
         ftc.setFeatureTypeName( visitName(constraint.getFeatureTypeName()).getLocalPart() );
         ftc.setFilter( visit(constraint.getFilter()));
@@ -172,8 +172,8 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.Extent visit(Extent extent, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.Extent ext = sld_factory.createExtent();
+    public org.geotoolkit.sld.xml.v100.Extent visit(Extent extent, Object data) {
+        org.geotoolkit.sld.xml.v100.Extent ext = sld_factory.createExtent();
         ext.setName(extent.getName());
         ext.setValue(extent.getValue());
         return ext;
@@ -185,15 +185,15 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v100.sld.RemoteOWS visit(RemoteOWS ows, Object data) {
-        org.geotoolkit.internal.jaxb.v100.sld.RemoteOWS remote = sld_factory.createRemoteOWS();
+    public org.geotoolkit.sld.xml.v100.RemoteOWS visit(RemoteOWS ows, Object data) {
+        org.geotoolkit.sld.xml.v100.RemoteOWS remote = sld_factory.createRemoteOWS();
         remote.setService(ows.getService());
         remote.setOnlineResource( visit(ows.getOnlineResource(), null) );
         return remote;
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.InlineFeature visit(InlineFeature inline, Object data) {
+    public org.geotoolkit.sld.xml.v110.InlineFeature visit(InlineFeature inline, Object data) {
         //TODO handle this when GML will be ready
         return null;
     }

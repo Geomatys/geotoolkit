@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor;
+import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
@@ -68,7 +68,7 @@ public class SLD100Test extends TestCase{
     
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
             UNMARSHALLER = jaxbContext.createUnmarshaller();
             MARSHALLER = jaxbContext.createMarshaller();
             MARSHALLER.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
@@ -205,17 +205,17 @@ public class SLD100Test extends TestCase{
         assertEquals(pvt.getNamedLayerOrUserLayer().size(), 2);
         
         //Named Layer-----------------------------------------------------------
-        org.geotoolkit.internal.jaxb.v100.sld.NamedLayer nlt = (org.geotoolkit.internal.jaxb.v100.sld.NamedLayer) pvt.getNamedLayerOrUserLayer().get(0);
+        org.geotoolkit.sld.xml.v100.NamedLayer nlt = (org.geotoolkit.sld.xml.v100.NamedLayer) pvt.getNamedLayerOrUserLayer().get(0);
         assertEquals(nlt.getName(), "Named layer : name");
         //no title, no description in SLD1.0        
-        List<org.geotoolkit.internal.jaxb.v100.sld.FeatureTypeConstraint> constr = nlt.getLayerFeatureConstraints().getFeatureTypeConstraint();
+        List<org.geotoolkit.sld.xml.v100.FeatureTypeConstraint> constr = nlt.getLayerFeatureConstraints().getFeatureTypeConstraint();
         assertEquals(constr.size(), 1);
         
         assertNotNull(constr.get(0).getFilter());
         assertEquals(constr.get(0).getFeatureTypeName(),"Feature type : name");
         assertEquals(constr.get(0).getExtent().size(), 3);
         
-        org.geotoolkit.internal.jaxb.v100.sld.Extent extx = constr.get(0).getExtent().get(0);
+        org.geotoolkit.sld.xml.v100.Extent extx = constr.get(0).getExtent().get(0);
         assertEquals(extx.getName(), "Ext : Name 1");
         assertEquals(extx.getValue(), "Ext : Value 1");
         
@@ -229,15 +229,15 @@ public class SLD100Test extends TestCase{
         
         //Named Style-----------------------------------------------------------
         assertEquals(nlt.getNamedStyleOrUserStyle().size(), 1);
-        org.geotoolkit.internal.jaxb.v100.sld.NamedStyle nst = (org.geotoolkit.internal.jaxb.v100.sld.NamedStyle) nlt.getNamedStyleOrUserStyle().get(0);
+        org.geotoolkit.sld.xml.v100.NamedStyle nst = (org.geotoolkit.sld.xml.v100.NamedStyle) nlt.getNamedStyleOrUserStyle().get(0);
         assertEquals(nst.getName(), "Named style : name");
         
         //User Layer------------------------------------------------------------
-        org.geotoolkit.internal.jaxb.v100.sld.UserLayer ulx = (org.geotoolkit.internal.jaxb.v100.sld.UserLayer)pvt.getNamedLayerOrUserLayer().get(1);
+        org.geotoolkit.sld.xml.v100.UserLayer ulx = (org.geotoolkit.sld.xml.v100.UserLayer)pvt.getNamedLayerOrUserLayer().get(1);
         assertEquals(ulx.getName(), "User layer : name");
         //no title, no description in SLD1.0   
         
-        org.geotoolkit.internal.jaxb.v100.sld.RemoteOWS sourcex = (org.geotoolkit.internal.jaxb.v100.sld.RemoteOWS) ulx.getRemoteOWS();
+        org.geotoolkit.sld.xml.v100.RemoteOWS sourcex = (org.geotoolkit.sld.xml.v100.RemoteOWS) ulx.getRemoteOWS();
         assertEquals(sourcex.getService(), "WFS");
         assertEquals(sourcex.getOnlineResource().getHref(), "http://some.site.com/WFS?");
         

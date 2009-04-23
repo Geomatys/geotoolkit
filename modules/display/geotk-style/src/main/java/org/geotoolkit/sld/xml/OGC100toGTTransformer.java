@@ -370,7 +370,7 @@ public class OGC100toGTTransformer {
     /**
      * Transform a parametervaluetype in Expression.
      */
-    public Expression visitExpression(org.geotoolkit.internal.jaxb.v100.sld.ParameterValueType param) {
+    public Expression visitExpression(org.geotoolkit.sld.xml.v100.ParameterValueType param) {
         if(param == null) return null;
         
 //        Objects of the following type(s) are allowed in the list 

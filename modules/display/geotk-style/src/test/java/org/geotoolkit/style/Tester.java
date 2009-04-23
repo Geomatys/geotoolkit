@@ -113,12 +113,12 @@ public class Tester {
     //--------------------- V1.0.0 ---------------------------------------------
     private static void testSLDMarshall_V100(File file) {
         StyledLayerDescriptor geoSLD = createSLD();
-        org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V100(geoSLD);
+        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V100(geoSLD);
         SLD_UTILITIES.marshall_V100(sld, file);
     }
 
     private static void testSLDUnMarshall_V100(File file) {        
-        org.geotoolkit.internal.jaxb.v100.sld.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V100(file);
+        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V100(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transform_V100(sld);
         showSLD(geoSLD);
     }
@@ -128,12 +128,12 @@ public class Tester {
     //--------------------- V1.1.0 ---------------------------------------------
     private static void testSLDMarshall_V110(File file) {
         StyledLayerDescriptor geoSLD = createSLD();
-        org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V110(geoSLD);
+        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V110(geoSLD);
         SLD_UTILITIES.marshall_V110(sld, file);
     }
 
     private static void testSLDUnMarshall_V110(File file) {        
-        org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V110(file);
+        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V110(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transform_V110(sld);
         showSLD(geoSLD);
     }
@@ -333,77 +333,77 @@ public class Tester {
         
     }
     
-    private static void showSLD(org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor sld){
+    private static void showSLD(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld){
         
         System.out.println("NAME =" + sld.getName());
         
-        org.geotoolkit.internal.jaxb.v110.se.DescriptionType des = sld.getDescription();
+        org.geotoolkit.se.xml.v110.DescriptionType des = sld.getDescription();
         System.out.println("DESC : title="+des.getTitle());
         System.out.println("DESC : abstract="+des.getAbstract());
         
-        for(org.geotoolkit.internal.jaxb.v110.sld.UseSLDLibrary lib : sld.getUseSLDLibrary()){
+        for(org.geotoolkit.sld.xml.v110.UseSLDLibrary lib : sld.getUseSLDLibrary()){
             System.out.println("SLD_LIB : resource=" + lib.getOnlineResource());
         }
         
         for(Object obj : sld.getNamedLayerOrUserLayer()){
-            if(obj instanceof org.geotoolkit.internal.jaxb.v110.sld.NamedLayer){
-                org.geotoolkit.internal.jaxb.v110.sld.NamedLayer named = (org.geotoolkit.internal.jaxb.v110.sld.NamedLayer) obj;
+            if(obj instanceof org.geotoolkit.sld.xml.v110.NamedLayer){
+                org.geotoolkit.sld.xml.v110.NamedLayer named = (org.geotoolkit.sld.xml.v110.NamedLayer) obj;
                 System.out.println("LAYER : NAMED : name=" + named.getName());
-                org.geotoolkit.internal.jaxb.v110.se.DescriptionType desc = named.getDescription();
+                org.geotoolkit.se.xml.v110.DescriptionType desc = named.getDescription();
                 if(desc != null){
                     System.out.println("LAYER : NAMED : DESC : title=" + desc.getTitle());
                     System.out.println("LAYER : NAMED : DESC : abstract=" + desc.getAbstract());
                 }
                 
-                org.geotoolkit.internal.jaxb.v110.sld.LayerFeatureConstraints cons = named.getLayerFeatureConstraints();
-                for(org.geotoolkit.internal.jaxb.v110.sld.FeatureTypeConstraint con : cons.getFeatureTypeConstraint()){
+                org.geotoolkit.sld.xml.v110.LayerFeatureConstraints cons = named.getLayerFeatureConstraints();
+                for(org.geotoolkit.sld.xml.v110.FeatureTypeConstraint con : cons.getFeatureTypeConstraint()){
                     System.out.println("LAYER : NAMED : CONSTR : ftname=" + con.getFeatureTypeName());
                 }
                 
                 for(Object style : named.getNamedStyleOrUserStyle()){
-                    if(style instanceof org.geotoolkit.internal.jaxb.v110.sld.NamedStyle){
-                        org.geotoolkit.internal.jaxb.v110.sld.NamedStyle ns = (org.geotoolkit.internal.jaxb.v110.sld.NamedStyle) style;
+                    if(style instanceof org.geotoolkit.sld.xml.v110.NamedStyle){
+                        org.geotoolkit.sld.xml.v110.NamedStyle ns = (org.geotoolkit.sld.xml.v110.NamedStyle) style;
                         System.out.println("LAYER : NAMED : STYLE : NAMED : name=" + ns.getName());
-                        org.geotoolkit.internal.jaxb.v110.se.DescriptionType nsdesc = ns.getDescription();
+                        org.geotoolkit.se.xml.v110.DescriptionType nsdesc = ns.getDescription();
                         if(desc != null){
                             System.out.println("LAYER : NAMED : STYLE : NAMED : DESC : title=" + nsdesc.getTitle());
                             System.out.println("LAYER : NAMED : STYLE : NAMED : DESC : abstract=" + nsdesc.getAbstract());
                         }
-                    }else if(style instanceof org.geotoolkit.internal.jaxb.v110.sld.UserStyle){
+                    }else if(style instanceof org.geotoolkit.sld.xml.v110.UserStyle){
                         
                     }
                 }
                 
-            }else if(obj instanceof org.geotoolkit.internal.jaxb.v110.sld.UserLayer){
-                org.geotoolkit.internal.jaxb.v110.sld.UserLayer user = (org.geotoolkit.internal.jaxb.v110.sld.UserLayer) obj;
+            }else if(obj instanceof org.geotoolkit.sld.xml.v110.UserLayer){
+                org.geotoolkit.sld.xml.v110.UserLayer user = (org.geotoolkit.sld.xml.v110.UserLayer) obj;
                 System.out.println("LAYER : USER : name=" + user.getName());
-                org.geotoolkit.internal.jaxb.v110.se.DescriptionType desc = user.getDescription();
+                org.geotoolkit.se.xml.v110.DescriptionType desc = user.getDescription();
                 if(desc != null){
                     System.out.println("LAYER : USER : DESC : title=" + desc.getTitle());
                     System.out.println("LAYER : USER : DESC : abstract=" + desc.getAbstract());
                 }
                                 
-                org.geotoolkit.internal.jaxb.v110.sld.RemoteOWS ows = user.getRemoteOWS();
+                org.geotoolkit.sld.xml.v110.RemoteOWS ows = user.getRemoteOWS();
                 if(ows != null){
                     System.out.println("LAYER : USER : OWS : service="+ows.getService());
                     System.out.println("LAYER : USER : OWS : resource="+ows.getOnlineResource());
                 }
                 
-                org.geotoolkit.internal.jaxb.v110.sld.LayerFeatureConstraints ftcons = user.getLayerFeatureConstraints();
-                for(org.geotoolkit.internal.jaxb.v110.sld.FeatureTypeConstraint con : ftcons.getFeatureTypeConstraint()){
+                org.geotoolkit.sld.xml.v110.LayerFeatureConstraints ftcons = user.getLayerFeatureConstraints();
+                for(org.geotoolkit.sld.xml.v110.FeatureTypeConstraint con : ftcons.getFeatureTypeConstraint()){
                     System.out.println("LAYER : USER : FT_CONSTR : ftname=" + con.getFeatureTypeName());
                 }
                 
-                org.geotoolkit.internal.jaxb.v110.sld.LayerCoverageConstraints cvcons = user.getLayerCoverageConstraints();
-                for(org.geotoolkit.internal.jaxb.v110.sld.CoverageConstraint con : cvcons.getCoverageConstraint()){
+                org.geotoolkit.sld.xml.v110.LayerCoverageConstraints cvcons = user.getLayerCoverageConstraints();
+                for(org.geotoolkit.sld.xml.v110.CoverageConstraint con : cvcons.getCoverageConstraint()){
                     System.out.println("LAYER : USER : CV_CONSTR : cname=" + con.getCoverageName());
-                    org.geotoolkit.internal.jaxb.v110.sld.CoverageExtent ext = con.getCoverageExtent();
+                    org.geotoolkit.sld.xml.v110.CoverageExtent ext = con.getCoverageExtent();
                     if(ext != null){
                         if(ext.getTimePeriod() != null){
                             System.out.println("LAYER : USER : CV_CONSTR : EXTENT : timeperiod=" + ext.getTimePeriod());
                         }
                         
-                        for(org.geotoolkit.internal.jaxb.v110.sld.RangeAxis axi : ext.getRangeAxis()){
+                        for(org.geotoolkit.sld.xml.v110.RangeAxis axi : ext.getRangeAxis()){
                             System.out.println("LAYER : USER : CV_CONSTR : EXTENT : RANGE : name="+axi.getName() +" value=" + axi.getValue());
                         }
                     }

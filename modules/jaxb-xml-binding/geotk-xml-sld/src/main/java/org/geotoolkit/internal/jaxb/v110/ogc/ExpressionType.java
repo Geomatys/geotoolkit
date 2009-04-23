@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolationPointType;
-import org.geotoolkit.internal.jaxb.v110.se.MapItemType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
+import org.geotoolkit.se.xml.v110.MapItemType;
 
 
 /**
@@ -39,7 +39,7 @@ import org.geotoolkit.internal.jaxb.v110.se.MapItemType;
     org.geotoolkit.internal.jaxb.v110.ogc.FunctionType.class,
     InterpolationPointType.class,
     MapItemType.class,
-    org.geotoolkit.internal.jaxb.v110.se.FunctionType.class
+    org.geotoolkit.se.xml.v110.FunctionType.class
 })
 public abstract class ExpressionType {
 

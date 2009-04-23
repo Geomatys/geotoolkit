@@ -34,19 +34,19 @@ import org.geotoolkit.internal.jaxb.v110.ogc.FunctionType;
 import org.geotoolkit.internal.jaxb.v110.ogc.GmlObjectIdType;
 import org.geotoolkit.internal.jaxb.v110.ogc.LiteralType;
 import org.geotoolkit.internal.jaxb.v110.ogc.PropertyNameType;
-import org.geotoolkit.internal.jaxb.v110.se.CategorizeType;
-import org.geotoolkit.internal.jaxb.v110.se.ChangeCaseType;
-import org.geotoolkit.internal.jaxb.v110.se.ConcatenateType;
-import org.geotoolkit.internal.jaxb.v110.se.FormatDateType;
-import org.geotoolkit.internal.jaxb.v110.se.FormatNumberType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolateType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolationPointType;
-import org.geotoolkit.internal.jaxb.v110.se.MapItemType;
-import org.geotoolkit.internal.jaxb.v110.se.RecodeType;
-import org.geotoolkit.internal.jaxb.v110.se.StringLengthType;
-import org.geotoolkit.internal.jaxb.v110.se.StringPositionType;
-import org.geotoolkit.internal.jaxb.v110.se.SubstringType;
-import org.geotoolkit.internal.jaxb.v110.se.TrimType;
+import org.geotoolkit.se.xml.v110.CategorizeType;
+import org.geotoolkit.se.xml.v110.ChangeCaseType;
+import org.geotoolkit.se.xml.v110.ConcatenateType;
+import org.geotoolkit.se.xml.v110.FormatDateType;
+import org.geotoolkit.se.xml.v110.FormatNumberType;
+import org.geotoolkit.se.xml.v110.InterpolateType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
+import org.geotoolkit.se.xml.v110.MapItemType;
+import org.geotoolkit.se.xml.v110.RecodeType;
+import org.geotoolkit.se.xml.v110.StringLengthType;
+import org.geotoolkit.se.xml.v110.StringPositionType;
+import org.geotoolkit.se.xml.v110.SubstringType;
+import org.geotoolkit.se.xml.v110.TrimType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -433,7 +433,7 @@ public class OGC110toGTTransformer {
     /**
      * Transform a parametervaluetype in Expression.
      */
-    public Expression visitExpression(org.geotoolkit.internal.jaxb.v110.se.ParameterValueType param) {
+    public Expression visitExpression(org.geotoolkit.se.xml.v110.ParameterValueType param) {
         if(param == null) return null;
         
 //        Objects of the following type(s) are allowed in the list 

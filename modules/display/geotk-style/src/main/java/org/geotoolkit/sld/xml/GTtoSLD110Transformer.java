@@ -17,8 +17,8 @@
 
 package org.geotoolkit.sld.xml;
 
-import org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType;
-import org.geotoolkit.internal.jaxb.v110.sld.UseSLDLibrary;
+import org.geotoolkit.se.xml.v110.OnlineResourceType;
+import org.geotoolkit.sld.xml.v110.UseSLDLibrary;
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.Extent;
@@ -45,17 +45,17 @@ import org.opengis.style.Style;
  */
 public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVisitor {
 
-    private final org.geotoolkit.internal.jaxb.v110.sld.ObjectFactory sld_factory;
-    private final org.geotoolkit.internal.jaxb.v110.se.ObjectFactory se_factory;
+    private final org.geotoolkit.sld.xml.v110.ObjectFactory sld_factory;
+    private final org.geotoolkit.se.xml.v110.ObjectFactory se_factory;
 
     public GTtoSLD110Transformer() {
-        this.sld_factory = new org.geotoolkit.internal.jaxb.v110.sld.ObjectFactory();
-        this.se_factory = new org.geotoolkit.internal.jaxb.v110.se.ObjectFactory();
+        this.sld_factory = new org.geotoolkit.sld.xml.v110.ObjectFactory();
+        this.se_factory = new org.geotoolkit.se.xml.v110.ObjectFactory();
     }
   
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor visit(StyledLayerDescriptor sld, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor versionned = sld_factory.createStyledLayerDescriptor();
+    public org.geotoolkit.sld.xml.v110.StyledLayerDescriptor visit(StyledLayerDescriptor sld, Object data) {
+        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor versionned = sld_factory.createStyledLayerDescriptor();
         versionned.setName(sld.getName());
 //        versionned.setVersion(sld.getVersion());
         versionned.setDescription( visit(sld.getDescription(), null));
@@ -86,8 +86,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.NamedLayer visit(NamedLayer layer, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.NamedLayer named = sld_factory.createNamedLayer();
+    public org.geotoolkit.sld.xml.v110.NamedLayer visit(NamedLayer layer, Object data) {
+        org.geotoolkit.sld.xml.v110.NamedLayer named = sld_factory.createNamedLayer();
         named.setName(layer.getName());
         named.setDescription( visit(layer.getDescription(), null));
         named.setLayerFeatureConstraints( visit(layer.getConstraints(),null) );
@@ -106,8 +106,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.UserLayer visit(UserLayer layer, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.UserLayer user = sld_factory.createUserLayer();
+    public org.geotoolkit.sld.xml.v110.UserLayer visit(UserLayer layer, Object data) {
+        org.geotoolkit.sld.xml.v110.UserLayer user = sld_factory.createUserLayer();
         user.setName(layer.getName());
         user.setDescription( visit(layer.getDescription(),null) );
         
@@ -136,16 +136,16 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.NamedStyle visit(NamedStyle style, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.NamedStyle named = sld_factory.createNamedStyle();
+    public org.geotoolkit.sld.xml.v110.NamedStyle visit(NamedStyle style, Object data) {
+        org.geotoolkit.sld.xml.v110.NamedStyle named = sld_factory.createNamedStyle();
         named.setName(style.getName());
         named.setDescription( visit(style.getDescription(), null));
         return named;
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.LayerCoverageConstraints visit(LayerCoverageConstraints constraints, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.LayerCoverageConstraints cons = sld_factory.createLayerCoverageConstraints();
+    public org.geotoolkit.sld.xml.v110.LayerCoverageConstraints visit(LayerCoverageConstraints constraints, Object data) {
+        org.geotoolkit.sld.xml.v110.LayerCoverageConstraints cons = sld_factory.createLayerCoverageConstraints();
         
         for( CoverageConstraint fc : constraints.constraints() ){
             cons.getCoverageConstraint().add( visit(fc,null) );
@@ -155,8 +155,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.LayerFeatureConstraints visit(LayerFeatureConstraints constraints, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
+    public org.geotoolkit.sld.xml.v110.LayerFeatureConstraints visit(LayerFeatureConstraints constraints, Object data) {
+        org.geotoolkit.sld.xml.v110.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
         
         for( FeatureTypeConstraint fc : constraints.constraints() ){
             cons.getFeatureTypeConstraint().add( visit(fc,null) );
@@ -166,8 +166,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.CoverageConstraint visit(CoverageConstraint constraint, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.CoverageConstraint ftc = sld_factory.createCoverageConstraint();
+    public org.geotoolkit.sld.xml.v110.CoverageConstraint visit(CoverageConstraint constraint, Object data) {
+        org.geotoolkit.sld.xml.v110.CoverageConstraint ftc = sld_factory.createCoverageConstraint();
         
         ftc.setCoverageName(constraint.getCoverageName());
         ftc.setCoverageExtent( visit(constraint.getCoverageExtent(),null) );
@@ -176,8 +176,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.FeatureTypeConstraint visit(FeatureTypeConstraint constraint, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
+    public org.geotoolkit.sld.xml.v110.FeatureTypeConstraint visit(FeatureTypeConstraint constraint, Object data) {
+        org.geotoolkit.sld.xml.v110.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
         
         ftc.setFeatureTypeName( visitName(constraint.getFeatureTypeName()));
         ftc.setFilter( visit(constraint.getFilter()));
@@ -190,8 +190,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.CoverageExtent visit(CoverageExtent extent, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.CoverageExtent ce = sld_factory.createCoverageExtent();
+    public org.geotoolkit.sld.xml.v110.CoverageExtent visit(CoverageExtent extent, Object data) {
+        org.geotoolkit.sld.xml.v110.CoverageExtent ce = sld_factory.createCoverageExtent();
         
         if(extent.getTimePeriod() != null){
             ce.setTimePeriod(extent.getTimePeriod());
@@ -205,31 +205,31 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.Extent visit(Extent extent, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.Extent ext = sld_factory.createExtent();
+    public org.geotoolkit.sld.xml.v110.Extent visit(Extent extent, Object data) {
+        org.geotoolkit.sld.xml.v110.Extent ext = sld_factory.createExtent();
         ext.setName(extent.getName());
         ext.setValue(extent.getValue());
         return ext;
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.RangeAxis visit(RangeAxis axi, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.RangeAxis axe = sld_factory.createRangeAxis();
+    public org.geotoolkit.sld.xml.v110.RangeAxis visit(RangeAxis axi, Object data) {
+        org.geotoolkit.sld.xml.v110.RangeAxis axe = sld_factory.createRangeAxis();
         axe.setName(axi.getName());
         axe.setValue(axi.getValue());
         return axe;
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.RemoteOWS visit(RemoteOWS ows, Object data) {
-        org.geotoolkit.internal.jaxb.v110.sld.RemoteOWS remote = sld_factory.createRemoteOWS();
+    public org.geotoolkit.sld.xml.v110.RemoteOWS visit(RemoteOWS ows, Object data) {
+        org.geotoolkit.sld.xml.v110.RemoteOWS remote = sld_factory.createRemoteOWS();
         remote.setService(ows.getService());
         remote.setOnlineResource( visit(ows.getOnlineResource(), null) );
         return remote;
     }
 
     @Override
-    public org.geotoolkit.internal.jaxb.v110.sld.InlineFeature visit(InlineFeature inline, Object data) {
+    public org.geotoolkit.sld.xml.v110.InlineFeature visit(InlineFeature inline, Object data) {
         //TODO handle this when GML will be ready
         return null;
     }

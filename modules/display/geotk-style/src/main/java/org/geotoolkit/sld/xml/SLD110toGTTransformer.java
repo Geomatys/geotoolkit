@@ -22,14 +22,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotoolkit.internal.jaxb.v110.sld.InlineFeature;
-import org.geotoolkit.internal.jaxb.v110.sld.LayerCoverageConstraints;
-import org.geotoolkit.internal.jaxb.v110.sld.LayerFeatureConstraints;
-import org.geotoolkit.internal.jaxb.v110.sld.NamedLayer;
-import org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor;
-import org.geotoolkit.internal.jaxb.v110.sld.UseSLDLibrary;
-import org.geotoolkit.internal.jaxb.v110.sld.UserLayer;
-import org.geotoolkit.internal.jaxb.v110.sld.UserStyle;
+import org.geotoolkit.sld.xml.v110.InlineFeature;
+import org.geotoolkit.sld.xml.v110.LayerCoverageConstraints;
+import org.geotoolkit.sld.xml.v110.LayerFeatureConstraints;
+import org.geotoolkit.sld.xml.v110.NamedLayer;
+import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
+import org.geotoolkit.sld.xml.v110.UseSLDLibrary;
+import org.geotoolkit.sld.xml.v110.UserLayer;
+import org.geotoolkit.sld.xml.v110.UserStyle;
 import org.geotoolkit.sld.MutableLayer;
 import org.geotoolkit.sld.MutableLayerCoverageConstraints;
 import org.geotoolkit.sld.MutableLayerFeatureConstraints;
@@ -160,7 +160,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         }else{
             Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
             
-            for(org.geotoolkit.internal.jaxb.v110.sld.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
+            for(org.geotoolkit.sld.xml.v110.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
                 Name name = visitQName(aftc.getFeatureTypeName());
                 Filter filter = visitFilter(aftc.getFilter());
                 List<Extent> extents = visitExtents(aftc.getExtent());
@@ -181,7 +181,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         }else{
             Collection<CoverageConstraint> constraints = new ArrayList<CoverageConstraint>();
             
-            for(org.geotoolkit.internal.jaxb.v110.sld.CoverageConstraint aftc : ftc.getCoverageConstraint()){
+            for(org.geotoolkit.sld.xml.v110.CoverageConstraint aftc : ftc.getCoverageConstraint()){
                 String name = aftc.getCoverageName();
                 CoverageExtent extent = visitCoverageExtent(aftc.getCoverageExtent());
                 CoverageConstraint cons = sldFactory.createCoverageConstraint(name, extent);
@@ -195,13 +195,13 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD extents in a GT extents class.
      */
-    public List<Extent> visitExtents(List<org.geotoolkit.internal.jaxb.v110.sld.Extent> exts){
+    public List<Extent> visitExtents(List<org.geotoolkit.sld.xml.v110.Extent> exts){
         if(exts == null || exts.isEmpty()){
             return Collections.emptyList();
         }else{
             List<Extent> extents = new ArrayList<Extent>();
             
-            for(org.geotoolkit.internal.jaxb.v110.sld.Extent ex : exts){
+            for(org.geotoolkit.sld.xml.v110.Extent ex : exts){
                 extents.add(sldFactory.createExtent(ex.getName(), ex.getValue()));
             }
             
@@ -212,7 +212,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD extent in a GT extent class.
      */
-    public CoverageExtent visitCoverageExtent(org.geotoolkit.internal.jaxb.v110.sld.CoverageExtent coverageExtent) {
+    public CoverageExtent visitCoverageExtent(org.geotoolkit.sld.xml.v110.CoverageExtent coverageExtent) {
         if(coverageExtent == null){
             return null;
         }else{
@@ -232,13 +232,13 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD RangeAxis in a GT RangeAxis class.
      */
-    public List<RangeAxis> visitRangeAxis(List<org.geotoolkit.internal.jaxb.v110.sld.RangeAxis> ranges){
+    public List<RangeAxis> visitRangeAxis(List<org.geotoolkit.sld.xml.v110.RangeAxis> ranges){
         if(ranges == null || ranges.isEmpty()){
             return Collections.emptyList();
         }else{
             List<RangeAxis> axis = new ArrayList<RangeAxis>();
             
-            for(org.geotoolkit.internal.jaxb.v110.sld.RangeAxis axe : ranges){
+            for(org.geotoolkit.sld.xml.v110.RangeAxis axe : ranges){
                 axis.add( sldFactory.createRangeAxis(axe.getName(), axe.getValue()) );
             }
             
@@ -249,7 +249,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD remoteOWS in a GT remoteOWS class.
      */
-    public RemoteOWS visiteRemoteOWS(org.geotoolkit.internal.jaxb.v110.sld.RemoteOWS ows){
+    public RemoteOWS visiteRemoteOWS(org.geotoolkit.sld.xml.v110.RemoteOWS ows){
         if(ows == null){
             return null;
         }else{
@@ -280,14 +280,14 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             Collection<MutableLayerStyle> mStyles = new ArrayList<MutableLayerStyle>();
             
             for(Object obj : styles){
-                if(obj instanceof org.geotoolkit.internal.jaxb.v110.sld.NamedStyle){
-                    org.geotoolkit.internal.jaxb.v110.sld.NamedStyle ns = (org.geotoolkit.internal.jaxb.v110.sld.NamedStyle) obj;
+                if(obj instanceof org.geotoolkit.sld.xml.v110.NamedStyle){
+                    org.geotoolkit.sld.xml.v110.NamedStyle ns = (org.geotoolkit.sld.xml.v110.NamedStyle) obj;
                     MutableNamedStyle mns = sldFactory.createNamedStyle();
                     mns.setName(ns.getName());
                     mns.setDescription(visitDescription(ns.getDescription()));
                     mStyles.add(mns);
-                }else if(obj instanceof org.geotoolkit.internal.jaxb.v110.sld.UserStyle){
-                    org.geotoolkit.internal.jaxb.v110.sld.UserStyle us = (org.geotoolkit.internal.jaxb.v110.sld.UserStyle) obj;
+                }else if(obj instanceof org.geotoolkit.sld.xml.v110.UserStyle){
+                    org.geotoolkit.sld.xml.v110.UserStyle us = (org.geotoolkit.sld.xml.v110.UserStyle) obj;
                     //we call SE transformer for this part
                     mStyles.add(visitUserStyle(us));
                 }
@@ -307,7 +307,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         }else{
             Collection<MutableStyle> mStyles = new ArrayList<MutableStyle>();
             
-            for(org.geotoolkit.internal.jaxb.v110.sld.UserStyle us : styles){
+            for(org.geotoolkit.sld.xml.v110.UserStyle us : styles){
                 //we call SE transformer for this part
                 mStyles.add(visitUserStyle(us));
             }

@@ -16,11 +16,11 @@ import junit.framework.TestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.jaxb.v110.se.CoverageStyleType;
-import org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType;
-import org.geotoolkit.internal.jaxb.v110.se.ObjectFactory;
-import org.geotoolkit.internal.jaxb.v110.se.RuleType;
-import org.geotoolkit.internal.jaxb.v110.sld.UserStyle;
+import org.geotoolkit.se.xml.v110.CoverageStyleType;
+import org.geotoolkit.se.xml.v110.FeatureTypeStyleType;
+import org.geotoolkit.se.xml.v110.ObjectFactory;
+import org.geotoolkit.se.xml.v110.RuleType;
+import org.geotoolkit.sld.xml.v110.UserStyle;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -96,7 +96,7 @@ public class SEforSLD110Test extends TestCase{
     
     static{
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.v110.sld.StyledLayerDescriptor.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
             UNMARSHALLER = jaxbContext.createUnmarshaller();
             MARSHALLER = jaxbContext.createMarshaller();
             MARSHALLER.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
@@ -308,7 +308,7 @@ public class SEforSLD110Test extends TestCase{
         Object obj = unMarshall(FILE_SE_SYMBOL_POINT);
         assertNotNull(obj);
         
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType> jax = (JAXBElement<org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType>) obj;
+        JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType> jax = (JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType>) obj;
         PointSymbolizer pointSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(pointSymbol);
         
@@ -332,11 +332,11 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(mark.getFill().getColor().toString(), "#808080");
         
         //Write test
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType> pvt = TRANSFORMER_OGC.visit(pointSymbol,null);
+        JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType> pvt = TRANSFORMER_OGC.visit(pointSymbol,null);
         assertNotNull(pvt);
         
         assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
-        org.geotoolkit.internal.jaxb.v110.se.GraphicType gra = pvt.getValue().getGraphic();
+        org.geotoolkit.se.xml.v110.GraphicType gra = pvt.getValue().getGraphic();
         
         assertNotNull(gra.getOpacity());
         assertNotNull(gra.getRotation());
@@ -357,7 +357,7 @@ public class SEforSLD110Test extends TestCase{
         Object obj = unMarshall(FILE_SE_SYMBOL_LINE);
         assertNotNull(obj);
         
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType> jax = (JAXBElement<org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType>) obj;
+        JAXBElement<org.geotoolkit.se.xml.v110.LineSymbolizerType> jax = (JAXBElement<org.geotoolkit.se.xml.v110.LineSymbolizerType>) obj;
         LineSymbolizer lineSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(lineSymbol);
         
@@ -373,7 +373,7 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(lineSymbol.getStroke().getColor().toString(), "#FF0000");
                 
         //Write test
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType> pvt = TRANSFORMER_OGC.visit(lineSymbol,null);
+        JAXBElement<org.geotoolkit.se.xml.v110.LineSymbolizerType> pvt = TRANSFORMER_OGC.visit(lineSymbol,null);
         assertNotNull(pvt);
         
         assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
@@ -390,7 +390,7 @@ public class SEforSLD110Test extends TestCase{
         Object obj = unMarshall(FILE_SE_SYMBOL_POLYGON);
         assertNotNull(obj);
         
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType> jax = (JAXBElement<org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType>) obj;
+        JAXBElement<org.geotoolkit.se.xml.v110.PolygonSymbolizerType> jax = (JAXBElement<org.geotoolkit.se.xml.v110.PolygonSymbolizerType>) obj;
         PolygonSymbolizer polySymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(polySymbol);
         
@@ -409,7 +409,7 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(polySymbol.getFill().getColor().toString(), "#0000FF");
                 
         //Write test
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType> pvt = TRANSFORMER_OGC.visit(polySymbol,null);
+        JAXBElement<org.geotoolkit.se.xml.v110.PolygonSymbolizerType> pvt = TRANSFORMER_OGC.visit(polySymbol,null);
         assertNotNull(pvt);
         
         assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
@@ -427,7 +427,7 @@ public class SEforSLD110Test extends TestCase{
         Object obj = unMarshall(FILE_SE_SYMBOL_TEXT);
         assertNotNull(obj);
         
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType> jax = (JAXBElement<org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType>) obj;
+        JAXBElement<org.geotoolkit.se.xml.v110.TextSymbolizerType> jax = (JAXBElement<org.geotoolkit.se.xml.v110.TextSymbolizerType>) obj;
         TextSymbolizer textSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(textSymbol);
         
@@ -450,7 +450,7 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(textSymbol.getFont().getWeight().evaluate(null,String.class), "bold");
         
         //Write test
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType> pvt = TRANSFORMER_OGC.visit(textSymbol,null);
+        JAXBElement<org.geotoolkit.se.xml.v110.TextSymbolizerType> pvt = TRANSFORMER_OGC.visit(textSymbol,null);
         assertNotNull(pvt);
         
         assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent() , "");
@@ -467,7 +467,7 @@ public class SEforSLD110Test extends TestCase{
         Object obj = unMarshall(FILE_SE_SYMBOL_RASTER);
         assertNotNull(obj);
         
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType> jax = (JAXBElement<org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType>) obj;
+        JAXBElement<org.geotoolkit.se.xml.v110.RasterSymbolizerType> jax = (JAXBElement<org.geotoolkit.se.xml.v110.RasterSymbolizerType>) obj;
         RasterSymbolizer rasterSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(rasterSymbol);
         
@@ -500,10 +500,10 @@ public class SEforSLD110Test extends TestCase{
         
         
         //Write test
-        JAXBElement<org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType> pvt = TRANSFORMER_OGC.visit(rasterSymbol,null);
+        JAXBElement<org.geotoolkit.se.xml.v110.RasterSymbolizerType> pvt = TRANSFORMER_OGC.visit(rasterSymbol,null);
         assertNotNull(pvt);
         
-        org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType rs = pvt.getValue();
+        org.geotoolkit.se.xml.v110.RasterSymbolizerType rs = pvt.getValue();
         
         assertEquals(rs.getGeometry().getPropertyName().getContent() , "");
         

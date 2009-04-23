@@ -39,46 +39,46 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotools.feature.NameImpl;
-import org.geotoolkit.internal.jaxb.v110.se.AnchorPointType;
-import org.geotoolkit.internal.jaxb.v110.se.CategorizeType;
-import org.geotoolkit.internal.jaxb.v110.se.ChannelSelectionType;
-import org.geotoolkit.internal.jaxb.v110.se.ColorMapType;
-import org.geotoolkit.internal.jaxb.v110.se.ContrastEnhancementType;
-import org.geotoolkit.internal.jaxb.v110.se.CoverageStyleType;
-import org.geotoolkit.internal.jaxb.v110.se.DescriptionType;
-import org.geotoolkit.internal.jaxb.v110.se.DisplacementType;
-import org.geotoolkit.internal.jaxb.v110.se.ExternalGraphicType;
-import org.geotoolkit.internal.jaxb.v110.se.FeatureTypeStyleType;
-import org.geotoolkit.internal.jaxb.v110.se.FillType;
-import org.geotoolkit.internal.jaxb.v110.se.FontType;
-import org.geotoolkit.internal.jaxb.v110.se.GeometryType;
-import org.geotoolkit.internal.jaxb.v110.se.GraphicFillType;
-import org.geotoolkit.internal.jaxb.v110.se.GraphicStrokeType;
-import org.geotoolkit.internal.jaxb.v110.se.GraphicType;
-import org.geotoolkit.internal.jaxb.v110.se.HaloType;
-import org.geotoolkit.internal.jaxb.v110.se.ImageOutlineType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolateType;
-import org.geotoolkit.internal.jaxb.v110.se.InterpolationPointType;
-import org.geotoolkit.internal.jaxb.v110.se.LabelPlacementType;
-import org.geotoolkit.internal.jaxb.v110.se.LegendGraphicType;
-import org.geotoolkit.internal.jaxb.v110.se.LinePlacementType;
-import org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.MarkType;
-import org.geotoolkit.internal.jaxb.v110.se.MethodType;
-import org.geotoolkit.internal.jaxb.v110.se.ModeType;
-import org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType;
-import org.geotoolkit.internal.jaxb.v110.se.ParameterValueType;
-import org.geotoolkit.internal.jaxb.v110.se.PointPlacementType;
-import org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.RuleType;
-import org.geotoolkit.internal.jaxb.v110.se.ShadedReliefType;
-import org.geotoolkit.internal.jaxb.v110.se.StrokeType;
-import org.geotoolkit.internal.jaxb.v110.se.SvgParameterType;
-import org.geotoolkit.internal.jaxb.v110.se.SymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType;
-import org.geotoolkit.internal.jaxb.v110.se.ThreshholdsBelongToType;
+import org.geotoolkit.se.xml.v110.AnchorPointType;
+import org.geotoolkit.se.xml.v110.CategorizeType;
+import org.geotoolkit.se.xml.v110.ChannelSelectionType;
+import org.geotoolkit.se.xml.v110.ColorMapType;
+import org.geotoolkit.se.xml.v110.ContrastEnhancementType;
+import org.geotoolkit.se.xml.v110.CoverageStyleType;
+import org.geotoolkit.se.xml.v110.DescriptionType;
+import org.geotoolkit.se.xml.v110.DisplacementType;
+import org.geotoolkit.se.xml.v110.ExternalGraphicType;
+import org.geotoolkit.se.xml.v110.FeatureTypeStyleType;
+import org.geotoolkit.se.xml.v110.FillType;
+import org.geotoolkit.se.xml.v110.FontType;
+import org.geotoolkit.se.xml.v110.GeometryType;
+import org.geotoolkit.se.xml.v110.GraphicFillType;
+import org.geotoolkit.se.xml.v110.GraphicStrokeType;
+import org.geotoolkit.se.xml.v110.GraphicType;
+import org.geotoolkit.se.xml.v110.HaloType;
+import org.geotoolkit.se.xml.v110.ImageOutlineType;
+import org.geotoolkit.se.xml.v110.InterpolateType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
+import org.geotoolkit.se.xml.v110.LabelPlacementType;
+import org.geotoolkit.se.xml.v110.LegendGraphicType;
+import org.geotoolkit.se.xml.v110.LinePlacementType;
+import org.geotoolkit.se.xml.v110.LineSymbolizerType;
+import org.geotoolkit.se.xml.v110.MarkType;
+import org.geotoolkit.se.xml.v110.MethodType;
+import org.geotoolkit.se.xml.v110.ModeType;
+import org.geotoolkit.se.xml.v110.OnlineResourceType;
+import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.geotoolkit.se.xml.v110.PointPlacementType;
+import org.geotoolkit.se.xml.v110.PointSymbolizerType;
+import org.geotoolkit.se.xml.v110.PolygonSymbolizerType;
+import org.geotoolkit.se.xml.v110.RasterSymbolizerType;
+import org.geotoolkit.se.xml.v110.RuleType;
+import org.geotoolkit.se.xml.v110.ShadedReliefType;
+import org.geotoolkit.se.xml.v110.StrokeType;
+import org.geotoolkit.se.xml.v110.SvgParameterType;
+import org.geotoolkit.se.xml.v110.SymbolizerType;
+import org.geotoolkit.se.xml.v110.TextSymbolizerType;
+import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -167,7 +167,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
     }
 
-    public OnLineResource visitOnlineResource(final org.geotoolkit.internal.jaxb.v110.se.OnlineResourceType ort) {
+    public OnLineResource visitOnlineResource(final org.geotoolkit.se.xml.v110.OnlineResourceType ort) {
         URI uri = null;
         try {
             uri = new URI(ort.getHref());
@@ -235,7 +235,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 userstyle in GT style.
      */
-    public MutableStyle visitUserStyle(org.geotoolkit.internal.jaxb.v110.sld.UserStyle us) {
+    public MutableStyle visitUserStyle(org.geotoolkit.sld.xml.v110.UserStyle us) {
         if(us == null){
             return null;
         }else{
@@ -385,7 +385,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(org.geotoolkit.internal.jaxb.v110.se.RuleType rt) {
+    public MutableRule visitRule(org.geotoolkit.se.xml.v110.RuleType rt) {
 
         MutableRule rule = styleFactory.rule();
 
@@ -401,26 +401,26 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             
         }else{
             
-            for(JAXBElement<? extends org.geotoolkit.internal.jaxb.v110.se.SymbolizerType> jax : rt.getSymbolizer()) {
-                org.geotoolkit.internal.jaxb.v110.se.SymbolizerType st = jax.getValue();
+            for(JAXBElement<? extends org.geotoolkit.se.xml.v110.SymbolizerType> jax : rt.getSymbolizer()) {
+                org.geotoolkit.se.xml.v110.SymbolizerType st = jax.getValue();
 
                 if (st == null) {
                     continue;
                 }
-                if (st instanceof org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType) {
-                    org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType pst = (org.geotoolkit.internal.jaxb.v110.se.PointSymbolizerType) st;
+                if (st instanceof org.geotoolkit.se.xml.v110.PointSymbolizerType) {
+                    org.geotoolkit.se.xml.v110.PointSymbolizerType pst = (org.geotoolkit.se.xml.v110.PointSymbolizerType) st;
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType) {
-                    org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType pst = (org.geotoolkit.internal.jaxb.v110.se.LineSymbolizerType) st;
+                } else if (st instanceof org.geotoolkit.se.xml.v110.LineSymbolizerType) {
+                    org.geotoolkit.se.xml.v110.LineSymbolizerType pst = (org.geotoolkit.se.xml.v110.LineSymbolizerType) st;
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType) {
-                    org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType pst = (org.geotoolkit.internal.jaxb.v110.se.PolygonSymbolizerType) st;
+                } else if (st instanceof org.geotoolkit.se.xml.v110.PolygonSymbolizerType) {
+                    org.geotoolkit.se.xml.v110.PolygonSymbolizerType pst = (org.geotoolkit.se.xml.v110.PolygonSymbolizerType) st;
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType) {
-                    org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType pst = (org.geotoolkit.internal.jaxb.v110.se.TextSymbolizerType) st;
+                } else if (st instanceof org.geotoolkit.se.xml.v110.TextSymbolizerType) {
+                    org.geotoolkit.se.xml.v110.TextSymbolizerType pst = (org.geotoolkit.se.xml.v110.TextSymbolizerType) st;
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType) {
-                    org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType pst = (org.geotoolkit.internal.jaxb.v110.se.RasterSymbolizerType) st;
+                } else if (st instanceof org.geotoolkit.se.xml.v110.RasterSymbolizerType) {
+                    org.geotoolkit.se.xml.v110.RasterSymbolizerType pst = (org.geotoolkit.se.xml.v110.RasterSymbolizerType) st;
                     rule.symbolizers().add(visit(pst));
                 }
             }
@@ -920,7 +920,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 selected channel in GT selected channel.
      */
-    private SelectedChannelType visit(org.geotoolkit.internal.jaxb.v110.se.SelectedChannelType channel) {
+    private SelectedChannelType visit(org.geotoolkit.se.xml.v110.SelectedChannelType channel) {
         if(channel == null) return null;
         
         String name = channel.getSourceChannelName();
