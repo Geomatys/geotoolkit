@@ -96,6 +96,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-xml-citygml</module>
+    <module>geotk-xml-csw</module>
     <!--module>geotk-xml-ebrim</module-->
     <module>geotk-xml-gml</module>
     <module>geotk-xml-kml</module>

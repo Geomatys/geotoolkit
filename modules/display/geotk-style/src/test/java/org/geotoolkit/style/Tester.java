@@ -92,9 +92,14 @@ public class Tester {
 
     @Test
     public void marshalltests() {
-        
-        testSLDMarshall_V100( new File("sld_v100.xml") );
-        testSLDMarshall_V110( new File("sld_v110.xml") );
+
+        File sld100 = new File("sld_v100.xml");
+        File sld110 = new File("sld_v110.xml");
+        sld100.deleteOnExit();
+        sld110.deleteOnExit();
+
+        testSLDMarshall_V100( sld100 );
+        testSLDMarshall_V110( sld110 );
         
         try { testSLDUnMarshall_V100(new File(Tester.class.getResource("/org/geotoolkit/sample/SLD_v100.xml").toURI()));
         } catch (URISyntaxException ex) { ex.printStackTrace(); }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Configuration of "cstl-xml-csw" module from GeoToolkit project.
+  Version: $Id: pom.xml 1558 2009-04-22 16:25:53Z desruisseaux $
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>jaxb-xml-binding</artifactId>
+    <version>SNAPSHOT</version>
+  </parent>
+
+
+
+  <!--
+    Module description.
+  -->
+  <groupId>org.geotoolkit.pending</groupId>
+  <artifactId>geotk-xml-csw</artifactId>
+  <packaging>jar</packaging>
+  <name>Bindings for the Catalog Service for the Web schemas</name>
+  <description>
+    XML bindings for the geographic information metadata schemas used by the 
+    OGC Catalog Service for the Web (CSW).
+  </description>
+
+
+
+  <!--
+    Developers and contributors.
+  -->
+  <developers>
+    <developer>
+      <id>glegal</id>
+      <name>Guilhem Legal</name>
+      <email>guilhem.legal@geomatys.fr</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>desruisseaux</id>
+      <name>Martin Desruisseaux</name>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+
+
+  <!--
+    Required dependencies for building. These dependencies will be included
+    in the JARs' list that maven will put in the directory "target/binaries".
+  -->
+  <dependencies>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-ogc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-ows</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>
