@@ -24,9 +24,7 @@
  * @since 2.5
  * @module
  */
-@XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED,
-namespace = Namespaces.GCO,
-xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GCO, xmlns = {
     @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
     @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI)
@@ -34,9 +32,9 @@ xmlns = {
 @XmlAccessorType(XmlAccessType.NONE)
 package org.geotoolkit.internal.jaxb.text;
 
+import org.geotoolkit.xml.Namespaces;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.geotoolkit.xml.Namespaces;

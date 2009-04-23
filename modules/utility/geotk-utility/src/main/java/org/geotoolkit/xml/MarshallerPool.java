@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
 
 
 /**
@@ -60,7 +60,7 @@ public class MarshallerPool {
     /**
      * A configurable adapter.
      */
-    private final AnchoredStringAdapter anchors = new AnchoredStringAdapter();
+    private final AnchoredCharSequenceAdapter anchors = new AnchoredCharSequenceAdapter();
 
     /**
      * Adapters configured externally. This is mostly for handling extensions to metadata profile,
@@ -236,6 +236,7 @@ public class MarshallerPool {
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper", mapper);
         marshaller.setAdapter(anchors);
+        marshaller.setAdapter(anchors.string);
         marshaller.setAdapter(anchors.international);
         for (final RegisterableAdapter adapter : adapters) {
             adapter.register(marshaller);
@@ -252,6 +253,7 @@ public class MarshallerPool {
     protected Unmarshaller createUnmarshaller() throws JAXBException {
         final Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setAdapter(anchors);
+        unmarshaller.setAdapter(anchors.string);
         unmarshaller.setAdapter(anchors.international);
         for (final RegisterableAdapter adapter : adapters) {
             adapter.register(unmarshaller);

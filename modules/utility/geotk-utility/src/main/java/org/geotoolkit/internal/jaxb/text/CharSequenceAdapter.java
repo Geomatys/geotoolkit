@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.internal.jaxb.text;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 
@@ -30,26 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @since 3.0
  * @module
  */
-public final class CharSequenceAdapter extends XmlAdapter<CharSequenceAdapter, CharSequence> {
-    /**
-     * The text value.
-     */
-    @XmlElement(name = "CharacterString")
-    public String text;
-
+public class CharSequenceAdapter extends XmlAdapter<CharacterString, CharSequence> {
     /**
      * Empty constructor for JAXB only.
      */
     public CharSequenceAdapter() {
-    }
-
-    /**
-     * Builds an adapter for the given {@link CharSequence}.
-     *
-     * @param text The Character Sequence to marshall.
-     */
-    private CharSequenceAdapter(final CharSequence text) {
-        this.text = text.toString();
     }
 
     /**
@@ -60,11 +44,15 @@ public final class CharSequenceAdapter extends XmlAdapter<CharSequenceAdapter, C
      * @return A {@link CharSequence} which represents the metadata value.
      */
     @Override
-    public CharSequence unmarshal(final CharSequenceAdapter value) {
+    public final CharSequence unmarshal(final CharacterString value) {
         if (value == null) {
             return null;
         }
-        return value.text;
+        final Object text = value.text;
+        if (text == null || text instanceof CharSequence) {
+            return (CharSequence) text;
+        }
+        return text.toString();
     }
 
     /**
@@ -75,10 +63,7 @@ public final class CharSequenceAdapter extends XmlAdapter<CharSequenceAdapter, C
      * @return The adapter for this string.
      */
     @Override
-    public CharSequenceAdapter marshal(final CharSequence value) {
-        if (value == null) {
-            return null;
-        }
-        return new CharSequenceAdapter(value);
+    public CharacterString marshal(final CharSequence value) {
+        return (value != null) ? new CharacterString(value) : null;
     }
 }

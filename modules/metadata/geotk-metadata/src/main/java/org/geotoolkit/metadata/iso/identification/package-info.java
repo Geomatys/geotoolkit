@@ -36,9 +36,7 @@
  * @since 2.1
  * @module
  */
-@XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED,
-namespace=Namespaces.GMD,
-xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GMD, xmlns = {
     @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
     @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI)
@@ -83,9 +81,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
-import org.geotoolkit.internal.jaxb.uom.*;
-import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.primitive.*;
-import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.DateAdapter;
+import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
+import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.text.LocaleAdapter;

@@ -60,7 +60,7 @@ public final class FreeText extends CharacterString {
     public FreeText(final DefaultInternationalString text) {
         this.textGroup = new TextGroup(text);
         if (text != null) {
-            this.text = text.toString();
+            this.text = text;
         }
     }
 }

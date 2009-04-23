@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.internal.jaxb.text;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.HashMap;
-import org.geotoolkit.resources.Errors;
-
 
 /**
  * A {@link StringAdapter} which can substitute text by anchors. At the difference of most
@@ -29,14 +24,14 @@ import org.geotoolkit.resources.Errors;
  * labels and URNs, and the configured adapter must be given to the mashaller as below:
  *
  * {@preformat java
- *     AnchoredStringAdapter adapter = new AnchoredStringAdapter();
- *     adapter.addLinkage(...);
- *     marshaller.setAdapter(adapter);
+ *     marshaller.setAdapter(charSequenceAdapter.string);
  * }
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
+ *
+ * @see AnchoredCharSequenceAdapter
  *
  * @since 3.0
  * @module
@@ -45,37 +40,20 @@ public final class AnchoredStringAdapter extends StringAdapter {
     /**
      * Binds string labels with URNs.
      */
-    private final Map<String,URI> anchors = new HashMap<String,URI>();
+    private final AnchoredCharSequenceAdapter anchors;
 
     /**
-     * An adapter for {@link InternationalString} using the same anchors than this adapter.
+     * For JAXB compliance.
      */
-    public final AnchoredInternationalStringAdapter international =
-            new AnchoredInternationalStringAdapter(anchors);
-
-    /**
-     * Creates a unitialized adapter.
-     */
-    public AnchoredStringAdapter() {
+    private AnchoredStringAdapter() {
+        anchors = AnchoredCharSequenceAdapter.INSTANCE;
     }
 
     /**
-     * Adds a label associated to the given URN.
-     *
-     * @param  label The label associated to the URN.
-     * @param  linkage The URN.
-     * @throws IllegalStateException If a URN is already associated to the given linkage.
+     * Creates an adapter.
      */
-    public synchronized void addLinkage(final String label, final URI linkage)
-            throws IllegalStateException
-    {
-        final URI old;
-        synchronized (anchors) {
-            old = anchors.put(label, linkage);
-        }
-        if (old != null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, label));
-        }
+    AnchoredStringAdapter(final AnchoredCharSequenceAdapter anchors) {
+        this.anchors = anchors;
     }
 
     /**
@@ -87,16 +65,6 @@ public final class AnchoredStringAdapter extends StringAdapter {
      */
     @Override
     public CharacterString marshal(final String value) {
-        if (value == null) {
-            return null;
-        }
-        final URI href;
-        synchronized (anchors) {
-            href = anchors.get(value);
-        }
-        if (href != null) {
-            return new CharacterString(new AnchorType(href, value));
-        }
-        return new CharacterString(value);
+        return anchors.marshal(value);
     }
 }

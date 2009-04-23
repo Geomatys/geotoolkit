@@ -19,6 +19,8 @@
  */
 package org.geotoolkit.naming;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.util.TypeName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.MemberName;
@@ -34,6 +36,7 @@ import org.opengis.util.MemberName;
  * @since 3.0
  * @module
  */
+@XmlRootElement(name = "TypeName")
 public class DefaultTypeName extends DefaultLocalName implements TypeName {
     /**
      * Serial number for interoperability with different versions.

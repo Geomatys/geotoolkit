@@ -45,10 +45,7 @@ public class StringAdapter extends XmlAdapter<CharacterString, String> {
      */
     @Override
     public final String unmarshal(final CharacterString value) {
-        if (value == null) {
-            return null;
-        }
-        return value.toString();
+        return (value != null) ? value.toString() : null;
     }
 
     /**
@@ -60,9 +57,6 @@ public class StringAdapter extends XmlAdapter<CharacterString, String> {
      */
     @Override
     public CharacterString marshal(final String value) {
-        if (value == null) {
-            return null;
-        }
-        return new CharacterString(value);
+        return (value != null) ? new CharacterString(value) : null;
     }
 }

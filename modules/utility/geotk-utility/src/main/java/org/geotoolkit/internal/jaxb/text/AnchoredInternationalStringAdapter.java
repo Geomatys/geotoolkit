@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.internal.jaxb.text;
 
-import java.net.URI;
-import java.util.Map;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.jaxb.metadata.FreeText;
@@ -31,12 +29,14 @@ import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
  * labels and URNs, and the configured adapter must be given to the mashaller as below:
  *
  * {@preformat java
- *     marshaller.setAdapter(new AnchoredInternationalStringAdapter(bindings));
+ *     marshaller.setAdapter(charSequenceAdapter.international);
  * }
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
+ *
+ * @see AnchoredCharSequenceAdapter
  *
  * @since 3.0
  * @module
@@ -45,19 +45,19 @@ public final class AnchoredInternationalStringAdapter extends InternationalStrin
     /**
      * Binds string labels with URNs.
      */
-    private final Map<String,URI> anchors;
+    private final AnchoredCharSequenceAdapter anchors;
 
     /**
      * For JAXB compliance.
      */
     private AnchoredInternationalStringAdapter() {
-        anchors = null;
+        anchors = AnchoredCharSequenceAdapter.INSTANCE;
     }
 
     /**
-     * Creates a unitialized adapter.
+     * Creates an adapter.
      */
-    AnchoredInternationalStringAdapter(final Map<String,URI> anchors) {
+    AnchoredInternationalStringAdapter(final AnchoredCharSequenceAdapter anchors) {
         this.anchors = anchors;
     }
 
@@ -69,23 +69,10 @@ public final class AnchoredInternationalStringAdapter extends InternationalStrin
      * @return The adapter for the string.
      */
     @Override
-    public final CharacterString marshal(final InternationalString value) {
-        if (value != null) {
-            if (value instanceof DefaultInternationalString) {
-                return new FreeText((DefaultInternationalString) value);
-            }
-            final String text = value.toString();
-            if (text != null) {
-                final URI href;
-                synchronized (anchors) {
-                    href = anchors.get(text);
-                }
-                if (href != null) {
-                    return new CharacterString(new AnchorType(href, text));
-                }
-                return new CharacterString(text);
-            }
+    public CharacterString marshal(final InternationalString value) {
+        if (value instanceof DefaultInternationalString) {
+            return new FreeText((DefaultInternationalString) value);
         }
-        return null;
+        return anchors.marshal(value);
     }
 }

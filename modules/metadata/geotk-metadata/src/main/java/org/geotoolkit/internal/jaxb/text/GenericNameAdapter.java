@@ -19,11 +19,12 @@ package org.geotoolkit.internal.jaxb.text;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.opengis.util.TypeName;
+import org.opengis.util.LocalName;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.naming.AbstractName;
 import org.geotoolkit.naming.DefaultTypeName;
-import org.geotoolkit.naming.DefaultLocalName;
 import org.geotoolkit.naming.DefaultScopedName;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.xml.Namespaces;
@@ -79,9 +80,9 @@ public final class GenericNameAdapter extends XmlAdapter<GenericNameAdapter, Gen
      * @return The current name, or {@code null} if none.
      */
     @XmlElement(name = "LocalName", namespace = Namespaces.GCO)
-    public DefaultLocalName getLocalName() {
-        final AbstractName name = this.name;
-        return (name instanceof DefaultLocalName) ? (DefaultLocalName) name : null;
+    public String getLocalName() {
+        final Object name = this.name;
+        return (name instanceof LocalName) && !(name instanceof TypeName) ? name.toString() : null;
     }
 
     /**
@@ -91,9 +92,17 @@ public final class GenericNameAdapter extends XmlAdapter<GenericNameAdapter, Gen
      * @param name The new name.
      * @throws IllegalStateException If a name is already defined.
      */
-    public void setLocalName(final DefaultLocalName name) throws IllegalStateException {
+    public void setLocalName(final String name) throws IllegalStateException {
         ensureUndefined();
-        this.name = name;
+        if (name == null) {
+            this.name = null;
+        } else {
+            /*
+             * Following cast should be safe because the getNameFactory() method asked specifically
+             * for a DefaultNameFactory instance, which is known to create AbstractName instances.
+             */
+            this.name = (AbstractName) LocalNameAdapter.getNameFactory().createLocalName(null, name);
+        }
     }
 
     /**
@@ -104,7 +113,7 @@ public final class GenericNameAdapter extends XmlAdapter<GenericNameAdapter, Gen
      */
     @XmlElement(name = "ScopedName", namespace = Namespaces.GCO)
     public DefaultScopedName getScopedName() {
-        final AbstractName name = this.name;
+        final Object name = this.name;
         return (name instanceof DefaultScopedName) ? (DefaultScopedName) name : null;
     }
 
@@ -128,7 +137,7 @@ public final class GenericNameAdapter extends XmlAdapter<GenericNameAdapter, Gen
      */
     @XmlElement(name = "TypeName", namespace = Namespaces.GCO)
     public DefaultTypeName getTypeName() {
-        final AbstractName name = this.name;
+        final Object name = this.name;
         return (name instanceof DefaultTypeName) ? (DefaultTypeName) name : null;
     }
 

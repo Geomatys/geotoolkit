@@ -202,4 +202,59 @@ public final class StringUtilities {
         }
         return true;
     }
+
+    /**
+     * Returns the index of the first character after the given number of lines.
+     * This method counts the number of occurence of {@code '\n'}, {@code '\r'}
+     * or {@code "\r\n"}. When {@code numToSkip} occurences have been found, the
+     * index of the first character after the last occurence is returned.
+     *
+     * @param string    The string in which to skip a determined amount of lines.
+     * @param numToSkip The number of lines to skip. Can be positive, zero or negative.
+     * @param startAt   Index at which to start the search.
+     * @return Index of the first character after the last skipped line.
+     */
+    public static int skipLines(final CharSequence string, int numToSkip, int startAt) {
+        final int length = string.length();
+        /*
+         * Go backward if the number of lines is negative.
+         */
+        if (numToSkip < 0) {
+            do {
+                char c;
+                do {
+                    if (startAt == 0) {
+                        return startAt;
+                    }
+                    c = string.charAt(--startAt);
+                    if (c == '\n') {
+                        if (startAt != 0 && string.charAt(startAt - 1) == '\r') {
+                            --startAt;
+                        }
+                        break;
+                    }
+                } while (c != '\r');
+            } while (++numToSkip != 0);
+            numToSkip = 1; // For skipping the "end of line" characters.
+        }
+        /*
+         * Skips forward the given amount of lines.
+         */
+        while (--numToSkip >= 0) {
+            char c;
+            do {
+                if (startAt >= length) {
+                    return startAt;
+                }
+                c = string.charAt(startAt++);
+                if (c == '\r') {
+                    if (startAt != length && string.charAt(startAt) == '\n') {
+                        startAt++;
+                    }
+                    break;
+                }
+            } while (c != '\n');
+        }
+        return startAt;
+    }
 }

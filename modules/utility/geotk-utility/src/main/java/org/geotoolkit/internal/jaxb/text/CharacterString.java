@@ -37,9 +37,9 @@ import org.geotoolkit.internal.jaxb.metadata.FreeText;
 public class CharacterString {
     /**
      * The text or anchor value. It can only by an instance of
-     * {@link String} or {@link AnchorType}.
+     * {@link CharSequence} or {@link AnchorType}.
      */
-    protected CharSequence text;
+    protected Object text;
 
     /**
      * Empty constructor for JAXB only.
@@ -52,7 +52,7 @@ public class CharacterString {
      *
      * @param text The string to marshall.
      */
-    public CharacterString(final String text) {
+    public CharacterString(final CharSequence text) {
         this.text = text;
     }
 
@@ -70,10 +70,10 @@ public class CharacterString {
      *
      * @return The text, or {@code null}.
      */
-    @XmlElement(name = "CharacterString")
+    @XmlElement(name = "CharacterString", namespace = Namespaces.GCO)
     public final String getCharacterString() {
         final Object text = this.text;
-        return (text instanceof String) ? (String) text : null;
+        return (text instanceof CharSequence) ? text.toString() : null;
     }
 
     /**

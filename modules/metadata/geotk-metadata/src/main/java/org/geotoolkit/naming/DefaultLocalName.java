@@ -23,16 +23,17 @@ import java.util.List;
 import java.util.Collections;
 import java.io.ObjectStreamException;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
 import org.geotoolkit.xml.Namespaces;
 
 
@@ -45,6 +46,7 @@ import org.geotoolkit.xml.Namespaces;
  * @since 2.1
  * @module
  */
+@XmlRootElement(name = "LocalName")
 public class DefaultLocalName extends AbstractName implements LocalName {
     /**
      * Serial number for interoperability with different versions.
@@ -62,7 +64,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
     /**
      * The name, either as a {@link String} or an {@link InternationalString}.
      */
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
+    @XmlJavaTypeAdapter(AnchoredCharSequenceAdapter.class)
     @XmlElement(name = "aName", namespace = Namespaces.GCO)
     final CharSequence name;
 

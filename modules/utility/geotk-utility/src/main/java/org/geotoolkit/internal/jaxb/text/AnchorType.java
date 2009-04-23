@@ -36,7 +36,7 @@ import org.geotoolkit.xml.Namespaces;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(namespace = Namespaces.GMX)
-public final class AnchorType implements CharSequence {
+public final class AnchorType { // Should NOT implement CharSequence.
     /**
      * A URN.
      */
@@ -68,36 +68,8 @@ public final class AnchorType implements CharSequence {
     }
 
     /**
-     * Provided for compliance with the {@link CharSequence} contract,
-     * but not expected to be used.
-     */
-    @Override
-    public int length() {
-        final String value = this.value;
-        return (value != null) ? value.length() : 0;
-    }
-
-    /**
-     * Provided for compliance with the {@link CharSequence} contract,
-     * but not expected to be used.
-     */
-    @Override
-    public char charAt(final int index) {
-        return value.charAt(index);
-    }
-
-    /**
-     * Provided for compliance with the {@link CharSequence} contract,
-     * but not expected to be used.
-     */
-    @Override
-    public CharSequence subSequence(final int start, final int end) {
-        return value.subSequence(start, end);
-    }
-
-    /**
      * Returns the text as a string, or {@code null} if none.
-     * The null value is expected by {@link TextAdapter#toString()}.
+     * The null value is expected by {@link CharacterString#toString()}.
      */
     @Override
     public String toString() {

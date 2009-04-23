@@ -18,10 +18,11 @@ package org.geotoolkit.internal.jaxb.text;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.opengis.util.LocalName;
 import org.opengis.util.NameFactory;
+
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.naming.DefaultLocalName;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.internal.FactoryUtilities;
 
@@ -37,7 +38,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * @since 2.5
  * @module
  */
-public final class LocalNameAdapter extends XmlAdapter<String,DefaultLocalName> {
+public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
     /**
      * The factory to use for creating names.
      * Will be created only if needed.
@@ -61,14 +62,14 @@ public final class LocalNameAdapter extends XmlAdapter<String,DefaultLocalName> 
     }
 
     /**
-     * Does the link between a {@link DefaultLocalName} and the string associated.
+     * Does the link between a {@link LocalName} and the string associated.
      * JAXB calls automatically this method at marshalling-time.
      *
      * @param value The implementing class for this metadata value.
      * @return A {@link String} which represents the metadata value.
      */
     @Override
-    public String marshal(final DefaultLocalName value) {
+    public String marshal(final LocalName value) {
         return (value == null) ? null : value.toInternationalString().toString(null);
     }
 
@@ -80,7 +81,7 @@ public final class LocalNameAdapter extends XmlAdapter<String,DefaultLocalName> 
      * @return The implementing class for this string.
      */
     @Override
-    public DefaultLocalName unmarshal(final String value) {
+    public LocalName unmarshal(final String value) {
         if (value == null) {
             return null;
         }
@@ -89,10 +90,6 @@ public final class LocalNameAdapter extends XmlAdapter<String,DefaultLocalName> 
             // No need to synchronize. This is not a big deal if the factory is fetched twice.
             this.factory = factory = getNameFactory();
         }
-        /*
-         * Following cast should be safe because the getNameFactory() method asked specifically
-         * for a DefaultNameFactory instance, which is known to create DefaultLocalName instances.
-         */
-        return (DefaultLocalName) factory.createLocalName(null, value);
+        return factory.createLocalName(null, value);
     }
 }

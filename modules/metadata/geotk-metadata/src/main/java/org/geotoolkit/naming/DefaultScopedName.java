@@ -22,6 +22,8 @@ package org.geotoolkit.naming;
 import java.util.List;
 import java.util.Iterator;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -29,7 +31,9 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.jaxb.text.LocalNameAdapter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
@@ -42,6 +46,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @since 2.1
  * @module
  */
+@XmlRootElement(name = "ScopedName")
 public class DefaultScopedName extends AbstractName implements ScopedName {
     /**
      * Serial number for interoperability with different versions.
@@ -282,7 +287,8 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
      * Returns the sequence of local name for this {@linkplain GenericName generic name}.
      */
     @Override
-    @XmlElement(name = "parsedName", required = true)
+    @XmlJavaTypeAdapter(LocalNameAdapter.class) // Seems required in order to avoid random failures.
+    @XmlElement(name = "parsedName", namespace = Namespaces.GCO, required = true)
     public List<? extends LocalName> getParsedNames() {
         return parsedNames;
     }
