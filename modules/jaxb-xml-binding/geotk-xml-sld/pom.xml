@@ -66,14 +66,5 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
     <dependencies>
-        <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-style</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gtm-main</artifactId>
-        </dependency>
     </dependencies>
 </project>

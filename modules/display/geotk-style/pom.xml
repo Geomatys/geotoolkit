@@ -49,7 +49,17 @@
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-metadata</artifactId>
-          <version>SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-xml-sld</artifactId>
+          <version>${geotoolkit.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gtm-main</artifactId>
+          <version>${geomodified.version}</version>
       </dependency>
   </dependencies>
             
