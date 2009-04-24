@@ -17,4 +17,4 @@
  */
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/cat/wrs/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.geotoolkit.cat.xml.wrs.v100;
+package org.geotoolkit.wrs.xml.v100;

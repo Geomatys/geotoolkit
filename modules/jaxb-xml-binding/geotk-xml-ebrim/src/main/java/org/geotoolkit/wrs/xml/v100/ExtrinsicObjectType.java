@@ -16,7 +16,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.cat.xml.wrs.v100;
+package org.geotoolkit.wrs.xml.v100;
 
 import javax.activation.DataHandler;
 import javax.xml.bind.annotation.XmlAccessType;

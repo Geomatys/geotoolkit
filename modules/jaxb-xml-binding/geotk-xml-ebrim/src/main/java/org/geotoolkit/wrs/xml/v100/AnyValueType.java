@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.cat.xml.wrs.v100;
+package org.geotoolkit.wrs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;

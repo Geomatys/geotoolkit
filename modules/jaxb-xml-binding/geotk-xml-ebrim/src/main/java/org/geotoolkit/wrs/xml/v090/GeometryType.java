@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.cat.xml.wrs.v090;
+package org.geotoolkit.wrs.xml.v090;
 
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;

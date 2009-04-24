@@ -17,7 +17,7 @@
  */
 
 
-package org.geotoolkit.cat.xml.wrs.v100;
+package org.geotoolkit.wrs.xml.v100;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

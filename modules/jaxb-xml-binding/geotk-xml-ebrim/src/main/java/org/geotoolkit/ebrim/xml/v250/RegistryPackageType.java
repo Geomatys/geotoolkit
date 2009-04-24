@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.cat.xml.wrs.v090.ApplicationModuleType;
+import org.geotoolkit.wrs.xml.v090.ApplicationModuleType;
 
 
 /**

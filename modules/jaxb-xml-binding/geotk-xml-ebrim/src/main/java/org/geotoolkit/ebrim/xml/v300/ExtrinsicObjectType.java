@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "contentVersionInfo"
 })
 @XmlSeeAlso({
-    org.geotoolkit.cat.xml.wrs.v100.ExtrinsicObjectType.class
+    org.geotoolkit.wrs.xml.v100.ExtrinsicObjectType.class
 })
 @XmlRootElement(name = "ExtrinsicObject")
 public class ExtrinsicObjectType extends RegistryObjectType {

@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "value"
 })
 @XmlSeeAlso({
-    org.geotoolkit.cat.xml.wrs.v100.ValueListType.class
+    org.geotoolkit.wrs.xml.v100.ValueListType.class
 })
 public class ValueListType {
 
