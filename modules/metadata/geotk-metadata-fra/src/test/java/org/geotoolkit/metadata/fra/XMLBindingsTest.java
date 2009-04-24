@@ -19,14 +19,11 @@ package org.geotoolkit.metadata.fra;
 import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.io.BufferedReader;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
+import org.geotoolkit.xml.XML;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -47,50 +44,9 @@ import static org.geotoolkit.test.Commons.*;
  */
 public final class XMLBindingsTest {
     /**
-     * Pool of marshallers/unmarshallers.
-     */
-    private static MarshallerPool pool;
-
-    /**
-     * Unmarshaller for a {@link DefaultMetaData} object.
-     */
-    private Unmarshaller unmarshaller;
-
-    /**
-     * Marshaller for a {@link DefaultMetaData} object.
-     */
-    private Marshaller marshaller;
-
-    /**
      * An XML file representing a reference system tree.
      */
     private static final String RESOURCE_FILE = "DirectReferenceSystem.xml";
-
-    /**
-     * Instanciates the {@link MarshallerPool} with the classes whished.
-     *
-     * @throws JAXBException if the creation of the {@link MarshallerPool} fails.
-     */
-    @BeforeClass
-    public static void setupPool() throws JAXBException {
-        pool = new MarshallerPool("", DefaultMetaData.class);
-    }
-
-    /**
-     * Releases some marshaller/unmarshaller that might have not already been returned to the
-     * pool.
-     */
-    @After
-    public void releaseMarshallers() {
-        if (marshaller != null) {
-            pool.release(marshaller);
-            marshaller = null;
-        }
-        if (unmarshaller != null) {
-            pool.release(unmarshaller);
-            unmarshaller = null;
-        }
-    }
 
     /**
      * Skips the two first lines, because the xlmns are not always in the same order.
@@ -113,10 +69,6 @@ public final class XMLBindingsTest {
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
         metadata.setReferenceSystemInfo(Arrays.asList(refSys));
 
-        final StringWriter sw = new StringWriter();
-        marshaller = pool.acquireMarshaller();
-        marshaller.marshal(metadata, sw);
-
         final BufferedReader in = TestData.openReader(this, RESOURCE_FILE);
         final StringBuilder out = new StringBuilder();
         String line;
@@ -126,7 +78,7 @@ public final class XMLBindingsTest {
         in.close();
 
         String expected = out.toString();
-        String actual   = sw.toString();
+        String actual = XML.marshal(metadata);
         expected = skipHeader(expected);
         actual   = skipHeader(actual);
 
@@ -143,8 +95,7 @@ public final class XMLBindingsTest {
     @Test
     public void UnmarshallingTest() throws JAXBException, IOException {
         final InputStream in = TestData.openStream(this, RESOURCE_FILE);
-        unmarshaller = pool.acquireUnmarshaller();
-        final DefaultMetaData result = (DefaultMetaData) unmarshaller.unmarshal(in);
+        final DefaultMetaData result = (DefaultMetaData) XML.unmarshal(in);
         in.close();
 
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(

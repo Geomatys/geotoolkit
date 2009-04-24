@@ -18,12 +18,15 @@ package org.geotoolkit.xml;
 
 import java.net.URI;
 import java.util.Deque;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ServiceLoader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import org.geotoolkit.internal.jaxb.RegisterableTypes;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
 
@@ -48,6 +51,18 @@ public class MarshallerPool {
     private static final int CAPACITY = 16;
 
     /**
+     * Root objects to be marshalled. They are the objects to be given by default to the
+     * {@link JAXBContext}, if no classes were explicitly given.
+     */
+    private static final ServiceLoader<RegisterableTypes> TYPES = ServiceLoader.load(RegisterableTypes.class);
+
+    /**
+     * Adapters configured externally. This is mostly for handling extensions to metadata profile,
+     * like the {@code FRA} extension for France (provided in the {@code geotk-metadata-fra} module).
+     */
+    private static final ServiceLoader<RegisterableAdapter> ADAPTERS = ServiceLoader.load(RegisterableAdapter.class);
+
+    /**
      * The JAXB context to use for creating marshaller and unmarshaller.
      */
     private final JAXBContext context;
@@ -68,12 +83,6 @@ public class MarshallerPool {
     private final AnchoredCharSequenceAdapter anchors = new AnchoredCharSequenceAdapter();
 
     /**
-     * Adapters configured externally. This is mostly for handling extensions to metadata profile,
-     * like the {@code FRA} extension for France (provided in the {@code geotk-metadata-fra} module).
-     */
-    private final ServiceLoader<RegisterableAdapter> adapters = ServiceLoader.load(RegisterableAdapter.class);
-
-    /**
      * The pool of marshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
@@ -84,6 +93,24 @@ public class MarshallerPool {
      * and will be filled with elements as needed.
      */
     private final Deque<Unmarshaller> unmarshallers = new LinkedList<Unmarshaller>();
+
+    /**
+     * Returns the classes of the root Geotoolkit objects to be marshalled by default.
+     * Those classes can be given as the last argument to the {@code MarshallerPool}
+     * constructors, in order to bound a default set of classes with {@link JAXBContext}.
+     * <p>
+     * The list of classes is determined dynamically from the Geotoolkit modules found on
+     * the classpath.
+     *
+     * @return The default set of classes to be bound to the {@code JAXBContext}.
+     */
+    public static Class<?>[] defaultClassesToBeBound() {
+        final ArrayList<Class<?>> types = new ArrayList<Class<?>>();
+        for (final RegisterableTypes t : TYPES) {
+            t.getTypes(types);
+        }
+        return types.toArray(new Class<?>[types.size()]);
+    }
 
     /**
      * Creates a new factory for the given class to be bound, with a default empty namespace.
@@ -279,7 +306,7 @@ public class MarshallerPool {
         marshaller.setAdapter(anchors);
         marshaller.setAdapter(anchors.string);
         marshaller.setAdapter(anchors.international);
-        for (final RegisterableAdapter adapter : adapters) {
+        for (final RegisterableAdapter adapter : ADAPTERS) {
             adapter.register(marshaller);
         }
         return marshaller;
@@ -296,7 +323,7 @@ public class MarshallerPool {
         unmarshaller.setAdapter(anchors);
         unmarshaller.setAdapter(anchors.string);
         unmarshaller.setAdapter(anchors.international);
-        for (final RegisterableAdapter adapter : adapters) {
+        for (final RegisterableAdapter adapter : ADAPTERS) {
             adapter.register(unmarshaller);
         }
         return unmarshaller;
