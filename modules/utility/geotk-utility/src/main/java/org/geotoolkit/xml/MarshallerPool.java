@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.jaxb.RegisterableTypes;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
@@ -68,14 +69,16 @@ public class MarshallerPool {
     private final JAXBContext context;
 
     /**
+     * {@code true} if the JAXB implementation is the one bundled in JDK 6,
+     * or {@code false} if this is an external implementation like a JAR put
+     * in the endorsed directory.
+     */
+    private final boolean internal;
+
+    /**
      * The mapper between namespaces and prefix.
      */
     private final Object mapper;
-
-    /**
-     * The key to use for setting the {@linkplain #mapper} in a unmarshaller.
-     */
-    private final String mapperKey;
 
     /**
      * A configurable adapter.
@@ -174,13 +177,11 @@ public class MarshallerPool {
          *   JAXB endorsed JAR uses    "com.sun.xml.bind"
          *   JAXB bundled in JDK uses  "com.sun.xml.internal.bind"
          */
-        String key  = "com.sun.xml.bind.namespacePrefixMapper";
+        internal = !context.getClass().getName().startsWith("com.sun.xml.bind");
         String type = "org.geotoolkit.xml.OGCNamespacePrefixMapper_Endorsed";
-        if (!context.getClass().getName().startsWith("com.sun.xml.bind")) {
-            key  = "com.sun.xml.internal.bind.namespacePrefixMapper";
+        if (internal) {
             type = type.substring(0, type.lastIndexOf('_'));
         }
-        mapperKey = key;
         /*
          * Instantiates the OGCNamespacePrefixMapper appropriate for the implementation
          * we just detected.
@@ -209,6 +210,14 @@ public class MarshallerPool {
      * Marks the given marshaller or unmarshaller available for further reuse.
      */
     private static <T> void release(final Deque<T> queue, final T marshaller) {
+        try {
+            ((Pooled) marshaller).reset();
+        } catch (JAXBException exception) {
+            // Not expected to happen because the we are supposed
+            // to reset the properties to their initial values.
+            Logging.unexpectedException(MarshallerPool.class, "release", exception);
+            return;
+        }
         synchronized (queue) {
             queue.addLast(marshaller);
             while (queue.size() > CAPACITY) {
@@ -241,6 +250,7 @@ public class MarshallerPool {
         Marshaller marshaller = acquire(marshallers);
         if (marshaller == null) {
             marshaller = createMarshaller();
+            marshaller = new PooledMarshaller(marshaller, internal);
         }
         return marshaller;
     }
@@ -268,6 +278,7 @@ public class MarshallerPool {
         Unmarshaller unmarshaller = acquire(unmarshallers);
         if (unmarshaller == null) {
             unmarshaller = createUnmarshaller();
+            unmarshaller = new PooledUnmarshaller(unmarshaller, internal);
         }
         return unmarshaller;
     }
@@ -299,6 +310,9 @@ public class MarshallerPool {
      * @throws JAXBException If an error occured while creating and configuring the marshaller.
      */
     protected Marshaller createMarshaller() throws JAXBException {
+        final String mapperKey = internal ?
+            "com.sun.xml.internal.bind.namespacePrefixMapper" :
+            "com.sun.xml.bind.namespacePrefixMapper";
         final Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
