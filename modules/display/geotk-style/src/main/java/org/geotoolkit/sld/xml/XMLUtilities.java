@@ -80,8 +80,8 @@ public final class XMLUtilities {
     private final org.geotoolkit.sld.xml.v100.ObjectFactory factory_sld_100 = new org.geotoolkit.sld.xml.v100.ObjectFactory();
     private final org.geotoolkit.sld.xml.v110.ObjectFactory factory_sld_110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
     private final org.geotoolkit.se.xml.v110.ObjectFactory factory_se_110 = new org.geotoolkit.se.xml.v110.ObjectFactory();
-    private final org.geotoolkit.internal.jaxb.v100.ogc.ObjectFactory factory_ogc_100 = new org.geotoolkit.internal.jaxb.v100.ogc.ObjectFactory();
-    private final org.geotoolkit.internal.jaxb.v110.ogc.ObjectFactory factory_ogc_110 = new org.geotoolkit.internal.jaxb.v110.ogc.ObjectFactory();
+    private final org.geotoolkit.ogc.xml.v100.ObjectFactory factory_ogc_100 = new org.geotoolkit.ogc.xml.v100.ObjectFactory();
+    private final org.geotoolkit.ogc.xml.v110modified.ObjectFactory factory_ogc_110 = new org.geotoolkit.ogc.xml.v110modified.ObjectFactory();
     
     private SLD100toGTTransformer TRANSFORMER_GT_V100 = null;
     private SLD110toGTTransformer TRANSFORMER_GT_V110 = null;
@@ -561,21 +561,21 @@ public final class XMLUtilities {
         switch(version){
             case V_1_0_0 :
                 obj = unmarshallV100(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v100.ogc.FilterType){
-                    return TRANSFORMER_GT_V100.visitFilter( (org.geotoolkit.internal.jaxb.v100.ogc.FilterType) obj);
+                if(obj instanceof org.geotoolkit.ogc.xml.v100.FilterType){
+                    return TRANSFORMER_GT_V100.visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) obj);
                 }else if(obj instanceof JAXBElement<?> && 
-                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.internal.jaxb.v100.ogc.FilterType){
-                    return TRANSFORMER_GT_V100.visitFilter( (org.geotoolkit.internal.jaxb.v100.ogc.FilterType) ((JAXBElement<?>)obj).getValue() );
+                        ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.ogc.xml.v100.FilterType){
+                    return TRANSFORMER_GT_V100.visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC Filter v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if(obj instanceof org.geotoolkit.internal.jaxb.v110.ogc.FilterType){
-                    return TRANSFORMER_GT_V110.visitFilter( (org.geotoolkit.internal.jaxb.v110.ogc.FilterType) obj);
+                if(obj instanceof org.geotoolkit.ogc.xml.v110modified.FilterType){
+                    return TRANSFORMER_GT_V110.visitFilter( (org.geotoolkit.ogc.xml.v110modified.FilterType) obj);
                 }else if(obj instanceof JAXBElement<?> && 
-                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.internal.jaxb.v110.ogc.FilterType){
-                    return TRANSFORMER_GT_V110.visitFilter( (org.geotoolkit.internal.jaxb.v110.ogc.FilterType) ((JAXBElement<?>)obj).getValue() );
+                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.ogc.xml.v110modified.FilterType){
+                    return TRANSFORMER_GT_V110.visitFilter( (org.geotoolkit.ogc.xml.v110modified.FilterType) ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC Filter v1.1.0");
                 }
@@ -602,16 +602,16 @@ public final class XMLUtilities {
             case V_1_0_0 :
                 if (TRANSFORMER_XML_V100 == null) TRANSFORMER_XML_V100 = new GTtoSLD100Transformer();
                 jax = TRANSFORMER_XML_V100.visit(filter);
-                if(jax instanceof org.geotoolkit.internal.jaxb.v100.ogc.FilterType){
-                    jax = factory_ogc_100.createFilter( (org.geotoolkit.internal.jaxb.v100.ogc.FilterType) jax);
+                if(jax instanceof org.geotoolkit.ogc.xml.v100.FilterType){
+                    jax = factory_ogc_100.createFilter( (org.geotoolkit.ogc.xml.v100.FilterType) jax);
                 }
                 marshallV100(target, jax, OGC_NAMESPACE);
                 break;
             case V_1_1_0 :
                 if (TRANSFORMER_XML_V110 == null) TRANSFORMER_XML_V110 = new GTtoSLD110Transformer();
                 jax = TRANSFORMER_XML_V110.visit(filter);
-                if(jax instanceof org.geotoolkit.internal.jaxb.v110.ogc.FilterType){
-                    jax = factory_ogc_110.createFilter( (org.geotoolkit.internal.jaxb.v110.ogc.FilterType) jax);
+                if(jax instanceof org.geotoolkit.ogc.xml.v110modified.FilterType){
+                    jax = factory_ogc_110.createFilter( (org.geotoolkit.ogc.xml.v110modified.FilterType) jax);
                 }
                 marshallV110(target,jax,OGC_NAMESPACE);
                 break;

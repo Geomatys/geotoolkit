@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractCoordinateOperationType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.v311modified.AbstractCoordinateOperationType;
+import org.geotoolkit.gml.xml.v311modified.PolygonType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 
 /**

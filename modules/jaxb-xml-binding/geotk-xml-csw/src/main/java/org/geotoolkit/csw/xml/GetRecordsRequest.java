@@ -18,7 +18,7 @@ package org.geotoolkit.csw.xml;
 
 import java.util.List;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110modified.FilterType;
 
 
 /**

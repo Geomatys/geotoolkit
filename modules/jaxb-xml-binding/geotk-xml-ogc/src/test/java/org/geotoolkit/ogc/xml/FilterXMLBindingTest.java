@@ -17,11 +17,11 @@
 package org.geotoolkit.ogc.xml;
 
 // J2SE dependencies
-import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.ogc.xml.v110.OverlapsType;
-import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110modified.FilterType;
+import org.geotoolkit.ogc.xml.v110modified.OverlapsType;
+import org.geotoolkit.ogc.xml.v110modified.PropertyNameType;
 import org.geotoolkit.ogc.*;
-import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.logging.Logger;
@@ -35,8 +35,8 @@ import javax.xml.bind.Unmarshaller;
 // Constellation dependencies
 
 //Junit dependencies
-import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
+import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -57,8 +57,8 @@ public class FilterXMLBindingTest {
     @Before
     public void setUp() throws JAXBException {
         pool = new MarshallerPool(
-                "org.geotoolkit.ogc.xml.v110:" +
-                "org.geotoolkit.gml.xml.v311");
+                "org.geotoolkit.ogc.xml.v110modified:" +
+                "org.geotoolkit.gml.xml.v311modified");
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }

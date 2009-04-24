@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110.ExpressionType;
+import org.geotoolkit.ogc.xml.v110modified.ExpressionType;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 

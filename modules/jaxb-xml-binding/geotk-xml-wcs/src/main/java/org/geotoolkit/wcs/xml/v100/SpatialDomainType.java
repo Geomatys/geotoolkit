@@ -25,10 +25,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
-import org.geotoolkit.gml.xml.v311.GridType;
-import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.gml.xml.v311modified.PolygonType;
+import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311modified.GridType;
+import org.geotoolkit.gml.xml.v311modified.ObjectFactory;
 
 /**
  * Definition of the spatial domain of a coverage. 

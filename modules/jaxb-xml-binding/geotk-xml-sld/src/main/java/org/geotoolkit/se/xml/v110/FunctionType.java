@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110.ExpressionType;
+import org.geotoolkit.ogc.xml.v110modified.ExpressionType;
 
 
 /**

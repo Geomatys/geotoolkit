@@ -27,22 +27,22 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import org.geotoolkit.internal.jaxb.v100.ogc.BinaryComparisonOpType;
-import org.geotoolkit.internal.jaxb.v100.ogc.BinaryLogicOpType;
-import org.geotoolkit.internal.jaxb.v100.ogc.BinaryOperatorType;
-import org.geotoolkit.internal.jaxb.v100.ogc.ComparisonOpsType;
-import org.geotoolkit.internal.jaxb.v100.ogc.FilterType;
-import org.geotoolkit.internal.jaxb.v100.ogc.FunctionType;
-import org.geotoolkit.internal.jaxb.v100.ogc.LiteralType;
-import org.geotoolkit.internal.jaxb.v100.ogc.LogicOpsType;
-import org.geotoolkit.internal.jaxb.v100.ogc.LowerBoundaryType;
-import org.geotoolkit.internal.jaxb.v100.ogc.PropertyIsBetweenType;
-import org.geotoolkit.internal.jaxb.v100.ogc.PropertyIsLikeType;
-import org.geotoolkit.internal.jaxb.v100.ogc.PropertyIsNullType;
-import org.geotoolkit.internal.jaxb.v100.ogc.PropertyNameType;
-import org.geotoolkit.internal.jaxb.v100.ogc.SpatialOpsType;
-import org.geotoolkit.internal.jaxb.v100.ogc.UnaryLogicOpType;
-import org.geotoolkit.internal.jaxb.v100.ogc.UpperBoundaryType;
+import org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType;
+import org.geotoolkit.ogc.xml.v100.BinaryLogicOpType;
+import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
+import org.geotoolkit.ogc.xml.v100.ComparisonOpsType;
+import org.geotoolkit.ogc.xml.v100.FilterType;
+import org.geotoolkit.ogc.xml.v100.FunctionType;
+import org.geotoolkit.ogc.xml.v100.LiteralType;
+import org.geotoolkit.ogc.xml.v100.LogicOpsType;
+import org.geotoolkit.ogc.xml.v100.LowerBoundaryType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsNullType;
+import org.geotoolkit.ogc.xml.v100.PropertyNameType;
+import org.geotoolkit.ogc.xml.v100.SpatialOpsType;
+import org.geotoolkit.ogc.xml.v100.UnaryLogicOpType;
+import org.geotoolkit.ogc.xml.v100.UpperBoundaryType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.Geometry;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
@@ -139,11 +139,11 @@ public class GTtoSE100Transformer implements StyleVisitor{
     private static final String VERSION = "1.0.0";
     
     private final org.geotoolkit.sld.xml.v100.ObjectFactory sld_factory_v100;
-    private final org.geotoolkit.internal.jaxb.v100.ogc.ObjectFactory ogc_factory;
+    private final org.geotoolkit.ogc.xml.v100.ObjectFactory ogc_factory;
     
     public GTtoSE100Transformer(){
         this.sld_factory_v100 = new org.geotoolkit.sld.xml.v100.ObjectFactory();
-        this.ogc_factory = new org.geotoolkit.internal.jaxb.v100.ogc.ObjectFactory();
+        this.ogc_factory = new org.geotoolkit.ogc.xml.v100.ObjectFactory();
     }
 
     /**
