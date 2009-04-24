@@ -15,8 +15,10 @@
  *    Lesser General Public License for more details.
  */
 
-package org.constellation.observation;
+package org.geotoolkit.observation;
 
+import org.geotoolkit.observation.xml.v100.ProcessEntry;
+import org.geotoolkit.observation.xml.v100.ObservationEntry;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -27,10 +29,10 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
 import org.geotoolkit.gml.xml.v311modified.PointType;
 import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
-import org.constellation.sampling.SamplingPointEntry;
+import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
 
 //Junit dependencies
-import org.constellation.swe.v101.PhenomenonEntry;
+import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -46,7 +48,10 @@ public class ObservationXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.constellation.sampling:org.constellation.observation:org.geotoolkit.gml.xml.v311modified");
+        pool = new MarshallerPool(
+                "org.geotoolkit.sampling.xml.v100:" +
+                "org.geotoolkit.observation.xml.v100:" +
+                "org.geotoolkit.gml.xml.v311modified");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

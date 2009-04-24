@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.constellation.sampling;
+package org.geotoolkit.sampling;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,6 +29,7 @@ import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
 import org.geotoolkit.gml.xml.v311modified.PointType;
 
 //Junit dependencies
+import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -46,7 +47,10 @@ public class SamplingXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.constellation.sampling:org.constellation.observation:org.geotoolkit.gml.xml.v311modified");
+        pool = new MarshallerPool(
+                "org.geotoolkit.sampling.xml.v100:" +
+                "org.geotoolkit.observation.xml.v100:" +
+                "org.geotoolkit.gml.xml.v311modified");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

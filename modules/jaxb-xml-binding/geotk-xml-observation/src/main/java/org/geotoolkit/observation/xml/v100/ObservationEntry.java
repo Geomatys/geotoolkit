@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.constellation.observation;
+package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
 import java.util.logging.Logger;
@@ -33,14 +33,14 @@ import org.geotoolkit.gml.xml.v311modified.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311modified.ReferenceEntry;
 import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
 import org.geotoolkit.gml.xml.v311modified.TimePositionType;
-import org.constellation.sampling.SamplingFeatureEntry;
-import org.constellation.sampling.SamplingPointEntry;
-import org.constellation.swe.xml.v101.AnyResultEntry;
-import org.constellation.swe.xml.v101.DataArrayEntry;
-import org.constellation.swe.xml.v101.DataArrayPropertyType;
-import org.constellation.swe.xml.v101.PhenomenonEntry;
-import org.constellation.swe.xml.v101.PhenomenonPropertyType;
-import org.constellation.swe.xml.v101.TimeGeometricPrimitivePropertyType;
+import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
+import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
+import org.geotoolkit.swe.xml.v101.AnyResultEntry;
+import org.geotoolkit.swe.xml.v101.DataArrayEntry;
+import org.geotoolkit.swe.xml.v101.DataArrayPropertyType;
+import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
+import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
+import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 
 // openGis dependencies
 import org.opengis.observation.Process;
@@ -83,7 +83,7 @@ public class ObservationEntry implements Observation {
     private static final long serialVersionUID = 3269639171560208276L;
 
     @XmlTransient
-    org.constellation.sampling.ObjectFactory factory = new org.constellation.sampling.ObjectFactory();
+    org.geotoolkit.sampling.xml.v100.ObjectFactory factory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
     /**
      * A logger (debugging purpose)
      */

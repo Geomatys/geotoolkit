@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.constellation.sampling;
+package org.geotoolkit.sampling.xml.v100;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 
 // Geotools dependencies
 import org.geotoolkit.gml.xml.v311modified.AbstractFeatureEntry;
-import org.constellation.observation.ObservationEntry;
-import org.constellation.observation.SurveyProcedureEntry;
+import org.geotoolkit.observation.xml.v100.ObservationEntry;
+import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
 
 // openGis dependencies

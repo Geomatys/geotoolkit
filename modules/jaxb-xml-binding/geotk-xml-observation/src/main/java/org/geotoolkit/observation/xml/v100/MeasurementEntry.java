@@ -15,15 +15,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.constellation.observation;
+package org.geotoolkit.observation.xml.v100;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311modified.AbstractTimeGeometricPrimitiveType;
-import org.constellation.sampling.SamplingFeatureEntry;
-import org.constellation.swe.v101.PhenomenonEntry;
+import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
+import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Measure;

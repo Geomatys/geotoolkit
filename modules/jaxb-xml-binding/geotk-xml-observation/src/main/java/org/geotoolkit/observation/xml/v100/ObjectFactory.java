@@ -14,13 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.constellation.sampling;
+package org.geotoolkit.observation.xml.v100;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
-import org.geotoolkit.gml.xml.v311modified.PointType;
 
 /**
  *
@@ -30,27 +29,44 @@ import org.geotoolkit.gml.xml.v311modified.PointType;
 @XmlRegistry
 public class ObjectFactory {
     
-    private final static QName _SamplingPoint_QNAME = new QName("http://www.opengis.net/sa/1.0", "SamplingPoint");
+    private final static QName _Observation_QNAME   = new QName("http://www.opengis.net/om/1.0", "Observation");
+     
     /**
      *
      */
     public ObjectFactory() {
     }
     
-    /**
-     * Create an instance of {@link SamplingPointEntry }
+     /**
+     * Create an instance of {@link ObservationEntry }
      * 
      */
-    public SamplingPointEntry createSamplingPointEntry() {
-        return new SamplingPointEntry();
+    public ObservationEntry createObservationEntry() {
+        return new ObservationEntry();
+    }
+    
+    /**
+     * Create an instance of {@link ObservationCollectionEntry }
+     * 
+     */
+    public ObservationCollectionEntry createObservationCollectionEntry() {
+        return new ObservationCollectionEntry();
+    }
+    
+      /**
+     * Create an instance of {@link MeasurementEntry }
+     * 
+     */
+    public MeasurementEntry createMeasurementEntry() {
+        return new MeasurementEntry();
     }
     
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/sa/1.0", name = "SamplingPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<SamplingPointEntry> createSamplingPoint(SamplingPointEntry value) {
-        return new JAXBElement<SamplingPointEntry>(_SamplingPoint_QNAME, SamplingPointEntry.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Observation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
+    public JAXBElement<ObservationEntry> createObservation(ObservationEntry value) {
+        return new JAXBElement<ObservationEntry>(_Observation_QNAME, ObservationEntry.class, null, value);
     }
 }

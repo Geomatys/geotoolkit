@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.constellation.sampling;
+package org.geotoolkit.sampling.xml.v100;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311modified.PointType;
-import org.constellation.observation.ObservationEntry;
-import org.constellation.observation.SurveyProcedureEntry;
+import org.geotoolkit.observation.xml.v100.ObservationEntry;
+import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
 import org.opengis.observation.sampling.SamplingPoint;
 
