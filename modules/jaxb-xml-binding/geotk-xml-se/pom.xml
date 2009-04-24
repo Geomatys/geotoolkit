@@ -20,10 +20,10 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotk-xml-sld</artifactId>
+    <artifactId>geotk-xml-se</artifactId>
     <packaging>jar</packaging>
-    <name>Bindings for the Styled Layer Descriptor schema</name>
-    <description>OGC XML Styled Layer Descriptor binding implementation.</description>
+    <name>Bindings for the Symbology Encoding schema</name>
+    <description>OGC XML Symbology Encoding implementation.</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
@@ -68,7 +68,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-xml-se</artifactId>
+            <artifactId>geotk-xml-ogc</artifactId>
             <version>${geotoolkit.version}</version>
         </dependency>
     </dependencies>

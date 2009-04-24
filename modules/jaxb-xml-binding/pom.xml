@@ -104,6 +104,7 @@
     <module>geotk-xml-ogc</module>
     <module>geotk-xml-ows</module>
     <module>geotk-xml-sensorML</module>
+    <module>geotk-xml-se</module>
     <module>geotk-xml-skos</module>
     <module>geotk-xml-sld</module>
     <module>geotk-xml-sos</module>
