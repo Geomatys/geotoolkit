@@ -54,7 +54,7 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-csw</artifactId>
-      <version>${project.version}</version>
+      <version>${geotoolkit.version}</version>
     </dependency>
   </dependencies>
 

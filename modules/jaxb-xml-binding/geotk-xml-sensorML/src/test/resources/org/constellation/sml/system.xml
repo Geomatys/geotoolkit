@@ -1,0 +1,349 @@
+<SensorML xmlns="http://www.opengis.net/sensorML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0 D:\Guilhem\DIVERS~1\SOSFUL~1\sml\1.0.0\sensorML.xsd">
+	<member xlink:role="urn:x-ogx:def:sensor:OGC:detector">
+		<System>
+			<gml:description>information about the piezometer</gml:description>
+			<gml:name>Piezometer Test</gml:name>
+			<!-- metadata  -->
+			<keywords>
+				<KeywordList codeSpace="urn:x-brgm:def:gcmd:keywords">
+					<keyword>piezometer</keyword>
+					<keyword>geosciences</keyword>
+					<keyword>point d'eau</keyword>
+				</KeywordList>
+			</keywords>
+			<identification>
+				<IdentifierList>
+					<identifier name="bssCode">
+						<Term definition="urn:x-ogc:def:identifier:OGC:modelNumber">
+							<codeSpace xlink:href="urn:x-brgm:def:samplingStation:bss"/>
+							<value>10972X0137/PONT</value>
+						</Term>
+					</identifier>
+					<identifier name="supervisorCode">
+						<Term definition="urn:x-ogc:def:identifier:OGC:modelNumber">
+							<codeSpace xlink:href="urn:x-brgm:def:sensorSystem:hydras"/>
+							<value>00ARGLELES</value>
+						</Term>
+					</identifier>
+					<identifier name="longName">
+						<Term definition="urn:x-ogc:def:identifier:OGC:longname">
+							<value>ARGELES</value>
+						</Term>
+					</identifier>
+				</IdentifierList>
+			</identification>
+			<classification>
+				<ClassifierList>
+					<classifier name="intendedApplication">
+						<Term definition="urn:x-ogc:def:classifier:OGC:application">
+							<value>eaux souterraines</value>
+						</Term>
+					</classifier>
+					<classifier name="sensorType">
+						<Term definition="urn:sensor:classifier:sensorType">
+							<codeSpace xlink:href="urn:x-brgm:def:GeoPoint:bss"/>
+							<value>piezometer</value>
+						</Term>
+					</classifier>
+					<classifier name="waterBody">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-sandre:def:mdo:identifier"/>
+							<value>FR6221</value>
+						</Term>
+					</classifier>
+					<classifier name="waterBody">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-sandre:def:mdo:name"/>
+							<value>Multicouche pliocene et alluvions quaternaires du Roussillon</value>
+						</Term>
+					</classifier>
+					<classifier name="hydrologicalEntity">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-sandre:def:bdhrf:identifier"/>
+							<value>225</value>
+						</Term>
+					</classifier>
+					<classifier name="hydrologicalEntity">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-sandre:def:bdhrf:name"/>
+							<value>Pliocene du Roussillon</value>
+						</Term>
+					</classifier>
+					<classifier name="commune">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-insee:def:commune:identifier"/>
+							<value>66008</value>
+						</Term>
+					</classifier>
+					<classifier name="commune">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-insee:def:commune:name"/>
+							<value>ARGELES SUR MER</value>
+						</Term>
+					</classifier>
+					<classifier name="network">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-sandre:def:network:identifier"/>
+							<value>600000221</value>
+						</Term>
+					</classifier>
+					<classifier name="network">
+						<Term definition="urn:sensor:classifier:references">
+							<codeSpace xlink:href="urn:x-sandre:def:network:identifier"/>
+							<value>600000025</value>
+						</Term>
+					</classifier>
+				</ClassifierList>
+			</classification>
+			<legalConstraint>
+				<Rights copyRights="true" privacyAct="true">
+					<documentation>
+						<Document>
+							<gml:description>Donnees sous copyright du BRGM</gml:description>
+						</Document>
+					</documentation>
+				</Rights>
+			</legalConstraint>
+			<!-- description des caracteristiques physiques du piezometre pour une lecture humaine : profondeur totale, diametre,..-->
+			<characteristics>
+				<swe:DataRecord definition="urn:x-ogc:def:property:physicalProperties">
+					<swe:field name="physicalProperties">
+						<swe:DataRecord>
+							<swe:field name="MaxDepth">
+								<swe:Quantity definition="urn:x-ogc:def:property:depth">
+									<swe:uom xlink:href="urn:ogc:unit:m"/>
+									<swe:value>166.0</swe:value>
+								</swe:Quantity>
+							</swe:field>
+						</swe:DataRecord>
+					</swe:field>
+				</swe:DataRecord>
+			</characteristics>
+			<!-- description des capacites generales du piezometre, notamment les eventuelles limites et perecisions -->
+			<capabilities>
+				<swe:DataRecord definition="urn:x-ogc:def:property:measurementProperties">
+					<gml:description>Toutes les informations sur les  contraintes sur les donnees</gml:description>
+				
+					<swe:field name="resolution" xlink:role="urn:x-ogc:def:property:resolution">
+						<swe:Quantity definition="urn:x-ogc:def:property:temperature">
+							<swe:uom xlink:href="urn:ogc:unit:degree:celsius"/>
+							<swe:value>0.1</swe:value>
+						</swe:Quantity>
+					</swe:field>
+					<swe:field name="accuracy" xlink:role="urn:x-ogc:def:property:accuracy">
+						<swe:QuantityRange definition="urn:x-ogc:def:property:absoluteAccuracy">
+							<swe:uom xlink:href="urn:ogc:unit:percent"/>
+							<swe:value>-0.5 0.5</swe:value>
+						</swe:QuantityRange>
+					</swe:field>
+				</swe:DataRecord>
+			</capabilities>
+			<contact xlink:role="urn:x-ogc:def:role:producer">
+				<ResponsibleParty>
+					<individualName>BLAISE Marion (BRGM)</individualName>
+					<organizationName>BRGM</organizationName>
+					<contactInfo>
+						<address>
+								<deliveryPoint>SGR LRO-1039 Rue de Pinville-34000 Montpellier</deliveryPoint>
+									<city>MONTPELLIER</city>
+									<electronicMailAddress>m.blaise@brgm.fr</electronicMailAddress>
+								</address>
+						</contactInfo>
+				</ResponsibleParty>
+			</contact>
+			<contact xlink:role="urn:x-ogc:def:role:owner">
+				<ResponsibleParty>
+					<individualName>ASSENS Martine (CG66)</individualName>
+					<organizationName>CONSEIL GENERAL DES PYRENEES ORIENTALES</organizationName>
+					<contactInfo>
+                        <address>
+                            <deliveryPoint>Hotel du Departement, B.P. 906, 66 906 Perpignan Cedex</deliveryPoint>
+                            <city>PERPIGNAN</city>
+                        </address>
+                    </contactInfo>
+				</ResponsibleParty>
+			</contact>
+			<documentation xlink:role="urn:ogc:role:description">
+				<Document>
+					<gml:description>Fiche descriptive de la station</gml:description>
+					<format>text/html</format>
+					<onlineResource xlink:href="http://ades.eaufrance.fr/FichePtEau.aspx?code=10972X0137/PONT"/>
+				</Document>
+			</documentation>
+			<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+			<!--Systeme de coordonnees de reference  -->
+			<!-- Detector Coordinate Frame-->
+			<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+			<spatialReferenceFrame>
+				<gml:EngineeringCRS gml:id="STATION_FRAME">
+					<gml:srsName>Position absolue du capteur</gml:srsName>
+					<gml:usesCS xlink:href="urn:ogc:def:crs:ogc:1.0:xyzFrame"/>
+					<gml:usesEngineeringDatum>
+						<gml:EngineeringDatum gml:id="datum">
+							<gml:datumName>Sensor Datum</gml:datumName>
+							<gml:anchorPoint>X, Y et Z sont orthogonal au regard d'un point de reference.</gml:anchorPoint>
+						</gml:EngineeringDatum>
+					</gml:usesEngineeringDatum>
+				</gml:EngineeringCRS>
+			</spatialReferenceFrame>
+			<!-- Reference temporelle -->
+			<temporalReferenceFrame>
+				<gml:TemporalCRS gml:id="temporalReference">
+					<gml:srsName>calendrier gregorien en heure d'ete</gml:srsName>
+					<gml:usesTemporalCS xlink:href="urn:x-brgm:temporalCS:gregorian"/>
+					<gml:usesTemporalDatum xlink:href="urn:x-brgm:temporalDatum:UniversalTime"/>
+				</gml:TemporalCRS>
+			</temporalReferenceFrame>
+			<!-- localisation du piezometre-->
+			<location>
+				<gml:Point gml:id="STATION_LOCALISATION">
+					<gml:pos srsName="urn:ogc:crs:EPSG:27582" srsDimension="2">65400.0 1731368.0</gml:pos>
+				</gml:Point>
+			</location>
+			<!-- description des differentes interfaces d'acces aux donnees-->
+			<interfaces>
+				<InterfaceList>
+					<interface name="RS-232">
+						<InterfaceDefinition>
+							<!-- http://www.interfacebus.com/Design_Connector_RS232.html -->
+							<!-- format d'echanges -->
+							<applicationLayer>
+								<swe:Category definition="urn:ogc:def:protocol:applicationLink">
+									<swe:value>urn:x-brgm:def:protocol:hydrasIRIS</swe:value>
+								</swe:Category>
+							</applicationLayer>
+							<!-- mode d'interrogation -->
+							<dataLinkLayer>
+								<swe:Category definition="urn:ogc:def:protocol:dataLink">
+									<swe:value>urn:x-brgm:def:dataLink:RTC</swe:value>
+								</swe:Category>
+							</dataLinkLayer>
+						</InterfaceDefinition>
+					</interface>
+				</InterfaceList>
+			</interfaces>
+			<inputs>
+				<InputList>
+					<input name="level">
+						<swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:level"/>
+					</input>
+				</InputList>
+			</inputs>
+			<!--~~~~~~~~~~~~~~-->
+			<!-- Detector Outputs-->
+			<!--~~~~~~~~~~~~~~-->
+			<outputs>
+				<OutputList>
+					<output name="piezoMeasurements">
+						<swe:DataRecord gml:id="outputGroup">
+							<swe:field name="time">
+								<swe:Time definition="urn:x-ogc:def:phenomenon:observationTime">
+									<swe:uom xlink:href="urn:x-ogc:def:unit:ISO8601"/>
+								</swe:Time>
+							</swe:field>
+							<swe:field name="depth">
+								<swe:Quantity definition="urn:x-ogc:def:phenomenon:OGC:depth">
+									<swe:uom code="m"/>
+								</swe:Quantity>
+							</swe:field>
+							<swe:field name="validity">
+								<swe:Boolean definition="urn:x-ogc:def:phenomenon:BRGM:validity">								
+							</swe:Boolean>
+							</swe:field>
+						</swe:DataRecord>
+					</output>
+				</OutputList>
+			</outputs>
+			<components>
+				<ComponentList>
+					<!--~~~~~~~~~~~~~~~-->
+					<!--  les capteurs   -->
+					<!--~~~~~~~~~~~~~~~-->
+					<component name="Profondeur" xlink:role="urn:x-ogc:def:sensor:detector" xlink:href="capteur_"/>
+				</ComponentList>
+			</components>
+			<positions>
+				<PositionList>
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+					<!-- Position of Station in X, Y, Alt -->
+					<!-- NON UTILISE CAR IL S'AGIT DE LA MEME INFORMATION QUE LOCATION -->
+					<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					<position name="stationPosition">
+						<swe:Position localFrame="#STATION_FRAME" referenceFrame="urn:ogc:crs:EPSG:27582">
+							<swe:location>
+								<swe:Vector gml:id="STATION_LOCATION" definition="urn:ogc:phenomenon:location">
+									<swe:coordinate name="X">
+										<swe:Quantity axisID="x"> 
+											<swe:uom code="m"/>
+											<swe:value>762008</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+									<swe:coordinate name="Y">
+										<swe:Quantity axisID="y">
+											<swe:uom code="m"/>
+											<swe:value>1873053</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+									<swe:coordinate name="altitude">
+										<swe:Quantity axisID="z">
+											<swe:uom code="m"/>
+											<swe:value>51.11</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+								</swe:Vector>
+							</swe:location>
+						</swe:Position>
+					</position>-->
+					<!--============================================-->
+					<!-- Position of piezometer -->
+					<!--============================================-->
+					<position name="piezoPosition">
+						<swe:Position localFrame="#PIEZOMETER_FRAME" referenceFrame="#REFERENCE_POINT">
+							<swe:location>
+								<swe:Vector definition="urn:ogc:def:phenomenon:location">
+									<swe:coordinate name="x">
+										<swe:Quantity definition="urn:ogc:def:phenomenon:distance" axisID="X">
+											<swe:uom code="m"/>
+											<swe:value>0.0</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+									<swe:coordinate name="y">
+										<swe:Quantity definition="urn:ogc:def:phenomenon:distance" axisID="Y">
+											<swe:uom code="m"/>
+											<swe:value>0.0</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+									<swe:coordinate name="z">
+										<swe:Quantity definition="urn:ogc:def:phenomenon:distance" axisID="Z">
+											<swe:uom code="m"/>
+											<swe:value>0.0</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+								</swe:Vector>
+							</swe:location>
+						</swe:Position>
+					</position>
+				</PositionList>
+			</positions>
+			<!-- relation entre les resultats et les capteurs -->
+			<!-- inputToX : contient les liens sur les input entre inputs et les capteurs-->
+			<!-- XToOutput : contient les liens entre outputs et les capteurs-->
+			<connections>
+				<ConnectionList>
+					<connection name="inputTolevel">
+						<Link>
+							<source ref="this/inputs/level"/>
+							<destination ref="piezometer/inputs/level"/>
+						</Link>
+					</connection>
+					<connection name="depthToOutput">
+						<Link>
+							<source ref="piezometer/outputs/depth"/>
+							<destination ref="this/outputs/piezoMeasurements/depth"/>
+						</Link>
+					</connection>
+				</ConnectionList>
+			</connections>
+		</System>
+	</member>
+</SensorML>

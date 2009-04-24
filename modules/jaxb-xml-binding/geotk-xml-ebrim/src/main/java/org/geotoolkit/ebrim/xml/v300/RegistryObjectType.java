@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.cat.xml.csw.Settable;
+import org.geotoolkit.csw.xml.Settable;
 import org.geotoolkit.ebrim.xml.RegistryObject;
 
 

@@ -1,0 +1,105 @@
+<SensorML xmlns="http://www.opengis.net/sensorML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0 http://schemas.opengis.net/sensorML/1.0.0/base.xsd" version="1.0">
+	<member xlink:role="urn:x-ogx:def:sensor:OGC:detector">
+		<Component>
+			<gml:name>Capteur Profondeur de ARGELES</gml:name>
+			<!-- metadata  -->
+			<keywords>
+				<KeywordList codeSpace="urn:x-brgm:def:gcmd:keywords">
+					<keyword>piezometer</keyword>
+					<keyword>geosciences</keyword>
+					<keyword>point d'eau</keyword>
+				</KeywordList>
+			</keywords>
+			<identification>
+				<IdentifierList>
+					<identifier name="supervisorCode">
+						<Term definition="urn:x-ogc:def:identifier:OGC:modelNumber">
+							<codeSpace xlink:href="urn:x-brgm:def:sensorSystem:hydras"/>
+							<value>00ARGLELES_2000</value>
+						</Term>
+					</identifier>
+					<identifier name="longName">
+						<Term definition="urn:x-ogc:def:identifier:OGC:longname">
+							<value>Madofil II</value>
+						</Term>
+					</identifier>
+				</IdentifierList>
+			</identification>
+			<classification>
+				<ClassifierList>
+					<classifier name="intendedApplication">
+						<Term definition="urn:x-ogc:def:classifier:OGC:application">
+							<value>eaux souterraines</value>
+						</Term>
+					</classifier>
+					<classifier name="sensorType">
+						<Term definition="urn:sensor:classifier:sensorType">
+							<codeSpace xlink:href="urn:x-brgm:def:GeoPoint:bss"/>
+							<value>Profondeur</value>
+						</Term>
+					</classifier>
+				</ClassifierList>
+			</classification>
+			<!-- Periode de debut / fin du capteur sur le site -->
+			<validTime>
+				<gml:TimePeriod>
+					<gml:beginPosition>2004-06-01</gml:beginPosition>
+					<gml:endPosition indeterminatePosition="now"/>
+				</gml:TimePeriod>
+			</validTime>
+			<!-- Periode de donnees disponible -->
+			<capabilities>
+				<swe:DataRecord definition="urn:x-brgm:def:property:periodOfData">
+					<swe:field name="periodOfData" xlink:role="urn:x-brgm:def:property:periodOfData">
+						<swe:TimeRange>
+							<swe:value>1987-04-23 now</swe:value>
+						</swe:TimeRange>
+					</swe:field>
+				</swe:DataRecord>
+			</capabilities>
+			<contact xlink:role="urn:x-ogc:def:role:manufacturer">
+				<ResponsibleParty>
+					<organizationName>IRIS</organizationName>
+				</ResponsibleParty>
+			</contact>
+			<position name="conductivitePosition" xlink:href="piezometer#piezoPosition"/>
+			<inputs>
+				<InputList>
+					<input name="level">
+						<swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:level"/>
+					</input>
+				</InputList>
+			</inputs>
+			<outputs>
+				<OutputList>
+					<output name="depth">
+						<swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:depth"/>
+					</output>
+				</OutputList>
+			</outputs>
+			<!-- Frequence d'acquisition, precision, plage de validite,...  -->
+			<parameters>
+				<ParameterList>
+					<parameter name="frequency" xlink:role="urn:x-ogc:def:property:frequency">
+						<swe:Quantity definition="urn:x-ogc:def:property:frequency">
+							<swe:uom xlink:href="urn:ogc:unit:minuts"/>
+							<swe:value>60</swe:value>
+						</swe:Quantity>
+					</parameter>	
+					<parameter name="precision" xlink:role="urn:x-ogc:def:property:precision">
+						<swe:Quantity definition="urn:x-ogc:def:property:precision">
+							<swe:uom code="m"/>
+							<swe:value>0.05</swe:value>
+						</swe:Quantity>
+					</parameter>
+					<parameter name="validity" xlink:role="urn:x-ogc:def:property:validity">
+						<swe:QuantityRange>
+							<swe:uom code="m"/>
+							<swe:value>0.0 10.0</swe:value>
+						</swe:QuantityRange>
+					</parameter>				
+				</ParameterList>
+			</parameters>
+  	</Component>
+	</member>
+</SensorML>

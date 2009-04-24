@@ -21,7 +21,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
-import org.geotoolkit.cat.xml.csw.v202.Capabilities;
+import org.geotoolkit.csw.xml.v202.Capabilities;
 
 
 /**

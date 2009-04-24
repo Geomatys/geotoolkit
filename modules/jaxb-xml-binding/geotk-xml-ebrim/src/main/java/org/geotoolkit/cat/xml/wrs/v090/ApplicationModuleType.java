@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.cat.xml.csw.v200.AbstractQueryType;
-import org.geotoolkit.cat.xml.csw.v200.ObjectFactory;
-import org.geotoolkit.cat.xml.csw.v200.QueryType;
+import org.geotoolkit.csw.xml.v200.AbstractQueryType;
+import org.geotoolkit.csw.xml.v200.ObjectFactory;
+import org.geotoolkit.csw.xml.v200.QueryType;
 import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
 
 

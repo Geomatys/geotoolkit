@@ -97,13 +97,17 @@
   <modules>
     <module>geotk-xml-citygml</module>
     <module>geotk-xml-csw</module>
-    <!--module>geotk-xml-ebrim</module-->
+    <module>geotk-xml-ebrim</module>
     <module>geotk-xml-gml</module>
     <module>geotk-xml-kml</module>
+    <module>geotk-xml-observation</module>
     <module>geotk-xml-ogc</module>
     <module>geotk-xml-ows</module>
+    <module>geotk-xml-sensorML</module>
     <module>geotk-xml-skos</module>
     <module>geotk-xml-sld</module>
+    <module>geotk-xml-sos</module>
+    <module>geotk-xml-swe</module>
     <module>geotk-xml-wcs</module>
     <module>geotk-xml-wfs</module>
     <module>geotk-xml-wms</module>
