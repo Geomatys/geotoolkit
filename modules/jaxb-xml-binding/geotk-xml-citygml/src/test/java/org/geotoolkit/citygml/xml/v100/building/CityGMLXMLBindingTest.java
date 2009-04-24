@@ -50,7 +50,7 @@ public class CityGMLXMLBindingTest {
     public void setUp() throws Exception {
         pool         = new MarshallerPool(
                 "org.geotoolkit.citygml.xml.v100:" +
-                "org.geotoolkit.gml.xml.v311:" +
+                "org.geotoolkit.gml.xml.v311modified:" +
                 "org.geotoolkit.citygml.xml.v100.building");
         Unmarshaller = pool.acquireUnmarshaller();
         Marshaller   = pool.acquireMarshaller();

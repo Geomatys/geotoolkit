@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
-import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
+import org.geotoolkit.gml.xml.v311modified.MultiSurfacePropertyType;
 
 
 /**

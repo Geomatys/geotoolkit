@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
 import org.geotoolkit.citygml.xml.v100.ImplicitRepresentationPropertyType;
-import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
-import org.geotoolkit.gml.xml.v311.MultiCurvePropertyType;
+import org.geotoolkit.gml.xml.v311modified.GeometryPropertyType;
+import org.geotoolkit.gml.xml.v311modified.MultiCurvePropertyType;
 
 /**
  * Type describing city furnitures, like traffic lights, benches, ... As subclass of _CityObject, a

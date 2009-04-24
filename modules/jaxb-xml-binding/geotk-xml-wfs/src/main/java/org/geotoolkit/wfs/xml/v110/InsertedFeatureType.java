@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.FeatureIdType;
+import org.geotoolkit.ogc.xml.v110modified.FeatureIdType;
 
 
 /**

@@ -25,15 +25,15 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.geotools.feature.NameImpl;
-import org.geotoolkit.gml.xml.v311modified.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
-import org.geotoolkit.ogc.xml.v110modified.AbstractIdType;
-import org.geotoolkit.ogc.xml.v110modified.BinaryOperatorType;
-import org.geotoolkit.ogc.xml.v110modified.FeatureIdType;
-import org.geotoolkit.ogc.xml.v110modified.FunctionType;
-import org.geotoolkit.ogc.xml.v110modified.GmlObjectIdType;
-import org.geotoolkit.ogc.xml.v110modified.LiteralType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110.AbstractIdType;
+import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
+import org.geotoolkit.ogc.xml.v110.FeatureIdType;
+import org.geotoolkit.ogc.xml.v110.FunctionType;
+import org.geotoolkit.ogc.xml.v110.GmlObjectIdType;
+import org.geotoolkit.ogc.xml.v110.LiteralType;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChangeCaseType;
 import org.geotoolkit.se.xml.v110.ConcatenateType;
@@ -69,17 +69,17 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD filter v1.1 in GT filter.
      */
-    public Filter visitFilter(org.geotoolkit.ogc.xml.v110modified.FilterType ft){
+    public Filter visitFilter(org.geotoolkit.ogc.xml.v110.FilterType ft){
         if(ft == null)return null;        
         
         if(ft.getComparisonOps() != null){
-            final JAXBElement<? extends org.geotoolkit.ogc.xml.v110arisonOpsType> jax = ft.getComparisonOps();
+            final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.ComparisonOpsType> jax = ft.getComparisonOps();
             return visitComparisonOp(jax);     
         }else if(ft.getLogicOps() != null){
-            final JAXBElement<? extends org.geotoolkit.ogc.xml.v110cOpsType> jax = ft.getLogicOps();
+            final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.LogicOpsType> jax = ft.getLogicOps();
             return visitLogicOp(jax);
         }else if(ft.getSpatialOps() != null){
-            final JAXBElement<? extends org.geotoolkit.ogc.xml.v110ialOpsType> jax = ft.getSpatialOps();
+            final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.SpatialOpsType> jax = ft.getSpatialOps();
             return visitSpatialOp(jax);
         }else if(ft.getId() != null && !ft.getId().isEmpty()){
             return visitIds(ft.getId());
@@ -93,14 +93,14 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD spatial Filter v1.1 in GT filter.
      */
-    public Filter visitSpatialOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110ialOpsType> jax) {
-        final org.geotoolkit.ogc.xml.v110modified.SpatialOpsType ops = jax.getValue();
+    public Filter visitSpatialOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.SpatialOpsType> jax) {
+        final org.geotoolkit.ogc.xml.v110.SpatialOpsType ops = jax.getValue();
         final String OpName = jax.getName().getLocalPart();
 
-        if (ops instanceof org.geotoolkit.ogc.xml.v110modified.BinarySpatialOpType) {
-            org.geotoolkit.ogc.xml.v110modified.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v110modified.BinarySpatialOpType) ops;
+        if (ops instanceof org.geotoolkit.ogc.xml.v110.BinarySpatialOpType) {
+            org.geotoolkit.ogc.xml.v110.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v110.BinarySpatialOpType) ops;
             JAXBElement<? extends AbstractGeometryType> geom = binary.getAbstractGeometry();
-            org.geotoolkit.ogc.xml.v110modified.PropertyNameType pnt = binary.getPropertyName();
+            org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = binary.getPropertyName();
                         
             Expression left = filterFactory.property(pnt.getContent());
             Expression right = visit(geom);
@@ -125,11 +125,11 @@ public class OGC110toGTTransformer {
             
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
             
-        } else if (ops instanceof org.geotoolkit.ogc.xml.v110modified.DistanceBufferType) {
-            org.geotoolkit.ogc.xml.v110modified.DistanceBufferType dstOp = (org.geotoolkit.ogc.xml.v110modified.DistanceBufferType) ops;
-            org.geotoolkit.ogc.xml.v110modified.DistanceType dt = dstOp.getDistance();
-            JAXBElement<? extends org.geotoolkit.internal.jaxb.v110.gmleometryType> geom = dstOp.getAbstractGeometry();
-            org.geotoolkit.ogc.xml.v110modified.PropertyNameType pnt = dstOp.getPropertyName();
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v110.DistanceBufferType) {
+            org.geotoolkit.ogc.xml.v110.DistanceBufferType dstOp = (org.geotoolkit.ogc.xml.v110.DistanceBufferType) ops;
+            org.geotoolkit.ogc.xml.v110.DistanceType dt = dstOp.getDistance();
+            JAXBElement<? extends AbstractGeometryType> geom = dstOp.getAbstractGeometry();
+            org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = dstOp.getPropertyName();
 
             Expression geom1 = filterFactory.property(pnt.getContent());
             Expression geom2 = visit(geom);
@@ -146,10 +146,10 @@ public class OGC110toGTTransformer {
             
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
-        } else if (ops instanceof org.geotoolkit.ogc.xml.v110modified.BBOXType) {
-            org.geotoolkit.ogc.xml.v110modified.BBOXType binary = (org.geotoolkit.ogc.xml.v110modified.BBOXType) ops;
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v110.BBOXType) {
+            org.geotoolkit.ogc.xml.v110.BBOXType binary = (org.geotoolkit.ogc.xml.v110.BBOXType) ops;
             JAXBElement<? extends EnvelopeType> box = binary.getEnvelope();
-            org.geotoolkit.ogc.xml.v110modified.PropertyNameType pnt = binary.getPropertyName();
+            org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = binary.getPropertyName();
             
             Expression geom = filterFactory.property(pnt.getContent());
             double minx = box.getValue().getCoord().get(0).getX().doubleValue();
@@ -172,12 +172,12 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD logic Filter v1.1 in GT filter.
      */
-    public Filter visitLogicOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110cOpsType> jax) {
-        final org.geotoolkit.ogc.xml.v110modified.LogicOpsType ops = jax.getValue();
+    public Filter visitLogicOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.LogicOpsType> jax) {
+        final org.geotoolkit.ogc.xml.v110.LogicOpsType ops = jax.getValue();
         final String OpName = jax.getName().getLocalPart();
 
-        if (ops instanceof org.geotoolkit.ogc.xml.v110modified.UnaryLogicOpType) {
-            org.geotoolkit.ogc.xml.v110modified.UnaryLogicOpType unary = (org.geotoolkit.ogc.xml.v110modified.UnaryLogicOpType) ops;
+        if (ops instanceof org.geotoolkit.ogc.xml.v110.UnaryLogicOpType) {
+            org.geotoolkit.ogc.xml.v110.UnaryLogicOpType unary = (org.geotoolkit.ogc.xml.v110.UnaryLogicOpType) ops;
 
             if (JAXBStatics.FILTER_LOGIC_NOT.equalsIgnoreCase(OpName)) {
                 Filter filter = null;
@@ -193,20 +193,20 @@ public class OGC110toGTTransformer {
                 return filterFactory.not(filter);
             }
 
-        } else if (ops instanceof org.geotoolkit.ogc.xml.v110modified.BinaryLogicOpType) {
-            org.geotoolkit.ogc.xml.v110modified.BinaryLogicOpType binary = (org.geotoolkit.ogc.xml.v110modified.BinaryLogicOpType) ops;
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v110.BinaryLogicOpType) {
+            org.geotoolkit.ogc.xml.v110.BinaryLogicOpType binary = (org.geotoolkit.ogc.xml.v110.BinaryLogicOpType) ops;
 
             if (JAXBStatics.FILTER_LOGIC_AND.equalsIgnoreCase(OpName)) {
                 List<Filter> filters = new ArrayList<Filter>();
                 
                 for(JAXBElement<?> ele : binary.getComparisonOpsOrSpatialOpsOrLogicOps()){
                     Object obj = ele.getValue();
-                    if(obj instanceof org.geotoolkit.ogc.xml.v110modified.ComparisonOpsType){
-                        filters.add(visitComparisonOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110arisonOpsType>) ele ));
-                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110modified.SpatialOpsType){
-                        filters.add(visitSpatialOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110ialOpsType>) ele ));
-                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110modified.LogicOpsType){
-                        filters.add(visitLogicOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110cOpsType>) ele ));
+                    if(obj instanceof org.geotoolkit.ogc.xml.v110.ComparisonOpsType){
+                        filters.add(visitComparisonOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110.ComparisonOpsType>) ele ));
+                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110.SpatialOpsType){
+                        filters.add(visitSpatialOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110.SpatialOpsType>) ele ));
+                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110.LogicOpsType){
+                        filters.add(visitLogicOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110.LogicOpsType>) ele ));
                     }
                 }
                 
@@ -216,12 +216,12 @@ public class OGC110toGTTransformer {
                 
                 for(JAXBElement<?> ele : binary.getComparisonOpsOrSpatialOpsOrLogicOps()){
                     Object obj = ele.getValue();
-                    if(obj instanceof org.geotoolkit.ogc.xml.v110modified.ComparisonOpsType){
-                        filters.add(visitComparisonOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110arisonOpsType>) ele ));
-                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110modified.SpatialOpsType){
-                        filters.add(visitSpatialOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110ialOpsType>) ele ));
-                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110modified.LogicOpsType){
-                        filters.add(visitLogicOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110cOpsType>) ele ));
+                    if(obj instanceof org.geotoolkit.ogc.xml.v110.ComparisonOpsType){
+                        filters.add(visitComparisonOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110.ComparisonOpsType>) ele ));
+                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110.SpatialOpsType){
+                        filters.add(visitSpatialOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110.SpatialOpsType>) ele ));
+                    }else if(obj instanceof org.geotoolkit.ogc.xml.v110.LogicOpsType){
+                        filters.add(visitLogicOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v110.LogicOpsType>) ele ));
                     }
                 }
                 
@@ -236,12 +236,12 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD comparison Filter v1.1 in GT filter.
      */
-    public Filter visitComparisonOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110arisonOpsType> jax){
-        final org.geotoolkit.ogc.xml.v110modified.ComparisonOpsType ops = jax.getValue();
+    public Filter visitComparisonOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.ComparisonOpsType> jax){
+        final org.geotoolkit.ogc.xml.v110.ComparisonOpsType ops = jax.getValue();
         final String OpName = jax.getName().getLocalPart();
 
-        if (ops instanceof org.geotoolkit.ogc.xml.v110modified.BinaryComparisonOpType) {
-            org.geotoolkit.ogc.xml.v110modified.BinaryComparisonOpType binary = (org.geotoolkit.ogc.xml.v110modified.BinaryComparisonOpType) ops;
+        if (ops instanceof org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType) {
+            org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType binary = (org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType) ops;
 
             Expression left = visitExpression(binary.getExpression().get(0));
             Expression right = visitExpression(binary.getExpression().get(1));
@@ -262,8 +262,8 @@ public class OGC110toGTTransformer {
 
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
-        } else if (ops instanceof org.geotoolkit.ogc.xml.v110modified.PropertyIsLikeType) {
-            org.geotoolkit.ogc.xml.v110modified.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v110modified.PropertyIsLikeType) ops;
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v110.PropertyIsLikeType) {
+            org.geotoolkit.ogc.xml.v110.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v110.PropertyIsLikeType) ops;
 
             Expression expr = filterFactory.property(property.getPropertyName().getContent());
             String pattern = visitExpression(property.getLiteral()).toString();
@@ -277,8 +277,8 @@ public class OGC110toGTTransformer {
 
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
-        } else if (ops instanceof org.geotoolkit.ogc.xml.v110modified.PropertyIsBetweenType) {
-            org.geotoolkit.ogc.xml.v110modified.PropertyIsBetweenType property = (org.geotoolkit.ogc.xml.v110modified.PropertyIsBetweenType) ops;
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType) {
+            org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType property = (org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType) ops;
 
             Expression lower = visitExpression( property.getLowerBoundary().getExpression() );
             Expression upper = visitExpression( property.getUpperBoundary().getExpression() );
@@ -290,8 +290,8 @@ public class OGC110toGTTransformer {
             
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
-        } else if (ops instanceof org.geotoolkit.ogc.xml.v110modified.PropertyIsNullType) {
-            org.geotoolkit.ogc.xml.v110modified.PropertyIsNullType property = (org.geotoolkit.ogc.xml.v110modified.PropertyIsNullType) ops;
+        } else if (ops instanceof org.geotoolkit.ogc.xml.v110.PropertyIsNullType) {
+            org.geotoolkit.ogc.xml.v110.PropertyIsNullType property = (org.geotoolkit.ogc.xml.v110.PropertyIsNullType) ops;
 
             Expression expr = filterFactory.property(property.getPropertyName().getContent());
             
@@ -309,10 +309,10 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD IDS Filter v1.1 in GT filter.
      */
-    public Filter visitIds(List<JAXBElement<? extends org.geotoolkit.ogc.xml.v110ractIdType>> lst){
+    public Filter visitIds(List<JAXBElement<? extends org.geotoolkit.ogc.xml.v110.AbstractIdType>> lst){
         Set<Identifier> ids = new HashSet<Identifier>();
         
-        for(JAXBElement<? extends org.geotoolkit.ogc.xml.v110ractIdType> id : lst){
+        for(JAXBElement<? extends org.geotoolkit.ogc.xml.v110.AbstractIdType> id : lst){
             AbstractIdType idd = id.getValue();
             if(idd instanceof FeatureIdType){
                 ids.add( filterFactory.featureId(( (FeatureIdType)idd).getFid()) );
@@ -324,7 +324,7 @@ public class OGC110toGTTransformer {
         return filterFactory.id(ids);
     }
     
-    public Expression visit(JAXBElement<? extends org.geotoolkit.internal.jaxb.v110.gmleometryType> ele){
+    public Expression visit(JAXBElement<? extends AbstractGeometryType> ele){
         throw new UnsupportedOperationException("not supported yet, need GML");
     }
     

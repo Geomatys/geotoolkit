@@ -159,19 +159,4 @@ public class InterpolateType
         this.method = value;
     }
 
-    @Override
-    public Object evaluate(Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(Object object, Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

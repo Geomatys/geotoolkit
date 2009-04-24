@@ -31,22 +31,22 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.ogc.xml.v110modified.BinaryComparisonOpType;
-import org.geotoolkit.ogc.xml.v110modified.BinaryLogicOpType;
-import org.geotoolkit.ogc.xml.v110modified.BinaryOperatorType;
-import org.geotoolkit.ogc.xml.v110modified.ComparisonOpsType;
-import org.geotoolkit.ogc.xml.v110modified.FilterType;
-import org.geotoolkit.ogc.xml.v110modified.FunctionType;
-import org.geotoolkit.ogc.xml.v110modified.LiteralType;
-import org.geotoolkit.ogc.xml.v110modified.LogicOpsType;
-import org.geotoolkit.ogc.xml.v110modified.LowerBoundaryType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyIsBetweenType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyIsLikeType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyIsNullType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyNameType;
-import org.geotoolkit.ogc.xml.v110modified.SpatialOpsType;
-import org.geotoolkit.ogc.xml.v110modified.UnaryLogicOpType;
-import org.geotoolkit.ogc.xml.v110modified.UpperBoundaryType;
+import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
+import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
+import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
+import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.FunctionType;
+import org.geotoolkit.ogc.xml.v110.LiteralType;
+import org.geotoolkit.ogc.xml.v110.LogicOpsType;
+import org.geotoolkit.ogc.xml.v110.LowerBoundaryType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
+import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
+import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
@@ -188,12 +188,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
     
     private final org.geotoolkit.sld.xml.v110.ObjectFactory sld_factory_v110;
     private final org.geotoolkit.se.xml.v110.ObjectFactory se_factory;
-    private final org.geotoolkit.ogc.xml.v110modified.ObjectFactory ogc_factory;
+    private final org.geotoolkit.ogc.xml.v110.ObjectFactory ogc_factory;
     
     public GTtoSE110Transformer(){
         this.sld_factory_v110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
         this.se_factory = new org.geotoolkit.se.xml.v110.ObjectFactory();
-        this.ogc_factory = new org.geotoolkit.ogc.xml.v110modified.ObjectFactory();
+        this.ogc_factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
     }
 
     public JAXBElement<?> extract(Expression exp){
