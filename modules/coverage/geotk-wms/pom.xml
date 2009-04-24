@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-wms</artifactId>
   <packaging>jar</packaging>
-  <name>Format Web Map Server</name>
+  <name>Coverage Web Map Server</name>
   <url>http://maven.geotools.fr/reports/modules/plugin/wms/</url>
 
   <scm>
