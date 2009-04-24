@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.xml;
 
-import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 
 /**
- * A mapper between namespace prefixes and URL they represent.
- * It is possible to specify a root namespace, which will be used if no namespace
- * is specified.
+ * A mapper between namespace prefixes and URL they represent. Identical to
+ * {@link OGCNamespacePrefixMapper} except that it depends on the endorsed
+ * JAXB jar instead than the implementation bundled in JDK 6.
  *
  * @author Cédric Briançon (Geomatys)
  * @version 3.0
@@ -30,7 +30,7 @@ import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
  * @since 2.5
  * @module
  */
-final class OGCNamespacePrefixMapper extends NamespacePrefixMapper {
+final class OGCNamespacePrefixMapper_Endorsed extends NamespacePrefixMapper {
     /**
      * If set, this namespace will be the root of the document with no prefix.
      */
@@ -46,7 +46,7 @@ final class OGCNamespacePrefixMapper extends NamespacePrefixMapper {
      *
      * @param rootNamespace The root namespace.
      */
-    public OGCNamespacePrefixMapper(final String rootNamespace) {
+    public OGCNamespacePrefixMapper_Endorsed(final String rootNamespace) {
         this.rootNamespace = rootNamespace;
         defaultPrefix = rootNamespace.substring(rootNamespace.lastIndexOf('/') + 1);
     }

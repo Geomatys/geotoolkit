@@ -14,25 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.xml;
-
-import org.geotoolkit.lang.Static;
+package com.sun.xml.bind.marshaller;
 
 
 /**
- * Utility class for some XML-related methods.
+ * A placeholder for class bundled in JAXB. This is the same than the class bundled in
+ * JDK 6 except for the package name. Some servers like Glassfish uses the endorsed JAXB
+ * implementation instead than the one bundled in JDK 6, so we must be able to support both.
  *
  * @author Cédric Briançon (Geomatys)
  * @version 3.0
  *
  * @since 3.0
- * @module
  */
-@Static
-public final class XML {
-    /**
-     * Do not allow instantiation on this class.
-     */
-    private XML() {
-    }
+public abstract class NamespacePrefixMapper {
+    public abstract String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix);
+    public abstract String[] getPreDeclaredNamespaceUris();
 }

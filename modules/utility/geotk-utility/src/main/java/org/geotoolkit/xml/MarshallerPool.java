@@ -55,7 +55,12 @@ public class MarshallerPool {
     /**
      * The mapper between namespaces and prefix.
      */
-    private final OGCNamespacePrefixMapper mapper;
+    private final Object mapper;
+
+    /**
+     * The key to use for setting the {@linkplain #mapper} in a unmarshaller.
+     */
+    private final String mapperKey;
 
     /**
      * A configurable adapter.
@@ -98,8 +103,7 @@ public class MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public MarshallerPool(final String rootNamespace, final Class<?>... classesToBeBound) throws JAXBException {
-        context = JAXBContext.newInstance(classesToBeBound);
-        mapper  = new OGCNamespacePrefixMapper(rootNamespace);
+        this(rootNamespace, JAXBContext.newInstance(classesToBeBound));
     }
 
     /**
@@ -123,8 +127,45 @@ public class MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public MarshallerPool(final String rootNamespace, final String packages) throws JAXBException {
-        context = JAXBContext.newInstance(packages);
-        mapper  = new OGCNamespacePrefixMapper(rootNamespace);
+        this(rootNamespace, JAXBContext.newInstance(packages));
+    }
+
+    /**
+     * Creates a new factory for the given packages.
+     *
+     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
+     * @param  context          The JAXB context.
+     * @throws JAXBException    If the OGC namespace prefix mapper can not be created.
+     */
+    private MarshallerPool(final String rootNamespace, final JAXBContext context) throws JAXBException {
+        this.context = context;
+        /*
+         * Detects if we are using the endorsed JAXB implementation (i.e. the one provided in
+         * separated JAR files).  If not, we will assume that we are using the implementation
+         * bundled in JDK 6. We use the JAXB context package name as a criterion.
+         *
+         *   JAXB endorsed JAR uses    "com.sun.xml.bind"
+         *   JAXB bundled in JDK uses  "com.sun.xml.internal.bind"
+         */
+        String key  = "com.sun.xml.bind.namespacePrefixMapper";
+        String type = "org.geotoolkit.xml.OGCNamespacePrefixMapper_Endorsed";
+        if (!context.getClass().getName().startsWith("com.sun.xml.bind")) {
+            key  = "com.sun.xml.internal.bind.namespacePrefixMapper";
+            type = type.substring(0, type.lastIndexOf('_'));
+        }
+        mapperKey = key;
+        /*
+         * Instantiates the OGCNamespacePrefixMapper appropriate for the implementation
+         * we just detected.
+         */
+        try {
+            mapper = Class.forName(type).getConstructor(String.class).newInstance(rootNamespace);
+        } catch (Throwable exception) {
+            // There is a lot of checked and unchecked exceptions that may be thrown above,
+            // including NoClassDefFoundError because of our trick using "geotk-provided".
+            // This is why we use such an extrem catch as "Throwable".
+            throw new JAXBException("Unsupported JAXB implementation.", exception);
+        }
     }
 
     /**
@@ -234,7 +275,7 @@ public class MarshallerPool {
         final Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper", mapper);
+        marshaller.setProperty(mapperKey, mapper);
         marshaller.setAdapter(anchors);
         marshaller.setAdapter(anchors.string);
         marshaller.setAdapter(anchors.international);
