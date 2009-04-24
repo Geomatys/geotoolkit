@@ -21,11 +21,11 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.swe.v101.AnyScalarPropertyType;
-import org.geotoolkit.swe.v101.DataArrayEntry;
-import org.geotoolkit.swe.v101.SimpleDataRecordEntry;
-import org.geotoolkit.swe.v101.Text;
-import org.geotoolkit.swe.v101.TextBlockEntry;
+import org.geotoolkit.swe.xml.v101.AnyScalarPropertyType;
+import org.geotoolkit.swe.xml.v101.DataArrayEntry;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.Text;
+import org.geotoolkit.swe.xml.v101.TextBlockEntry;
 
 //Junit dependencies
 import org.geotoolkit.xml.MarshallerPool;
@@ -43,7 +43,7 @@ public class SweXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.swe.v101");
+        pool = new MarshallerPool("org.geotoolkit.swe.xml.v101");
         marshaller = pool.acquireMarshaller();
     }
 

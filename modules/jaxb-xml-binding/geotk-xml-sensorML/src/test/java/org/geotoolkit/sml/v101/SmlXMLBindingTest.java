@@ -17,8 +17,8 @@
 
 package org.geotoolkit.sml.v101;
 
-import org.geotoolkit.sml.v101.ComponentType;
-import org.geotoolkit.sml.v101.ObjectFactory;
+import org.geotoolkit.sml.xml.v101.ComponentType;
+import org.geotoolkit.sml.xml.v101.ObjectFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,23 +26,23 @@ import java.util.List;
 import java.util.logging.Logger;
 
 //constellation
-import org.geotoolkit.sml.v101.Classification.ClassifierList.Classifier;
+import org.geotoolkit.sml.xml.v101.Classification.ClassifierList.Classifier;
 import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
 import org.geotoolkit.gml.xml.v311modified.TimePositionType;
 
-import org.geotoolkit.sml.v101.Identification.IdentifierList;
-import org.geotoolkit.sml.v101.Identification.IdentifierList.Identifier;
-import org.geotoolkit.sml.v101.Inputs.InputList;
-import org.geotoolkit.sml.v101.Outputs.OutputList;
-import org.geotoolkit.sml.v101.Parameters.ParameterList;
-import org.geotoolkit.swe.v101.CodeSpacePropertyType;
-import org.geotoolkit.swe.v101.DataComponentPropertyType;
-import org.geotoolkit.swe.v101.DataRecordType;
-import org.geotoolkit.swe.v101.ObservableProperty;
-import org.geotoolkit.swe.v101.QuantityRange;
-import org.geotoolkit.swe.v101.QuantityType;
-import org.geotoolkit.swe.v101.TimeRange;
-import org.geotoolkit.swe.v101.UomPropertyType;
+import org.geotoolkit.sml.xml.v101.Identification.IdentifierList;
+import org.geotoolkit.sml.xml.v101.Identification.IdentifierList.Identifier;
+import org.geotoolkit.sml.xml.v101.Inputs.InputList;
+import org.geotoolkit.sml.xml.v101.Outputs.OutputList;
+import org.geotoolkit.sml.xml.v101.Parameters.ParameterList;
+import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
+import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
+import org.geotoolkit.swe.xml.v101.ObservableProperty;
+import org.geotoolkit.swe.xml.v101.QuantityRange;
+import org.geotoolkit.swe.xml.v101.QuantityType;
+import org.geotoolkit.swe.xml.v101.TimeRange;
+import org.geotoolkit.swe.xml.v101.UomPropertyType;
 
 // JAXB dependencies
 import javax.xml.bind.JAXBContext;
@@ -61,10 +61,10 @@ import static org.junit.Assert.*;
  */
 public class SmlXMLBindingTest {
 
-    private Logger       logger = Logger.getLogger("org.constellation.filter");
+    private Logger       logger = Logger.getLogger("org.geotoolkit.sml");
     private MarshallerPool  pool;
     private ObjectFactory sml100Factory = new ObjectFactory();
-    private org.geotoolkit.swe.v101.ObjectFactory swe100Factory = new org.geotoolkit.swe.v101.ObjectFactory();
+    private org.geotoolkit.swe.xml.v101.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
 
 
     @BeforeClass
@@ -77,7 +77,7 @@ public class SmlXMLBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        pool = new MarshallerPool("org.geotoolkit.sml.v101");
+        pool = new MarshallerPool("org.geotoolkit.sml.xml.v101");
     }
 
     @After

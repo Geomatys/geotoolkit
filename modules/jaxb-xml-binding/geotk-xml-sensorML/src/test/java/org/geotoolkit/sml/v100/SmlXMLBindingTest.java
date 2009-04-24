@@ -17,58 +17,58 @@
 
 package org.geotoolkit.sml.v100;
 
-import org.geotoolkit.sml.v100.Connection;
-import org.geotoolkit.sml.v100.CapabilitiesSML;
-import org.geotoolkit.sml.v100.Identification;
-import org.geotoolkit.sml.v100.ComponentPropertyType;
-import org.geotoolkit.sml.v100.Outputs;
-import org.geotoolkit.sml.v100.InputList;
-import org.geotoolkit.sml.v100.Connections;
-import org.geotoolkit.sml.v100.Interface;
-import org.geotoolkit.sml.v100.Characteristics;
-import org.geotoolkit.sml.v100.ComponentType;
-import org.geotoolkit.sml.v100.Document;
-import org.geotoolkit.sml.v100.ParameterList;
-import org.geotoolkit.sml.v100.ObjectFactory;
-import org.geotoolkit.sml.v100.Keywords;
-import org.geotoolkit.sml.v100.PositionList;
-import org.geotoolkit.sml.v100.SensorML;
-import org.geotoolkit.sml.v100.LayerPropertyType;
-import org.geotoolkit.sml.v100.ConnectionList;
-import org.geotoolkit.sml.v100.OutputList;
-import org.geotoolkit.sml.v100.Location;
-import org.geotoolkit.sml.v100.Position;
-import org.geotoolkit.sml.v100.SpatialReferenceFrame;
-import org.geotoolkit.sml.v100.ResponsibleParty;
-import org.geotoolkit.sml.v100.ComponentList;
-import org.geotoolkit.sml.v100.Interfaces;
-import org.geotoolkit.sml.v100.Contact;
-import org.geotoolkit.sml.v100.SystemType;
-import org.geotoolkit.sml.v100.IoComponentPropertyType;
-import org.geotoolkit.sml.v100.Destination;
-import org.geotoolkit.sml.v100.Documentation;
-import org.geotoolkit.sml.v100.Term;
-import org.geotoolkit.sml.v100.Inputs;
-import org.geotoolkit.sml.v100.KeywordList;
-import org.geotoolkit.sml.v100.ClassifierList;
-import org.geotoolkit.sml.v100.TemporalReferenceFrame;
-import org.geotoolkit.sml.v100.ValidTime;
-import org.geotoolkit.sml.v100.Classification;
-import org.geotoolkit.sml.v100.Classifier;
-import org.geotoolkit.sml.v100.InterfaceList;
-import org.geotoolkit.sml.v100.Link;
-import org.geotoolkit.sml.v100.LegalConstraint;
-import org.geotoolkit.sml.v100.IdentifierList;
-import org.geotoolkit.sml.v100.Source;
-import org.geotoolkit.sml.v100.Identifier;
-import org.geotoolkit.sml.v100.InterfaceDefinition;
-import org.geotoolkit.sml.v100.ContactInfo;
-import org.geotoolkit.sml.v100.Positions;
-import org.geotoolkit.sml.v100.Rights;
-import org.geotoolkit.sml.v100.AddressType;
-import org.geotoolkit.sml.v100.Components;
-import org.geotoolkit.sml.v100.OnlineResource;
-import org.geotoolkit.sml.v100.Parameters;
+import org.geotoolkit.sml.xml.v100.Connection;
+import org.geotoolkit.sml.xml.v100.CapabilitiesSML;
+import org.geotoolkit.sml.xml.v100.Identification;
+import org.geotoolkit.sml.xml.v100.ComponentPropertyType;
+import org.geotoolkit.sml.xml.v100.Outputs;
+import org.geotoolkit.sml.xml.v100.InputList;
+import org.geotoolkit.sml.xml.v100.Connections;
+import org.geotoolkit.sml.xml.v100.Interface;
+import org.geotoolkit.sml.xml.v100.Characteristics;
+import org.geotoolkit.sml.xml.v100.ComponentType;
+import org.geotoolkit.sml.xml.v100.Document;
+import org.geotoolkit.sml.xml.v100.ParameterList;
+import org.geotoolkit.sml.xml.v100.ObjectFactory;
+import org.geotoolkit.sml.xml.v100.Keywords;
+import org.geotoolkit.sml.xml.v100.PositionList;
+import org.geotoolkit.sml.xml.v100.SensorML;
+import org.geotoolkit.sml.xml.v100.LayerPropertyType;
+import org.geotoolkit.sml.xml.v100.ConnectionList;
+import org.geotoolkit.sml.xml.v100.OutputList;
+import org.geotoolkit.sml.xml.v100.Location;
+import org.geotoolkit.sml.xml.v100.Position;
+import org.geotoolkit.sml.xml.v100.SpatialReferenceFrame;
+import org.geotoolkit.sml.xml.v100.ResponsibleParty;
+import org.geotoolkit.sml.xml.v100.ComponentList;
+import org.geotoolkit.sml.xml.v100.Interfaces;
+import org.geotoolkit.sml.xml.v100.Contact;
+import org.geotoolkit.sml.xml.v100.SystemType;
+import org.geotoolkit.sml.xml.v100.IoComponentPropertyType;
+import org.geotoolkit.sml.xml.v100.Destination;
+import org.geotoolkit.sml.xml.v100.Documentation;
+import org.geotoolkit.sml.xml.v100.Term;
+import org.geotoolkit.sml.xml.v100.Inputs;
+import org.geotoolkit.sml.xml.v100.KeywordList;
+import org.geotoolkit.sml.xml.v100.ClassifierList;
+import org.geotoolkit.sml.xml.v100.TemporalReferenceFrame;
+import org.geotoolkit.sml.xml.v100.ValidTime;
+import org.geotoolkit.sml.xml.v100.Classification;
+import org.geotoolkit.sml.xml.v100.Classifier;
+import org.geotoolkit.sml.xml.v100.InterfaceList;
+import org.geotoolkit.sml.xml.v100.Link;
+import org.geotoolkit.sml.xml.v100.LegalConstraint;
+import org.geotoolkit.sml.xml.v100.IdentifierList;
+import org.geotoolkit.sml.xml.v100.Source;
+import org.geotoolkit.sml.xml.v100.Identifier;
+import org.geotoolkit.sml.xml.v100.InterfaceDefinition;
+import org.geotoolkit.sml.xml.v100.ContactInfo;
+import org.geotoolkit.sml.xml.v100.Positions;
+import org.geotoolkit.sml.xml.v100.Rights;
+import org.geotoolkit.sml.xml.v100.AddressType;
+import org.geotoolkit.sml.xml.v100.Components;
+import org.geotoolkit.sml.xml.v100.OnlineResource;
+import org.geotoolkit.sml.xml.v100.Parameters;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,15 +78,15 @@ import java.util.logging.Logger;
 //constellation
 import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
 import org.geotoolkit.gml.xml.v311modified.TimePositionType;
-import org.geotoolkit.swe.v100.AbstractDataRecordType;
-import org.geotoolkit.swe.v100.CodeSpacePropertyType;
-import org.geotoolkit.swe.v100.DataComponentPropertyType;
-import org.geotoolkit.swe.v100.DataRecordType;
-import org.geotoolkit.swe.v100.ObservableProperty;
-import org.geotoolkit.swe.v100.QuantityRange;
-import org.geotoolkit.swe.v100.QuantityType;
-import org.geotoolkit.swe.v100.TimeRange;
-import org.geotoolkit.swe.v100.UomPropertyType;
+import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.CodeSpacePropertyType;
+import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
+import org.geotoolkit.swe.xml.v100.ObservableProperty;
+import org.geotoolkit.swe.xml.v100.QuantityRange;
+import org.geotoolkit.swe.xml.v100.QuantityType;
+import org.geotoolkit.swe.xml.v100.TimeRange;
+import org.geotoolkit.swe.xml.v100.UomPropertyType;
 
 // JAXB dependencies
 import javax.xml.bind.JAXBElement;
@@ -103,13 +103,13 @@ import org.geotoolkit.gml.xml.v311modified.PointType;
 import org.geotoolkit.gml.xml.v311modified.TemporalCRSType;
 import org.geotoolkit.gml.xml.v311modified.TemporalCSRefType;
 import org.geotoolkit.gml.xml.v311modified.TemporalDatumRefType;
-import org.geotoolkit.swe.v100.BooleanType;
-import org.geotoolkit.swe.v100.Category;
-import org.geotoolkit.swe.v100.CoordinateType;
-import org.geotoolkit.swe.v100.PositionType;
-import org.geotoolkit.swe.v100.TimeType;
-import org.geotoolkit.swe.v100.VectorPropertyType;
-import org.geotoolkit.swe.v100.VectorType;
+import org.geotoolkit.swe.xml.v100.BooleanType;
+import org.geotoolkit.swe.xml.v100.Category;
+import org.geotoolkit.swe.xml.v100.CoordinateType;
+import org.geotoolkit.swe.xml.v100.PositionType;
+import org.geotoolkit.swe.xml.v100.TimeType;
+import org.geotoolkit.swe.xml.v100.VectorPropertyType;
+import org.geotoolkit.swe.xml.v100.VectorType;
 
 //Junit dependencies
 import org.geotoolkit.xml.MarshallerPool;
@@ -125,7 +125,7 @@ public class SmlXMLBindingTest {
     private Logger       logger = Logger.getLogger("org.geotoolkit.sml");
     private MarshallerPool marshallerPool;
     private ObjectFactory sml100Factory = new ObjectFactory();
-    private org.geotoolkit.swe.v100.ObjectFactory swe100Factory = new org.geotoolkit.swe.v100.ObjectFactory();
+    private org.geotoolkit.swe.xml.v100.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
 
 
     @BeforeClass
@@ -138,7 +138,7 @@ public class SmlXMLBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        marshallerPool = new MarshallerPool("org.geotoolkit.sml.v100");
+        marshallerPool = new MarshallerPool("org.geotoolkit.sml.xml.v100");
     }
 
     @After

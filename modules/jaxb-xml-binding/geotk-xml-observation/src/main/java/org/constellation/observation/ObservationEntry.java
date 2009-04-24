@@ -35,12 +35,12 @@ import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
 import org.geotoolkit.gml.xml.v311modified.TimePositionType;
 import org.constellation.sampling.SamplingFeatureEntry;
 import org.constellation.sampling.SamplingPointEntry;
-import org.constellation.swe.v101.AnyResultEntry;
-import org.constellation.swe.v101.DataArrayEntry;
-import org.constellation.swe.v101.DataArrayPropertyType;
-import org.constellation.swe.v101.PhenomenonEntry;
-import org.constellation.swe.v101.PhenomenonPropertyType;
-import org.constellation.swe.v101.TimeGeometricPrimitivePropertyType;
+import org.constellation.swe.xml.v101.AnyResultEntry;
+import org.constellation.swe.xml.v101.DataArrayEntry;
+import org.constellation.swe.xml.v101.DataArrayPropertyType;
+import org.constellation.swe.xml.v101.PhenomenonEntry;
+import org.constellation.swe.xml.v101.PhenomenonPropertyType;
+import org.constellation.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 
 // openGis dependencies
 import org.opengis.observation.Process;
