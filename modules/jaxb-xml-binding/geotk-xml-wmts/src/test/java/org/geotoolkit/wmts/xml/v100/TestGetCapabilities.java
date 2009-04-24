@@ -50,7 +50,7 @@ public class TestGetCapabilities {
     @Test
     public void testUnmarshalling() throws JAXBException, IOException {
         final Unmarshaller unmarsh =  pool.acquireUnmarshaller();
-        final InputStream getCapsResponse = this.getClass().getResourceAsStream("wmtsGetCapabilities_response.xml");
+        final InputStream getCapsResponse = this.getClass().getResourceAsStream("/org/geotoolkit/wmts/v100/wmtsGetCapabilities_response.xml");
         assertFalse("The getCapabilities response in the resources folder was not found !",
                     getCapsResponse.available() <= 0);
         final Object objResp = unmarsh.unmarshal(getCapsResponse);
