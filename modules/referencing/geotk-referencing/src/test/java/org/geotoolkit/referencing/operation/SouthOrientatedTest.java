@@ -83,7 +83,6 @@ public final class SouthOrientatedTest {
      * @throws FactoryException Should never happen.
      */
     @Test
-    @Ignore
     public void testTransverseMercator() throws FactoryException {
         /*
          * Tests "Transverse Mercator" (not south-orientated) with an axis orientated toward south.

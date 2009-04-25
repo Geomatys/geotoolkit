@@ -279,7 +279,7 @@ public class TransverseMercator extends CassiniOrMercator {
      * @param parameters The parameters of the projection to be created.
      */
     protected TransverseMercator(final Parameters parameters) {
-        super(parameters, parameters.nameMatches(SouthOrientated.PARAMETERS));
+        super(parameters);
         esp = excentricitySquared / (1 - excentricitySquared);
     }
 

@@ -100,7 +100,7 @@ public class CassiniSoldner extends CassiniOrMercator {
      * @param parameters The parameters of the projection to be created.
      */
     protected CassiniSoldner(final Parameters parameters) {
-        super(parameters, false);
+        super(parameters);
     }
 
     /**
