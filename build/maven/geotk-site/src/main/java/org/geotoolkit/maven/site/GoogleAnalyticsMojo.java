@@ -81,7 +81,6 @@ public class GoogleAnalyticsMojo extends AbstractMojo implements FileFilter {
         } catch (IOException e) {
             throw new MojoExecutionException(e.toString(), e);
         }
-
     }
 
     /**

@@ -2,6 +2,8 @@
 <project name="Geotoolkit">
   <bannerLeft>
     <name>Geotoolkit</name>
+    <alt>Geotoolkit</alt>
+    <src>http://www.geotoolkit.org/images/logos/Geotoolkit.png</src>
     <href>http://www.geotoolkit.org/</href>
   </bannerLeft>
 
