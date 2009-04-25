@@ -66,10 +66,12 @@
     <url>http://hudson.geomatys.com/job/Geotoolkit/</url>
   </ciManagement>
 
+<!--
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/GEOT</url>
   </issueManagement>
+-->
 
 <!--
   <mailingLists>

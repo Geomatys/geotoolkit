@@ -105,6 +105,21 @@ abstract class CassiniOrMercator extends UnitaryProjection {
         /*
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
+         *
+         * Note that in the South Orientated case, the meaning of False Easting and False Northing
+         * are reversed: they are effectively False Westing and False Southing. This is the opposite
+         * of what we would expect from the parameter names, but is documented that way in the EPSG
+         * database. In other words the usual Transverse Mercator formulas are:
+         *
+         *     easting   =  (false easting)  + px
+         *     northing  =  (false northing) + py
+         *
+         * The Transverse Mercator South Orientated Projection formulas are:
+         *
+         *     westing   =  (false easting)  - px
+         *     southing  =  (false northing) - py
+         *
+         * Where the px and py terms are the same in both cases.
          */
         parameters.validate();
         final AffineTransform denormalize = parameters.normalize(false);

@@ -164,7 +164,12 @@ public class TransverseMercator extends MapProjection {
 
     /**
      * The provider for <cite>TransverseMercator Transverse (South Orientated)</cite> projection
-     * (EPSG:9808).
+     * (EPSG:9808). The coordinate axes are called <cite>Westings</cite> and <cite>Southings</cite>
+     * and increment to the West and South from the origin respectively.
+     * <p>
+     * The terms <cite>false easting</cite> (FE) and <cite>false northing</cite> (FN) increase
+     * the Westing and Southing value at the natural origin. In other words they are effectively
+     * <cite>false westing</cite> (FW) and <cite>false southing</cite> (FS) respectively.
      *
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
      * @version 3.0
