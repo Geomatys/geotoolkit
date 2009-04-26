@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faqs title="Common compiler errors while migrating from GeoTools">
+  <part id="utilities">
+    <title>Utilities</title>
+    <faq id="NumberRange">
+      <question>
+        Missing <code>NumberRange</code> constructor
+      </question>
+      <answer>
+        <p>Because of usage of <cite>parameterized types</cite>, expressions like:
+
+<blockquote><pre>NumberRange range = new NumberRange(lower, upper);</pre></blockquote>
+
+        need to replace the constructor call by a call to the static method factory:
+
+<blockquote><pre>NumberRange&lt;Integer&gt; range = NumberRange.create(lower, upper);</pre></blockquote>
+
+        The <code>&lt;Integer&gt;</code> declaration is optional but recommanded, and may need
+        to be changed to <code>&lt;Double&gt;</code> or other types depending on the type of the
+        <code>lower</code> and <code>upper</code> arguments.</p>
+      </answer>
+    </faq>
+
+
+    <faq id="DefaultParameterDescriptor">
+      <question>
+        Missing <code>DefaultParameterDescriptor</code> constructor
+      </question>
+      <answer>
+        <p>Because of usage of <cite>parameterized types</cite>, expressions like:
+
+<blockquote><pre>ParameterDescriptor descriptor = new DefaultParameterDescriptor(name, validValues, defaultValue);</pre></blockquote>
+
+        need an explicit declaration of the value class, as below. It is usually just a matter of
+        adding something like <code>String.class</code> in the arguments.
+
+        <blockquote><pre>ParameterDescriptor descriptor = new DefaultParameterDescriptor(name, valueClass, validValues, defaultValue);</pre></blockquote></p>
+      </answer>
+    </faq>
+  </part>
+
+
+  <!-- ========================================================================================= -->
+
+
+  <part id="referencing">
+    <title>Referencing</title>
+    <faq id="createProjectedCRS">
+      <question>
+         Missing <code>ReferencingFactoryContainer.createProjectedCRS</code> method.
+      </question>
+      <answer>
+        <p>Because of the removal of deprecated methods, expressions like:
+
+<blockquote><pre>ReferencingFactoryContainer factories = ...
+ProjectedCRS crs = factories.createProjectedCRS(properties, geographicCRS, conversion, cartesianCS);</pre></blockquote>
+
+        need to replace the call to the <code>ReferencingFactoryContainer</code> method by
+        a call to the same method in <code>CRSFactory</code>:
+
+<blockquote><pre>CRSFactory factory = factories.getCRSFactory(); // Note: an alternative is to use FactoryFinder.
+ProjectedCRS crs = factory.createProjectedCRS(properties, geographicCRS, conversion, cartesianCS);</pre></blockquote></p>
+      </answer>
+    </faq>
+
+
+    <faq id="ProjectedCRS">
+      <question>
+        Missing <code>ProjectedCRS</code> constructor
+      </question>
+      <answer>
+        <p>Because of the removal of deprecated methods, expressions like:
+
+<blockquote><pre>ProjectedCRS crs = new DefaultProjectedCRS(properties, geographicCRS, method, transform, cartesianCS);</pre></blockquote>
+
+        need to bundle the <code>method</code> and <code>transform</code> arguments in an
+        <code>DefiningConversion</code> object:
+
+<blockquote><pre>Conversion conversion = new DefiningConversion("my conversion", method, transform);
+ProjectedCRS crs = new DefaultProjectedCRS(properties, geographicCRS, conversion, cartesianCS);</pre></blockquote>
+
+        The same applies to constructions using a <code>ParameterValueGroup</code> argument
+        instead than <code>MathTransform</code>, or to constructions performed with the
+        <code>ReferencingFactoryContainer.createProjectedCRS</code> overloaded method, or to constructions
+        performed with the <code>CRSFactory</code> and <code>CoordinateOperationFactory</code> interfaces.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

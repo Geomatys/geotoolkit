@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<faqs title="Summary of changes compared to GeoTools 2.6" toplink="false">
+<faqs title="Summary of changes compared to GeoTools 2.6">
   <part id="general">
     <title>General</title>
     <faq id="mercurial">
