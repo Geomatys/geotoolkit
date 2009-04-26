@@ -110,7 +110,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.2
  * @module
+ *
+ * @deprecated The API of this class will change in a future Geotoolkit release. Do not rely on it.
  */
+@Deprecated
 public class OperationJAI extends Operation2D {
     /**
      * Serial number for interoperability with different versions.

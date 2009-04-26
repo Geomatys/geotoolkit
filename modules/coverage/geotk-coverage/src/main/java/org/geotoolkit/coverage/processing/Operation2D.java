@@ -53,7 +53,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated The API of this class will change in a future Geotoolkit release. Do not rely on it.
  */
+@Deprecated
 public abstract class Operation2D extends AbstractOperation {
     /**
      * Serial number for interoperability with different versions.
