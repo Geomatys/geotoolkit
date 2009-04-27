@@ -102,8 +102,8 @@
     <module>geotk-xml-kml</module>
     <module>geotk-xml-observation</module>
     <module>geotk-xml-ogc</module>
+    <module>geotk-xml-owc</module>
     <module>geotk-xml-ows</module>
-    <module>geotk-xml-owsc</module>
     <module>geotk-xml-sensorML</module>
     <module>geotk-xml-se</module>
     <module>geotk-xml-skos</module>
