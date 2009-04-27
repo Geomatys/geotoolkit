@@ -264,7 +264,7 @@ public class ContextBuilder {
             layer.setDescription(SF.description("polygons", ""));
             context.layers().add(layer);
 
-            params = new HashMap<String,Object>();
+            /*params = new HashMap<String,Object>();
             shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/clip_POLYGONE.shp");
             params.put( "url", shape.toURI().toURL() );
             store = DataStoreFinder.getDataStore(params);
@@ -272,7 +272,7 @@ public class ContextBuilder {
             style = createNewPolygonStyle();
             layer = MapBuilder.createFeatureLayer(fs, style);
             layer.setDescription(SF.description("clip", ""));
-            context.layers().add(layer);
+            context.layers().add(layer);*/
 
             context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
             context.setAreaOfInterest(context.getBounds());

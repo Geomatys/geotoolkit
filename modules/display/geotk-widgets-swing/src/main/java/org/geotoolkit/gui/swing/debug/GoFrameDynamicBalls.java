@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.TransformException;
 public class GoFrameDynamicBalls extends javax.swing.JFrame {
 
     private J2DMapVolatile guiMap;
-    private MapContext context = ContextBuilder.buildBigRoadContext();
+    private MapContext context = ContextBuilder.buildSmallVectorContext();
     
     /** Creates new form GoFrame */
     public GoFrameDynamicBalls() {
@@ -58,16 +58,16 @@ public class GoFrameDynamicBalls extends javax.swing.JFrame {
             
         guiContextTree.addContext(context);
                         
-        guiMap = new J2DMapVolatile();
+        guiMap = new J2DMapVolatile(false);
 //        try {
             guiMap.getContainer().setContext(context);
 
-//        try {
-//            guiMap.getCanvas().getController().setObjectiveCRS(context.getCoordinateReferenceSystem());
-//        } catch (TransformException ex) {
-//            ex.printStackTrace();
-//            Logger.getLogger(J2DMap.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+
+        try {
+            guiMap.getCanvas().getController().setObjectiveCRS(context.getCoordinateReferenceSystem());
+        } catch (TransformException ex) {
+            ex.printStackTrace();
+        }
 //        } catch (IOException ex) {
 //            Logger.getLogger(GoFrame.class.getName()).log(Level.SEVERE, null, ex);
 //        } catch (TransformException ex) {
@@ -89,7 +89,13 @@ public class GoFrameDynamicBalls extends javax.swing.JFrame {
         guiNavBar.setMap(guiMap);
         guiCoordBar.setMap(guiMap);
         
-        
+
+        guiMap.getContainer().add(new DynamicGraphic(guiMap.getCanvas()));
+//        guiMap.getContainer().add(new DynamicGraphic(guiMap.getCanvas()));
+//        guiMap.getContainer().add(new DynamicGraphic(guiMap.getCanvas()));
+//        guiMap.getContainer().add(new DynamicGraphic(guiMap.getCanvas()));
+//        guiMap.getContainer().add(new DynamicGraphic(guiMap.getCanvas()));
+
         setSize(1024,768);
         setLocationRelativeTo(null);             
     }

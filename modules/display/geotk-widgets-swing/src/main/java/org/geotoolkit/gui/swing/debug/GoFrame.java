@@ -74,7 +74,7 @@ public class GoFrame extends javax.swing.JFrame {
     private J2DMapVolatile guiMap;
 //    private MapContext context = org.constellation.map.PostGRIDContextBuilder.buildPostGridContext();
 
-    private MapContext context = ContextBuilder.buildWMSContext();
+    private MapContext context = ContextBuilder.buildRealCityContext();
     private JContextTree guiContextTree;
     
     /** Creates new form GoFrame */

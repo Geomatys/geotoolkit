@@ -70,7 +70,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
           <SubComponents>
-            <Component class="org.geotools.gui.swing.go.control.JCoordinateBar" name="guiCoordBar">
+            <Component class="org.geotoolkit.gui.swing.go.control.JCoordinateBar" name="guiCoordBar">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                   <BorderConstraints direction="Last"/>
@@ -144,7 +144,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="org.geotools.gui.swing.go.control.JNavigationBar" name="guiNavBar">
+        <Container class="org.geotoolkit.gui.swing.go.control.JNavigationBar" name="guiNavBar">
           <Properties>
             <Property name="floatable" type="boolean" value="false"/>
             <Property name="rollover" type="boolean" value="true"/>
@@ -157,7 +157,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
         </Container>
-        <Container class="org.geotools.gui.swing.go.control.JInformationBar" name="guiInfoBar">
+        <Container class="org.geotoolkit.gui.swing.go.control.JInformationBar" name="guiInfoBar">
           <Properties>
             <Property name="floatable" type="boolean" value="false"/>
             <Property name="rollover" type="boolean" value="true"/>
@@ -170,7 +170,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
         </Container>
-        <Container class="org.geotools.gui.swing.go.control.JSelectionBar" name="guiSelectionBar">
+        <Container class="org.geotoolkit.gui.swing.go.control.JSelectionBar" name="guiSelectionBar">
           <Properties>
             <Property name="floatable" type="boolean" value="false"/>
             <Property name="rollover" type="boolean" value="true"/>
@@ -183,7 +183,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
         </Container>
-        <Container class="org.geotools.gui.swing.go.control.JConfigBar" name="guiConfigBar">
+        <Container class="org.geotoolkit.gui.swing.go.control.JConfigBar" name="guiConfigBar">
           <Properties>
             <Property name="floatable" type="boolean" value="false"/>
             <Property name="rollover" type="boolean" value="true"/>
