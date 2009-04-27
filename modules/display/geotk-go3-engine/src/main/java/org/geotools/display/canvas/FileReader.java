@@ -19,8 +19,8 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.factory.Hints;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gce.geotiff.GeoTiffReader;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -59,11 +59,11 @@ private static final String GEOTIFF = ".tif";
         }
 
         features = source.getFeatures();
-        ReferencedEnvelope env = source.getBounds();
-        double xmin = env.getMinX();
-        double ymin = env.getMinY();
-        double xmax = env.getMaxX();
-        double ymax = env.getMaxY();
+        Envelope env = source.getBounds();
+        double xmin = env.getMinimum(0);
+        double ymin = env.getMinimum(1);
+        double xmax = env.getMaximum(0);
+        double ymax = env.getMaximum(1);
         System.out.println("Xmin " + xmin + " ymin " + ymin + " xmax " + xmax + " ymax " + ymax);
       
         return features;

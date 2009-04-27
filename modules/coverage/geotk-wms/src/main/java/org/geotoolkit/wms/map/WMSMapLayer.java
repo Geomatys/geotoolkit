@@ -16,16 +16,18 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
+
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -34,7 +36,7 @@ import org.geotoolkit.wms.WebMapServer;
 public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
     //TODO : we should use the envelope profided by the wms capabilities
-    private static final ReferencedEnvelope MAXEXTEND_ENV = new ReferencedEnvelope(-180, 180, -70, 70, DefaultGeographicCRS.WGS84);
+    private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
 
     private final WebMapServer server;
     private final String[] layers;
@@ -50,7 +52,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         this.layers = layers;
     }
 
-    public ReferencedEnvelope getBounds() {
+    @Override
+    public Envelope getBounds() {
         return MAXEXTEND_ENV;
     }
 
@@ -68,7 +71,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         }
 
         final RenderingContext2D context2D = (RenderingContext2D) context;
-        final ReferencedEnvelope env = context2D.getCanvasObjectiveBounds();
+        final Envelope env = context2D.getCanvasObjectiveBounds();
         Shape rect = context2D.getCanvasDisplayBounds();
 
         final double rotation = context2D.getCanvas().getController().getRotation();
@@ -85,7 +88,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return null;
     }
 
-    public URL query(final ReferencedEnvelope env, final Dimension rect) throws MalformedURLException  {
+    public URL query(final Envelope env, final Dimension rect) throws MalformedURLException  {
         final GetMapRequest request = server.createGetMap();
         request.setEnvelope(env);
         request.setDimension(rect);
@@ -98,6 +101,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return request.getURL();
     }
 
+    @Override
     public void portray(RenderingContext context) throws PortrayalException {
         if( !(context instanceof RenderingContext2D)){
             throw new PortrayalException("WMSLayer only support rendering for RenderingContext2D");

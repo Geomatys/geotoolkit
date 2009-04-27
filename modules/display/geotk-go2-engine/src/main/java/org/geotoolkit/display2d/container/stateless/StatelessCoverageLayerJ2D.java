@@ -37,7 +37,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.GraphicBuilder;
@@ -198,9 +197,8 @@ public class StatelessCoverageLayerJ2D extends GraphicCoverageJ2D{
      * {@inheritDoc }
      */
     @Override
-    public ReferencedEnvelope getEnvelope() {
-        Envelope env = super.getEnvelope();
-        return new ReferencedEnvelope(env);
+    public Envelope getEnvelope() {
+        return super.getEnvelope();
     }
 
     /**

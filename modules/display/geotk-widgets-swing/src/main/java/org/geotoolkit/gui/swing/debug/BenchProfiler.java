@@ -16,15 +16,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.canvas.control.FailOnErrorMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.canvas.GO2Hints;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.map.MapContext;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -35,9 +32,7 @@ public class BenchProfiler {
     public static void main(String[] args) throws IOException {
         MapContext context = ContextBuilder.buildBigRoadContext();
 
-//        ReferencedEnvelope env = new ReferencedEnvelope(-180,180,-90,90,DefaultGeographicCRS.WGS84);
-//        ReferencedEnvelope env = new ReferencedEnvelope(-60,180,-30,90,DefaultGeographicCRS.WGS84);
-        ReferencedEnvelope env = context.getBounds();
+        Envelope env = context.getBounds();
 
         Hints hints = new Hints();
 //        hints.put(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);

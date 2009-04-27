@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotools.data.DefaultQuery;
-import org.geotools.data.FeatureSource;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -39,17 +37,20 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+
+import org.geotools.data.DefaultQuery;
+import org.geotools.data.FeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
@@ -180,7 +181,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
-        final ReferencedEnvelope layerBounds                     = layer.getBounds();
+        final Envelope layerBounds                               = layer.getBounds();
         
         if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -201,11 +202,11 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
 
-            bbox = new ReferencedEnvelope(env);
+            bbox = new DefaultBoundingBox(env);
         }
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(layerBounds)){
+        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
             filter = Filter.INCLUDE;
         }else{
@@ -295,7 +296,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final ReferencedEnvelope layerBounds                     = layer.getBounds();
+        final Envelope layerBounds                               = layer.getBounds();
 
         if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -313,11 +314,11 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
 
-            bbox = new ReferencedEnvelope(env);
+            bbox = new DefaultBoundingBox(env);
         }
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(layerBounds)){
+        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
             filter = Filter.INCLUDE;
         }else{

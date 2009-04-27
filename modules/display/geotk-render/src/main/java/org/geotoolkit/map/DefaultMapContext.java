@@ -29,7 +29,6 @@ import javax.swing.event.EventListenerList;
 
 import org.geotools.data.FeatureSource;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
@@ -40,7 +39,6 @@ import org.geotoolkit.util.Utilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Description;
@@ -238,18 +236,18 @@ final class DefaultMapContext implements MapContext {
      *
      */
     @Override
-    public ReferencedEnvelope getBounds() throws IOException {
+    public Envelope getBounds() throws IOException {
         final CoordinateReferenceSystem crs = area.getCoordinateReferenceSystem();
         if (crs == null) {
             throw new IOException("CRS of this map context is null. Unable to get bounds.");
         }
-        ReferencedEnvelope result = null;
+        GeneralEnvelope result = null;
 
         FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-        ReferencedEnvelope env;
+        GeneralEnvelope env;
         CoordinateReferenceSystem sourceCrs;
         for(final MapLayer layer : layers){
-            env = layer.getBounds();
+            env = new GeneralEnvelope(layer.getBounds());
             sourceCrs = env.getCoordinateReferenceSystem();
 
             if (env == null) {
@@ -258,11 +256,7 @@ final class DefaultMapContext implements MapContext {
 
                 if ((sourceCrs != null) && (crs != null) && !CRS.equalsIgnoreMetadata(sourceCrs,crs)) {
                     try {
-                        env = env.transform(crs, true);
-                    } catch (FactoryException e) {
-                        LOGGER.log(Level.SEVERE,
-                                "Data source and map context coordinate system differ, yet it was not possible to get a projected bounds estimate...",
-                                e);
+                        env = new GeneralEnvelope(CRS.transform(env, crs));
                     } catch (TransformException e) {
                         LOGGER.log(Level.SEVERE,
                                 "Data source and map context coordinate system differ, yet it was not possible to get a projected bounds estimate...",
@@ -273,7 +267,7 @@ final class DefaultMapContext implements MapContext {
                 if (result == null) {
                     result = env;
                 } else {
-                    result.expandToInclude(env);
+                    result.add(env);
                 }
             }
 
@@ -281,8 +275,7 @@ final class DefaultMapContext implements MapContext {
 
         if(result == null){
             //we could not find a valid envelope
-            Envelope general = new GeneralEnvelope(crs);
-            result = new ReferencedEnvelope(general);
+            result = new GeneralEnvelope(crs);
         }
         return result;
     }

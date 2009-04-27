@@ -37,19 +37,19 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display.canvas.HintKey;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.display.canvas.HintKey;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.portrayal.PortrayalService;
 
@@ -73,7 +73,7 @@ public class DefaultPortrayalService implements PortrayalService{
      * @param mime : mime output type
      * @param canvasDimension : size of the wanted image
      */
-    public static void portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static void portray(final MapContext context, final Envelope contextEnv,
             final Object output, final String mime, final Dimension canvasDimension, 
             final boolean strechImage) throws PortrayalException {
         portray(context, contextEnv, null, output, mime, canvasDimension, null, strechImage);
@@ -90,14 +90,14 @@ public class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @param hints : canvas hints
      */
-    public static void portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static void portray(final MapContext context, final Envelope contextEnv,
             final Color background, final Object output, final String mime, 
             final Dimension canvasDimension, Hints hints, final boolean strechImage) 
             throws PortrayalException {
         portray(context, contextEnv, null,null,background,output,mime,canvasDimension, hints,strechImage);
     }
 
-    public static void portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static void portray(final MapContext context, final Envelope contextEnv,
             final Date start, final Date end, final Color background, final Object output, 
             final String mime, final Dimension canvasDimension, Hints hints, 
             final boolean strechImage) throws PortrayalException {
@@ -148,7 +148,7 @@ public class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @return resulting image of the portraying operation
      */
-    public static BufferedImage portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage) 
             throws PortrayalException{
 
@@ -178,21 +178,21 @@ public class DefaultPortrayalService implements PortrayalService{
         return buffer;
     }
 
-    public static BufferedImage portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage, final float azimuth,
             final CanvasMonitor monitor, final Color background)
             throws PortrayalException{
         return portray(context,contextEnv,null,null,canvasDimension,strechImage,azimuth,monitor,background);
     }
 
-    public static BufferedImage portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
             final Date start, final Date end, final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background) throws PortrayalException{
         return portray(context,contextEnv,start,end,canvasDimension,strechImage,azimuth,monitor,background,null);
     }
 
-    public static BufferedImage portray(final MapContext context, final ReferencedEnvelope contextEnv,
+    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
             final Date start, final Date end, final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, Hints hints) throws PortrayalException{
@@ -244,7 +244,7 @@ public class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @return resulting image of the portraying operation
      */
-    public static Image portray(final GridCoverage2D coverage, final ReferencedEnvelope mapArea,
+    public static Image portray(final GridCoverage2D coverage, final Envelope mapArea,
             final Dimension canvasDimension, final boolean strechImage)
             throws PortrayalException{
 
@@ -292,7 +292,7 @@ public class DefaultPortrayalService implements PortrayalService{
         return buffer;
     }
 
-    public static void visit( final MapContext context, final ReferencedEnvelope contextEnv,
+    public static void visit( final MapContext context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage, final Hints hints,
             final Shape selectedArea, final GraphicVisitor visitor)
             throws PortrayalException {

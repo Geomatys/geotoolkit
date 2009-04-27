@@ -12,10 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import net.sf.jasperreports.engine.JRException;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.gui.swing.debug.ContextBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.report.JRExportService;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -28,8 +28,7 @@ public class tester {
         JRExportService service = JRExportService.getInstance();
         MapContext context = ContextBuilder.buildSmallVectorContext();
 
-        ReferencedEnvelope env = context.getBounds();
-        env.expandBy(-3000);
+        Envelope env = context.getBounds();
         context.setAreaOfInterest(env);
 
         File template = new File("/home/sorel/DEV/temp/TestReport.jrxml");

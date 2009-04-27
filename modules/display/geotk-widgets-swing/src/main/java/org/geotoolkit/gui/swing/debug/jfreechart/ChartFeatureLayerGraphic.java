@@ -7,6 +7,7 @@ package org.geotoolkit.gui.swing.debug.jfreechart;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -15,28 +16,32 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
+
+import org.geotools.data.FeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
+
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotools.data.FeatureSource;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.ui.RectangleInsets;
+
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -116,7 +121,7 @@ public class ChartFeatureLayerGraphic extends GraphicJ2D{
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
-        final ReferencedEnvelope layerBounds                     = layer.getBounds();
+        final Envelope layerBounds                               = layer.getBounds();
 
         if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -134,11 +139,11 @@ public class ChartFeatureLayerGraphic extends GraphicJ2D{
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
 
-            bbox = new ReferencedEnvelope(env);
+            bbox = new DefaultBoundingBox(env);
         }
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(layerBounds)){
+        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
             filter = Filter.INCLUDE;
         }else{

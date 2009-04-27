@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
 import org.geotoolkit.gui.swing.contexttree.JContextTreePopup;
 import org.geotoolkit.gui.swing.contexttree.column.VisibleTreeTableColumn;
@@ -203,7 +202,7 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
     Dimension canvasDimension = new Dimension(640,480);
-    ReferencedEnvelope dataEnvelope = null;
+    org.opengis.geometry.Envelope dataEnvelope = null;
     try {
         dataEnvelope = context.getBounds();
     } catch (IOException ex) {
@@ -235,7 +234,7 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
 //    Dimension canvasDimension = new Dimension(640,480);
-//    ReferencedEnvelope dataEnvelope = null;
+//    Envelope dataEnvelope = null;
 //    try {
 //        dataEnvelope = context.getLayerBounds();
 //    } catch (IOException ex) {

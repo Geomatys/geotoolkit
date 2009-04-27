@@ -14,10 +14,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.display3d.canvas.A3DCanvas;
 import org.geotools.display3d.primitive.A3DGraphic;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.GraphicBuilder;
 import org.geotools.map.MapContext;
 import org.geotools.map.MapLayer;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -52,14 +52,14 @@ public class ContextNode extends A3DGraphic{
             z += 10d;
         }
 
-        final ReferencedEnvelope env;
+        final Envelope env;
         try {
             env = context.getBounds();
 
-            float minX = (float) env.getMinX();
-            float minY = (float) env.getMinY();
-            float maxX = (float) env.getMaxX();
-            float maxY = (float) env.getMaxY();
+            float minX = (float) env.getMinimum(0);
+            float minY = (float) env.getMinimum(1);
+            float maxX = (float) env.getMaximum(0);
+            float maxY = (float) env.getMaximum(1);
 
             setTranslation(-env.getMedian(0), -env.getMedian(1), 0);
 //            setScale(0.999f);
@@ -78,7 +78,7 @@ public class ContextNode extends A3DGraphic{
     private Node buildPlan(){
         final Node plan = new Node("plan");
 
-        final ReferencedEnvelope env;
+        final Envelope env;
         try {
             env = context.getBounds();
         } catch (IOException ex) {
@@ -87,10 +87,10 @@ public class ContextNode extends A3DGraphic{
         }
 
         plan.setTranslation(env.getMedian(0), env.getMedian(1), -0.1f);
-        float minX = (float) env.getMinX();
-        float minY = (float) env.getMinY();
-        float maxX = (float) env.getMaxX();
-        float maxY = (float) env.getMaxY();
+        float minX = (float) env.getMinimum(0);
+        float minY = (float) env.getMinimum(1);
+        float maxX = (float) env.getMaximum(0);
+        float maxY = (float) env.getMaximum(1);
 
 
         final Quad back = new Quad();

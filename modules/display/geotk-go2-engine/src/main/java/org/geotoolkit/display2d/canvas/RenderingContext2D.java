@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import org.geotoolkit.display.canvas.*;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -24,8 +23,11 @@ import java.awt.geom.AffineTransform;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.style.renderer.LabelRenderer;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -120,7 +122,7 @@ public interface RenderingContext2D extends RenderingContext{
 
     Shape getPaintingObjectiveShape();
 
-    ReferencedEnvelope getPaintingObjectiveBounds();
+    BoundingBox getPaintingObjectiveBounds();
 
 
     
@@ -132,6 +134,6 @@ public interface RenderingContext2D extends RenderingContext{
     
     Shape getCanvasObjectiveShape();
     
-    ReferencedEnvelope getCanvasObjectiveBounds();
+    BoundingBox getCanvasObjectiveBounds();
     
 }

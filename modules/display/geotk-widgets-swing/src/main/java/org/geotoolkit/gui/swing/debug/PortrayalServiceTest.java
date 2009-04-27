@@ -30,7 +30,6 @@ import javax.swing.JScrollPane;
 
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 
 import org.geotoolkit.geometry.Envelope2D;
@@ -49,6 +48,7 @@ import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.factory.Hints;
 
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.geometry.Envelope;
@@ -96,8 +96,8 @@ public class PortrayalServiceTest {
 //        }
         crs = DefaultGeographicCRS.WGS84;
         
-        ReferencedEnvelope dataEnvelope = null;
-        dataEnvelope = new ReferencedEnvelope(rect, crs);
+        Envelope dataEnvelope = null;
+        dataEnvelope = new Envelope2D(crs,rect);
         
 //        try {
 //            dataEnvelope = context.getBounds();
@@ -150,7 +150,7 @@ public class PortrayalServiceTest {
         MapContext context = ContextBuilder.buildBigRoadContext();
 
         Dimension canvasDimension = new Dimension(2400,1200);
-        ReferencedEnvelope dataEnvelope = null;
+        Envelope dataEnvelope = null;
         try {
             dataEnvelope = context.getBounds();
         } catch (IOException ex) {
@@ -193,7 +193,7 @@ public class PortrayalServiceTest {
 
         System.out.println("Enveloppe =" + env);
         
-        dataEnvelope = new ReferencedEnvelope(env);
+        dataEnvelope = new GeneralEnvelope(env);
 
         System.out.println("dataEnveloppe 2 =" + dataEnvelope);
         
@@ -428,7 +428,7 @@ public class PortrayalServiceTest {
     private static float testBasicService(MapContext context,Hints hints,String filename){
 
         Dimension canvasDimension = new Dimension(2400,1200);
-        ReferencedEnvelope dataEnvelope = null;
+        Envelope dataEnvelope = null;
         try {
             dataEnvelope = context.getBounds();
         } catch (IOException ex) {

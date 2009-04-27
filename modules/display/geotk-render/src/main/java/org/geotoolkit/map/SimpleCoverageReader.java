@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.io.CoverageReadParam;
 import org.geotools.coverage.io.CoverageReader;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -43,8 +43,8 @@ public class SimpleCoverageReader implements CoverageReader{
     }
 
     @Override
-    public ReferencedEnvelope getCoverageBounds() {
-        return new ReferencedEnvelope(coverage.getEnvelope());
+    public Envelope getCoverageBounds() {
+        return coverage.getEnvelope();
     }
 
 }

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import org.geotoolkit.display2d.style.renderer.DefaultLabelRenderer;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
@@ -34,12 +33,15 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.display2d.style.renderer.DefaultLabelRenderer;
+import org.geotoolkit.display2d.style.renderer.LabelRenderer;
+import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.renderer.LabelRenderer;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.FactoryException;
@@ -161,12 +163,12 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     private Shape              paintingDisplayShape   = null;
     private Rectangle          paintingDisplaybounds  = null;
     private Shape              paintingObjectiveShape = null;
-    private ReferencedEnvelope paintingObjectiveBBox  = null;
+    private Envelope           paintingObjectiveBBox  = null;
 
     private Shape              canvasDisplayShape   = null;
     private Rectangle          canvasDisplaybounds  = null;
     private Shape              canvasObjectiveShape = null;
-    private ReferencedEnvelope canvasObjectiveBBox  = null;
+    private Envelope           canvasObjectiveBBox  = null;
     
 
     /**
@@ -207,7 +209,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 //                                      canvasObjectiveBounds.getY()-d1,
 //                                      canvasObjectiveBounds.getWidth()+2*d0,
 //                                      canvasObjectiveBounds.getHeight()+2*d1);
-        this.canvasObjectiveBBox = new ReferencedEnvelope(canvasObjectiveBounds, objectiveCRS);
+        this.canvasObjectiveBBox = new Envelope2D(objectiveCRS,canvasObjectiveBounds);
 
         //calculate painting shape/bounds values -------------------------------
         this.paintingDisplayShape = paintingDisplayShape;
@@ -216,7 +218,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.paintingObjectiveShape = paintingObjectiveShape;
 
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
-        this.paintingObjectiveBBox = new ReferencedEnvelope(paintingObjectiveBounds, objectiveCRS);
+        this.paintingObjectiveBBox = new Envelope2D(objectiveCRS,paintingObjectiveBounds);
 
     }
 
@@ -494,8 +496,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
-    public ReferencedEnvelope getPaintingObjectiveBounds(){
-        return paintingObjectiveBBox;
+    public BoundingBox getPaintingObjectiveBounds(){
+        return new DefaultBoundingBox(paintingObjectiveBBox);
     }
 
 
@@ -529,8 +531,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
-    public ReferencedEnvelope getCanvasObjectiveBounds() {
-        return canvasObjectiveBBox;
+    public BoundingBox getCanvasObjectiveBounds() {
+        return new DefaultBoundingBox(canvasObjectiveBBox);
     }
 
     @Override

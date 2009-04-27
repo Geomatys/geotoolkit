@@ -6,8 +6,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
-
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.converter.UnitConverter;
@@ -15,9 +15,9 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotools.geometry.jts.JTS;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
@@ -87,7 +87,7 @@ public class MesureUtilities {
         if(geom == null || !(geom instanceof Polygon)) return 0;
 
         try {
-            ReferencedEnvelope env = JTS.toEnvelope(geom);
+            Envelope env = JTS.toEnvelope(geom);
 
             final GeographicCRS geoCRS = CRSUtilities.getStandardGeographicCRS2D(geomCRS);
 

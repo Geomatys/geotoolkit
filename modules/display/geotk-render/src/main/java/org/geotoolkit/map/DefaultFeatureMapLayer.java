@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import org.geotools.data.FeatureSource;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -66,10 +68,10 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      * {@inheritDoc }
      */
     @Override
-    public ReferencedEnvelope getBounds() {
+    public Envelope getBounds() {
 
         final CoordinateReferenceSystem sourceCrs = featureSource.getSchema().getCoordinateReferenceSystem();
-        ReferencedEnvelope env = null;
+        Envelope env = null;
         try {
             env = featureSource.getBounds();
         } catch (MismatchedDimensionException e) {
@@ -83,10 +85,10 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
             if(crsEnv != null){
                 //we couldn't estime the features envelope, return the crs envelope if possible
                 //we assume the features are not out of the crs valide envelope
-                env = new ReferencedEnvelope(crsEnv);
+                env = new GeneralEnvelope(crsEnv);
             }else{
                 //never return a null envelope, we better return an infinite envelope
-                env = new ReferencedEnvelope(XRectangle2D.INFINITY, sourceCrs);
+                env = new Envelope2D(sourceCrs,XRectangle2D.INFINITY);
             }
         }
 

@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 import org.geotools.display.container.statefull.StatefullProjectedFeature;
 import org.geotools.display.primitive.GeometryJ2D;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureMapLayer;
 import org.geotools.map.MapContext;
 import org.opengis.feature.simple.SimpleFeature;

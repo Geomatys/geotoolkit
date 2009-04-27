@@ -16,7 +16,6 @@ import org.geotools.display3d.primitive.A3DGraphic;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureMapLayer;
 import org.geotools.map.MapContext;
 import org.geotoolkit.referencing.CRS;

@@ -25,17 +25,17 @@ import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
@@ -487,8 +487,8 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public void setVisibleArea(ReferencedEnvelope env) throws NoninvertibleTransformException{
-        Rectangle2D rect2D = new Rectangle2D.Double(env.getMinX(), env.getMinY(), env.getWidth(), env.getHeight());
+    public void setVisibleArea(Envelope env) throws NoninvertibleTransformException{
+        Rectangle2D rect2D = new Rectangle2D.Double(env.getMinimum(0), env.getMinimum(1), env.getSpan(0), env.getSpan(1));
         reset(rect2D, canvas.getDisplayBounds().getBounds(), true,false);
     }
 

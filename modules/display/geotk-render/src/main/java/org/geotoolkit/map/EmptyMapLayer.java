@@ -17,10 +17,11 @@
 
 package org.geotoolkit.map;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.style.MutableStyle;
+import org.opengis.geometry.Envelope;
 
 /**
  * This class is a dummy implementation of maplayer, which hold no datas.
@@ -35,8 +36,8 @@ public class EmptyMapLayer extends AbstractMapLayer{
     }
 
     @Override
-    public ReferencedEnvelope getBounds() {
-        return new ReferencedEnvelope(XRectangle2D.INFINITY,DefaultGeographicCRS.WGS84);
+    public Envelope getBounds() {
+        return new Envelope2D(DefaultGeographicCRS.WGS84, XRectangle2D.INFINITY);
     }
 
 }

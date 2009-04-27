@@ -18,8 +18,8 @@ import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.factory.Hints;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.MapContext;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -86,7 +86,7 @@ public class BenchBigShapes {
     private static float testBasicService(MapContext context,Hints hints,String filename){
 
         Dimension canvasDimension = new Dimension(2400,1200);
-        ReferencedEnvelope dataEnvelope = null;
+        Envelope dataEnvelope = null;
         try {
             dataEnvelope = context.getBounds();
         } catch (IOException ex) {

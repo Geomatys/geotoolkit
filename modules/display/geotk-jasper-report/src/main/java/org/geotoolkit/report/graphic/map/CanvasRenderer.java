@@ -26,14 +26,12 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -224,7 +222,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public void render(Graphics2D g, Rectangle2D rect) throws JRException {
         setSize(new Dimension((int)rect.getWidth(), (int)rect.getHeight()));
         try {
-            getController().setVisibleArea(new ReferencedEnvelope(renderer.getContext().getAreaOfInterest()));
+            getController().setVisibleArea(renderer.getContext().getAreaOfInterest());
         } catch (NoninvertibleTransformException ex) {
             Logger.getLogger(CanvasRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }

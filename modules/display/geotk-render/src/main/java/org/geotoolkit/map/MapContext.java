@@ -19,8 +19,6 @@ package org.geotoolkit.map;
 import java.io.IOException;
 import java.util.List;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
@@ -98,7 +96,7 @@ public interface MapContext {
 	/**
      * Return the enveloppe of all layers.
 	 */
-    ReferencedEnvelope getBounds() throws IOException;
+    Envelope getBounds() throws IOException;
 
     void addContextListener(ContextListener listener);
 

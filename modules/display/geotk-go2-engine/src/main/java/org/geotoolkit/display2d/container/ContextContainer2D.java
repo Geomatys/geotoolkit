@@ -31,13 +31,13 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.style.GO2Utilities;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 
 import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.AnchorPoint;
@@ -126,7 +126,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     public Rectangle2D getGraphicsEnvelope2D() {
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
-            ReferencedEnvelope env = getContext().getBounds();
+            Envelope env = getContext().getBounds();
 
             if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
                 GeneralEnvelope genv = new GeneralEnvelope(env);
@@ -167,7 +167,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     public GeneralEnvelope getGraphicsEnvelope(){
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
-            ReferencedEnvelope env = getContext().getBounds();
+            Envelope env = getContext().getBounds();
 
             if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
                 return new GeneralEnvelope(env);

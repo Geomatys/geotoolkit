@@ -39,7 +39,6 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -59,6 +58,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -697,11 +697,11 @@ public class RenderedGridMarks extends RenderedMarks {
 
         MathTransform trs = context.getMathTransform(context.getObjectiveCRS(),coverage.getCoordinateReferenceSystem2D() );
 
-        final ReferencedEnvelope refEnv = context.getCanvasObjectiveBounds();
+        final Envelope refEnv = context.getCanvasObjectiveBounds();
         final GeneralEnvelope coverageEnv = CRS.transform(trs, refEnv);
 
-        final double objX = refEnv.getWidth();
-        final double objY = refEnv.getHeight();
+        final double objX = refEnv.getSpan(0);
+        final double objY = refEnv.getSpan(1);
         final double covX = coverageEnv.getMaximum(0)-coverageEnv.getMinimum(0);
         final double covY = coverageEnv.getMaximum(1)-coverageEnv.getMinimum(1);
         final double scaleX = covX/objX;

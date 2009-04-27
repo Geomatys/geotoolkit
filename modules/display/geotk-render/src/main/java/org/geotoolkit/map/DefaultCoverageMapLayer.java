@@ -18,9 +18,9 @@ package org.geotoolkit.map;
 
 
 import org.geotools.coverage.io.CoverageReader;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.Envelope;
 
 /**
  * Default implementation of the coverage MapLayer.
@@ -61,7 +61,7 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
      * {@inheritDoc }
      */
     @Override
-    public ReferencedEnvelope getBounds() {        
+    public Envelope getBounds() {        
         return reader.getCoverageBounds();
     }
 

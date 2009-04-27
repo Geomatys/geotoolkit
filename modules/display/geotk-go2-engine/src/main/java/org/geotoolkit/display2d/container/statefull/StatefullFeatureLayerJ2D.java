@@ -46,9 +46,9 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 
@@ -172,7 +172,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = context.getMonitor();
-        final ReferencedEnvelope layerBounds                     = layer.getBounds();
+        final Envelope layerBounds                     = layer.getBounds();
 
         if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -193,11 +193,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
 
-            bbox = new ReferencedEnvelope(env);
+            bbox = new DefaultBoundingBox(env);
         }
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(layerBounds)){
+        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds in within the bbox, no need for a spatial filter
             filter = Filter.INCLUDE;
         }else{
@@ -344,7 +344,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final ReferencedEnvelope layerBounds                     = layer.getBounds();
+        final Envelope layerBounds                     = layer.getBounds();
 
         if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -365,7 +365,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
 
-            bbox = new ReferencedEnvelope(env);
+            bbox = new DefaultBoundingBox(env);
         }
 
         //efficient but doesnt take in count the symbolizer size and width
@@ -374,14 +374,14 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 //            trs.invert();
 //            Geometry bb = JTS.transform(mask, new AffineTransform2D(trs));
 //            bb = JTS.transform(bb, CRS.findMathTransform(context.getObjectiveCRS(), layerBounds.getCoordinateReferenceSystem(),true));
-//            bbox = new ReferencedEnvelope(JTS.toEnvelope(bb),layerBounds.getCoordinateReferenceSystem());
+//            bbox = new DefaultBoundingBox(JTS.toEnvelope(bb),layerBounds.getCoordinateReferenceSystem());
 //        } catch (Exception ex) {
 //            Logger.getLogger(StatefullFeatureLayerJ2D.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(layerBounds)){
+        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds in wihin the bbox, no need for a spatial filter
             filter = Filter.INCLUDE;
         }else{

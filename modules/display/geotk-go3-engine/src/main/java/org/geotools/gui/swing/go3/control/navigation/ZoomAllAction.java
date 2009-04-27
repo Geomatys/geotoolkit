@@ -23,9 +23,9 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 import org.geotools.display3d.canvas.A3DCanvas;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.gui.swing.resource.IconBundle;
 import org.geotools.map.MapContext;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -47,7 +47,7 @@ public class ZoomAllAction extends AbstractAction {
             MapContext context = map.getContainer2().getContext();
             if(context == null) return;
 
-            ReferencedEnvelope env;
+            Envelope env;
             try {
                 env = context.getBounds();
                 map.getController().setCameraPosition(env.getMedian(0),env.getMedian(1),5);

@@ -24,11 +24,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 
 import org.opengis.display.canvas.CanvasController;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**
  * Default canvas 2D controller methods. 
@@ -173,7 +173,7 @@ public interface CanvasController2D extends CanvasController{
     
     void setDisplayVisibleArea(Rectangle2D dipsEnv);
 
-    void setVisibleArea(ReferencedEnvelope env) throws NoninvertibleTransformException;
+    void setVisibleArea(Envelope env) throws NoninvertibleTransformException;
 
     /**
      * Defines the limits of the visible part, in logical coordinates.  This method will modify the

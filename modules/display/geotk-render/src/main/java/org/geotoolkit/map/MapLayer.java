@@ -20,11 +20,11 @@ import java.util.List;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
 import org.opengis.style.Description;
 
 /**
@@ -181,7 +181,7 @@ public interface MapLayer {
      * if possible and in last case an infinitee envelope.
      * @return - the layer's bounds
      */
-    ReferencedEnvelope getBounds();
+    Envelope getBounds();
 
     /**
      * Returns the Elevation model to use for this layer.

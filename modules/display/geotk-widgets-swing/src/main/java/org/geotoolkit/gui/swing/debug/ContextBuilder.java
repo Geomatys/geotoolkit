@@ -15,15 +15,15 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotools.feature.FeatureCollection;
-import org.geotoolkit.util.RandomStyleFactory;
 import org.geotools.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.wi.WorldImageFactory;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.postgis.PostgisDataStoreFactory;
 
+import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.coverage.wi.WorldImageFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.display2d.ext.vectorfield.GridMarkGraphicBuilder;
