@@ -29,6 +29,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.coverage.grid.ImageGeometry;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 
 /**
@@ -48,10 +49,16 @@ final class MosaicPanel extends ZoomPane {
     private static final double MARGIN = 0.125;
 
     /**
-     * The maximal amount of tiles for which to paint the border. If there is more
-     * tiles than this maximum to paint, their border will be omitted.
+     * The size of the panel to display on the left of this panel. This is not really the
+     * business of this class to specify such size, but we do so anyway in order to keep
+     * a consistent size in our implementations.
      */
-    private static final int TILES_THRESHOLD = 100;
+    static final int LEFT_PANEL_SIZE = 400;
+
+    /**
+     * An empty array of tile managers.
+     */
+    static final TileManager[] NO_TILES = new TileManager[0];
 
     /**
      * The manager of the tiles to be displayed.
@@ -79,7 +86,7 @@ final class MosaicPanel extends ZoomPane {
      */
     public MosaicPanel() {
         super(UNIFORM_SCALE | TRANSLATE_X | TRANSLATE_Y | ROTATE | RESET);
-        managers = new TileManager[0];
+        managers = NO_TILES;
         setBackground(Color.WHITE);
         setPaintingWhileAdjusting(true);
         setMagnifierEnabled(false);
@@ -94,10 +101,28 @@ final class MosaicPanel extends ZoomPane {
      *
      * @param managers The new tile managers.
      */
-    public void setTileManager(final TileManager... managers) {
+    public void setTileManagers(final TileManager... managers) {
         this.managers = managers.clone();
         area = null; // For forcing computation.
         reset();
+    }
+
+    /**
+     * Returns the tile managers. The returned array may be empty but should never be null.
+     *
+     * @return The tile managers.
+     */
+    public TileManager[] getTileManagers() {
+        return managers.clone();
+    }
+
+    /**
+     * Convenience method returning the first tile manager, or {@code null} if none.
+     *
+     * @return The first tile mamanger, or {@code null}.
+     */
+    public TileManager getTileManager() {
+        return managers.length != 0 ? managers[0] : null;
     }
 
     /**
@@ -146,9 +171,7 @@ final class MosaicPanel extends ZoomPane {
      */
     @Override
     protected void paintComponent(final Graphics2D graphics) {
-        final AffineTransform textTr = graphics.getTransform();
-        graphics.transform(zoom);
-        final AffineTransform worldTr = graphics.getTransform();
+        final AffineTransform imageToDisplay = new AffineTransform(zoom);
         AffineTransform lastTr = null;
         for (int j=managers.length; --j>=0;) {
             final TileManager manager = managers[j];
@@ -163,7 +186,6 @@ final class MosaicPanel extends ZoomPane {
                 managers[j] = null;
                 continue; // We will just ignore that tile manager.
             }
-            final boolean paintBorder = tiles.size() <= TILES_THRESHOLD;
             final Color color = tileColors[Math.min(tileColors.length-1, j)];
             graphics.setColor(color);
             for (final Tile tile : tiles) {
@@ -176,22 +198,21 @@ final class MosaicPanel extends ZoomPane {
                     Logging.unexpectedException(MosaicPanel.class, "paintComponent", e);
                     continue;
                 }
-                // The affine transform is usually the same for every tiles at the
-                // same pyramid level, so it is worth to perform the check below.
+                // The affine transform is usually the same instance for every tiles at
+                // the same pyramid level, so it is worth to perform the check below.
                 final AffineTransform tr = tile.getGridToCRS();
                 if (tr != lastTr) {
-                    graphics.setTransform(worldTr);
-                    graphics.transform(tr);
+                    imageToDisplay.setTransform(zoom);
+                    imageToDisplay.concatenate(tr);
                     lastTr = tr;
                 }
-                graphics.fill(bounds);
-                if (paintBorder) {
-                    graphics.setColor(Color.DARK_GRAY);
-                    graphics.draw(bounds);
-                    graphics.setColor(color);
+                XAffineTransform.transform(imageToDisplay, bounds, bounds);
+                if (bounds.width >= 5 && bounds.height >= 5) {
+                    bounds.x++; bounds.width  -= 2;
+                    bounds.y++; bounds.height -= 2;
                 }
+                graphics.fill(bounds);
             }
         }
-        graphics.setTransform(textTr);
     }
 }

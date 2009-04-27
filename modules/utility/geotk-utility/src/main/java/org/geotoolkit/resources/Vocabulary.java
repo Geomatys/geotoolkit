@@ -104,6 +104,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int AUTOMATIC = 10;
 
         /**
+         * {0} axis
+         */
+        public static final int AXIS_$1 = 288;
+
+        /**
          * Axis changes
          */
         public static final int AXIS_CHANGES = 11;
@@ -162,6 +167,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Category
          */
         public static final int CATEGORY = 22;
+
+        /**
+         * Choose
+         */
+        public static final int CHOOSE = 289;
 
         /**
          * Class
@@ -1037,6 +1047,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Others
          */
         public static final int OTHERS = 197;
+
+        /**
+         * Output directory
+         */
+        public static final int OUTPUT_DIRECTORY = 290;
 
         /**
          * Outside

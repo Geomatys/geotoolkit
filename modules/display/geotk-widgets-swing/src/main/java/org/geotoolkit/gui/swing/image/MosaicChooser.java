@@ -174,15 +174,29 @@ public class MosaicChooser extends JPanel {
         mosaicLayout = new CardLayout();
         final JPanel rightPane = new JPanel(mosaicLayout);
         mosaic = new MosaicPanel();
+        final JComponent mosaicPane = mosaic.createScrollPane();
+        mosaicPane.setBorder(BorderFactory.createLoweredBevelBorder());
         busy = new JXBusyLabel(new Dimension(32, 32));
         busy.setVerticalAlignment(JLabel.CENTER);
         busy.setHorizontalAlignment(JLabel.CENTER);
         rightPane.add(busy, "Busy");
-        rightPane.add(mosaic.createScrollPane(), "Mosaic");
+        rightPane.add(mosaicPane, "Mosaic");
         pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, leftPane, rightPane);
-        pane.setContinuousLayout(true);
-        pane.setOneTouchExpandable(true);
+        pane.setDividerLocation(MosaicPanel.LEFT_PANEL_SIZE);
+        pane.setBorder(null);
         add(pane, BorderLayout.CENTER);
+    }
+
+    /**
+     * Returns the selected tiles as {@code TileManager} objects, or an empty array if none.
+     * Only one tile manager is usually returned. However more managers may be returned if,
+     * for example, {@link org.geotoolkit.image.io.mosaic.TileManagerFactory} failed to create
+     * only one instance from a set of tiles.
+     *
+     * @return The selected tiles as {@code TileManager} objects, or an empty array if none.
+     */
+    public TileManager[] getSelectedTiles() {
+        return (mosaic != null) ? mosaic.getTileManagers() : MosaicPanel.NO_TILES;
     }
 
     /**
@@ -204,7 +218,7 @@ public class MosaicChooser extends JPanel {
      * and the remainder entries are sorted. If the creation of some tiles failed, an error dialog
      * box is displayed.
      */
-    protected void promptForTiles() {
+    private void promptForTiles() {
         tiles.locale = getLocale();
         /*
          * Setup the image chooser. The directory is set the the one
@@ -344,7 +358,7 @@ public class MosaicChooser extends JPanel {
                             ExceptionMonitor.show(MosaicChooser.this, error);
                         }
                         if (managers != null) {
-                            mosaic.setTileManager(managers);
+                            mosaic.setTileManagers(managers);
                         }
                         loader = null; // Said to MosaicChooser that we are done.
                         break;

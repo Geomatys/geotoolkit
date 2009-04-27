@@ -1,3 +1,0 @@
-This package is actually defined in the geotk-coverageio module.
-Only a few dependencies required by the geotk-coverage module are
-defined here.
