@@ -17,7 +17,11 @@
 package org.geotoolkit.gui.swing.image;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -49,13 +53,6 @@ final class MosaicPanel extends ZoomPane {
     private static final double MARGIN = 0.125;
 
     /**
-     * The size of the panel to display on the left of this panel. This is not really the
-     * business of this class to specify such size, but we do so anyway in order to keep
-     * a consistent size in our implementations.
-     */
-    static final int LEFT_PANEL_SIZE = 400;
-
-    /**
      * An empty array of tile managers.
      */
     static final TileManager[] NO_TILES = new TileManager[0];
@@ -71,15 +68,25 @@ final class MosaicPanel extends ZoomPane {
      * than {@code managers} array, then the last color is reused for all remaining managers.
      */
     private Color[] tileColors = new Color[] {
-        new Color(0, 64, 255, 128),
-        new Color(255, 0, 0, 128)
+        new Color(0, 64, 255, 92),
+        new Color(255, 0, 0, 92)
     };
+
+    /**
+     * The colors of selected tiles. By default they are derived from {@link #tileColors}.
+     */
+    private Color[] selectedColors;
 
     /**
      * The area covered by all tiles in "real world" units. Will be computed when
      * {@link #getArea} will be invoked.
      */
     private Rectangle2D area;
+
+    /**
+     * The selected tiles.
+     */
+    private Set<Tile> selected;
 
     /**
      * Creates an initially empty canvas.
@@ -90,6 +97,49 @@ final class MosaicPanel extends ZoomPane {
         setBackground(Color.WHITE);
         setPaintingWhileAdjusting(true);
         setMagnifierEnabled(false);
+        deriveSelectedColors();
+    }
+
+    /**
+     * Derives the selected colors from the current tile colors.
+     */
+    private void deriveSelectedColors() {
+        selectedColors = tileColors.clone();
+        for (int i=0; i<selectedColors.length; i++) {
+            selectedColors[i] = selectedColors[i].darker();
+        }
+    }
+
+    /**
+     * Sets the tiles to be displayed as selected tiles. Elements that are not in the set of tiles
+     * managed by a {@link TileManger} will be ignored.
+     *
+     * @param selected The selected tiles.
+     */
+    public void setSelectedTiles(final Tile... tiles) {
+        if (tiles == null || tiles.length == 0) {
+            selected = null;
+        } else {
+            final Collection<Tile> asList = Arrays.asList(tiles);
+            if (selected == null) {
+                selected = new HashSet<Tile>(asList);
+            } else {
+                selected.clear();
+                selected.addAll(asList);
+            }
+        }
+        repaint();
+    }
+
+    /**
+     * Returns the tiles to be displayed as selected tiles, or an empty array if none.
+     */
+    public Tile[] getSelectedTiles() {
+        Set<Tile> selected = this.selected;
+        if (selected == null) {
+            selected = Collections.emptySet();
+        }
+        return selected.toArray(new Tile[selected.size()]);
     }
 
     /**
@@ -171,6 +221,7 @@ final class MosaicPanel extends ZoomPane {
      */
     @Override
     protected void paintComponent(final Graphics2D graphics) {
+        final Set<Tile> selected = this.selected;
         final AffineTransform imageToDisplay = new AffineTransform(zoom);
         AffineTransform lastTr = null;
         for (int j=managers.length; --j>=0;) {
@@ -186,8 +237,11 @@ final class MosaicPanel extends ZoomPane {
                 managers[j] = null;
                 continue; // We will just ignore that tile manager.
             }
-            final Color color = tileColors[Math.min(tileColors.length-1, j)];
+            final int ci = Math.min(tileColors.length-1, j);
+            final Color selectedColor = selectedColors[ci];
+            final Color color = tileColors[ci];
             graphics.setColor(color);
+            boolean isSelected = false;
             for (final Tile tile : tiles) {
                 final Rectangle bounds;
                 try {
@@ -210,6 +264,10 @@ final class MosaicPanel extends ZoomPane {
                 if (bounds.width >= 5 && bounds.height >= 5) {
                     bounds.x++; bounds.width  -= 2;
                     bounds.y++; bounds.height -= 2;
+                }
+                if (selected != null && selected.contains(tile) != isSelected) {
+                    isSelected = !isSelected;
+                    graphics.setColor(isSelected ? selectedColor : color);
                 }
                 graphics.fill(bounds);
             }

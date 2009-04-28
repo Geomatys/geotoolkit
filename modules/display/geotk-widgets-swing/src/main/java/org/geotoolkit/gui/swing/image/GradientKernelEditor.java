@@ -27,6 +27,7 @@ import java.awt.Component;
 import javax.media.jai.KernelJAI;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
 
+import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.SwingUtilities;
 
@@ -54,7 +55,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-public class GradientKernelEditor extends JComponent {
+public class GradientKernelEditor extends JComponent implements Dialog {
     /**
      * Square root of 2.
      */
@@ -299,15 +300,9 @@ public class GradientKernelEditor extends JComponent {
     }
 
     /**
-     * Shows a dialog box requesting input from the user. If {@code owner} is contained into a
-     * {@link javax.swing.JDesktopPane}, the dialog box will appears as an internal frame. This
-     * method can be invoked from any thread (may or may not be the <cite>Swing</cite> thread).
-     *
-     * @param  owner The parent component for the dialog box, or {@code null} if there is no parent.
-     * @param  title The dialog box title.
-     * @return {@code true} if user pressed the "Ok" button, or {@code false} otherwise
-     *         (e.g. pressing "Cancel" or closing the dialog box from the title bar).
+     * {@inheritDoc}
      */
+    @Override
     public boolean showDialog(final Component owner, final String title) {
         return SwingUtilities.showOptionDialog(owner, this, title);
     }

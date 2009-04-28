@@ -83,7 +83,7 @@ import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
  * @module
  */
 @SuppressWarnings("serial")
-public class About extends JPanel {
+public class About extends JPanel implements Dialog {
     /**
      * The amount of bytes in one "unit of memory" to be displayed.
      */
@@ -569,13 +569,28 @@ public class About extends JPanel {
      * @param owner The component which will be the owner of this component.
      */
     public void showDialog(final Component owner) {
+        showDialog(owner, resources.getMenuLabel(Vocabulary.Keys.ABOUT));
+    }
+
+    /**
+     * Popups the dialog box and waits for the user. This method always invoke {@link #start}
+     * before showing the dialog, and {@link #stop} after disposing it.
+     *
+     * @param  owner The component which will be the owner of this component.
+     * @param  title The title to write in the window bar.
+     * @return Always {@code false} for this component.
+     *
+     * @since 3.0
+     */
+    @Override
+    public boolean showDialog(final Component owner, final String title) {
         try {
             start();
-            SwingUtilities.showMessageDialog(owner, this,
-                    resources.getMenuLabel(Vocabulary.Keys.ABOUT), JOptionPane.PLAIN_MESSAGE);
+            SwingUtilities.showMessageDialog(owner, this, title, JOptionPane.PLAIN_MESSAGE);
         } finally {
             stop();
         }
+        return false;
     }
 
     /**

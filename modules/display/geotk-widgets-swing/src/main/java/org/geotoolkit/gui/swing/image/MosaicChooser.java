@@ -27,6 +27,7 @@ import java.awt.EventQueue;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.imageio.spi.ImageReaderSpi;
@@ -38,6 +39,7 @@ import javax.swing.table.TableModel;
 import org.jdesktop.swingx.JXHeader;
 import org.jdesktop.swingx.JXBusyLabel;
 
+import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.resources.Vocabulary;
@@ -48,7 +50,18 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
 
 
 /**
- * A chooser for a set of {@linkplain Tile tiles} to be used for creating a mosaic.
+ * A chooser for a set of {@linkplain Tile tiles} to be used for creating a mosaic. This chooser
+ * allows users to select tiles from a file or a directory and see the silhouette of selected tiles.
+ * The result can be obtained by a call to {@link #getSelectedTiles()}.
+ * <p>
+ * The tiles are images in any format supported by Java Image I/O (TIFF, PNG, <cite>etc.</cite>),
+ * accompagned by their <cite>world files</cite>. World Files must have the same name than the
+ * images except for the extension ({@code ".tfw"}, {@code ".jpw"}, <cite>etc.</cite> depending
+ * on the image format).
+ * <p>
+ * Users can define the mosaic either directly by choosing an arbitrary amount of image files,
+ * or indirectly by selecting a single text file having {@code .txt}, {@code .lst} or {@code .csv}
+ * extension. The text file shall contain a list of image files to use for the mosaic.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
@@ -57,22 +70,28 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
  * @module
  */
 @SuppressWarnings("serial")
-public class MosaicChooser extends JPanel {
+public class MosaicChooser extends JPanel implements Dialog {
     /**
-     * The preference name for the directory of files to be read.
+     * The preference name for the format of tiles to be read.
+     */
+    private static final String INPUT_FORMAT = "InputTilesFormat";
+
+    /**
+     * The preference name for the directory of tiles to be read.
      */
     private static final String INPUT_DIRECTORY = "InputTilesDirectory";
 
     /**
-     * The list of tiles.
+     * The preference name for the directory of tiles to be writen. This is not used by this
+     * class ({@link MosaicBuilderEditor} uses it), but is defined here for keeping it close
+     * to {@link #INPUT_DIRECTORY}.
      */
-    private final MosaicTableModel tiles;
+    static final String OUTPUT_DIRECTORY = "OutputTilesDirectory";
 
     /**
-     * The image file chooser. Will be displayed only when the user clicks
-     * on the "Add..." button.
+     * The table of tiles.
      */
-    private ImageFileChooser fileChooser;
+    private final MosaicTableModel tiles;
 
     /**
      * The main panel, with the tables of tiles on the left side and the graphical
@@ -113,18 +132,31 @@ public class MosaicChooser extends JPanel {
     public MosaicChooser() {
         super(new BorderLayout());
         final Vocabulary resources = Vocabulary.getResources(null);
+        final MosaicPanel mosaic = this.mosaic = new MosaicPanel();
+        final MosaicTableModel tiles = this.tiles = new MosaicTableModel();
         /*
          * Builds the tables of tiles. At this stage we build only the table of successfully
          * created tiles. Later (in the "reportFailures" method), a table of failures may also
          * be created.
          */
-        tiles = new MosaicTableModel();
-        final MosaicTableModel tiles = this.tiles;
         final JTable successTable = new JTable(tiles);
         final TableColumnModel columns = successTable.getColumnModel();
-        columns.getColumn(0).setPreferredWidth(200); // Gives more space to the column of filenames.
+        columns.getColumn(0).setPreferredWidth(250); // Gives more space to the column of filenames.
+        for (int i=2; i<=5; i++) {
+            // Gives more space to the (width,height,x,y) columns,
+            // since they typically contain big numbers.
+            columns.getColumn(i).setPreferredWidth(100);
+        }
+        successTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override public void valueChanged(final ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    mosaic.setSelectedTiles(tiles.getElements(successTable.getSelectedRows()));
+                }
+            }
+        });
         /*
          * Builds the "Add" and "Remove" buttons, together with their actions.
+         * Those buttons will be inserted below the table created above.
          */
         final JButton add = new JButton(resources.getMenuLabel(Vocabulary.Keys.ADD));
         final JButton remove = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
@@ -136,7 +168,7 @@ public class MosaicChooser extends JPanel {
         final class RemoveAction implements ActionListener, ListSelectionListener {
             @Override public void actionPerformed(final ActionEvent event) {
                 tiles.remove(successTable.getSelectedRows());
-                runLoader(true);
+                runLoader(null);
             }
             @Override public void valueChanged(final ListSelectionEvent event) {
                 remove.setEnabled(successTable.getSelectedRowCount() != 0);
@@ -168,12 +200,11 @@ public class MosaicChooser extends JPanel {
         leftPane.add(bb, BorderLayout.SOUTH);
         leftPane.add(new JScrollPane(successTable), BorderLayout.CENTER); // Must be last (see above).
         /*
-         * Builds the right pane, which contains the outline of the selected tiles,
-         * and put everything in a split pane.
+         * Builds the right pane, which contains the silhouette of the selected tiles. We use a
+         * a CardLayout in order to switch between the busy state and the display of silhouettes.
          */
         mosaicLayout = new CardLayout();
         final JPanel rightPane = new JPanel(mosaicLayout);
-        mosaic = new MosaicPanel();
         final JComponent mosaicPane = mosaic.createScrollPane();
         mosaicPane.setBorder(BorderFactory.createLoweredBevelBorder());
         busy = new JXBusyLabel(new Dimension(32, 32));
@@ -181,10 +212,28 @@ public class MosaicChooser extends JPanel {
         busy.setHorizontalAlignment(JLabel.CENTER);
         rightPane.add(busy, "Busy");
         rightPane.add(mosaicPane, "Mosaic");
+        /*
+         * Creates the split pane. The divider location has been empirically determined to
+         * a value approximatively equals to the preferred table width, in order to allow
+         * filename and (width,height,x,y) columns to be fully visible. If this value needs
+         * to be changed, a convenient place where to display a value is in promptForTiles().
+         *
+         * We do not set a preferred size for the widget as a whole because the default size
+         * seems good enough.
+         */
         pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, leftPane, rightPane);
-        pane.setDividerLocation(MosaicPanel.LEFT_PANEL_SIZE);
+        pane.setDividerLocation(460);
         pane.setBorder(null);
         add(pane, BorderLayout.CENTER);
+    }
+
+    /**
+     * Returns the table of tiles.
+     *
+     * @return The table of tiles.
+     */
+    public MosaicTableModel getTileTable() {
+        return tiles;
     }
 
     /**
@@ -220,14 +269,16 @@ public class MosaicChooser extends JPanel {
      */
     private void promptForTiles() {
         tiles.locale = getLocale();
+        final Preferences prefs = Preferences.userNodeForPackage(MosaicChooser.class);
         /*
-         * Setup the image chooser. The directory is set the the one
+         * Setup the image chooser. The directory is set to the one
          * used last time this widget was executed, for convenience.
          */
-        fileChooser = new ImageFileChooser("tiff");
+        final ImageFileChooser fileChooser;
+        fileChooser = new ImageFileChooser(prefs.get(INPUT_FORMAT, "tiff"));
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setListFileFilterUsed(true);
-        String home = Preferences.userNodeForPackage(MosaicChooser.class).get(INPUT_DIRECTORY, null);
+        String home = prefs.get(INPUT_DIRECTORY, null);
         if (home != null) {
             final File directory = new File(home);
             if (directory.isDirectory()) {
@@ -238,24 +289,31 @@ public class MosaicChooser extends JPanel {
             return;
         }
         final String directory = fileChooser.getCurrentDirectory().getPath();
-        Preferences.userNodeForPackage(MosaicChooser.class).put(INPUT_DIRECTORY, directory);
-        runLoader(false);
+        prefs.put(INPUT_DIRECTORY, directory);
+        runLoader(fileChooser);
+        final String format = loader.getFormat();
+        if (format != null) {
+            prefs.put(INPUT_FORMAT, format);
+        }
     }
 
     /**
-     * Runs {@link Loader} in a background thread.
+     * Runs {@link Loader} in a background thread. This method is invoked when tiles are
+     * added add when tiles are removed. In the later case, loading of tile headers can
+     * be skipped.
      *
-     * @param skip {@code true} if the process of loading tile should be skipped. This
-     *        thread will go directly to the creation of the tile manager instead.
+     * @param fileChooser The chooser from which to get the selected tiles. If {@code null},
+     *        then loading of tile headers will be skipped - the thread will go directly to
+     *        the creation of the tile manager instead.
      */
-    private void runLoader(final boolean skip) {
+    private void runLoader(final ImageFileChooser fileChooser) {
         Loader loader = this.loader;
         if (loader != null) {
             loader.cancel = true;
         }
-        this.loader = loader = new Loader(skip);
+        this.loader = loader = new Loader(fileChooser);
         final Thread thread = new Thread(SwingUtilities.WORKER_THREADS, loader);
-        thread.setDaemon(true); // Do not prevent the application to close.
+        thread.setDaemon(true); // Do not prevent the application to finish.
         thread.start();
     }
 
@@ -279,20 +337,29 @@ public class MosaicChooser extends JPanel {
         /**
          * Creates a new tile loader.
          *
-         * @param skip {@code true} if the process of loading tile should be skipped. This
-         *        thread will go directly to the creation of the tile manager instead.
+         * @param fileChooser The chooser from which to get the selected tiles. If {@code null},
+         *        then loading of tile headers will be skipped - this thread will go directly to
+         *        the creation of the tile manager instead.
          */
-        Loader(final boolean skip) {
-            if (skip) {
+        Loader(final ImageFileChooser fileChooser) {
+            if (fileChooser == null) {
                 files    = null;
                 provider = null;
                 progress = null;
             } else {
-                final ImageFileChooser fileChooser = MosaicChooser.this.fileChooser;
                 files    = fileChooser.getSelectedFiles();
                 provider = (ImageReaderSpi) fileChooser.getCurrentProvider();
                 progress = new ProgressWindow(MosaicChooser.this);
             }
+        }
+
+        /**
+         * Returns the format name of the reader used for reading tile headers,
+         * or {@code null} if it can not be determined.
+         */
+        public String getFormat() {
+            final String[] names = provider.getFormatNames();
+            return (names != null && names.length != 0) ? names[0] : null;
         }
 
         /**
@@ -417,5 +484,13 @@ public class MosaicChooser extends JPanel {
             leftPane.add(tables, BorderLayout.CENTER);
             leftPane.validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean showDialog(final Component owner, final String title) {
+        return SwingUtilities.showOptionDialog(owner, this, title);
     }
 }

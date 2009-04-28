@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A file chooser for images. The list of {@link FileFilter file filters} is determined
+ * A file chooser for images. The list of {@linkplain FileFilter file filters} is determined
  * automatically from the image formats known to {@link IIORegistry}.
  * <p>
  * This class should typically be used as below (replace "{@code showOpenDialog}" by

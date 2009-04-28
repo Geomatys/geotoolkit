@@ -16,15 +16,27 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.prefs.Preferences;
+import java.awt.Rectangle;
+import java.awt.Dimension;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXTitledPanel;
 
 import org.geotoolkit.math.XMath;
@@ -32,9 +44,14 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
+import org.geotoolkit.gui.swing.Dialog;
+import org.geotoolkit.gui.swing.ListTableModel;
+import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.swing.FileField;
 import org.geotoolkit.internal.swing.SizeFields;
 import org.geotoolkit.internal.swing.LabeledTableCellRenderer;
+
+import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
 
 
 /**
@@ -47,7 +64,14 @@ import org.geotoolkit.internal.swing.LabeledTableCellRenderer;
  * @module
  */
 @SuppressWarnings("serial")
-public class MosaicBuilderEditor extends JPanel {
+public class MosaicBuilderEditor extends JPanel implements Dialog {
+    /**
+     * The default tile size. If {@link MosaicBuilder} can not suggest a tile size,
+     * we will use the size specified by the WMTS (<cite>Web Map Tile Service</cite>)
+     * specification.
+     */
+    private static final Dimension DEFAULT_TILE_SIZE = new Dimension(256, 256);
+
     /**
      * The mosaic builder to configure.
      */
@@ -88,24 +112,46 @@ public class MosaicBuilderEditor extends JPanel {
     public MosaicBuilderEditor(final MosaicBuilder builder) {
         this.builder = builder;
         final Locale locale = getLocale();
-        subsamplings.add(new Dimension(1,1));
         final Vocabulary resources = Vocabulary.getResources(locale);
         /*
-         * The table where to specifies subsampling.
+         * Determines the default values.
          */
-        final JTable subsamplingTable = new JTable(new Subsamplings(subsamplings, resources));
+        final File initialDirectory = new File(Preferences.userNodeForPackage(MosaicBuilderEditor.class)
+                .get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+        /*
+         * The table where to specifies subsampling, together with a "Remove" botton for
+         * removing rows. There is no "add" button given that subsampling can be added on
+         * the last row.
+         */
+        final List<Dimension> subsamplings = this.subsamplings;
+        final Subsamplings subsamplingModel = new Subsamplings(subsamplings, resources);
+        final JTable subsamplingTable = new JTable(subsamplingModel);
         subsamplingTable.setDefaultRenderer(Integer.class, new LabeledTableCellRenderer.Numeric(locale, true));
-        final JPanel subsamplingPane = new JXTitledPanel(
-                resources.getString(Vocabulary.Keys.SUBSAMPLING), new JScrollPane(subsamplingTable));
+        final JButton removeButton = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
+        removeButton.setEnabled(false);
+        final class RemoveSubsampling implements ActionListener, ListSelectionListener {
+            @Override public void actionPerformed(final ActionEvent event) {
+                subsamplingModel.remove(subsamplingTable.getSelectedRows());
+            }
+
+            @Override public void valueChanged(final ListSelectionEvent event) {
+                final int min = ((ListSelectionModel) event.getSource()).getMinSelectionIndex();
+                removeButton.setEnabled(min >= 0 && min < subsamplings.size());
+            }
+        }
+        final RemoveSubsampling removeAction = new RemoveSubsampling();
+        removeButton.addActionListener(removeAction);
+        subsamplingTable.getSelectionModel().addListSelectionListener(removeAction);
+        JPanel subsamplingPane = new JPanel(new BorderLayout());
+        subsamplingPane.add(new JScrollPane(subsamplingTable), BorderLayout.CENTER);
+        subsamplingPane.add(removeButton, BorderLayout.SOUTH);
+        subsamplingPane = new JXTitledPanel(resources.getString(Vocabulary.Keys.SUBSAMPLING), subsamplingPane);
         /*
          * The panel where to select the tile size and the output directory.
          */
-        Dimension size = builder.getTileSize();
-        if (size == null) {
-            size = new Dimension(256, 256); // Default tile size.
-        }
-        tileSize = new SizeFields(locale, size);
+        tileSize = new SizeFields(locale, DEFAULT_TILE_SIZE);
         directory = new FileField(locale, null, true);
+        directory.setFile(initialDirectory);
         directory.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OUTPUT_DIRECTORY)));
         final JLabel explain = new JLabel(); // No purpose other than fill space at this time.
         /*
@@ -115,22 +161,25 @@ public class MosaicBuilderEditor extends JPanel {
         final GridBagConstraints c = new GridBagConstraints();
         c.insets.bottom=9;
         c.weightx=1; c.fill=GridBagConstraints.HORIZONTAL;
-        c.gridx=0; c.anchor = GridBagConstraints.LINE_START;
+        c.gridx=0; c.anchor=GridBagConstraints.LINE_START;
         c.gridy=0; controlPane.add(tileSize,  c);
         c.gridy++; controlPane.add(directory, c); c.weighty=1; c.fill=GridBagConstraints.BOTH;
         c.gridy++; controlPane.add(explain, c);
         /*
-         * Layout all the above components.
+         * Layout all the above components. The divider location has been determined
+         * empirically for allowing the subsamplings columns to be fully visible.
          */
         mosaic = new MosaicPanel();
         final JPanel panel = new JPanel(new GridLayout(1, 2, 15, 9));
         panel.add(subsamplingPane);
         panel.add(controlPane);
         final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panel, mosaic);
-        sp.setDividerLocation(MosaicPanel.LEFT_PANEL_SIZE);
+        sp.setDividerLocation(460);
         sp.setBorder(null);
         setLayout(new BorderLayout());
         add(sp, BorderLayout.CENTER);
+        setPreferredSize(new Dimension(700, 300));
+        initializeForBounds(null); // Sets default values inferred from the MosaicBuilder.
     }
 
     /**
@@ -142,7 +191,7 @@ public class MosaicBuilderEditor extends JPanel {
      * @param managers The tiles for which to setup default values.
      * @throws IOException If an I/O operation was necessary and failed.
      */
-    public void setDefaultValues(final TileManager... managers) throws IOException {
+    public void initializeForTiles(final TileManager... managers) throws IOException {
         /*
          * Searchs for a rectangle that encompass every tiles.
          */
@@ -158,17 +207,39 @@ public class MosaicBuilderEditor extends JPanel {
                 }
             }
         }
+        initializeForBounds(bounds);
+    }
+
+    /**
+     * Proposes default values suitable for tiles in a mosaic of the given size.
+     *
+     * @param bounds The bounds of the whole mosaic.
+     */
+    public void initializeForBounds(final Rectangle bounds) {
         /*
          * If a region was found, discard the values previously set and give the new region
          * to the TileBuilder. Then asks for the default values proposed by the builder
          */
+        subsamplings.clear();
         if (bounds != null) {
             builder.setTileSize(null);
+            builder.setSubsamplings((Dimension[]) null);
             builder.setUntiledImageBounds(bounds);
         }
         Dimension size = builder.getTileSize();
         if (size == null) {
-            size = new Dimension(256, 256); // Default tile size.
+            size = DEFAULT_TILE_SIZE;
+        }
+        tileSize.setSizeValue(size);
+        /*
+         * Subsamplings must be queried only after the tile size has been set.
+         * The code above forced the calculation of the default tile size.
+         */
+        final Dimension[] sub = builder.getSubsamplings();
+        if (sub != null) {
+            subsamplings.addAll(Arrays.asList(sub));
+        } else {
+            subsamplings.add(new Dimension(1,1));
         }
     }
 
@@ -181,16 +252,11 @@ public class MosaicBuilderEditor extends JPanel {
      * @since 3.0
      * @module
      */
-    private static final class Subsamplings extends AbstractTableModel implements Comparator<Dimension> {
+    private static final class Subsamplings extends ListTableModel<Dimension> implements Comparator<Dimension> {
         /**
          * For cross-version compatibility.
          */
         private static final long serialVersionUID = 4366921097769025343L;
-
-        /**
-         * The subsampling selection.
-         */
-        private final List<Dimension> subsamplings;
 
         /**
          * Localized column titles.
@@ -201,12 +267,12 @@ public class MosaicBuilderEditor extends JPanel {
          * Creates a default set of subsampling values.
          */
         Subsamplings(final List<Dimension> subsamplings, final Vocabulary resources) {
+            super(Dimension.class, subsamplings);
             titles = new String[] {
                 resources.getString(Vocabulary.Keys.LEVEL),
                 resources.getString(Vocabulary.Keys.AXIS_$1, "x"),
                 resources.getString(Vocabulary.Keys.AXIS_$1, "y")
             };
-            this.subsamplings = subsamplings;
             Collections.sort(subsamplings, this);
         }
 
@@ -232,7 +298,7 @@ public class MosaicBuilderEditor extends JPanel {
          */
         @Override
         public int getRowCount() {
-            return subsamplings.size() + 1;
+            return elements.size() + 1;
         }
 
         /**
@@ -275,10 +341,11 @@ public class MosaicBuilderEditor extends JPanel {
             if (columnIndex == 0) {
                 return rowIndex + 1;
             }
-            if (rowIndex < subsamplings.size()) {
+            if (rowIndex < elements.size()) {
+                final Dimension size = elements.get(rowIndex);
                 switch (columnIndex) {
-                    case 1:  return subsamplings.get(rowIndex).width;
-                    case 2:  return subsamplings.get(rowIndex).height;
+                    case 1:  return size.width;
+                    case 2:  return size.height;
                 }
             }
             return null; // Insertion row.
@@ -294,15 +361,15 @@ public class MosaicBuilderEditor extends JPanel {
             if (value != null) {
                 final Dimension s;
                 final int n = (Integer) value;
-                if (rowIndex < subsamplings.size()) {
-                    s = subsamplings.get(rowIndex);
+                if (rowIndex < elements.size()) {
+                    s = elements.get(rowIndex);
                     switch (columnIndex) {
                         case 1: s.width  = n; break;
                         case 2: s.height = n; break;
                     }
                 } else {
                     s = new Dimension(n, n);
-                    subsamplings.add(s);
+                    elements.add(s);
                 }
                 /*
                  * Sorts the subsamplings in increasing order and fires a change event
@@ -311,11 +378,19 @@ public class MosaicBuilderEditor extends JPanel {
                  * ones are already sorted, so they should not move if the edit record
                  * did not moved.
                  */
-                Collections.sort(subsamplings, this);
-                if (subsamplings.get(rowIndex) != s) {
-                    fireTableRowsUpdated(0, subsamplings.size());
+                Collections.sort(elements, this);
+                if (elements.get(rowIndex) != s) {
+                    fireTableRowsUpdated(0, elements.size());
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean showDialog(final Component owner, final String title) {
+        return SwingUtilities.showOptionDialog(owner, this, title);
     }
 }

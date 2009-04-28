@@ -16,13 +16,8 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import java.util.Map;
 import java.util.List;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.ListIterator;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -35,12 +30,12 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import org.opengis.util.ProgressListener;
 
-import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
+import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.SwingUtilities;
 
 
@@ -83,7 +78,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * {@section Serialization}
  * This model is serialiable if the underlying list of tiles is serializable.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
  *
  * @see MosaicChooser
@@ -91,7 +86,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * @since 3.0
  * @module
  */
-public class MosaicTableModel extends AbstractTableModel {
+public class MosaicTableModel extends ListTableModel<Tile> {
     /**
      * Serial number for compatibility with different versions.
      */
@@ -106,13 +101,6 @@ public class MosaicTableModel extends AbstractTableModel {
      * Dummy location to be used when we have determined that no location are available.
      */
     private static final Point NO_LOCATION = new Point();
-
-    /**
-     * The list of tiles. This is a direct reference to the list given by the user at
-     * construction time, not a clone. If this list is modified externaly, then the
-     * appropriate {@code fireXXX} method must be invoked explicitly.
-     */
-    protected final List<Tile> tiles;
 
     /**
      * An optional locale for column headers and error messages, or {@code null}
@@ -147,7 +135,7 @@ public class MosaicTableModel extends AbstractTableModel {
      * Creates a new table model backed by an {@link ArrayList} of tiles.
      */
     public MosaicTableModel() {
-        tiles = new ArrayList<Tile>();
+        super(Tile.class);
     }
 
     /**
@@ -159,17 +147,7 @@ public class MosaicTableModel extends AbstractTableModel {
      * @param tiles The list of tiles to display in a table.
      */
     public MosaicTableModel(final List<Tile> tiles) {
-        this.tiles = tiles;
-    }
-
-    /**
-     * Returns the number of rows in the table.
-     *
-     * @return The number of rows.
-     */
-    @Override
-    public int getRowCount() {
-        return tiles.size();
+        super(Tile.class, tiles);
     }
 
     /**
@@ -231,7 +209,7 @@ public class MosaicTableModel extends AbstractTableModel {
     @SuppressWarnings("fallthrough")
     public Object getValueAt(final int row, final int column) {
         final int value;
-        final Tile tile = tiles.get(row);
+        final Tile tile = elements.get(row);
         if (tile != last) {
             last        = tile;
             size        = null;
@@ -284,30 +262,6 @@ public class MosaicTableModel extends AbstractTableModel {
             }
         }
         return value;
-    }
-
-    /**
-     * For internal use by {@link MosaicTableModel#getTiles}:
-     * asks for the tiles from the Swing thread.
-     */
-    private final class GetTiles implements Runnable {
-        Tile[] array;
-
-        @Override public void run() {
-            array = tiles.toArray(new Tile[tiles.size()]);
-        }
-    }
-
-    /**
-     * Returns a snapshot of every tiles contained in this model. This method can be invoked
-     * from any thread (not necessarly the Swing thread).
-     *
-     * @return A snapshot of every tiles in this model.
-     */
-    public Tile[] getTiles() {
-        final GetTiles task = new GetTiles();
-        SwingUtilities.invokeAndWait(task);
-        return task.array;
     }
 
     /**
@@ -410,162 +364,6 @@ public class MosaicTableModel extends AbstractTableModel {
     }
 
     /**
-     * Adds all tiles from the given collection to the {@linkplain #tiles list of tiles} in this
-     * table. The default implementation invokes {@link List#addAll(Collection)} and uses the
-     * change of {@linkplain List#size list size} for computing the index to be given to the
-     * {@link #fireTableRowsInserted fireTableRowsInserted(int,int)} method. Consequently the
-     * list implementation doesn't need to accept every tiles. Note however that the list must
-     * not change in a concurrent thread, otherwise the change event to be fired may have an
-     * inacurate index range.
-     *
-     * @param  toAdd The tiles to add.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
-     *         is not modifiable.
-     */
-    public void add(final Collection<? extends Tile> toAdd) throws UnsupportedOperationException {
-        if (!toAdd.isEmpty()) {
-            final int insertAt = tiles.size();
-            if (tiles.addAll(toAdd)) {
-                fireTableRowsInserted(insertAt, tiles.size() - 1);
-            }
-        }
-    }
-
-    /**
-     * Inserts at the given position of the {@linkplain #tiles list of tiles} all tiles
-     * from the given collection. The tiles in this table that are after the insertion
-     * point are shifted to larger index.
-     * <p>
-     * The default implementation invokes {@link List#addAll(int,Collection)} and uses the
-     * change of {@linkplain List#size list size} for computing the index to be given to the
-     * {@link #fireTableRowsInserted fireTableRowsInserted(int,int)} method. Consequently the
-     * list implementation doesn't need to accept every tiles. Note however that the list must
-     * not change in a concurrent thread, otherwise the change event to be fired may have an
-     * inacurate index range.
-     *
-     * @param  insertAt The insertion point. The first tile will be inserted at that position.
-     * @param  toAdd The tiles to add.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
-     *         is not modifiable.
-     * @throws IndexOutOfBoundsException if the given index is out of range.
-     */
-    public void insert(final int insertAt, final Collection<? extends Tile> toAdd)
-            throws UnsupportedOperationException, IndexOutOfBoundsException
-    {
-        if (!toAdd.isEmpty()) {
-            int count = tiles.size();
-            if (tiles.addAll(insertAt, toAdd)) {
-                count = tiles.size() - count;
-                fireTableRowsInserted(insertAt, insertAt + count - 1);
-            }
-        }
-    }
-
-    /**
-     * Removes a range of rows (or tiles).
-     *
-     * @param  lower Index of the first row to remove, inclusive.
-     * @param  upper Index of the last row to remove, <strong>inclusive</strong>.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
-     *         is not modifiable.
-     */
-    public void remove(final int lower, final int upper) throws UnsupportedOperationException {
-        if (lower == upper) {
-            tiles.remove(lower);
-        } else {
-            tiles.subList(lower, upper+1).clear();
-        }
-        fireTableRowsDeleted(lower, upper);
-    }
-
-    /**
-     * Removes the given elements from the {@linkplain #tiles list of tiles}.
-     *
-     * @param  indices The index of elements to remove.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
-     *         is not modifiable.
-     */
-    public void remove(int[] indices) throws UnsupportedOperationException {
-        // We must iterate in reverse order, because the
-        // index after the removed elements will change.
-        int i = indices.length;
-        if (i != 0) {
-            if (!XArrays.isSorted(indices, false)) {
-                indices = indices.clone();
-                Arrays.sort(indices);
-            }
-            int upper = indices[--i];
-            int lower = upper;
-            while (i != 0) {
-                int previous = indices[--i];
-                if (previous != lower - 1) {
-                    remove(lower, upper);
-                    upper = previous;
-                }
-                lower = previous;
-            }
-            remove(lower, upper);
-        }
-    }
-
-    /**
-     * Removes duplicated tiles. If two tiles are equal in the sense of {@link Tile#equals(Object)}
-     * method, then the first one is removed from the {@linkplain #tiles list of tiles}. We keep the
-     * last tile instead of the first one on the assumption that the last tile is the most recently
-     * added.
-     *
-     * @return {@code true} if at least one tile has been removed as a result of this call.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
-     *         is not modifiable.
-     */
-    public boolean removeDuplicates() throws UnsupportedOperationException {
-        int count = 0;
-        final int[] indices = new int[tiles.size()];
-        final Map<Tile,Integer> previous = new HashMap<Tile,Integer>();
-        final ListIterator<Tile> it = tiles.listIterator();
-        while (it.hasNext()) {
-            Tile tile = it.next();
-            final Integer p = previous.put(tile, it.previousIndex());
-            if (p != null) {
-                indices[count++] = p;
-            }
-        }
-        if (count == 0) {
-            return false;
-        }
-        remove(XArrays.resize(indices, count));
-        return true;
-    }
-
-    /**
-     * Sorts the tiles by their input name first. The complete list of criterions is
-     * documented in the {@link Tile#compareTo(Tile)} method.
-     *
-     * @return {@code true} if the row order changed as a result of this method call.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
-     *         is not modifiable.
-     */
-    public boolean sort() throws UnsupportedOperationException {
-        boolean changed = false;
-        if (!tiles.isEmpty()) {
-            final Tile[] array = tiles.toArray(new Tile[tiles.size()]);
-            Arrays.sort(array);
-            final ListIterator<Tile> it = tiles.listIterator();
-            for (int i=0; i<array.length; i++) {
-                final Tile t = array[i];
-                if (it.next() != t) {
-                    it.set(t);
-                    changed = true;
-                }
-            }
-            if (changed) {
-                fireTableRowsUpdated(0, tiles.size() - 1);
-            }
-        }
-        return changed;
-    }
-
-    /**
      * Returns a tile manager for the current {@linkplain #tiles list of tiles}. This method
      * should return an array of length 1, but a different length may be obtained if it was
      * not possible to create a single tile manager.
@@ -579,7 +377,7 @@ public class MosaicTableModel extends AbstractTableModel {
      * @throws IOException if an error occured while reading a tile.
      */
     public TileManager[] getTileManager() throws IOException {
-        final TileManager[] managers = TileManagerFactory.DEFAULT.create(getTiles());
+        final TileManager[] managers = TileManagerFactory.DEFAULT.create(getElements());
         /*
          * TileManagerFactory has computed some properties previously unavailable,
          * like the tile location computed from the "gridToCRS" affine transform.
@@ -587,7 +385,7 @@ public class MosaicTableModel extends AbstractTableModel {
          */
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
-                fireTableRowsUpdated(0, tiles.size()-1);
+                fireTableRowsUpdated(0, elements.size()-1);
             }
         });
         return managers;

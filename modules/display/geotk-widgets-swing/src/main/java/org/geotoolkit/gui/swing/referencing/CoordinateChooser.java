@@ -65,6 +65,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.display.shape.DoubleDimension2D;
+import org.geotoolkit.gui.swing.Dialog;
 
 
 /**
@@ -87,7 +88,7 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
  * @module
  */
 @SuppressWarnings("serial")
-public class CoordinateChooser extends JPanel {
+public class CoordinateChooser extends JPanel implements Dialog {
     /**
      * An enumeration constant for showing or hidding the geographic area selector.
      * Used as argument for {@link #isSelectorVisible} and {@link #setSelectorVisible}.
@@ -727,11 +728,11 @@ public class CoordinateChooser extends JPanel {
     }
 
     /**
-     * Shows a dialog box requesting input from the user. The dialog box will be
-     * parented to {@code owner}. If {@code owner} is contained into a
-     * {@link javax.swing.JDesktopPane}, the dialog box will appears as an internal
-     * frame. This method can be invoked from any thread (may or may not be the
-     * <cite>Swing</cite> thread).
+     * Shows a dialog box requesting input from the user. The dialog box will be parented to
+     * {@code owner}. If {@code owner} is contained into a {@link javax.swing.JDesktopPane},
+     * the dialog box will appears as an internal frame.
+     * <p>
+     * This method can be invoked from any thread (may or may not be the <cite>Swing</cite> thread).
      *
      * @param  owner The parent component for the dialog box, or {@code null} if there is no parent.
      * @return {@code true} if user pressed the "Ok" button, or {@code false} otherwise
@@ -743,15 +744,9 @@ public class CoordinateChooser extends JPanel {
     }
 
     /**
-     * Shows a dialog box requesting input from the user. If {@code owner} is contained into a
-     * {@link javax.swing.JDesktopPane}, the dialog box will appears as an internal frame. This
-     * method can be invoked from any thread (may or may not be the <cite>Swing</cite> thread).
-     *
-     * @param  owner The parent component for the dialog box, or {@code null} if there is no parent.
-     * @param  title The dialog box title.
-     * @return {@code true} if user pressed the "Ok" button, or {@code false} otherwise
-     *         (e.g. pressing "Cancel" or closing the dialog box from the title bar).
+     * {@inheritDoc}
      */
+    @Override
     public boolean showDialog(final Component owner, final String title) {
         while (SwingUtilities.showOptionDialog(owner, this, title)) {
             if (commitEdit(owner)) {

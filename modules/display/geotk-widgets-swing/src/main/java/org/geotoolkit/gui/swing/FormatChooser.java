@@ -64,7 +64,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-public class FormatChooser extends JPanel {
+public class FormatChooser extends JPanel implements Dialog {
     /**
      * The maximum number of items to keep in the history list.
      */
@@ -453,16 +453,9 @@ public class FormatChooser extends JPanel {
     }
 
     /**
-     * Shows a dialog box requesting input from the user. The dialog box will be parented to
-     * {@code owner}. If {@code owner} is contained into a {@link javax.swing.JDesktopPane},
-     * the dialog box will appears as an internal frame. This method can be invoked from any
-     * thread (may or may not be the <i>Swing</i> thread).
-     *
-     * @param  owner The parent component for the dialog box, or {@code null} if there is no parent.
-     * @param  title The dialog box title.
-     * @return {@code true} if user pressed the "Ok" button, or {@code false} otherwise
-     *         (e.g. pressing "Cancel" or closing the dialog box from the title bar).
+     * {@inheritDoc}
      */
+    @Override
     public boolean showDialog(final Component owner, final String title) {
         final String old = getPattern();
         while (SwingUtilities.showOptionDialog(owner, this, title)) {

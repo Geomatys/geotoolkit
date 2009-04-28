@@ -57,7 +57,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-public class DisjointLists extends JPanel {
+public class DisjointLists extends JPanel implements Dialog {
     /**
      * The list model. Each {@link DisjointLists} object will use two instances
      * of this class.  Both instances share the same list of elements, but have
@@ -510,15 +510,11 @@ public class DisjointLists extends JPanel {
     }
 
     /**
-     * Displays this component in a dialog box and wait for the user to press "Ok".
-     * This method can be invoked from any thread.
-     *
-     * @param  owner The owner (may be null).
-     * @param  title The title to write in the window bar.
-     * @return {@code true} if the user pressed "okay", or {@code false} otherwise.
+     * {@inheritDoc}
      *
      * @since 2.2
      */
+    @Override
     public boolean showDialog(final Component owner, final String title) {
         return SwingUtilities.showOptionDialog(owner, this, title);
     }

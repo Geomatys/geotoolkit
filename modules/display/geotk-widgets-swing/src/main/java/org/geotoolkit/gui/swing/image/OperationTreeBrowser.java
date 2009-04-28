@@ -51,6 +51,7 @@ import javax.media.jai.KernelJAI;
 
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.gui.swing.ParameterEditor;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -99,7 +100,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @module
  */
 @SuppressWarnings("serial")
-public class OperationTreeBrowser extends JPanel {
+public class OperationTreeBrowser extends JPanel implements Dialog {
     /**
      * Key for {@link PropertySource}.
      */
@@ -462,21 +463,16 @@ public class OperationTreeBrowser extends JPanel {
     }
 
     /**
-     * Shows the operation chain in the given owner.
+     * {@inheritDoc}
      *
-     * @param  owner The owner widget, or {@code null} if none.
-     * @param  title The widget title, or {@code null} for a default one.
-     * @return {@code true} if the user clicked on the "Ok" button.
+     * @param  title The dialog box title, or {@code null} for a default title.
      */
+    @Override
     public boolean showDialog(final Component owner, String title) {
         if (title == null) {
             title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.OPERATIONS);
         }
-        if (SwingUtilities.showOptionDialog(owner, this, title)) {
-            // TODO: User clicked on "Ok".
-            return true;
-        }
-        return false;
+        return SwingUtilities.showOptionDialog(owner, this, title);
     }
 
     /**
