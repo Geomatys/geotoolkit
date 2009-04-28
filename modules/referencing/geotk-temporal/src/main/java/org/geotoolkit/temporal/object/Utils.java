@@ -44,7 +44,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
  */
 public class Utils {
 
-    Logger logger = Logger.getLogger("org.geotools.temporal");
+    Logger logger = Logger.getLogger("org.geotoolkit.temporal");
     /**
      * The number of millisecond in one year.
      */

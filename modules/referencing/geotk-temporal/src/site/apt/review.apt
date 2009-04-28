@@ -14,12 +14,12 @@ MODULE TEMPORAL
   Geomatys' assignment document.
 
 
-* org.geotools.temporal.object [(test)]
+* org.geotoolkit.temporal.object [(test)]
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Created to define temporal geometric and topological objects that 
   shall be used as values for the temporal characteristics of features and data sets.
 
 
-* org.geotools.temporal.reference [(test)]
+* org.geotoolkit.temporal.reference [(test)]
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Provides elements for describing temporal reference systems.
