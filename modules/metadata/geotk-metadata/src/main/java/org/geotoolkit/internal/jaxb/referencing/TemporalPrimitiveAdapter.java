@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalPrimitive;
+import org.opengis.temporal.TemporalFactory;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
@@ -115,7 +116,9 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
                 throw new IllegalArgumentException(Errors.format(
                         Errors.Keys.ILLEGAL_ARGUMENT_$2, "TimePeriod", period));
             }
-            metadata = factory.getPeriod(begin, end);
+            metadata = factory.createPeriod(
+                        factory.createInstant(factory.createPosition(begin)),
+                        factory.createInstant(factory.createPosition(end)));
         }
     }
 }
