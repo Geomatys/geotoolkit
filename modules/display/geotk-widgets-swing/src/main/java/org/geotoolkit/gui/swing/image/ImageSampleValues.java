@@ -134,20 +134,24 @@ public class ImageSampleValues extends JPanel {
         }
 
         /**
-         * Format a cell value.
+         * Formats a cell value.
          */
         @Override
         public void setValue(final Object value) {
             final String text;
-            if      (value     == null) text = "";
-            else if (formatter == null) text = value.toString();
-            else                        text = formatter.format(value);
+            if (value == null) {
+                text = "";
+            } else if (formatter == null) {
+                text = value.toString();
+            } else {
+                text = formatter.format(value);
+            }
             setText(text);
         }
     }
 
     /**
-     * The component responsible for drawing the color for the selected cell.
+     * The component responsible for painting the color for the selected cell.
      * Also a listener for various events of interest for the enclosing class.
      */
     @SuppressWarnings("serial")

@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.internal.wizard;
 
+import java.awt.Dimension;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.api.wizard.WizardDisplayer;
 
+import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
+import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 
 
 /**
@@ -36,16 +39,28 @@ import org.geotoolkit.gui.swing.image.MosaicChooser;
  */
 public final class MosaicWizard {
     /**
+     * The default size for content panes.
+     */
+    private static final Dimension SIZE = new Dimension(800, 400);
+
+    /**
      * The page for tile selection.
      */
     @SuppressWarnings("serial")
     public static final class Select extends WizardPage {
         /**
+         * The content of this wizard page.
+         */
+        private final MosaicChooser content;
+
+        /**
          * Creates the "Select source tiles" page.
          */
         public Select() {
             super("Select", getDescription(), false);
-            add(new MosaicChooser());
+            content = new MosaicChooser();
+            content.setPreferredSize(SIZE);
+            add(content);
         }
 
         /**
@@ -59,13 +74,45 @@ public final class MosaicWizard {
     }
 
     /**
+     * The page for configuring the tile layout.
+     */
+    @SuppressWarnings("serial")
+    public static final class Layout extends WizardPage {
+        /**
+         * The content of this wizard page.
+         */
+        private final MosaicBuilderEditor content;
+
+        /**
+         * Creates the "Set target tiles layout" page.
+         */
+        public Layout() {
+            super("Select", getDescription(), false);
+            content = new MosaicBuilderEditor();
+            content.setPreferredSize(SIZE);
+            add(content);
+        }
+
+        /**
+         * Returns a localized description of that page.
+         *
+         * @return The localized description.
+         */
+        public static String getDescription() {
+            return "Define pyramid tiling";
+        }
+    }
+
+    /**
      * Displays this wizard.
      *
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
+        Registry.setDefaultCodecPreferences();
         Wizard wiz = WizardPage.createWizard(new Class[] {
-            Select.class
+            Select.class,
+            Layout.class
         });
         WizardDisplayer.showWizard(wiz);
         System.exit(0);

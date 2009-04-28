@@ -67,6 +67,8 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  * @author Cédric Briançon (Geomatys)
  * @version 3.0
  *
+ * @see org.geotoolkit.gui.swing.image.MosaicBuilderEditor
+ *
  * @since 2.5
  * @module
  */
