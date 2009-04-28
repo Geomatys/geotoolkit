@@ -120,6 +120,7 @@
     <module>jaxb-xml-binding</module>
     <module>display</module>
     <module>coverage</module>
+    <module>referencing</module>
   </modules>
 
 
