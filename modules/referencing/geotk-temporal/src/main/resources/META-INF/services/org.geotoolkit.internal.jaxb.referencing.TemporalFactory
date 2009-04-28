@@ -1,0 +1,4 @@
+# Temporary workaround until a TemporalFactory interface
+# is defined in GeoAPI.
+
+org.geotools.temporal.factory.DefaultTemporalFactory
