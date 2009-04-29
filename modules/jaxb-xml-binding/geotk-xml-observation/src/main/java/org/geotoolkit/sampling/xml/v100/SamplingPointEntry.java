@@ -28,6 +28,7 @@ import org.geotoolkit.gml.xml.v311modified.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationEntry;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
+import org.opengis.observation.sampling.SamplingFeatureRelation;
 import org.opengis.observation.sampling.SamplingPoint;
 
 /**
@@ -63,7 +64,7 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
     public SamplingPointEntry(final String                              identifier,
                               final String                              name,
                               final String                              remarks,
-                              final List<SamplingFeatureRelationEntry > relatedSamplingFeature,
+                              final List<SamplingFeatureRelationEntry> relatedSamplingFeature,
                               final List<ObservationEntry >             relatedObservation,
                               final List<String>                        sampledFeature,
                               final SurveyProcedureEntry                surveyDetail,

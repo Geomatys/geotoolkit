@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311modified.AbstractFeatureEntry;
 import org.geotoolkit.util.Utilities;
+import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 
 /**
@@ -71,8 +72,8 @@ public class ObservationCollectionEntry extends AbstractFeatureEntry implements 
     /**
      * Return a collection of Observation
      */
-    public Collection<ObservationEntry> getMember() {
-        Collection result = new ArrayList<ObservationEntry>();
+    public List<Observation> getMember() {
+        List result = new ArrayList<Observation>();
         
         for (ObservationPropertyType obprop: member) {
             result.add(obprop.getObservation());

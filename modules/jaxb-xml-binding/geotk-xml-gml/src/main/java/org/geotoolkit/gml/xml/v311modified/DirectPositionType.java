@@ -18,12 +18,19 @@ package org.geotoolkit.gml.xml.v311modified;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -42,7 +49,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "DirectPositionType", propOrder = {
     "value"
 })
-public class DirectPositionType {
+public class DirectPositionType implements DirectPosition{
 
     @XmlValue
     private List<Double> value;
@@ -227,5 +234,52 @@ public class DirectPositionType {
         hash = 71 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
         hash = 71 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        try {
+            return CRS.decode(srsName);
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(DirectPositionType.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(DirectPositionType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public double[] getCoordinate() {
+        double[] coords = new double[value.size()];
+        for(int i=0,n=value.size(); i<n; i++){
+            coords[i] = value.get(i);
+        }
+        return coords;
+    }
+
+    @Override
+    public double[] getCoordinates() {
+        return getCoordinate();
+    }
+
+    @Override
+    public double getOrdinate(int dimension) throws IndexOutOfBoundsException {
+        return value.get(dimension);
+    }
+
+    @Override
+    public void setOrdinate(int dimension, double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+        this.value.remove(dimension);
+        this.value.add(dimension, value);
+    }
+
+    @Override
+    public DirectPosition getPosition() {
+        return this;
+    }
+
+    @Override
+    public DirectPosition getDirectPosition() {
+        return this;
     }
 }
