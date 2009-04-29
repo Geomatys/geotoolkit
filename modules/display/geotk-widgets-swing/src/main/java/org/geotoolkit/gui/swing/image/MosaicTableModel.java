@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -30,6 +32,7 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import org.opengis.util.ProgressListener;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -43,7 +46,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * A table model for a list of {@linkplain Tile tiles}. The default implementation provides one
  * row for each tile {@linkplain #add(Collection) added} to this model and one column for each
  * tile property listed below. This table model does not allows cell edition but allows row
- * insertion and removal, assuming that the {@linkplain #tiles list of tiles} is modifiable.
+ * insertion and removal, assuming that the {@linkplain #elements list of tiles} is modifiable.
  * The default columns are:
  * <p>
  * <ul>
@@ -283,7 +286,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      *         for attempting an automatic detection.
      * @param  files The files from which to creates tiles.
      * @param  progress An optional listener where to report progress, or {@code null} if none.
-     * @throws UnsupportedOperationException if the underlying {@linkplain #tiles list of tiles}
+     * @throws UnsupportedOperationException if the underlying {@linkplain #elements list of tiles}
      *         is not modifiable.
      * @return {@code null} on success, or a list of files that failed otherwise.
      */
@@ -302,7 +305,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             final Dimension size;
             try {
                 tile = new Tile(provider, file, 0);
-                size = tile.getSize();
+                size = tile.getSize(); // This is mostly for forcing immediate loading of image header.
             } catch (Exception e) {
                 if (progress != null) {
                     String message = e.getLocalizedMessage();
@@ -350,13 +353,17 @@ public class MosaicTableModel extends ListTableModel<Tile> {
          * that we will need (TFW, image size). Process to the addition in Swing thread,
          * then remove duplicated and sort.
          */
-        SwingUtilities.invokeAndWait(new Runnable() {
-            @Override public void run() {
-                add(toAdd);
-                removeDuplicates();
-                sort();
-            }
-        });
+        if (!toAdd.isEmpty()) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override public void run() {
+                    int count = elements.size();
+                    add(toAdd);
+                    count -= removeDuplicates();
+                    recreate(count);
+                    sort();
+                }
+            });
+        }
         if (progress != null) {
             progress.complete();
         }
@@ -364,7 +371,44 @@ public class MosaicTableModel extends ListTableModel<Tile> {
     }
 
     /**
-     * Returns a tile manager for the current {@linkplain #tiles list of tiles}. This method
+     * Recreates every tiles in the current list which were there before the addition of
+     * new tiles. This is needed in order to get {@link TileManager} to recompute their
+     * affine transforms. Only the {@code n} first tiles will be recreated.
+     */
+    private void recreate(final int n) {
+        boolean changed = false;
+        for (int i=0; i<n; i++) {
+            Tile tile = elements.get(i);
+            final Rectangle region;
+            try {
+                region = tile.getRegion();
+            } catch (IOException e) {
+                // Should not happen, but if it does anyway keep the current tile,
+                // which is likely to be painted as an invalid tile by MosaicPanel.
+                Logging.recoverableException(MosaicTableModel.class, "add", e);
+                continue;
+            }
+            final AffineTransform tr;
+            try {
+                tr = tile.getGridToCRS();
+            } catch (IllegalStateException e) {
+                // Should not happen, but if it does anyway it means that the tile
+                // has not yet been processed by TileManagerFactory, in which case
+                // we don't need to recreate it.
+                Logging.recoverableException(MosaicTableModel.class, "add", e);
+                continue;
+            }
+            tile = new Tile(tile.getImageReaderSpi(), tile.getInput(), tile.getImageIndex(), region, tr);
+            elements.set(i, tile);
+            changed = true;
+        }
+        if (changed) {
+            fireTableRowsUpdated(0, n-1);
+        }
+    }
+
+    /**
+     * Returns a tile manager for the current {@linkplain #elements list of tiles}. This method
      * should return an array of length 1, but a different length may be obtained if it was
      * not possible to create a single tile manager.
      * <p>

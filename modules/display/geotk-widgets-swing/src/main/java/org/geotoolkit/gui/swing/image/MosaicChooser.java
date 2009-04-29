@@ -31,6 +31,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
@@ -51,17 +53,25 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
 
 /**
  * A chooser for a set of {@linkplain Tile tiles} to be used for creating a mosaic. This chooser
- * allows users to select tiles from a file or a directory and see the silhouette of selected tiles.
- * The result can be obtained by a call to {@link #getSelectedTiles()}.
+ * allows users to select tiles from a file or a directory. The tiles are images in any format
+ * supported by Java Image I/O library (TIFF, PNG, <cite>etc.</cite>), accompanied by their
+ * <cite>World Files</cite> (text files having the same name than the image files except for the
+ * extension, which is {@code .tfw}, {@code .jpw}, <cite>etc.</cite> depending on the image format).
+ * The silhouette of selected tiles is displayed in the right pane.
  * <p>
- * The tiles are images in any format supported by Java Image I/O (TIFF, PNG, <cite>etc.</cite>),
- * accompagned by their <cite>world files</cite>. World Files must have the same name than the
- * images except for the extension ({@code ".tfw"}, {@code ".jpw"}, <cite>etc.</cite> depending
- * on the image format).
+ * As an alternative to the selection of multiple image files, the user can also select a single
+ * text file having the {@code .txt}, {@code .lst} or {@code .csv} extension. This text file is
+ * expected to contain a list of image files to use for the mosaic.
  * <p>
- * Users can define the mosaic either directly by choosing an arbitrary amount of image files,
- * or indirectly by selecting a single text file having {@code .txt}, {@code .lst} or {@code .csv}
- * extension. The text file shall contain a list of image files to use for the mosaic.
+ * <b>Example:</b>
+ *
+ * {@preformat java
+ *     MosaicChooser chooser = new MosaicChooser();
+ *     if (chooser.showDialog(null, "Select source tiles")) {
+ *         TileManager[] tiles = chooser.getSelectedTiles();
+ *         // Process here.
+ *     }
+ * }
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
@@ -225,15 +235,6 @@ public class MosaicChooser extends JPanel implements Dialog {
         pane.setDividerLocation(460);
         pane.setBorder(null);
         add(pane, BorderLayout.CENTER);
-    }
-
-    /**
-     * Returns the table of tiles.
-     *
-     * @return The table of tiles.
-     */
-    public MosaicTableModel getTileTable() {
-        return tiles;
     }
 
     /**
@@ -416,7 +417,7 @@ public class MosaicChooser extends JPanel implements Dialog {
                      * mosaic creation and may affect the result of Tile.equals(Object).
                      */
                     case 3: {
-                        if (tiles.removeDuplicates() && error == null) {
+                        if (tiles.removeDuplicates() != 0 && error == null) {
                             stage = 2; // Creates TileManager again.
                             return;
                         }
@@ -428,6 +429,7 @@ public class MosaicChooser extends JPanel implements Dialog {
                             mosaic.setTileManagers(managers);
                         }
                         loader = null; // Said to MosaicChooser that we are done.
+                        fireStateChanged();
                         break;
                     }
                     /*
@@ -483,6 +485,39 @@ public class MosaicChooser extends JPanel implements Dialog {
             tables.setDividerLocation(200);
             leftPane.add(tables, BorderLayout.CENTER);
             leftPane.validate();
+        }
+    }
+
+    /**
+     * Adds a listener to be notified when the {@linkplain #getSelectedTiles() selected tiles}
+     * changed. Those listeners can invoke {@link #getSelectedTiles()} in order to get the new
+     * selection.
+     *
+     * @param listener The listener to add.
+     */
+    public void addChangeListener(final ChangeListener listener) {
+        listenerList.add(ChangeListener.class, listener);
+    }
+
+    /**
+     * Removes a listener previously added.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeChangeListener(final ChangeListener listener) {
+        listenerList.remove(ChangeListener.class, listener);
+    }
+
+    /**
+     * Invoked when the selection of tiles changed.
+     */
+    private void fireStateChanged() {
+        final ChangeEvent event = new ChangeEvent(this);
+        final Object[] listeners = listenerList.getListenerList();
+        for (int i=listeners.length; (i-=2) >= 0;) {
+            if (ChangeListener.class.equals(listeners[i])) {
+                ((ChangeListener) listeners[i+1]).stateChanged(event);
+            }
         }
     }
 

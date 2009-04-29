@@ -33,14 +33,16 @@ public interface Dialog {
      * Shows a dialog box requesting input from the user. The dialog box will be parented to
      * {@code owner}. If {@code owner} is contained into a {@link javax.swing.JDesktopPane},
      * the dialog box will appears as an internal frame.
-     * <p>
-     * This method can be invoked from any thread (may or may not be the
-     * <cite>Swing</cite> thread).
+     *
+     * {@section Multi-threading}
+     * Geotoolkit implementations allow this method to be invoked from any thread. If the caller
+     * thread is not the <cite>Swing</cite> thread, then the execution of this method will be
+     * registered in the AWT Event Queue and the caller thread will block until completion.
      *
      * @param  owner The parent component for the dialog box, or {@code null} if there is no parent.
      * @param  title The dialog box title.
-     * @return {@code true} if user pressed the "Ok" button, or {@code false} otherwise
-     *         (e.g. pressing "Cancel" or closing the dialog box from the title bar).
+     * @return {@code true} if user pressed the "<cite>Ok</cite>" button, or {@code false} otherwise
+     *         (e.g. pressing "<cite>Cancel</cite>" or closing the dialog box from the title bar).
      */
     boolean showDialog(Component owner, String title);
 }

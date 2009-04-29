@@ -55,7 +55,22 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
 
 
 /**
- * Configures a {@link MosaicBuilder} according the input provided by a user.
+ * Configures a {@link MosaicBuilder} according the input provided by a user. The caller can
+ * invoke one of the {@code initializeForXXX} methods (optional but recommanded) in order to
+ * initialize the widgets with a set of default values. After the widget has been displayed,
+ * the caller can invoke {@link #getMosaicBuilder()} in order to get the user's choices in
+ * an object ready for use.
+ * <p>
+ * <b>Example:</b>
+ *
+ * {@preformat java
+ *     MosaicBuilderEditor editor = new MosaicBuilderEditor();
+ *     editor.initializeForBounds(boundsOfTheWholeMosaic);
+ *     if (editor.showDialog(null, "Define pyramid tiling")) {
+ *         MosaicBuilder builder = editor.getMosaicBuilder();
+ *         // Process here.
+ *     }
+ * }
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
@@ -73,7 +88,9 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
     private static final Dimension DEFAULT_TILE_SIZE = new Dimension(256, 256);
 
     /**
-     * The mosaic builder to configure.
+     * The mosaic builder to configure. This is the instance given to the constructor.
+     * This builder may not be synchronized with the content of this widget - the
+     * synchronization happen only when {@link #getMosaicBuilder()} is invoked.
      */
     protected final MosaicBuilder builder;
 
@@ -116,8 +133,11 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         /*
          * Determines the default values.
          */
-        final File initialDirectory = new File(Preferences.userNodeForPackage(MosaicBuilderEditor.class)
-                .get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+        File initialDirectory = builder.getTileDirectory();
+        if (initialDirectory == null) {
+            initialDirectory = new File(Preferences.userNodeForPackage(MosaicBuilderEditor.class)
+                    .get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+        }
         /*
          * The table where to specifies subsampling, together with a "Remove" botton for
          * removing rows. There is no "add" button given that subsampling can be added on
@@ -384,6 +404,22 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
                 }
             }
         }
+    }
+
+    /**
+     * Configures the mosaic {@linkplain #builder} with the informations provided by the user
+     * and returns it. This method should be invoked only if the user has not cancelled his
+     * editing.
+     *
+     * @return The configured mosaic builder.
+     */
+    public MosaicBuilder getMosaicBuilder() {
+        final File dir = directory.getFile();
+        Preferences.userNodeForPackage(MosaicBuilderEditor.class).put(OUTPUT_DIRECTORY, dir.getPath());
+        builder.setTileDirectory(dir);
+        builder.setTileSize(tileSize.getSizeValue());
+        builder.setSubsamplings(subsamplings.toArray(new Dimension[subsamplings.size()]));
+        return builder;
     }
 
     /**

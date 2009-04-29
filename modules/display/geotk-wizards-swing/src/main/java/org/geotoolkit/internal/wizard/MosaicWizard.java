@@ -21,14 +21,14 @@ import java.util.Map;
 import java.awt.Dimension;
 import javax.swing.JComponent;
 import javax.swing.BorderFactory;
-import javax.swing.table.TableModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 import org.geotoolkit.image.jai.Registry;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 
@@ -80,20 +80,23 @@ public final class MosaicWizard extends WizardPanelProvider {
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
         final JComponent component;
         if (id.equals("Select")) {
-            final class Chooser extends MosaicChooser implements TableModelListener {
+            final class Chooser extends MosaicChooser implements ChangeListener {
                 private static final long serialVersionUID = -6696539336904269650L;
-                @Override public void tableChanged(final TableModelEvent event) {
-                    String problem = null;
-                    if (event == null || ((TableModel) event.getSource()).getRowCount() == 0) {
-                        problem = "At least one tile must be selected.";
+                @Override public void stateChanged(final ChangeEvent event) {
+                    final TileManager[] tiles = chooser.getSelectedTiles();
+                    final String problem;
+                    switch (tiles.length) {
+                        case 0:  problem = "At least one tile must be selected."; break;
+                        case 1:  problem = null; break; // We can process
+                        default: problem = "The selected tiles can not make a single mosaic."; break;
                     }
                     controller.setProblem(problem);
                 }
             }
             final Chooser c;
             component = chooser = c = new Chooser();
-            chooser.getTileTable().addTableModelListener(c);
-            c.tableChanged(null); // Force the call to controller.setProblem("..."),
+            chooser.addChangeListener(c);
+            c.stateChanged(null); // Force the call to controller.setProblem("..."),
         } else {
             final MosaicBuilderEditor editor;
             component = editor = new MosaicBuilderEditor();

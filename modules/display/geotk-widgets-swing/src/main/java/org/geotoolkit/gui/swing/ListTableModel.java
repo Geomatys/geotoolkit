@@ -298,11 +298,11 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
      * {@linkplain #elements} list. We keep the last element instead of the first one
      * on the assumption that the last element is the most recently added.
      *
-     * @return {@code true} if at least one element has been removed as a result of this call.
+     * @return The number of duplicates which have been found.
      * @throws UnsupportedOperationException if the underlying {@linkplain #elements} list
      *         is not modifiable.
      */
-    public boolean removeDuplicates() throws UnsupportedOperationException {
+    public int removeDuplicates() throws UnsupportedOperationException {
         int count = 0;
         final int[] indices = new int[elements.size()];
         final Map<E,Integer> previous = new HashMap<E,Integer>();
@@ -314,11 +314,10 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
                 indices[count++] = p;
             }
         }
-        if (count == 0) {
-            return false;
+        if (count != 0) {
+            remove(XArrays.resize(indices, count));
         }
-        remove(XArrays.resize(indices, count));
-        return true;
+        return count;
     }
 
     /**
