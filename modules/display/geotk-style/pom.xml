@@ -51,11 +51,6 @@
           <artifactId>geotk-metadata</artifactId>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-xml-sld</artifactId>
-          <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
           <groupId>org.geotoolkit.project</groupId>
           <artifactId>geotk-provided</artifactId>
           <version>${geotoolkit.version}</version>

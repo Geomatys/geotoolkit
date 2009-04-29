@@ -117,10 +117,10 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
-    <module>jaxb-xml-binding</module>
-    <module>display</module>
-    <module>coverage</module>
     <module>referencing</module>
+    <module>jaxb-xml-binding</module>
+    <module>coverage</module>
+    <module>display</module>
   </modules>
 
 
