@@ -18,6 +18,7 @@
 package org.geotoolkit.sld.xml;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -39,6 +40,9 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotools.feature.NameImpl;
+
+import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
+
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
@@ -79,6 +83,19 @@ import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
+import org.geotoolkit.se.xml.v110.CategorizeType;
+import org.geotoolkit.se.xml.v110.ChangeCaseType;
+import org.geotoolkit.se.xml.v110.ConcatenateType;
+import org.geotoolkit.se.xml.v110.FormatDateType;
+import org.geotoolkit.se.xml.v110.FormatNumberType;
+import org.geotoolkit.se.xml.v110.InterpolateType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
+import org.geotoolkit.se.xml.v110.MapItemType;
+import org.geotoolkit.se.xml.v110.RecodeType;
+import org.geotoolkit.se.xml.v110.StringLengthType;
+import org.geotoolkit.se.xml.v110.StringPositionType;
+import org.geotoolkit.se.xml.v110.SubstringType;
+import org.geotoolkit.se.xml.v110.TrimType;
 
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -199,7 +216,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 //        JAXBElementPropertyNameType> 
 //        JAXBElementBinaryOperatorType>
         
-        if(JAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName()) ){
+        if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName()) ){
             //its a float array
             float[] values = null;
             
@@ -227,6 +244,104 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             return NonSI.PIXEL;
         }        
         
+    }
+
+    /**
+     * Transform a JaxBelement in Expression.
+     */
+    @Override
+    public Expression visitExpression(JAXBElement<?> jax){
+        //Added in SE1.1-----
+//        JAXBElementMapItemType>
+//        JAXBElementInterpolateType>
+//        JAXBElementConcatenateType>
+//        JAXBElementChangeCaseType>
+//        JAXBElementTrimType>
+//        JAXBElementFormatDateType>
+//        JAXBElementCategorizeType>
+//        JAXBElementInterpolationPointType>
+//        JAXBElementStringLengthType>
+//        JAXBElementRecodeType>
+//        JAXBElementnet.opengis.se.FunctionType>
+//        JAXBElementFormatNumberType>
+//        JAXBElementSubstringType>
+//        JAXBElementStringPositionType>
+
+        Expression exp;
+        try{
+            return super.visitExpression(jax);
+        }catch(IllegalArgumentException ex){
+            String expName = jax.getName().getLocalPart();
+            Object obj = jax.getValue();
+
+            if(obj instanceof MapItemType){
+                throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof InterpolateType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof ConcatenateType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof ChangeCaseType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof TrimType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof FormatDateType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof CategorizeType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof InterpolationPointType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof StringLengthType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof RecodeType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof FormatNumberType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof SubstringType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }else if(obj instanceof StringPositionType){
+                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+            }
+        }
+        
+
+        throw new IllegalArgumentException("Unknowed expression element" + jax);
+    }
+
+    /**
+     * Transform a parametervaluetype in Expression.
+     */
+    public Expression visitExpression(org.geotoolkit.se.xml.v110.ParameterValueType param) {
+        if(param == null) return null;
+
+//        Objects of the following type(s) are allowed in the list
+//        JAXBElementFunctionType> ---NS
+//        String ---k
+//        JAXBElementExpressionType> ---k
+//        JAXBElementLiteralType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+//        JAXBElementPropertyNameType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+
+        Expression result = Expression.NIL;
+
+        List<Serializable> sers = param.getContent();
+
+        for(Serializable ser :sers){
+
+            if(ser instanceof String){
+                result = filterFactory.literal((String)ser);
+                break;
+            }else if(ser instanceof JAXBElement<?>){
+                JAXBElement<?> jax = (JAXBElement<?>) ser;
+                result = visitExpression(jax);
+                break;
+            }
+
+        }
+
+        return result;
     }
 
 
@@ -625,19 +740,19 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
         List<SvgParameterType> params = strk.getSvgParameter();
         for(SvgParameterType svg : params){
-            if(JAXBStatics.STROKE.equalsIgnoreCase(svg.getName())){
+            if(SEJAXBStatics.STROKE.equalsIgnoreCase(svg.getName())){
                 color = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_OPACITY.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_OPACITY.equalsIgnoreCase(svg.getName())){
                 opacity = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_WIDTH.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_WIDTH.equalsIgnoreCase(svg.getName())){
                 width = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_LINEJOIN.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_LINEJOIN.equalsIgnoreCase(svg.getName())){
                 join = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_LINECAP.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_LINECAP.equalsIgnoreCase(svg.getName())){
                 cap = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName())){
                 dashes = (float[])visitSVG(svg);
-            }else if(JAXBStatics.STROKE_DASHOFFSET.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_DASHOFFSET.equalsIgnoreCase(svg.getName())){
                 offset = (Expression)visitSVG(svg);
             }
         }
@@ -664,9 +779,9 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         
         List<SvgParameterType> params = fl.getSvgParameter();
         for(SvgParameterType svg : params){
-            if(JAXBStatics.FILL.equalsIgnoreCase(svg.getName())){
+            if(SEJAXBStatics.FILL.equalsIgnoreCase(svg.getName())){
                 color = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.FILL_OPACITY.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FILL_OPACITY.equalsIgnoreCase(svg.getName())){
                 opacity = (Expression)visitSVG(svg);
             }
         }
@@ -690,13 +805,13 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      *  Transform a SLD v1.1 overlap in GT overlap.
      */
     private OverlapBehavior visitOverLap(String overlapBehavior) {
-        if(JAXBStatics.OVERLAP_AVERAGE.equalsIgnoreCase(overlapBehavior)){
+        if(SEJAXBStatics.OVERLAP_AVERAGE.equalsIgnoreCase(overlapBehavior)){
             return OverlapBehavior.AVERAGE;
-        }else if(JAXBStatics.OVERLAP_EARLIEST_ON_TOP.equalsIgnoreCase(overlapBehavior)){
+        }else if(SEJAXBStatics.OVERLAP_EARLIEST_ON_TOP.equalsIgnoreCase(overlapBehavior)){
             return OverlapBehavior.EARLIEST_ON_TOP;
-        }else if(JAXBStatics.OVERLAP_LATEST_ON_TOP.equalsIgnoreCase(overlapBehavior)){
+        }else if(SEJAXBStatics.OVERLAP_LATEST_ON_TOP.equalsIgnoreCase(overlapBehavior)){
             return OverlapBehavior.LATEST_ON_TOP;
-        }else if(JAXBStatics.OVERLAP_RANDOM.equalsIgnoreCase(overlapBehavior)){
+        }else if(SEJAXBStatics.OVERLAP_RANDOM.equalsIgnoreCase(overlapBehavior)){
             return OverlapBehavior.RANDOM;
         }else{
             return OverlapBehavior.RANDOM;
@@ -795,13 +910,13 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         
         List<SvgParameterType> params = font.getSvgParameter();
         for(SvgParameterType svg : params){
-            if(JAXBStatics.FONT_FAMILY.equalsIgnoreCase(svg.getName())){
+            if(SEJAXBStatics.FONT_FAMILY.equalsIgnoreCase(svg.getName())){
                 family.add( (Expression)visitSVG(svg) );
-            }else if(JAXBStatics.FONT_STYLE.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FONT_STYLE.equalsIgnoreCase(svg.getName())){
                 style = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.FONT_WEIGHT.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FONT_WEIGHT.equalsIgnoreCase(svg.getName())){
                 weight = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.FONT_SIZE.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FONT_SIZE.equalsIgnoreCase(svg.getName())){
                 size = (Expression)visitSVG(svg);
             }
         }

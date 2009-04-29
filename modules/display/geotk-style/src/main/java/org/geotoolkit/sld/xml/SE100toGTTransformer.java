@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sld.xml;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
 
 import org.geotools.feature.NameImpl;
+
+import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
 
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -135,7 +138,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 //        JAXBElementPropertyNameType> 
 //        JAXBElementBinaryOperatorType>
         
-        if(JAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(css.getName()) ){
+        if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(css.getName()) ){
             //its a float array
             float[] values = null;
             
@@ -154,6 +157,42 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    /**
+     * Transform a parametervaluetype in Expression.
+     */
+    public Expression visitExpression(org.geotoolkit.sld.xml.v100.ParameterValueType param) {
+        if(param == null) return null;
+
+//        Objects of the following type(s) are allowed in the list
+//        JAXBElementFunctionType> ---NS
+//        String ---k
+//        JAXBElementExpressionType> ---k
+//        JAXBElementLiteralType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+//        JAXBElementPropertyNameType> ---k
+//        JAXBElementBinaryOperatorType> ---k
+
+        Expression result = Expression.NIL;
+
+        List<Serializable> sers = param.getContent();
+
+        for(Serializable ser :sers){
+
+            if(ser instanceof String){
+                result = filterFactory.literal((String)ser);
+                break;
+            }else if(ser instanceof JAXBElement<?>){
+                JAXBElement<?> jax = (JAXBElement<?>) ser;
+                result = visitExpression(jax);
+                break;
+            }
+
+        }
+
+        return result;
+    }
 
     //Style, FTS and Rule-------------------------------------------------------
     /**
@@ -452,19 +491,19 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         
         List<CssParameter> params = strk.getCssParameter();
         for(CssParameter svg : params){
-            if(JAXBStatics.STROKE.equalsIgnoreCase(svg.getName())){
+            if(SEJAXBStatics.STROKE.equalsIgnoreCase(svg.getName())){
                 color = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_OPACITY.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_OPACITY.equalsIgnoreCase(svg.getName())){
                 opacity = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_WIDTH.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_WIDTH.equalsIgnoreCase(svg.getName())){
                 width = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_LINEJOIN.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_LINEJOIN.equalsIgnoreCase(svg.getName())){
                 join = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_LINECAP.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_LINECAP.equalsIgnoreCase(svg.getName())){
                 cap = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName())){
                 dashes = (float[])visitSVG(svg);
-            }else if(JAXBStatics.STROKE_DASHOFFSET.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.STROKE_DASHOFFSET.equalsIgnoreCase(svg.getName())){
                 offset = (Expression)visitSVG(svg);
             }
         }
@@ -492,9 +531,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         
         List<CssParameter> params = fl.getCssParameter();
         for(CssParameter svg : params){
-            if(JAXBStatics.FILL.equalsIgnoreCase(svg.getName())){
+            if(SEJAXBStatics.FILL.equalsIgnoreCase(svg.getName())){
                 color = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.FILL_OPACITY.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FILL_OPACITY.equalsIgnoreCase(svg.getName())){
                 opacity = (Expression)visitSVG(svg);
             }
         }
@@ -624,13 +663,13 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         
         List<CssParameter> params = font.getCssParameter();
         for(CssParameter svg : params){
-            if(JAXBStatics.FONT_FAMILY.equalsIgnoreCase(svg.getName())){
+            if(SEJAXBStatics.FONT_FAMILY.equalsIgnoreCase(svg.getName())){
                 family.add( (Expression)visitSVG(svg) );
-            }else if(JAXBStatics.FONT_STYLE.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FONT_STYLE.equalsIgnoreCase(svg.getName())){
                 style = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.FONT_WEIGHT.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FONT_WEIGHT.equalsIgnoreCase(svg.getName())){
                 weight = (Expression)visitSVG(svg);
-            }else if(JAXBStatics.FONT_SIZE.equalsIgnoreCase(svg.getName())){
+            }else if(SEJAXBStatics.FONT_SIZE.equalsIgnoreCase(svg.getName())){
                 size = (Expression)visitSVG(svg);
             }
         }

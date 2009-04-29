@@ -873,8 +873,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
         }
         
         List<SvgParameterType> svgs = ft.getSvgParameter();
-        svgs.add( visitSVG(fill.getColor(), JAXBStatics.FILL) );
-        svgs.add( visitSVG(fill.getOpacity(), JAXBStatics.FILL_OPACITY) );
+        svgs.add( visitSVG(fill.getColor(), SEJAXBStatics.FILL) );
+        svgs.add( visitSVG(fill.getOpacity(), SEJAXBStatics.FILL_OPACITY) );
                 
         return ft;
     }
@@ -888,12 +888,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
         
         List<SvgParameterType> svgs = ft.getSvgParameter();
         for(Expression exp : font.getFamily() ){
-            svgs.add( visitSVG(exp, JAXBStatics.FONT_FAMILY) );
+            svgs.add( visitSVG(exp, SEJAXBStatics.FONT_FAMILY) );
         }
         
-        svgs.add( visitSVG(font.getSize(), JAXBStatics.FONT_SIZE) );
-        svgs.add( visitSVG(font.getStyle(), JAXBStatics.FONT_STYLE) );
-        svgs.add( visitSVG(font.getWeight(), JAXBStatics.FONT_WEIGHT) );
+        svgs.add( visitSVG(font.getSize(), SEJAXBStatics.FONT_SIZE) );
+        svgs.add( visitSVG(font.getStyle(), SEJAXBStatics.FONT_STYLE) );
+        svgs.add( visitSVG(font.getWeight(), SEJAXBStatics.FONT_WEIGHT) );
         
         return ft;
     }
@@ -912,15 +912,15 @@ public class GTtoSE110Transformer implements StyleVisitor{
         }
                 
         List<SvgParameterType> svgs = st.getSvgParameter();
-        svgs.add( visitSVG(stroke.getColor(), JAXBStatics.STROKE) );
+        svgs.add( visitSVG(stroke.getColor(), SEJAXBStatics.STROKE) );
         if(stroke.getDashArray() != null){
-            svgs.add( visitSVG(stroke.getDashArray(), JAXBStatics.STROKE_DASHARRAY) );
+            svgs.add( visitSVG(stroke.getDashArray(), SEJAXBStatics.STROKE_DASHARRAY) );
         }
-        svgs.add( visitSVG(stroke.getDashOffset(), JAXBStatics.STROKE_DASHOFFSET) );
-        svgs.add( visitSVG(stroke.getLineCap(), JAXBStatics.STROKE_LINECAP) );
-        svgs.add( visitSVG(stroke.getLineJoin(), JAXBStatics.STROKE_LINEJOIN) );
-        svgs.add( visitSVG(stroke.getOpacity(), JAXBStatics.STROKE_OPACITY) );
-        svgs.add( visitSVG(stroke.getWidth(), JAXBStatics.STROKE_WIDTH) );
+        svgs.add( visitSVG(stroke.getDashOffset(), SEJAXBStatics.STROKE_DASHOFFSET) );
+        svgs.add( visitSVG(stroke.getLineCap(), SEJAXBStatics.STROKE_LINECAP) );
+        svgs.add( visitSVG(stroke.getLineJoin(), SEJAXBStatics.STROKE_LINEJOIN) );
+        svgs.add( visitSVG(stroke.getOpacity(), SEJAXBStatics.STROKE_OPACITY) );
+        svgs.add( visitSVG(stroke.getWidth(), SEJAXBStatics.STROKE_WIDTH) );
         
         return st;
     }
@@ -1238,10 +1238,10 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public String visit(OverlapBehavior overlapBehavior, Object data) {
         switch(overlapBehavior){
-            case AVERAGE : return JAXBStatics.OVERLAP_AVERAGE;
-            case EARLIEST_ON_TOP : return JAXBStatics.OVERLAP_EARLIEST_ON_TOP;
-            case LATEST_ON_TOP : return JAXBStatics.OVERLAP_LATEST_ON_TOP;
-            case RANDOM : return JAXBStatics.OVERLAP_RANDOM;        
+            case AVERAGE : return SEJAXBStatics.OVERLAP_AVERAGE;
+            case EARLIEST_ON_TOP : return SEJAXBStatics.OVERLAP_EARLIEST_ON_TOP;
+            case LATEST_ON_TOP : return SEJAXBStatics.OVERLAP_LATEST_ON_TOP;
+            case RANDOM : return SEJAXBStatics.OVERLAP_RANDOM;
             default : return null;
         }
     }

@@ -749,8 +749,8 @@ public class GTtoSE100Transformer implements StyleVisitor{
         }
         
         List<CssParameter> svgs = ft.getCssParameter();
-        svgs.add( visitCSS(fill.getColor(), JAXBStatics.FILL) );
-        svgs.add( visitCSS(fill.getOpacity(), JAXBStatics.FILL_OPACITY) );
+        svgs.add( visitCSS(fill.getColor(), SEJAXBStatics.FILL) );
+        svgs.add( visitCSS(fill.getOpacity(), SEJAXBStatics.FILL_OPACITY) );
         
         if(svgs.isEmpty() && ft.getGraphicFill() == null){
             return null;
@@ -768,12 +768,12 @@ public class GTtoSE100Transformer implements StyleVisitor{
         
         List<CssParameter> svgs = ft.getCssParameter();
         for(Expression exp : font.getFamily() ){
-            svgs.add( visitCSS(exp, JAXBStatics.FONT_FAMILY) );
+            svgs.add( visitCSS(exp, SEJAXBStatics.FONT_FAMILY) );
         }
         
-        svgs.add( visitCSS(font.getSize(), JAXBStatics.FONT_SIZE) );
-        svgs.add( visitCSS(font.getStyle(), JAXBStatics.FONT_STYLE) );
-        svgs.add( visitCSS(font.getWeight(), JAXBStatics.FONT_WEIGHT) );
+        svgs.add( visitCSS(font.getSize(), SEJAXBStatics.FONT_SIZE) );
+        svgs.add( visitCSS(font.getStyle(), SEJAXBStatics.FONT_STYLE) );
+        svgs.add( visitCSS(font.getWeight(), SEJAXBStatics.FONT_WEIGHT) );
         
         return ft;
     }
@@ -792,15 +792,15 @@ public class GTtoSE100Transformer implements StyleVisitor{
         }
                 
         List<CssParameter> svgs = st.getCssParameter();
-        svgs.add( visitCSS(stroke.getColor(), JAXBStatics.STROKE) );
+        svgs.add( visitCSS(stroke.getColor(), SEJAXBStatics.STROKE) );
         if(stroke.getDashArray() != null){
-            svgs.add( visitCSS(stroke.getDashArray(), JAXBStatics.STROKE_DASHARRAY) );
+            svgs.add( visitCSS(stroke.getDashArray(), SEJAXBStatics.STROKE_DASHARRAY) );
         }
-        svgs.add( visitCSS(stroke.getDashOffset(), JAXBStatics.STROKE_DASHOFFSET) );
-        svgs.add( visitCSS(stroke.getLineCap(), JAXBStatics.STROKE_LINECAP) );
-        svgs.add( visitCSS(stroke.getLineJoin(), JAXBStatics.STROKE_LINEJOIN) );
-        svgs.add( visitCSS(stroke.getOpacity(), JAXBStatics.STROKE_OPACITY) );
-        svgs.add( visitCSS(stroke.getWidth(), JAXBStatics.STROKE_WIDTH) );
+        svgs.add( visitCSS(stroke.getDashOffset(), SEJAXBStatics.STROKE_DASHOFFSET) );
+        svgs.add( visitCSS(stroke.getLineCap(), SEJAXBStatics.STROKE_LINECAP) );
+        svgs.add( visitCSS(stroke.getLineJoin(), SEJAXBStatics.STROKE_LINEJOIN) );
+        svgs.add( visitCSS(stroke.getOpacity(), SEJAXBStatics.STROKE_OPACITY) );
+        svgs.add( visitCSS(stroke.getWidth(), SEJAXBStatics.STROKE_WIDTH) );
         
         if(svgs.isEmpty() && st.getGraphicFill() == null && st.getGraphicStroke() == null){
             return null;
