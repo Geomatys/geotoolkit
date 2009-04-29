@@ -26,7 +26,10 @@
   <packaging>pom</packaging>
   <name>Build tools</name>
   <description>
-    Build tools for the Geotoolkit project.
+    Build tools for the Geotoolkit project. They define Maven plugins and command-line
+    tools for building Geotoolkit, but are not part of the distribution. Many of those
+    tools are tailored specifically for Geotoolkit and are not of interest for general
+    use.
   </description>
 
 

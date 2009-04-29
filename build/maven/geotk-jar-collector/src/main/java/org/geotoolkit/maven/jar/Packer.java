@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.jar.*;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,12 +35,7 @@ import java.io.InputStream;
  *
  * @since 3.0
  */
-public final class Packer {
-    /**
-     * The Geotoolkit version.
-     */
-    static final String VERSION = "SNAPSHOT";
-
+public final class Packer implements FilenameFilter {
     /**
      * The sub-directory containing JAR files.
      * This directory must exists; it will not be created.
@@ -59,6 +55,11 @@ public final class Packer {
     private final File targetDirectory;
 
     /**
+     * The directory of JAR files.
+     */
+    final File jarDirectory;
+
+    /**
      * The JAR files to read, by input filename.
      */
     private final Map<File,PackInput> inputs = new LinkedHashMap<File,PackInput>();
@@ -69,22 +70,39 @@ public final class Packer {
     private final Map<String,PackOutput> outputs = new LinkedHashMap<String,PackOutput>();
 
     /**
+     * The version to declare in the manifest file.
+     */
+    final String version;
+
+    /**
      * Creates a packer.
      *
      * @param targetDirectory The Maven target directory.
+     * @param version The version to declare in the manifest file.
      */
-    private Packer(final File targetDirectory) {
+    public Packer(final File targetDirectory, final String version) {
+        this.version = version;
         this.targetDirectory = targetDirectory;
+        this.jarDirectory = new File(targetDirectory, JAR_DIRECTORY);
+    }
+
+    /**
+     * Adds a pack which will contain every JAR files in the target directory.
+     *
+     * @param pack The name of the pack file to create.
+     */
+    public void addPack(final String pack) {
+        addPack(null, pack, jarDirectory.list(this));
     }
 
     /**
      * Adds the given JAR files for the given pack.
      *
      * @param parent The pack from which to inherit the JAR files, or {@code null} if none.
-     * @param pack   The name (without extension) of the pack file to create.
-     * @param jar    The list of JAR files in this pack file.
+     * @param pack   The name of the pack file to create.
+     * @param jars   The list of JAR files in this pack file.
      */
-    private void addPack(final String parent, final String pack, final String[] jars) {
+    public void addPack(final String parent, final String pack, final String[] jars) {
         if (pack == null) {
             throw new NullPointerException("pack");
         }
@@ -95,7 +113,7 @@ public final class Packer {
                 throw new IllegalArgumentException("Non-existant pack: " + parent);
             }
         }
-        p = new PackOutput(p, jars, new File(targetDirectory, JAR_DIRECTORY));
+        p = new PackOutput(this, p, jars);
         if (outputs.put(pack, p) != null) {
             throw new IllegalArgumentException("Duplicated pack: " + pack);
         }
@@ -107,7 +125,7 @@ public final class Packer {
      * @throws IOException if an error occured while reading existing JAR files
      *         or writing to the packed files.
      */
-    private void createJars() throws IOException {
+    public void createJars() throws IOException {
         /*
          * Creates the output directory. We do that first in order to avoid the
          * costly opening of all JAR files if we can't create this directory.
@@ -124,12 +142,7 @@ public final class Packer {
          * start the writting process. Files in the META-INF/services directory need to be merged.
          */
         for (final Map.Entry<String,PackOutput> entry : outputs.entrySet()) {
-            String name = entry.getKey();
-            final StringBuilder buffer = new StringBuilder("geotk-bundle-");
-            if (name.length() != 0) {
-                buffer.append(name).append('-');
-            }
-            name = buffer.append(VERSION).append(".jar").toString();
+            final String name = entry.getKey();
             final PackOutput pack = entry.getValue();
             pack.createPackInputs(inputs);
             pack.open(new File(outDirectory, name));
@@ -228,8 +241,10 @@ public final class Packer {
 
     /**
      * Closes all streams.
+     *
+     * @throws IOException If an error occured while closing the stream.
      */
-    private void close() throws IOException {
+    public void close() throws IOException {
         for (final PackOutput jar : outputs.values()) {
             jar.close();
         }
@@ -240,11 +255,25 @@ public final class Packer {
 
     /**
      * Launch Pack200 after output JAR files have been created.
+     *
+     * @throws IOException If an error occured while creating the PACK200 file.
      */
-    private void pack() throws IOException {
+    public void pack() throws IOException {
         for (final PackOutput jar : outputs.values()) {
             jar.pack();
         }
+    }
+
+    /**
+     * Filter the JAR files.
+     *
+     * @param  directory The directory (ignored).
+     * @param  name The filename.
+     * @return {@code true} if the given filename ends with {@code ".jar"}.
+     */
+    @Override
+    public boolean accept(final File directory, final String name) {
+        return name.endsWith(".jar");
     }
 
     /**
@@ -267,26 +296,8 @@ public final class Packer {
             System.out.println(" is not a directory.");
             return;
         }
-        final Packer packer = new Packer(targetDirectory);
-        packer.addPack(null, "referencing", new String[] {
-                "vecmath-1.3.1.jar",
-                "jsr-275-1.0-beta-2.jar",
-                "geoapi-2.3-SNAPSHOT.jar",
-                "geoapi-pending-2.3-SNAPSHOT.jar",
-                "geotk-utility-" + VERSION + ".jar",
-                "geotk-metadata-" + VERSION + ".jar",
-                "geotk-referencing-" + VERSION + ".jar"
-        });
-        packer.addPack("referencing", "coverage", new String[] {
-                "geotk-coverage-" + VERSION + ".jar",
-                "geotk-coverageio-" + VERSION + ".jar"
-        });
-        packer.addPack("coverage", "", new String[] {
-                "geotk-display-" + VERSION + ".jar",
-                "geotk-widgets-swing-" + VERSION + ".jar",
-                "jlfgr-1.0.jar",
-                "swingx-0.9.7.jar"
-        });
+        final Packer packer = new Packer(targetDirectory, "SNAPSHOT");
+        packer.addPack("geotk-bundle-pending-SNAPSHOT.jar");
         try {
             packer.createJars();
         } finally {

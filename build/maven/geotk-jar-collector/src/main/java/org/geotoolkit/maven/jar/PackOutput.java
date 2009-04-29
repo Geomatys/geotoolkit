@@ -41,6 +41,12 @@ import static java.util.jar.Pack200.Packer.*;
  */
 final class PackOutput implements Closeable {
     /**
+     * The packer that created this object. Will be used in order to fetch
+     * additional informations like the version to declare in the pom.xml file.
+     */
+    private final Packer packer;
+
+    /**
      * The output file.
      */
     private File file;
@@ -71,18 +77,19 @@ final class PackOutput implements Closeable {
     /**
      * Creates an output jar.
      *
+     * @param packer    The packer that created this object.
      * @param parent    The parent, or {@code null} if none.
      * @param jars      The JAR filenames.
-     * @param directory The directory of JAR files.
      */
-    PackOutput(final PackOutput parent, final String[] jars, final File directory) {
+    PackOutput(final Packer packer, final PackOutput parent, final String[] jars) {
+        this.packer = packer;
         if (parent != null) {
             inputs = new LinkedHashSet<File>(parent.inputs);
         } else {
             inputs = new LinkedHashSet<File>(jars.length * 4/3);
         }
         for (final String jar : jars) {
-            final File file = new File(directory, jar);
+            final File file = new File(packer.jarDirectory, jar);
             if (!file.isFile()) {
                 throw new IllegalArgumentException("Not a file: " + file);
             }
@@ -155,7 +162,7 @@ final class PackOutput implements Closeable {
         final Attributes attributes = manifest.getMainAttributes();
         attributes.put(Attributes.Name.MANIFEST_VERSION,       "1.0");
         attributes.put(Attributes.Name.SPECIFICATION_VENDOR,   "Geotoolkit");
-        attributes.put(Attributes.Name.IMPLEMENTATION_VERSION, Packer.VERSION);
+        attributes.put(Attributes.Name.IMPLEMENTATION_VERSION, packer.version);
         attributes.put(Attributes.Name.IMPLEMENTATION_URL,     "http://www.geotoolkit.org/");
         if (mainClass != null) {
             attributes.put(Attributes.Name.MAIN_CLASS, mainClass);
