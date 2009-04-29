@@ -55,6 +55,12 @@
           <artifactId>geotk-xml-sld</artifactId>
           <version>${geotoolkit.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.project</groupId>
+          <artifactId>geotk-provided</artifactId>
+          <version>${geotoolkit.version}</version>
+          <scope>provided</scope>
+      </dependency>
 
       <dependency>
           <groupId>org.geotools</groupId>
