@@ -62,6 +62,17 @@
         <dependency>
             <groupId>jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
+            <!-- jasper report use an old xml-apis, we replace it by a more recent one -->
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
         </dependency>
     </dependencies>
         
@@ -73,7 +84,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
