@@ -272,12 +272,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.opengis</groupId>
-        <artifactId>onm</artifactId>
-        <version>1.0-SNAPSHOT</version>
-      </dependency>
-
-      <dependency>
         <groupId>com.vividsolutions</groupId>
         <artifactId>jts</artifactId>
         <version>1.9</version>

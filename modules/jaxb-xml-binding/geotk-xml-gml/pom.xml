@@ -64,10 +64,6 @@
   -->
   <dependencies>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>onm</artifactId> 
-    </dependency>
-    <dependency>
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-utility</artifactId>
     </dependency>
