@@ -137,8 +137,13 @@ public class IoComponentPropertyType implements IoComponent {
     }
 
     public IoComponentPropertyType(String name, ObservableProperty observableProperty) {
-        this.name = name;
+        this.name               = name;
         this.observableProperty = observableProperty;
+    }
+
+    public IoComponentPropertyType(String name, QuantityType quantity) {
+        this.name     = name;
+        this.quantity = quantity;
     }
 
     

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311modified.BaseUnitType;
 import org.geotoolkit.gml.xml.v311modified.UnitDefinitionType;
+import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -67,7 +68,7 @@ import org.geotoolkit.util.Utilities;
     "unitDefinition",
     "baseUnit"
 })
-public class UomPropertyType {
+public class UomPropertyType implements UomProperty {
 
     @XmlElement(name = "UnitDefinition", namespace = "http://www.opengis.net/gml")
     private UnitDefinitionType unitDefinition;

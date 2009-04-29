@@ -439,8 +439,8 @@ public class ObjectFactory {
      * Create an instance of {@link VectorType.Coordinate }
      *
      */
-    public VectorType.Coordinate createVectorTypeCoordinate() {
-        return new VectorType.Coordinate();
+    public CoordinateType createCoordinateType() {
+        return new CoordinateType();
     }
 
     /**

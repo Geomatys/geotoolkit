@@ -2,7 +2,7 @@
  *    Constellation - An open source and standard compliant SDI
  *    http://www.constellation-sdi.org
  *
- *    (C) 2007 - 2008, Geomatys
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.util.Utilities;
 
 
@@ -61,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Quantity")
-public class QuantityType extends AbstractDataComponentType {
+public class QuantityType extends AbstractDataComponentType implements Quantity {
 
     private UomPropertyType uom;
     private AllowedValuesPropertyType constraint;

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311modified.UnitDefinitionType;
+import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "UomPropertyType", propOrder = {
     "unitDefinition"
 })
-public class UomPropertyType {
+public class UomPropertyType implements UomProperty {
 
     @XmlElementRef(name = "UnitDefinition", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends UnitDefinitionType> unitDefinition;
