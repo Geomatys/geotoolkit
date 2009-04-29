@@ -1,0 +1,11 @@
+# Use regular expression syntax, since it
+# works better than glob with NetBeans.
+syntax: regexp
+
+\.svn$
+\.project$
+\.classpath$
+\.settings$
+\.DS_Store
+target$
+^tmp$
