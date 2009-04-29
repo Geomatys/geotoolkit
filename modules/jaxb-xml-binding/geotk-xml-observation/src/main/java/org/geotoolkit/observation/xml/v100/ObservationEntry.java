@@ -44,15 +44,15 @@ import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 
 // openGis dependencies
 import org.opengis.observation.Process;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.observation.Observation;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.MetaData;
 
 // geotools dependencies
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
 
 /**
  * Implémentation d'une entrée représentant une {@linkplain Observation observation}.

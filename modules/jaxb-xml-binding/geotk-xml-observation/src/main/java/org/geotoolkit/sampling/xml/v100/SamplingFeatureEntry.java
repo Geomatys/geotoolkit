@@ -33,7 +33,10 @@ import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
 
 // openGis dependencies
+import org.opengis.observation.AnyFeature;
+import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.observation.sampling.SamplingFeatureRelation;
 
 /**
  * Implémentation d'une entrée représentant une {@link SamplingFeature station}.
@@ -58,12 +61,12 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
     /**
      * 
      */
-    private Collection<SamplingFeatureRelationEntry> relatedSamplingFeature;
+    private List<SamplingFeatureRelationEntry> relatedSamplingFeature;
     
     /**
      * Les Observations
      */
-    private Collection<ObservationEntry> relatedObservation;
+    private List<ObservationEntry> relatedObservation;
     
     /**
      * Les features designé
@@ -121,18 +124,17 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
     /**
      * {@inheritDoc}
      */
-    public synchronized Collection<SamplingFeatureRelationEntry> getRelatedSamplingFeatures() {
-    
-        return relatedSamplingFeature;
+    @Override
+    public synchronized List<SamplingFeatureRelation> getRelatedSamplingFeature() {
+        return new ArrayList<SamplingFeatureRelation>(relatedSamplingFeature);
     }
   
     
     /**
      * {@inheritDoc}
      */
-    public synchronized Collection<ObservationEntry> getRelatedObservations() {
-       
-        return relatedObservation;
+    public synchronized List<Observation> getRelatedObservation() {       
+        return new ArrayList<Observation>(relatedObservation);
     }
     
      /**
@@ -191,6 +193,11 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
         }
         s.append("sampledFeature = ").append(sampledFeatures);
         return s.toString();
+    }
+
+    @Override
+    public List<AnyFeature> getSampledFeature() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
    
 }

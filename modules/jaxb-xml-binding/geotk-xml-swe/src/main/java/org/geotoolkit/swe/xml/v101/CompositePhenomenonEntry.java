@@ -86,7 +86,7 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
     /**
      * Return the components.
      */
-    public Collection<PhenomenonEntry> getComponent() {
+    public List<PhenomenonEntry> getComponent() {
         List<PhenomenonEntry> result = new ArrayList<PhenomenonEntry>();
         for (PhenomenonPropertyType phen: component) {
             result.add(phen.getPhenomenon());
