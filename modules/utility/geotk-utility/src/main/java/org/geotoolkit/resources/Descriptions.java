@@ -79,6 +79,11 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int ERROR_READING_SOME_FILES_$2 = 5;
 
         /**
+         * No EPSG database has been configured, an embedded javaDB database will be used.
+         */
+        public static final int NO_EPSG_USE_JAVADB = 8;
+
+        /**
          * Count:       {0}
          * Minimum:     {1}
          * Maximum:     {2}

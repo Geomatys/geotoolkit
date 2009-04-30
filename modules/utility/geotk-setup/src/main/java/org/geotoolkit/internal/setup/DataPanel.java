@@ -18,14 +18,12 @@ package org.geotoolkit.internal.setup;
 
 import java.io.*;
 import javax.swing.*;
-import java.awt.Desktop;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.ZipEntry;
@@ -50,7 +48,7 @@ final class DataPanel extends JPanel {
     /**
      * Index of items to reports.
      */
-    private static final int EPSG=0, NADCON=1;
+    private static final int NADCON=0;
 
     /**
      * User for fetching localized words.
@@ -60,7 +58,7 @@ final class DataPanel extends JPanel {
     /**
      * The status about item to reports.
      */
-    private final JProgressBar[] status = new JProgressBar[2];
+    private final JProgressBar[] status = new JProgressBar[1];
 
     /**
      * The download buttons.
@@ -77,15 +75,11 @@ final class DataPanel extends JPanel {
         final GridBagConstraints c = new GridBagConstraints();
         c.insets.left=3; c.insets.right=3;
         c.anchor = GridBagConstraints.WEST;
-        c.fill   = GridBagConstraints.BOTH;
+        c.fill   = GridBagConstraints.HORIZONTAL;
         for (int i=0; i<status.length; i++) {
             c.gridy = i;
             final String label;
             switch (i) {
-                case EPSG: {
-                    label = resources.getString(Vocabulary.Keys.DATA_BASE_$1, "EPSG");
-                    break;
-                }
                 case NADCON: {
                     label = resources.getString(Vocabulary.Keys.DATA_$1, "NADCON");
                     break;
@@ -127,13 +121,6 @@ final class DataPanel extends JPanel {
     private void refresh(final int item) {
         boolean found = false;
         switch (item) {
-            case EPSG: {
-                final File directory = Installation.EPSG.directory(true);
-                if (new File(directory, "DataSource.properties").isFile()) {
-                    found = true;
-                }
-                break;
-            }
             case NADCON: {
                 final File directory = Installation.NADCON.directory(true);
                 if (new File(directory, "conus.las").isFile() &&
@@ -177,10 +164,6 @@ final class DataPanel extends JPanel {
         @Override
         protected Object doInBackground() throws Exception {
             switch (item) {
-                case EPSG: {
-                    Desktop.getDesktop().browse(new URI("http://www.epsg.org"));
-                    break;
-                }
                 case NADCON: {
                     final File directory = Installation.NADCON.validDirectory(true);
                     unzip(new URL("http://www.ngs.noaa.gov/PC_PROD/NADCON/GRIDS.zip"), directory);

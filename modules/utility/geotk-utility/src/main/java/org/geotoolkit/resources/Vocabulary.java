@@ -94,6 +94,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int ALTITUDE = 8;
 
         /**
+         * Apply
+         */
+        public static final int APPLY = 291;
+
+        /**
          * Authority
          */
         public static final int AUTHORITY = 9;
@@ -1069,6 +1074,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int PARAMETER_$1 = 200;
 
         /**
+         * Password
+         */
+        public static final int PASSWORD = 292;
+
+        /**
          * Past
          */
         public static final int PAST = 201;
@@ -1202,6 +1212,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Scale 1:{0} (approximative)
          */
         public static final int SCALE_$1 = 227;
+
+        /**
+         * Schema
+         */
+        public static final int SCHEMA = 293;
 
         /**
          * Search
@@ -1422,6 +1437,16 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Up
          */
         public static final int UP = 271;
+
+        /**
+         * URL
+         */
+        public static final int URL = 294;
+
+        /**
+         * User
+         */
+        public static final int USER = 295;
 
         /**
          * Use best resolution

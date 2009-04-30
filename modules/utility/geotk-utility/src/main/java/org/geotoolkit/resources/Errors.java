@@ -226,6 +226,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_TRANSFORM_VALID_POINTS = 35;
 
         /**
+         * Can't write file "{0}".
+         */
+        public static final int CANT_WRITE_$1 = 215;
+
+        /**
          * Graphic "{0}" is owned by an other canvas.
          */
         public static final int CANVAS_NOT_OWNER_$1 = 36;

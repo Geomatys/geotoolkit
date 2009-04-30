@@ -41,8 +41,10 @@ final class ControlPanel extends JPanel implements ActionListener {
         super(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
         final DataPanel data = new DataPanel(resources);
+        final EPSGPanel epsg = new EPSGPanel(resources);
         final JTabbedPane tabs = new JTabbedPane();
         tabs.addTab(resources.getString(Vocabulary.Keys.DIRECTORIES), new DirectoryPanel(data));
+        tabs.addTab(resources.getString(Vocabulary.Keys.DATA_BASE_$1, "EPSG"), epsg);
         tabs.addTab(resources.getString(Vocabulary.Keys.DATA), data);
         add(tabs, BorderLayout.CENTER);
         final JButton close = new JButton(resources.getString(Vocabulary.Keys.CLOSE));

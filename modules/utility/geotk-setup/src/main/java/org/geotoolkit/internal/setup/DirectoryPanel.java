@@ -215,7 +215,7 @@ final class DirectoryPanel extends JPanel {
         final Vocabulary resources = data.resources;
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        openIcon = new ImageIcon(ClassLoader.getSystemResource("toolbarButtonGraphics/general/Open16.gif"));
+        openIcon = new ImageIcon(DirectoryPanel.class.getResource("/toolbarButtonGraphics/general/Open16.gif"));
         final GridBagConstraints c = new GridBagConstraints();
         c.insets.left=3; c.insets.right=3; c.fill=HORIZONTAL; c.gridy=0;
         items = new Item[] {
