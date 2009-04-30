@@ -96,7 +96,7 @@ import static java.lang.Double.isInfinite;
  * @see Latitude
  * @see Longitude
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class AngleFormat extends Format {

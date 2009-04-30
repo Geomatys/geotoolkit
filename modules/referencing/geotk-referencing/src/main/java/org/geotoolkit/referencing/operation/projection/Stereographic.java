@@ -131,7 +131,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
  *
- * @since 2.1
+ * @since 1.0
  * @module
  */
 public class Stereographic extends UnitaryProjection {

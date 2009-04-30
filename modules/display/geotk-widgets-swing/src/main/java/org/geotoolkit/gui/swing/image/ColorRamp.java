@@ -74,7 +74,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.0
  *
- * @since 2.3
+ * @since 1.1
  * @module
  */
 @SuppressWarnings("serial")

@@ -41,7 +41,7 @@ import org.geotoolkit.util.Utilities;
  * @author Howard Freeland (MPO, for algorithmic inspiration)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class Plane implements Cloneable, Serializable {

@@ -46,7 +46,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class ProgressWindow implements ProgressListener {

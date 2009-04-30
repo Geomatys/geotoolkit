@@ -74,7 +74,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * @see AxisDirection
  * @see Graduation
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class Axis2D extends Line2D implements Cloneable, Serializable {

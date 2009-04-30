@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2001-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 1999-2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -63,10 +63,10 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * <p align="center"><img src="doc-files/ExceptionMonitor.png"></p>
  * <p>&nbsp;</p>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 @Static

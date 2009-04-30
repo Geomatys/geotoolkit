@@ -83,7 +83,7 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  * @see Mercator
  * @see ObliqueMercator
  *
- * @since 2.1
+ * @since 1.0
  * @module
  */
 public class TransverseMercator extends CassiniOrMercator {

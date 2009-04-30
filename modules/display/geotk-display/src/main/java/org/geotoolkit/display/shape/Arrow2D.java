@@ -37,7 +37,7 @@ import static java.lang.Double.doubleToLongBits;
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.0
  *
- * @since 2.3
+ * @since 1.0
  * @module
  */
 public class Arrow2D extends RectangularShape {

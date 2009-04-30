@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2001-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 1999-2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -66,10 +66,10 @@ import static java.lang.Double.doubleToLongBits;
  *     System.out.println(stats);
  * }
  *
- * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class Statistics implements Cloneable, Serializable {
@@ -636,7 +636,7 @@ public class Statistics implements Cloneable, Serializable {
      * @author Martin Desruisseaux (IRD)
      * @version 3.0
      *
-     * @since 2.0
+     * @since 1.0
      */
     public static class Delta extends Statistics {
         /**

@@ -36,7 +36,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
  * @see Longitude
  * @see AngleFormat
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class Angle implements Comparable<Angle>, Serializable {

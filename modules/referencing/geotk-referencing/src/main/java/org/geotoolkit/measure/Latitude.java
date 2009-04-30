@@ -27,7 +27,7 @@ package org.geotoolkit.measure;
  * @see Longitude
  * @see AngleFormat
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public final class Latitude extends Angle {

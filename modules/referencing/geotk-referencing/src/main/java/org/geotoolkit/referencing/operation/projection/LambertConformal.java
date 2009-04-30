@@ -86,7 +86,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Rueben Schulz (UBC)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.0
  * @module
  */
 public class LambertConformal extends UnitaryProjection {

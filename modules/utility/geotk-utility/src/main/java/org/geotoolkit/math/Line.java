@@ -45,7 +45,7 @@ import static java.lang.Double.*;
  * @see Line2D
  * @see Plane
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 public class Line implements Cloneable, Serializable {

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2001-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 1999-2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -43,12 +43,12 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @param <E> The type of elements in the set.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.0
  *
  * @see java.util.WeakHashMap
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 @ThreadSafe
