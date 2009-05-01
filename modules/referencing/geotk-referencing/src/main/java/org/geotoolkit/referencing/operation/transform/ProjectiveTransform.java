@@ -99,7 +99,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @see java.awt.geom.AffineTransform
  * @see <A HREF="http://mathworld.wolfram.com/AffineTransformation.html">Affine transformation on MathWorld</A>
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class ProjectiveTransform extends AbstractMathTransform implements LinearTransform, Serializable {

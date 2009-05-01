@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 class ConcatenatedTransformDirect extends ConcatenatedTransform {

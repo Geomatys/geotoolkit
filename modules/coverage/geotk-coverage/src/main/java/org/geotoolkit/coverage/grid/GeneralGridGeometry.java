@@ -68,7 +68,7 @@ import org.geotoolkit.resources.Errors;
  * @see GridGeometry2D
  * @see ImageGeometry
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class GeneralGridGeometry implements GridGeometry, Serializable {

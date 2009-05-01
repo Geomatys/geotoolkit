@@ -74,7 +74,7 @@ import org.geotoolkit.util.Utilities;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class GridSampleDimension implements SampleDimension, Serializable {

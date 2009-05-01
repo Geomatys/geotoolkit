@@ -62,7 +62,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class DefaultProjectedCRS extends AbstractDerivedCRS implements ProjectedCRS {

@@ -38,7 +38,7 @@
  *
  * @see org.geotoolkit.referencing.operation.provider
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 package org.geotoolkit.referencing.operation.transform;

@@ -69,7 +69,7 @@ import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLine
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperationFactory {

@@ -79,9 +79,9 @@ import org.geotoolkit.image.io.metadata.GeographicMetadata;
  * {@code TextRecordImageReader}, unless you want more control on the decoding process.
  *
  * @author Martin Desruisseaux (IRD)
- * @module
+ * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class TextRecordImageReader extends TextImageReader {

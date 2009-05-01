@@ -70,7 +70,7 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * @see WarpOpImage
  * @see WarpDescriptor
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class WarpTransform2D extends AbstractMathTransform implements MathTransform2D, Serializable {

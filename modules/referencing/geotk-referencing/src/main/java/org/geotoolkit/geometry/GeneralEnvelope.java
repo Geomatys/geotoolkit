@@ -71,7 +71,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
  * @see org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Serializable {

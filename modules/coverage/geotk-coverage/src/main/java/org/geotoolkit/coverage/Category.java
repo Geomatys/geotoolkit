@@ -74,7 +74,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
  *
  * @see GridSampleDimension
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class Category implements Serializable {

@@ -60,7 +60,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @see ProjectiveTransform
  *
- * @since 2.5
+ * @since 1.2
  * @module
  */
 public class AffineTransform2D extends XAffineTransform

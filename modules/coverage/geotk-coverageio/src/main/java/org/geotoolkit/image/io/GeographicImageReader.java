@@ -88,7 +88,7 @@ import org.geotoolkit.image.io.metadata.Band;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.4
+ * @since 1.2
  * @module
  */
 public abstract class GeographicImageReader extends ImageReader {

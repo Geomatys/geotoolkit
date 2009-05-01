@@ -116,7 +116,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * @see org.geotoolkit.coverage.processing.Operations#gradientMagnitude
  * @see GradientMagnitudeDescriptor
  *
- * @since 2.2
+ * @since 1.2
  * @module
  */
 public class GradientMagnitude extends OperationJAI {

@@ -46,7 +46,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  *
  * @see GridEnvelope2D
  *
- * @since 2.5
+ * @since 1.2
  * @module
  */
 public class GeneralGridEnvelope implements GridEnvelope, Serializable {

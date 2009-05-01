@@ -51,7 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see org.geotoolkit.referencing.crs.DefaultProjectedCRS
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class DefaultProjection extends DefaultConversion implements Projection {

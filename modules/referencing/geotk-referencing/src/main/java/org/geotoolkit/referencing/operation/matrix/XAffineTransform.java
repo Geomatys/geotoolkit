@@ -46,7 +46,7 @@ import static java.lang.Math.*;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.3
+ * @since 1.2
  * @module
  */
 @Static

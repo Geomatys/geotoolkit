@@ -60,7 +60,7 @@ import org.geotoolkit.measure.Units;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class DefaultGeographicCRS extends AbstractSingleCRS implements GeographicCRS {

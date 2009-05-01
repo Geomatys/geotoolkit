@@ -167,7 +167,7 @@
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
  *
- * @since 2.0
+ * @since 1.0
  * @level advanced
  * @module
  */

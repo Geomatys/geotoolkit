@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  *
  * @see javax.swing.filechooser.FileNameExtensionFilter
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class DefaultFileFilter extends javax.swing.filechooser.FileFilter

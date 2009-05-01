@@ -27,7 +27,7 @@ import javax.imageio.stream.ImageInputStream;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 final class InputStreamAdapter extends InputStream {

@@ -51,7 +51,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  *
  * @deprecated The API of this class will change in a future Geotoolkit release. Do not rely on it.

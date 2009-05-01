@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  * @see DirectPosition2D
  * @see java.awt.geom.Point2D
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class GeneralDirectPosition extends AbstractDirectPosition implements Serializable, Cloneable {

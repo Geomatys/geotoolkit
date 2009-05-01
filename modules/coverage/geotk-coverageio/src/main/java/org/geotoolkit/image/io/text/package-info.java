@@ -68,7 +68,7 @@
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.4
+ * @since 1.2
  * @module
  */
 package org.geotoolkit.image.io.text;

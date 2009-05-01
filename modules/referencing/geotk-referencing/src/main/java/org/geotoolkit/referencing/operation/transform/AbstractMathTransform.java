@@ -80,7 +80,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 @ThreadSafe

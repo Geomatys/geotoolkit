@@ -108,7 +108,7 @@ import org.geotoolkit.resources.Errors;
  * @author Simone Giannecchini (Geosolutions)
  * @version 3.0
  *
- * @since 2.2
+ * @since 1.2
  * @module
  *
  * @deprecated The API of this class will change in a future Geotoolkit release. Do not rely on it.

@@ -87,7 +87,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.2
+ * @since 1.2
  * @module
  */
 final class Resampler2D extends GridCoverage2D {

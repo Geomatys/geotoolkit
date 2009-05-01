@@ -45,7 +45,7 @@ import javax.media.jai.PlanarImage;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  *
  * @deprecated We should consider to use Sun's RAW decoder provided with "Java Advanced Imaging Image I/O

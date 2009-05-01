@@ -47,7 +47,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  *
  * @see DimensionFilter
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class PassThroughTransform extends AbstractMathTransform implements Serializable {

@@ -66,7 +66,7 @@ import static java.lang.Double.doubleToLongBits;
  * @author PROJ4 Project for formulas
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class GeocentricTransform extends AbstractMathTransform implements Serializable {

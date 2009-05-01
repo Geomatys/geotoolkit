@@ -52,7 +52,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @see Ellipsoid
  * @see PrimeMeridian
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum {

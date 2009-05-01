@@ -52,7 +52,7 @@ import org.geotoolkit.xml.Namespaces;
  * @see AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public abstract class AbstractCRS extends AbstractReferenceSystem implements CoordinateReferenceSystem {

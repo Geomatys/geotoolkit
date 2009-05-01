@@ -21,7 +21,7 @@
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.0
  * @module
  */
 package org.geotoolkit.display.shape;

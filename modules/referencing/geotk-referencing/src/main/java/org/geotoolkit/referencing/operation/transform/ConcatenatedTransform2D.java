@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 final class ConcatenatedTransform2D extends ConcatenatedTransform implements MathTransform2D {

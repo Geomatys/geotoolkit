@@ -56,7 +56,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * @see <A HREF="http://math.nist.gov/javanumerics/jama/">Jama matrix</A>
  * @see <A HREF="http://jcp.org/jsr/detail/83.jsp">JSR-83 Multiarray package</A>
  *
- * @since 2.2
+ * @since 1.2
  * @module
  */
 public class GeneralMatrix extends GMatrix implements XMatrix {

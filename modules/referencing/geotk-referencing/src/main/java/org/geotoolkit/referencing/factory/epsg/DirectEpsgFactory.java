@@ -110,7 +110,7 @@ import org.geotoolkit.util.Version;
  * @author Andrea Aime (TOPP)
  * @version 3.0
  *
- * @since 2.4
+ * @since 1.2
  * @module
  */
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,

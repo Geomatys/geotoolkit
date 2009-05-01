@@ -95,7 +95,7 @@ import org.geotoolkit.resources.Loggings;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class GridCoverage2D extends AbstractGridCoverage implements RenderedCoverage {

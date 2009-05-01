@@ -41,7 +41,7 @@ import org.geotoolkit.lang.Static;
  * @author Simone Giannecchini (Geosolutions)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 @Static

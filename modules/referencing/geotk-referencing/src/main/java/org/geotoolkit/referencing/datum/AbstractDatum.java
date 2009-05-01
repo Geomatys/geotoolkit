@@ -63,7 +63,7 @@ import org.geotoolkit.xml.Namespaces;
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.crs.AbstractCRS
  *
- * @since 2.1
+ * @since 1.2
  * @module
  */
 public class AbstractDatum extends AbstractIdentifiedObject implements Datum {

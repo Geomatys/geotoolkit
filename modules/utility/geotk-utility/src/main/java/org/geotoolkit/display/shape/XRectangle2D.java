@@ -40,7 +40,7 @@ import org.geotoolkit.util.converter.Classes;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.0
+ * @since 1.2
  * @module
  */
 public class XRectangle2D extends Rectangle2D implements Serializable {
