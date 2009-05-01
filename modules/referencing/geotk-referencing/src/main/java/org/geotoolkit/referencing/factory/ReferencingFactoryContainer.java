@@ -59,7 +59,7 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.4
+ * @since 2.1
  * @level advanced
  * @module
  */

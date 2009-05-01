@@ -89,7 +89,7 @@ import org.geotoolkit.internal.io.Installation;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.4
+ * @since 2.1
  * @module
  */
 public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory,
