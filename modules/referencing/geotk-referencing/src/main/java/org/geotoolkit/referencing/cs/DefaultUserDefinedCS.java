@@ -36,7 +36,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {

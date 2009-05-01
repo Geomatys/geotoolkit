@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @see ParameterGroup
  * @see DefaultParameterDescriptor
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor

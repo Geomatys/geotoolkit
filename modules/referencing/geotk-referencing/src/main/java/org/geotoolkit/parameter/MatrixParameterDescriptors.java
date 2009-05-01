@@ -62,7 +62,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  *
  * @see MatrixParameters
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup {

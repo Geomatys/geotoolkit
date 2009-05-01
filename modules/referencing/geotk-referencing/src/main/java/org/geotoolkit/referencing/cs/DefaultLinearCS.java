@@ -42,7 +42,7 @@ import org.geotoolkit.measure.Measure;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultLinearCS extends AbstractCS implements LinearCS {

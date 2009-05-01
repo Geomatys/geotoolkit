@@ -54,7 +54,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @see DefaultAffineCS
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {

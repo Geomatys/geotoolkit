@@ -47,7 +47,7 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.2
+ * @since 2.0
  * @module
  */
 public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthorityFactory {

@@ -40,7 +40,7 @@ import org.geotoolkit.factory.Hints;
  * @author John Grange
  * @version 3.0
  *
- * @since 2.4
+ * @since 2.0
  * @module
  */
 public class AnsiDialectEpsgFactory extends DirectEpsgFactory {

@@ -38,7 +38,7 @@ import org.geotoolkit.util.Utilities;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultImageDatum extends AbstractDatum implements ImageDatum {

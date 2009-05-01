@@ -32,7 +32,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.2
+ * @since 2.0
  * @module
  */
 public class BilevelOperation extends OperationJAI {

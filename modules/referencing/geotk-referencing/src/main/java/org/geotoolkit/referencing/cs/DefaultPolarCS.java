@@ -41,7 +41,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  *
  * @see DefaultCylindricalCS
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultPolarCS extends AbstractCS implements PolarCS {

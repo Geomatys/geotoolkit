@@ -41,7 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @see DefaultConversion
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultTransformation extends DefaultOperation implements Transformation {

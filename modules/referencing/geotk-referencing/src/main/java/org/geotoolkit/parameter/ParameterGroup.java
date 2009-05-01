@@ -55,7 +55,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * @see DefaultParameterDescriptorGroup
  * @see Parameter
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class ParameterGroup extends AbstractParameter implements ParameterValueGroup {

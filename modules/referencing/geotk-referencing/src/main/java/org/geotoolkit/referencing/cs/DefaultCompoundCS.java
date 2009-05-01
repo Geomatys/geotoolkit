@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultCompoundCS extends AbstractCS {

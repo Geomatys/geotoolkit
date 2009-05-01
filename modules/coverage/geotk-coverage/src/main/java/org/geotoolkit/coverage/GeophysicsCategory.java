@@ -37,7 +37,7 @@ import org.geotoolkit.util.NumberRange;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 final class GeophysicsCategory extends Category {

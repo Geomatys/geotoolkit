@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  *
  * @see AbstractParameter
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObject

@@ -36,7 +36,7 @@ import static java.lang.Math.*;
  * @see PolarStereographic
  * @see ObliqueStereographic
  *
- * @since 2.4
+ * @since 2.0
  * @module
  */
 public class EquatorialStereographic extends Stereographic {

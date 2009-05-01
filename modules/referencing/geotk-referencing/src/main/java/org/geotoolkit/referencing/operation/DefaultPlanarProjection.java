@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see org.geotoolkit.referencing.crs.DefaultProjectedCRS
  * @see <A HREF="http://mathworld.wolfram.com/AzimuthalProjection.html">Azimuthal projection on MathWorld</A>
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultPlanarProjection extends DefaultProjection implements PlanarProjection {

@@ -70,7 +70,7 @@ import org.geotoolkit.resources.Errors;
  * @see Factory
  * @see FactoryRegistry
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class Hints extends RenderingHints {

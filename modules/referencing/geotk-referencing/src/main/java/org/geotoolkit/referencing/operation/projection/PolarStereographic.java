@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @see EquatorialStereographic
  * @see ObliqueStereographic
  *
- * @since 2.4
+ * @since 2.0
  * @module
  */
 public class PolarStereographic extends Stereographic {

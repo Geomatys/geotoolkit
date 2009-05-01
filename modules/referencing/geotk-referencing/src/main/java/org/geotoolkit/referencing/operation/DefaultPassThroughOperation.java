@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
  * @author Martin Desruisseaux (IRD)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultPassThroughOperation extends DefaultSingleOperation implements PassThroughOperation {

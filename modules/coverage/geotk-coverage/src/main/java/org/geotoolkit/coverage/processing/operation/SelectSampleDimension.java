@@ -88,7 +88,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
  * @see org.geotoolkit.coverage.processing.Operations#selectSampleDimension
  * @see BandSelectDescriptor
  *
- * @since 2.2
+ * @since 2.0
  * @module
  */
 public class SelectSampleDimension extends Operation2D {

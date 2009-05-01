@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultTimeCS extends AbstractCS implements TimeCS {

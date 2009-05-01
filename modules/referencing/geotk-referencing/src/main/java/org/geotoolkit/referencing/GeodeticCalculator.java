@@ -91,7 +91,7 @@ import org.geotoolkit.util.NullArgumentException;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class GeodeticCalculator {

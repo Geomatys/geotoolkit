@@ -29,7 +29,7 @@ import java.awt.geom.Point2D;
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.0
  *
- * @since 2.2
+ * @since 2.0
  * @module
  */
 public interface DeformableViewer {

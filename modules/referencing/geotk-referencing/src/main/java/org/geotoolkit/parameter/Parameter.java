@@ -61,7 +61,7 @@ import org.geotoolkit.resources.Errors;
  * @see DefaultParameterDescriptor
  * @see ParameterGroup
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class Parameter<T> extends AbstractParameter implements ParameterValue<T> {

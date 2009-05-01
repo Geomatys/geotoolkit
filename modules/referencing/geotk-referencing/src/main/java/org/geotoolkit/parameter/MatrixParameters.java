@@ -53,7 +53,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  *
  * @see MatrixParameterDescriptors
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class MatrixParameters extends ParameterGroup implements ParameterDescriptorGroup {

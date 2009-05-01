@@ -57,7 +57,7 @@ import org.geotoolkit.io.wkt.Formatter;
  *
  * @see DefaultOperationMethod
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultOperation extends DefaultSingleOperation implements Operation {

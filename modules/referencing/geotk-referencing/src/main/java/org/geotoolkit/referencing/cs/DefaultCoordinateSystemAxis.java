@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.opengis.referencing.cs.AxisDirection;
@@ -69,7 +68,7 @@ import org.geotoolkit.xml.Namespaces;
  * @see AbstractCS
  * @see Unit
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject

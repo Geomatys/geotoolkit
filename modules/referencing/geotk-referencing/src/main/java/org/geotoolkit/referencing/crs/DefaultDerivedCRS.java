@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultDerivedCRS extends AbstractDerivedCRS implements DerivedCRS {

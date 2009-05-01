@@ -44,7 +44,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  *
  * @see DefaultCartesianCS
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
 public class DefaultAffineCS extends AbstractCS implements AffineCS {
