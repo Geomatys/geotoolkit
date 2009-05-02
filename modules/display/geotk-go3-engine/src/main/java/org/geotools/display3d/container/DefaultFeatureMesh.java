@@ -4,10 +4,10 @@ package org.geotools.display3d.container;
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Vector3;
+import com.ardor3d.scenegraph.FloatBufferData;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.Spatial;
-import com.ardor3d.scenegraph.TexCoords;
 import com.ardor3d.util.geom.BufferUtils;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -15,11 +15,9 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotools.display.container.statefull.StatefullProjectedFeature;
-import org.geotools.display.primitive.GeometryJ2D;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.MapContext;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapContext;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -130,8 +128,9 @@ public class DefaultFeatureMesh extends Mesh {
      */
     private void setTextureData() {
         if (_meshData.getTextureCoords(0) == null) {
-            _meshData.setTextureCoords(new TexCoords(BufferUtils.createVector2Buffer(8)), 0);
-            final FloatBuffer tex = _meshData.getTextureCoords(0).coords;
+            _meshData.setTextureCoords(new FloatBufferData(BufferUtils.createVector2Buffer(8), 3),0);
+//            _meshData.setTextureCoords(new TexCoords(BufferUtils.createVector2Buffer(8)), 0);
+            final FloatBuffer tex = _meshData.getTextureCoords(0).getBuffer();
 
             tex.put(1).put(0);
             tex.put(0).put(0);

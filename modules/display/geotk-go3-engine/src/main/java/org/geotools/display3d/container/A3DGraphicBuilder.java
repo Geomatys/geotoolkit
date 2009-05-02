@@ -1,15 +1,16 @@
 
 package org.geotools.display3d.container;
 
+import com.ardor3d.scenegraph.shape.Box;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotools.display3d.canvas.A3DCanvas;
 import org.geotools.display3d.primitive.A3DGraphic;
-import org.geotools.map.CoverageMapLayer;
-import org.geotools.map.DynamicMapLayer;
-import org.geotools.map.FeatureMapLayer;
-import org.geotools.map.GraphicBuilder;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.DynamicMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.display.canvas.Canvas;
 
 /**

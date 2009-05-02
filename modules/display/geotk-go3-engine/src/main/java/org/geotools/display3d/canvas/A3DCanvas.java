@@ -34,9 +34,9 @@ import com.google.inject.Stage;
 import javax.swing.JComponent;
 import org.geotools.display3d.controller.A3DController;
 import org.geotools.display3d.container.A3DContainer;
-import org.geotools.display.canvas.ReferencedCanvas;
-import org.geotools.display.container.AbstractContainer;
-import org.geotools.display.renderer.RenderingContext;
+import org.geotoolkit.display.canvas.ReferencedCanvas;
+import org.geotoolkit.display.container.AbstractContainer;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 
 import org.lwjgl.LWJGLException;
@@ -105,7 +105,7 @@ public class A3DCanvas extends ReferencedCanvas{
     }
 
     private void initContext() throws LWJGLException{
-        FRAMEWORK.registerUpdater(controller);
+        FRAMEWORK.addUpdater(controller);
         controller.init();
         updateCanvas(new Dimension(200,200));
     }
@@ -140,15 +140,6 @@ public class A3DCanvas extends ReferencedCanvas{
                     if (source != canvas) {
                         return;
                     }
-
-//                    if (_showCursor1.get(canvas)) {
-//                        mouseManager.setCursor(_cursor1);
-//                    }
-//                    else {
-//                        mouseManager.setCursor(_cursor2);
-//                    }
-//
-//                    _showCursor1.put(canvas, !_showCursor1.get(theCanvas));
                 }
             }));
         LOGICAL_LAYER.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.J),
@@ -163,7 +154,7 @@ public class A3DCanvas extends ReferencedCanvas{
                 }
             }));
 
-        FRAMEWORK.registerCanvas(canvas);
+        FRAMEWORK.addCanvas(canvas);
 
         return canvas;
     }

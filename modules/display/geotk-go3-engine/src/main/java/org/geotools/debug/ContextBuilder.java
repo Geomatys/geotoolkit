@@ -19,41 +19,37 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.io.CoverageReader;
-import org.geotools.coverage.wi.WorldImageFactory;
+import org.geotoolkit.coverage.wi.WorldImageFactory;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.postgis.PostgisDataStoreFactory;
-import org.geotools.data.wms.WebMapServer;
-import org.geotools.display.ext.vectorfield.GridMarkGraphicBuilder;
-import org.geotools.display.ext.vectorfield.VectorFieldSymbolizer;
+import org.geotoolkit.wms.WebMapServer;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.gce.geotiff.GeoTiffReader;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.map.MapBuilder;
-import org.geotools.map.WMSMapLayer;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotools.sld.MutableNamedLayer;
-import org.geotools.sld.MutableStyledLayerDescriptor;
-import org.geotools.sld.SLDFactory;
-import org.geotools.style.MutableFeatureTypeStyle;
-import org.geotools.style.MutableRule;
-import org.geotools.style.MutableStyle;
-import org.geotools.style.RandomStyleFactory;
-import org.geotools.style.StyleConstants;
-import org.geotools.style.StyleFactory;
-import org.geotools.style.function.InterpolationPoint;
-import org.geotools.style.function.Method;
-import org.geotools.style.function.Mode;
+import org.geotoolkit.sld.MutableNamedLayer;
+import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
 
-import org.geotools.style.function.ThreshholdsBelongTo;
-import org.geotools.style.sld.DefaultSLDFactory;
-import org.geotools.style.sld.Specification.StyledLayerDescriptor;
-import org.geotools.style.sld.XMLUtilities;
+import org.geotoolkit.style.function.ThreshholdsBelongTo;
+import org.geotoolkit.sld.DefaultSLDFactory;
+import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
+import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.util.RandomStyleFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -65,6 +61,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.sld.SLDFactory;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -98,7 +95,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public class ContextBuilder {
 
-    public static final StyleFactory SF = CommonFactoryFinder.getStyleFactory(null);
+    public static final DefaultStyleFactory SF = new DefaultStyleFactory();
+    public static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2(null);
     public static final RandomStyleFactory RANDOM_FACTORY = new RandomStyleFactory();
 
     public static MapContext buildMNTContext(){
@@ -821,16 +819,16 @@ public class ContextBuilder {
         try {
             context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
 
-//            Map<String,Object> params = new HashMap<String,Object>();
-//            File shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ADMIN_COMMUNE.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            DataStore store = DataStoreFinder.getDataStore(params);
-//            FeatureSource fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            MutableStyle style = createNewLineStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("communes", ""));
-//            layer.setName("communes");
-//            context.layers().add(layer);
+            Map<String,Object> params = new HashMap<String,Object>();
+            File shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
+            params.put( "url", shape.toURI().toURL() );
+            DataStore store = DataStoreFinder.getDataStore(params);
+            FeatureSource fs = store.getFeatureSource(store.getTypeNames()[0]);
+            MutableStyle style = createNewLineStyle();
+            layer = MapBuilder.createFeatureLayer(fs, style);
+            layer.setDescription(SF.description("communes", ""));
+            layer.setName("communes");
+            context.layers().add(layer);
 
 //            params = new HashMap<String,Object>();
 //            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
@@ -843,7 +841,7 @@ public class ContextBuilder {
 //            layer.setName("isoligne");
 //            layer.setVisible(true);
 //            context.layers().add(layer);
-//
+
 //            params = new HashMap<String,Object>();
 //            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/RESFER_TRONCON_VOIE_FERREE.SHP");
 //            params.put( "url", shape.toURI().toURL() );
@@ -869,12 +867,12 @@ public class ContextBuilder {
 //            layer.setVisible(true);
 //            context.layers().add(layer);
 
-            Map<String,Object> params = new HashMap<String,Object>();
-            File shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
+            params = new HashMap<String,Object>();
+            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
             params.put( "url", shape.toURI().toURL() );
-            DataStore store = DataStoreFinder.getDataStore(params);
-            FeatureSource fs = store.getFeatureSource(store.getTypeNames()[0]);
-            MutableStyle style = createRealBuildingStyle();
+            store = DataStoreFinder.getDataStore(params);
+            fs = store.getFeatureSource(store.getTypeNames()[0]);
+            style = createRealBuildingStyle();
             layer = MapBuilder.createFeatureLayer(fs, style);
             layer.setDescription(SF.description("batiments", ""));
             layer.setName("batiments");
@@ -939,40 +937,40 @@ public class ContextBuilder {
 
     }
 
-    public static MapContext buildWMSContext() {
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-        MapLayer layer;
-
-        try {
-            WebMapServer wms = new WebMapServer(new URL("http://demo.geomatys.fr/constellation/WS/wms?"),"1.1.1");
-//            WebMapServer wms = new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1");
-//            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"Bathymetry,Countries");
-            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"BlueMarble");
-//            wmsLayer.setName("Builtup+areas,Bathymetry,Countries,Topography,Coastlines,Waterbodies,Inundated,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Settlements,Spot+elevations,Airports,Ocean+features");
-//            wmsLayer.setDescription(SF.description("wms layer", ""));
-//            wmsLayer.setOutputFormat("image/gif");
-
-//            context.layers().add(wmsLayer);
-//            context.layers().add(createVectorLayer("/home/eclesia/GIS_DATA/normandy/bn_Lim_departements.shp"));
-
-//            Map<String,Object> params = new HashMap<String,Object>();
-//            File shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/COASTL.shp");
-//            params.put( "url", shape.toURI().toURL() );
+//    public static MapContext buildWMSContext() {
+//        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+//        MapLayer layer;
 //
-//            DataStore store = DataStoreFinder.getDataStore(params);
-//            FeatureSource<SimpleFeatureType, SimpleFeature> fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            MutableStyle style = createNewLineStyle();
-//            layer = MAP_BUILDER.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("points", ""));
-//            context.layers().add(layer);
-
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-    }
+//        try {
+//            WebMapServer wms = new WebMapServer(new URL("http://demo.geomatys.fr/constellation/WS/wms?"),"1.1.1");
+////            WebMapServer wms = new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1");
+////            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"Bathymetry,Countries");
+//            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"BlueMarble");
+////            wmsLayer.setName("Builtup+areas,Bathymetry,Countries,Topography,Coastlines,Waterbodies,Inundated,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Settlements,Spot+elevations,Airports,Ocean+features");
+////            wmsLayer.setDescription(SF.description("wms layer", ""));
+////            wmsLayer.setOutputFormat("image/gif");
+//
+////            context.layers().add(wmsLayer);
+////            context.layers().add(createVectorLayer("/home/eclesia/GIS_DATA/normandy/bn_Lim_departements.shp"));
+//
+////            Map<String,Object> params = new HashMap<String,Object>();
+////            File shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/COASTL.shp");
+////            params.put( "url", shape.toURI().toURL() );
+////
+////            DataStore store = DataStoreFinder.getDataStore(params);
+////            FeatureSource<SimpleFeatureType, SimpleFeature> fs = store.getFeatureSource(store.getTypeNames()[0]);
+////            MutableStyle style = createNewLineStyle();
+////            layer = MAP_BUILDER.createFeatureLayer(fs, style);
+////            layer.setDescription(SF.description("points", ""));
+////            context.layers().add(layer);
+//
+//            context.setDescription(SF.description("Democontext", ""));
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//
+//        return context;
+//    }
 
     public static MapContext buildMixedContext() {
         MapContext context = null;
@@ -1242,9 +1240,9 @@ public class ContextBuilder {
         List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("square",Color.RED));
 
-        Expression opacity = SF.literalExpression(1d);
-        Expression expSize = SF.literalExpression(16);
-        Expression expRotation = SF.literalExpression(0);
+        Expression opacity = FF.literal(1d);
+        Expression expSize = FF.literal(16);
+        Expression expRotation = FF.literal(0);
         AnchorPoint anchor = null;
         Displacement disp = null;
         org.opengis.style.Graphic graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
@@ -1263,7 +1261,7 @@ public class ContextBuilder {
     public static MutableStyle createNewLineStyle(){
 
         Stroke stroke = createNewStroke();
-        Expression offset = SF.literalExpression(0);                                 //--
+        Expression offset = FF.literal(0);                                 //--
         Unit uom = NonSI.PIXEL;                                                       //--
         String geom = null;                                                                         //--
         String name = "unIdQuelconque";                                                             //OK
@@ -1276,17 +1274,17 @@ public class ContextBuilder {
     
     public static MutableStyle createElecLineStyle(){
 
-        Expression color = SF.colorExpression(Color.RED);
-        Expression opacity = SF.literalExpression(1d);
-        Expression width = SF.literalExpression(2d);
-        Expression join = SF.literalExpression("bevel");
-        Expression cap = SF.literalExpression("round");
+        Expression color = SF.literal(Color.RED);
+        Expression opacity = FF.literal(1d);
+        Expression width = FF.literal(2d);
+        Expression join = FF.literal("bevel");
+        Expression cap = FF.literal("round");
         float[] dashes = null;
-        Expression strokeOffset = SF.literalExpression(0d);
+        Expression strokeOffset = FF.literal(0d);
 
         Stroke stroke = SF.stroke(color, opacity, width, join, cap, dashes, strokeOffset);
         
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = NonSI.PIXEL;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1303,7 +1301,7 @@ public class ContextBuilder {
         Stroke stroke = createNewStroke();
 
         Displacement disp = SF.displacement(0, 0);
-        Expression offset = SF.literalExpression(0);                                 //--
+        Expression offset = FF.literal(0);                                 //--
         Unit uom = NonSI.PIXEL;                                                        //--
         String geom = null;                                                                         //--
         String name = "unIdQuelconque";                                                             //OK
@@ -1318,13 +1316,13 @@ public class ContextBuilder {
     public static MutableStyle createRasterStyle(){
 
         final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
-//        values.add( SF.createInterpolationPoint(SF.colorExpression(Color.BLACK), 8000));
-//        values.add( SF.createInterpolationPoint(SF.colorExpression(Color.BLUE), 8300));
-//        values.add( SF.createInterpolationPoint(SF.colorExpression(new Color(0,150,0)), 8600));
-//        values.add( SF.createInterpolationPoint(SF.colorExpression(new Color(100,50,50)), 30000));
-//        values.add( SF.createInterpolationPoint(SF.colorExpression(Color.WHITE), 60000));
-        values.add( SF.interpolationPoint(SF.colorExpression(new Color(0f,0f,0f,0f)), 8300));
-        values.add( SF.interpolationPoint(SF.colorExpression(Color.WHITE), 16000));
+//        values.add( SF.createInterpolationPoint(SF.literal(Color.BLACK), 8000));
+//        values.add( SF.createInterpolationPoint(SF.literal(Color.BLUE), 8300));
+//        values.add( SF.createInterpolationPoint(SF.literal(new Color(0,150,0)), 8600));
+//        values.add( SF.createInterpolationPoint(SF.literal(new Color(100,50,50)), 30000));
+//        values.add( SF.createInterpolationPoint(SF.literal(Color.WHITE), 60000));
+        values.add( SF.interpolationPoint(SF.literal(new Color(0f,0f,0f,0f)), 8300));
+        values.add( SF.interpolationPoint(SF.literal(Color.WHITE), 16000));
         final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
         final Function function = SF.interpolateFunction(
@@ -1333,13 +1331,13 @@ public class ContextBuilder {
         final ChannelSelection selection = StyleConstants.DEFAULT_RASTER_CHANNEL_RGB;
 
 //        final ChannelSelection selection = SF.createChannelSelection(
-//                SF.createSelectedChannelType("0", SF.literalExpression(1)));
+//                SF.createSelectedChannelType("0", FF.literal(1)));
 
-        Expression opacity = SF.literalExpression(1f);
+        Expression opacity = FF.literal(1f);
         OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
 //        ColorMap colorMap = SF.createColorMap(function);
         ColorMap colorMap = null;
-        ContrastEnhancement enchance = SF.contrastEnhancement(SF.literalExpression(1.0f),ContrastMethod.NONE);
+        ContrastEnhancement enchance = SF.contrastEnhancement(FF.literal(1.0f),ContrastMethod.NONE);
         ShadedRelief relief = null; //StyleConstants.DEFAULT_SHADED_RELIEF;
         Symbolizer outline = null;//createDashLineSymbolizer();
         Unit uom = NonSI.PIXEL;
@@ -1354,21 +1352,21 @@ public class ContextBuilder {
 
     public static Stroke createNewStroke(){
 
-        Expression color = SF.colorExpression(Color.GREEN.darker());                           //OK
-        Expression opacity = SF.literalExpression(1d);                               //OK
-        Expression width = SF.literalExpression(1d);                                //OK
-        Expression join = SF.literalExpression("bevel");                             //OK
-        Expression cap = SF.literalExpression("round");                              //OK
+        Expression color = SF.literal(Color.GREEN.darker());                           //OK
+        Expression opacity = FF.literal(1d);                               //OK
+        Expression width = FF.literal(1d);                                //OK
+        Expression join = FF.literal("bevel");                             //OK
+        Expression cap = FF.literal("round");                              //OK
         float[] dashes = null;                                                             //OK
-        Expression strokeOffset = SF.literalExpression(0d);                          //OK
+        Expression strokeOffset = FF.literal(0d);                          //OK
 
         Stroke stroke = SF.stroke(color, opacity, width, join, cap, dashes, strokeOffset);
         return stroke;
     }
 
     public static Fill createNewFill(){
-        Expression fillColor = SF.colorExpression(Color.BLUE);                           //OK
-        Expression fillOpacity = SF.literalExpression(1d);                               //OK
+        Expression fillColor = SF.literal(Color.BLUE);                           //OK
+        Expression fillOpacity = FF.literal(1d);                               //OK
 
         Fill fill = SF.fill(null, fillColor, fillOpacity);
         return fill;
@@ -1376,7 +1374,7 @@ public class ContextBuilder {
 
     public static MutableStyle createRealRoadStyle(){
 
-        SLDFactory SLDF = new DefaultSLDFactory();
+        MutableSLDFactory SLDF = new DefaultSLDFactory();
         MutableStyledLayerDescriptor sld = SLDF.createSLD();
         MutableNamedLayer layer = SLDF.createNamedLayer();
         sld.layers().add(layer);
@@ -1384,7 +1382,7 @@ public class ContextBuilder {
         
         Symbolizer[] symbols = new Symbolizer[3];
 
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = SI.METER;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1398,13 +1396,13 @@ public class ContextBuilder {
         //partie roulante
         GraphicFill fill = null;
         GraphicStroke strk = null;
-        Expression color = SF.colorExpression(Color.RED.darker());
-        Expression opacity = SF.literalExpression(1d);
-        Expression width = SF.literalExpression(22d);
+        Expression color = SF.literal(Color.RED.darker());
+        Expression opacity = FF.literal(1d);
+        Expression width = FF.literal(22d);
         Expression join = StyleConstants.STROKE_JOIN_BEVEL;
         Expression cap = StyleConstants.STROKE_CAP_BUTT;
         float[] dashes = null;
-        Expression off = SF.literalExpression(0d);
+        Expression off = FF.literal(0d);
 
         stroke = SF.stroke(color,opacity,width,join,cap,dashes,off);
         symbol = SF.lineSymbolizer(name,geom,desc,uom,stroke, offset);
@@ -1413,13 +1411,13 @@ public class ContextBuilder {
         //trottoir
         fill = null;
         strk = null;
-        color = SF.colorExpression(Color.BLACK);
-        opacity = SF.literalExpression(1d);
-        width = SF.literalExpression(24d);
+        color = SF.literal(Color.BLACK);
+        opacity = FF.literal(1d);
+        width = FF.literal(24d);
         join = StyleConstants.STROKE_JOIN_BEVEL;
         cap = StyleConstants.STROKE_CAP_BUTT;
         dashes = null;
-        off = SF.literalExpression(0d);
+        off = FF.literal(0d);
 
         stroke = SF.stroke(color,opacity,width,join,cap,dashes,off);
         symbol = SF.lineSymbolizer(name,geom,desc,uom,stroke, offset);
@@ -1438,7 +1436,7 @@ public class ContextBuilder {
         
         symbols = new Symbolizer[3];
 
-        offset = SF.literalExpression(0);
+        offset = FF.literal(0);
         uom = SI.METER;
         geom = null;
         name = "unIdQuelconque";
@@ -1452,13 +1450,13 @@ public class ContextBuilder {
         //partie roulante
         fill = null;
         strk = null;
-        color = SF.colorExpression(Color.BLACK);
-        opacity = SF.literalExpression(1d);
-        width = SF.literalExpression(8d);
-        join = SF.literalExpression("round");
-        cap = SF.literalExpression("round");
+        color = SF.literal(Color.BLACK);
+        opacity = FF.literal(1d);
+        width = FF.literal(8d);
+        join = FF.literal("round");
+        cap = FF.literal("round");
         dashes = null;
-        off = SF.literalExpression(0d);
+        off = FF.literal(0d);
 
         stroke = SF.stroke(color,opacity,width,join,cap,dashes,off);
         symbol = SF.lineSymbolizer(name,geom,desc,uom,stroke, offset);
@@ -1467,13 +1465,13 @@ public class ContextBuilder {
         //trottoir
         fill = null;
         strk = null;
-        color = SF.colorExpression(Color.DARK_GRAY);
-        opacity = SF.literalExpression(1d);
-        width = SF.literalExpression(10.5d);
-        join = SF.literalExpression("round");
-        cap = SF.literalExpression("round");
+        color = SF.literal(Color.DARK_GRAY);
+        opacity = FF.literal(1d);
+        width = FF.literal(10.5d);
+        join = FF.literal("round");
+        cap = FF.literal("round");
         dashes = null;
-        off = SF.literalExpression(0d);
+        off = FF.literal(0d);
 
         stroke = SF.stroke(color,opacity,width,join,cap,dashes,off);
         symbol = SF.lineSymbolizer(name,geom,desc,uom,stroke, offset);
@@ -1524,24 +1522,24 @@ public class ContextBuilder {
 
         symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("cross",Color.RED));
-        opacity = SF.literalExpression(1d);
-        expSize = SF.literalExpression(16);
-        expRotation = SF.literalExpression(0);
+        opacity = FF.literal(1d);
+        expSize = FF.literal(16);
+        expRotation = FF.literal(0);
         anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         disp = SF.displacement(0, 0);
         graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
         ps[0] = SF.pointSymbolizer(name,geom,desc,uom,graphic);
 
-        Expression label = SF.attributeExpression("ALTITUDE");
+        Expression label = FF.property("ALTITUDE");
         Expression weight = StyleConstants.FONT_WEIGHT_BOLD;
         Expression style = StyleConstants.FONT_STYLE_NORMAL;
-        Expression size = SF.literalExpression(14);
+        Expression size = FF.literal(14);
         List<Expression> families = new ArrayList<Expression>();
         Font font = SF.font(families, style, weight, size);
         LabelPlacement placement = SF.pointPlacement(
                 SF.anchorPoint(0,0),
                 SF.displacement(10, -10),
-                SF.literalExpression(45));
+                FF.literal(45));
         Halo halo = SF.halo(Color.RED, 3f);
         Fill fill = SF.fill(Color.WHITE);
         TextSymbolizer text = SF.textSymbolizer(name,geom,desc,uom,label, font, placement, halo, fill);
@@ -1561,19 +1559,19 @@ public class ContextBuilder {
                 graphic.getAnchorPoint(),
                 graphic.getDisplacement());                        //OK
 
-        Expression fillColor = SF.colorExpression(inside);                           //OK
-        Expression fillOpacity = SF.literalExpression(1d);                               //OK
+        Expression fillColor = SF.literal(inside);                           //OK
+        Expression fillOpacity = FF.literal(1d);                               //OK
 
         Fill fill = SF.fill(null, fillColor, fillOpacity);
 
 
-        Expression color = SF.colorExpression(Color.BLACK);                           //OK
-        Expression opacity = SF.literalExpression(1d);                               //OK
-        Expression width = SF.literalExpression(1d);                                //OK
-        Expression join = SF.literalExpression("bevel");                             //OK
-        Expression cap = SF.literalExpression("round");                              //OK
+        Expression color = SF.literal(Color.BLACK);                           //OK
+        Expression opacity = FF.literal(1d);                               //OK
+        Expression width = FF.literal(1d);                                //OK
+        Expression join = FF.literal("bevel");                             //OK
+        Expression cap = FF.literal("round");                              //OK
         float[] dashes = null;                                                             //OK
-        Expression strokeOffset = SF.literalExpression(0d);                          //OK
+        Expression strokeOffset = FF.literal(0d);                          //OK
 
         Stroke stroke = SF.stroke(color, opacity, width, join, cap, dashes, strokeOffset);
 
@@ -1589,7 +1587,7 @@ public class ContextBuilder {
 //        ExternalMark external = STYLE_BUILDER.createExternalMark(rsc, icon, format, index);
 
 
-        Expression wkn = SF.literalExpression(strWkn);                               //OK
+        Expression wkn = FF.literal(strWkn);                               //OK
         Mark mark = SF.mark(wkn, fill, stroke);
 
         return mark;
@@ -1597,7 +1595,7 @@ public class ContextBuilder {
     }
 
     public static LineSymbolizer createRealWorldLineSymbolizer(){
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = SI.METER;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1610,7 +1608,7 @@ public class ContextBuilder {
     }
 
     public static LineSymbolizer createDashLineSymbolizer(){
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = NonSI.PIXEL;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1640,9 +1638,9 @@ public class ContextBuilder {
 
         symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("star",Color.YELLOW));
-        opacity = SF.literalExpression(1d);
-        expSize = SF.literalExpression(20);
-        expRotation = SF.literalExpression(0);
+        opacity = FF.literal(1d);
+        expSize = FF.literal(20);
+        expRotation = FF.literal(0);
         anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         disp = SF.displacement(0, 0);
         graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
@@ -1650,9 +1648,9 @@ public class ContextBuilder {
 
         symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("square",Color.BLUE));
-        opacity = SF.literalExpression(1d);
-        expSize = SF.literalExpression(20);
-        expRotation = SF.literalExpression(0);
+        opacity = FF.literal(1d);
+        expSize = FF.literal(20);
+        expRotation = FF.literal(0);
         anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         disp = SF.displacement(22, 0);
         graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
@@ -1660,9 +1658,9 @@ public class ContextBuilder {
 
         symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("cross",Color.RED));
-        opacity = SF.literalExpression(1d);
-        expSize = SF.literalExpression(20);
-        expRotation = SF.literalExpression(0);
+        opacity = FF.literal(1d);
+        expSize = FF.literal(20);
+        expRotation = FF.literal(0);
         anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         disp = SF.displacement(0, 22);
         graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
@@ -1670,9 +1668,9 @@ public class ContextBuilder {
 
         symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("circle",Color.GREEN));
-        opacity = SF.literalExpression(1d);
-        expSize = SF.literalExpression(20);
-        expRotation = SF.literalExpression(0);
+        opacity = FF.literal(1d);
+        expSize = FF.literal(20);
+        expRotation = FF.literal(0);
         anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         disp = SF.displacement(22,22);
         graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
@@ -1680,9 +1678,9 @@ public class ContextBuilder {
 
         symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(createMark("arrow",Color.MAGENTA));
-        opacity = SF.literalExpression(1d);
-        expSize = SF.literalExpression(20);
-        expRotation = SF.literalExpression(0);
+        opacity = FF.literal(1d);
+        expSize = FF.literal(20);
+        expRotation = FF.literal(0);
         anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         disp = SF.displacement(0, 48);
         graphic = SF.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
@@ -1696,7 +1694,7 @@ public class ContextBuilder {
 
         Symbolizer[] symbols = new Symbolizer[5];
 
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = SI.METER;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1735,16 +1733,16 @@ public class ContextBuilder {
         Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
 
-        Expression label = SF.literalExpression("Rail road");
+        Expression label = FF.literal("Rail road");
         Expression weight = StyleConstants.FONT_WEIGHT_BOLD;
         Expression style = StyleConstants.FONT_STYLE_ITALIC;
-        Expression size = SF.literalExpression(30);
+        Expression size = FF.literal(30);
         List<Expression> families = new ArrayList<Expression>();
         Font font = SF.font(families, style, weight, size);
         LabelPlacement placement = SF.linePlacement(
-                SF.literalExpression(5), 
-                SF.literalExpression(10), 
-                SF.literalExpression(50),
+                FF.literal(5),
+                FF.literal(10),
+                FF.literal(50),
                 true, 
                 true, 
                 true);
@@ -1763,7 +1761,7 @@ public class ContextBuilder {
         Stroke stroke;
         PolygonSymbolizer symbol;
         Displacement disp = SF.displacement(0,0);
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = SI.METER;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1771,7 +1769,7 @@ public class ContextBuilder {
 
         //decalage noir,  ombre de la maison
         disp = SF.displacement(3, -3);
-        offset = SF.literalExpression(0);
+        offset = FF.literal(0);
         fill = SF.fill(Color.DARK_GRAY);
         stroke = SF.stroke(Color.BLACK, 0d);
         symbol = SF.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
@@ -1779,7 +1777,7 @@ public class ContextBuilder {
 
         //bord du toit
         disp = SF.displacement(0,0);
-        offset = SF.literalExpression(0);
+        offset = FF.literal(0);
         fill = SF.fill(new Color(1f,0.6f,0.6f));
         stroke = SF.stroke(Color.RED, 0.2d);
         symbol = SF.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
@@ -1813,7 +1811,7 @@ public class ContextBuilder {
         Stroke stroke;
         PolygonSymbolizer symbol;
         Displacement disp = SF.displacement(0,0);
-        Expression offset = SF.literalExpression(0);
+        Expression offset = FF.literal(0);
         Unit uom = NonSI.PIXEL;
         String geom = null;
         String name = "unIdQuelconque";
@@ -1822,24 +1820,24 @@ public class ContextBuilder {
 
         //bord de mer
         disp = SF.displacement(0,0);
-        offset = SF.literalExpression(20);
-        fill = SF.fill(null, SF.colorExpression(new Color(0.7f,0.7f,1f)),SF.literalExpression(0.7f));
+        offset = FF.literal(20);
+        fill = SF.fill(null, SF.literal(new Color(0.7f,0.7f,1f)),FF.literal(0.7f));
         stroke = SF.stroke(Color.BLUE.brighter(), 0d);
         symbol = SF.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
         symbols[0] = symbol;
 
         //un peu plus sombre
         disp = SF.displacement(0,0);
-        offset = SF.literalExpression(10);
-        fill = SF.fill(null, SF.colorExpression(new Color(0.5f,0.5f,1f)),SF.literalExpression(0.7f));
+        offset = FF.literal(10);
+        fill = SF.fill(null, SF.literal(new Color(0.5f,0.5f,1f)),FF.literal(0.7f));
         stroke = SF.stroke(Color.BLUE, 0d);
         symbol = SF.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
         symbols[1] = symbol;
 
         //un peu plus sombre
         disp = SF.displacement(0,0);
-        offset = SF.literalExpression(0);
-        fill = SF.fill(null, SF.colorExpression(new Color(0.3f,0.3f,1f)),SF.literalExpression(0.7f));
+        offset = FF.literal(0);
+        fill = SF.fill(null, SF.literal(new Color(0.3f,0.3f,1f)),FF.literal(0.7f));
         stroke = SF.stroke(Color.BLUE.darker(), 0d);
         symbol = SF.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
         symbols[2] = symbol;
@@ -1897,22 +1895,22 @@ public class ContextBuilder {
     public static MutableStyle createCategorizeStyle() {
 
         final Map<Expression,Expression> values = new HashMap<Expression,Expression>();
-        values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.colorExpression(Color.WHITE));
-        values.put(SF.literalExpression(0), SF.colorExpression(Color.BLUE));
-        values.put(SF.literalExpression(19), SF.colorExpression(Color.YELLOW));
-        values.put(SF.literalExpression(20), SF.colorExpression(Color.GREEN));
-        values.put(SF.literalExpression(21), SF.colorExpression(Color.YELLOW));
-        values.put(SF.literalExpression(30), SF.colorExpression(Color.RED));
+        values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(Color.WHITE));
+        values.put(FF.literal(0), SF.literal(Color.BLUE));
+        values.put(FF.literal(19), SF.literal(Color.YELLOW));
+        values.put(FF.literal(20), SF.literal(Color.GREEN));
+        values.put(FF.literal(21), SF.literal(Color.YELLOW));
+        values.put(FF.literal(30), SF.literal(Color.RED));
         final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
         final Function categorizeFunction = SF.categorizeFunction(
                 lookup, values, ThreshholdsBelongTo.PRECEDING, fallback);
 
         final ChannelSelection selection = SF.channelSelection(
-                SF.selectedChannelType("0", SF.literalExpression(1)));
+                SF.selectedChannelType("0", FF.literal(1)));
 
 
-        Expression opacity = SF.literalExpression(1f);
+        Expression opacity = FF.literal(1f);
         OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         ColorMap colorMap = SF.colorMap(categorizeFunction);
         ContrastEnhancement enchance = StyleConstants.DEFAULT_CONTRAST_ENHANCEMENT;
@@ -1928,10 +1926,10 @@ public class ContextBuilder {
         return SF.style(symbol);
     }
 
-    private static MutableStyle createGridMarkStyle() {
-//        Symbolizer symbol1 = SF.createRasterSymbolizer();
-        Symbolizer symbol2 = new VectorFieldSymbolizer();
-        return SF.style(new Symbolizer[]{symbol2});
-    }
+//    private static MutableStyle createGridMarkStyle() {
+////        Symbolizer symbol1 = SF.createRasterSymbolizer();
+//        Symbolizer symbol2 = new VectorFieldSymbolizer();
+//        return SF.style(new Symbolizer[]{symbol2});
+//    }
     
 }

@@ -6,7 +6,7 @@
 package org.geotools.display.canvas;
 
 import java.awt.geom.AffineTransform;
-import org.geotools.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

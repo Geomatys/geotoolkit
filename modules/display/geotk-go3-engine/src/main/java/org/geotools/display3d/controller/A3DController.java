@@ -4,6 +4,7 @@ package org.geotools.display3d.controller;
 import com.ardor3d.annotation.MainThread;
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.Updater;
+import com.ardor3d.framework.awt.AwtCanvas;
 import com.ardor3d.input.ButtonState;
 import com.ardor3d.input.InputState;
 import com.ardor3d.input.Key;
@@ -19,7 +20,11 @@ import com.ardor3d.input.logical.TwoInputStates;
 import com.ardor3d.math.Matrix3;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Camera;
+import com.ardor3d.util.Constants;
+import com.ardor3d.util.GameTaskQueue;
+import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
+import com.ardor3d.util.stat.StatCollector;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -50,7 +55,7 @@ public class A3DController implements Updater,CanvasController3D {
     @Inject
     public A3DController(final A3DCanvas canvas, final LogicalLayer logicalLayer) {
         this.canvas = canvas;
-        this.logicalLayer = logicalLayer;
+        this.logicalLayer = logicalLayer;        
     }
 
     @Override
@@ -162,20 +167,29 @@ public class A3DController implements Updater,CanvasController3D {
     public void update(final ReadOnlyTimer timer) {
         final double tpf = timer.getTimePerFrame();
 
+        /** update stats, if enabled. */
+        if (Constants.stats) {
+            StatCollector.update();
+        }
+
+        // check and execute any input triggers, if we are concerned with input
         logicalLayer.checkTriggers(tpf);
 
+        // Execute updateQueue item
+        GameTaskQueueManager.getManager().getQueue(GameTaskQueue.UPDATE).execute();
+
         Camera camera = getCamera();
-        synchronized(updateLocation){
+        synchronized (updateLocation) {
 
-            if(camera != null){
-                camera.setDepthRangeFar(Double.POSITIVE_INFINITY);
-            }
+//            if(camera != null){
+//                camera.setDepthRangeFar(Double.POSITIVE_INFINITY);
+//            }
 
-            
-            if((updateLocation.getX() != 0 ||
-               updateLocation.getY() != 0 || 
-               updateLocation.getZ() != 0) &&
-               camera != null){
+
+            if ((updateLocation.getX() != 0 ||
+                    updateLocation.getY() != 0 ||
+                    updateLocation.getZ() != 0) &&
+                    camera != null) {
                 camera.setLocation(updateLocation);
                 updateLocation.setX(0);
                 updateLocation.setY(0);
@@ -183,7 +197,13 @@ public class A3DController implements Updater,CanvasController3D {
             }
         }
 
-        canvas.getContainer2().getRoot().updateGeometricState(tpf, true);
+        if(camera != null){
+            canvas.getContainer2().update(camera,tpf,true);
+        }
+
+
+        /** Update controllers/render states/transforms/bounds for rootNode. */
+        canvas.getContainer2().getRoot().updateGeometricState(timer.getTimePerFrame(), true);
     }
 
     private void rotateUpDown(final Canvas canvas, final double speed) {
@@ -222,11 +242,11 @@ public class A3DController implements Updater,CanvasController3D {
 
         final Vector3 temp = Vector3.fetchTempInstance();
 
-        //turning is autorise only along the Z axis
+        //turning is autorise only along the Y axis
         //this avoid all rolling effect of the camera
         Vector3 upAxi = new Vector3(camera.getUp());
         upAxi.setX(0);
-        upAxi.setY(0);
+        upAxi.setZ(0);
 
         _incr.fromAngleNormalAxis(speed, upAxi);
 
@@ -328,8 +348,8 @@ public class A3DController implements Updater,CanvasController3D {
      */
     private void checkLocation(Vector3 loc){
         //we can not go under 0Z
-        if(loc.getZ() < 0.1){
-            loc.setZ(0.1);
+        if(loc.getY() < 0.1){
+            loc.setY(0.1);
         }
     }
 

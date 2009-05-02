@@ -19,14 +19,12 @@ import java.util.logging.Level;
 
 
 import javax.media.opengl.GLAutoDrawable;
-import org.geotools.display.primitive.ReferencedGraphic;
-import org.geotools.display.container.AbstractContainer;
-import org.geotools.display.container.AbstractContainer2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas;
+import org.geotoolkit.display.primitive.ReferencedGraphic;
+import org.geotoolkit.display.container.AbstractContainer;
+import org.geotoolkit.display.container.AbstractContainer2D;
 
 import org.geotools.display.primitive.Graphic3D;
-import org.geotools.display.renderer.LabelRenderer;
-import org.geotools.display.renderer.RenderingContext;
-import org.geotools.display.renderer.RenderingContext2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 

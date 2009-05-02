@@ -2,6 +2,8 @@
 package org.geotools.display3d.container;
 
 import com.ardor3d.math.ColorRGBA;
+import com.ardor3d.math.Matrix3;
+import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
@@ -14,9 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.display3d.canvas.A3DCanvas;
 import org.geotools.display3d.primitive.A3DGraphic;
-import org.geotools.map.GraphicBuilder;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -32,9 +34,8 @@ public class ContextNode extends A3DGraphic{
     public ContextNode(A3DCanvas canvas, MapContext context) {
         this.context = context;
 
-        attachChild(buildPlan());
+//        attachChild(buildPlan());
 
-        double z = 10d;
         for(final MapLayer layer : context.layers()){
 
             GraphicBuilder<? extends A3DGraphic> builder = layer.getGraphicBuilder(A3DGraphic.class);
@@ -46,10 +47,8 @@ public class ContextNode extends A3DGraphic{
             Collection<? extends A3DGraphic> graphics = builder.createGraphics(layer, canvas);
 
             for(A3DGraphic gra : graphics){
-                gra.setTranslation(0, 0, z);
                 this.attachChild(gra);
             }
-            z += 10d;
         }
 
         final Envelope env;
@@ -61,9 +60,8 @@ public class ContextNode extends A3DGraphic{
             float maxX = (float) env.getMaximum(0);
             float maxY = (float) env.getMaximum(1);
 
-            setTranslation(-env.getMedian(0), -env.getMedian(1), 0);
-//            setScale(0.999f);
-//            setScale(0.9f, 0.9f, 1);
+            setScale(0.1f,1, 0.1f);
+            setTranslation(-env.getMedian(0)/10, 1f, -env.getMedian(1)/10);
 
 
 
@@ -86,54 +84,30 @@ public class ContextNode extends A3DGraphic{
             return plan;
         }
 
-        plan.setTranslation(env.getMedian(0), env.getMedian(1), -0.1f);
         float minX = (float) env.getMinimum(0);
         float minY = (float) env.getMinimum(1);
         float maxX = (float) env.getMaximum(0);
         float maxY = (float) env.getMaximum(1);
 
+        System.out.println(minX);
+        System.out.println(maxX);
+        System.out.println(minY);
+        System.out.println(maxY);
+
+        System.out.println(minX-env.getMedian(0));
+        System.out.println(minY-env.getMedian(1));
+
 
         final Quad back = new Quad();
         back.initialize(maxX-minX, maxY-minY);
         back.setLightCombineMode(LightCombineMode.Off);
-        back.setDefaultColor(ColorRGBA.DARK_GRAY);
+        back.setDefaultColor(ColorRGBA.RED);
+        back.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
+        back.setTranslation(minX, 0f, minY);
+
 
         plan.attachChild(back);
 
-//        final BlendState blend = new BlendState();
-//        blend.setBlendEnabled(true);
-//        blend.setSourceFunction(SourceFunction.SourceAlpha);
-//        blend.setDestinationFunction(DestinationFunction.OneMinusSourceAlpha);
-
-        float step = (maxX - minX) / 100f;
-
-        for(float i= minX;i<=maxX;i+=step){
-            final FloatBuffer verts = BufferUtils.createVector3Buffer(2);
-            verts.put(i).put(minY).put(0.001f);
-            verts.put(i).put(maxY).put(0.001f);
-            Line line = new Line("Lines", verts, null, null, null);
-            line.getMeshData().setIndexMode(IndexMode.LineStrip);
-            line.setLineWidth(1);
-            line.setLightCombineMode(LightCombineMode.Off);
-            line.setDefaultColor(ColorRGBA.ORANGE);
-//            line.setAntialiased(true);
-            plan.attachChild(line);
-        }
-
-        for(float i= minY;i<=maxY;i+=step){
-            final FloatBuffer verts = BufferUtils.createVector3Buffer(2);
-            verts.put(minX).put(i).put(0.001f);
-            verts.put(maxX).put(i).put(0.001f);
-            Line line = new Line("Lines", verts, null, null, null);
-            line.getMeshData().setIndexMode(IndexMode.LineStrip);
-            line.setLineWidth(1);
-            line.setLightCombineMode(LightCombineMode.Off);
-            line.setDefaultColor(ColorRGBA.ORANGE);
-//            line.setAntialiased(true);
-            plan.attachChild(line);
-        }
-
-//        plan.setRenderState(blend);
         return plan;
     }
 

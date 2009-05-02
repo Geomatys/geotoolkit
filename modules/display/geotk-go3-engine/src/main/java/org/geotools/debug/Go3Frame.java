@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import org.geotools.display3d.canvas.A3DCanvas;
 import org.geotools.gui.swing.go3.control.JNavigationBar;
-import org.geotools.gui.swing.maptree.JContextTree;
-import org.geotools.map.MapContext;
+import org.geotoolkit.gui.swing.maptree.JContextTree;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
@@ -58,9 +58,10 @@ public class Go3Frame extends JFrame{
 
         setJMenuBar(bar);
         setContentPane(splitTree);
-        setSize(1024, 768);
+        setSize(1280,1024);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
 
         while (true) {

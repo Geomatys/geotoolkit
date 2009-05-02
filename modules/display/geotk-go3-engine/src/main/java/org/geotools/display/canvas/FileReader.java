@@ -18,7 +18,6 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.factory.Hints;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.gce.geotiff.GeoTiffReader;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 
@@ -74,31 +73,31 @@ private static final String GEOTIFF = ".tif";
      * @return
      * @throws java.net.URISyntaxException
      */
-    public GridCoverage rasterReader()throws URISyntaxException {
-        GeoTiffReader reader;
-        GridCoverage cover = null;
-        if (this.url != null) {
-            String name = this.url.getFile().toLowerCase();
-            File file = null;
-                file = new File(this.url.getFile());
-           
-            if (file != null) {
-                    try {
-                         System.out.println("File path => "+file.getName());
-                        reader = new GeoTiffReader(file,new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
-                        cover = (GridCoverage2D) reader.read(null);
-                    } catch (DataSourceException ex) {
-                        cover = null;
-                        ex.printStackTrace();
-                    } catch (IOException ex) {
-                        cover = null;
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        
-        return cover;
-    }
+//    public GridCoverage rasterReader()throws URISyntaxException {
+//        GeoTiffReader reader;
+//        GridCoverage cover = null;
+//        if (this.url != null) {
+//            String name = this.url.getFile().toLowerCase();
+//            File file = null;
+//                file = new File(this.url.getFile());
+//
+//            if (file != null) {
+//                    try {
+//                         System.out.println("File path => "+file.getName());
+//                        reader = new GeoTiffReader(file,new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+//                        cover = (GridCoverage2D) reader.read(null);
+//                    } catch (DataSourceException ex) {
+//                        cover = null;
+//                        ex.printStackTrace();
+//                    } catch (IOException ex) {
+//                        cover = null;
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//        return cover;
+//    }
     /**
      *
      * @return the Path value for a URL

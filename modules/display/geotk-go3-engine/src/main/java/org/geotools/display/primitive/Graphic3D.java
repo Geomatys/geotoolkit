@@ -9,9 +9,10 @@ import java.awt.Shape;
 import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
-import org.geotools.display.canvas.ReferencedCanvas;
-import org.geotools.display.canvas.VisitFilter;
-import org.geotools.display.renderer.RenderingContext;
+import org.geotoolkit.display.canvas.ReferencedCanvas;
+import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.opengis.display.primitive.Graphic;
 
 /**

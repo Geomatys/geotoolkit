@@ -23,8 +23,8 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 import org.geotools.display3d.canvas.A3DCanvas;
-import org.geotools.gui.swing.resource.IconBundle;
-import org.geotools.map.MapContext;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 
 

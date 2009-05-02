@@ -5,7 +5,8 @@
 
 package org.geotools.display.canvas;
 
-import org.geotools.display.renderer.RenderingContext;
+import org.geotoolkit.display.canvas.RenderingContext;
+
 
 /**
  *

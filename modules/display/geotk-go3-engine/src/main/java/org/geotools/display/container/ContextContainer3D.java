@@ -6,7 +6,8 @@
 package org.geotools.display.container;
 
 import java.awt.geom.Rectangle2D;
-import org.geotools.display.canvas.ReferencedCanvas;
+import org.geotoolkit.display.canvas.ReferencedCanvas;
+import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

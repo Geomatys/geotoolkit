@@ -94,28 +94,28 @@ public class test extends JFrame implements ActionListener{
                         System.out.println("Test Open => " + file.shapeReader().toString());
                     } else if (filterFileRaster.accept(new File(url.toURI()))) {
                         //System.out.println("Test Open => " + file.rasterReader().toString());
-                        GridCoverage gridCoverageFile = file.rasterReader();
-                        System.out.println("CRS du Coverage => " + gridCoverageFile.getCoordinateReferenceSystem());
-                        Envelope gridEnvelope = gridCoverageFile.getEnvelope();
-                        double[] LowerCorner = gridEnvelope.getLowerCorner().getCoordinate();
-                        double[] UpperCorner = gridEnvelope.getUpperCorner().getCoordinate();
-
-                        System.out.println("Valeur de l'envelope de coverage LowerCorner =>" + LowerCorner[0]);
-                        System.out.println("Valeur de l'envelope de coverage UpperCorner =>" + UpperCorner[0]);
-
-                        GridCoverage2D coverage2D = (GridCoverage2D) gridCoverageFile;
-                        RenderedImage renderedImage = coverage2D.getRenderedImage();
-
-
-
-                        // coverage2D.show("tyutu");
-                        Raster data = renderedImage.getData();
-                        //DataBuffer buffer = data.getDataBuffer();
-                        //System.out.println(buffer.getSize());
-                        // ou => Copie en moins data.getSampleFloat(X,Y, 0);
-                        double[] samples = data.getSamples(data.getMinX(), data.getMinY(), data.getWidth(), data.getHeight(), 0, (double[]) null);
-                        int SampleModelTranslateX = data.getSampleModelTranslateX();
-                        int SampleModelTranslateY = data.getSampleModelTranslateY();
+//                        GridCoverage gridCoverageFile = file.rasterReader();
+//                        System.out.println("CRS du Coverage => " + gridCoverageFile.getCoordinateReferenceSystem());
+//                        Envelope gridEnvelope = gridCoverageFile.getEnvelope();
+//                        double[] LowerCorner = gridEnvelope.getLowerCorner().getCoordinate();
+//                        double[] UpperCorner = gridEnvelope.getUpperCorner().getCoordinate();
+//
+//                        System.out.println("Valeur de l'envelope de coverage LowerCorner =>" + LowerCorner[0]);
+//                        System.out.println("Valeur de l'envelope de coverage UpperCorner =>" + UpperCorner[0]);
+//
+//                        GridCoverage2D coverage2D = (GridCoverage2D) gridCoverageFile;
+//                        RenderedImage renderedImage = coverage2D.getRenderedImage();
+//
+//
+//
+//                        // coverage2D.show("tyutu");
+//                        Raster data = renderedImage.getData();
+//                        //DataBuffer buffer = data.getDataBuffer();
+//                        //System.out.println(buffer.getSize());
+//                        // ou => Copie en moins data.getSampleFloat(X,Y, 0);
+//                        double[] samples = data.getSamples(data.getMinX(), data.getMinY(), data.getWidth(), data.getHeight(), 0, (double[]) null);
+//                        int SampleModelTranslateX = data.getSampleModelTranslateX();
+//                        int SampleModelTranslateY = data.getSampleModelTranslateY();
                        // System.out.println("valeur de Translate X => " + SampleModelTranslateX);
                        // System.out.println("valeur de Translate Y => " + SampleModelTranslateY);
 

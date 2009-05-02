@@ -2,12 +2,11 @@
 
 package org.geotools.display3d.container;
 
-import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Vector3;
+import com.ardor3d.scenegraph.FloatBufferData;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Spatial;
-import com.ardor3d.scenegraph.TexCoords;
 import com.ardor3d.util.geom.BufferUtils;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -182,8 +181,9 @@ public class DefaultPolygonFeatureMesh extends Mesh {
 
         }
         if (_meshData.getTextureCoords(0) == null) {
-            _meshData.setTextureCoords(new TexCoords(BufferUtils.createVector2Buffer(8)), 0);
-            final FloatBuffer tex = _meshData.getTextureCoords(0).coords;
+            _meshData.setTextureCoords(new FloatBufferData(BufferUtils.createVector2Buffer(8), 3),0);
+//            _meshData.setTextureCoords(new TexCoords(BufferUtils.createVector2Buffer(8)), 0);
+            final FloatBuffer tex = _meshData.getTextureCoords(0).getBuffer();
 
             tex.put(1).put(0);
             tex.put(0).put(0);

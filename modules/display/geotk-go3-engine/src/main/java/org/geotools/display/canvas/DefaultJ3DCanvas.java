@@ -6,7 +6,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
-import org.geotools.display.renderer.RenderingContext;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.opengis.display.canvas.CanvasController;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -94,13 +94,11 @@ private final RenderingContext3D context = new DefaultRenderingContext3D();
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
-    @Override
     public CanvasController getController() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
-    @Override
     protected RenderingContext getRenderingContext() {
         return context;
     }

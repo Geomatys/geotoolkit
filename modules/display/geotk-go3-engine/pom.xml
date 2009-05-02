@@ -5,20 +5,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.geotools</groupId>
-        <artifactId>unsupported</artifactId>
-        <version>2.6-SNAPSHOT</version>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>display</artifactId>
+        <version>SNAPSHOT</version>
     </parent>
 
 
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotools</groupId>
-    <artifactId>gtm-go3</artifactId>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>geotk-go3</artifactId>
     <packaging>jar</packaging>
     <name>GO3 - OpenGL Renderer</name>
-    <description>New generation of Java2D renderer based on GeoAPI Display package.</description>
+    <description>New generation 3D engine.</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
@@ -31,18 +31,6 @@
   <!--     Developers and Contributors                             -->
   <!-- =========================================================== -->
     <developers>
-        <developer>
-            <name>Martin Desruisseaux</name>
-            <id>desruisseaux</id>
-            <email>desruisseaux@users.sourceforge.net</email>
-            <organization>Geomatys</organization>
-            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-            <timezone>+1</timezone>
-            <roles>
-                <role>Java Developer</role>
-                <role>Module Maintainer</role>
-            </roles>
-        </developer>
         <developer>
             <name>Johann Sorel</name>
             <id>jsorel</id>
@@ -61,6 +49,14 @@
   <!--     Dependencies                                            -->
   <!-- =========================================================== -->
     <dependencies>
+    <dependency>
+      <groupId>com.ardor3d</groupId>
+      <artifactId>ardor3d-examples</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+
+
+
         <dependency>
             <groupId>com.ardor3d</groupId>
             <artifactId>ardor3d-awt</artifactId>
@@ -72,15 +68,15 @@
             <version>0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gtm-render</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-render</artifactId>
+            <version>${geotoolkit.version}</version>
         </dependency>
         
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gtm-widgets-swing-pending</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-widgets-swing-pending</artifactId>
+            <version>${geotoolkit.version}</version>
         </dependency>
     </dependencies>
         
