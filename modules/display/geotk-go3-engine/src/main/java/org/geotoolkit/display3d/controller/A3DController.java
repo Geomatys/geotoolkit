@@ -162,6 +162,8 @@ public class A3DController implements Updater,CanvasController3D {
         canvas.getCanvasRenderer().getCamera().setFrame(loc, left, up, dir);
     }
 
+    Camera lastCamera = null;
+
     @MainThread
     @Override
     public void update(final ReadOnlyTimer timer) {
@@ -181,9 +183,14 @@ public class A3DController implements Updater,CanvasController3D {
         Camera camera = getCamera();
         synchronized (updateLocation) {
 
-//            if(camera != null){
-//                camera.setDepthRangeFar(Double.POSITIVE_INFINITY);
-//            }
+            if(camera != null && camera != lastCamera){
+                lastCamera = camera;
+                camera.setFrustumPerspective(
+                45.0,
+                (float) camera.getWidth()
+                        / (float) camera.getHeight(), 1, 10000.0f);
+                    camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
+            }
 
 
             if ((updateLocation.getX() != 0 ||

@@ -60,8 +60,8 @@ public class ContextNode extends A3DGraphic{
             float maxX = (float) env.getMaximum(0);
             float maxY = (float) env.getMaximum(1);
 
-            setScale(0.1f,1, 0.1f);
-            setTranslation(-env.getMedian(0)/10, 1f, -env.getMedian(1)/10);
+            setScale(0.2f,1, 0.2f);
+            setTranslation(-env.getMedian(0)/5, 1f, -env.getMedian(1)/5);
 
 
 
