@@ -127,9 +127,8 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
         
         if(evt.getPropertyName().equals(AbstractCanvas.OBJECTIVE_CRS_PROPERTY)){
             final CoordinateReferenceSystem newCRS = (CoordinateReferenceSystem) evt.getNewValue();
-            final CoordinateReferenceSystem oldCRS = (CoordinateReferenceSystem) evt.getOldValue();
             try {
-                setObjectiveCRS(newCRS, oldCRS);
+                setObjectiveCRS(newCRS);
             } catch (TransformException ex) {
                 ex.printStackTrace();
                 Logger.getLogger(ReferencedGraphic.class.getName()).log(Level.SEVERE, null, ex);
@@ -159,7 +158,8 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      * @throws TransformException If this method do not accept the new CRS. In such case,
      *         this method should keep the old CRS and leaves this graphic in a consistent state.
      */
-    protected void setObjectiveCRS(final CoordinateReferenceSystem newCRS, final CoordinateReferenceSystem oldCRS) throws TransformException {
+    protected void setObjectiveCRS(final CoordinateReferenceSystem newCRS) throws TransformException {
+        CoordinateReferenceSystem oldCRS = this.envelope.getCoordinateReferenceSystem();
         if (newCRS == null) {
             throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "crs", newCRS));
         }
@@ -302,7 +302,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
             //same crs for both envelope, we can directly try a contain.
             return envelope.intersects(candidateEnvelope, true);            
         }else{
-            //envelope have different envelope, we need to reproject them
+            //envelope have different projection, we need to reproject them
             //try reproject data envelope
             try {
                 final MathTransform trs = CRS.findMathTransform(
