@@ -35,7 +35,7 @@ import org.jdesktop.swingx.renderer.TableCellContext;
 public class DefaultCellRenderer implements javax.swing.table.TableCellRenderer, java.io.Serializable {
     
     protected ComponentProvider componentController;
-    private CellContext<JTable> cellContext;
+    private CellContext cellContext;
     private RenderAndEditComponent view;
     
         
@@ -73,7 +73,7 @@ public class DefaultCellRenderer implements javax.swing.table.TableCellRenderer,
      * @return the default table cell renderer
      */
     public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column) {
-        cellContext.installContext(table, value, row, column, isSelected, hasFocus,true, true);
+        // TODO cellContext.installContext(table, value, row, column, isSelected, hasFocus,true, true);
         return componentController.getRendererComponent(cellContext);
                 
     }

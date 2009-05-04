@@ -191,7 +191,6 @@
     <dependency>
       <groupId>org.swinglabs</groupId>
       <artifactId>swingx</artifactId>
-      <version>0.9.4</version>
     </dependency>
 
     <dependency>
