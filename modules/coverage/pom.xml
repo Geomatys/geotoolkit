@@ -71,17 +71,14 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-metadata</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opengis</groupId>

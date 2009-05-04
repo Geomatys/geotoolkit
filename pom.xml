@@ -224,8 +224,23 @@
         <artifactId>geotk-coverage</artifactId>
         <version>${geotoolkit.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-coverageio</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-widgets-swing</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
 
       <!-- Remaining dependencies to geomodified -->
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-api</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gtm-main</artifactId>
@@ -244,6 +259,16 @@
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gtm-cql</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-postgis</artifactId>
+        <version>${geomodified.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gtm-shapefile</artifactId>
         <version>${geomodified.version}</version>
       </dependency>
       <dependency>
@@ -270,16 +295,43 @@
         <artifactId>jasperreports</artifactId>
         <version>3.1.0</version>
       </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <version>1.3.04</version>
-        </dependency>
+      <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.3.04</version>
+      </dependency>
 
+      <dependency>
+        <groupId>com.ardor3d</groupId>
+        <artifactId>ardor3d-examples</artifactId>
+        <version>0.5-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ardor3d</groupId>
+        <artifactId>ardor3d-awt</artifactId>
+        <version>0.5-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ardor3d</groupId>
+        <artifactId>ardor3d-jogl</artifactId>
+        <version>0.5-SNAPSHOT</version>
+      </dependency>
+      
       <dependency>
         <groupId>com.vividsolutions</groupId>
         <artifactId>jts</artifactId>
         <version>1.9</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.java.dev.timingframework</groupId>
+        <artifactId>timingframework</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-swing-outline</artifactId>
+        <version>RELEASE65BETA</version>
       </dependency>
 
       <dependency>

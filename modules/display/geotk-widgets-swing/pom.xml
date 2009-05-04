@@ -71,14 +71,7 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverageio</artifactId>
-      <version>${geotoolkit.version}</version>
     </dependency>
-
-    <!--dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-epsg-postgresql</artifactId>
-      <version>${geotoolkit.version}</version>
-    </dependency-->
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
@@ -125,7 +118,6 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-widgets-swing</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -143,49 +135,36 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-api</artifactId>
-      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-coverage</artifactId>
-      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-main</artifactId>
-      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-cql</artifactId>
-      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-postgis</artifactId>
-      <version>${geomodified.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-shapefile</artifactId>
-      <version>${geomodified.version}</version>
     </dependency>
-
-    <!--pendency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-wfs</artifactId>
-      <version>${geomodified.version}</version>
-    </dependency-->
 
     <dependency>
       <groupId>net.java.dev.timingframework</groupId>
       <artifactId>timingframework</artifactId>
-      <version>1.0</version>
     </dependency>
 
     <dependency>
@@ -196,7 +175,6 @@
     <dependency>
       <groupId>org.netbeans.api</groupId>
       <artifactId>org-netbeans-swing-outline</artifactId>
-      <version>RELEASE65BETA</version>
     </dependency>
 
   </dependencies>
