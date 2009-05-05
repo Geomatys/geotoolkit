@@ -809,8 +809,8 @@ public class XAffineTransform extends AffineTransform {
              */
             if ((m00!=0 || m01!=0) && (m10!=0 || m11!=0)) {
                 double m02, m12;
-                if (abs(r = rint(m02=tr.getTranslateX()) - m02) <= tolerance) m02=r;
-                if (abs(r = rint(m12=tr.getTranslateY()) - m12) <= tolerance) m12=r;
+                if (abs((r = rint(m02=tr.getTranslateX())) - m02) <= tolerance) m02=r;
+                if (abs((r = rint(m12=tr.getTranslateY())) - m12) <= tolerance) m12=r;
                 tr.setTransform(m00, m10, m01, m11, m02, m12);
             }
         }

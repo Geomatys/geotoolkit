@@ -169,12 +169,12 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     /**
      * Default color with which to tint magnifying glass.
      */
-    private static final Paint DEFAULT_MAGNIFIER_GLASS = new Color(197, 204, 221);
+    private static final Paint DEFAULT_MAGNIFIER_GLASS = new Color(209, 225, 243);
 
     /**
      * Default color of the magnifying glass's border.
      */
-    private static final Paint DEFAULT_MAGNIFIER_BORDER = new Color(102, 102, 153);
+    private static final Paint DEFAULT_MAGNIFIER_BORDER = new Color(110, 129, 177);
 
     /**
      * Constant indicating the scale changes on the <var>x</var> axis.
@@ -509,8 +509,15 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Indicates whether the zoom is the result of a {@link #reset} operation.
+     * This is used in order to determine which behavior to replicate when the
+     * widget is resized.
      */
-    private boolean zoomIsReset;
+    private boolean zoomIsReset = true;
+
+    /**
+     * {@code true} if calls to {@link #repaint} should be temporarily disabled.
+     */
+    private boolean disableRepaint;
 
     /**
      * Types of zoom permitted.  This field should be a combination of the constants
@@ -526,7 +533,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * that we should display the entire contents, even if it means leaving blank spaces in
      * the panel.
      */
-    private boolean fillPanel = false;
+    private boolean fillPanel;
 
     /**
      * Rectangle representing the logical coordinates of the visible region. This information is
@@ -626,8 +633,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
         }
         this.allowedActions = allowedActions;
         final Vocabulary resources = Vocabulary.getResources(null);
-        final InputMap   inputMap = getInputMap();
-        final ActionMap actionMap = getActionMap();
+        final InputMap   inputMap = super.getInputMap();
+        final ActionMap actionMap = super.getActionMap();
         for (int i = 0; i < ACTION_ID.length; i++) {
             final short actionType = ACTION_TYPE[i];
             if ((actionType & allowedActions) != 0) {
@@ -640,8 +647,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                     /*
                      * Action to perform when a key has been hit or the mouse clicked.
                      */
-                    @Override public void actionPerformed(final ActionEvent event) {
-                        Point          point = null;
+                    @Override
+                    public void actionPerformed(final ActionEvent event) {
+                        Point point = null;
                         final Object  source = event.getSource();
                         final boolean button = (source instanceof AbstractButton);
                         if (button) {
@@ -664,9 +672,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                         transform(actionType & allowedActions, m, point);
                     }
                 };
-                action.putValue(Action.NAME,               resources.getString(RESOURCE_ID[i]));
+                action.putValue(Action.NAME, resources.getString(RESOURCE_ID[i]));
                 action.putValue(Action.ACTION_COMMAND_KEY, actionID);
-                action.putValue(Action.ACCELERATOR_KEY,    stroke);
+                action.putValue(Action.ACCELERATOR_KEY, stroke);
                 actionMap.put(actionID, action);
                 inputMap .put(stroke, actionID);
                 inputMap .put(KeyStroke.getKeyStroke(keyboard, modifier | KeyEvent.SHIFT_MASK), actionID);
@@ -678,16 +686,17 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
          * for mouse movements in order to perform zooms.
          */
         final Listeners listeners = new Listeners();
-        addComponentListener  (listeners);
+        super.addComponentListener(listeners);
         super.addMouseListener(listeners);
         if ((allowedActions & (SCALE_X | SCALE_Y)) != 0) {
             super.addMouseWheelListener(listeners);
         }
         super.addMouseListener(mouseSelectionTracker);
-        setAutoscrolls(true);
-        setFocusable(true);
-        setOpaque(true);
-        setUI(UI);
+        super.setBackground(Color.WHITE);
+        super.setAutoscrolls(true);
+        super.setFocusable(true);
+        super.setOpaque(true);
+        super.setUI(UI);
     }
 
     /**
@@ -745,7 +754,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                  */
                 if (!change.isIdentity()) {
                     fireZoomChanged0(change);
-                    repaint(zoomableBounds);
+                    if (!disableRepaint) {
+                        repaint(zoomableBounds);
+                    }
                 }
                 zoomIsReset = true;
                 log("reset", visibleArea);
@@ -1076,7 +1087,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             zoom.concatenate(change);
             XAffineTransform.round(zoom, EPS);
             fireZoomChanged(change);
-            repaint(getZoomableBounds());
+            if (!disableRepaint) {
+                repaint(getZoomableBounds());
+            }
             zoomIsReset = false;
         }
     }
@@ -1345,11 +1358,11 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Returns the geometric shape to be used to delimitate an area. This shape is generally a
-     * rectangle but could also be an ellipse, an arrow or another shape. The coordinates of the
-     * returned shape won't be taken into account. In fact, these coordinates will often be
-     * destroyed. The only things that matter are the class of the returned shape (e.g.
-     * {@link Ellipse2D} vs {@link Rectangle2D}) and any of its parameters not related
-     * to its position (e.g. arc size in a {@link RoundRectangle2D}).
+     * rectangle but could also be an ellipse or another shape. The coordinates of the returned
+     * shape won't be taken into account. In fact, these coordinates will often be overwritten.
+     * The only things that matter are the class of the returned shape (e.g. {@link Ellipse2D}
+     * vs {@link Rectangle2D}) and any of its parameters not related to its position (e.g. arc
+     * size in a {@link RoundRectangle2D}).
      * <p>
      * The returned shape will generally be an instance of {@link RectangularShape}, but can also
      * be an instance of {@link Line2D}. <strong>Any other class risks throwing a
@@ -1503,20 +1516,21 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      *        the specified coordinate.
      */
     private void setMagnifierVisible(final boolean visible, final Point center) {
+        MouseReshapeTracker magnifier = this.magnifier;
         if (visible && magnifierEnabled) {
             if (magnifier == null) {
                 Rectangle bounds = getZoomableBounds(); // Do not modify the Rectangle!
                 if (bounds.isEmpty()) bounds = new Rectangle(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
                 final int size = Math.min(Math.min(bounds.width, bounds.height), DEFAULT_MAGNIFIER_SIZE);
-                final int centerX, centerY;
+                final int x, y;
                 if (center != null) {
-                    centerX = center.x - size / 2;
-                    centerY = center.y - size / 2;
+                    x = center.x - size / 2;
+                    y = center.y - size / 2;
                 } else {
-                    centerX = bounds.x + (bounds.width - size) / 2;
-                    centerY = bounds.y + (bounds.height - size) / 2;
+                    x = bounds.x + (bounds.width - size) / 2;
+                    y = bounds.y + (bounds.height - size) / 2;
                 }
-                magnifier = new MouseReshapeTracker(new Ellipse2D.Float(centerX, centerY, size, size)) {
+                this.magnifier = magnifier = new MouseReshapeTracker(new RoundRectangle2D.Float(x, y, size, size, 24, 24)) {
                     @Override protected void stateWillChange(final boolean isAdjusting) {repaintMagnifier();}
                     @Override protected void stateChanged   (final boolean isAdjusting) {repaintMagnifier();}
                 };
@@ -1542,7 +1556,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             removeMouseMotionListener(magnifier);
             removeMouseListener      (magnifier);
             setCursor(null);
-            magnifier = null;
+            this.magnifier = null;
             firePropertyChange("magnifierVisible", Boolean.TRUE, Boolean.FALSE);
         }
     }
@@ -1754,21 +1768,23 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Method called each time the size or the position of the component changes.
+     * The {@link #repaint} method is not called because there is already a repaint command in
+     * the queue. The {@link #transform} method is not called neither because the zoom hasn't
+     * really changed; we have simply discovered a part of the window which was hidden before.
+     * However, we still need to adjust the scrollbars.
      */
     private final void processSizeEvent(final ComponentEvent event) {
-        if (!isValid(visibleArea) || zoomIsReset) {
-            reset();
+        if (zoomIsReset || !isValid(visibleArea)) {
+            disableRepaint = true;
+            try {
+                reset();
+            } finally {
+                disableRepaint = false;
+            }
         }
         if (magnifier != null) {
             magnifier.setClip(getZoomableBounds());
         }
-        /*
-         * {@link #repaint} isn't called because there is already a {@link #repaint} command in
-         * the queue.  Therefore, the redraw will be twice as quick under JDK 1.3.
-         * {@link #transform} isn't called either because the zoom hasn't really changed;
-         * we have simply discovered a part of the window which was hidden before. However,
-         * we still need to adjust the scrollbars.
-         */
         final Object[] listeners = listenerList.getListenerList();
         for (int i = listeners.length; (i-=2) >= 0;) {
             if (listeners[i] == ZoomChangeListener.class) {
@@ -1983,7 +1999,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
         /**
          * Indicates whether the scrollbars are being adjusted in response to {@link #zoomChanged}.
-         * If this is the case, {@link #stateChanged} mustn't make any other adjustments.
+         * If this is the case, {@link #stateChanged} must not make any other adjustments.
          */
         private transient boolean isAdjusting;
 
@@ -2156,9 +2172,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * is displayed.
      */
     @Override
-    public void repaint(final long tm, final int x, final int y,
-                        final int width, final int height)
-    {
+    public void repaint(final long tm, final int x, final int y, final int width, final int height) {
         super.repaint(tm, x, y, width, height);
         if (magnifier != null && magnifier.intersects(x, y, width, height)) {
             // If the part to paint is inside the magnifying glass,
@@ -2210,8 +2224,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Paints this component. Subclass must override this method in order to draw the
-     * {@code ZoomPane} content. For most implementations, the first line in this method will be
-     * <code>graphics.transform({@linkplain #zoom})</code>.
+     * {@code ZoomPane} content. For most implementations, the first line in this method
+     * will be <code>graphics.transform({@linkplain #zoom})</code>.
      *
      * @param graphics The graphics where to paint this component.
      */
@@ -2376,8 +2390,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Checks whether the rectangle {@code rect} is valid.  The rectangle
-     * is considered invalid if its length or width is less than or equal to 0,
-     * or if one of its coordinates is infinite or NaN.
+     * is considered invalid if its length or width is less than or equals
+     * to 0, or if one of its ordinates is infinite or NaN.
      */
     private static boolean isValid(final Rectangle2D rect) {
         if (rect == null) {

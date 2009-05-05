@@ -36,15 +36,45 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 /**
  * Applies an arbitrary {@link AffineTransform} on a {@link Shape}. A {@code TransformedShape}
  * instance is a <em>view</em> over a shape, i.e. the shape coordinates are transformed on the
- * fly, never copied.
+ * fly, never copied. When {@linkplain #getPathIterator(AffineTransform) iterating over the
+ * shape boundary}, the only performance cost is a {@linkplain #concatenate(AffineTransform)
+ * matrix multiplication} applied before the iterator is created - the cost of the iteration
+ * itself usually stay unchanged.
  * <p>
- * {@code TransformedShape}s are mutable: the same instance can be recycled for different affine
- * transforms and different shapes. This class extends {@link AffineTransform} as a convenience,
- * to allow direct invocation of any {@code AffineTransform} methods, which take immediate effect.
+ * The shape to be transformed is specified by {@link #setOriginalShape(Shape)}. The transform
+ * to apply is specified by the inherited {@code AffineTransform}, which can be modified at any
+ * time using all its usual methods. Every changes to the original shape or to the inherited
+ * transform take immediate effect since this class is only a view.
  *
  * {@note This class is final because extending directly <code>AffineTransform</code> is not a
- *        good example of object-oriented programming - it is just a little convenience utility
- *        class that shoud not be replicated.}
+ *        good example of object-oriented programming, since a transformed shape is not a special
+ *        kind of affine transform. We did that as a convenience for frequent modifications of the
+ *        transform by easy direct access to the <code>AffineTransform</code> methods, but this is
+ *        not an example that shoud be replicated.}
+ *
+ * <b>Example:</b> The {@link Arrow2D} class is inconditionnaly orientated toward 0° arithmetic.
+ * In order to draw a field of arrows in arbitrary directions, the code below can be used:
+ *
+ * {@preformat java
+ *     protected void paint(Graphics2D graphics) {
+ *         Arrow2D arrow = new Arrow2D(...);
+ *         TransformedShape orientatedArrow = new TransformedShape(arrow);
+ *         for (int i=0; i<numArrows; i++) {
+ *             double scale = ...
+ *             double orientation = Math.toRadians(...);
+ *             orientatedArrow.setToScale(scale, scale);
+ *             orientatedArrow.rotate(orientation);
+ *             graphics.fill(orientatedArrow);
+ *         }
+ *     }
+ * }
+ *
+ * An alternative to this {@code TransformedShape} class would be to change directly the
+ * {@link java.awt.Graphics2D} transform. The main difference between those alternatives
+ * is that when using {@code TransformedShape}, the transform does not apply to the line
+ * thickness or paint texture. The preferred alternative depends on the desired rendering
+ * effect, for example if line thickness needs to be specified in pixel units or in
+ * "<cite>real world</cite>" units.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.0
@@ -132,7 +162,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
     }
 
     /**
-     * Sets the shape for which this {@code TransformedShape} will be a views.
+     * Sets the shape for which this {@code TransformedShape} will be a view.
      *
      * @param shape The shape to wrap in this {@code TransformedShape} instance.
      */
@@ -172,6 +202,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
 
     /**
      * Tests if the specified coordinate is inside the boundary of this shape.
+     * This method might conservatively return {@code false} if the transform is not invertible.
      *
      * @param  x The <var>x</var> ordinate of the point to be tested.
      * @param  y The <var>y</var> ordinate of the point to be tested.
@@ -186,6 +217,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
 
     /**
      * Tests if a specified {@link Point2D} is inside the boundary of this shape.
+     * This method might conservatively return {@code false} if the transform is not invertible.
      *
      * @param  p The point to be tested.
      * @return {@code true} if this shape contains the given point.
@@ -202,6 +234,8 @@ public final class TransformedShape extends AffineTransform implements Shape {
 
     /**
      * Tests if the interior of this shape entirely contains the specified rectangular area.
+     * This method might conservatively return {@code false} if the transform is not invertible
+     * or if the calculation of {@code originalShape.contains(...)} is too expensive.
      *
      * @param  x The minimal <var>x</var> ordinate of the rectangle to be tested.
      * @param  y The minimal <var>y</var> ordinate of the rectangle to be tested.
@@ -220,7 +254,9 @@ public final class TransformedShape extends AffineTransform implements Shape {
 
     /**
      * Tests if the interior of this shape entirely contains the specified rectangle.
-     * This method might conservatively return {@code false}.
+     * This method might conservatively return {@code false} if the transform is not
+     * invertible or if the calculation of {@code originalShape.contains(...)} is too
+     * expensive.
      *
      * @param  r The rectangle to be tested.
      * @return {@code true} if this shape contains the given rectangle.
@@ -231,12 +267,14 @@ public final class TransformedShape extends AffineTransform implements Shape {
             return shape.contains(XAffineTransform.inverseTransform(this, r, rectangle));
         } catch (NoninvertibleTransformException exception) {
             Logging.recoverableException(TransformedShape.class, "contains", exception);
-            return false;
+            return false; // Consistent with the Shape interface contract.
         }
     }
 
     /**
      * Tests if the interior of this shape intersects the interior of a specified rectangular area.
+     * This method might conservatively return {@code true} if the transform is not invertible or
+     * if the calculation of {@code originalShape.intersects(...)} is too expensive.
      *
      * @param  x The minimal <var>x</var> ordinate of the rectangle to be tested.
      * @param  y The minimal <var>y</var> ordinate of the rectangle to be tested.
@@ -255,7 +293,8 @@ public final class TransformedShape extends AffineTransform implements Shape {
 
     /**
      * Tests if the interior of this shape intersects the interior of a specified rectangle.
-     * This method might conservatively return {@code true}.
+     * This method might conservatively return {@code true} if the transform is not invertible
+     * or if the calculation of {@code originalShape.intersects(...)} is too expensive.
      *
      * @param  r The rectangle to be tested.
      * @return {@code true} if this shape intersects the given rectangle.
@@ -266,7 +305,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
             return shape.intersects(XAffineTransform.inverseTransform(this, r, rectangle));
         } catch (NoninvertibleTransformException exception) {
             Logging.recoverableException(TransformedShape.class, "intersects", exception);
-            return false;
+            return true; // Consistent with the Shape interface contract.
         }
     }
 

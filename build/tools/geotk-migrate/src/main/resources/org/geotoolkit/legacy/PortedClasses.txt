@@ -102,6 +102,7 @@ gui.swing.LoggingTableModel
 gui.swing.MouseReshapeTracker
 gui.swing.MouseSelectionTracker
 gui.swing.ParameterEditor
+gui.swing.Plot2D
 gui.swing.ProgressWindow
 gui.swing.ZoomPane
 gui.swing.event.ZoomChangeEvent

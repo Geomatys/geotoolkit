@@ -132,4 +132,24 @@ public final class XAffineTransformTest {
         assertEquals(-f, XAffineTransform.getFlip    (tr));
         assertEquals(-f, getFlipFromType             (tr));
     }
+
+    /**
+     * Tests the {@link XAffineTransform#round} method.
+     */
+    @Test
+    public void testRound() {
+        final AffineTransform test = new AffineTransform(4, 0, 0, 4, -400, -1186);
+        final AffineTransform copy = new AffineTransform(test);
+        XAffineTransform.round(test, 1E-6);
+        assertEquals("Translation terms were already integers, so the " +
+                "transform should not have been modified.", copy, test);
+
+        test.translate(1E-8, 2E-8);
+        XAffineTransform.round(test, 1E-9);
+        assertFalse("Treshold was smaller than the translation, so the " +
+                "transform should not have been modified.", copy.equals(test));
+
+        XAffineTransform.round(test, 1E-6);
+        assertEquals("Translation terms should have been rounded.", copy, test);
+    }
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display.shape;
 
+import java.io.Serializable;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -27,7 +28,8 @@ import static java.lang.Double.doubleToLongBits;
 /**
  * Arrow oriented toward positives <var>x</var> values (0° arithmetic). This shape doesn't
  * have direct support for rotation. To rotate the arrow toward an other direction, use
- * {@link AffineTransform}.
+ * {@link AffineTransform}. See also the example documented in the {@link TransformedShape}
+ * class.
  * <p>
  * The following picture shows the default {@code Arrow2D} appearance. The relative size
  * of the tail can be modified by {@link #setTailProportion}.
@@ -40,7 +42,12 @@ import static java.lang.Double.doubleToLongBits;
  * @since 1.0
  * @module
  */
-public class Arrow2D extends RectangularShape {
+public class Arrow2D extends RectangularShape implements Serializable {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = 5093131349056679731L;
+
     /**
      * Minimal <var>x</var> et <var>y</var> coordinate values.
      */
@@ -98,7 +105,7 @@ public class Arrow2D extends RectangularShape {
 
     /**
      * Sets the tail width and height, relative to the arrow width and height.
-     * All given number must be in the [0 .. 1] range.
+     * All given number must be in the [0 &hellip; 1] range.
      *
      * @param sx  The position where the arrow's head starts, relative to the total
      *            arrow's {@linkplain #getWidth width}.

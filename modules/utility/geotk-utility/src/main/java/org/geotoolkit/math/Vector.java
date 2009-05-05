@@ -32,10 +32,22 @@ import org.geotoolkit.util.collection.CheckedCollection;
  * used together, for example in a time series where:
  * <p>
  * <ul>
- *   <li><var>x[i]</var> is a linear function of <var>i</var>
+ *   <li><var>x</var>[<var>i</var>] is a linear function of <var>i</var>
  *       (e.g. the sampling time of measurements performed at a fixed time interval)</li>
- *   <li><var>y[i]</var> is the measurement of a phenomenon at time <var>x[i]</var>.</li>
+ *   <li><var>y</var>[<var>i</var>] is the measurement of a phenomenon at time
+ *       <var>x</var>[<var>i</var>].</li>
  * </ul>
+ * <p>
+ * Instances of {@code Vector} are created by calls to the {@link #create(Object)} static method.
+ * The supplied array is not cloned - changes to the primitive array are reflected in the vector,
+ * and vis-versa.
+ * <p>
+ * Vectors can be created over a subrange of an array, provides a view of the elements in reverse
+ * order, <cite>etc.</cite>. The example below creates a view over a subrange:
+ *
+ * {@preformat java
+ *     Vector v = Vector.create(array).subList(lower, upper)
+ * }
  *
  * @author Martin Desruisseaux (MPO, Geomatys)
  * @version 3.0
@@ -78,7 +90,19 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     }
 
     /**
-     * Creates a new vector.
+     * Creates a sequence for the given values.
+     *
+     * @param  first The first value, inclusive.
+     * @param  step  The difference between the values at two adjacent indexes.
+     * @param  last  The last value, inclusive.
+     * @return The given sequence as a vector.
+     */
+    public static Vector createSequence(final double first, final double step, final double last) {
+        return new SequenceVector(first, step, last);
+    }
+
+    /**
+     * For subclasses constructor.
      */
     protected Vector() {
     }
@@ -103,7 +127,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns {@code true} if the value at the given index is {@code NaN}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return {@code true} if the value at the given index is {@code NaN}.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      */
@@ -112,7 +136,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code double}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws ClassCastException if the component type can not be converted to a
@@ -123,7 +147,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code float}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws ClassCastException if the component type can not be converted to a
@@ -134,7 +158,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code long}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws ClassCastException if the component type can not be converted to a
@@ -145,7 +169,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as an {@code int}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws ClassCastException if the component type can not be converted to an
@@ -156,7 +180,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code short}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws ClassCastException if the component type can not be converted to a
@@ -167,7 +191,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code byte}.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws ClassCastException if the component type can not be converted to a
@@ -178,7 +202,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the number at the given index, or {@code null} if none.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      */
@@ -188,7 +212,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Sets the number at the given index.
      *
-     * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
+     * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @param  value The value to set at the given index.
      * @return The value previously stored at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
@@ -267,18 +291,15 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * The returned view will contain the values from index {@code lower} inclusive to
      * {@code upper} exclusive.
      * <p>
-     * This method does not copy the values. Consequently any modification to the
-     * values of this vector will be reflected in the returned view and vis-versa.
-     *
-     * {@note This method delegates its work to <code>subList(lower, 1, upper)</code>.
-     *        It is declared final in order to force every subclasses to override the
-     *        later method instead than this one.}
+     * This method delegates its work to <code>{@linkplain #subList(int,int,int) subList}(lower,
+     * 1, upper)</code>. It is declared final in order to force every subclasses to override the
+     * later method instead than this one.
      *
      * @param  lower Index of the first value to be included in the returned view.
      * @param  upper Index after the last value to be included in the returned view.
      * @return A view of this vector containing values in the given index range.
      * @throws IndexOutOfBoundsException If an index is outside the
-     *         [0&hellip;{@linkplain #size size}-1] range.
+     *         [0 &hellip; {@linkplain #size size}-1] range.
      */
     @Override
     public final Vector subList(final int lower, final int upper) throws IndexOutOfBoundsException {
@@ -288,8 +309,9 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns a view which contain the values of this vector in the given index range.
      * The returned view will contain the values from index {@code first} inclusive to
-     * {@code last} exclusive, with index incremented or decremented by the given step
-     * value.
+     * {@code last} exclusive, with index incremented by the given step value, which can
+     * be negative. More specifically the index <var>i</var> in the returned vector will
+     * maps the element at index {@code i*step + first} in this vector.
      * <p>
      * This method does not copy the values. Consequently any modification to the
      * values of this vector will be reflected in the returned view and vis-versa.
@@ -302,7 +324,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * @return A view of this vector containing values in the given index range.
      * @throws ArithmeticException if {@code step} if zero.
      * @throws IndexOutOfBoundsException If an index is outside the
-     *         [0&hellip;{@linkplain #size size}-1] range.
+     *         [0 &hellip; {@linkplain #size size}-1] range.
      */
     public Vector subList(final int first, final int step, final int last)
             throws ArithmeticException, IndexOutOfBoundsException
@@ -314,7 +336,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     }
 
     /**
-     * Implementation of {@link #subList(int,int,int)} to be overriden by subclasses.
+     * Implementation of {@link #subList(int[])} to be overriden by subclasses.
      */
     Vector createSub(final int[] index) {
         return new SubVector(index);

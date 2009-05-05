@@ -31,6 +31,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.IllegalPathStateException;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Locale;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -593,10 +594,8 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
             if (hints == null) {
                 hints = new RenderingHints(key, value);
                 clearCache();
-            } else {
-                if (!value.equals(hints.put(key, value))) {
-                    clearCache();
-                }
+            } else if (!value.equals(hints.put(key, value))) {
+                clearCache();
             }
         } else if (hints != null) {
             if (hints.remove(key) != null) {
@@ -774,11 +773,11 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         private org.geotoolkit.display.axis.TickIterator iterator;
 
         /**
-         * A copy of {@link Axis2D#hints} rendering hints. A copy is required because some hints
-         * (especially {@link Graduation#VISUAL_AXIS_LENGTH} and
-         * {@link Graduation#VISUAL_TICK_SPACING}) are going to be overwriten. This set may also
-         * contains additional hints provided by {@link Graphics2D} in the {@link Axis2D#paint}
-         * method. This object will never be {@code null}.
+         * A copy of {@link Axis2D#hints}. A copy is required because some hints (especially
+         * {@link Graduation#VISUAL_AXIS_LENGTH} and {@link Graduation#VISUAL_TICK_SPACING})
+         * are going to be overwriten. This map may also contains additional hints provided
+         * by {@link Graphics2D} in the {@link Axis2D#paint} method. This object will never
+         * be {@code null}.
          */
         @SuppressWarnings("hiding")
         private final RenderingHints hints;
@@ -834,21 +833,27 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         private transient int modCount;
 
         /**
-         * Construct an iterator.
+         * Constructs an iterator.
          *
          * @param fontContext Information needed to correctly measure text, or
          *        {@code null} if unknow. This object is usually given by
          *        {@link Graphics2D#getFontRenderContext}.
          */
+        @SuppressWarnings("unchecked")
         public TickIterator(final FontRenderContext fontContext) {
-            this.hints = new RenderingHints(null);
-            this.hints.putAll(Axis2D.this.hints);
+            /*
+             * The unsafe cast below is a workaround for the mismatch between the generic types
+             * in the RenderingHints class declaration and in the constructor signature.  It is
+             * safe since our API allows only Key objects to be put in the map.  We can not use
+             * directly putAll(Axis2D.this.hints) instead because the Axis2D hints may be null.
+             */
+            this.hints = new RenderingHints((Map) Axis2D.this.hints);
             this.fontContext = fontContext;
             refresh();
         }
 
         /**
-         * Copy a rendering hints from the specified {@link Graphics2D}, providing that
+         * Copies a rendering hints from the specified {@link Graphics2D}, providing that
          * it is not already defined.
          */
         final void setRenderingHint(final Graphics2D graphics, final RenderingHints.Key key) {

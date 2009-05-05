@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.util.Locale;
+import java.util.Random;
 
 import javax.media.jai.operator.AddConstDescriptor;
 import javax.media.jai.operator.ConstantDescriptor;
@@ -162,31 +163,31 @@ public class MiscellaneousWidgetTest extends WidgetTestCase {
         show();
     }
 
-//    /**
-//     * Tests the {@link Plot2D}.
-//     */
-//    @Test
-//    public void testPlot2D() {
-//        final Random random = new Random();
-//        Plot2D test = new Plot2D(true, false);
-//        test.newAxis(0, "Some x values");
-//        test.newAxis(1, "Some y values");
-//        for (int j=0; j<2; j++) {
-//            final float[] x = new float[800];
-//            final float[] y = new float[800];
-//            for (int i=0; i<x.length; i++) {
-//                x[i] = i/10f;
-//                y[i] = (float)random.nextGaussian();
-//                if (i!=0) {
-//                    y[i] += y[i-1];
-//                }
-//            }
-//            test.addSeries("Random values", x, y);
-//        }
-//        test.setPaintingWhileAdjusting(true);
-//        component = test.createScrollPane();
-//        show("Plot2D");
-//    }
+    /**
+     * Tests the {@link Plot2D}.
+     */
+    @Test
+    public void testPlot2D() {
+        final Random random = new Random();
+        Plot2D test = new Plot2D(true, false);
+        test.addXAxis("Some x values");
+        test.addYAxis("Some y values");
+        for (int j=0; j<2; j++) {
+            final int length = 800;
+            final float[] x = new float[length];
+            final float[] y = new float[length];
+            for (int i=0; i<length; i++) {
+                x[i] = i / 10f;
+                y[i] = (float) random.nextGaussian();
+                if (i != 0) {
+                    y[i] += y[i-1];
+                }
+            }
+            test.addSeries("Random values", null, x, y);
+        }
+        component = test.createScrollPane();
+        show("Plot2D");
+    }
 
     /**
      * Tests the {@link ZoomPane}.
