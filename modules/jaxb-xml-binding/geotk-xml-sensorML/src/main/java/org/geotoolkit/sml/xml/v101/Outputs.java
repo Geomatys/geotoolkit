@@ -100,6 +100,10 @@ public class Outputs implements AbstractOutputs {
 
     }
 
+    public Outputs(List<IoComponentPropertyType> outputList) {
+        this.outputList = new OutputList(outputList);
+    }
+
     public Outputs(OutputList outputList) {
         this.outputList = outputList;
     }

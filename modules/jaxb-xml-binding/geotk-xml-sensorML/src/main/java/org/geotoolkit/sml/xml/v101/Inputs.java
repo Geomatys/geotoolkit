@@ -99,6 +99,10 @@ public class Inputs implements AbstractInputs {
 
     }
 
+    public Inputs(List<IoComponentPropertyType> inputList) {
+        this.inputList = new InputList(inputList);
+    }
+
     public Inputs(InputList inputList) {
         this.inputList = inputList;
     }
