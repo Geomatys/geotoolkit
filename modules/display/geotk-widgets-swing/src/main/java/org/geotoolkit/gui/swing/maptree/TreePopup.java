@@ -67,6 +67,7 @@ final class TreePopup extends JPopupMenu {
             }
 
             for (TreePopupItem control : tree.controls()) {
+                control.setTree(tree);
                 if (control.isValid(selection)) {
                     add(control.getComponent(selection));
                 }

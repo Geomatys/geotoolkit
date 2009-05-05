@@ -21,6 +21,8 @@ import java.awt.Component;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.tree.TreePath;
+
+import org.geotoolkit.gui.swing.maptree.JContextTree;
 import org.geotoolkit.gui.swing.maptree.TreePopupItem;
 
 /**
@@ -29,7 +31,9 @@ import org.geotoolkit.gui.swing.maptree.TreePopupItem;
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class SeparatorItem extends JSeparator implements TreePopupItem{
-           
+
+    private JContextTree tree = null;
+
     /** 
      * Creates a new instance of separator
      */
@@ -46,6 +50,16 @@ public class SeparatorItem extends JSeparator implements TreePopupItem{
     @Override
     public Component getComponent(TreePath[] selection) {
         return this;
+    }
+
+    @Override
+    public void setTree(JContextTree tree) {
+        this.tree = tree;
+    }
+
+    @Override
+    public JContextTree getTree() {
+        return tree;
     }
     
 }
