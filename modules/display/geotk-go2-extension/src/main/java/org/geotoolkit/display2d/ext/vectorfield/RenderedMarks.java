@@ -47,7 +47,7 @@ import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotools.geometry.jts.TransformedShape;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.util.XArrays;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -455,17 +455,18 @@ public abstract class RenderedMarks extends GraphicJ2D {
                      *            a transformed mark would take more memory for any kind of mark
                      *            with more than 3 points (plus the overhead for each new objects).
                      */
-                    transformedShape.shape = iterator.markShape();
-                    if (transformedShape.shape != null) {
+                    transformedShape.setOriginalShape(iterator.markShape());
+                    if (transformedShape.getOriginalShape() != null) {
                         final double amplitude = iterator.amplitude();
                         if (Double.isNaN(amplitude) || amplitude==0) {
-                            transformedShape.shape = null;
+                            transformedShape.setOriginalShape(null);
                         } else {
-                            transformedShape.setTransform(matrix);
-                            transformedShape.scale(amplitude/typicalScale);
+                            transformedShape.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                            double sc = amplitude/typicalScale;
+                            transformedShape.scale(sc, sc);
                             transformedShape.rotate(iterator.direction());
                             if (!transformedShape.intersects(zoomableBounds)) {
-                                transformedShape.shape = null;
+                                transformedShape.setOriginalShape(null);
                             } else {
                                 final Rectangle bounds = transformedShape.getBounds();
                                 if (boundingBox == null) {
@@ -493,7 +494,7 @@ public abstract class RenderedMarks extends GraphicJ2D {
                                              markIcon.getWidth(), markIcon.getHeight());
                         iconBounds.x -= iconBounds.width /2;
                         iconBounds.y -= iconBounds.height/2;
-                        if (transformedShape.shape == null) {
+                        if (transformedShape.getOriginalShape() == null) {
                             if (iconBoundsPool == null) {
                                 iconBoundsPool = new HashMap();
                             }
@@ -502,8 +503,8 @@ public abstract class RenderedMarks extends GraphicJ2D {
                                 bounds = new Rectangle(iconBounds);
                                 iconBoundsPool.put(bounds, bounds);
                             }
-                            transformedShape.shape = bounds;
-                            transformedShape.setTransform(matrix);
+                            transformedShape.setOriginalShape(bounds);
+                            transformedShape.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                         }
                         iconBounds.x += (int)Math.round(matrix[4]);
                         iconBounds.y += (int)Math.round(matrix[5]);
@@ -551,7 +552,7 @@ public abstract class RenderedMarks extends GraphicJ2D {
                      *                but never create the 'glyphVectors' array). But once an array
                      *                is created, it must have the same capacity than every others.
                      */
-                    if (transformedShape.shape==null && markIcon==null
+                    if (transformedShape.getOriginalShape()==null && markIcon==null
                         && glyphs==null && geographicArea==null)
                     {
                         continue;
@@ -583,13 +584,13 @@ public abstract class RenderedMarks extends GraphicJ2D {
                         areaShapes[numShapes] = geographicArea;
                     }
                     // STEP 2,3  -  Mark shapes or icons bounding box
-                    if (transformedShape.shape != null) {
+                    if (transformedShape.getOriginalShape() != null) {
                         if (markShapes == null) {
                             markShapes     = new Shape[markIndex.length];
                             markTransforms = new float[markIndex.length*TRANSFORM_RECORD_LENGTH];
                         }
                         transformedShape.getMatrix(markTransforms, numShapes*TRANSFORM_RECORD_LENGTH);
-                        markShapes[numShapes] = transformedShape.shape;
+                        markShapes[numShapes] = transformedShape.getOriginalShape();
                     }
                     // STEP 4  - Gylph vectors
                     if (glyphs != null) {
@@ -656,8 +657,8 @@ public abstract class RenderedMarks extends GraphicJ2D {
                     geographicArea = areaShapes[i];
                 }
                 if (markShapes != null) {
-                    transformedShape.shape = markShapes[i];
-                    if (transformedShape.shape != null) {
+                    transformedShape.setOriginalShape(markShapes[i]);
+                    if (transformedShape.getOriginalShape() != null) {
                         transformedShape.setTransform(markTransforms, i*TRANSFORM_RECORD_LENGTH);
                         markShape = transformedShape;
                     }

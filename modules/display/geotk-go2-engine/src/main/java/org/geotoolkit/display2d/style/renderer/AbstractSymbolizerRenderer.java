@@ -28,7 +28,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
-import org.geotools.geometry.jts.TransformedShape;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
@@ -108,8 +108,8 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
 
         if(shape != null){
             final TransformedShape trs = new TransformedShape();
-            trs.shape = shape;
-            trs.scale(size);
+            trs.setOriginalShape(shape);
+            trs.scale(size, size);
             renderFill(trs, mark.getFill(), target);
             renderStroke(trs, mark.getStroke(), SI.METER, target);
         }

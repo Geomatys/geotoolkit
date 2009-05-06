@@ -62,6 +62,10 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-display</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-render</artifactId>
             <version>${geotoolkit.version}</version>

@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotoolkit</artifactId>
+    <artifactId>modules</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>modules</artifactId>
+  <artifactId>feature</artifactId>
   <packaging>pom</packaging>
-  <name>Modules</name>
+  <name>Feature</name>
 
   <description>
-    The modules that are components of the Geotoolkit pending library.
+    Projects group for pending filter and feature.
   </description>
 
 
@@ -65,64 +65,33 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>net.java.dev.jsr-275</groupId>
-      <artifactId>jsr-275</artifactId>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.project</groupId>
-      <artifactId>geotk-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-metadata</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
     </dependency>
   </dependencies>
 
 
   <!-- =========================================================== -->
-  <!--     Build Configuration                                     -->
-  <!--         copies all JARs in a single directory.              -->
-  <!-- =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-jar-collector</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>collect</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!--
-        Deploys the test JAR files in addition to the regular one.
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-
-  <!-- =========================================================== -->
-  <!--     Modules for the build in approximate dependency order   -->
+  <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>referencing</module>
-    <module>feature</module>
-    <module>jaxb-xml-binding</module>
-    <module>coverage</module>
-    <module>display</module>
+    <module>geotk-filter</module>
   </modules>
-
 
 </project>

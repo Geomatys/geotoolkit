@@ -37,7 +37,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
 
-import org.geotools.geometry.jts.TransformedShape;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
@@ -184,7 +184,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
                 CRSShape = new TransformedShape();
                 ((TransformedShape)CRSShape).setTransform(
                         context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
-                ((TransformedShape)CRSShape).shape = search.displayShape;
+                ((TransformedShape)CRSShape).setOriginalShape(search.displayShape);
             } catch (TransformException ex) {
                 ex.printStackTrace();
                 return false;
@@ -292,7 +292,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
 
         g.setClip(rectangle);
         final TransformedShape shape = new TransformedShape();
-        shape.shape = LINE;
+        shape.setOriginalShape(LINE);
         shape.setTransform(affine);
 
         renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);

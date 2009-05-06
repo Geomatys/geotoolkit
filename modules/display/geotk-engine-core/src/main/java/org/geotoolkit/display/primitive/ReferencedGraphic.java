@@ -159,7 +159,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      *         this method should keep the old CRS and leaves this graphic in a consistent state.
      */
     protected void setObjectiveCRS(final CoordinateReferenceSystem newCRS) throws TransformException {
-        CoordinateReferenceSystem oldCRS = this.envelope.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem oldCRS = this.envelope.getCoordinateReferenceSystem();
         if (newCRS == null) {
             throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "crs", newCRS));
         }
@@ -235,9 +235,6 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
             throws TransformException{
 
         try {
-
-//            return CRS.findMathTransform(sourceCRS, targetCRS, true);
-
             final Canvas owner = getCanvas();
             if (owner instanceof ReferencedCanvas) {
                 return ((ReferencedCanvas) owner).getMathTransform(sourceCRS, targetCRS,
@@ -279,19 +276,10 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      *         {@linkplain #getObjectiveCRS objective CRS}.
      */
     protected void setEnvelope(final Envelope newEnvelope) throws TransformException {
-        final GeneralEnvelope old;
-        synchronized (getTreeLock()) {
-            
-            CoordinateReferenceSystem sourceCRS = newEnvelope.getCoordinateReferenceSystem();
-            CoordinateReferenceSystem targetCRS = getCanvas().getObjectiveCRS();
-            if (targetCRS == null) {
-                targetCRS = sourceCRS;
-            }
-            
-            old = new GeneralEnvelope(envelope);
+        synchronized (getTreeLock()) {                        
+            final GeneralEnvelope old = new GeneralEnvelope(envelope);
             this.envelope.setEnvelope(new GeneralEnvelope(newEnvelope));
-            this.envelope.setCoordinateReferenceSystem(newEnvelope.getCoordinateReferenceSystem());
-            
+            setObjectiveCRS(getCanvas().getObjectiveCRS());
             propertyListeners.firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
         }
     }

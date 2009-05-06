@@ -21,7 +21,7 @@ import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 
-import org.geotools.geometry.jts.TransformedShape;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 
 import org.opengis.feature.Feature;
@@ -171,7 +171,7 @@ public class CachedMark extends Cache<Mark>{
             g2.translate(center,center);
 
             TransformedShape trs = new TransformedShape();
-            trs.shape = candidateWKN;
+            trs.setOriginalShape(candidateWKN);
             trs.scale(j2dSize,j2dSize);
             Shape shp = trs; //trs.createTransformedShape(marker);
 
