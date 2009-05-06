@@ -20,16 +20,13 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
 import java.lang.ref.WeakReference;
-import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.geotoolkit.gui.swing.maptree.AbstractTreePopupItem;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.maptree.JContextTree;
-import org.geotoolkit.gui.swing.maptree.TreePopupItem;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 
@@ -38,20 +35,16 @@ import org.geotoolkit.map.MapLayer;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class DeleteItem extends JMenuItem implements TreePopupItem{
+public class DeleteItem extends AbstractTreePopupItem{
 
     private WeakReference<MapLayer> layerRef;
-
-    private final JContextTree tree;
     
     /**
      * delete item for jcontexttree
      */
-    public DeleteItem(final JContextTree tree){
+    public DeleteItem(){
         super( MessageBundle.getString("contexttreetable_delete") );
         init();
-        this.tree = tree;
-        
     }
 
     private void init(){
@@ -74,12 +67,7 @@ public class DeleteItem extends JMenuItem implements TreePopupItem{
     
     @Override
     public boolean isValid(TreePath[] selection) {
-        if (selection.length == 1 && selection[0].getLastPathComponent() instanceof DefaultMutableTreeNode) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-            return ( node.getUserObject() instanceof MapLayer ) ;
-        }
-        return false;
-
+        return uniqueAndType(selection,MapLayer.class);
     }
 
     @Override

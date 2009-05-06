@@ -23,7 +23,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import org.geotools.geometry.jts.TransformedShape;
+import org.geotoolkit.display.shape.TransformedShape;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -392,7 +392,7 @@ public class CachedGraphic extends Cache<Graphic>{
         }else{
             Rectangle rect = new Rectangle(subBuffer.getWidth(), subBuffer.getHeight());
             TransformedShape trs = new TransformedShape();
-            trs.shape = rect;
+            trs.setOriginalShape(rect);
             trs.rotate(candidateRotation);
             maxSizeX = (int) trs.getBounds2D().getWidth();
             maxSizeY = (int) trs.getBounds2D().getHeight();
@@ -534,7 +534,7 @@ public class CachedGraphic extends Cache<Graphic>{
         }else{
             Rectangle rect = new Rectangle(subBuffer.getWidth(), subBuffer.getHeight());
             TransformedShape trs = new TransformedShape();
-            trs.shape = rect;
+            trs.setOriginalShape(rect);
             trs.rotate(candidateRotation);
             maxSizeX = (int) trs.getBounds2D().getWidth();
             maxSizeY = (int) trs.getBounds2D().getHeight();

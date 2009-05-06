@@ -22,12 +22,10 @@ import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.TreePopupItem;
+import org.geotoolkit.gui.swing.maptree.AbstractTreePopupItem;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
@@ -42,7 +40,7 @@ import org.geotoolkit.map.MapLayer;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class LayerPropertyItem extends JMenuItem implements TreePopupItem {
+public class LayerPropertyItem extends AbstractTreePopupItem {
 
     private WeakReference<MapLayer> layerRef;
     private final List<PropertyPane> lst = new ArrayList<PropertyPane>();
@@ -88,11 +86,7 @@ public class LayerPropertyItem extends JMenuItem implements TreePopupItem {
 
     @Override
     public boolean isValid(TreePath[] selection) {
-        if (selection.length == 1 && selection[0].getLastPathComponent() instanceof DefaultMutableTreeNode) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-            return ( node.getUserObject() instanceof MapLayer ) ;
-        }
-        return false;
+        return uniqueAndType(selection,MapLayer.class);
     }
 
     @Override

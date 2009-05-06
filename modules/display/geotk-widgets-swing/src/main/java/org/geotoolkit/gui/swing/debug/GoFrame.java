@@ -121,7 +121,7 @@ public class GoFrame extends javax.swing.JFrame {
 
         tree.controls().add(new LayerFeatureItem());
         tree.controls().add(new SeparatorItem());
-        tree.controls().add(new DeleteItem(tree));
+        tree.controls().add(new DeleteItem());
         tree.controls().add(new SeparatorItem());
 
         LayerPropertyItem property = new LayerPropertyItem();

@@ -21,12 +21,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-
-import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.TreePopupItem;
+import org.geotoolkit.gui.swing.maptree.AbstractTreePopupItem;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.LayerFeaturePropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
@@ -39,7 +37,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class LayerFeatureItem extends JMenuItem implements TreePopupItem{
+public class LayerFeatureItem extends AbstractTreePopupItem{
     
     private WeakReference<FeatureMapLayer> layerRef;
     
@@ -71,12 +69,7 @@ public class LayerFeatureItem extends JMenuItem implements TreePopupItem{
     
     @Override
     public boolean isValid(TreePath[] selection) {
-        if (selection != null && selection.length == 1 && selection[0].getLastPathComponent() instanceof DefaultMutableTreeNode) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-            return ( node.getUserObject() instanceof FeatureMapLayer ) ;
-        }
-        return false;
-        
+        return uniqueAndType(selection,FeatureMapLayer.class);
     }
 
     @Override

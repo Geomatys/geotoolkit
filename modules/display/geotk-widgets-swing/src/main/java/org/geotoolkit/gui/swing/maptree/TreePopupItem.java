@@ -27,7 +27,12 @@ import javax.swing.tree.TreePath;
  * @author Johann Sorel (Puzzle-GIS)
  */
 public interface TreePopupItem {
-        
+
+
+    public void setTree(JContextTree tree);
+
+    public JContextTree getTree();
+
     /**
      * return true if the control should by shown
      * @param selection 

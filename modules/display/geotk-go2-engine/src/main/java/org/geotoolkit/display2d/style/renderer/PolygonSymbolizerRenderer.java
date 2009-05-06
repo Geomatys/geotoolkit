@@ -37,7 +37,7 @@ import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
-import org.geotools.geometry.jts.TransformedShape;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display.shape.XRectangle2D;
 
 import org.opengis.feature.Feature;
@@ -204,7 +204,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
                 CRSShape = new TransformedShape();
                 ((TransformedShape)CRSShape).setTransform((AffineTransform)
                         context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
-                ((TransformedShape)CRSShape).shape = mask;
+                ((TransformedShape)CRSShape).setOriginalShape(mask);
             }catch(FactoryException ex){
                 ex.printStackTrace();
                 return false;
@@ -354,7 +354,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
         g.setClip(rectangle);
         final TransformedShape shape = new TransformedShape();
-        shape.shape = POLYGON;
+        shape.setOriginalShape(POLYGON);
         shape.setTransform(affine);
 
         renderFill(shape, symbol.getSource().getFill(), g);

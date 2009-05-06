@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sml.xml;
 
+import java.util.List;
 import org.geotoolkit.swe.xml.Quantity;
 
 /**
@@ -62,6 +63,56 @@ public class SmlFactory {
             }
             return new org.geotoolkit.sml.xml.v101.IoComponentPropertyType(name,
                                                                 (org.geotoolkit.swe.xml.v101.QuantityType)quantity);
+        } else {
+            throw new IllegalArgumentException("Unexpected SWE version:" + version);
+        }
+    }
+
+    /**
+     * Build a Inputs in the factory version.
+     *
+     * @param name
+     * @param quantity
+     * @return
+     */
+    public AbstractInputs createInputs(List<? extends IoComponent> inputList) {
+
+        if ("1.0.0".equals(version)) {
+            if (inputList != null) {
+                throw new IllegalArgumentException("Unexpected SWE version for quantity object.");
+            }
+            return new org.geotoolkit.sml.xml.v100.Inputs((List<org.geotoolkit.sml.xml.v100.IoComponentPropertyType>)inputList);
+
+        } else if ("1.0.1".equals(version)) {
+            if (inputList != null) {
+                throw new IllegalArgumentException("Unexpected SWE version for quantity object.");
+            }
+            return new org.geotoolkit.sml.xml.v101.Inputs((List<org.geotoolkit.sml.xml.v101.IoComponentPropertyType>)inputList);
+        } else {
+            throw new IllegalArgumentException("Unexpected SWE version:" + version);
+        }
+    }
+
+    /**
+     * Build a Inputs in the factory version.
+     *
+     * @param name
+     * @param quantity
+     * @return
+     */
+    public AbstractOutputs createOutputs(List<? extends IoComponent> outputList) {
+
+        if ("1.0.0".equals(version)) {
+            if (outputList != null) {
+                throw new IllegalArgumentException("Unexpected SWE version for quantity object.");
+            }
+            return new org.geotoolkit.sml.xml.v100.Outputs((List<org.geotoolkit.sml.xml.v100.IoComponentPropertyType>)outputList);
+
+        } else if ("1.0.1".equals(version)) {
+            if (outputList != null) {
+                throw new IllegalArgumentException("Unexpected SWE version for quantity object.");
+            }
+            return new org.geotoolkit.sml.xml.v101.Outputs((List<org.geotoolkit.sml.xml.v101.IoComponentPropertyType>)outputList);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }

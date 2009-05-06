@@ -21,12 +21,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-
-import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.TreePopupItem;
+import org.geotoolkit.gui.swing.maptree.AbstractTreePopupItem;
 import org.geotoolkit.gui.swing.propertyedit.ContextCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.ContextGeneralPanel;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
@@ -39,7 +37,7 @@ import org.geotoolkit.map.MapContext;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class ContextPropertyItem extends JMenuItem implements TreePopupItem{
+public class ContextPropertyItem extends AbstractTreePopupItem{
     
     private WeakReference<MapContext> contextRef;
     
@@ -71,11 +69,7 @@ public class ContextPropertyItem extends JMenuItem implements TreePopupItem{
             
     @Override
     public boolean isValid(TreePath[] selection) {
-        if (selection.length == 1 && selection[0].getLastPathComponent() instanceof DefaultMutableTreeNode) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-            return ( node.getUserObject() instanceof MapContext ) ;
-        }
-        return false;
+        return uniqueAndType(selection,MapContext.class);
     }
 
     @Override
