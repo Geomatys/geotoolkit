@@ -32,7 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.AbstractListModel;
 
 import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -488,10 +487,11 @@ public class DisjointLists extends JPanel implements Dialog {
         final Model target = (Model) right.getModel();
         int[] indices = new int[Math.min(selected.size(), source.choices.size())];
         int indice=0, count=0;
-        for (final Iterator<Object> it=source.choices.iterator(); it.hasNext(); indice++) {
-            if (selected.contains(ListElement.unwrap(it.next()))) {
+        for (final Object choice : source.choices) {
+            if (selected.contains(ListElement.unwrap(choice))) {
                 indices[count++] = indice;
             }
+            indice++;
         }
         indices = XArrays.resize(indices, count);
         target.move(source, indices);

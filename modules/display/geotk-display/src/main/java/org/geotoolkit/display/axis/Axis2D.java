@@ -421,10 +421,11 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
     @Override
     public synchronized PathIterator getPathIterator(final AffineTransform transform, final double flatness) {
         if (isPainting) {
+            TickPathIterator iterator = this.iterator;
             if (iterator != null) {
                 iterator.rewind(transform);
             } else {
-                iterator = new TickPathIterator(transform);
+                this.iterator = iterator = new TickPathIterator(transform);
             }
             return iterator;
         }
@@ -446,12 +447,12 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
          * Initialise l'itérateur en appelant 'init' (contrairement à 'getPathIterator'
          * qui n'appelle que 'rewind') pour des résultats plus rapides et plus constants.
          */
+        TickPathIterator iterator = this.iterator;
         if (iterator != null) {
             iterator.init(null);
         } else {
-            iterator = new TickPathIterator(null);
+            this.iterator = iterator = new TickPathIterator(null);
         }
-        final TickPathIterator iterator = this.iterator;
         final boolean sameContext;
         final Shape clip;
         if (graphics != null) {
@@ -502,7 +503,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
             double maxWidth  = 0;
             double maxHeight = 0;
             iterator.rewind();
-            while (iterator.hasNext()) {
+            while (!iterator.isTickDone()) {
                 if (iterator.isMajorTick()) {
                     final GlyphVector glyphs = iterator.currentLabelGlyphs();
                     final Rectangle2D bounds = iterator.currentLabelBounds();
@@ -866,18 +867,15 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         }
 
         /**
-         * Tests if the iterator has more ticks.
+         * {@inheritDoc}
          */
         @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
+        public boolean isDone() {
+            return iterator.isDone();
         }
 
         /**
-         * Tests if the current tick is a major one.
-         *
-         * @return {@code true} if current tick is a major tick,
-         *         or {@code false} if it is a minor tick.
+         * {@inheritDoc}
          */
         @Override
         public boolean isMajorTick() {
@@ -885,10 +883,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         }
 
         /**
-         * Returns the position where to draw the current tick.  The position is scaled
-         * from the graduation's minimum to maximum.    This is usually the same number
-         * than {@link #currentValue}. The mean exception is for logarithmic graduation,
-         * in which the tick position is not proportional to the tick value.
+         * {@inheritDoc}
          */
         @Override
         public double currentPosition() {
@@ -896,7 +891,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         }
 
         /**
-         * Returns the value for current tick. The current tick may be major or minor.
+         * {@inheritDoc}
          */
         @Override
         public double currentValue() {
@@ -941,7 +936,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
          */
         public Line2D currentTick(final Line2D dest) {
             final boolean isMajorTick = isMajorTick();
-            final double     position = currentPosition()-minimum;
+            final double position = currentPosition() - minimum;
             final double x  = position*scaleX + getX1();
             final double y  = position*scaleY + getY1();
             final double s1 = isMajorTick ? tickStart : subTickStart;
@@ -959,10 +954,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         }
 
         /**
-         * Returns the label for current tick. This method is usually invoked
-         * only for major ticks, but may be invoked for minor ticks as well.
-         * This method returns {@code null} if it can't produces a label
-         * for current tick.
+         * {@inheritDoc}
          */
         @Override
         public String currentLabel() {
@@ -1264,6 +1256,11 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
      * Itérateur balayant l'axe et ses barres de graduations pour leur traçage. Cet itérateur ne
      * balaye pas les étiquettes de graduations. Puisque cet itérateur ne retourne que des droites
      * et jamais de courbes, il ne prend pas d'argument {@code flatness}.
+     * <p>
+     * <strong>WARNING:</strong> There is a clash in the semantic of {@link #isDone} between the
+     * {@link PathIterator} contract and the {@link TickIterator} contract. Since this object is
+     * used only for iterating over the shape outline, not over tick, it should be of no concern
+     * to the user.
      *
      * @author Martin Desruisseaux (MPO, IRD)
      * @version 3.0
@@ -1373,16 +1370,27 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
          * Return the winding rule for determining the insideness of the path.
          */
         @Override
-        public int getWindingRule() {
+        public final int getWindingRule() {
             return WIND_NON_ZERO;
         }
 
         /**
-         * Tests if the iteration is complete.
+         * Returns {@code true} if the underlying tick iterator is done.
+         * This method is defined as a workaround for the clash between
+         * {@link PathIterator#isDone} and {@link TickIterator#isDone}.
+         */
+        final boolean isTickDone() {
+            return super.isDone();
+        }
+
+        /**
+         * Tests if the iteration is complete. This is the {@link PathIterator#isDone()}
+         * method which is defined here. In order to query {@link TickIterator#isDone()},
+         * invoke {@link #isTickDone()} instead.
          */
         @Override
         public boolean isDone() {
-            return (nextType == TICK_LINETO) && !hasNext();
+            return (nextType == TICK_LINETO) && super.isDone();
         }
 
         /**

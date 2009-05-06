@@ -24,7 +24,9 @@ import java.awt.Stroke;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
+import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -60,9 +62,23 @@ import static java.lang.Math.hypot;
 /**
  * Displays two axes and an arbitrary amount of series with zoom capability.
  * Axes may have arbitrary orientation (they don't need to be perpendicular).
+ * It is possible for example to create a plot with a vertical <var>x</var>
+ * axis increasing downward, like the ones used in oceanography for ploting
+ * the data of <cite>Conductivity, Temperature, Depth</cite> (CTD) Sensors.
+ * Axes can also be oblique for simulating 3D effects.
  * <p>
  * Axes color and font can bet set with call to {@link #setForeground} and {@link #setFont}
  * methods respectively. A scroll pane can be created with {@link #createScrollPane}.
+ * The example below creates a plot with zoom capability restricted to the <var>x</var> axis:
+ *
+ * {@preformat java
+ *     float[] x = ...:
+ *     float[] y = ...:
+ *     Plot2D plot = new Plot2D(true, false);
+ *     plot.addXAxis("Some x values");
+ *     plot.addYAxis("Some y values");
+ *     plot.addSeries("Random values", Color.BLUE, x, y);
+ * }
  *
  * <p>&nbsp;</p>
  * <p align="center"><img src="doc-files/Plot2D.png"></p>
@@ -177,18 +193,17 @@ public class Plot2D extends ZoomPane {
     private Font titleFont = new Font("SansSerif", Font.BOLD, 16);
 
     /**
-     * The default stroke for painting axes. By default we use the thickness line that
-     * Java2D can display. This is often identical to a line of 1 pixel tick, except
-     * if the user zoom in a graphic portion using the magnifier glass.
+     * The default cycle of colors. They are used only if the user added a series
+     * without specifying explicitly the color to use for that series.
      */
-    private final Stroke stroke = new BasicStroke(0);
+    private static final Color[] DEFAULT_COLORS = new Color[] {
+        Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.CYAN, Color.MAGENTA
+    };
 
     /**
-     * The cycle of colors.
+     * The color to use for drawing grid lines, or {@code null} if the grid should not be drawn.
      */
-    private final Color[] colors = new Color[] {
-        Color.BLUE, Color.RED, Color.ORANGE
-    };
+    private Color gridColor = Color.LIGHT_GRAY;
 
     /**
      * Listener class for various events.
@@ -204,7 +219,7 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Constructs an initially empty {@code Plot2D} with
+     * Crestes an initially empty {@code Plot2D} with
      * zoom capabilities on horizontal and vertical axis.
      */
     public Plot2D() {
@@ -212,7 +227,7 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Constructs an initially empty {@code Plot2D} with
+     * Creates an initially empty {@code Plot2D} with
      * zoom capabilities on the specified axis.
      *
      * @param zoomX {@code true} for allowing zooming on the <var>x</var> axis.
@@ -285,8 +300,9 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Adds a new serie to the plot. This convenience method wraps the given arrays into
-     * {@link Vector} objects and delegates to {@linkplain #addSeries(String, Paint, Vector, Vector)}.
+     * Adds a new serie to the plot. This convenience method wraps the given arrays into {@link Vector}
+     * objects and delegates to {@linkplain #addSeries(String, Paint, Vector, Vector, Vector)} with
+     * a null thickness.
      *
      * @param  name The series name, or {@code null} if none.
      * @param  color The color to use for plotting the series, or {@code null} for a default color.
@@ -298,12 +314,13 @@ public class Plot2D extends ZoomPane {
     public Series addSeries(final String name, final Paint color, final float[] x, final float[] y)
             throws MismatchedSizeException
     {
-        return addSeries(name, color, Vector.create(x), Vector.create(y));
+        return addSeries(name, color, Vector.create(x), Vector.create(y), null);
     }
 
     /**
-     * Adds a new serie to the plot. This convenience method wraps the given arrays into
-     * {@link Vector} objects and delegates to {@link #addSeries(String, Paint, Vector, Vector)}.
+     * Adds a new serie to the plot. This convenience method wraps the given arrays into {@link Vector}
+     * objects and delegates to {@link #addSeries(String, Paint, Vector, Vector, Vector)} with a
+     * null thickness.
      *
      * @param  name The series name, or {@code null} if none.
      * @param  color The color to use for plotting the series, or {@code null} for a default color.
@@ -315,7 +332,7 @@ public class Plot2D extends ZoomPane {
     public Series addSeries(final String name, final Paint color, final double[] x, final double[] y)
             throws MismatchedSizeException
     {
-        return addSeries(name, color, Vector.create(x), Vector.create(y));
+        return addSeries(name, color, Vector.create(x), Vector.create(y), null);
     }
 
     /**
@@ -326,16 +343,18 @@ public class Plot2D extends ZoomPane {
      * @param  color The color to use for plotting the series, or {@code null} for a default color.
      * @param  x The vector of <var>x</var> values.
      * @param  y The vector of <var>y</var> values.
+     * @param  thickness The thickness of the line to draw in units of <var>y</var> axis,
+     *         or {@code null} for drawing a simple line.
      * @return The series added.
      * @throws MismatchedSizeException if the arrays don't have the same length.
      */
-    public Series addSeries(final String name, Paint color, final Vector x, final Vector y)
-            throws MismatchedSizeException
+    public Series addSeries(final String name, Paint color, final Vector x, final Vector y,
+            final Vector thickness) throws MismatchedSizeException
     {
         if (color == null) {
-            color = colors[series.size() % colors.length];
+            color = DEFAULT_COLORS[series.size() % DEFAULT_COLORS.length];
         }
-        return addSeries(new DefaultSeries(name, color, x, y));
+        return addSeries(new DefaultSeries(name, color, x, y, thickness));
     }
 
     /**
@@ -397,6 +416,26 @@ public class Plot2D extends ZoomPane {
      */
     public Set<Series> getSeries() {
         return unmodifiableSeries;
+    }
+
+    /**
+     * Returns the color to use for drawing grid lines, or {@code null} if the grid should not
+     * be drawn.
+     *
+     * @return The current grid color, or {@code null} if none.
+     */
+    public Color getGridColor() {
+        return gridColor;
+    }
+
+    /**
+     * Sets the color to use for drawing grid lines, or {@code null} if the grid should not
+     * be drawn.
+     *
+     * @param color The new grid color to use, or {@code null} if none.
+     */
+    public void setGridColor(final Color color) {
+        gridColor = color;
     }
 
     /**
@@ -663,17 +702,57 @@ public class Plot2D extends ZoomPane {
      */
     @Override
     protected void paintComponent(final Graphics2D graphics) {
+        if (xAxes.isEmpty() || yAxes.isEmpty()) {
+            return;
+        }
         final Rectangle bounds    = getZoomableBounds(null);
         final Stroke    oldStroke = graphics.getStroke();
         final Paint     oldPaint  = graphics.getPaint();
         final Shape     oldClip   = graphics.getClip();
         final Font      oldFont   = graphics.getFont();
+        final Object    oldHint   = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        /*
+         * Draws the grid lines before to paint the series. We use the first (x,y)
+         * axes since they are the closest ones to the center of the graph area.
+         */
+        final Axis2D xAxis = xAxes.get(0);
+        final Axis2D yAxis = yAxes.get(0);
+        final double xx1 = xAxis.getX1();
+        final double xy1 = xAxis.getY1();
+        final double xx2 = xAxis.getX2();
+        final double xy2 = xAxis.getY2();
+        final double yx1 = yAxis.getX1();
+        final double yy1 = yAxis.getY1();
+        final double yx2 = yAxis.getX2();
+        final double yy2 = yAxis.getY2();
+        final double xxD = (yx2 - yx1);
+        final double xyD = (yy2 - yy1);
+        final double yxD = (xx2 - xx1);
+        final double yyD = (xy2 - xy1);
+        final Line2D line = new Line2D.Double();
+        if (gridColor != null) {
+            graphics.setPaint(gridColor);
+            final Point2D.Double point = new Point2D.Double();
+            Axis2D.TickIterator tk = xAxis.new TickIterator(null);
+            for (tk.nextMajor(); !tk.isDone(); tk.nextMajor()) {
+                tk.currentPosition(point);
+                line.setLine(point.x, point.y, point.x + xxD, point.y + xyD);
+                graphics.draw(line);
+            }
+            tk = yAxis.new TickIterator(null);
+            for (tk.nextMajor(); !tk.isDone(); tk.nextMajor()) {
+                tk.currentPosition(point);
+                line.setLine(point.x, point.y, point.x + yxD, point.y + yyD);
+                graphics.draw(line);
+            }
+        }
         /*
          * Paints series first.
          */
         int axisCount = 0;
         graphics.clip(bounds);
-        graphics.setStroke(stroke);
+        graphics.setStroke(new BasicStroke((float) (1/getGraphicsScale())));
         final TransformedShape transformed = new TransformedShape();
         for (final Map.Entry<Series,Entry> e : series.entrySet()) {
             final Series series = e.getKey();
@@ -683,12 +762,18 @@ public class Plot2D extends ZoomPane {
             transformed.setTransform(transform);
             transformed.setOriginalShape(path);
             graphics.setPaint(series.getPaint());
-            graphics.draw(transformed);
+            if (series instanceof DefaultSeries && ((DefaultSeries) series).fill) {
+                graphics.fill(transformed);
+            } else {
+                graphics.draw(transformed);
+            }
             axisCount++;
         }
         /*
-         * Paints axes on top of series.
+         * Paints axes on top of series, then paint the remainder of the box
+         * around the graph area.
          */
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldHint);
         graphics.setStroke(oldStroke);
         graphics.setPaint(getForeground());
         graphics.setFont(getFont());
@@ -699,6 +784,8 @@ public class Plot2D extends ZoomPane {
         for (final Axis2D axis : yAxes) {
             axis.paint(graphics);
         }
+        line.setLine(xx2, xy2, xx2+xxD, xy2+xyD); graphics.draw(line);
+        line.setLine(yx2, yy2, yx2+yxD, yy2+yyD); graphics.draw(line);
         /*
          * Paints the title.
          */
@@ -708,7 +795,6 @@ public class Plot2D extends ZoomPane {
             final Rectangle2D titleBounds = glyphs.getVisualBounds();
             graphics.drawGlyphVector(glyphs, (float) ((getWidth() - titleBounds.getWidth()) / 2), 20);
         }
-        graphics.setStroke(oldStroke);
         graphics.setPaint(oldPaint);
         graphics.setFont(oldFont);
     }
@@ -799,19 +885,31 @@ public class Plot2D extends ZoomPane {
         private final Rectangle2D bounds;
 
         /**
+         * {@code true} if the {@linkplain #path path} is a closed polygon which should be painted
+         * using {@link Graphics2D#fill(Shape)} instead of {@link Graphics2D#draw(Shape)}. This is
+         * not a public API at this time. The usual value is {@code false}.
+         */
+        final boolean fill;
+
+        /**
          * Constructs a series with the given name and (<var>x</var>,<var>y</var>) vectors.
          *
          * @throws MismatchedSizeException if the arrays don't have the same length.
          */
-        public DefaultSeries(final String name, final Paint color, final Vector x, final Vector y)
-                throws MismatchedSizeException
+        public DefaultSeries(final String name, final Paint color, final Vector x, final Vector y,
+                final Vector thickness) throws MismatchedSizeException
         {
             this.name  = name;
             this.color = color;
+            fill = (thickness != null);
             final int length = x.size();
-            if (length != y.size()) {
+            if (length != y.size() || (thickness != null && thickness.size() != length)) {
                 throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
             }
+            /*
+             * Creates a Path2D of Float type if it is suffisient
+             * for the provided data, or of Double tpe otherwise.
+             */
             final Class<?> type = Classes.widestClass(
                     Classes.primitiveToWrapper(x.getElementType()).asSubclass(Number.class),
                     Classes.primitiveToWrapper(y.getElementType()).asSubclass(Number.class));
@@ -820,10 +918,22 @@ public class Plot2D extends ZoomPane {
             } else {
                 path = new Path2D.Float();
             }
+            /*
+             * Creates the shape. It will requires two passes
+             * if the shape is a polygon to be filled.
+             */
             boolean move = true;
-            for (int i=0; i<length; i++) {
-                final double xi, yi;
-                if (Double.isNaN(yi = y.doubleValue(i)) || Double.isNaN(xi = x.doubleValue(i))) {
+            boolean reverse = fill;
+            do for (int i=0; i<length; i++) {
+                final int j = (reverse) ? length-(i+1) : i;
+                double xi = x.doubleValue(j);
+                double yi = y.doubleValue(j);
+                if (thickness != null) {
+                    final double t = 0.5 * thickness.doubleValue(j);
+                    if (reverse) yi -= t;
+                    else yi += t;
+                }
+                if (Double.isNaN(yi) || Double.isNaN(xi)) {
                     move = true;
                     continue;
                 }
@@ -833,6 +943,9 @@ public class Plot2D extends ZoomPane {
                 } else {
                     path.lineTo(xi, yi);
                 }
+            } while ((reverse = !reverse) == false);
+            if (fill) {
+                path.closePath();
             }
             bounds = path.getBounds2D();
         }

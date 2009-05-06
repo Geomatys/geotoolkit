@@ -700,10 +700,11 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     }
 
     /**
-     * Reinitializes the {@link #zoom} affine transform in order to cancel any zoom, rotation or
-     * translation.  The default implementation initializes the {@link #zoom} affine transform in
-     * order to make the <var>y</var> axis point upwards and make the whole of the region covered
-     * by the {@link #getPreferredArea} logical coordinates appears in the panel.
+     * Reinitializes the {@linkplain #zoom zoom} affine transform in order to cancel any zoom,
+     * rotation or translation. The default implementation performs the initialisation in such
+     * a way that the <var>y</var> axis point upwards and make the whole of the region covered
+     * by the {@link #getPreferredArea() getPreferredArea()} logical coordinates appears in the
+     * panel.
      *
      * {@note <code>reset()</code> is <u>the only</u> method of <code>ZoomPane</code> which doesn't
      * have to pass through the <code>transform(AffineTransform)</code> method to modify the zoom.
@@ -714,9 +715,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     }
 
     /**
-     * Reinitializes the affine transform {@link #zoom} in order to cancel any zoom, rotation or
+     * Reinitializes the affine transform {@link #zoom zoom} in order to cancel any zoom, rotation or
      * translation. The argument {@code yAxisUpward} indicates whether the <var>y</var> axis should
-     * point upwards.  The value {@code false} lets it point downwards. This method is offered
+     * point upwards. The value {@code false} lets it point downwards. This method is offered
      * for convenience sake for derived classes which want to redefine {@link #reset()}.
      *
      * @param zoomableBounds Coordinates, in pixels, of the screen space in which to draw.
@@ -1068,9 +1069,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     }
 
     /**
-     * Changes the {@linkplain #zoom} by applying an affine transform. The {@code change} transform
-     * must express a change in logical units, for example, a translation in metres. This method is
-     * conceptually similar to the following code:
+     * Changes the {@linkplain #zoom zoom} by applying an affine transform. The {@code change}
+     * transform must express a change in logical units, for example, a translation in metres.
+     * This method is conceptually similar to the following code:
      *
      * {@preformat java
      *     zoom.concatenate(change);
@@ -1465,6 +1466,15 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
         final Paint old = magnifierBorder;
         magnifierBorder = color;
         firePropertyChange("magnifierBorder", old, color);
+    }
+
+    /**
+     * Returns the scale factor that has been applied on the {@link Graphics2D} before invoking
+     * {@link #paintComponent(Graphics2D)}. This is always 1, except when painting the content
+     * of the magnifier glass.
+     */
+    final double getGraphicsScale() {
+        return (flag == IS_PAINTING_MAGNIFIER) ? magnifierPower : 1;
     }
 
     /**

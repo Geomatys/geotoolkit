@@ -18,6 +18,7 @@ package org.geotoolkit.math;
 
 import java.io.Serializable;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -36,6 +37,16 @@ final class SequenceVector extends Vector implements Serializable {
     private static final long serialVersionUID = 7980737287789566091L;
 
     /**
+     * Small tolerance number for rounding errors.
+     */
+    private static final double EPS = 1E-9;
+
+    /**
+     * The element type, or {@code null} if values are NaN.
+     */
+    private final Class<? extends Number> type;
+
+    /**
      * The value at index 0.
      */
     private final double first;
@@ -43,7 +54,7 @@ final class SequenceVector extends Vector implements Serializable {
     /**
      * The difference between the values at two adjacent indexes.
      */
-    private final double step;
+    private final double increment;
 
     /**
      * The length of this vector.
@@ -51,16 +62,24 @@ final class SequenceVector extends Vector implements Serializable {
     private final int length;
 
     /**
-     * Creates a sequence for the given values.
+     * Creates a sequence of numbers in the given range of values using the given increment.
      *
-     * @param first The first value, inclusive.
-     * @param step  The difference between the values at two adjacent indexes.
-     * @param last  The last value, inclusive.
+     * @param first     The first value, inclusive.
+     * @param increment The difference between the values at two adjacent indexes.
+     * @param limit     The last value, <strong>exclusive</strong>.
      */
-    public SequenceVector(final double first, final double step, final double last) {
-        this.first = first;
-        this.step  = step;
-        length = Math.max(0, (int) ((last - first) / step + (1 + 1E-9)));
+    public SequenceVector(final double first, final double increment, final double limit) {
+        this.first     = first;
+        this.increment = increment;
+        this.length    = Math.max(0, (int) ((limit - first) / increment + (1 - EPS)));
+        if (Double.isNaN(first) || Double.isNaN(increment) || Double.isNaN(limit)) {
+            type = null;
+        } else {
+            Class<? extends Number> t = Classes.finestClass(first);
+            t = Classes.widestClass(t,  Classes.finestClass(first + increment));
+            t = Classes.widestClass(t,  Classes.finestClass(first + increment*(length-1)));
+            type = t;
+        }
     }
 
     /**
@@ -76,15 +95,16 @@ final class SequenceVector extends Vector implements Serializable {
      */
     @Override
     public Class<? extends Number> getElementType() {
-        return Double.class;
+        // Float is the smallest type capable to hold NaN.
+        return (type != null) ? type : Float.class;
     }
 
     /**
      * Returns {@code true} if this vector returns {@code NaN} values.
      */
     @Override
-    public boolean isNaN(final int index) throws IndexOutOfBoundsException {
-        return Double.isNaN(doubleValue(index));
+    public boolean isNaN(final int index) {
+        return type == null;
     }
 
     /**
@@ -95,7 +115,7 @@ final class SequenceVector extends Vector implements Serializable {
         if (index < 0 || index >= length) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
         }
-        return first + step*index;
+        return first + increment*index;
     }
 
     /**
@@ -158,7 +178,7 @@ final class SequenceVector extends Vector implements Serializable {
      * Creates a new sequence.
      */
     @Override
-    Vector createSub(final int first, final int step, final int last) {
-        return new SequenceVector(doubleValue(first), this.step*step, doubleValue(last));
+    Vector createSub(final int first, final int step, final int limit) {
+        return new SequenceVector(doubleValue(first), increment*step, doubleValue(limit));
     }
 }

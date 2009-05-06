@@ -461,19 +461,15 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Indique s'il reste des graduations à retourner. Cette méthode retourne {@code true}
-     * tant que {@link #currentValue} ou {@link #currentLabel} peuvent être appelées.
+     * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
-        return value <= maximum;
+    public boolean isDone() {
+        return value > maximum;
     }
 
     /**
-     * Indique si la graduation courante est une graduation majeure.
-     *
-     * @return {@code true} si la graduation courante est une graduation majeure, ou
-     *         {@code false} si elle est une graduation mineure.
+     * {@inheritDoc}
      */
     @Override
     public boolean isMajorTick() {
@@ -481,9 +477,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Returns the position where to draw the current tick. The position is scaled
-     * from the graduation's minimum to maximum. This is usually the same number
-     * than {@link #currentValue}.
+     * {@inheritDoc}
      */
     @Override
     public double currentPosition() {
@@ -491,8 +485,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Retourne la valeur de la graduation courante. Cette méthode
-     * peut être appelée pour une graduation majeure ou mineure.
+     * {@inheritDoc}
      */
     @Override
     public double currentValue() {
@@ -500,10 +493,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Retourne l'étiquette de la graduation courante. On n'appele généralement
-     * cette méthode que pour les graduations majeures, mais elle peut aussi
-     * être appelée pour les graduations mineures. Cette méthode retourne
-     * {@code null} s'il n'y a pas d'étiquette pour la graduation courante.
+     * {@inheritDoc}
      */
     @Override
     public String currentLabel() {
@@ -554,7 +544,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Passe à la graduation suivante.
+     * {@inheritDoc}
      */
     @Override
     public void next() {
@@ -582,7 +572,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Passe directement à la graduation majeure suivante.
+     * {@inheritDoc}
      */
     @Override
     public void nextMajor() {
@@ -603,7 +593,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Replace l'itérateur sur la première graduation.
+     * {@inheritDoc}
      */
     @Override
     public void rewind() {
@@ -618,7 +608,7 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * Retourne les conventions à utiliser pour écrire les étiquettes de graduation.
+     * {@inheritDoc}
      */
     @Override
     public Locale getLocale() {

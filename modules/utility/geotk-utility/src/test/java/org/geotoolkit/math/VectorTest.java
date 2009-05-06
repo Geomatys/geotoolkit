@@ -30,6 +30,30 @@ import static org.junit.Assert.*;
  */
 public final class VectorTest {
     /**
+     * Tests {@link SequenceVector}.
+     */
+    @Test
+    public void testSequence() {
+        Vector vector = Vector.createSequence(100, 2, 120);
+        assertEquals(Byte.class, vector.getElementType());
+        assertEquals(10, vector.size());
+        for (int i=0; i<vector.size(); i++) {
+            assertEquals(100 + 2*i, vector.byteValue(i));
+        }
+        /*
+         * Same tests, using double values.
+         */
+        vector = Vector.createSequence(100, 0.1, 101);
+        assertEquals(Double.class, vector.getElementType());
+        assertEquals(10, vector.size());
+        for (int i=0; i<vector.size(); i++) {
+            assertEquals(100 + 0.1*i, vector.doubleValue(i), 1E-10);
+        }
+        assertEquals("Because the last value is exclusive, 100.91 should be the " +
+                "same than 101.", vector, Vector.createSequence(100, 0.1, 100.91));
+    }
+
+    /**
      * Tests {@link ArrayVector} backed by an array of primitive type.
      */
     @Test

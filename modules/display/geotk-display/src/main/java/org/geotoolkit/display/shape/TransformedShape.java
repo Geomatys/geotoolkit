@@ -48,8 +48,8 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  *
  * {@note This class is final because extending directly <code>AffineTransform</code> is not a
  *        good example of object-oriented programming, since a transformed shape is not a special
- *        kind of affine transform. We did that as a convenience for frequent modifications of the
- *        transform by easy direct access to the <code>AffineTransform</code> methods, but this is
+ *        kind of affine transform. We did that as a convenience for allowing frequent modifications
+ *        of the transform by direct access to the <code>AffineTransform</code> methods, but this is
  *        not an example that shoud be replicated.}
  *
  * <b>Example:</b> The {@link Arrow2D} class is inconditionnaly orientated toward 0° arithmetic.

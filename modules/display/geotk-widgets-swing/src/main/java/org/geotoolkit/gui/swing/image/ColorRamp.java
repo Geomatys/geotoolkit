@@ -575,9 +575,8 @@ public class ColorRamp extends JComponent {
             /*
              * Now write the graduation.
              */
-            for (final TickIterator ticks = reuse = graduation.getTickIterator(hints, reuse);
-                    ticks.hasNext(); ticks.nextMajor())
-            {
+            final TickIterator ticks = graduation.getTickIterator(hints, reuse);
+            for (reuse=ticks; !ticks.isDone(); ticks.nextMajor()) {
                 if (ticks.isMajorTick()) {
                     final GlyphVector glyph = font.createGlyphVector(context, ticks.currentLabel());
                     final Rectangle2D rectg = glyph.getVisualBounds();
