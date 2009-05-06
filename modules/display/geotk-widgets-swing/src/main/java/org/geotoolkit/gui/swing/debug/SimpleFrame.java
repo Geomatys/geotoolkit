@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.geotoolkit.gui.swing.go.J2DMap;
+import org.geotoolkit.gui.swing.go.J2DMapVolatile;
 import org.geotoolkit.gui.swing.go.control.JNavigationBar;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -49,8 +50,8 @@ public class SimpleFrame {
 
         //make the frame
         final JFrame frame = new JFrame();
-        final J2DMap map = new J2DMap();
-        map.getRenderer().setContext(context);
+        final J2DMapVolatile map = new J2DMapVolatile();
+        map.getContainer().setContext(context);
         final JNavigationBar bar = new JNavigationBar(map);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.add(BorderLayout.NORTH,bar);
