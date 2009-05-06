@@ -29,7 +29,6 @@ import java.awt.image.BufferedImage;
 
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -39,22 +38,22 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Canvas based on a BufferedImage.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class J2DCanvasBuffered extends J2DCanvas{
-    
+
     private final CanvasController2D controller = new DefaultController2D(this);
     private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private BufferedImage buffer;
     private Color background = null;
     private Dimension dim;
-    
-    
+
+
     public J2DCanvasBuffered(CoordinateReferenceSystem crs, final Dimension dim){
         this(crs,dim,null);
     }
-    
+
     public J2DCanvasBuffered(CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
         if(dim == null){
@@ -69,7 +68,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     public void setBackground(final Color color){
         this.background = color;
     }
-    
+
     public void setSize(final Dimension dim){
         if(dim == null){
             throw new NullPointerException("Dimension can't be null");
@@ -80,7 +79,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
             buffer = null;
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -108,7 +107,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     public CanvasController2D getController() {
         return controller;
     }
-    
+
     /**
      * Returns the display bounds in terms of {@linkplain #getDisplayCRS display CRS}.
      * If no bounds were {@linkplain #setDisplayBounds explicitly set}, then this method
@@ -122,13 +121,13 @@ public class J2DCanvasBuffered extends J2DCanvas{
         }
         return bounds;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void repaint() {
-        
+
         if(buffer == null){
             //create the buffer at the last possible moment
             buffer = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
@@ -138,18 +137,18 @@ public class J2DCanvasBuffered extends J2DCanvas{
             g2D.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
             g2D.fillRect(0,0,dim.width,dim.height);
         }
-            
+
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
-                
+
         final Graphics2D output = (Graphics2D) buffer.getGraphics();
-        
+
         //paint background if there is one.
         if(background != null){
             output.setColor(background);
             output.fillRect(0,0,dim.width,dim.height);
         }
-        
+
         Rectangle clipBounds = output.getClipBounds();
         /*
          * Sets a flag for avoiding some "refresh()" events while we are actually painting.
@@ -170,7 +169,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         }
         output.setClip(clipBounds);
         output.addRenderingHints(hints);
-        
+
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
         final AbstractContainer renderer = getContainer();
         if(renderer != null && renderer instanceof AbstractContainer2D){
@@ -185,13 +184,13 @@ public class J2DCanvasBuffered extends J2DCanvas{
         fireRenderingStateChanged(RenderingState.ON_HOLD);
         monitor.renderingFinished();
     }
-     
+
     /**
      * {@inheritDoc }
      */
     @Override
     public BufferedImage getSnapShot(){
-       return buffer;
+        return buffer;
     }
 
     @Override
@@ -201,7 +200,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     @Override
     public void repaint(Shape displayArea) {
-        
+
     }
-   
+
 }

@@ -399,13 +399,23 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
                     Integer.valueOf(channel.getChannelName())
                 };
             }else{
-                indices = new int[]{
-                    Integer.valueOf(channels[0].getChannelName()),
-                    Integer.valueOf(channels[1].getChannelName()),
-                    Integer.valueOf(channels[2].getChannelName())
-                    };
+                if (image.getColorModel().hasAlpha()) {
+                    indices = new int[]{
+                        Integer.valueOf(channels[0].getChannelName()),
+                        Integer.valueOf(channels[1].getChannelName()),
+                        Integer.valueOf(channels[2].getChannelName()),
+                        // Here we suppose that the transparent band is the last one. This is the
+                        // default behaviour with standard java.
+                        image.getSampleModel().getNumBands() - 1
+                        };
+                } else {
+                    indices = new int[]{
+                        Integer.valueOf(channels[0].getChannelName()),
+                        Integer.valueOf(channels[1].getChannelName()),
+                        Integer.valueOf(channels[2].getChannelName())
+                        };
+                }
             }
-
             image = selectBand(image, indices);
         }
 
