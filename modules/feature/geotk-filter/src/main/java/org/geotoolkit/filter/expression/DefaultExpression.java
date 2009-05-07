@@ -16,13 +16,7 @@
  */
 package org.geotoolkit.filter.expression;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.imageio.spi.ServiceRegistry;
 import javax.xml.bind.annotation.XmlTransient;
-import org.geotoolkit.filter.accessor.PropertyAccessor;
-import org.geotoolkit.filter.accessor.PropertyAccessorFactory;
 
 /**
  * Implements a default expression, with helpful variables and static methods.
@@ -31,17 +25,6 @@ import org.geotoolkit.filter.accessor.PropertyAccessorFactory;
  */
 @XmlTransient
 public abstract class DefaultExpression extends AbstractExpression {
-
-    private static final List<PropertyAccessorFactory> ACCESSOR_FACTORIES = new ArrayList<PropertyAccessorFactory>();
-
-    static{
-        final Iterator<PropertyAccessorFactory> factories = ServiceRegistry.lookupProviders(PropertyAccessorFactory.class);
-
-        while(factories.hasNext()){
-            ACCESSOR_FACTORIES.add(factories.next());
-        }
-
-    }
 
     /** Defines the type of this expression. */
     protected final ExpressionType type;
@@ -57,14 +40,6 @@ public abstract class DefaultExpression extends AbstractExpression {
      */
     public ExpressionType getType() {
         return type;
-    }
-
-    protected static final PropertyAccessor getAccessor(Class type, String xpath, Class target){
-        for(PropertyAccessorFactory pf : ACCESSOR_FACTORIES){
-            PropertyAccessor pa = pf.createPropertyAccessor(type, xpath, target,null);
-            if(pa != null) return pa;
-        }
-        return null;
     }
 
 }

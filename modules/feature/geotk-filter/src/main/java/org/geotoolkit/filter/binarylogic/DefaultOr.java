@@ -1,30 +1,30 @@
 
 
-package org.geotoolkit.filter.logic;
+package org.geotoolkit.filter.binarylogic;
 
 import java.util.List;
-import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.Or;
 
-public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
+public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
 
-    public DefaultAnd(List<Filter> filters) {
+    public DefaultOr(List<Filter> filters) {
         super(filters);
     }
 
-    public DefaultAnd(Filter filter1, Filter filter2){
+    public DefaultOr(Filter filter1, Filter filter2){
         super(filter1,filter2);
     }
 
     @Override
     public boolean evaluate(Object object) {
-        for (final Filter filter : filters) {
-            if(!filter.evaluate(object)) {
-                return false;
+        for (Filter filter : filters) {
+            if (filter.evaluate(object)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override

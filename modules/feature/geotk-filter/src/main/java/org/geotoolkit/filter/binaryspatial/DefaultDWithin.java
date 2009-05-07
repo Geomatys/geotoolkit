@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
 

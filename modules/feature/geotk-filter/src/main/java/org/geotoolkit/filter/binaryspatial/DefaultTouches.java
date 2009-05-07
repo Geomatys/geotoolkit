@@ -14,19 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.spatial.Touches;
 
 
-public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,Expression> implements Intersects {
+public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Expression> implements Touches {
 
-    public DefaultIntersect(Expression left, Expression right) {
+    public DefaultTouches(Expression left, Expression right) {
         super(left,right);
     }
 
@@ -39,14 +39,7 @@ public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,E
             return false;
         }
 
-        final Envelope envLeft = leftGeom.getEnvelopeInternal();
-        final Envelope envRight = rightGeom.getEnvelopeInternal();
-
-        if (envLeft.intersects(envRight)) {
-            return leftGeom.intersects(rightGeom);
-        }
-
-        return false;
+        return leftGeom.touches(rightGeom);
     }
 
     @Override

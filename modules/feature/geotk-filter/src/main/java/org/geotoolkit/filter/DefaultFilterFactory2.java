@@ -19,26 +19,27 @@ package org.geotoolkit.filter;
 
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsEqualTo;
+import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsNotEqualTo;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.filter.identity.DefaultGmlObjectId;
-import org.geotoolkit.filter.logic.DefaultAnd;
-import org.geotoolkit.filter.logic.DefaultOr;
-import org.geotoolkit.filter.spatial.DefaultBBox;
-import org.geotoolkit.filter.spatial.DefaultBeyond;
-import org.geotoolkit.filter.spatial.DefaultContains;
-import org.geotoolkit.filter.spatial.DefaultCrosses;
-import org.geotoolkit.filter.spatial.DefaultDWithin;
-import org.geotoolkit.filter.spatial.DefaultDisjoint;
-import org.geotoolkit.filter.spatial.DefaultEquals;
-import org.geotoolkit.filter.spatial.DefaultIntersect;
-import org.geotoolkit.filter.spatial.DefaultOverlaps;
-import org.geotoolkit.filter.spatial.DefaultTouches;
-import org.geotoolkit.filter.spatial.DefaultWithin;
+import org.geotoolkit.filter.binarylogic.DefaultAnd;
+import org.geotoolkit.filter.binarylogic.DefaultOr;
+import org.geotoolkit.filter.binaryspatial.DefaultBBox;
+import org.geotoolkit.filter.binaryspatial.DefaultBeyond;
+import org.geotoolkit.filter.binaryspatial.DefaultContains;
+import org.geotoolkit.filter.binaryspatial.DefaultCrosses;
+import org.geotoolkit.filter.binaryspatial.DefaultDWithin;
+import org.geotoolkit.filter.binaryspatial.DefaultDisjoint;
+import org.geotoolkit.filter.binaryspatial.DefaultEquals;
+import org.geotoolkit.filter.binaryspatial.DefaultIntersect;
+import org.geotoolkit.filter.binaryspatial.DefaultOverlaps;
+import org.geotoolkit.filter.binaryspatial.DefaultTouches;
+import org.geotoolkit.filter.binaryspatial.DefaultWithin;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -92,13 +93,10 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Default implementation of a GeoAPI filterFactory.
@@ -287,8 +285,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Not not(Filter f) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Not not(Filter filter) {
+        return new DefaultNot(filter);
     }
 
     /**
@@ -296,7 +294,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Id id(Set<? extends Identifier> ids) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultId(ids);
     }
 
     /**
@@ -304,7 +302,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyName property(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyName(name);
     }
 
     /**
@@ -312,7 +310,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsBetween between(Expression expr, Expression lower, Expression upper) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsBetween(expr, lower, upper);
     }
 
     /**
@@ -320,7 +318,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsEqualTo equals(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return equal(expr1,expr2,true);
     }
 
     /**
@@ -328,7 +326,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsEqualTo equal(Expression expr1, Expression expr2, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsEqualTo(expr1, expr2, matchCase);
     }
 
     /**
@@ -336,7 +334,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsNotEqualTo notEqual(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return notEqual(expr1, expr2,false);
     }
 
     /**
@@ -344,7 +342,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsNotEqualTo notEqual(Expression expr1, Expression expr2, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsNotEqualTo(expr1, expr2, matchCase);
     }
 
     /**

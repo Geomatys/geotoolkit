@@ -14,19 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.Overlaps;
+import org.opengis.filter.spatial.Contains;
 
 
-public class DefaultOverlaps extends AbstractBinarySpatialOperator<Expression,Expression> implements Overlaps {
+public class DefaultContains extends AbstractBinarySpatialOperator<Expression,Expression> implements Contains {
 
-    public DefaultOverlaps(Expression left, Expression right) {
+    public DefaultContains(Expression left, Expression right) {
         super(left,right);
     }
 
@@ -42,8 +42,8 @@ public class DefaultOverlaps extends AbstractBinarySpatialOperator<Expression,Ex
         final Envelope envLeft = leftGeom.getEnvelopeInternal();
         final Envelope envRight = rightGeom.getEnvelopeInternal();
 
-        if (envLeft.intersects(envRight)) {
-            return leftGeom.overlaps(rightGeom);
+        if (envLeft.contains(envRight)) {
+            return leftGeom.contains(rightGeom);
         }
 
         return false;

@@ -14,19 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.Disjoint;
+import org.opengis.filter.spatial.Intersects;
 
 
-public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Expression> implements Disjoint {
+public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,Expression> implements Intersects {
 
-    public DefaultDisjoint(Expression left, Expression right) {
+    public DefaultIntersect(Expression left, Expression right) {
         super(left,right);
     }
 
@@ -42,11 +42,11 @@ public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Ex
         final Envelope envLeft = leftGeom.getEnvelopeInternal();
         final Envelope envRight = rightGeom.getEnvelopeInternal();
 
-        if(envRight.intersects(envLeft)){
-            return leftGeom.disjoint(rightGeom);
+        if (envLeft.intersects(envRight)) {
+            return leftGeom.intersects(rightGeom);
         }
 
-        return true;
+        return false;
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.geotoolkit.filter.expression;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -50,8 +51,6 @@ import org.opengis.filter.expression.Expression;
 @XmlTransient
 public abstract class AbstractExpression implements Expression {
 
-    protected static final ConverterRegistry CONVERTERS = ConverterRegistry.system();
-
     /**
      * Default implementation delegates handling of context
      * conversion to Value utility class.
@@ -63,24 +62,7 @@ public abstract class AbstractExpression implements Expression {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T evaluate(Object candidate, Class<T> target) {
-        return (T) evaluate(candidate, (Class) candidate.getClass(), target);
-    }
-
-    private static <S,T> T evaluate(S candidate, Class<S> source, Class<T> target) {
-
-        // handle case of source being an instance of target up front
-        if (target.isAssignableFrom(source) ) {
-            return (T) candidate;
-        }
-
-        final ObjectConverter<S,T> converter;
-        try {
-            converter = CONVERTERS.converter(source, target);
-            return converter.convert(candidate);
-        } catch (NonconvertibleObjectException ex) {
-            Logging.recoverableException(AbstractExpression.class, "evaluate", ex);
-            return null;
-        }
+        return Converters.convert(candidate, target);
     }
 
 }

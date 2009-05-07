@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.filter;
 
+import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.geotoolkit.filter.expression.DefaultExpression;
 import org.geotoolkit.filter.expression.ExpressionType;
+
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
@@ -45,7 +47,7 @@ public class DefaultPropertyName extends DefaultExpression implements PropertyNa
 
     @Override
     public Object evaluate(Object candidate) {
-        PropertyAccessor accessor = getAccessor(candidate.getClass(),property, null);
+        PropertyAccessor accessor = Accessors.getAccessor(candidate.getClass(),property, null);
     	if (accessor == null) {
             return null;
     	}

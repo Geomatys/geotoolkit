@@ -14,20 +14,33 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.spatial.Beyond;
 
 
-public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Expression> implements Touches {
+public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expression> implements Beyond {
 
-    public DefaultTouches(Expression left, Expression right) {
+    private final double distance;
+    private final String unit;
+
+    public DefaultBeyond(Expression left, Expression right, double distance, String unit) {
         super(left,right);
+        this.distance = distance;
+        this.unit = unit;
+    }
+
+    @Override
+    public double getDistance() {
+        return distance;
+    }
+
+    @Override
+    public String getDistanceUnits() {
+        return unit.toString();
     }
 
     @Override
@@ -39,7 +52,11 @@ public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Exp
             return false;
         }
 
-        return leftGeom.touches(rightGeom);
+        // TODO we can not handle units with JTS geometries
+        // we need a way to obtain both geometry CRS to be able to make a correct
+        // unit usage
+
+        return !leftGeom.isWithinDistance(rightGeom, distance);
     }
 
     @Override

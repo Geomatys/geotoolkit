@@ -1,6 +1,6 @@
 
 
-package org.geotoolkit.filter.logic;
+package org.geotoolkit.filter.binarylogic;
 
 import java.util.List;
 

@@ -14,20 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Within;
+import org.opengis.filter.spatial.Crosses;
 
 
-public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements Within {
+public class DefaultCrosses extends AbstractBinarySpatialOperator<Expression,Expression> implements Crosses {
 
-    public DefaultWithin(Expression left, Expression right) {
+    public DefaultCrosses(Expression left, Expression right) {
         super(left,right);
     }
 
@@ -43,8 +42,8 @@ public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expr
         final Envelope envLeft = leftGeom.getEnvelopeInternal();
         final Envelope envRight = rightGeom.getEnvelopeInternal();
 
-        if(envRight.contains(envLeft)){
-            return leftGeom.within(rightGeom);
+        if (envRight.intersects(envLeft)) {
+            return leftGeom.crosses(rightGeom);
         }
 
         return false;

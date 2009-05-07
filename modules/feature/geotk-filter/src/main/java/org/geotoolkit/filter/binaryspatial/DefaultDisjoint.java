@@ -14,33 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.spatial;
+package org.geotoolkit.filter.binaryspatial;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.Disjoint;
 
 
-public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expression> implements Beyond {
+public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Expression> implements Disjoint {
 
-    private final double distance;
-    private final String unit;
-
-    public DefaultBeyond(Expression left, Expression right, double distance, String unit) {
+    public DefaultDisjoint(Expression left, Expression right) {
         super(left,right);
-        this.distance = distance;
-        this.unit = unit;
-    }
-
-    @Override
-    public double getDistance() {
-        return distance;
-    }
-
-    @Override
-    public String getDistanceUnits() {
-        return unit.toString();
     }
 
     @Override
@@ -52,11 +39,14 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
             return false;
         }
 
-        // TODO we can not handle units with JTS geometries
-        // we need a way to obtain both geometry CRS to be able to make a correct
-        // unit usage
+        final Envelope envLeft = leftGeom.getEnvelopeInternal();
+        final Envelope envRight = rightGeom.getEnvelopeInternal();
 
-        return !leftGeom.isWithinDistance(rightGeom, distance);
+        if(envRight.intersects(envLeft)){
+            return leftGeom.disjoint(rightGeom);
+        }
+
+        return true;
     }
 
     @Override
