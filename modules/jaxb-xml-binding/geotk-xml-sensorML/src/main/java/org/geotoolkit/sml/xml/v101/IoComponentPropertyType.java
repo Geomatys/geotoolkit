@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -37,6 +38,7 @@ import org.geotoolkit.swe.xml.v101.CountRange;
 import org.geotoolkit.swe.xml.v101.ObservableProperty;
 import org.geotoolkit.swe.xml.v101.QuantityType;
 import org.geotoolkit.swe.xml.v101.QuantityRange;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TimeType;
 import org.geotoolkit.swe.xml.v101.TimeRange;
@@ -132,6 +134,9 @@ public class IoComponentPropertyType implements IoComponent {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    @XmlTransient
+    private org.geotoolkit.swe.xml.v101.ObjectFactory factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
+
     public IoComponentPropertyType() {
 
     }
@@ -146,6 +151,10 @@ public class IoComponentPropertyType implements IoComponent {
         this.quantity = quantity;
     }
 
+    public IoComponentPropertyType(String name, SimpleDataRecordEntry abstractDataRecord) {
+        this.name = name;
+        this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
+    }
     
     /**
      * Gets the value of the count property.

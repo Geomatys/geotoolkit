@@ -75,6 +75,14 @@ public class VectorPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public VectorPropertyType() {
+
+    }
+
+    public VectorPropertyType(VectorType vector) {
+        this.vector = vector;
+    }
+    
     /**
      * Gets the value of the vector property.
      * 

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.Vector;
 import org.geotoolkit.util.Utilities;
 
 
@@ -58,7 +59,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "VectorType", propOrder = {
     "coordinate"
 })
-public class VectorType extends AbstractVectorType {
+public class VectorType extends AbstractVectorType implements Vector {
 
     @XmlElement(required = true)
     private List<CoordinateType> coordinate;
