@@ -98,11 +98,13 @@ public class AnyScalarPropertyType implements AnyScalar {
     private String actuate;
 
         
-    /**
-     * An empty constructor used by JAXB.
-     */
-    AnyScalarPropertyType() {
-        
+    public AnyScalarPropertyType() {
+
+    }
+
+    public AnyScalarPropertyType(String name, QuantityType quantity) {
+        this.name     = name;
+        this.quantity = quantity;
     }
     
     /**
@@ -122,6 +124,11 @@ public class AnyScalarPropertyType implements AnyScalar {
         } else {
             abstractDataComponent = component;
         }
+    }
+
+    public AnyScalarPropertyType(String name, Text text) {
+        this.name  = name;
+        this.text  = text;
     }
     
     /**

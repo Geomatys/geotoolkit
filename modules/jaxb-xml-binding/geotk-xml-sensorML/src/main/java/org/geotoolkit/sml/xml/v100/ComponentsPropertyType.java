@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.ComponentsProperty;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "componentsPropertyType", propOrder = {
     "processList"
 })
-public class ComponentsPropertyType {
+public class ComponentsPropertyType implements ComponentsProperty {
 
     @XmlElement(name = "ProcessList")
     private AbstractListType processList;

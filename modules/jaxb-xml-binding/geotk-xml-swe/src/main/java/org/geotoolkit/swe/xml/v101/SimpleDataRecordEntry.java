@@ -20,6 +20,7 @@ package org.geotoolkit.swe.xml.v101;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -61,6 +62,10 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
         super(id, definition, fixed);
         this.blockId = blockId;
         this.field = fields;
+    }
+
+     public SimpleDataRecordEntry(List<AnyScalarPropertyType> field) {
+        this.field = field;
     }
 
     /**

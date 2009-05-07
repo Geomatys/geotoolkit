@@ -2,7 +2,7 @@
  *    Constellation - An open source and standard compliant SDI
  *    http://www.constellation-sdi.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2007 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,13 +15,12 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.swe.xml;
+package org.geotoolkit.sml.xml;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Quantity {
+public interface ComponentsProperty {
 
-    public void setAxisID(String value);
 }

@@ -40,5 +40,12 @@ public class AbstractDataRecordEntry extends AbstractDataComponentEntry {
     public AbstractDataRecordEntry(final String id, final String definition, boolean fixed) {
         super(id, definition, fixed);
     }
+
+    /**
+     * super-constructeur appellé par les sous-classes.
+     */
+    public AbstractDataRecordEntry(final String definition) {
+        super(definition);
+    }
     
 }

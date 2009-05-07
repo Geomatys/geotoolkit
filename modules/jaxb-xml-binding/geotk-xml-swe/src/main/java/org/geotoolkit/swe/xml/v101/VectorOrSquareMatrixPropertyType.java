@@ -56,6 +56,18 @@ public class VectorOrSquareMatrixPropertyType {
     @XmlElement(name = "SquareMatrix")
     private SquareMatrixType squareMatrix;
 
+     public VectorOrSquareMatrixPropertyType() {
+
+    }
+
+    public VectorOrSquareMatrixPropertyType(VectorType vector) {
+        this.vector = vector;
+    }
+
+    public VectorOrSquareMatrixPropertyType(SquareMatrixType squareMatrix) {
+        this.squareMatrix = squareMatrix;
+    }
+    
     /**
      * Gets the value of the vector property.
      */

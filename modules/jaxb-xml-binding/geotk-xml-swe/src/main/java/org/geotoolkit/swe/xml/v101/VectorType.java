@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.Vector;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -56,19 +58,70 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "VectorType", propOrder = {
     "coordinate"
 })
-public class VectorType extends AbstractVectorType {
+public class VectorType extends AbstractVectorType implements Vector {
 
     @XmlElement(required = true)
-    protected List<CoordinateType> coordinate;
+    private List<CoordinateType> coordinate;
+
+    public VectorType() {
+
+    }
+
+    public VectorType(String referenceFrame, String localFrame, List<CoordinateType> coordinate) {
+        super(referenceFrame, localFrame);
+        this.coordinate = coordinate;
+    }
+
+    public VectorType(String definition, List<CoordinateType> coordinate) {
+        super(definition);
+        this.coordinate = coordinate;
+    }
+
+    public VectorType(List<CoordinateType> coordinate) {
+        this.coordinate = coordinate;
+    }
 
     /**
      * Gets the value of the coordinate property.
-     * 
+     *
      */
     public List<CoordinateType> getCoordinate() {
         if (coordinate == null) {
             coordinate = new ArrayList<CoordinateType>();
         }
         return this.coordinate;
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof VectorType && super.equals(object)) {
+            final VectorType  that = (VectorType ) object;
+            return Utilities.equals(this.coordinate, that.coordinate);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.coordinate != null ? this.coordinate.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (coordinate != null) {
+            s.append("coordinate:").append(coordinate).append('\n');
+        }
+        return s.toString();
     }
 }

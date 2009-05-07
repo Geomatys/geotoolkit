@@ -106,6 +106,11 @@ public class Position implements AbstractPosition {
         this.href = href;
         this.name = name;
     }
+
+    public Position(String name, PositionType position) {
+        this.name = name;
+        this.position = position;
+    }
     
     /**
      * Gets the value of the process property.

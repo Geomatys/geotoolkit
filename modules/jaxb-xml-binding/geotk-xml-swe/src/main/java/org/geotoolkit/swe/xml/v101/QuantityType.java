@@ -63,6 +63,13 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
         this.uom   = uom;
         this.value = value;
     }
+
+    public QuantityType(String axisID, String definition, UomPropertyType uom, Double value) {
+        super(definition);
+        this.axisID = axisID;
+        this.uom    = uom;
+        this.value  = value;
+    }
     
     /**
      * Gets the value of the uom property.
@@ -85,6 +92,13 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
         return axisID;
     }
 
+    /**
+     * Sets the value of the axisID property.
+     */
+    public void setAxisID(String value) {
+        this.axisID = value;
+    }
+    
     /**
      * Gets the value of the referenceFrame property.
      */
