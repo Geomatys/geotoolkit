@@ -72,9 +72,8 @@ public final class CanonicalSetTest {
     }
 
     /**
-     * Tests the {@link CanonicalSet} using weak references.
-     * In this test, we have to keep in mind than some elements
-     * in {@code weakSet} may disaspear at any time!
+     * Tests the {@link CanonicalSet} using weak references. In this test, we have to keep
+     * in mind than some elements in {@code weakSet} may disaspear at any time!
      *
      * @throws InterruptedException If the test has been interrupted.
      */
@@ -130,5 +129,19 @@ public final class CanonicalSetTest {
             }
             assertEquals("equals:", strongSet, weakSet);
         }
+    }
+
+    /**
+     * Tests with array elements.
+     */
+    @Test
+    public void testArray() {
+        final CanonicalSet<int[]> weakSet = CanonicalSet.newInstance(int[].class);
+        final int[] array = new int[] {2, 5, 3};
+        assertTrue (weakSet.add(array));
+        assertFalse(weakSet.add(array));
+        assertFalse(weakSet.add(array.clone()));
+        assertTrue (weakSet.add(new int[] {2, 5, 4}));
+        assertSame (array, weakSet.unique(array.clone()));
     }
 }

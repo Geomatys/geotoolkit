@@ -1,0 +1,46 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.math;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
+
+/**
+ * Tests the {@link VectorPair} class.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.0
+ *
+ * @since 3.0
+ */
+public final class VectorPairTest {
+    /**
+     * Tests the {@link VectorPair#omitColinearPoints} method.
+     */
+    @Test
+    public void testOmitColinearPoints() {
+        final double[]  x = {1, 2, 3, 4, 5, 6, 7, 8};
+        final double[]  y = {4, 4, 3, 3, 3, 4, 5, 6};
+        final double[] ey = {4, 4, 3,    3,       6}; // Expected result
+        final double[] ex = {1, 2, 3,    5,       8};
+        final VectorPair pair = new VectorPair(Vector.create(x), Vector.create(y));
+        pair.omitColinearPoints(1E-6, 1E-6);
+        assertEquals(Vector.create(ey), pair.getY());
+        assertEquals(Vector.create(ex), pair.getX());
+    }
+}

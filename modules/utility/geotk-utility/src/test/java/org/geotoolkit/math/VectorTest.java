@@ -106,7 +106,7 @@ public final class VectorTest {
         /*
          * Tests subvector at specific indexes.
          */
-        vector = vector.subvector(10, 20, 25);
+        vector = vector.view(10, 20, 25);
         assertEquals(3, vector.size());
         assertEquals(array[120], vector.floatValue(0), 0);
         assertEquals(array[140], vector.floatValue(1), 0);

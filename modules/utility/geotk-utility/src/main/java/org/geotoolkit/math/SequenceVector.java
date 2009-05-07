@@ -178,7 +178,7 @@ final class SequenceVector extends Vector implements Serializable {
      * Creates a new sequence.
      */
     @Override
-    Vector createSub(final int first, final int step, final int limit) {
+    Vector createView(final int first, final int step, final int limit) {
         return new SequenceVector(doubleValue(first), increment*step, doubleValue(limit));
     }
 }

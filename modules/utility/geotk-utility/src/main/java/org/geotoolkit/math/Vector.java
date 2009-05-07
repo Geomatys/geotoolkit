@@ -22,6 +22,7 @@ import java.util.RandomAccess;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.CanonicalSet;
 import org.geotoolkit.util.collection.CheckedCollection;
 
 
@@ -56,6 +57,11 @@ import org.geotoolkit.util.collection.CheckedCollection;
  * @module
  */
 public abstract class Vector extends AbstractList<Number> implements CheckedCollection<Number>, RandomAccess {
+    /**
+     * A pool of indices used by the {@link Vector.View} inner class.
+     */
+    private static final CanonicalSet<int[]> INDICES = CanonicalSet.newInstance(int[].class);
+
     /**
      * Wraps the given object in a vector. The argument should be one of the following:
      * <p>
@@ -271,12 +277,15 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * Returns a view which contains the values of this vector at the given indexes.
      * This method does not copy the values, consequently any modification to the
      * values of this vector will be reflected in the returned view and vis-versa.
+     * <p>
+     * The indexes don't need to be in any particular order. The same index can be repeated
+     * more than once. Thus it is possible to create a vector larger than the original vector.
      *
      * @param  index Index of the values to be returned.
      * @return A view of this vector containing values at the given indexes.
      * @throws IndexOutOfBoundsException if at least one index is out of bounds.
      */
-    public Vector subvector(int... index) throws IndexOutOfBoundsException {
+    public Vector view(int... index) throws IndexOutOfBoundsException {
         index = toBacking(index);
         int first, limit, step;
         switch (index.length) {
@@ -299,7 +308,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
                 for (int i=2; i<index.length; i++) {
                     final int current = index[i];
                     if (current - limit != step) {
-                        return createSub(index);
+                        return createView(index);
                     }
                     limit = current;
                 }
@@ -355,20 +364,27 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         if (step == 1 && first == 0 && limit == size()) {
             return this;
         }
-        return createSub(first, step, limit);
+        return createView(first, step, limit);
     }
 
     /**
-     * Implementation of {@link #subList(int[])} to be overriden by subclasses.
+     * Implementation of {@link #subList(int[])} to be overriden by subclasses. The indexes
+     * array is cloned (if necessary) before this method is invoked and should not be cloned
+     * again. If this vector is a view, the indexes have already been converted to the space
+     * of the backing vector.
+     *
+     * @param index A copy of the user-supplied indexes, converted to the space of the backing
+     *        vector (if any). This array should not be modified after the execution of this
+     *        method, since it may be cached for future sharing with other views.
      */
-    Vector createSub(final int[] index) {
-        return new SubVector(index);
+    Vector createView(final int[] index) {
+        return new View(INDICES.unique(index));
     }
 
     /**
      * Implementation of {@link #subList(int,int,int)} to be overriden by subclasses.
      */
-    Vector createSub(final int first, final int step, final int limit) {
+    Vector createView(final int first, final int step, final int limit) {
         return new SubList(first, step, limit);
     }
 
@@ -381,7 +397,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * @since 1.0
      * @module
      */
-    private final class SubVector extends Vector implements Serializable {
+    private final class View extends Vector implements Serializable {
         /**
          * For cross-version compatibility.
          */
@@ -396,7 +412,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
          * Creates a new view over the values at the given indexes. This constructor
          * does not clone the array; it is caller responsability to clone it if needed.
          */
-        public SubVector(int[] index) {
+        public View(int[] index) {
             this.index = index;
         }
 
@@ -465,18 +481,18 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createSub(int[] index) {
-            return Vector.this.createSub(index);
+        @Override Vector createView(int[] index) {
+            return Vector.this.createView(index);
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createSub(int first, final int step, final int limit) {
+        @Override Vector createView(int first, final int step, final int limit) {
             final int ni[] = new int[length(first, step, limit)];
             for (int j=0; j<ni.length; j++) {
                 ni[j] = index[first];
                 first += step;
             }
-            return Vector.this.subvector(ni);
+            return Vector.this.view(ni);
         }
     }
 
@@ -617,12 +633,12 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createSub(int[] index) {
-            return Vector.this.createSub(index);
+        @Override Vector createView(int[] index) {
+            return Vector.this.createView(index);
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createSub(int first, int step, int limit) {
+        @Override Vector createView(int first, int step, int limit) {
             first = toBacking(first);
             step *= this.step;
             limit = toBacking(limit);

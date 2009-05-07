@@ -26,17 +26,20 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
- * A set of objects hold by weak references. An entry in a {@code WeakHashSet}
- * will automatically be removed when it is no longer in ordinary use. More precisely,
- * the presence of an entry will not prevent the entry from being discarded by the
- * garbage collector, that is, made finalizable, finalized, and then reclaimed.
- * When an entry has been discarded it is effectively removed from the set, so
- * this class behaves somewhat differently than other {@link java.util.Set} implementations.
+ * A set of objects hold by weak references. An entry in a {@code WeakHashSet} will automatically
+ * be removed when it is no longer in ordinary use. More precisely, the presence of an entry will
+ * not prevent the entry from being discarded by the garbage collector, that is, made finalizable,
+ * finalized, and then reclaimed. When an entry has been discarded it is effectively removed from
+ * the set, so this class behaves somewhat differently than other {@link java.util.Set} implementations.
+ * <p>
+ * If the elements stored in this set are arrays, then the hash codes and the comparaisons are
+ * performed using the methods from {@link Arrays} that work on arrays.
  * <p>
  * If you would like to use {@code WeakHashSet} as inside a factory to prevent creating
  * duplicate immutable objects, please look at the {@link CanonicalSet} subclass.
@@ -56,16 +59,16 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     /**
      * Minimal capacity for {@link #table}.
      */
-    private static final int MIN_CAPACITY = 7;
+    private static final int MIN_CAPACITY = 21;
 
     /**
-     * Load factor. Control the moment
-     * where {@link #table} must be rebuild.
+     * Load factor. Control the moment where {@link #table} must be rebuild.
      */
     private static final float LOAD_FACTOR = 0.75f;
 
     /**
-     * A weak reference to an element.
+     * A weak reference to an element. This is an element in a linked list.
+     * When the reference is disposed, it is removed from the enclosing set.
      */
     private final class Entry extends WeakReference<E> implements WeakCollectionCleaner.Disposeable {
         /**
@@ -74,18 +77,17 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         Entry next;
 
         /**
-         * Index for this element in {@link #table}. This index
-         * must be updated at every {@link #rehash} call.
+         * The hash value of this element.
          */
-        int index;
+        final int hash;
 
         /**
          * Constructs a new weak reference.
          */
-        Entry(final E obj, final Entry next, final int index) {
+        Entry(final E obj, final Entry next, final int hash) {
             super(obj, WeakCollectionCleaner.DEFAULT.queue);
-            this.next  = next;
-            this.index = index;
+            this.next = next;
+            this.hash = hash;
         }
 
         /**
@@ -109,6 +111,12 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     private final Class<E> type;
 
     /**
+     * {@code true} if the elements in this set may be arrays. If the elements can not
+     * be arrays, then we can avoid the calls to the costly {@link Utilities} methods.
+     */
+    private final boolean isArray;
+
+    /**
      * Number of non-nul elements in {@link #table}.
      */
     private int count;
@@ -120,21 +128,6 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     private int threshold;
 
     /**
-     * The timestamp when {@link #table} was last rehashed. This information
-     * is used to avoid too early table reduction. When the garbage collector
-     * collected a lot of elements, we will wait at least 20 seconds before
-     * rehashing {@link #table}. Too early table reduction leads to many cycles
-     * like "reduce", "expand", "reduce", "expand", etc.
-     */
-    private long lastRehashTime;
-
-    /**
-     * Number of millisecond to wait before to rehash
-     * the table for reducing its size.
-     */
-    private static final long HOLD_TIME = 20*1000L;
-
-    /**
      * Constructs a {@code WeakHashSet}.
      *
      * @param type The type of the element to be included in this set.
@@ -143,9 +136,9 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      */
     public WeakHashSet(final Class<E> type) {
         this.type = type;
+        isArray = type.isArray() || type.equals(Object.class);
         newEntryTable(MIN_CAPACITY);
         threshold = Math.round(table.length*LOAD_FACTOR);
-        lastRehashTime = System.currentTimeMillis();
     }
 
     /**
@@ -175,9 +168,11 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      */
     private synchronized void removeEntry(final Entry toRemove) {
         assert valid() : count;
-        final int i = toRemove.index;
-        // Index 'i' may not be valid if the reference 'toRemove'
-        // has been already removed in a previous rehash.
+        final int i = toRemove.hash % table.length;
+        /*
+         * Index 'i' may not be valid if the reference 'toRemove'
+         * has been already removed in a previous rehash.
+         */
         if (i < table.length) {
             Entry prev = null;
             Entry e = table[i];
@@ -190,14 +185,13 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                     }
                     count--;
                     assert valid();
-
-                    // If the number of elements has dimunished
-                    // significatively, rehash the table.
+                    /*
+                     * If the number of elements has dimunished significatively, rehash the table.
+                     * We can't continue the loop pass that point, since 'e' is no longer valid.
+                     */
                     if (count <= threshold/4) {
-                        rehash(false);
+                        rehash("remove");
                     }
-                    // We must not continue the loop, since
-                    // variable 'e' is no longer valid.
                     return;
                 }
                 prev = e;
@@ -215,21 +209,15 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     /**
      * Rehash {@link #table}.
      *
-     * @param augmentation
-     *          {@code true} if this method is invoked for augmenting {@link #table},
-     *          or {@code false} if it is invoked for making the table smaller.
+     * @param caller The method invoking this one. User for logging purpose only.
      */
-    private void rehash(final boolean augmentation) {
+    private void rehash(final String caller) {
         assert Thread.holdsLock(this);
         assert valid();
-        final long currentTime = System.currentTimeMillis();
         final int capacity = Math.max(Math.round(count / (LOAD_FACTOR/2)), count + MIN_CAPACITY);
-        if (augmentation ? (capacity <= table.length) :
-                           (capacity >= table.length || currentTime-lastRehashTime < HOLD_TIME))
-        {
+        if (capacity == table.length) {
             return;
         }
-        lastRehashTime = currentTime;
         final Entry[] oldTable = table;
         newEntryTable(capacity);
         threshold = Math.round(capacity * LOAD_FACTOR);
@@ -237,15 +225,9 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
             for (Entry old=oldTable[i]; old!=null;) {
                 final Entry e = old;
                 old = old.next; // We keep 'next' right now because its value will change.
-                final E obj_e = e.get();
-                if (obj_e != null) {
-                    final int index = (obj_e.hashCode() & 0x7FFFFFFF) % table.length;
-                    e.index = index;
-                    e.next  = table[index];
-                    table[index]=e;
-                } else {
-                    count--;
-                }
+                final int index = e.hash % table.length;
+                e.next = table[index];
+                table[index] = e;
             }
         }
         final Logger logger = Logging.getLogger("org.geotoolkit.util");
@@ -253,7 +235,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         if (logger.isLoggable(level)) {
             final LogRecord record = new LogRecord(level,
                     "Rehash from " + oldTable.length + " to " + table.length);
-            record.setSourceMethodName(augmentation ? "unique" : "remove");
+            record.setSourceMethodName(caller);
             record.setSourceClassName(WeakHashSet.class.getName());
             record.setLoggerName(logger.getName());
             logger.log(record);
@@ -262,11 +244,10 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     }
 
     /**
-     * Checks if this {@code WeakHashSet} is valid. This method counts the
-     * number of elements and compare it to {@link #count}. If the check fails,
-     * the number of elements is corrected (if we didn't, an {@link AssertionError}
-     * would be thrown for every operations after the first error,  which make
-     * debugging more difficult). The set is otherwise unchanged, which should
+     * Checks if this {@code WeakHashSet} is valid. This method counts the number of elements and
+     * compares it to {@link #count}. If the check fails, the number of elements is corrected (if
+     * we didn't, an {@link AssertionError} would be thrown for every operations after the first
+     * error, which make debugging more difficult). The set is otherwise unchanged, which should
      * help to get similar behaviour as if assertions hasn't been turned on.
      */
     private boolean valid() {
@@ -335,10 +316,9 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     /** The "intern" operation.  */  static final int INTERN = +2;
 
     /**
-     * Returns an object equal to {@code obj} if such an object already
-     * exist in this {@code WeakHashSet}. Otherwise, add {@code obj}
-     * to this {@code WeakHashSet}. This method is equivalents to the
-     * following code:
+     * Returns an object equal to {@code obj} if such an object already exist in this
+     * {@code WeakHashSet}. Otherwise, add {@code obj} to this {@code WeakHashSet}.
+     * This method is equivalents to the following code:
      *
      * {@preformat java
      *     if (object!=null) {
@@ -357,39 +337,35 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         assert WeakCollectionCleaner.DEFAULT.isAlive();
         assert valid() : count;
         if (obj != null) {
-            assert obj.equals(obj) : obj;
             /*
              * Check if {@code obj} is already contained in this
              * {@code WeakHashSet}. If yes, returns the element.
              */
-            final int hash = obj.hashCode() & 0x7FFFFFFF;
+            final int hash = (isArray ? Utilities.deepHashCode(obj) : obj.hashCode()) & 0x7FFFFFFF;
             int index = hash % table.length;
             for (Entry e=table[index]; e!=null; e=e.next) {
                 final E candidate = e.get();
-                if (candidate != null) {
-                    if (candidate.equals(obj)) {
-                        if (operation == REMOVE) {
-                            e.dispose();
-                        }
-                        assert candidate.getClass().equals(obj.getClass()) : candidate;
-                        @SuppressWarnings("unchecked")
-                        final T result = (T) candidate;
-                        return result;
+                if (isArray ? Utilities.deepEquals(candidate, obj) : obj.equals(candidate)) {
+                    if (operation == REMOVE) {
+                        e.dispose();
                     }
+                    assert candidate.getClass().equals(obj.getClass()) : candidate;
+                    @SuppressWarnings("unchecked")
+                    final T result = (T) candidate;
+                    return result;
                 }
                 // Do not remove the null element; lets ReferenceQueue do its job
                 // (it was a bug to remove element here as an "optimization")
             }
             if (operation >= ADD) {
                 /*
-                 * Check if the table need to be rehashed,
-                 * and add {@code obj} to the table.
+                 * Check if the table needs to be rehashed, and add {@code obj} to the table.
                  */
                 if (count >= threshold) {
-                    rehash(true);
+                    rehash("add");
                     index = hash % table.length;
                 }
-                table[index] = new Entry(obj, table[index], index);
+                table[index] = new Entry(obj, table[index], hash);
                 count++;
             }
         }
