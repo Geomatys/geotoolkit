@@ -16,6 +16,7 @@
 package org.geotoolkit.gui.swing.go.control;
 
 
+import java.awt.Component;
 import org.geotoolkit.gui.swing.go.control.information.InformationAction;
 import javax.swing.JToolBar;
 
@@ -28,7 +29,7 @@ import org.geotoolkit.gui.swing.go.control.information.MesureLenghtAction;
  *
  * @author johann sorel (Puzzle-GIS)
  */
-public class JInformationBar extends JToolBar {
+public class JInformationBar extends JToolBar implements MapControlBar{
 
     private final MesureLenghtAction actionLenght = new MesureLenghtAction();
     private final MesureAreaAction actionArea = new MesureAreaAction();
@@ -59,5 +60,15 @@ public class JInformationBar extends JToolBar {
         actionLenght.setMap(map);
         actionArea.setMap(map);
         actionInfo.setMap(map);
+    }
+
+    @Override
+    public GoMap2D getMap() {
+        return map;
+    }
+
+    @Override
+    public Component getComponent() {
+        return this;
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.geotoolkit.gui.swing.go.control;
 
+import java.awt.Component;
 import javax.swing.JToolBar;
 
 import org.geotoolkit.gui.swing.go.GoMap2D;
@@ -30,7 +31,7 @@ import org.geotoolkit.gui.swing.go.control.navigation.RefreshAction;
  *
  * @author johann Sorel (Puzzle-GIS)
  */
-public class JNavigationBar extends JToolBar {
+public class JNavigationBar extends JToolBar implements MapControlBar{
 
     private final ZoomAllAction actionZoomAll = new ZoomAllAction();
     private final ZoomInAction actionZoomIn = new ZoomInAction();
@@ -71,5 +72,15 @@ public class JNavigationBar extends JToolBar {
         actionZoomIn.setMap(map);
         actionZoomOut.setMap(map);
         actionZoomPan.setMap(map);
+    }
+
+    @Override
+    public GoMap2D getMap() {
+        return map;
+    }
+
+    @Override
+    public Component getComponent() {
+        return this;
     }
 }

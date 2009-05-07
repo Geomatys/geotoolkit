@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.swing.go.control;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
@@ -24,7 +25,6 @@ import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.geotoolkit.gui.swing.go.GoMap2D;
-import org.geotoolkit.gui.swing.go.control.selection.LasoSelectionDecoration;
 import org.geotoolkit.gui.swing.go.control.selection.LasoSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
@@ -32,7 +32,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class JEditionBar extends JToolBar {
+public class JEditionBar extends JToolBar implements MapControlBar{
 
     private static final ImageIcon ICON_SELECT = IconBundle.getInstance().getIcon("16_select");
 
@@ -118,7 +118,18 @@ public class JEditionBar extends JToolBar {
      * set the related Map2D
      * @param map2d : related Map2D
      */
+    @Override
     public void setMap(GoMap2D map2d) {
         map = map2d;        
+    }
+
+    @Override
+    public GoMap2D getMap() {
+        return map;
+    }
+
+    @Override
+    public Component getComponent() {
+        return this;
     }
 }
