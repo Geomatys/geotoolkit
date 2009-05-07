@@ -92,6 +92,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-filter</module>
+    <module>geotk-geometry</module>
   </modules>
 
 </project>

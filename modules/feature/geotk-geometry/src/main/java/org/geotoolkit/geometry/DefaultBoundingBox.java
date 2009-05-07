@@ -15,6 +15,10 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,Envelope{
 
+    public DefaultBoundingBox(CoordinateReferenceSystem crs){
+        super(crs);
+    }
+
     public DefaultBoundingBox(Envelope env){
         super(env);
     }

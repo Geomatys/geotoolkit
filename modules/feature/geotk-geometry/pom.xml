@@ -24,12 +24,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-filter</artifactId>
+  <artifactId>geotk-geometry</artifactId>
   <packaging>jar</packaging>
-  <name>Feature filter and expression</name>
+  <name>Feature geometry</name>
     
   <description>
-    Implementation of GeoAPI Filter and Expression interface.
+    Implementation of GeoAPI geometries interface.
   </description>
 
   <licenses>
@@ -44,21 +44,15 @@
   <!-- =========================================================== -->
   <!--     Dependencies                                            -->
   <!-- =========================================================== -->
-  <dependencies>      
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-utility</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-geometry</artifactId>
-          <version>${geotoolkit.version}</version>
-      </dependency>
+  <dependencies>
       <dependency>
           <groupId>com.vividsolutions</groupId>
           <artifactId>jts</artifactId>
       </dependency>
-
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-utility</artifactId>
+      </dependency>
       <dependency>
           <groupId>org.geotoolkit.project</groupId>
           <artifactId>geotk-provided</artifactId>
