@@ -50,28 +50,28 @@ public class JEditionBar extends JToolBar implements MapControlBar{
 
     private boolean installed = false;
 
-    private final ActionListener listener = new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(map == null) return;
-
-            map.setHandler(new LasoSelectionHandler(map));
-
-            if(e.getSource() == guiSelect){
-                if(installed){
-                    map.setHandler(new LasoSelectionHandler(map));
-//                    map.removeDecoration( deco);
-                    installed = false;
-                }else{
-//                    map.addDecoration(10, deco);
-                    installed = true;
-                }
-            }else{
-                
-            }
-        }
-    };
+//    private final ActionListener listener = new ActionListener() {
+//
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            if(map == null) return;
+//
+//            map.setHandler(new LasoSelectionHandler(map));
+//
+//            if(e.getSource() == guiSelect){
+//                if(installed){
+//                    map.setHandler(new LasoSelectionHandler(map));
+////                    map.removeDecoration( deco);
+//                    installed = false;
+//                }else{
+////                    map.addDecoration(10, deco);
+//                    installed = true;
+//                }
+//            }else{
+//
+//            }
+//        }
+//    };
 
         
     private GoMap2D map = null;
@@ -99,11 +99,11 @@ public class JEditionBar extends JToolBar implements MapControlBar{
         groupZone.add(guiLasso);
         groupZone.add(guiSquare);
 
-        guiSelect.addActionListener(listener);
-        guiIntersect.addActionListener(listener);
-        guiWithin.addActionListener(listener);
-        guiLasso.addActionListener(listener);
-        guiSquare.addActionListener(listener);
+//        guiSelect.addActionListener(listener);
+//        guiIntersect.addActionListener(listener);
+//        guiWithin.addActionListener(listener);
+//        guiLasso.addActionListener(listener);
+//        guiSquare.addActionListener(listener);
 
         add(guiSelect);
         add(guiIntersect);

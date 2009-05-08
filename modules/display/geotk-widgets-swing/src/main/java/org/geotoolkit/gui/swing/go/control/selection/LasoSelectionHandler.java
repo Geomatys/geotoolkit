@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gui.swing.go.control.selection;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.awt.Component;
@@ -50,7 +49,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 
 /**
- * laso selection handler
+ * Selection handler
  * 
  * @author Johann Sorel
  */
@@ -58,13 +57,13 @@ public class LasoSelectionHandler implements CanvasHandler {
 
     protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     protected static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-
-//    private static final ImageIcon ICON = IconBundle.getInstance().getIcon("16_select_laso");
     
-    private final MouseInputListener mouseInputListener = new MouseListen();
-    private final LasoSelectionDecoration selectionPane = new LasoSelectionDecoration();
     private final GoMap2D map2D;
-    protected Cursor CUR_SELECT;
+    private final boolean squareArea;
+    private final boolean withinArea;
+    private final boolean geographicArea;
+    private final MouseInputListener mouseInputListener;
+    private final LasoSelectionDecoration selectionPane = new LasoSelectionDecoration();
 
     private final GraphicVisitor visitor = new AbstractGraphicVisitor() {
 
@@ -74,7 +73,6 @@ public class LasoSelectionHandler implements CanvasHandler {
         public void startVisit() {
             super.startVisit();
             selection.clear();
-            System.out.println("start");
         }
 
         @Override
@@ -89,7 +87,6 @@ public class LasoSelectionHandler implements CanvasHandler {
             }
 
             selection.clear();
-            System.out.println("end");
         }
 
         @Override
@@ -112,38 +109,13 @@ public class LasoSelectionHandler implements CanvasHandler {
     };
 
 
-    public LasoSelectionHandler(GoMap2D map2D) {
+    public LasoSelectionHandler(GoMap2D map2D, boolean squareArea, boolean withinArea, boolean geographicArea) {
         this.map2D = map2D;
+        this.squareArea = squareArea;
+        this.withinArea = withinArea;
+        this.geographicArea = geographicArea;
+        mouseInputListener = new MouseListen();
     }
-
-
-    private void doMouseSelection(int mx, int my) {
-
-//        Geometry geometry = mousePositionToGeometry(mx, my);
-//        if (geometry != null) {
-//            map2D.doSelection(geometry);
-//        }
-    }
-
-    /**
-     *  transform a mouse coordinate in JTS Geometry using the CRS of the mapcontext
-     * @param mx : x coordinate of the mouse on the map (in pixel)
-     * @param my : y coordinate of the mouse on the map (in pixel)
-     * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
-     */
-//    private Geometry mousePositionToGeometry(int mx, int my) {
-//        Coordinate[] coord = new Coordinate[5];
-//        int taille = 4;
-//        StreamingStrategy strategy = map2D.getRenderingStrategy();
-//        coord[0] = strategy.toMapCoord(mx - taille, my - taille);
-//        coord[1] = strategy.toMapCoord(mx - taille, my + taille);
-//        coord[2] = strategy.toMapCoord(mx + taille, my + taille);
-//        coord[3] = strategy.toMapCoord(mx + taille, my - taille);
-//        coord[4] = coord[0];
-//
-//        LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
-//        return GEOMETRY_FACTORY.createPolygon(lr1, null);
-//    }
 
     private void doSelection(List<Point> points) {
 
@@ -158,28 +130,9 @@ public class LasoSelectionHandler implements CanvasHandler {
                 path.lineTo(p.x, p.y);
             }
 
-            map2D.getCanvas().getGraphicsIn(path, visitor, VisitFilter.INTERSECTS);
+            map2D.getCanvas().getGraphicsIn(path, visitor, (withinArea) ? VisitFilter.WITHIN : VisitFilter.INTERSECTS);
             map2D.getCanvas().getController().repaint();
-
-
-//            Coordinate[] coord = new Coordinate[lst.size() + 1];
-//
-//            int i = 0;
-//            for (int n = lst.size(); i < n; i++) {
-//                coord[i] = lst.get(i);
-//            }
-//
-//            coord[i] = coord[0];
-//
-//            LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
-//            Geometry geometry = GEOMETRY_FACTORY.createPolygon(lr1, null);
-
-
-
-
-//            map2D.doSelection(geometry);
         }
-
 
     }
 
@@ -206,33 +159,53 @@ public class LasoSelectionHandler implements CanvasHandler {
 
         Point lastValid = null;
         final List<Point> points = new ArrayList<Point>();
+        private int startX = 0;
+        private int startY = 0;
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            doMouseSelection(e.getX(), e.getY());
+            final Point point = e.getPoint();
+            points.clear();
+            points.add(new Point(point.x-1, point.y-1));
+            points.add(new Point(point.x-1, point.y+1));
+            points.add(new Point(point.x+1, point.y+1));
+            points.add(new Point(point.x+1, point.y-1));
+            doSelection(points);
+            points.clear();
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
             lastValid = e.getPoint();
             points.clear();
-            points.add(lastValid);
+            if(squareArea){
+                startX = lastValid.x;
+                startY = lastValid.y;
+            }else{
+                points.add(lastValid);
+            }
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            points.add(e.getPoint());
-
+            final Point lastPoint = e.getPoint();
+            if(squareArea){
+                points.clear();
+                points.add(lastPoint);
+                points.add(new Point(lastPoint.x, startY));
+                points.add(new Point(startX, startY));
+                points.add(new Point(startX, lastPoint.y));
+            }else{
+                points.add(lastPoint);
+            }
             doSelection(points);
-
             selectionPane.setPoints(null);
-
             points.clear();
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            map2D.getComponent().setCursor(CUR_SELECT);
+            map2D.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         }
 
         @Override
@@ -241,12 +214,21 @@ public class LasoSelectionHandler implements CanvasHandler {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            Point p = e.getPoint();
-
-            if(p.distance(lastValid) > 6){
-                lastValid = p;
-                points.add(new Point(e.getX(), e.getY()));
+            Point eventPoint = e.getPoint();
+            if(squareArea){
+                points.clear();
+                points.add(eventPoint);
+                points.add(new Point(eventPoint.x, startY));
+                points.add(new Point(startX, startY));
+                points.add(new Point(startX, eventPoint.y));
+                points.add(eventPoint);
                 selectionPane.setPoints(new ArrayList<Point>(points));
+            }else{
+                if(eventPoint.distance(lastValid) > 6){
+                    lastValid = eventPoint;
+                    points.add(new Point(e.getX(), e.getY()));
+                    selectionPane.setPoints(new ArrayList<Point>(points));
+                }
             }
         }
 

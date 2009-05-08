@@ -847,26 +847,26 @@ public class ContextBuilder {
             File gridFile;
             GridCoverage2D cover = null;
 
-            gridFile = new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1797-83.jpg");
-            CoverageReader reader = readWorldImage(gridFile);
-////            try {
-////                GeoTiffReader reader = new GeoTiffReader(gridFile, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
-////                cover = (GridCoverage2D) reader.read(null);
-//////                WorldImageReader reader = new WorldImageReader(gridFile);
+//            gridFile = new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1797-83.jpg");
+//            CoverageReader reader = readWorldImage(gridFile);
+//////            try {
+//////                GeoTiffReader reader = new GeoTiffReader(gridFile, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
 //////                cover = (GridCoverage2D) reader.read(null);
-////            } catch (DataSourceException ex) {
-////                cover = null;
-////                ex.printStackTrace();
-////            }catch (IOException ex){
-////                cover = null;
-////                ex.printStackTrace();
-////            }
-            layer = MapBuilder.createCoverageLayer(reader, SF.style(SF.rasterSymbolizer()),"1998-0897-1798-83");
-//            layer = MAP_BUILDER.createCoverageLayer(cover, createRasterStyle(),"1998-0897-1797-83");
-            layer.setDescription(SF.description("raster1", ""));
-            layer.setName("raster1");
-            layer.setVisible(true);
-            context.layers().add(layer);
+////////                WorldImageReader reader = new WorldImageReader(gridFile);
+////////                cover = (GridCoverage2D) reader.read(null);
+//////            } catch (DataSourceException ex) {
+//////                cover = null;
+//////                ex.printStackTrace();
+//////            }catch (IOException ex){
+//////                cover = null;
+//////                ex.printStackTrace();
+//////            }
+//            layer = MapBuilder.createCoverageLayer(reader, SF.style(SF.rasterSymbolizer()),"1998-0897-1798-83");
+////            layer = MAP_BUILDER.createCoverageLayer(cover, createRasterStyle(),"1998-0897-1797-83");
+//            layer.setDescription(SF.description("raster1", ""));
+//            layer.setName("raster1");
+//            layer.setVisible(true);
+//            context.layers().add(layer);
 
 //            gridFile = new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1798-83.TIF");
 //            try {

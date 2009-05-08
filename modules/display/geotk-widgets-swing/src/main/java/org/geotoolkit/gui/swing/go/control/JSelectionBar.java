@@ -19,14 +19,20 @@ package org.geotoolkit.gui.swing.go.control;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JToggleButton;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.go.GoMap2D;
 import org.geotoolkit.gui.swing.go.control.selection.LasoSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * 
@@ -35,18 +41,26 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 public class JSelectionBar extends JToolBar implements MapControlBar{
 
     private static final ImageIcon ICON_SELECT = IconBundle.getInstance().getIcon("16_select");
+    private static final ImageIcon ICON_CONFIG = IconBundle.getInstance().getIcon("16_vertical_next");
+    private static final ImageIcon ICON_INTERSECT = IconBundle.getInstance().getIcon("16_select_intersect");
+    private static final ImageIcon ICON_WITHIN = IconBundle.getInstance().getIcon("16_select_within");
+    private static final ImageIcon ICON_LASSO = IconBundle.getInstance().getIcon("16_select_lasso");
+    private static final ImageIcon ICON_SQUARE = IconBundle.getInstance().getIcon("16_select_square");
+    private static final ImageIcon ICON_GEOGRAPHIC = IconBundle.getInstance().getIcon("16_zoom_all");
+    private static final ImageIcon ICON_VISUAL = IconBundle.getInstance().getIcon("16_visible");
 
     private final ButtonGroup groupClip = new ButtonGroup();
     private final ButtonGroup groupZone = new ButtonGroup();
+    private final ButtonGroup groupVisit = new ButtonGroup();
 
     private final JButton guiSelect = new JButton(ICON_SELECT);
-    private final JToggleButton guiIntersect = new JToggleButton("I");
-    private final JToggleButton guiWithin = new JToggleButton("W");
-    private final JToggleButton guiLasso = new JToggleButton("L");
-    private final JToggleButton guiSquare = new JToggleButton("S");
-
-//    private final LasoSelectionDecoration deco = new LasoSelectionDecoration();
-//    private final LasoSelectionHandler handler = new LasoSelectionHandler();
+    private final JButton guiConfig = new JButton(ICON_CONFIG);
+    private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.getString("select_intersect"),ICON_INTERSECT);
+    private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.getString("select_within"),ICON_WITHIN);
+    private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.getString("select_lasso"),ICON_LASSO);
+    private final JRadioButtonMenuItem guiSquare = new JRadioButtonMenuItem(MessageBundle.getString("select_square"),ICON_SQUARE);
+    private final JRadioButtonMenuItem guiGeographic = new JRadioButtonMenuItem(MessageBundle.getString("select_geographic"),ICON_GEOGRAPHIC);
+    private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.getString("select_visual"),ICON_VISUAL);
 
     private boolean installed = false;
 
@@ -56,15 +70,17 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
         public void actionPerformed(ActionEvent e) {
             if(map == null) return;
 
-            map.setHandler(new LasoSelectionHandler(map));
+            boolean squareArea = guiSquare.isSelected();
+            boolean withinArea = guiWithin.isSelected();
+            boolean geographicArea = guiGeographic.isSelected();
+
+            map.setHandler(new LasoSelectionHandler(map,squareArea,withinArea,geographicArea));
 
             if(e.getSource() == guiSelect){
                 if(installed){
-                    map.setHandler(new LasoSelectionHandler(map));
-//                    map.removeDecoration( deco);
+                    map.setHandler(new LasoSelectionHandler(map,squareArea,withinArea,geographicArea));
                     installed = false;
                 }else{
-//                    map.addDecoration(10, deco);
                     installed = true;
                 }
             }else{
@@ -81,7 +97,6 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
      */
     public JSelectionBar() {
         this(null);
-
     }
 
     /**
@@ -91,33 +106,60 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     public JSelectionBar(GoMap2D map) {
         setMap(map);
 
+        final JPopupMenu menu = new JPopupMenu();
+        menu.add(guiLasso);
+        menu.add(guiSquare);
+        menu.add(new JSeparator(SwingConstants.HORIZONTAL));
+        menu.add(guiIntersect);
+        menu.add(guiWithin);
+        menu.add(new JSeparator(SwingConstants.HORIZONTAL));
+        menu.add(guiGeographic);
+        menu.add(guiVisual);
+
+        guiConfig.setComponentPopupMenu(menu);
+        guiConfig.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if(event.getButton() == MouseEvent.BUTTON1){
+                    menu.show(guiConfig, event.getX(), event.getY());
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent arg0) {}
+            @Override
+            public void mouseReleased(MouseEvent arg0) {}
+            @Override
+            public void mouseEntered(MouseEvent arg0) {}
+            @Override
+            public void mouseExited(MouseEvent arg0) {}
+        });
+
         guiIntersect.setSelected(true);
         groupClip.add(guiIntersect);
         groupClip.add(guiWithin);
 
-        guiLasso.setSelected(true);
+        guiSquare.setSelected(true);
         groupZone.add(guiLasso);
         groupZone.add(guiSquare);
+
+        guiVisual.setSelected(true);
+        groupVisit.add(guiVisual);
+        groupVisit.add(guiGeographic);
 
         guiSelect.addActionListener(listener);
         guiIntersect.addActionListener(listener);
         guiWithin.addActionListener(listener);
         guiLasso.addActionListener(listener);
         guiSquare.addActionListener(listener);
+        guiGeographic.addActionListener(listener);
+        guiVisual.addActionListener(listener);
 
         add(guiSelect);
-        add(guiIntersect);
-        add(guiWithin);
-        add(guiLasso);
-        add(guiSquare);
+        add(guiConfig);
 
     }
 
-    
-    /**
-     * set the related Map2D
-     * @param map2d : related Map2D
-     */
+    @Override
     public void setMap(GoMap2D map2d) {
         map = map2d;        
     }
