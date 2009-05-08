@@ -167,6 +167,9 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      *       by {@link #createSequence}), cast the value because the calculation accuracy is
      *       often unknown to the vector - and not necessarly its job.</li>
      * </ul>
+     * <p>
+     * For safety users should either call {@link #doubleValue} in all cases, or call this
+     * methods only if the type returned by {@link #getElementType()} has been verified.
      *
      * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.

@@ -49,9 +49,10 @@ public class VectorPair implements Serializable {
     private static final long serialVersionUID = 8330893190189236019L;
 
     /**
-     * Vector of the pair.
+     * The vectors specified to the {@code VectorPair} constructor,
+     * or the result of the last operation performed on this object.
      */
-    private Vector X, Y;
+    protected Vector X, Y;
 
     /**
      * Creates a new pair of vector. Whatever the two given vectors need to have the
@@ -61,8 +62,8 @@ public class VectorPair implements Serializable {
      * @param Y The second vector of the pair.
      */
     public VectorPair(final Vector X, final Vector Y) {
-        ensureNonNull("x", this.X = X);
-        ensureNonNull("y", this.Y = Y);
+        ensureNonNull("X", this.X = X);
+        ensureNonNull("Y", this.Y = Y);
     }
 
     /**
@@ -103,7 +104,7 @@ public class VectorPair implements Serializable {
      * @return The vector length, which is the same for the two vectors.
      * @throws MismatchedSizeException if the two vectors don't have the same length.
      */
-    public final int length() throws MismatchedSizeException {
+    public int length() throws MismatchedSizeException {
         final int length = Y.size();
         if (length != X.size()) {
             throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
@@ -113,9 +114,9 @@ public class VectorPair implements Serializable {
 
     /**
      * Merges consecutive colinear segments, if any. More specifically for any index <var>i</var>,
-     * if the point having the coordinate {@code (x[i], y[i]) lies on the line segment defined by
-     * the end points {@code (x[i-1], y[i-1]) to {@code (x[i+1], y[i+1]), then the point at index
-     * <var>i</var> will be dropped.
+     * if the point having the coordinate {@code (x[i], y[i])} lies on the line segment defined by
+     * the two end points {@code (x[i-1], y[i-1])} and {@code (x[i+1], y[i+1])}, then the point at
+     * index <var>i</var> will be dropped.
      * <p>
      * If the (<var>X</var>,<var>Y</var>) vectors are data to be plotted, then this method can be
      * used for simplifying the data without visual impact.
@@ -128,9 +129,9 @@ public class VectorPair implements Serializable {
      *         the same length.
      */
     public void omitColinearPoints(final double xTolerance, double yTolerance) throws MismatchedSizeException {
+        final int length = length(); // Invoked first for forcing an inconditional check of vectors length.
         final double ratio = yTolerance / xTolerance;
         if (!Double.isNaN(ratio)) {
-            final int length = length();
             final Vector X = this.X;
             final Vector Y = this.Y;
             int indices[] = null;
@@ -146,16 +147,17 @@ public class VectorPair implements Serializable {
                     double y3 = Y.doubleValue(i);
                     final double dsq = Line2D.ptSegDistSq(x1, y1, x3, y3, x2, y2);
                     if (dsq <= yTolerance) {
-                        // Found a colinear point.
+                        // Found a colinear point: (x2,y2) is on the line segment (x1,y1)-(x3,y3)
                         if (indices == null) {
                             indices = new int[length - 1];
                             while (count < i) {
                                 indices[count] = count++;
                             }
                         }
-                        // Overwrite the point in the middle with the last one.
+                        // Overwrite the point in the middle (x2,y2) with the last one (x3,y3).
                         indices[count-1] = i;
                     } else {
+                        // The point is not colinear, so remember that we must keep it.
                         if (indices != null) {
                             indices[count++] = i;
                         }
@@ -177,11 +179,11 @@ public class VectorPair implements Serializable {
     /**
      * Computes views of (<var>X</var>,<var>Y</var>) vectors where every diagonal line is replaced
      * by a horizontal line followed by a vertical line. For this purpose, every <var>x</var> and
-     * <var>y</var> value are repeated once. A graph of the resulting vectors would have the visual
+     * <var>y</var> values are repeated once. A graph of the resulting vectors would have the visual
      * appareance of a stair.
      * <p>
      * This method can be used before to plot (<var>X</var>,<var>Y</var>) data where <var>X</var>
-     * can takes only some fixed values, in order to visualy emphase this discontinuous nature.
+     * can takes only some fixed values, in order to visualy emphase its discontinuous nature.
      *
      * {@section On input}
      * Lets define <var>X</var><sub>i</sub> and <var>Y</var><sub>i</sub> the input vectors before
@@ -197,14 +199,16 @@ public class VectorPair implements Serializable {
      * <ul>
      *   <li>(<var>X</var><sub>o</sub>[0], <var>Y</var><sub>o</sub>[0]) =
      *       (<var>X</var><sub>i</sub>[0], <var>Y</var><sub>i</sub>[0])</li>
-     *   <li>(<var>X</var><sub>o</sub>[2*s-1], <var>Y</var><sub>o</sub>[2*s-1]) =
+     *   <li>(<var>X</var><sub>o</sub>[2s-1], <var>Y</var><sub>o</sub>[2s-1]) =
      *       (<var>X</var><sub>i</sub>[s], <var>Y</var><sub>i</sub>[s-1])</li>
      * </ul>
+     * <p>
+     * It is often a good idea to invoke {@link #omitColinearPoints} after this method.
      *
      * @throws MismatchedSizeException If the length of the <var>X</var> vector is not equal to
-     *         the length of the <var>Y</var> vector plus one.
+     *         the length of the <var>Y</var> vector + 1.
      */
-    public void makeDiscontinuous() throws MismatchedSizeException {
+    public void makeStepwise() throws MismatchedSizeException {
         final int length = Y.size();
         if (length+1 != X.size()) {
             throw new MismatchedSizeException();

@@ -43,4 +43,19 @@ public final class VectorPairTest {
         assertEquals(Vector.create(ey), pair.getY());
         assertEquals(Vector.create(ex), pair.getX());
     }
+
+    /**
+     * Tests the {@link VectorPair#makeStepwise} method.
+     */
+    @Test
+    public void testMakeStepwise() {
+        final double[]  x = {1, 2, 3, 4, 5, 6, 7};
+        final double[]  y = {4, 5, 6, 6, 3, 4};
+        final double[] ey = {4, 4, 5, 5, 6, 6, 6, 6, 3, 3, 4, 4};
+        final double[] ex = {1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7};
+        final VectorPair pair = new VectorPair(Vector.create(x), Vector.create(y));
+        pair.makeStepwise();
+        assertEquals(Vector.create(ey), pair.getY());
+        assertEquals(Vector.create(ex), pair.getX());
+    }
 }
