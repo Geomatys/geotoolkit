@@ -73,16 +73,14 @@
   </issueManagement>
 -->
 
-<!--
   <mailingLists>
     <mailingList>
-      <name>geotoolkit-devel</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/geotoolkit-devel</subscribe>
-      <post>geotoolkit-devel@lists.sourceforge.net</post>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=geotoolkit-devel</archive>
+      <name>geotoolkit</name>
+      <subscribe>http://lists.osgeo.org/mailman/listinfo/geotoolkit</subscribe>
+      <post>geotoolkit@lists.osgeo.org</post>
+      <archive>http://lists.osgeo.org/pipermail/geotoolkit</archive>
     </mailingList>
   </mailingLists>
--->
 
 
   <!-- =========================================================== -->
