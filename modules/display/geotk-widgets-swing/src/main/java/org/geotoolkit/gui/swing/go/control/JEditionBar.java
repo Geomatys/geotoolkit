@@ -25,7 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.geotoolkit.gui.swing.go.GoMap2D;
-import org.geotoolkit.gui.swing.go.control.selection.LasoSelectionHandler;
+import org.geotoolkit.gui.swing.go.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
 /**

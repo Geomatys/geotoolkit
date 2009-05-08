@@ -30,7 +30,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.go.GoMap2D;
-import org.geotoolkit.gui.swing.go.control.selection.LasoSelectionHandler;
+import org.geotoolkit.gui.swing.go.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -74,11 +74,11 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
             boolean withinArea = guiWithin.isSelected();
             boolean geographicArea = guiGeographic.isSelected();
 
-            map.setHandler(new LasoSelectionHandler(map,squareArea,withinArea,geographicArea));
+            map.setHandler(new DefaultSelectionHandler(map,squareArea,withinArea,geographicArea));
 
             if(e.getSource() == guiSelect){
                 if(installed){
-                    map.setHandler(new LasoSelectionHandler(map,squareArea,withinArea,geographicArea));
+                    map.setHandler(new DefaultSelectionHandler(map,squareArea,withinArea,geographicArea));
                     installed = false;
                 }else{
                     installed = true;

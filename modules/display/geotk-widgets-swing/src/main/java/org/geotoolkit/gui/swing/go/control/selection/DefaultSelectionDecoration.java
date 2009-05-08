@@ -16,8 +16,15 @@
  */
 package org.geotoolkit.gui.swing.go.control.selection;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.geom.GeneralPath;
+import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -25,68 +32,107 @@ import org.geotoolkit.gui.swing.map.map2d.Map2D;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 
 /**
- * Default selection decoration
+ * Selection decoration
  * 
  * @author Johann Sorel
  */
 public class DefaultSelectionDecoration extends JComponent implements MapDecoration{
 
-    private final Color borderColor = new Color(0,255,0);
-    private final Color fillColor = new Color(0,255,0,30);
+    private static final Color MAIN_COLOR = Color.GREEN;
+    private static final Color SHADOW_COLOR = new Color(0f, 0f, 0f, 0.5f);
+    private static final int SHADOW_STEP = 2;
     
-    private int startx =0;
-    private int starty =0;
-    private int width = 0;
-    private int height = 0;
-    private boolean draw = false;
-    private boolean fill = false;
+    List<Point> points = null;
+    
     
     public DefaultSelectionDecoration(){}
     
-    public void setFill(boolean fill){
-        this.fill = fill;
-    }
     
     
-    public void setCoord(int sx, int sy, int ex, int ey, boolean draw){
-        startx = sx;
-        starty = sy;
-        width = ex;
-        height = ey;
-        this.draw = draw;
+    public void setPoints(List<Point> points){
+        this.points = points;
         repaint();
     }
     
     @Override
     public void paintComponent(Graphics g) {
-        if(draw){
-                        
-            if(fill){
-                g.setColor(fillColor);
-                g.fillRect(startx, starty, width, height);
-            }
+        if(points != null && points.size() > 1){
+
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+            path.moveTo(points.get(0).x, points.get(0).y);
+
             
-            g.setColor(borderColor);
-            g.drawRect(startx, starty, width, height);
+            for(int i=1;i<points.size();i++){
+                Point p = points.get(i);
+                path.lineTo(p.x, p.y);
             }
+
+
+            g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            //draw a shadow
+            g2.translate(SHADOW_STEP, SHADOW_STEP);
+            g2.setColor(SHADOW_COLOR);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+            g2.fill(path);
+
+            //draw the lines
+            g2.translate(-SHADOW_STEP, -SHADOW_STEP);
+            g2.setColor(MAIN_COLOR);
+            g2.fill(path);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            g2.draw(path);
+
+            //draw start cross
+            paintCross(g2, points.get(0));
+
+            //draw end cross
+            paintCross(g2, points.get(points.size()-1));
+
+            
+        }
     }
 
+
+    private void paintCross(Graphics2D g2, Point p){
+        g2.setStroke(new BasicStroke(3,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));
+        //draw a shadow
+        p.x +=SHADOW_STEP;
+        p.y +=SHADOW_STEP;
+        g2.setColor(SHADOW_COLOR);
+        g2.drawLine((int)p.x, (int)p.y-6, (int)p.x, (int)p.y+6);
+        g2.drawLine((int)p.x-6, (int)p.y, (int)p.x+6, (int)p.y);
+        ///draw the start cross
+        p.x -=SHADOW_STEP;
+        p.y -=SHADOW_STEP;
+        g2.setColor(MAIN_COLOR);
+        g2.drawLine((int)p.x, (int)p.y-6, (int)p.x, (int)p.y+6);
+        g2.drawLine((int)p.x-6, (int)p.y, (int)p.x+6, (int)p.y);
+    }
+
+    @Override
     public void refresh() {
         repaint();
     }
 
+    @Override
     public JComponent geComponent() {
         return this;
     }
     
+    @Override
     public void setMap2D(Map2D map) {
         
     }
 
+    @Override
     public Map2D getMap2D() {
         return null;
     }
 
+    @Override
     public void dispose() {
     }
 }
