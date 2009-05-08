@@ -161,7 +161,16 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
 
     @Override
     public void setMap(GoMap2D map2d) {
-        map = map2d;        
+        map = map2d;
+
+        if(map != null){
+            guiSelect.setEnabled(true);
+            guiSelect.setEnabled(true);
+        }else{
+            guiSelect.setEnabled(false);
+            guiSelect.setEnabled(false);
+        }
+
     }
 
     @Override

@@ -20,13 +20,19 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go.GoMap2D;
 import org.geotoolkit.gui.swing.go.control.selection.DefaultSelectionHandler;
+import org.geotoolkit.gui.swing.misc.Render.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  * 
@@ -34,28 +40,22 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 public class JEditionBar extends JToolBar implements MapControlBar{
 
-    private static final ImageIcon ICON_SELECT = IconBundle.getInstance().getIcon("16_select");
+    private static final ImageIcon ICON_EDIT = IconBundle.getInstance().getIcon("16_edit_geom");
 
-    private final ButtonGroup groupClip = new ButtonGroup();
-    private final ButtonGroup groupZone = new ButtonGroup();
-
-    private final JButton guiSelect = new JButton(ICON_SELECT);
-    private final JToggleButton guiIntersect = new JToggleButton("I");
-    private final JToggleButton guiWithin = new JToggleButton("W");
-    private final JToggleButton guiLasso = new JToggleButton("L");
-    private final JToggleButton guiSquare = new JToggleButton("S");
+    private final JButton guiEdit = new JButton(ICON_EDIT);
+    private final JComboBox guiLayers = new JComboBox();
 
 //    private final LasoSelectionDecoration deco = new LasoSelectionDecoration();
 //    private final LasoSelectionHandler handler = new LasoSelectionHandler();
 
     private boolean installed = false;
 
-//    private final ActionListener listener = new ActionListener() {
-//
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            if(map == null) return;
-//
+    private final ActionListener listener = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(map == null) return;
+
 //            map.setHandler(new LasoSelectionHandler(map));
 //
 //            if(e.getSource() == guiSelect){
@@ -70,8 +70,8 @@ public class JEditionBar extends JToolBar implements MapControlBar{
 //            }else{
 //
 //            }
-//        }
-//    };
+        }
+    };
 
         
     private GoMap2D map = null;
@@ -91,25 +91,13 @@ public class JEditionBar extends JToolBar implements MapControlBar{
     public JEditionBar(GoMap2D map) {
         setMap(map);
 
-        guiIntersect.setSelected(true);
-        groupClip.add(guiIntersect);
-        groupClip.add(guiWithin);
+        guiLayers.setRenderer(new LayerListRenderer());
 
-        guiLasso.setSelected(true);
-        groupZone.add(guiLasso);
-        groupZone.add(guiSquare);
+        guiEdit.addActionListener(listener);
+        guiLayers.addActionListener(listener);
 
-//        guiSelect.addActionListener(listener);
-//        guiIntersect.addActionListener(listener);
-//        guiWithin.addActionListener(listener);
-//        guiLasso.addActionListener(listener);
-//        guiSquare.addActionListener(listener);
-
-        add(guiSelect);
-        add(guiIntersect);
-        add(guiWithin);
-        add(guiLasso);
-        add(guiSquare);
+        add(guiEdit);
+        add(guiLayers);
 
     }
 
@@ -120,7 +108,25 @@ public class JEditionBar extends JToolBar implements MapControlBar{
      */
     @Override
     public void setMap(GoMap2D map2d) {
-        map = map2d;        
+        map = map2d;
+
+        guiEdit.setEnabled(false);
+        guiLayers.setEnabled(false);
+
+        if(map != null){
+            AbstractContainer2D container = map.getCanvas().getContainer();
+            if(container instanceof ContextContainer2D){
+                guiEdit.setEnabled(true);
+                guiLayers.setEnabled(true);
+                ContextContainer2D cc = (ContextContainer2D) container;
+                guiLayers.setModel(new ListComboBoxModel(cc.getContext().layers()));
+            }else{
+                guiLayers.setModel(new DefaultComboBoxModel());
+            }
+        }else{
+            guiLayers.setModel(new DefaultComboBoxModel());
+        }
+
     }
 
     @Override

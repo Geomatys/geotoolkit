@@ -25,12 +25,10 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -42,6 +40,7 @@ import javax.swing.WindowConstants;
 import org.geotoolkit.display2d.canvas.GO2Hints;
 import org.geotoolkit.gui.swing.go.control.JConfigBar;
 import org.geotoolkit.gui.swing.go.control.JCoordinateBar;
+import org.geotoolkit.gui.swing.go.control.JEditionBar;
 import org.geotoolkit.gui.swing.go.control.JInformationBar;
 import org.geotoolkit.gui.swing.go.control.JNavigationBar;
 import org.geotoolkit.gui.swing.go.control.JSelectionBar;
@@ -54,7 +53,6 @@ import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.go.J2DMapVolatile;
 import org.geotoolkit.gui.swing.go.decoration.JClassicNavigationDecoration;
-import org.geotoolkit.gui.swing.go.decoration.JNorthArrowDecoration;
 import org.geotoolkit.gui.swing.go.decoration.JScaleBarDecoration;
 import org.geotoolkit.gui.swing.maptree.JContextTree;
 import org.geotoolkit.gui.swing.maptree.menu.ContextPropertyItem;
@@ -110,6 +108,7 @@ public class GoFrame extends javax.swing.JFrame {
         guiCoordBar.setMap(guiMap);
         guiConfigBar.setMap(guiMap);
         guiSelectionBar.setMap(guiMap);
+        guiEditBar.setMap(guiMap);
 
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
@@ -169,6 +168,7 @@ public class GoFrame extends javax.swing.JFrame {
         guiNavBar = new JNavigationBar();
         guiInfoBar = new JInformationBar();
         guiSelectionBar = new JSelectionBar();
+        guiEditBar = new JEditionBar();
         guiConfigBar = new JConfigBar();
         jMenuBar1 = new JMenuBar();
         jMenu1 = new JMenu();
@@ -230,8 +230,14 @@ public class GoFrame extends javax.swing.JFrame {
         guiSelectionBar.setRollover(true);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         jPanel1.add(guiSelectionBar, gridBagConstraints);
+
+        guiEditBar.setFloatable(false);
+        guiEditBar.setRollover(true);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(guiEditBar, gridBagConstraints);
 
         guiConfigBar.setFloatable(false);
         guiConfigBar.setRollover(true);
@@ -358,6 +364,7 @@ private void jButton3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton
     private ButtonGroup buttonGroup1;
     private JConfigBar guiConfigBar;
     private JCoordinateBar guiCoordBar;
+    private JEditionBar guiEditBar;
     private JInformationBar guiInfoBar;
     private JNavigationBar guiNavBar;
     private JSelectionBar guiSelectionBar;
@@ -367,7 +374,6 @@ private void jButton3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton
     private JMenuItem jMenuItem1;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
-    private JSelectionBar jSelectionBar1;
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
     private JPanel panGeneral;

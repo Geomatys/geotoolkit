@@ -40,7 +40,7 @@ public class LayerListRenderer implements ListCellRenderer{
     private final Border border = BorderFactory.createLineBorder(Color.LIGHT_GRAY,1);
     private final Border nullborder = BorderFactory.createEmptyBorder(1,1,1,1);
     
-    JLabel lbl = new JLabel();
+    private final JLabel lbl = new JLabel();
     
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -49,8 +49,11 @@ public class LayerListRenderer implements ListCellRenderer{
             MapLayer layer = (MapLayer) value;
             lbl.setText(layer.getDescription().getTitle().toString());
             lbl.setIcon(getIcon(layer));
-        }else{
+        }else if(value != null){
             lbl.setText(value.toString());
+            lbl.setIcon(null);
+        }else{
+            lbl.setText("");
             lbl.setIcon(null);
         }
         
