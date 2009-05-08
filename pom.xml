@@ -77,6 +77,7 @@
     <mailingList>
       <name>geotoolkit</name>
       <subscribe>http://lists.osgeo.org/mailman/listinfo/geotoolkit</subscribe>
+      <unsubscribe>http://lists.osgeo.org/mailman/listinfo/geotoolkit</unsubscribe>
       <post>geotoolkit@lists.osgeo.org</post>
       <archive>http://lists.osgeo.org/pipermail/geotoolkit</archive>
     </mailingList>
