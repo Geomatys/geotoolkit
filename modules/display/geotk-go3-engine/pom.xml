@@ -51,13 +51,7 @@
     <dependencies>
        <dependency>
           <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-examples</artifactId>       </dependency>
-       <dependency>
-          <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-awt</artifactId>       </dependency>
-       <dependency>
-          <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-jogl</artifactId>
+          <artifactId>ardor3d-awt</artifactId>
        </dependency>
        <dependency>
           <groupId>org.geotoolkit.pending</groupId>
