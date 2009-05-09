@@ -19,20 +19,14 @@ package org.geotoolkit.gui.swing.go.control;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go.GoMap2D;
-import org.geotoolkit.gui.swing.go.control.selection.DefaultSelectionHandler;
-import org.geotoolkit.gui.swing.misc.Render.LayerListRenderer;
+import org.geotoolkit.gui.swing.go.control.creation.DefaultEditionHandler2;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  * 
@@ -43,12 +37,10 @@ public class JEditionBar extends JToolBar implements MapControlBar{
     private static final ImageIcon ICON_EDIT = IconBundle.getInstance().getIcon("16_edit_geom");
 
     private final JButton guiEdit = new JButton(ICON_EDIT);
-    private final JComboBox guiLayers = new JComboBox();
 
-//    private final LasoSelectionDecoration deco = new LasoSelectionDecoration();
-//    private final LasoSelectionHandler handler = new LasoSelectionHandler();
+    private GoMap2D map = null;
 
-    private boolean installed = false;
+    private final DefaultEditionHandler2 handler = new DefaultEditionHandler2(map);
 
     private final ActionListener listener = new ActionListener() {
 
@@ -56,25 +48,14 @@ public class JEditionBar extends JToolBar implements MapControlBar{
         public void actionPerformed(ActionEvent e) {
             if(map == null) return;
 
-//            map.setHandler(new LasoSelectionHandler(map));
-//
-//            if(e.getSource() == guiSelect){
-//                if(installed){
-//                    map.setHandler(new LasoSelectionHandler(map));
-////                    map.removeDecoration( deco);
-//                    installed = false;
-//                }else{
-////                    map.addDecoration(10, deco);
-//                    installed = true;
-//                }
-//            }else{
-//
-//            }
+            handler.setMap(map);
+            map.setHandler(handler);
+            
         }
     };
 
         
-    private GoMap2D map = null;
+    
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -91,14 +72,8 @@ public class JEditionBar extends JToolBar implements MapControlBar{
     public JEditionBar(GoMap2D map) {
         setMap(map);
 
-        guiLayers.setRenderer(new LayerListRenderer());
-
         guiEdit.addActionListener(listener);
-        guiLayers.addActionListener(listener);
-
         add(guiEdit);
-        add(guiLayers);
-
     }
 
     
@@ -111,21 +86,16 @@ public class JEditionBar extends JToolBar implements MapControlBar{
         map = map2d;
 
         guiEdit.setEnabled(false);
-        guiLayers.setEnabled(false);
 
         if(map != null){
             AbstractContainer2D container = map.getCanvas().getContainer();
             if(container instanceof ContextContainer2D){
                 guiEdit.setEnabled(true);
-                guiLayers.setEnabled(true);
-                ContextContainer2D cc = (ContextContainer2D) container;
-                guiLayers.setModel(new ListComboBoxModel(cc.getContext().layers()));
             }else{
-                guiLayers.setModel(new DefaultComboBoxModel());
             }
-        }else{
-            guiLayers.setModel(new DefaultComboBoxModel());
         }
+
+        handler.setMap(map);
 
     }
 

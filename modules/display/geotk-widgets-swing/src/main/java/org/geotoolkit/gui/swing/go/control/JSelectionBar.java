@@ -62,7 +62,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     private final JRadioButtonMenuItem guiGeographic = new JRadioButtonMenuItem(MessageBundle.getString("select_geographic"),ICON_GEOGRAPHIC);
     private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.getString("select_visual"),ICON_VISUAL);
 
-    private boolean installed = false;
+    private final DefaultSelectionHandler handler = new DefaultSelectionHandler();
 
     private final ActionListener listener = new ActionListener() {
 
@@ -70,22 +70,12 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
         public void actionPerformed(ActionEvent e) {
             if(map == null) return;
 
-            boolean squareArea = guiSquare.isSelected();
-            boolean withinArea = guiWithin.isSelected();
-            boolean geographicArea = guiGeographic.isSelected();
+            handler.setMap(map);
+            handler.setGeographicArea(guiGeographic.isSelected());
+            handler.setSquareArea(guiSquare.isSelected());
+            handler.setWithinArea(guiWithin.isSelected());
 
-            map.setHandler(new DefaultSelectionHandler(map,squareArea,withinArea,geographicArea));
-
-            if(e.getSource() == guiSelect){
-                if(installed){
-                    map.setHandler(new DefaultSelectionHandler(map,squareArea,withinArea,geographicArea));
-                    installed = false;
-                }else{
-                    installed = true;
-                }
-            }else{
-                
-            }
+            map.setHandler(handler);
         }
     };
 

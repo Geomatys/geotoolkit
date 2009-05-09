@@ -34,9 +34,10 @@ import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration.LEVEL
  */
 public class MouseNavigatonListener implements MouseInputListener, MouseWheelListener {
 
-    private final GoMap2D map;
+    
     private final ZoomDecoration decorationPane = new ZoomDecoration();
     private double zoomFactor = 2;
+    private GoMap2D map;
 
     private int startX;
     private int startY;
@@ -46,6 +47,14 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
     public MouseNavigatonListener(GoMap2D map) {
         this.map = map;
+    }
+
+    public void setMap(GoMap2D map) {
+        this.map = map;
+    }
+
+    public GoMap2D getMap() {
+        return map;
     }
 
     public void install(Component component){

@@ -58,13 +58,9 @@ public class DefaultSelectionHandler implements CanvasHandler {
     protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     protected static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     
-    private final GoMap2D map2D;
-    private final boolean squareArea;
-    private final boolean withinArea;
-    private final boolean geographicArea;
+    
     private final MouseInputListener mouseInputListener;
     private final DefaultSelectionDecoration selectionPane = new DefaultSelectionDecoration();
-
     private final GraphicVisitor visitor = new AbstractGraphicVisitor() {
 
         private final Map<MapLayer,Set<FeatureId>> selection = new HashMap<MapLayer, Set<FeatureId>>();
@@ -107,16 +103,48 @@ public class DefaultSelectionHandler implements CanvasHandler {
         public void visit(GraphicCoverageJ2D coverage, Shape queryArea) {
         }
     };
+    private boolean squareArea;
+    private boolean withinArea;
+    private boolean geographicArea;
+    private GoMap2D map2D;
 
 
-    public DefaultSelectionHandler(GoMap2D map2D, boolean squareArea, boolean withinArea, boolean geographicArea) {
-        this.map2D = map2D;
-        this.squareArea = squareArea;
-        this.withinArea = withinArea;
-        this.geographicArea = geographicArea;
+    public DefaultSelectionHandler() {
         mouseInputListener = new MouseListen();
     }
 
+    public boolean isGeographicArea() {
+        return geographicArea;
+    }
+
+    public boolean isSquareArea() {
+        return squareArea;
+    }
+
+    public boolean isWithinArea() {
+        return withinArea;
+    }
+
+    public void setGeographicArea(boolean geographicArea) {
+        this.geographicArea = geographicArea;
+    }
+
+    public void setSquareArea(boolean squareArea) {
+        this.squareArea = squareArea;
+    }
+
+    public void setWithinArea(boolean withinArea) {
+        this.withinArea = withinArea;
+    }
+
+    public GoMap2D getMap() {
+        return map2D;
+    }
+
+    public void setMap(GoMap2D map2D) {
+        this.map2D = map2D;
+    }
+    
     private void doSelection(List<Point> points) {
 
         if (points.size() > 2) {

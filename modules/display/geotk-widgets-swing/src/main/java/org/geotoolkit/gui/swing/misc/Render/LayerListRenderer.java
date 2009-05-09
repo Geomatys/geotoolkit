@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -34,35 +35,23 @@ import org.geotoolkit.map.MapLayer;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class LayerListRenderer implements ListCellRenderer{
+public class LayerListRenderer extends DefaultListCellRenderer {
 
     private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
     private final Border border = BorderFactory.createLineBorder(Color.LIGHT_GRAY,1);
     private final Border nullborder = BorderFactory.createEmptyBorder(1,1,1,1);
     
-    private final JLabel lbl = new JLabel();
     
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        
+        final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
         if(value instanceof MapLayer){
             MapLayer layer = (MapLayer) value;
             lbl.setText(layer.getDescription().getTitle().toString());
             lbl.setIcon(getIcon(layer));
-        }else if(value != null){
-            lbl.setText(value.toString());
-            lbl.setIcon(null);
-        }else{
-            lbl.setText("");
-            lbl.setIcon(null);
         }
-        
-        if(isSelected ){
-            lbl.setBorder(border);
-        }else{
-            lbl.setBorder(nullborder);
-        }
-                
+                        
         return lbl;
     }
     
