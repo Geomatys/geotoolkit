@@ -96,18 +96,22 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     }
 
     /**
-     * Creates a sequence of numbers in the given range of values using the given increment.
+     * Creates a sequence of numbers in a given range of values using the given increment.
+     * The range of values will be {@code first} inclusive to {@code first + increment*length}
+     * exclusive. Note that the value given by the {@code first} argument is equivalent to a
+     * "lowest" or "minimum" value only if the given increment is positive.
+     * <p>
      * The {@linkplain #getElementType() element type} will be the smallest type that can be
      * used for storing every values. For example it will be {@code Byte.class} for the range
      * [100:1:120] but will be {@code Double.class} for the range [0:0.1:1].
      *
      * @param  first     The first value, inclusive.
      * @param  increment The difference between the values at two adjacent indexes.
-     * @param  limit     The last value, <strong>exclusive</strong>.
+     * @param  length    The length of the desired vector.
      * @return The given sequence as a vector.
      */
-    public static Vector createSequence(final double first, final double increment, final double limit) {
-        return new SequenceVector(first, increment, limit);
+    public static Vector createSequence(final double first, final double increment, final int length) {
+        return new SequenceVector(first, increment, length);
     }
 
     /**
@@ -290,21 +294,20 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      */
     public Vector view(int... index) throws IndexOutOfBoundsException {
         index = toBacking(index);
-        int first, limit, step;
+        final int first, step;
         switch (index.length) {
             case 0: {
                 first = 0;
-                limit = 0;
                 step  = 1;
                 break;
             }
             case 1: {
                 first = index[0];
-                limit = first + 1;
                 step  = 1;
                 break;
             }
             default: {
+                int limit;
                 first = index[0];
                 limit = index[1];
                 step  = limit - first;
@@ -318,7 +321,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
                 break;
             }
         }
-        return subList(first, step, limit);
+        return subList(first, step, index.length);
     }
 
     /**
@@ -327,8 +330,8 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * {@code upper} exclusive.
      * <p>
      * This method delegates its work to <code>{@linkplain #subList(int,int,int) subList}(lower,
-     * 1, upper)</code>. It is declared final in order to force every subclasses to override the
-     * later method instead than this one.
+     * 1, upper-lower)</code>. It is declared final in order to force every subclasses to override
+     * the later method instead than this one.
      *
      * @param  lower Index of the first value to be included in the returned view.
      * @param  upper Index after the last value to be included in the returned view.
@@ -338,36 +341,36 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      */
     @Override
     public final Vector subList(final int lower, final int upper) throws IndexOutOfBoundsException {
-        return subList(lower, 1, upper);
+        return subList(lower, 1, upper - lower);
     }
 
     /**
-     * Returns a view which contain the values of this vector in the given index range.
+     * Returns a view which contain the values of this vector in a given index range.
      * The returned view will contain the values from index {@code first} inclusive to
-     * {@code limit} exclusive, with index incremented by the given {@code step} value,
-     * which can be negative. More specifically the index <var>i</var> in the returned
-     * vector will maps the element at index {@code i*step + first} in this vector.
+     * {@code first + step*length} exclusive with index incremented by the given {@code step}
+     * value, which can be negative. More specifically the index <var>i</var> in the returned
+     * vector will maps the element at index <code>first + step*<var>i</var></code> in this
+     * vector.
      * <p>
      * This method does not copy the values. Consequently any modification to the
      * values of this vector will be reflected in the returned view and vis-versa.
      *
-     * @param  first Index of the first value to be included in the returned view.
-     * @param  step	 The index increment between each values to be returned. Can be positive or
-     *               negative, but not zero. If negative, then the values will be returned in
-     *               reverse order. In such case {@code first} must be greater than {@code limit}.
-     * @param  limit Index after the last value to be included in the returned view.
+     * @param  first  Index of the first value to be included in the returned view.
+     * @param  step	  The index increment in this vector between two consecutive values
+     *                in the returned vector. Can be positive, zero or negative.
+     * @param  length The length of the vector to be returned. Can not be greater than
+     *                the length of this vector, except if the {@code step} is zero.
      * @return A view of this vector containing values in the given index range.
-     * @throws ArithmeticException if {@code step} if zero.
-     * @throws IndexOutOfBoundsException If an index is outside the
-     *         [0 &hellip; {@linkplain #size size}-1] range.
+     * @throws IndexOutOfBoundsException If a {@code first} or {@code first + step*(length-1)}
+     *         is outside the [0 &hellip; {@linkplain #size size}-1] range.
      */
-    public Vector subList(final int first, final int step, final int limit)
-            throws ArithmeticException, IndexOutOfBoundsException
+    public Vector subList(final int first, final int step, final int length)
+            throws IndexOutOfBoundsException
     {
-        if (step == 1 && first == 0 && limit == size()) {
+        if (step == 1 && first == 0 && length == size()) {
             return this;
         }
-        return createView(first, step, limit);
+        return createView(first, step, length);
     }
 
     /**
@@ -387,8 +390,8 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Implementation of {@link #subList(int,int,int)} to be overriden by subclasses.
      */
-    Vector createView(final int first, final int step, final int limit) {
-        return new SubList(first, step, limit);
+    Vector createView(final int first, final int step, final int length) {
+        return new SubList(first, step, length);
     }
 
     /**
@@ -489,9 +492,10 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createView(int first, final int step, final int limit) {
-            final int ni[] = new int[length(first, step, limit)];
-            for (int j=0; j<ni.length; j++) {
+        @Override Vector createView(int first, final int step, final int length) {
+            ensureValid(first, step, length);
+            final int ni[] = new int[length];
+            for (int j=0; j<length; j++) {
                 ni[j] = index[first];
                 first += step;
             }
@@ -500,27 +504,23 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     }
 
     /**
-     * Return the length of a subvector in the given range with the given step.
-     * If the result is an invalid length, format an error message assuming that
-     * the given range in invalid.
+     * Ensures that the range created from the given parameters is valid.
      */
-    static int length(final int first, final int step, final int limit) {
-        final int length = (limit - first) / step;
+    static void ensureValid(final int first, final int step, final int length) {
         if (length < 0) {
             final int key;
             final Object arg1, arg2;
             if (step == 1) {
                 key  = Errors.Keys.BAD_RANGE_$2;
                 arg1 = first;
-                arg2 = limit;
+                arg2 = first + length;
             } else {
                 key  = Errors.Keys.ILLEGAL_ARGUMENT_$2;
                 arg1 = "range";
-                arg2 = "[" + first + ':' + step + ':' + limit + ']';
+                arg2 = "[" + first + ':' + step + ':' + (first + step*length) + ']';
             }
             throw new IllegalArgumentException(Errors.format(key, arg1, arg2));
         }
-        return length;
     }
 
     /**
@@ -556,10 +556,11 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         /**
          * Creates a new view over the given range.
          */
-        protected SubList(final int first, final int step, final int limit) {
+        protected SubList(final int first, final int step, final int length) {
+            ensureValid(first, step, length);
             this.first  = first;
             this.step   = step;
-            this.length = length(first, step, limit);
+            this.length = length;
         }
 
         /** Returns the index where to look for the value in the enclosing vector. */
@@ -641,11 +642,10 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createView(int first, int step, int limit) {
+        @Override Vector createView(int first, int step, final int length) {
             first = toBacking(first);
             step *= this.step;
-            limit = toBacking(limit);
-            return Vector.this.subList(first, step, limit);
+            return Vector.this.subList(first, step, length);
         }
     }
 }

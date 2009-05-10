@@ -54,7 +54,7 @@ public final class VectorPairTest {
         final double[] ey = {4, 4, 5, 5, 6, 6, 6, 6, 3, 3, 4, 4};
         final double[] ex = {1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7};
         final VectorPair pair = new VectorPair(Vector.create(x), Vector.create(y));
-        pair.makeStepwise();
+        pair.makeStepwise(0);
         assertEquals(Vector.create(ey), pair.getY());
         assertEquals(Vector.create(ex), pair.getX());
     }

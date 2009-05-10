@@ -62,17 +62,21 @@ final class SequenceVector extends Vector implements Serializable {
     private final int length;
 
     /**
-     * Creates a sequence of numbers in the given range of values using the given increment.
+     * Creates a sequence of numbers in a given range of values using the given increment.
      *
      * @param first     The first value, inclusive.
      * @param increment The difference between the values at two adjacent indexes.
-     * @param limit     The last value, <strong>exclusive</strong>.
+     * @param length    The length of the vector.
      */
-    public SequenceVector(final double first, final double increment, final double limit) {
+    public SequenceVector(final double first, final double increment, final int length) {
+        if (length < 0) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$1, "length", length));
+        }
         this.first     = first;
         this.increment = increment;
-        this.length    = Math.max(0, (int) ((limit - first) / increment + (1 - EPS)));
-        if (Double.isNaN(first) || Double.isNaN(increment) || Double.isNaN(limit)) {
+        this.length    = length;
+        if (Double.isNaN(first) || Double.isNaN(increment)) {
             type = null;
         } else {
             Class<? extends Number> t = Classes.finestClass(first);
@@ -178,7 +182,7 @@ final class SequenceVector extends Vector implements Serializable {
      * Creates a new sequence.
      */
     @Override
-    Vector createView(final int first, final int step, final int limit) {
-        return new SequenceVector(doubleValue(first), increment*step, doubleValue(limit));
+    Vector createView(final int first, final int step, final int length) {
+        return new SequenceVector(doubleValue(first), increment*step, length);
     }
 }

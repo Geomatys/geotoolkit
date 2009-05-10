@@ -34,7 +34,7 @@ public final class VectorTest {
      */
     @Test
     public void testSequence() {
-        Vector vector = Vector.createSequence(100, 2, 120);
+        Vector vector = Vector.createSequence(100, 2, 10);
         assertEquals(Byte.class, vector.getElementType());
         assertEquals(10, vector.size());
         for (int i=0; i<vector.size(); i++) {
@@ -43,14 +43,12 @@ public final class VectorTest {
         /*
          * Same tests, using double values.
          */
-        vector = Vector.createSequence(100, 0.1, 101);
+        vector = Vector.createSequence(100, 0.1, 10);
         assertEquals(Double.class, vector.getElementType());
         assertEquals(10, vector.size());
         for (int i=0; i<vector.size(); i++) {
             assertEquals(100 + 0.1*i, vector.doubleValue(i), 1E-10);
         }
-        assertEquals("Because the last value is exclusive, 100.91 should be the " +
-                "same than 101.", vector, Vector.createSequence(100, 0.1, 100.91));
     }
 
     /**
@@ -92,7 +90,7 @@ public final class VectorTest {
         /*
          * Tests subvector in the range [100:2:298].
          */
-        vector = vector.subList(100, 2, 300);
+        vector = vector.subList(100, 2, 100);
         assertEquals(100, vector.size());
         for (int i=0; i<100; i++) {
             assertEquals(array[i*2 + 100], vector.floatValue (i), 0);

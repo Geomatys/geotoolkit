@@ -180,7 +180,7 @@ public class VectorPair implements Serializable {
      * Computes views of (<var>X</var>,<var>Y</var>) vectors where every diagonal line is replaced
      * by a horizontal line followed by a vertical line. For this purpose, every <var>x</var> and
      * <var>y</var> values are repeated once. A graph of the resulting vectors would have the visual
-     * appareance of a stair.
+     * appareance of a stair, or the outer limit of histograms.
      * <p>
      * This method can be used before to plot (<var>X</var>,<var>Y</var>) data where <var>X</var>
      * can takes only some fixed values, in order to visualy emphase its discontinuous nature.
@@ -205,10 +205,18 @@ public class VectorPair implements Serializable {
      * <p>
      * It is often a good idea to invoke {@link #omitColinearPoints} after this method.
      *
+     * @param  direction Controls the order of horizontal and vertical lines. If zero (neutral),
+     *         then the order of line segments will always be <cite>horizontal line followed by
+     *         vertical line</cite>, which produce the appearance of an histogram outer limit.
+     *         If positive or negative, then some vertical lines may appear before their horizontal
+     *         counterpart, when it makes the value of <var>y</var> higher (if {@code direction} is
+     *         positive) or lower (if {@code direction} is negative) than the would otherwise be.
      * @throws MismatchedSizeException If the length of the <var>X</var> vector is not equal to
      *         the length of the <var>Y</var> vector + 1.
+     *
+     * @todo Value of {@code direction} different than zero are not yet implemented.
      */
-    public void makeStepwise() throws MismatchedSizeException {
+    public void makeStepwise(final int direction) throws MismatchedSizeException {
         final int length = Y.size();
         if (length+1 != X.size()) {
             throw new MismatchedSizeException();
