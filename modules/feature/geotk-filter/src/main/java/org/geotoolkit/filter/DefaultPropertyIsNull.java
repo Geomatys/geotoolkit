@@ -62,4 +62,40 @@ public class DefaultPropertyIsNull implements PropertyIsNull {
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return "IsNull:"+exp.toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultPropertyIsNull other = (DefaultPropertyIsNull) obj;
+        if (this.exp != other.exp && (this.exp == null || !this.exp.equals(other.exp))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.exp != null ? this.exp.hashCode() : 0);
+        return hash;
+    }
+
 }

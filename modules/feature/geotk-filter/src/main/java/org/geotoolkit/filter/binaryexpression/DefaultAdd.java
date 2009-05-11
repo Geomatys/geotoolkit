@@ -55,4 +55,47 @@ public class DefaultAdd extends AbstractBinaryExpression<Expression,Expression> 
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder("Add{")
+                .append(left).append(',')
+                .append(right).append('}')
+                .toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractBinaryExpression other = (AbstractBinaryExpression) obj;
+        if (this.left != other.left && !this.left.equals(other.left)) {
+            return false;
+        }
+        if (this.right != other.right && !this.right.equals(other.right)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + this.left.hashCode() ;
+        hash = 53 * hash + this.right.hashCode() ;
+        return hash;
+    }
+
 }

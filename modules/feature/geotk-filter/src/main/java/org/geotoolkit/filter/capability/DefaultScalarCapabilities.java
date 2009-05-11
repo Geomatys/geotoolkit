@@ -62,4 +62,40 @@ public class DefaultScalarCapabilities implements ScalarCapabilities {
         return arithmetics;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultScalarCapabilities other = (DefaultScalarCapabilities) obj;
+        if (this.logical != other.logical) {
+            return false;
+        }
+        if (this.comparisons != other.comparisons && (this.comparisons == null || !this.comparisons.equals(other.comparisons))) {
+            return false;
+        }
+        if (this.arithmetics != other.arithmetics && (this.arithmetics == null || !this.arithmetics.equals(other.arithmetics))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.logical ? 1 : 0);
+        hash = 59 * hash + (this.comparisons != null ? this.comparisons.hashCode() : 0);
+        hash = 59 * hash + (this.arithmetics != null ? this.arithmetics.hashCode() : 0);
+        return hash;
+    }
+
 }

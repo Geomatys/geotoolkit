@@ -59,4 +59,32 @@ public class DefaultFunctions implements Functions{
         return functions.get(name);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultFunctions other = (DefaultFunctions) obj;
+        if (this.functions != other.functions && (this.functions == null || !this.functions.equals(other.functions))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.functions != null ? this.functions.hashCode() : 0);
+        return hash;
+    }
+
 }

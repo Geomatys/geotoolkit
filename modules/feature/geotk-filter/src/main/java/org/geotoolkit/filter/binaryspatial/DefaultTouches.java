@@ -56,4 +56,47 @@ public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Exp
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder("Touches{")
+                .append(left).append(',')
+                .append(right).append('}')
+                .toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractBinarySpatialOperator other = (AbstractBinarySpatialOperator) obj;
+        if (this.left != other.left && !this.left.equals(other.left)) {
+            return false;
+        }
+        if (this.right != other.right && !this.right.equals(other.right)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 24;
+        hash = 71 * hash + this.left.hashCode();
+        hash = 71 * hash + this.right.hashCode();
+        return hash;
+    }
+
 }

@@ -50,4 +50,36 @@ public class DefaultIdCapabilities implements IdCapabilities{
         return fid;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultIdCapabilities other = (DefaultIdCapabilities) obj;
+        if (this.eid != other.eid) {
+            return false;
+        }
+        if (this.fid != other.fid) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.eid ? 1 : 0);
+        hash = 67 * hash + (this.fid ? 1 : 0);
+        return hash;
+    }
+
 }

@@ -81,4 +81,57 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder("DWithin{")
+                .append(left).append(',')
+                .append(right).append(',')
+                .append(distance).append(',')
+                .append(unit).append('}')
+                .toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultDWithin other = (DefaultDWithin) obj;
+        if (this.left != other.left && !this.left.equals(other.left)) {
+            return false;
+        }
+        if (this.right != other.right && !this.right.equals(other.right)) {
+            return false;
+        }
+        if (this.distance != other.distance) {
+            return false;
+        }
+        if (!this.unit.equals(other.unit)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 19;
+        hash = 71 * hash + this.left.hashCode();
+        hash = 71 * hash + this.right.hashCode();
+        hash = 71 * hash + (int)this.distance;
+        hash = 71 * hash + this.unit.hashCode();
+        return hash;
+    }
+
 }

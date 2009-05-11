@@ -1,8 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -71,6 +71,14 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      * {@inheritDoc }
      */
     @Override
+    public String toString() {
+        return property;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -93,14 +101,6 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         int hash = 7;
         hash = 73 * hash + (this.property != null ? this.property.hashCode() : 0);
         return hash;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String toString() {
-        return property;
     }
 
 }

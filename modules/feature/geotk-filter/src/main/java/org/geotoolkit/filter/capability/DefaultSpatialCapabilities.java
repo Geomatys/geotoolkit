@@ -62,4 +62,36 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
         return operators;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultSpatialCapabilities other = (DefaultSpatialCapabilities) obj;
+        if (this.operands != other.operands && (this.operands == null || !this.operands.equals(other.operands))) {
+            return false;
+        }
+        if (this.operators != other.operators && (this.operators == null || !this.operators.equals(other.operators))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.operands != null ? this.operands.hashCode() : 0);
+        hash = 71 * hash + (this.operators != null ? this.operators.hashCode() : 0);
+        return hash;
+    }
+    
 }

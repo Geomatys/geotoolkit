@@ -55,4 +55,44 @@ public class DefaultSortBy implements SortBy{
         return order;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder("SortBy{")
+                .append(property).append(',')
+                .append(order).append('}')
+                .toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultSortBy other = (DefaultSortBy) obj;
+        if (this.property != other.property && (this.property == null || !this.property.equals(other.property))) {
+            return false;
+        }
+        if (this.order != other.order && (this.order == null || !this.order.equals(other.order))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + (this.property != null ? this.property.hashCode() : 0);
+        hash = 83 * hash + (this.order != null ? this.order.hashCode() : 0);
+        return hash;
+    }
+
 }

@@ -60,4 +60,52 @@ public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperat
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder("PropertyIsGreaterTo{")
+                .append(left).append(',')
+                .append(right).append(',')
+                .append(match).append('}')
+                .toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractBinaryComparisonOperator other = (AbstractBinaryComparisonOperator) obj;
+        if (this.left != other.left && !this.left.equals(other.left)) {
+            return false;
+        }
+        if (this.right != other.right && !this.right.equals(other.right)) {
+            return false;
+        }
+        if (this.match != other.match) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 8;
+        hash = 23 * hash + this.left.hashCode();
+        hash = 23 * hash + this.right.hashCode() ;
+        hash = 23 * hash + (this.match ? 1 : 0);
+        return hash;
+    }
+
 }

@@ -73,4 +73,44 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
         return version;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultFilterCapabilities other = (DefaultFilterCapabilities) obj;
+        if ((this.version == null) ? (other.version != null) : !this.version.equals(other.version)) {
+            return false;
+        }
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
+        if (this.spatial != other.spatial && (this.spatial == null || !this.spatial.equals(other.spatial))) {
+            return false;
+        }
+        if (this.scalar != other.scalar && (this.scalar == null || !this.scalar.equals(other.scalar))) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 71 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 71 * hash + (this.spatial != null ? this.spatial.hashCode() : 0);
+        hash = 71 * hash + (this.scalar != null ? this.scalar.hashCode() : 0);
+        return hash;
+    }
+
 }

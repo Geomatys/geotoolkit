@@ -61,4 +61,40 @@ public class DefaultNot implements Not{
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return "Not:"+filter.toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultNot other = (DefaultNot) obj;
+        if (this.filter != other.filter && (this.filter == null || !this.filter.equals(other.filter))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        return hash;
+    }
+
 }

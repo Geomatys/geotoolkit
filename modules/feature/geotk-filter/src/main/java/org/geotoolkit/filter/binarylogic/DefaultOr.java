@@ -58,4 +58,45 @@ public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Or{");
+        for(Filter f : filters){
+            sb.append(f.toString());
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractBinaryLogicOperator other = (AbstractBinaryLogicOperator) obj;
+        if (this.filters != other.filters && !this.filters.equals(other.filters)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 6;
+        hash = 73 * hash + this.filters.hashCode();
+        return hash;
+    }
+
 }

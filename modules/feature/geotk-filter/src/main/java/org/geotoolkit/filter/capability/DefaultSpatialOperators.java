@@ -57,4 +57,32 @@ public class DefaultSpatialOperators implements SpatialOperators {
         return operators.get(name);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultSpatialOperators other = (DefaultSpatialOperators) obj;
+        if (this.operators != other.operators && (this.operators == null || !this.operators.equals(other.operators))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.operators != null ? this.operators.hashCode() : 0);
+        return hash;
+    }
+
 }

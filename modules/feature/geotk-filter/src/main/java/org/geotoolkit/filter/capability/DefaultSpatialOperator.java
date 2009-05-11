@@ -51,4 +51,32 @@ public class DefaultSpatialOperator extends DefaultOperator implements SpatialOp
         return operands;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultSpatialOperator other = (DefaultSpatialOperator) obj;
+        if (this.operands != other.operands && (this.operands == null || !this.operands.equals(other.operands))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.operands != null ? this.operands.hashCode() : 0);
+        return hash;
+    }
+
 }

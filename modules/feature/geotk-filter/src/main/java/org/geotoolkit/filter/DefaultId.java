@@ -89,12 +89,40 @@ public class DefaultId implements Id{
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultId other = (DefaultId) obj;
+        if (this.keys != other.keys && (this.keys == null || !this.keys.equals(other.keys))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.keys != null ? this.keys.hashCode() : 0);
+        return hash;
+    }
+
+    /**
      * Take advantage of the fact that both ObjectId and Identifier are unique and
      * ObjectId is an attribut of Identifier.
      * This special map act like a double key map and so benefit all the performance
      * of hashmap.
      */
-    private class DualKeyMap extends HashMap<Object,Identifier>{
+    private static class DualKeyMap extends HashMap<Object,Identifier>{
 
         @Override
         public boolean containsValue(Object value) {

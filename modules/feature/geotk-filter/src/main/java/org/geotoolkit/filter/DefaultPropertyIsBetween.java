@@ -102,4 +102,40 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultPropertyIsBetween other = (DefaultPropertyIsBetween) obj;
+        if (this.candidate != other.candidate && (this.candidate == null || !this.candidate.equals(other.candidate))) {
+            return false;
+        }
+        if (this.lower != other.lower && (this.lower == null || !this.lower.equals(other.lower))) {
+            return false;
+        }
+        if (this.upper != other.upper && (this.upper == null || !this.upper.equals(other.upper))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.candidate != null ? this.candidate.hashCode() : 0);
+        hash = 97 * hash + (this.lower != null ? this.lower.hashCode() : 0);
+        hash = 97 * hash + (this.upper != null ? this.upper.hashCode() : 0);
+        return hash;
+    }
+
 }
