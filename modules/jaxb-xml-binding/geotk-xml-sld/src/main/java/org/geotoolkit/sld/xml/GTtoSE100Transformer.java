@@ -924,9 +924,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
 
     /**
      * Transform a GT label placement in jaxb label placement.
-     * @return
      */
-    @Override
     public org.geotoolkit.sld.xml.v100.LabelPlacement visit(LabelPlacement labelPlacement, Object data) {
         org.geotoolkit.sld.xml.v100.LabelPlacement lpt = sld_factory_v100.createLabelPlacement();
         if(labelPlacement instanceof LinePlacement){
@@ -952,7 +950,6 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform a GT onlineResource in jaxb online resource.
      */
-    @Override
     public org.geotoolkit.sld.xml.v100.OnlineResource visit(OnLineResource or, Object data){
         org.geotoolkit.sld.xml.v100.OnlineResource ort = sld_factory_v100.createOnlineResource();
         try {
@@ -1029,7 +1026,6 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * transform a GT overlap in xml string representation.
      */
-    @Override
     public org.geotoolkit.sld.xml.v100.OverlapBehavior visit(OverlapBehavior overlapBehavior, Object data) {
         org.geotoolkit.sld.xml.v100.OverlapBehavior over = sld_factory_v100.createOverlapBehavior();
         switch(overlapBehavior){
