@@ -4,10 +4,8 @@ package org.geotoolkit.wms;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -46,6 +44,10 @@ public interface GetMapRequest {
     String getSldBody();
 
     void setSldBody(String sldBody);
+    
+    Boolean getTransparent();
+
+    void setTransparent(Boolean transparent);
 
     Map<String,String> dimensions();
 

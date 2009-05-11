@@ -2,6 +2,7 @@
 
 package org.geotoolkit.wms;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,26 +42,17 @@ public class WebMapServer {
         this.serverURL = serverURL;
     }
 
-    public AbstractWMSCapabilities getCapabilities() {
+    public AbstractWMSCapabilities getCapabilities() throws MalformedURLException {
         if(capabilities == null){
             StringBuilder sb = new StringBuilder();
-            String request = serverURL.toString();
-            sb.append(request);
-            if(!request.contains("?")){
-                sb.append("?");
-            }else if(!request.endsWith("&")){
-                sb.append("&");
-            }
-
-            sb.append("REQUEST=GetCapabilities");
-            sb.append("&SERVICE=WMS");
-            sb.append("&VERSION=").append(version.getCode());
-            System.out.println(sb.toString());
+            sb.append(new GetCapabilities(serverURL.toString(), version.getCode()).getURL().toString());  
+            
             try {
                 URL url = new URL(sb.toString());
                 capabilities = WMSBindingUtilities.unmarshall(url, version);
+                Logger.getLogger(WebMapServer.class.getName()).log(Level.INFO, "GetCapabilities request and marshalling succeed, url was : " + sb.toString());
             } catch (Exception ex) {
-                Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "GetCapabilities request failed, probably the url requested  is malformed : " + sb.toString(), ex);
             }
 
         }

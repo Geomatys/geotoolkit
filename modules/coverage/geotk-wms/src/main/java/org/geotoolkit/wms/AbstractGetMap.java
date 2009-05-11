@@ -24,6 +24,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     protected Dimension dimension = null;
     protected String sld = null;
     protected String sldBody = null;
+    protected Boolean transparent = true;
 
     protected AbstractGetMap(String serverURL,String version){
         super(serverURL);
@@ -93,7 +94,15 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     public void setSldBody(String sldBody){
         this.sldBody = sldBody;
     }
+    
+    public Boolean getTransparent(){
+        return transparent;
+    }
 
+    public void setTransparent(Boolean transparent){
+        this.transparent = transparent;
+    }
+    
     public Map<String,String> dimensions(){
         return dims;
     }
@@ -116,6 +125,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
         requestParameters.put("LAYERS",     toString(layers));
         requestParameters.put("STYLES",     toString(styles));
+        requestParameters.put("TRANSPARENT",     transparent.toString().toUpperCase());
 
         if (sld != null) {
             requestParameters.put("SLD",sld);
@@ -128,47 +138,6 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.putAll(toString(enveloppe));
 
         return super.getURL();
-    }
-
-    protected String getBasePath(){
-        if(layers == null || layers.length == 0){
-            throw new IllegalArgumentException("Layers are not defined");
-        }
-        if(dimension == null){
-            throw new IllegalArgumentException("Dimension is not defined");
-        }
-
-        final StringBuilder sb = new StringBuilder();
-        sb.append(serverURL);
-
-        if(!sb.toString().endsWith("?")){
-            sb.append("?");
-        }
-
-        sb.append("SERVICE=WMS");
-        sb.append("&REQUEST=GetMap");
-        sb.append("&VERSION=").append(version);
-        sb.append("&EXCEPTIONS=").append(exception);
-        sb.append("&FORMAT=").append(format);
-        sb.append("&WIDTH=").append(dimension.width);
-        sb.append("&HEIGHT=").append(dimension.height);
-        sb.append("&LAYERS=").append(toString(layers));
-        sb.append("&STYLES=").append(toString(styles));
-
-        if (sld != null) {
-            sb.append("&SLD=").append(sld);
-        }
-        if (sldBody != null) {
-            sb.append("&SLD_BODY=").append(sldBody);
-        }
-
-        for(String key : dims.keySet()){
-            sb.append('&').append(key).append('=').append(dims.get(key));
-        }
-
-        sb.append(toString(enveloppe));
-
-        return sb.toString();
     }
 
     private String toString(String[] vars){
