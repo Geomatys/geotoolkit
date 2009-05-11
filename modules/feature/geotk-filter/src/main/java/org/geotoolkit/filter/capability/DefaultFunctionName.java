@@ -11,10 +11,10 @@ public class DefaultFunctionName implements FunctionName{
     private final List<String> argNames;
     private final int size;
 
-    public DefaultFunctionName(String name, List<String> argNames) {
+    public DefaultFunctionName(String name, List<String> argNames, int size) {
         this.name = name;
         this.argNames = argNames;
-        this.size = argNames.size();
+        this.size = size;
     }
 
     @Override

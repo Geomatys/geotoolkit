@@ -48,6 +48,7 @@ import org.geotoolkit.filter.binaryspatial.DefaultWithin;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFunctionName;
 import org.geotoolkit.filter.capability.DefaultFunctions;
 import org.geotoolkit.filter.capability.DefaultIdCapabilities;
 import org.geotoolkit.filter.capability.DefaultOperator;
@@ -621,8 +622,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Function function(String name, Expression[] args) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Function function(String name, Expression[] parameters) {
+        return org.geotoolkit.filter.function.Functions.function(name, null, parameters);
     }
 
     /**
@@ -630,7 +631,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Function function(String name, Expression arg1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return function(name,new Expression[]{arg1});
     }
 
     /**
@@ -638,7 +639,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Function function(String name, Expression arg1, Expression arg2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return function(name,new Expression[]{arg1,arg2});
     }
 
     /**
@@ -646,7 +647,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Function function(String name, Expression arg1, Expression arg2, Expression arg3) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return function(name,new Expression[]{arg1,arg2,arg3});
     }
 
     /**
@@ -763,7 +764,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public FunctionName functionName(String name, int nargs) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultFunctionName(name, null, nargs);
     }
 
     /**
