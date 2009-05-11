@@ -86,6 +86,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
         assert sourceClass.equals(fallback.getSourceClass());
         assert targetClass.isAssignableFrom(primary .getTargetClass()) &&
                targetClass.isAssignableFrom(fallback.getTargetClass());
+        assert !primary.equals(fallback) : primary;
     }
 
     /**

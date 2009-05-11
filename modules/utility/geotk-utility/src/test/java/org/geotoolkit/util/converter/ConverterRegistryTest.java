@@ -232,6 +232,15 @@ public final class ConverterRegistryTest {
         converter = NumberConverter.String.INSTANCE;
         assertRegistered(String.class);
         assertRegistered(CharSequence.class);
+        /*
+         * Adds Number ⇨ Float
+         * Expected side-effect: none
+         */
+        converter = NumberConverter.Float.INSTANCE;
+        registry.register(converter);
+        assertRegistered(Float.class);
+        converter = NumberConverter.Boolean.INSTANCE;
+        assertRegistered(Boolean.class);
     }
 
     /**
@@ -241,6 +250,12 @@ public final class ConverterRegistryTest {
     public void testSystem() {
         registry = ConverterRegistry.system();
         converter = NumberConverter.String .INSTANCE; assertRegistered(); assertRegistered(CharSequence.class);
+        converter = NumberConverter.Double .INSTANCE; assertRegistered();
+        converter = NumberConverter.Float  .INSTANCE; assertRegistered();
+        converter = NumberConverter.Long   .INSTANCE; assertRegistered();
+        converter = NumberConverter.Integer.INSTANCE; assertRegistered();
+        converter = NumberConverter.Short  .INSTANCE; assertRegistered();
+        converter = NumberConverter.Byte   .INSTANCE; assertRegistered();
         converter = NumberConverter.Boolean.INSTANCE; assertRegistered();
         converter = NumberConverter.Color  .INSTANCE; assertRegistered();
         converter = StringConverter.Number .INSTANCE; assertRegistered();

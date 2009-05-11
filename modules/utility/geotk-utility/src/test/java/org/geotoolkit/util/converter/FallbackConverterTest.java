@@ -169,7 +169,7 @@ public final class FallbackConverterTest {
     }
 
     /**
-     * Count the number of converters, descending down in the tree if necessary.
+     * Counts the number of converters, descending down in the tree if necessary.
      *
      * @param converter The converter for which to count underlying converters.
      * @param expected  Expected converters while we go down the tree, or {@code null}.

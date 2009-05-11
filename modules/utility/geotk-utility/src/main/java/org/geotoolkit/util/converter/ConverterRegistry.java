@@ -56,25 +56,31 @@ public class ConverterRegistry {
         ConverterRegistry s = system;
         if (s == null) {
             s = new ConverterRegistry();
-            s.register(StringConverter.Number.INSTANCE); // Better to make it first.
-            s.register(StringConverter.Double.INSTANCE);
-            s.register(StringConverter.Float.INSTANCE);
-            s.register(StringConverter.Long.INSTANCE);
+            s.register(StringConverter.Number .INSTANCE); // Better to make it first.
+            s.register(StringConverter.Double .INSTANCE);
+            s.register(StringConverter.Float  .INSTANCE);
+            s.register(StringConverter.Long   .INSTANCE);
             s.register(StringConverter.Integer.INSTANCE);
-            s.register(StringConverter.Short.INSTANCE);
-            s.register(StringConverter.Byte.INSTANCE);
+            s.register(StringConverter.Short  .INSTANCE);
+            s.register(StringConverter.Byte   .INSTANCE);
             s.register(StringConverter.Boolean.INSTANCE);
-            s.register(StringConverter.Color.INSTANCE);
-            s.register(StringConverter.Locale.INSTANCE);
+            s.register(StringConverter.Color  .INSTANCE);
+            s.register(StringConverter.Locale .INSTANCE);
             s.register(StringConverter.Charset.INSTANCE);
-            s.register(StringConverter.File.INSTANCE);
-            s.register(StringConverter.URI.INSTANCE);
-            s.register(StringConverter.URL.INSTANCE);
-            s.register(NumberConverter.String.INSTANCE);
+            s.register(StringConverter.File   .INSTANCE);
+            s.register(StringConverter.URI    .INSTANCE);
+            s.register(StringConverter.URL    .INSTANCE);
+            s.register(NumberConverter.String .INSTANCE);
+            s.register(NumberConverter.Double .INSTANCE);
+            s.register(NumberConverter.Float  .INSTANCE);
+            s.register(NumberConverter.Long   .INSTANCE);
+            s.register(NumberConverter.Integer.INSTANCE);
+            s.register(NumberConverter.Short  .INSTANCE);
+            s.register(NumberConverter.Byte   .INSTANCE);
             s.register(NumberConverter.Boolean.INSTANCE);
-            s.register(NumberConverter.Color.INSTANCE);
-            s.register(DateConverter.Long.INSTANCE);
-            s.register(LongConverter.Date.INSTANCE);
+            s.register(NumberConverter.Color  .INSTANCE);
+            s.register(DateConverter  .Long   .INSTANCE);
+            s.register(LongConverter  .Date   .INSTANCE);
             system = s; // Only on success.
         }
         return s;
@@ -187,6 +193,7 @@ public class ConverterRegistry {
         assert Thread.holdsLock(converters);
         final ObjectConverter<?,?> existing = converters.get(key);
         if (existing != null) {
+            assert !existing.equals(converter) : key;
             final boolean isDefining = key.isDefining(converter);
             if (key.isDefining(existing) == isDefining) {
                 // Both the new converter and the old one are specific or are not specific.
@@ -233,7 +240,7 @@ public class ConverterRegistry {
             while ((candidate = candidate.parentSource()) != null) {
                 converter = converters.get(candidate);
                 if (converter != null) {
-                    register(candidate, converter);
+                    register(key, converter);
                     return key.cast(converter);
                 }
             }

@@ -48,6 +48,19 @@ public final class NumberConverterTest {
     }
 
     /**
+     * Tests conversions to double values.
+     *
+     * @throws NonconvertibleObjectException Should never happen.
+     */
+    @Test
+    public void testDouble() throws NonconvertibleObjectException {
+        final ObjectConverter<Number,Double> c = NumberConverter.Double.INSTANCE;
+        assertEquals(Double.valueOf(2.0), c.convert(Integer.valueOf(2)));
+        assertEquals(Double.valueOf(0.5), c.convert(Float.valueOf(0.5f)));
+        assertSame(c, serialize(c));
+    }
+
+    /**
      * Tests conversions to color values.
      * Adapted from Geotoolkit 2.5 {@code ColorConverterFactoryTest}.
      *
