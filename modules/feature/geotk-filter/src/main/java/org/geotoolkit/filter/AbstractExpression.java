@@ -14,30 +14,34 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.filter;
 
-package org.geotoolkit.filter.binarycomparison;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsEqualTo;
+import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.converter.ConverterRegistry;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.filter.expression.Expression;
 
 /**
- * Immutable "is equal to" filter.
+ * Override evaluate(Object,Class) by using the converters system.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultPropertyIsEqualTo extends AbstractPropertyEqual implements PropertyIsEqualTo{
-
-    public DefaultPropertyIsEqualTo(Expression left, Expression right, boolean match) {
-        super(left,right,match);
-    }
+@XmlTransient
+public abstract class AbstractExpression implements Expression {
 
     /**
      * {@inheritDoc }
+     * Use the converters utility class to convert the default result object
+     * to the wished class.
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
-        return visitor.visit(this, extraData);
+    public <T> T evaluate(Object candidate, Class<T> target) {
+        return Converters.convert(candidate, target);
     }
 
 }

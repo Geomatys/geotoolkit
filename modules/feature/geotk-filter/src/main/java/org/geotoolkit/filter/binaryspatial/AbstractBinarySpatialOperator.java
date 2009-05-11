@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.filter.binaryspatial;
@@ -14,8 +26,11 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.geometry.Envelope;
 
 /**
+ * Immutable abstract binary spatial operator.
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
+ * @param <E> Expression or subclass
+ * @param <F> Expression or subclass
  */
 public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> implements BinarySpatialOperator {
 
@@ -33,16 +48,27 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         this.right = right;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public E getExpression1() {
         return left;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public F getExpression2() {
         return right;
     }
 
+    /**
+     * Utility method to transform an envelope in geometry.
+     * @param env
+     * @return Geometry
+     */
     protected static Geometry toGeometry(Envelope env){
         final Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(env.getMinimum(0), env.getMinimum(1));

@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.filter.binarylogic;
 
@@ -9,6 +24,11 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
 
+/**
+ * Immutable abstract binary logic operator.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator{
 
     protected final List<Filter> filters;
@@ -31,6 +51,9 @@ public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator
         this.filters = UnmodifiableArrayList.wrap(new Filter[]{filter1,filter2});
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<Filter> getChildren() {
         return filters;

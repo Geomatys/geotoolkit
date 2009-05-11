@@ -1,45 +1,73 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.filter;
 
-import org.geotoolkit.filter.expression.*;
-import com.vividsolutions.jts.geom.Geometry;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 /**
+ * Immutable generic Literal.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultLiteral<T> extends DefaultExpression implements Literal{
+public class DefaultLiteral<T> extends AbstractExpression implements Literal{
 
     private final T value;
 
     public DefaultLiteral(T value) {
-        super(getType(value));
         this.value = value;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public T evaluate(Object feature) {
         return value;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object accept(ExpressionVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public T getValue() {
         return value;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         return value == null ? "NULL" : value.toString();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -55,27 +83,14 @@ public class DefaultLiteral<T> extends DefaultExpression implements Literal{
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 3;
         hash = 89 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
-    }
-
-    private static ExpressionType getType(Object literal){
-        if (literal instanceof Double) {
-            return ExpressionType.LITERAL_DOUBLE;
-        } else if (literal instanceof Integer) {
-            return ExpressionType.LITERAL_INTEGER;
-        } else if (literal instanceof Long) {
-            return ExpressionType.LITERAL_LONG;
-        } else if (literal instanceof String) {
-            return ExpressionType.LITERAL_STRING;
-        } else if (literal instanceof Geometry) {
-            return ExpressionType.LITERAL_GEOMETRY;
-        } else {
-            return ExpressionType.LITERAL_UNDECLARED;
-        }
     }
 
 }

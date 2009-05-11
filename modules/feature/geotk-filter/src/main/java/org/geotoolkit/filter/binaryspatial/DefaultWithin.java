@@ -1,9 +1,9 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
- * 
- *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -24,13 +24,20 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Contains;
 import org.opengis.filter.spatial.Within;
 
-
+/**
+ * Immutable "within" filter.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements Within {
 
     public DefaultWithin(Expression left, Expression right) {
         super(left,right);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean evaluate(Object object) {
         final Geometry leftGeom = left.evaluate(object, Geometry.class);
@@ -50,6 +57,9 @@ public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expr
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object accept(FilterVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);

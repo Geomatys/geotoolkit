@@ -1,12 +1,31 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.filter;
 
-import org.geotoolkit.util.converter.ConverterRegistry;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Expression;
 
+/**
+ * Immutable "is between" filter.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public class DefaultPropertyIsBetween implements PropertyIsBetween{
 
     private final Expression candidate;
@@ -23,21 +42,33 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
         this.upper = upper;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Expression getExpression() {
         return candidate;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Expression getLowerBoundary() {
         return lower;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Expression getUpperBoundary() {
         return upper;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean evaluate(Object feature) {
         Object value = candidate.evaluate(feature);
@@ -63,6 +94,9 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
         return down.compareTo(test) <= 0 && up.compareTo(test) >= 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object accept(FilterVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);

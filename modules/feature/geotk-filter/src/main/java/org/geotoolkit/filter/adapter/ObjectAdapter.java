@@ -1,8 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
- *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,11 +26,17 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class ObjectAdapter extends XmlAdapter<String,Object>{
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object unmarshal(String str) throws Exception {
         return str;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String marshal(Object inter) throws Exception {
         return inter.toString();

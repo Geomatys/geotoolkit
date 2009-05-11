@@ -37,7 +37,6 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  * 
  * @author Justin Deoliveira, The Open Planning Project
- * 
  */
 public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFactory {
 
@@ -48,6 +47,9 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static final Pattern idPattern = Pattern.compile("@(\\w+:)?id");
     private static final Pattern propertyPattern = Pattern.compile("(\\w+:)?(\\w+)");
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {
 
@@ -208,7 +210,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             }
 
             if (object instanceof FeatureType) {
-                throw new IllegalArgumentException("feature type is immutable");
+                throw new IllegalArgumentException("Feature type is immutable");
             }
 
         }
