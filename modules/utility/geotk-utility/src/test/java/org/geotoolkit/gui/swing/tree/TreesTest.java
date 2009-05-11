@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.tree;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 
 
 /**
@@ -42,9 +43,10 @@ public final class TreesTest {
 
         assertEquals(Integer.valueOf(1), root.getUserObject());
         assertEquals(Integer.valueOf(2), branch.getUserObject());
-        assertEquals("Node #1\n" +
-                     "├───Node #2\n" +
-                     "│   └───Node #4\n" +
-                     "└───Node #3\n", Trees.toString(root));
+        assertMultilinesEquals(
+                "Node #1\n" +
+                "├───Node #2\n" +
+                "│   └───Node #4\n" +
+                "└───Node #3\n", Trees.toString(root));
     }
 }
