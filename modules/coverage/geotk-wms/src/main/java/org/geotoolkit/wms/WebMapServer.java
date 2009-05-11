@@ -46,8 +46,10 @@ public class WebMapServer {
             StringBuilder sb = new StringBuilder();
             String request = serverURL.toString();
             sb.append(request);
-            if(!request.endsWith("?")){
+            if(!request.contains("?")){
                 sb.append("?");
+            }else if(!request.endsWith("&")){
+                sb.append("&");
             }
 
             sb.append("REQUEST=GetCapabilities");
