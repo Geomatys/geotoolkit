@@ -269,6 +269,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int COORDINATE_REFERENCE_SYSTEM = 40;
 
         /**
+         * Cost estimation
+         */
+        public static final int COST_ESTIMATION = 296;
+
+        /**
          * Current user
          */
         public static final int CURRENT_USER = 41;

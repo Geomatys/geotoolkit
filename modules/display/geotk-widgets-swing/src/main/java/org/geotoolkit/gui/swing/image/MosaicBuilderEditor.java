@@ -35,6 +35,8 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXTitledPanel;
@@ -105,14 +107,19 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
     private final SizeFields tileSize;
 
     /**
+     * The target file format for writing tiles.
+     */
+    private final JComboBox format;
+
+    /**
      * The output directory.
      */
     private final FileField directory;
 
     /**
-     * A view of the mosaic to be created.
+     * A plot of the estimated cost of loading tiles at given resolution.
      */
-    private final MosaicPanel mosaic;
+    private final MosaicPerformanceGraph plot;
 
     /**
      * Creates a new panel for configuring a default mosaic builder.
@@ -167,9 +174,11 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         subsamplingPane.add(removeButton, BorderLayout.SOUTH);
         subsamplingPane = new JXTitledPanel(resources.getString(Vocabulary.Keys.SUBSAMPLING), subsamplingPane);
         /*
-         * The panel where to select the tile size and the output directory.
+         * The panel where to select the tile size, file format and the output directory.
          */
         tileSize = new SizeFields(locale, DEFAULT_TILE_SIZE);
+        format = new JComboBox(ImageFormatEntry.list(locale));
+        format.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
         directory = new FileField(locale, null, true);
         directory.setFile(initialDirectory);
         directory.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OUTPUT_DIRECTORY)));
@@ -183,23 +192,37 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         c.weightx=1; c.fill=GridBagConstraints.HORIZONTAL;
         c.gridx=0; c.anchor=GridBagConstraints.LINE_START;
         c.gridy=0; controlPane.add(tileSize,  c);
+        c.gridy++; controlPane.add(format,    c);
         c.gridy++; controlPane.add(directory, c); c.weighty=1; c.fill=GridBagConstraints.BOTH;
         c.gridy++; controlPane.add(explain, c);
         /*
          * Layout all the above components. The divider location has been determined
          * empirically for allowing the subsamplings columns to be fully visible.
          */
-        mosaic = new MosaicPanel();
+        plot = new MosaicPerformanceGraph();
         final JPanel panel = new JPanel(new GridLayout(1, 2, 15, 9));
         panel.add(subsamplingPane);
         panel.add(controlPane);
-        final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panel, mosaic);
+        final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panel, plot);
         sp.setDividerLocation(460);
         sp.setBorder(null);
         setLayout(new BorderLayout());
         add(sp, BorderLayout.CENTER);
         setPreferredSize(new Dimension(700, 300));
         initializeForBounds(null); // Sets default values inferred from the MosaicBuilder.
+        /*
+         * Adds listeners to be notified when a property that may affect the MosaicBuilder
+         * changed. They will trig a repaint of the graph of estimated tiles loading cost.
+         */
+        final class Listener implements TableModelListener {
+            @Override public void tableChanged(final TableModelEvent event) {
+                final MosaicPerformanceGraph plot = MosaicBuilderEditor.this.plot;
+                plot.clear();
+                plot.plotLater(null, getMosaicBuilder(), 1000);
+            }
+        }
+        final Listener listener = new Listener();
+        subsamplingModel.addTableModelListener(listener);
     }
 
     /**
@@ -236,30 +259,32 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
      * @param bounds The bounds of the whole mosaic.
      */
     public void initializeForBounds(final Rectangle bounds) {
-        /*
-         * If a region was found, discard the values previously set and give the new region
-         * to the TileBuilder. Then asks for the default values proposed by the builder
-         */
-        subsamplings.clear();
-        if (bounds != null) {
-            builder.setTileSize(null);
-            builder.setSubsamplings((Dimension[]) null);
-            builder.setUntiledImageBounds(bounds);
-        }
-        Dimension size = builder.getTileSize();
-        if (size == null) {
-            size = DEFAULT_TILE_SIZE;
-        }
-        tileSize.setSizeValue(size);
-        /*
-         * Subsamplings must be queried only after the tile size has been set.
-         * The code above forced the calculation of the default tile size.
-         */
-        final Dimension[] sub = builder.getSubsamplings();
-        if (sub != null) {
-            subsamplings.addAll(Arrays.asList(sub));
-        } else {
-            subsamplings.add(new Dimension(1,1));
+        synchronized (getTreeLock()) {
+            /*
+             * If a region was found, discard the values previously set and give the new region
+             * to the TileBuilder. Then asks for the default values proposed by the builder
+             */
+            subsamplings.clear();
+            if (bounds != null) {
+                builder.setTileSize(null);
+                builder.setSubsamplings((Dimension[]) null);
+                builder.setUntiledImageBounds(bounds);
+            }
+            Dimension size = builder.getTileSize();
+            if (size == null) {
+                size = DEFAULT_TILE_SIZE;
+            }
+            tileSize.setSizeValue(size);
+            /*
+             * Subsamplings must be queried only after the tile size has been set.
+             * The code above forced the calculation of the default tile size.
+             */
+            final Dimension[] sub = builder.getSubsamplings();
+            if (sub != null) {
+                subsamplings.addAll(Arrays.asList(sub));
+            } else {
+                subsamplings.add(new Dimension(1,1));
+            }
         }
     }
 
@@ -392,14 +417,15 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
                     elements.add(s);
                 }
                 /*
-                 * Sorts the subsamplings in increasing order and fires a change event
-                 * only if the position of the new subsampling changed as a result of
-                 * this operation. We test only the new subsampling because the other
-                 * ones are already sorted, so they should not move if the edit record
-                 * did not moved.
+                 * Sorts the subsamplings in increasing order and fires a change event for the
+                 * whole table only if the position of the new subsampling changed as a result
+                 * of this operation. We test only the new subsampling because the other ones
+                 * are already sorted, so they should not move if the edited record did not moved.
                  */
                 Collections.sort(elements, this);
-                if (elements.get(rowIndex) != s) {
+                if (elements.get(rowIndex) == s) {
+                    fireTableCellUpdated(rowIndex, columnIndex);
+                } else {
                     fireTableRowsUpdated(0, elements.size());
                 }
             }
@@ -408,18 +434,22 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
 
     /**
      * Configures the mosaic {@linkplain #builder} with the informations provided by the user
-     * and returns it. This method should be invoked only if the user has not cancelled his
-     * editing.
+     * and returns it.
      *
      * @return The configured mosaic builder.
      */
     public MosaicBuilder getMosaicBuilder() {
-        final File dir = directory.getFile();
-        Preferences.userNodeForPackage(MosaicBuilderEditor.class).put(OUTPUT_DIRECTORY, dir.getPath());
-        builder.setTileDirectory(dir);
-        builder.setTileSize(tileSize.getSizeValue());
-        builder.setSubsamplings(subsamplings.toArray(new Dimension[subsamplings.size()]));
-        return builder;
+        synchronized (getTreeLock()) {
+            final MosaicBuilder builder = this.builder;
+            final File dir = directory.getFile();
+            Preferences.userNodeForPackage(MosaicBuilderEditor.class).put(OUTPUT_DIRECTORY, dir.getPath());
+            final ImageFormatEntry tileFormat = (ImageFormatEntry) format.getSelectedItem();
+            builder.setTileDirectory(dir);
+            builder.setTileSize(tileSize.getSizeValue());
+            builder.setSubsamplings(subsamplings.toArray(new Dimension[subsamplings.size()]));
+            builder.setTileReaderSpi(tileFormat.reader);
+            return builder;
+        }
     }
 
     /**

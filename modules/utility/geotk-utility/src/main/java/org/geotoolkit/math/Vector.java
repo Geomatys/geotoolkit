@@ -17,6 +17,7 @@
 package org.geotoolkit.math;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.AbstractList;
 import java.util.RandomAccess;
 
@@ -97,7 +98,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
 
     /**
      * Creates a sequence of numbers in a given range of values using the given increment.
-     * The range of values will be {@code first} inclusive to {@code first + increment*length}
+     * The range of values will be {@code first} inclusive to {@code (first + increment*length)}
      * exclusive. Note that the value given by the {@code first} argument is equivalent to a
      * "lowest" or "minimum" value only if the given increment is positive.
      * <p>
@@ -259,6 +260,15 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
             throws IndexOutOfBoundsException, ArrayStoreException;
 
     /**
+     * If this vector is a view over an other vector, returns the backing vector.
+     * Otherwise returns {@code this}. If this method is overriden, it should be
+     * together with the {@link #toBacking} method.
+     */
+    Vector backingVector() {
+        return this;
+    }
+
+    /**
      * Converts an array of indexes used by this vector to the indexes used by the
      * backing vector. If there is no such backing vector, then returns a clone of
      * the given array. This method must also check index validity.
@@ -314,7 +324,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
                 for (int i=2; i<index.length; i++) {
                     final int current = index[i];
                     if (current - limit != step) {
-                        return createView(index);
+                        return backingVector().new View(INDICES.unique(index));
                     }
                     limit = current;
                 }
@@ -322,6 +332,19 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
             }
         }
         return subList(first, step, index.length);
+    }
+
+    /**
+     * Returns a view which contains the values of this vector in reverse order. This method
+     * delegates its work to <code>{@linkplain #subList(int,int,int) subList}(size-1, -1,
+     * {@linkplain #size() size})</code>. It is declared final in order to force every
+     * subclasses to override the later method instead than this one.
+     *
+     * @return The vector values in reverse order.
+     */
+    public final Vector reverse() {
+        final int length = size();
+        return (length != 0) ? subList(length-1, -1, length) : this;
     }
 
     /**
@@ -347,9 +370,9 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns a view which contain the values of this vector in a given index range.
      * The returned view will contain the values from index {@code first} inclusive to
-     * {@code first + step*length} exclusive with index incremented by the given {@code step}
+     * {@code (first + step*length)} exclusive with index incremented by the given {@code step}
      * value, which can be negative. More specifically the index <var>i</var> in the returned
-     * vector will maps the element at index <code>first + step*<var>i</var></code> in this
+     * vector will maps the element at index <code>(first + step*<var>i</var>)</code> in this
      * vector.
      * <p>
      * This method does not copy the values. Consequently any modification to the
@@ -361,7 +384,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * @param  length The length of the vector to be returned. Can not be greater than
      *                the length of this vector, except if the {@code step} is zero.
      * @return A view of this vector containing values in the given index range.
-     * @throws IndexOutOfBoundsException If a {@code first} or {@code first + step*(length-1)}
+     * @throws IndexOutOfBoundsException If {@code first} or {@code first + step*(length-1)}
      *         is outside the [0 &hellip; {@linkplain #size size}-1] range.
      */
     public Vector subList(final int first, final int step, final int length)
@@ -370,28 +393,40 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         if (step == 1 && first == 0 && length == size()) {
             return this;
         }
-        return createView(first, step, length);
-    }
-
-    /**
-     * Implementation of {@link #subList(int[])} to be overriden by subclasses. The indexes
-     * array is cloned (if necessary) before this method is invoked and should not be cloned
-     * again. If this vector is a view, the indexes have already been converted to the space
-     * of the backing vector.
-     *
-     * @param index A copy of the user-supplied indexes, converted to the space of the backing
-     *        vector (if any). This array should not be modified after the execution of this
-     *        method, since it may be cached for future sharing with other views.
-     */
-    Vector createView(final int[] index) {
-        return new View(INDICES.unique(index));
+        return createSubList(first, step, length);
     }
 
     /**
      * Implementation of {@link #subList(int,int,int)} to be overriden by subclasses.
      */
-    Vector createView(final int first, final int step, final int length) {
+    Vector createSubList(final int first, final int step, final int length) {
         return new SubList(first, step, length);
+    }
+
+    /**
+     * Returns the concatenation of this vector with the given one. Indexes in the
+     * [0 &hellip; {@linkplain #size size}-1] range will map to this vector, while
+     * indexes in the [size &hellip; size + toAppend.size] range while map to the
+     * given vector.
+     *
+     * @param  toAppend The vector to concatenate at the end of this vector.
+     * @return The concatenation of this vector with the given vector.
+     */
+    public Vector concatenate(final Vector toAppend) {
+        if (toAppend.size() == 0) {
+            return this;
+        }
+        if (size() == 0) {
+            return toAppend;
+        }
+        return createConcatenate(toAppend);
+    }
+
+    /**
+     * Implementation of {@link #concatenate(Vector)} to be overriden by subclasses.
+     */
+    Vector createConcatenate(final Vector toAppend) {
+        return new ConcatenatedVector(this, toAppend);
     }
 
     /**
@@ -420,6 +455,11 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
          */
         public View(int[] index) {
             this.index = index;
+        }
+
+        /** Returns the backing vector. */
+        @Override Vector backingVector() {
+            return Vector.this;
         }
 
         /** Returns the indexes where to look for the value in the enclosing vector. */
@@ -487,12 +527,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createView(int[] index) {
-            return Vector.this.createView(index);
-        }
-
-        /** Delegates to the enclosing vector. */
-        @Override Vector createView(int first, final int step, final int length) {
+        @Override Vector createSubList(int first, final int step, final int length) {
             ensureValid(first, step, length);
             final int ni[] = new int[length];
             for (int j=0; j<length; j++) {
@@ -500,6 +535,17 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
                 first += step;
             }
             return Vector.this.view(ni);
+        }
+
+        /** Concatenates the indexes if possible. */
+        @Override Vector createConcatenate(final Vector toAppend) {
+            if (toAppend instanceof View && toAppend.backingVector() == Vector.this) {
+                final int[] other = ((View) toAppend).index;
+                final int[] c = Arrays.copyOf(index, index.length + other.length);
+                System.arraycopy(other, 0, c, index.length, other.length);
+                return Vector.this.view(c);
+            }
+            return super.createConcatenate(toAppend);
         }
     }
 
@@ -561,6 +607,11 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
             this.first  = first;
             this.step   = step;
             this.length = length;
+        }
+
+        /** Returns the backing vector. */
+        @Override Vector backingVector() {
+            return Vector.this;
         }
 
         /** Returns the index where to look for the value in the enclosing vector. */
@@ -637,15 +688,21 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         }
 
         /** Delegates to the enclosing vector. */
-        @Override Vector createView(int[] index) {
-            return Vector.this.createView(index);
-        }
-
-        /** Delegates to the enclosing vector. */
-        @Override Vector createView(int first, int step, final int length) {
+        @Override Vector createSubList(int first, int step, final int length) {
             first = toBacking(first);
             step *= this.step;
             return Vector.this.subList(first, step, length);
+        }
+
+        /** Delegates to the enclosing vector if possible. */
+        @Override Vector createConcatenate(final Vector toAppend) {
+            if (toAppend instanceof SubList && toAppend.backingVector() == Vector.this) {
+                final SubList other = (SubList) toAppend;
+                if (other.step == step && other.first == first + step*length) {
+                    return Vector.this.createSubList(first, step, length + other.length);
+                }
+            }
+            return super.createConcatenate(toAppend);
         }
     }
 }

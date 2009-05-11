@@ -32,10 +32,6 @@ import org.geotoolkit.util.NullArgumentException;
  * values. Because they are views, callers should not change the values of the original vectors,
  * unless propagation to the views is really wanted.
  *
- * {@section Serialization}
- * {@code VectorPair} is serializable if the two original vectors are serializable
- * (which they usually are).
- *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
  *
@@ -180,10 +176,13 @@ public class VectorPair implements Serializable {
      * Computes views of (<var>X</var>,<var>Y</var>) vectors where every diagonal line is replaced
      * by a horizontal line followed by a vertical line. For this purpose, every <var>x</var> and
      * <var>y</var> values are repeated once. A graph of the resulting vectors would have the visual
-     * appareance of a stair, or the outer limit of histograms.
+     * appareance of a stair, or the outer limit of a histogram.
      * <p>
-     * This method can be used before to plot (<var>X</var>,<var>Y</var>) data where <var>X</var>
-     * can takes only some fixed values, in order to visualy emphase its discontinuous nature.
+     * When invoked with {@code direction=0}, This method can be used before to plot
+     * (<var>X</var>,<var>Y</var>) data where <var>X</var> can takes only some fixed values,
+     * in order to visualy emphase its discontinuous nature. When invoked with positive or
+     * negative {@code direction} argument, this method can be used for plotting upper or lower
+     * limit respectively (for example computed from a standard deviation) of the above data.
      *
      * {@section On input}
      * Lets define <var>X</var><sub>i</sub> and <var>Y</var><sub>i</sub> the input vectors before
@@ -192,9 +191,10 @@ public class VectorPair implements Serializable {
      *
      * {@section On output}
      * Lets define <var>X</var><sub>o</sub> and <var>Y</var><sub>o</sub> the output vectors after
-     * this method has been invoked. The length of those two vectors will be 2<var>s</var>. The
-     * first point and the last point in the output vectors will be the same than the first point
-     * and the last point in the input vectors. More specifically:
+     * this method has been invoked. The length of those two vectors will be at most 2<var>s</var>
+     * (they will be exactly of that length if {@code abs(direction) <= 1}). The first point and the
+     * last point in the output vectors will be the same than the first point and the last point in
+     * the input vectors. More specifically, assuming that the output vectors have the maximal length:
      * <p>
      * <ul>
      *   <li>(<var>X</var><sub>o</sub>[0], <var>Y</var><sub>o</sub>[0]) =
@@ -205,29 +205,93 @@ public class VectorPair implements Serializable {
      * <p>
      * It is often a good idea to invoke {@link #omitColinearPoints} after this method.
      *
-     * @param  direction Controls the order of horizontal and vertical lines. If zero (neutral),
-     *         then the order of line segments will always be <cite>horizontal line followed by
-     *         vertical line</cite>, which produce the appearance of an histogram outer limit.
-     *         If positive or negative, then some vertical lines may appear before their horizontal
-     *         counterpart, when it makes the value of <var>y</var> higher (if {@code direction} is
-     *         positive) or lower (if {@code direction} is negative) than the would otherwise be.
+     * @param direction Controls the order of horizontal and vertical lines.<ul>
+     *     <li>If zero (neutral), then the order of line segments will always be <cite>horizontal
+     *         line followed by vertical line</cite>, which produce the appearance of a histogram
+     *         outer limit.</li>
+     *     <li>If +1 or -1, then some vertical lines may appear before their horizontal counterpart,
+     *         when it makes the value of <var>y</var> higher (if {@code direction} is +1) or lower
+     *         (if {@code direction} is -1) than they would otherwise be. So {@code direction} can
+     *         be interpreted as the sign of the allowed change of <var>y</var> values.</li>
+     *     <li>If +2 or -2, then the same reordering than +1 or -1 is executed, followed by:<ul>
+     *         <li>If {@code direction} is +2, the removal of lower point when the <var>y</var>
+     *             values are going down and up again at the same <var>x</var> value.</li>
+     *         <li>If {@code direction} is -2, the removal of higher point when the <var>y</var>
+     *             values are going up and down again at the same <var>x</var> value.</li>
+     *         </ul>
+     *         So +2 and -2 argument can be interpreted as shifting the main <var>y</var> value
+     *         toward positive or negative infinity slightly more than what +1 or -1 does.</li>
+     *   </ul>
      * @throws MismatchedSizeException If the length of the <var>X</var> vector is not equal to
      *         the length of the <var>Y</var> vector + 1.
-     *
-     * @todo Value of {@code direction} different than zero are not yet implemented.
      */
-    public void makeStepwise(final int direction) throws MismatchedSizeException {
+    public void makeStepwise(int direction) throws MismatchedSizeException {
+        final Vector X = this.X;
+        final Vector Y = this.Y;
         final int length = Y.size();
         if (length+1 != X.size()) {
             throw new MismatchedSizeException();
         }
-        final int[] indices = new int[length*2];
-        for (int i=0,j=0; i<length; i++) {
-            indices[j++] = indices[j++] = i;
+        int[] Xi = new int[length*2];
+        int[] Yi = new int[length*2];
+        if (length != 0) {
+            boolean swap = false;
+            double x0 = X.doubleValue(0);
+            double y0 = Y.doubleValue(0);
+            for (int i=0,j=0; i<length; i++) {
+                if (direction != 0) {
+                    if (i+1 == length) {
+                        // We have reached the end of the vector. Never swap the last
+                        // index, otherwise we get an IndexOutOfBoundsException.
+                        swap = false;
+                    } else {
+                        final double xi = X.doubleValue(i+1);
+                        final double yi = Y.doubleValue(i+1);
+                        int xs = (xi > x0) ? +1 : (xi < x0) ? -1 : 0; // We want 0 for NaN.
+                        if (xs != 0) {
+                            boolean up = (direction >= 0) ^ (xs < 0) ^ swap;
+                            if (up ? (yi > y0) : (yi < y0)) {
+                                swap = !swap;
+                            }
+                        }
+                        x0 = xi;
+                        y0 = yi;
+                    }
+                }
+                Xi[j]   = i;
+                Yi[j++] = i;
+                Xi[j]   = swap ? i : i+1;
+                Yi[j++] = swap ? i+1 : i;
+            }
+            assert XArrays.isSorted(Xi, false);
+            assert XArrays.isSorted(Yi, false);
+            /*
+             * At this point we are done. However if 'direction' is different than 0, then the
+             * index swapping may have caused situations where a Y value goes down, then up at
+             * the same X value.  The code below will erase the down point (or the opposite if
+             * 'direction' is negative instead than positive).
+             */
+            if (Math.abs(direction) >= 2) {
+                direction = XMath.sgn(direction);
+                int size = Xi.length;
+                for (int i=size; --i>=2;) {
+                    if (Xi[i] == Xi[i-2]) {
+                        final double y1, y2;
+                        y0 = Y.doubleValue(Yi[i-2]) * direction;
+                        y1 = Y.doubleValue(Yi[i-1]) * direction;
+                        y2 = Y.doubleValue(Yi[i  ]) * direction;
+                        if (y1 < Math.min(y0, y2)) {
+                            System.arraycopy(Xi, i, Xi, i-1, size-i);
+                            System.arraycopy(Yi, i, Yi, i-1, size-i);
+                            size--;
+                        }
+                    }
+                }
+                Xi = XArrays.resize(Xi, size);
+                Yi = XArrays.resize(Yi, size);
+            }
         }
-        Y = Y.view(indices);
-        System.arraycopy(indices, 1, indices, 0, indices.length-1);
-        indices[indices.length-1] = length;
-        X = X.view(indices);
+        this.X = X.view(Xi);
+        this.Y = Y.view(Yi);
     }
 }

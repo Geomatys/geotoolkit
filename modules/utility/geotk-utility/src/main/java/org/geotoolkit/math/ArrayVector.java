@@ -27,8 +27,6 @@ import org.geotoolkit.util.converter.Classes;
  * array is reflected in this vector and vis-versa. The backing array is typically an array of a
  * primitive type, but array of wrappers are also accepted.
  *
- * @param <E> The type of elements to be stored in the vector.
- *
  * @author Martin Desruisseaux (MPO, Geomatys)
  * @version 3.0
  *
@@ -55,7 +53,7 @@ final class ArrayVector extends Vector implements Serializable {
     }
 
     /**
-     * Returns the type of elements in this vector. This method returns
+     * Returns the type of elements in the backing array. This method returns
      * alway the wrapper type, as documented in the parent class.
      */
     @Override
@@ -64,7 +62,7 @@ final class ArrayVector extends Vector implements Serializable {
     }
 
     /**
-     * Returns the value at the given index.
+     * Returns the length of the backing array.
      */
     @Override
     public int size() {

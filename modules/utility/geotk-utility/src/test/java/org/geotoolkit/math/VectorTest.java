@@ -110,4 +110,51 @@ public final class VectorTest {
         assertEquals(array[140], vector.floatValue(1), 0);
         assertEquals(array[150], vector.floatValue(2), 0);
     }
+
+    /**
+     * Tests {@link Vector#reverse}.
+     */
+    @Test
+    public void testReverse() {
+        final double[] array    = {2, 3, 8};
+        final double[] expected = {8, 3, 2};
+        assertEquals(Vector.create(expected), Vector.create(array).reverse());
+    }
+
+    /**
+     * Tests {@link Vector#concatenate}.
+     */
+    @Test
+    public void testConcatenate() {
+        final float[] array = new float[40];
+        for (int i=0; i<array.length; i++) {
+            array[i] = i * 10;
+        }
+        final int[] extra = new int[20];
+        for (int i=0; i<extra.length; i++) {
+            extra[i] = (i + 40) * 10;
+        }
+        Vector v1 = Vector.create(array);
+        Vector v2 = Vector.create(extra);
+        Vector v3 = v1.concatenate(v2);
+        assertEquals("Length of V3 should be the sum of V1 and V2 length.", 60, v3.size());
+        assertEquals("Component type should be the widest of V1 and V2.", Float.class, v3.getElementType());
+        assertEquals("Sample from V1.", Float  .valueOf(200), v3.get(20));
+        assertEquals("Sample from V2.", Integer.valueOf(500), v3.get(50));
+        for (int i=0; i<60; i++) {
+            assertEquals(i*10, v3.floatValue(i), 0f);
+        }
+        assertSame("Should be able to restitute the original vector.", v1, v3.subList( 0, 40));
+        assertSame("Should be able to restitute the original vector.", v2, v3.subList(40, 60));
+        /*
+         * Tests concatenation of views at fixed indices. Should be
+         * implemented as the concatenation of the indice arrays when possible.
+         */
+        final Vector expected = v3.view(10, 25, 30, 0, 35, 39);
+        v2 = v1.view( 0, 35, 39);
+        v1 = v1.view(10, 25, 30);
+        v3 = v1.concatenate(v2);
+        assertEquals(expected, v3);
+        assertFalse("Expected concatenation of the indices.", v3 instanceof ConcatenatedVector);
+    }
 }

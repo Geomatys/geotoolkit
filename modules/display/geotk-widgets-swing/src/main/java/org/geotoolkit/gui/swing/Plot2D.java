@@ -39,6 +39,7 @@ import java.awt.event.ComponentAdapter;
 import java.util.Set;
 import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -53,6 +54,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.display.axis.Axis2D;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.shape.TransformedShape;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
@@ -195,10 +197,13 @@ public class Plot2D extends ZoomPane {
     /**
      * The default cycle of colors. They are used only if the user added a series
      * without specifying explicitly the color to use for that series.
+     * <p>
+     * Those default colors may change in future Geotoolkit versions. For safety, users are
+     * encouraged to specify the desired color explicitly when adding a series to a plot.
      */
-    private static final Color[] DEFAULT_COLORS = new Color[] {
-        Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.CYAN, Color.MAGENTA
-    };
+    protected static final List<Color> DEFAULT_COLORS = UnmodifiableArrayList.wrap(new Color[] {
+        Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.MAGENTA
+    });
 
     /**
      * The color to use for drawing grid lines, or {@code null} if the grid should not be drawn.
@@ -301,8 +306,7 @@ public class Plot2D extends ZoomPane {
 
     /**
      * Adds a new serie to the plot. This convenience method wraps the given arrays into {@link Vector}
-     * objects and delegates to {@linkplain #addSeries(String, Paint, Vector, Vector, Vector)} with
-     * a null thickness.
+     * objects and delegates to {@linkplain #addSeries(Map, Vector, Vector)}.
      *
      * @param  name The series name, or {@code null} if none.
      * @param  color The color to use for plotting the series, or {@code null} for a default color.
@@ -314,13 +318,12 @@ public class Plot2D extends ZoomPane {
     public Series addSeries(final String name, final Paint color, final float[] x, final float[] y)
             throws MismatchedSizeException
     {
-        return addSeries(name, color, Vector.create(x), Vector.create(y), null);
+        return addSeries(properties(name, color), Vector.create(x), Vector.create(y));
     }
 
     /**
      * Adds a new serie to the plot. This convenience method wraps the given arrays into {@link Vector}
-     * objects and delegates to {@link #addSeries(String, Paint, Vector, Vector, Vector)} with a
-     * null thickness.
+     * objects and delegates to {@link #addSeries(Map, Vector, Vector)}.
      *
      * @param  name The series name, or {@code null} if none.
      * @param  color The color to use for plotting the series, or {@code null} for a default color.
@@ -332,29 +335,53 @@ public class Plot2D extends ZoomPane {
     public Series addSeries(final String name, final Paint color, final double[] x, final double[] y)
             throws MismatchedSizeException
     {
-        return addSeries(name, color, Vector.create(x), Vector.create(y), null);
+        return addSeries(properties(name, color), Vector.create(x), Vector.create(y));
     }
 
     /**
-     * Adds a new serie to the plot. This convenience method creates a default {@link Series}
-     * implementation for the given vectors and delegates to {@link #addSeries(Series)}.
+     * Creates a properties map for the given arguments.
+     */
+    private static Map<String,Object> properties(final String name, final Paint color) {
+        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        properties.put("Name", name);
+        properties.put("Paint", color);
+        return properties;
+    }
+
+    /**
+     * Adds a new serie to the plot. This method creates a default {@link Series} implementation
+     * for the given vectors and delegates to {@link #addSeries(Series)}. The series is configured
+     * using the values given in the {@code properties} map. The following keys are recognized:
+     * <p>
+     * <ul>
+     *   <li>{@code "Name"} for a {@link String} value to be used as the {@linkplain Series#name series name}.</li>
+     *   <li>{@code "Paint"} for a {@link Paint} value to be used as the {@linkplain Series#paint series paint}.</li>
+     * </ul>
+     * <p>
+     * Any keys not recognized by this method are ignored and can be used by subclasses for
+     * their own additional information. Missing entries will be replaced by default values.
+     * Future versions of the {@code Plot2D} class may add more keys - this method is using
+     * a {@link Map} argument for allowing such extensibility.
      *
-     * @param  name The series name, or {@code null} if none.
-     * @param  color The color to use for plotting the series, or {@code null} for a default color.
+     * @param  properties The properties to be given to the new series.
      * @param  x The vector of <var>x</var> values.
      * @param  y The vector of <var>y</var> values.
-     * @param  thickness The thickness of the line to draw in units of <var>y</var> axis,
-     *         or {@code null} for drawing a simple line.
      * @return The series added.
      * @throws MismatchedSizeException if the arrays don't have the same length.
      */
-    public Series addSeries(final String name, Paint color, final Vector x, final Vector y,
-            final Vector thickness) throws MismatchedSizeException
+    public Series addSeries(Map<String,?> properties, final Vector x, final Vector y)
+            throws MismatchedSizeException
     {
-        if (color == null) {
-            color = DEFAULT_COLORS[series.size() % DEFAULT_COLORS.length];
+        if (properties == null) {
+            properties = Collections.emptyMap();
         }
-        return addSeries(new DefaultSeries(name, color, x, y, thickness));
+        String name = (String) properties.get("Name");
+        Paint color = (Paint) properties.get("Paint");
+        if (color == null) {
+            color = DEFAULT_COLORS.get(series.size() % DEFAULT_COLORS.size());
+        }
+        boolean fill = Boolean.TRUE.equals(properties.get("Fill")); // Undocumented (for now) feature.
+        return addSeries(new DefaultSeries(name, color, x, y, fill));
     }
 
     /**
@@ -396,7 +423,7 @@ public class Plot2D extends ZoomPane {
         }
         this.series.put(series, currentAxes);
         if (title == null) {
-            title = series.getName();
+            title = series.name();
         }
         if (seriesBounds == null) {
             seriesBounds = new Rectangle2D.Double();
@@ -455,7 +482,7 @@ public class Plot2D extends ZoomPane {
                 entry.yAxis
             };
         }
-        throw new NoSuchElementException(series.getName());
+        throw new NoSuchElementException(series.name());
     }
 
     /**
@@ -761,7 +788,7 @@ public class Plot2D extends ZoomPane {
             final Shape path = series.path();
             transformed.setTransform(transform);
             transformed.setOriginalShape(path);
-            graphics.setPaint(series.getPaint());
+            graphics.setPaint(series.paint());
             if (series instanceof DefaultSeries && ((DefaultSeries) series).fill) {
                 graphics.fill(transformed);
             } else {
@@ -830,14 +857,14 @@ public class Plot2D extends ZoomPane {
          *
          * @return The name of this series, or {@code null} if none.
          */
-        String getName();
+        String name();
 
         /**
          * Returns the color to use for plotting this series.
          *
          * @return The color to use for plotting this series.
          */
-        Paint getPaint();
+        Paint paint();
 
         /**
          * Returns the bounding box of all <var>x</var> and <var>y</var> ordinates.
@@ -872,7 +899,7 @@ public class Plot2D extends ZoomPane {
         /**
          * The color.
          */
-        private Paint color;
+        private final Paint color;
 
         /**
          * The path, which may be float or double precision.
@@ -896,14 +923,13 @@ public class Plot2D extends ZoomPane {
          *
          * @throws MismatchedSizeException if the arrays don't have the same length.
          */
-        public DefaultSeries(final String name, final Paint color, final Vector x, final Vector y,
-                final Vector thickness) throws MismatchedSizeException
+        public DefaultSeries(final String name, final Paint color, final Vector x, final Vector y, boolean fill)
+                throws MismatchedSizeException
         {
             this.name  = name;
             this.color = color;
-            fill = (thickness != null);
             final int length = x.size();
-            if (length != y.size() || (thickness != null && thickness.size() != length)) {
+            if (length != y.size()) {
                 throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
             }
             /*
@@ -919,22 +945,17 @@ public class Plot2D extends ZoomPane {
                 path = new Path2D.Float();
             }
             /*
-             * Creates the shape. It will requires two passes
-             * if the shape is a polygon to be filled.
+             * Creates the shape.
              */
             boolean move = true;
-            boolean reverse = fill;
-            do for (int i=0; i<length; i++) {
-                final int j = (reverse) ? length-(i+1) : i;
-                double xi = x.doubleValue(j);
-                double yi = y.doubleValue(j);
-                if (thickness != null) {
-                    final double t = 0.5 * thickness.doubleValue(j);
-                    if (reverse) yi -= t;
-                    else yi += t;
-                }
+            for (int i=0; i<length; i++) {
+                double xi = x.doubleValue(i);
+                double yi = y.doubleValue(i);
                 if (Double.isNaN(yi) || Double.isNaN(xi)) {
-                    move = true;
+                    if (!move) {
+                        fill = false; // We will not be able to close the shape.
+                        move = true;
+                    }
                     continue;
                 }
                 if (move) {
@@ -943,10 +964,11 @@ public class Plot2D extends ZoomPane {
                 } else {
                     path.lineTo(xi, yi);
                 }
-            } while ((reverse = !reverse) == false);
+            }
             if (fill) {
                 path.closePath();
             }
+            this.fill = fill;
             bounds = path.getBounds2D();
         }
 
@@ -954,7 +976,7 @@ public class Plot2D extends ZoomPane {
          * Returns the series name.
          */
         @Override
-        public String getName() {
+        public String name() {
             return name;
         }
 
@@ -962,7 +984,7 @@ public class Plot2D extends ZoomPane {
          * Returns the color for this series.
          */
         @Override
-        public Paint getPaint() {
+        public Paint paint() {
             return color;
         }
 

@@ -30,7 +30,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-public class ProgressWindowTest extends WidgetTestCase {
+public final class ProgressWindowTest extends WidgetTestCase {
     /**
      * Constructs the test case.
      */

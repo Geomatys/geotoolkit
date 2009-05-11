@@ -94,9 +94,6 @@ final class MosaicPanel extends ZoomPane {
     public MosaicPanel() {
         super(UNIFORM_SCALE | TRANSLATE_X | TRANSLATE_Y | ROTATE | RESET);
         managers = NO_TILES;
-        setBackground(Color.WHITE);
-        setPaintingWhileAdjusting(true);
-        setMagnifierEnabled(false);
         deriveSelectedColors();
     }
 

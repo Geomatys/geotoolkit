@@ -48,7 +48,7 @@ import static java.awt.Color.*;
  *
  * @since 2.0
  */
-public class MiscellaneousWidgetTest extends WidgetTestCase {
+public final class MiscellaneousWidgetTest extends WidgetTestCase {
     /**
      * Constructs the test case.
      */
