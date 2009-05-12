@@ -534,10 +534,12 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * {@inheritDoc}
+     * Reinitializes the affine transform {@link #zoom zoom} in order to cancel any zoom, rotation or
+     * translation. The argument {@code yAxisUpward} indicates whether the <var>y</var> axis should
+     * point upwards, which is usually {@code true} for a plot.
      */
     @Override
-    public void reset() {
+    protected void reset(final Rectangle zoomableBounds, final boolean yAxisUpward) {
         layoutAxis(true);
         /*
          * It is okay to use the same IdentityHashMap instance for both X and Y axes because the
@@ -567,7 +569,7 @@ public class Plot2D extends ZoomPane {
                 grad.setMaximum(bounds.getMaxY());
             }
         }
-        super.reset();
+        super.reset(zoomableBounds, yAxisUpward);
     }
 
     /**

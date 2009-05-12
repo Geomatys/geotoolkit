@@ -200,13 +200,10 @@ skip:   while (it.hasNext()) {
                 }
                 // Remember the longuest format string. If two of them
                 // have the same length, favor the one in upper case.
-                if (longFormat != null) {
-                    final int dl = format.length() - longFormat.length();
-                    if (dl < 0 || (dl == 0 && format.compareTo(longFormat) >= 0)) {
-                        continue;
-                    }
-                }
-                longFormat = format;
+                longFormat = ImageFormatEntry.longuest(longFormat, format);
+            }
+            if (longFormat == null) {
+                longFormat = spi.getDescription(locale);
             }
             /*
              * At this point, we have a provider to take in account. We need to get the list of

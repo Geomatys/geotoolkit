@@ -761,10 +761,9 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
             addTo.ensureCapacity(n);
         }
         /*
-         * Creates the destination array with a capacity equal to the maximal number of tiles
-         * expected at this level. The array may not be filled completly if the iteration gets
-         * some null tiles. The array way also expand belong the expected "maximal" size if we
-         * put tiles from finer levels into the mix (as the loop below may do).
+         * The expected number of tiles is (xmax-xmin)*(ymax-ymin). However we may get less tiles
+         * if the iteration gets some null tiles. We may also get more tiles if we put tiles from
+         * finer levels into the mix (as the loop below may do).
          */
         long totalCost = 0;
         for (int y=ymin; y<ymax; y++) {
@@ -797,8 +796,8 @@ nextTile:   for (int x=xmin; x<xmax; x++) {
                     }
                     atr.x = atr.width  * x;
                     atr.y = atr.height * y;
-                    assert atr.equals(tile.getAbsoluteRegion()) ||
-                            !tile.getClass().equals(Tile.class) : atr;
+                    // Following assertion is enforced only if the Tile is not a custom implementation.
+                    assert atr.contains(tile.getAbsoluteRegion()) || !tile.getClass().equals(Tile.class);
                     OverviewLevel previous = this;
                     while ((previous = previous.getFinerLevel()) != null) {
                         if (!previous.isAbsoluteTilesRegion(atr)) {

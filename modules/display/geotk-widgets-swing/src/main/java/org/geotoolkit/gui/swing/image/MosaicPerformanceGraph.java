@@ -193,6 +193,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 properties.remove("Fill");
                 properties.put("Paint", color);
                 addSeries(properties, main.getX(), main.getY());
+                if (ns == 0) {
+                    reset();
+                }
             }
         });
     }

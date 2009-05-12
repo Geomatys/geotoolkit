@@ -87,6 +87,13 @@ public class MosaicChooser extends JPanel implements Dialog {
     private static final String INPUT_FORMAT = "InputTilesFormat";
 
     /**
+     * The preference name for the format of tiles to be read. This is not used by this class
+     * ({@link MosaicBuilderEditor} uses it), but is defined here for keeping it close to
+     * {@link #INPUT_DIRECTORY}.
+     */
+    static final String OUTPUT_FORMAT = "OutputTilesFormat";
+
+    /**
      * The preference name for the directory of tiles to be read.
      */
     private static final String INPUT_DIRECTORY = "InputTilesDirectory";
@@ -276,7 +283,7 @@ public class MosaicChooser extends JPanel implements Dialog {
          * used last time this widget was executed, for convenience.
          */
         final ImageFileChooser fileChooser;
-        fileChooser = new ImageFileChooser(prefs.get(INPUT_FORMAT, "tiff"));
+        fileChooser = new ImageFileChooser(prefs.get(INPUT_FORMAT, "png"));
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setListFileFilterUsed(true);
         String home = prefs.get(INPUT_DIRECTORY, null);

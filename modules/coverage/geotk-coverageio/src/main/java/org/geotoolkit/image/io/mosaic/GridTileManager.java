@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.AbstractSet;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -256,7 +257,7 @@ final class GridTileManager extends TileManager {
             subsampling.setSize(doable);
             return tiles;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**

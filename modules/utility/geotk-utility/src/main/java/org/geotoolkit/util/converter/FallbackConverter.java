@@ -86,7 +86,6 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
         assert sourceClass.equals(fallback.getSourceClass());
         assert targetClass.isAssignableFrom(primary .getTargetClass()) &&
                targetClass.isAssignableFrom(fallback.getTargetClass());
-        assert !primary.equals(fallback) : primary;
     }
 
     /**
@@ -97,6 +96,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      * @return {@code true} if the given primary and fallback converters should be interchanged.
      */
     private static <S> boolean swap(final ObjectConverter<S,?> primary, final ObjectConverter<S,?> fallback) {
+        assert !primary.equals(fallback) : primary;
         if (primary instanceof FallbackConverter) {
             final FallbackConverter<S,?> candidate = (FallbackConverter<S,?>) primary;
             return swap(candidate.primary, fallback) && swap(candidate.fallback, fallback);

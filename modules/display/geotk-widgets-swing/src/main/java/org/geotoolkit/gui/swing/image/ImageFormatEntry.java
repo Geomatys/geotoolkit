@@ -16,20 +16,23 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ArrayList;
+import java.util.Collection;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
+import org.geotoolkit.util.XArrays;
 
 
 /**
- * An element to be displayed in a list of image formats. A list of {@code ImageFormatEntry}
- * will be a list of formats available for both reading and writing.
+ * An element to be displayed in a list of image formats. A list of such elements is
+ * created by the {@link #list} method. Those elements are designed for use in a Swing
+ * combo box.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
@@ -37,54 +40,153 @@ import javax.imageio.spi.ImageWriterSpi;
  * @since 3.0
  * @module
  */
-final class ImageFormatEntry {
+final class ImageFormatEntry implements Comparable<ImageFormatEntry> {
     /**
      * The image reader for this entry.
      */
-    final ImageReaderSpi reader;
+    private ImageReaderSpi reader;
 
     /**
      * The image reader for this entry.
      */
-    final ImageWriterSpi writer;
+    private ImageWriterSpi writer;
 
     /**
-     * The description to be displayed in the combo box.
+     * The file format. Also used as the description to be displayed in the combo box
+     * in current version.
      */
-    final String description;
+    private String format;
 
     /**
      * Creates a new entry.
      */
-    private ImageFormatEntry(final ImageReaderSpi reader, final ImageWriterSpi writer, final String description) {
-        this.reader = reader;
-        this.writer = writer;
-        this.description = description;
+    private ImageFormatEntry() {
     }
 
     /**
-     * Creates a new list of entries.
+     * Creates a new list of entries. This method returns elements that describes formats
+     * available both for reading and for writing.
      *
-     * @param writers {@code true} for writers, or {@code false} for readers.
+     * @param defaultFormat The format to select by default (can not be {@code null}).
+     * @param preferred Where to store the entry for the preferred format.
      */
-    public static ImageFormatEntry[] list(final Locale locale) {
-        final Set<String> formatsDone = new HashSet<String>();
+    static ImageFormatEntry[] list(final String defaultFormat, final Set<ImageFormatEntry> preferred) {
+        final Map<String,ImageFormatEntry> formatsDone = new HashMap<String,ImageFormatEntry>();
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        final List<ImageFormatEntry> entries = new ArrayList<ImageFormatEntry>();
-skip:   for (final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true); it.hasNext();) {
-            final ImageReaderSpi reader = it.next();
-            ImageWriterSpi writer = null;
-            for (final String format : reader.getFormatNames()) {
-                if (!formatsDone.add(format)) {
+        /*
+         * Get the list of writers first, because they are typically less numerous
+         * than readers (e.g. they were no GIF writers before the patent get expired).
+         */
+skip:   for (final Iterator<ImageWriterSpi> it=registry.getServiceProviders(ImageWriterSpi.class, true); it.hasNext();) {
+            final ImageWriterSpi spi = it.next();
+            final ImageFormatEntry entry = new ImageFormatEntry();
+            for (final String format : spi.getFormatNames()) {
+                final ImageFormatEntry old = formatsDone.put(format, entry);
+                if (old != null) {
                     // Avoid declaring the same format twice (e.g. declaring
                     // both the JSE and JAI ImageReaders for the PNG format).
+                    formatsDone.put(format, old);
                     continue skip;
                 }
+                entry.addFormat(format);
+                if (defaultFormat.equalsIgnoreCase(format)) {
+                    preferred.add(entry);
+                }
             }
-            // TODO: check image writer here.
-            entries.add(new ImageFormatEntry(reader, null, reader.getDescription(locale)));
+            entry.writer = spi;
         }
-        return entries.toArray(new ImageFormatEntry[entries.size()]);
+        /*
+         * Associate a reader to the entries built in the previous step.
+         */
+skip:   for (final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true); it.hasNext();) {
+            final ImageReaderSpi spi = it.next();
+            for (final String format : spi.getFormatNames()) {
+                final ImageFormatEntry entry = formatsDone.get(format);
+                if (entry != null) {
+                    if (entry.reader == null) {
+                        entry.reader = spi;
+                    } else if (entry.reader != spi) {
+                        // Avoid declaring the same format twice (e.g. declaring
+                        // both the JSE and JAI ImageReaders for the PNG format).
+                        continue skip;
+                    }
+                    entry.addFormat(format);
+                }
+            }
+        }
+        /*
+         * Gets the array of entries, removing the one without readers.
+         * We wraps in a HashSet in order to remove duplicated values.
+         */
+        final Collection<ImageFormatEntry> entries = new HashSet<ImageFormatEntry>(formatsDone.values());
+        ImageFormatEntry[] array = entries.toArray(new ImageFormatEntry[entries.size()]);
+        int count = 0;
+        for (int i=0; i<array.length; i++) {
+            final ImageFormatEntry entry = array[i];
+            if (entry.reader != null) {
+                array[count++] = entry;
+            }
+        }
+        array = XArrays.resize(array, count);
+        preferred.retainAll(Arrays.asList(array));
+        Arrays.sort(array);
+        return array;
+    }
+
+    /**
+     * If the given string is longer than the current {@linkplain #format},
+     * replaces the current description by that format.
+     */
+    private void addFormat(final String format) {
+        this.format = longuest(this.format, format);
+    }
+
+    /**
+     * Selects the longuest format string. If two of them
+     * have the same length, favor the one in upper case.
+     *
+     * @param current    The previous longuest format string, or {@code null} if none.
+     * @param candidate  The format string which may be longuer than the previous one.
+     * @return The format string which is the longuest one up to date.
+     */
+    static String longuest(final String current, final String candidate) {
+        if (current != null) {
+            final int dl = candidate.length() - current.length();
+            if (dl < 0 || (dl == 0 && candidate.compareTo(current) >= 0)) {
+                return current;
+            }
+        }
+        return candidate;
+    }
+
+    /**
+     * Returns the image format.
+     */
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * Returns the image reader provider.
+     */
+    public ImageReaderSpi getReader() {
+        return reader;
+    }
+
+    /**
+     * Returns the image writer provider.
+     */
+    public ImageWriterSpi getWriter() {
+        return writer;
+    }
+
+    /**
+     * Compares this entry with the given one for order. This is used for sorting
+     * the entries to be displayed in a combo box.
+     */
+    @Override
+    public int compareTo(final ImageFormatEntry other) {
+        return format.compareTo(other.format);
     }
 
     /**
@@ -92,6 +194,6 @@ skip:   for (final Iterator<ImageReaderSpi> it=registry.getServiceProviders(Imag
      */
     @Override
     public String toString() {
-        return description;
+        return format;
     }
 }

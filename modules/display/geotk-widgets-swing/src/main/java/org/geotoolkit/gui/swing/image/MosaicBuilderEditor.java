@@ -18,12 +18,15 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.prefs.Preferences;
 import java.awt.Rectangle;
 import java.awt.Dimension;
@@ -34,6 +37,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -53,6 +57,7 @@ import org.geotoolkit.internal.swing.FileField;
 import org.geotoolkit.internal.swing.SizeFields;
 import org.geotoolkit.internal.swing.LabeledTableCellRenderer;
 
+import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_FORMAT;
 import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
 
 
@@ -140,10 +145,18 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         /*
          * Determines the default values.
          */
+        final Preferences prefs = Preferences.userNodeForPackage(MosaicBuilderEditor.class);
         File initialDirectory = builder.getTileDirectory();
         if (initialDirectory == null) {
-            initialDirectory = new File(Preferences.userNodeForPackage(MosaicBuilderEditor.class)
-                    .get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+            initialDirectory = new File(prefs.get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+        }
+        ImageReaderSpi reader = builder.getTileReaderSpi();
+        String preferredFormat;
+        if (reader != null) {
+            // FormatNames can not be a null or empty array according the method contract.
+            preferredFormat = reader.getFormatNames()[0];
+        } else {
+            preferredFormat = prefs.get(OUTPUT_FORMAT, "png");
         }
         /*
          * The table where to specifies subsampling, together with a "Remove" botton for
@@ -177,7 +190,14 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
          * The panel where to select the tile size, file format and the output directory.
          */
         tileSize = new SizeFields(locale, DEFAULT_TILE_SIZE);
-        format = new JComboBox(ImageFormatEntry.list(locale));
+        {
+            final Set<ImageFormatEntry> preferredEntries = new LinkedHashSet<ImageFormatEntry>();
+            format = new JComboBox(ImageFormatEntry.list(preferredFormat, preferredEntries));
+            final Iterator<ImageFormatEntry> it = preferredEntries.iterator();
+            if (it.hasNext()) {
+                format.setSelectedItem(it.next());
+            }
+        }
         format.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
         directory = new FileField(locale, null, true);
         directory.setFile(initialDirectory);
@@ -204,11 +224,11 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         panel.add(subsamplingPane);
         panel.add(controlPane);
         final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panel, plot);
-        sp.setDividerLocation(460);
+        sp.setDividerLocation(400);
         sp.setBorder(null);
         setLayout(new BorderLayout());
         add(sp, BorderLayout.CENTER);
-        setPreferredSize(new Dimension(700, 300));
+        setPreferredSize(new Dimension(800, 300));
         initializeForBounds(null); // Sets default values inferred from the MosaicBuilder.
         /*
          * Adds listeners to be notified when a property that may affect the MosaicBuilder
@@ -442,12 +462,14 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         synchronized (getTreeLock()) {
             final MosaicBuilder builder = this.builder;
             final File dir = directory.getFile();
-            Preferences.userNodeForPackage(MosaicBuilderEditor.class).put(OUTPUT_DIRECTORY, dir.getPath());
             final ImageFormatEntry tileFormat = (ImageFormatEntry) format.getSelectedItem();
+            final Preferences prefs = Preferences.userNodeForPackage(MosaicBuilderEditor.class);
+            prefs.put(OUTPUT_FORMAT, tileFormat.getFormat());
+            prefs.put(OUTPUT_DIRECTORY, dir.getPath());
             builder.setTileDirectory(dir);
             builder.setTileSize(tileSize.getSizeValue());
             builder.setSubsamplings(subsamplings.toArray(new Dimension[subsamplings.size()]));
-            builder.setTileReaderSpi(tileFormat.reader);
+            builder.setTileReaderSpi(tileFormat.getReader());
             return builder;
         }
     }
