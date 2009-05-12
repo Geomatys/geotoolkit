@@ -75,6 +75,12 @@
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-filter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-render</artifactId>
       <version>${project.version}</version>
     </dependency>

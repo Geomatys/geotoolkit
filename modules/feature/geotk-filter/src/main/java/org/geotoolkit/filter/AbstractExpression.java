@@ -41,7 +41,9 @@ public abstract class AbstractExpression implements Expression {
      */
     @Override
     public <T> T evaluate(Object candidate, Class<T> target) {
-        return Converters.convert(candidate, target);
+        Object obj = evaluate(candidate);
+        System.out.println(obj.getClass() + " >to> " + target);
+        return Converters.convert(obj, target);
     }
 
 }
