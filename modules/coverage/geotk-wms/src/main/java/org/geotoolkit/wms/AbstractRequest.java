@@ -20,10 +20,7 @@ public class AbstractRequest implements Request{
 
     protected AbstractRequest(String serverURL){
 
-        final int lastblock = serverURL.lastIndexOf("/");
-        final String block = serverURL.substring(lastblock);
-
-        if(block.contains("?")){
+        if(serverURL.contains("?")){
             this.serverURL = serverURL;
         }else{
             this.serverURL = serverURL + "?";

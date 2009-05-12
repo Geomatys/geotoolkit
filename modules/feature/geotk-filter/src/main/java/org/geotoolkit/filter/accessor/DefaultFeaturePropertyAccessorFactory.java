@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -58,7 +59,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         if (!Feature.class.isAssignableFrom(type) && !FeatureType.class.isAssignableFrom(type)) {
-            return null; // we only work with simple feature
+            return null; // we only work with feature
         }
         //if ("".equals(xpath) && target == Geometry.class)
         if (xpath.isEmpty()) {
@@ -144,7 +145,9 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public Object get(Object object, String xpath, Class target) {
-            if (object instanceof Feature) {
+            if(object instanceof SimpleFeature){
+                return ((SimpleFeature) object).getDefaultGeometry();
+            }else if (object instanceof Feature) {
                 return ((Feature) object).getDefaultGeometryProperty().getValue();
             }
             if (object instanceof FeatureType) {
@@ -190,7 +193,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             xpath = stripPrefix(xpath);
 
             if (object instanceof Feature) {
-                return ((Feature) object).getProperty(xpath);
+                return ((Feature) object).getProperty(xpath).getValue();
             }
 
             if (object instanceof FeatureType) {

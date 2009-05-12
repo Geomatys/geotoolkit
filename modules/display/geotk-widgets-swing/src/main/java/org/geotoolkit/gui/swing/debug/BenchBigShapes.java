@@ -17,8 +17,12 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapContext;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -30,7 +34,12 @@ public class BenchBigShapes {
 
     public BenchBigShapes(){
 
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        System.out.println(ff.getClass());
+
+
         MapContext context = BenchContextBuilder.buildBigRoadContext();
+//        MapContext context = ContextBuilder.buildRealCityContext();
 
 //        MapLayer[] layers = context.getLayers();
 //
@@ -58,7 +67,13 @@ public class BenchBigShapes {
 //        System.out.println( (after-before)/1000000000f  +" sec");
 
 
-        int NBPASS = 5;
+        //make 3 pass to load stuffs
+        testBasicService(context,null,"imageGO2.png");
+//        testBasicService(context,null,"imageGO2.png");
+//        testBasicService(context,null,"imageGO2.png");
+
+        int NBPASS = 2;
+
         float[] times = new float[NBPASS];
 
 
@@ -92,6 +107,8 @@ public class BenchBigShapes {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
+//        dataEnvelope = new GeneralEnvelope(dataEnvelope.getCoordinateReferenceSystem());
 
         File output = new File(filename);
         String mime = "image/png";

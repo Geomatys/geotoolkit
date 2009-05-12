@@ -304,19 +304,19 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
         float size;
         
         if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Float.class);
+            opacity = expOpa.evaluate(null, Number.class).floatValue();
         }else{
             opacity = 0.6f;
         }
                 
         if(GO2Utilities.isStatic(expRotation)){
-            rotation = expRotation.evaluate(null, Float.class);
+            rotation = expRotation.evaluate(null, Number.class).floatValue();
         }else{
             rotation = 0f;
         }
         
         if(GO2Utilities.isStatic(expSize)){
-            size = expSize.evaluate(null, Float.class);
+            size = expSize.evaluate(null, Number.class).floatValue();
         }else{
             size = 8f;
         }

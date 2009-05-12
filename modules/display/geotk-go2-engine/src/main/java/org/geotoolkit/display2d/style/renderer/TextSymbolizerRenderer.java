@@ -315,7 +315,7 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
 
             final Expression expWidth = symbol.getSource().getHalo().getRadius();
             if(GO2Utilities.isStatic(expWidth)){
-                width = expWidth.evaluate(null, Float.class);
+                width = expWidth.evaluate(null, Number.class).floatValue();
             }else{
                 width = 1;
             }
