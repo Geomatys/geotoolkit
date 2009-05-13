@@ -14,6 +14,7 @@ public final class Converters {
     private Converters(){}
 
     public static <T> T convert(Object candidate, Class<T> target) {
+        if(candidate == null) return null;
         return (T) convert(candidate, (Class) candidate.getClass(), target);
     }
 
