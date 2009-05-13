@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.filter.accessor;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
-
 import org.geotoolkit.util.collection.Cache;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
