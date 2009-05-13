@@ -1079,6 +1079,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * Returns a clone of the current {@link #zoom} transform.
      *
      * @return A clone of the current transform.
+     *
+     * @since 3.0
      */
     public AffineTransform getTransform() {
         return (AffineTransform) zoom.clone();
@@ -1091,6 +1093,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * This is done that way for giving listeners a chance to track the changes.
      *
      * @param tr The new transform.
+     *
+     * @since 3.0
      */
     public void setTransform(final AffineTransform tr) {
         final AffineTransform change;
@@ -1341,7 +1345,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * respectively, the change is computed in such a way that the following relation is respected
      * within rounding errors:
      *
-     * (@preformat java
+     * {@preformat java
      *     newZoom = oldZoom.concatenate(change)
      * }
      *

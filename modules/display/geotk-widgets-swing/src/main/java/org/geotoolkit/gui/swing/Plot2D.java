@@ -120,7 +120,7 @@ public class Plot2D extends ZoomPane {
      * All {@code Entry.xAxis} instance <strong>must</strong> appears in this list as well, but
      * not necessarly in the same order.
      *
-     * @see #newAxis
+     * @see #addXAxis
      * @see #addSeries
      */
     private final List<Axis2D> xAxes = new ArrayList<Axis2D>(3);
@@ -130,7 +130,7 @@ public class Plot2D extends ZoomPane {
      * All {@code Entry.yAxis} instance <strong>must</strong> appears in this list as well, but
      * not necessarly in the same order.
      *
-     * @see #newAxis
+     * @see #addYAxis
      * @see #addSeries
      */
     private final List<Axis2D> yAxes = new ArrayList<Axis2D>(3);
@@ -538,6 +538,8 @@ public class Plot2D extends ZoomPane {
      * where the graph will be plotted.
      *
      * @return The margin between widget bounds and the area where the graph is plotted.
+     *
+     * @since 3.0
      */
     public Insets getMargin() {
         return new Insets(top, left, bottom, right);
@@ -548,6 +550,8 @@ public class Plot2D extends ZoomPane {
      * {@linkplain #getZoomableBounds zoomable bounds} to the given insets.
      *
      * @param margin The new margin between widget bounds and the area where the graph is plotted.
+     *
+     * @since 3.0
      */
     public void setMargin(final Insets margin) {
         top    = margin.top;
