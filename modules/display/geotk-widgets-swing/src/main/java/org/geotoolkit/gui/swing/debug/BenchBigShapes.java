@@ -38,8 +38,8 @@ public class BenchBigShapes {
         System.out.println(ff.getClass());
 
 
-        MapContext context = BenchContextBuilder.buildBigRoadContext();
-//        MapContext context = ContextBuilder.buildRealCityContext();
+//        MapContext context = BenchContextBuilder.buildBigRoadContext();
+        MapContext context = ContextBuilder.buildRealCityContext();
 
 //        MapLayer[] layers = context.getLayers();
 //
@@ -69,31 +69,31 @@ public class BenchBigShapes {
 
         //make 3 pass to load stuffs
         testBasicService(context,null,"imageGO2.png");
-//        testBasicService(context,null,"imageGO2.png");
-//        testBasicService(context,null,"imageGO2.png");
+        testBasicService(context,null,"imageGO2.png");
+        testBasicService(context,null,"imageGO2.png");
 
-//        int NBPASS = 10;
-//
-//        float[] times = new float[NBPASS];
-//
-//
-//        //test with generalisation
-//        for(int i=0; i<NBPASS;i++){
-//            System.out.println("pass "+i);
-//            times[i] = testBasicService(context,null,"imageGO2.png");
-//        }
-//
-//
-//        //summary---------------------------------------------------------------
-//
-//        float sum = 0;
-//        for(int i=0;i<NBPASS;i++){
-//            float f = times[i];
-//            System.out.println("GO2 :time to render = " + f +"sec.");
-//            sum += f;
-//        }
-//        float averageNO = sum/NBPASS;
-//        System.out.println("GO2 : Average = " + averageNO +"sec.");
+        int NBPASS = 10;
+
+        float[] times = new float[NBPASS];
+
+
+        //test with generalisation
+        for(int i=0; i<NBPASS;i++){
+            System.out.println("pass "+i);
+            times[i] = testBasicService(context,null,"imageGO2.png");
+        }
+
+
+        //summary---------------------------------------------------------------
+
+        float sum = 0;
+        for(int i=0;i<NBPASS;i++){
+            float f = times[i];
+            System.out.println("GO2 :time to render = " + f +"sec.");
+            sum += f;
+        }
+        float averageNO = sum/NBPASS;
+        System.out.println("GO2 : Average = " + averageNO +"sec.");
 
     }
 
@@ -108,7 +108,12 @@ public class BenchBigShapes {
             ex.printStackTrace();
         }
 
-//        dataEnvelope = new GeneralEnvelope(dataEnvelope.getCoordinateReferenceSystem());
+        GeneralEnvelope env = new GeneralEnvelope(dataEnvelope.getCoordinateReferenceSystem());
+        double spanX = dataEnvelope.getSpan(0);
+        double spanY = dataEnvelope.getSpan(1);
+        env.setRange(0, dataEnvelope.getMinimum(0)+ 0.25f*spanX, dataEnvelope.getMaximum(0)-0.25f*spanX);
+        env.setRange(1, dataEnvelope.getMinimum(1)+ 0.25f*spanY, dataEnvelope.getMaximum(1)-0.25f*spanY);
+        dataEnvelope = env;
 
         File output = new File(filename);
         String mime = "image/png";

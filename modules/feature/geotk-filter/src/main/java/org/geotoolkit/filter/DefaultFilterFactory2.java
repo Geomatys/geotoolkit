@@ -622,32 +622,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Function function(String name, Expression[] parameters) {
+    public Function function(String name, Expression ... parameters) {
         return org.geotoolkit.filter.function.Functions.function(name, null, parameters);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function function(String name, Expression arg1) {
-        return function(name,new Expression[]{arg1});
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function function(String name, Expression arg1, Expression arg2) {
-        return function(name,new Expression[]{arg1,arg2});
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function function(String name, Expression arg1, Expression arg2, Expression arg3) {
-        return function(name,new Expression[]{arg1,arg2,arg3});
     }
 
     /**
