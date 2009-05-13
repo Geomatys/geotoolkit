@@ -72,28 +72,28 @@ public class BenchBigShapes {
 //        testBasicService(context,null,"imageGO2.png");
 //        testBasicService(context,null,"imageGO2.png");
 
-        int NBPASS = 2;
-
-        float[] times = new float[NBPASS];
-
-
-        //test with generalisation
-        for(int i=0; i<NBPASS;i++){
-            System.out.println("pass "+i);
-            times[i] = testBasicService(context,null,"imageGO2.png");
-        }
-
-
-        //summary---------------------------------------------------------------
-
-        float sum = 0;
-        for(int i=0;i<NBPASS;i++){
-            float f = times[i];
-            System.out.println("GO2 :time to render = " + f +"sec.");
-            sum += f;
-        }
-        float averageNO = sum/NBPASS;
-        System.out.println("GO2 : Average = " + averageNO +"sec.");
+//        int NBPASS = 10;
+//
+//        float[] times = new float[NBPASS];
+//
+//
+//        //test with generalisation
+//        for(int i=0; i<NBPASS;i++){
+//            System.out.println("pass "+i);
+//            times[i] = testBasicService(context,null,"imageGO2.png");
+//        }
+//
+//
+//        //summary---------------------------------------------------------------
+//
+//        float sum = 0;
+//        for(int i=0;i<NBPASS;i++){
+//            float f = times[i];
+//            System.out.println("GO2 :time to render = " + f +"sec.");
+//            sum += f;
+//        }
+//        float averageNO = sum/NBPASS;
+//        System.out.println("GO2 : Average = " + averageNO +"sec.");
 
     }
 

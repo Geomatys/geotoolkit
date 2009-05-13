@@ -42,7 +42,7 @@ public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
      */
     @Override
     public boolean evaluate(Object object) {
-        for (Filter filter : filters) {
+        for (Filter filter : filterArray) {
             if (filter.evaluate(object)) {
                 return true;
             }

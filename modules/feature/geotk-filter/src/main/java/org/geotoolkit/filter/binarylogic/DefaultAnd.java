@@ -42,7 +42,7 @@ public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
      */
     @Override
     public boolean evaluate(Object object) {
-        for (final Filter filter : filters) {
+        for (Filter filter : filterArray) {
             if(!filter.evaluate(object)) {
                 return false;
             }

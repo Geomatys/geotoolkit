@@ -16,7 +16,12 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.FilterVisitor;
@@ -31,8 +36,18 @@ import org.opengis.geometry.Envelope;
  */
 public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,DefaultLiteral<Envelope>> implements BBOX {
 
+    private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
+
+    //cache the bbox geometry
+    private final PreparedGeometry boundingGeometry;
+    private final com.vividsolutions.jts.geom.Envelope boundingEnv;
+
     public DefaultBBox(PropertyName property, DefaultLiteral<Envelope> bbox) {
         super(property,bbox);
+        boundingGeometry = toGeometry(bbox.getValue());
+        boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
     }
 
     /**
@@ -94,7 +109,18 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             return false;
         }
 
-        return candidate.intersects(toGeometry(right.getValue()));
+//        return boundingGeometry.intersects(candidate);
+
+        final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
+
+		if(boundingEnv.contains(candidateEnv) || candidateEnv.contains(boundingEnv)) {
+            return true;
+        } else if(boundingEnv.intersects(candidateEnv)) {
+            return boundingGeometry.intersects(candidate);
+        } else {
+            return false;
+        }
+        
     }
 
     /**
@@ -148,4 +174,20 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         return hash;
     }
 
+    /**
+     * Utility method to transform an envelope in geometry.
+     * @param env
+     * @return Geometry
+     */
+    private static PreparedGeometry toGeometry(Envelope env){
+        final Coordinate[] coords = new Coordinate[5];
+        coords[0] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
+        coords[1] = new Coordinate(env.getMinimum(0), env.getMaximum(1));
+        coords[2] = new Coordinate(env.getMaximum(0), env.getMaximum(1));
+        coords[3] = new Coordinate(env.getMaximum(0), env.getMinimum(1));
+        coords[4] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
+        final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(coords);
+        Geometry geom = GEOMETRY_FACTORY.createPolygon(ring, EMPTY_RINGS);
+        return PREPARED_FACTORY.create(geom);
+    }
 }

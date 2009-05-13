@@ -31,6 +31,7 @@ import org.opengis.filter.Filter;
  */
 public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator{
 
+    protected final Filter[] filterArray;
     protected final List<Filter> filters;
 
     public AbstractBinaryLogicOperator(List<Filter> filters) {
@@ -39,7 +40,8 @@ public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator
         }
 
         //use a threadsafe optimized immutable list
-        this.filters = UnmodifiableArrayList.wrap(filters.toArray(new Filter[filters.size()]));
+        this.filterArray = filters.toArray(new Filter[filters.size()]);
+        this.filters = UnmodifiableArrayList.wrap(filterArray);
     }
 
     public AbstractBinaryLogicOperator(Filter filter1, Filter filter2) {
@@ -48,7 +50,8 @@ public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator
         }
 
         //use a threadsafe optimized immutable list
-        this.filters = UnmodifiableArrayList.wrap(new Filter[]{filter1,filter2});
+        this.filterArray = new Filter[]{filter1,filter2};
+        this.filters = UnmodifiableArrayList.wrap(filterArray);
     }
 
     /**

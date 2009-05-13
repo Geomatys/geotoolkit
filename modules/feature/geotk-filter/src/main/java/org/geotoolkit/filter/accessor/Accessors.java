@@ -29,15 +29,17 @@ import javax.imageio.spi.ServiceRegistry;
  */
 public class Accessors {
 
-    private static final List<PropertyAccessorFactory> ACCESSOR_FACTORIES = new ArrayList<PropertyAccessorFactory>();
+    private static final PropertyAccessorFactory[] ACCESSOR_FACTORIES;
 
     static{
         final Iterator<PropertyAccessorFactory> factories = ServiceRegistry.lookupProviders(PropertyAccessorFactory.class);
 
+        List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
         while(factories.hasNext()){
-            ACCESSOR_FACTORIES.add(factories.next());
+            lst.add(factories.next());
         }
 
+        ACCESSOR_FACTORIES = lst.toArray(new PropertyAccessorFactory[lst.size()]);
     }
 
     private Accessors(){}

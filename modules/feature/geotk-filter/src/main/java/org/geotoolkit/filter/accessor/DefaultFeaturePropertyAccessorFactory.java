@@ -91,7 +91,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
      * @return xpath with any XML prefixes removed
      */
     private static String stripPrefix(String xpath) {
-        int split = xpath.indexOf(":");
+        int split = xpath.indexOf(':');
         if (split != -1) {
             return xpath.substring(split + 1);
         }
