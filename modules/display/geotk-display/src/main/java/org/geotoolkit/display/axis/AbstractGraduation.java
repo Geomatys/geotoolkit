@@ -28,6 +28,7 @@ import javax.measure.converter.ConversionException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -331,5 +332,13 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
             code ^= unit.hashCode();
         }
         return code;
+    }
+
+    /**
+     * Returns a string representation for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return Classes.getShortClassName(this) + '[' + getMinimum() + " \u2026 " + getMaximum() + ']';
     }
 }

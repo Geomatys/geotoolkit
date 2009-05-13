@@ -21,6 +21,7 @@ import java.awt.Shape;
 import java.awt.Paint;
 import java.awt.Color;
 import java.awt.Stroke;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
@@ -219,7 +220,7 @@ public class Plot2D extends ZoomPane {
          */
         @Override public void componentResized(final ComponentEvent event) {
             final Plot2D c = (Plot2D) event.getSource();
-            c.layoutAxis(false);
+            c.layoutAxes(false);
         }
     }
 
@@ -392,44 +393,63 @@ public class Plot2D extends ZoomPane {
      * @return The added series, returned for convenience.
      */
     public Series addSeries(final Series series) {
+        /*
+         * Computes the data extremums before to create axes because we need the zoom affine
+         * transform, and the calculation of the zoom transform needs the data extremums.
+         */
         final Rectangle2D bounds = series.bounds();
+        if (!bounds.isEmpty()) {
+            if (seriesBounds == null) {
+                seriesBounds = new Rectangle2D.Double();
+                seriesBounds.setRect(bounds);
+            } else {
+                seriesBounds.add(bounds);
+            }
+            if (zoomIsReset()) {
+                reset(); // Needed for computing the zoom.
+            }
+        }
+        /*
+         * Gets the axes, creating them if needed.
+         */
         final Axis2D xAxis;
         final Axis2D yAxis;
-        if (nextXAxis != null) {
-            xAxis = new Axis2D();
-            final AbstractGraduation grad = (AbstractGraduation) xAxis.getGraduation();
-            grad.setMinimum(bounds.getMinX());
-            grad.setMaximum(bounds.getMaxX());
-            grad.setTitle(nextXAxis);
-            xAxes.add(xAxis);
-            nextXAxis = null;
-        } else {
-            xAxis = currentAxes.xAxis;
+        boolean axisCreated = false;
+        try {
+            if (nextXAxis != null) {
+                axisCreated = true;
+                xAxis = new Axis2D();
+                layoutAxis(xAxis, xAxes.size(), true);
+                inferGraduation(xAxis, true); // Must be after layoutAxis.
+                final AbstractGraduation grad = (AbstractGraduation) xAxis.getGraduation();
+                grad.setTitle(nextXAxis);
+                xAxes.add(xAxis);
+                nextXAxis = null;
+            } else {
+                xAxis = currentAxes.xAxis;
+            }
+            if (nextYAxis != null) {
+                axisCreated = true;
+                yAxis = new Axis2D();
+                layoutAxis(yAxis, yAxes.size(), false);
+                inferGraduation(yAxis, false); // Must be after layoutAxis.
+                final AbstractGraduation grad = (AbstractGraduation) yAxis.getGraduation();
+                grad.setTitle(nextYAxis);
+                yAxes.add(yAxis);
+                nextYAxis = null;
+            } else {
+                yAxis = currentAxes.yAxis;
+            }
+        } catch (NoninvertibleTransformException exception) {
+            throw new IllegalStateException(exception);
         }
-        if (nextYAxis != null) {
-            yAxis = new Axis2D();
-            final AbstractGraduation grad = (AbstractGraduation) yAxis.getGraduation();
-            grad.setMinimum(bounds.getMinY());
-            grad.setMaximum(bounds.getMaxY());
-            grad.setTitle(nextYAxis);
-            yAxes.add(yAxis);
-            nextYAxis = null;
-        } else {
-            yAxis = currentAxes.yAxis;
-        }
-        if (xAxis != null || yAxis != null) {
+        if (axisCreated) {
             // At least one axis has been created.
             currentAxes = new Entry(xAxis, yAxis);
         }
         this.series.put(series, currentAxes);
         if (title == null) {
             title = series.name();
-        }
-        if (seriesBounds == null) {
-            seriesBounds = new Rectangle2D.Double();
-            seriesBounds.setRect(bounds);
-        } else {
-            seriesBounds.add(bounds);
         }
         repaint();
         return series;
@@ -466,13 +486,13 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Returns the {<var>x</var>, <var>y</var>} axis for the specified series.
+     * Returns the {<var>x</var>, <var>y</var>} axes for the specified series.
      *
      * @param  series The series for which axis are wanted.
      * @return An array of length 2 containing <var>x</var> and <var>y</var> axis.
      * @throws NoSuchElementException if this widget doesn't contains the specified series.
      */
-    public Axis2D[] getAxis(final Series series) throws NoSuchElementException {
+    public Axis2D[] getAxes(final Series series) throws NoSuchElementException {
         final Entry entry = this.series.get(series);
         if (entry != null) {
             assert xAxes.indexOf(entry.xAxis) >= 0 : xAxes;
@@ -513,6 +533,30 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
+     * Returns the margin between the {@linkplain #getBounds() widget bounds} and the
+     * {@linkplain #getZoomableBounds zoomable bounds}. The zoomable bounds is the area
+     * where the graph will be plotted.
+     *
+     * @return The margin between widget bounds and the area where the graph is plotted.
+     */
+    public Insets getMargin() {
+        return new Insets(top, left, bottom, right);
+    }
+
+    /**
+     * Sets the margin between the {@linkplain #getBounds() widget bounds} and the
+     * {@linkplain #getZoomableBounds zoomable bounds} to the given insets.
+     *
+     * @param margin The new margin between widget bounds and the area where the graph is plotted.
+     */
+    public void setMargin(final Insets margin) {
+        top    = margin.top;
+        left   = margin.left;
+        bottom = margin.bottom;
+        right  = margin.right;
+    }
+
+    /**
      * Adds the given bounds to a map of bounds. If no bounds were assigned to the given axis,
      * then the given bounds is copied and assigned to that axis. Otherwise - if a bounds
      * already exists for the given axis - then that bounds is expanded in order to contains
@@ -522,7 +566,9 @@ public class Plot2D extends ZoomPane {
      * @param axis  The axis for which the bounds is to be updated.
      * @param box   The bounds to be added to the bounds associated to the given axis.
      */
-    private static void add(final Map<Axis2D,Rectangle2D> unions, final Axis2D axis, final Rectangle2D bounds) {
+    private static void addAxisRange(final Map<Axis2D,Rectangle2D> unions,
+            final Axis2D axis, final Rectangle2D bounds)
+    {
         Rectangle2D union = unions.get(axis);
         if (union != null) {
             union.add(bounds);
@@ -540,7 +586,7 @@ public class Plot2D extends ZoomPane {
      */
     @Override
     protected void reset(final Rectangle zoomableBounds, final boolean yAxisUpward) {
-        layoutAxis(true);
+        layoutAxes(true);
         /*
          * It is okay to use the same IdentityHashMap instance for both X and Y axes because the
          * same Axis2D instance should never be used for both axes. Note however that a plain HashMap
@@ -550,8 +596,8 @@ public class Plot2D extends ZoomPane {
         for (final Map.Entry<Series,Entry> e : series.entrySet()) {
             final Rectangle2D bounds = e.getKey().bounds();
             final Entry entry = e.getValue();
-            add(unions, entry.xAxis, bounds);
-            add(unions, entry.yAxis, bounds);
+            addAxisRange(unions, entry.xAxis, bounds);
+            addAxisRange(unions, entry.yAxis, bounds);
         }
         for (final Axis2D axis : xAxes) {
             final Rectangle2D bounds = unions.get(axis);
@@ -573,14 +619,15 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Sets axis location. This method is automatically invoked when the axis needs to be layout.
+     * Sets axes location. This method is automatically invoked when the axes need to be layout.
      * This occurs for example when new axis are added, or when the component has been resized.
+     * This method does not change the graduations.
      *
-     * @param force If {@code true}, then axis orientation and position are reset to their default
-     *        value. If {@code false}, then this method tries to preserve axis orientation and
+     * @param force If {@code true}, then axes orientation and position are reset to their default
+     *        value. If {@code false}, then this method tries to preserve axes orientation and
      *        position relative to widget's border.
      */
-    private void layoutAxis(final boolean force) {
+    private void layoutAxes(final boolean force) {
         final int width  = getWidth();
         final int height = getHeight();
         final double tx  = width  - lastWidth;
@@ -588,9 +635,7 @@ public class Plot2D extends ZoomPane {
         int axisCount = 0;
         for (final Axis2D axis : xAxes) {
             if (force) {
-                axis.setLabelClockwise(true);
-                axis.setLine(left, height-bottom, width-right, height-bottom);
-                translatePerpendicularly(axis, xOffset*axisCount, yOffset*axisCount);
+                layoutAxis(axis, axisCount, true);
             } else {
                 resize(axis, tx, ty);
             }
@@ -599,9 +644,7 @@ public class Plot2D extends ZoomPane {
         axisCount = 0;
         for (final Axis2D axis : yAxes) {
             if (force) {
-                axis.setLabelClockwise(false);
-                axis.setLine(left, height-bottom, left, top);
-                translatePerpendicularly(axis, xOffset*axisCount, yOffset*axisCount);
+                layoutAxis(axis, axisCount, false);
             } else {
                 resize(axis, tx, ty);
             }
@@ -609,6 +652,33 @@ public class Plot2D extends ZoomPane {
         }
         lastWidth  = width;
         lastHeight = height;
+    }
+
+    /**
+     * Forces the layout of the given axis. This method changes only the axis position,
+     * not the axis graduation. To change the graduation, invoke {@link #inferGraduation}
+     * <strong>after</strong> the axis has been put at its proper location on the widget area.
+     *
+     * @param axis The axis to layout.
+     * @param axisCount The index of the given axis.
+     * @param isX {@code true} if the given axis is an X axis, or {@code false} for an Y axis.
+     */
+    private void layoutAxis(final Axis2D axis, final int axisCount, final boolean isX) {
+        final int width  = super.getWidth();
+        final int height = super.getHeight();
+        final int x1, y1, x2, y2;
+        x1 = left;
+        y1 = height - bottom;
+        if (isX) {
+            x2 = width - right;
+            y2 = y1;
+        } else {
+            x2 = x1;
+            y2 = top;
+        }
+        axis.setLabelClockwise(isX);
+        axis.setLine(x1, y1, x2, y2);
+        translatePerpendicularly(axis, xOffset*axisCount, yOffset*axisCount);
     }
 
     /**
@@ -627,8 +697,8 @@ public class Plot2D extends ZoomPane {
      *          dx = tx*sin(theta)
      *          dy = ty*cos(theta)
      *       }
-     *    </li>
-     *  </ul>
+     *   </li>
+     * </ul>
      */
     private static void translatePerpendicularly(final Axis2D axis, final double tx, final double ty) {
         final double x1 = axis.getX1();
@@ -644,7 +714,7 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Invoked when this component has been resized. This method adjust axis length will
+     * Invoked when this component has been resized. This method adjust axis length while
      * preserving their orientation and position relative to border.
      *
      * @param axis The axis to adjust.
@@ -655,7 +725,7 @@ public class Plot2D extends ZoomPane {
         final Point2D P1 = axis.getP1();
         final Point2D P2 = axis.getP2();
         final Point2D anchor, moveable;
-        if (length(P1) <= length(P2)) {
+        if (distance(P1) <= distance(P2)) {
             anchor   = P1;
             moveable = P2;
         } else {
@@ -673,53 +743,38 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Returns the length of the vector from (0,0) to the given point. We compute the length
-     * instead then the square of the length because the later may overflow,  while the Java
+     * Returns the distance from the origin (0,0) to the given point. We compute the distance
+     * instead then the square of the distance because the later may overflow, while the Java
      * {@link Math#hypot} implementation is designated for avoiding such overflow.
      */
-    private static double length(final Point2D point) {
+    private static double distance(final Point2D point) {
         return hypot(point.getX(), point.getY());
     }
 
     /**
-     * {@inheritDoc}
+     * Changes the {@linkplain #zoom zoom} by applying an affine transform. The {@code change}
+     * transform must express a change in the units of the {@linkplain #addSeries(Series) series
+     * added} to this widget. The location of axes will <strong>not</strong> change as a result
+     * of the given transform. Instead, the axis graduations will be updated with new minimal
+     * and maximal values matching the new zoom.
      */
     @Override
     public void transform(final AffineTransform change) {
         super.transform(change);
-        Point2D.Double P1 = new Point2D.Double();
-        Point2D.Double P2 = new Point2D.Double();
         try {
             /*
-             * Process horizontal axis first, then process the vertical axis.
+             * The affine transform from "data" to "pixel" coordinates changed. If we assume that
+             * the axes position don't change, then the graduations need to be updated in order
+             * to reflect the affine transform change. We perform this update by converting the
+             * axes coordinates from pixel units to data units. By definition, the (x,y) values
+             * of axes end-points in "data" units are the extremums on the X and Y axes respectively.
              */
-            boolean processVerticalAxis = false;
-            do {
-                for (final Axis2D axis : (processVerticalAxis ? yAxes : xAxes)) {
-                    P1.setLocation(axis.getX1(), axis.getY1());
-                    P2.setLocation(axis.getX2(), axis.getY2());
-                    zoom.inverseTransform(P1, P1);
-                    zoom.inverseTransform(P2, P2);
-                    final AbstractGraduation grad = (AbstractGraduation) axis.getGraduation();
-                    if (!processVerticalAxis) {
-                        if (P1.x > P2.x) {
-                            final Point2D.Double tmp = P1;
-                            P1 = P2;
-                            P2 = tmp;
-                        }
-                        grad.setMinimum(P1.x);
-                        grad.setMaximum(P2.x);
-                    } else {
-                        if (P1.y > P2.y) {
-                            final Point2D.Double tmp = P1;
-                            P1 = P2;
-                            P2 = tmp;
-                        }
-                        grad.setMinimum(P1.y);
-                        grad.setMaximum(P2.y);
-                    }
-                }
-            } while ((processVerticalAxis = !processVerticalAxis) == true);
+            for (final Axis2D axis : xAxes) {
+                inferGraduation(axis, true);
+            }
+            for (final Axis2D axis : yAxes) {
+                inferGraduation(axis, false);
+            }
         } catch (NoninvertibleTransformException exception) {
             Logging.unexpectedException(Plot2D.class, "transform", exception);
         }
@@ -727,7 +782,46 @@ public class Plot2D extends ZoomPane {
     }
 
     /**
-     * Paints the axes and all series.
+     * Sets the graduation of the given axis according its current position. The following
+     * conditions must be hold before this method is invoked:
+     * <p>
+     * <ul>
+     *   <li>The {@link #zoom} transform must be set to the "data to pixels" transform.</li>
+     *   <li>The axis must be at its proper location in the widget area, typically through a
+     *       call to {@link #layoutAxis} before this method call}.</li>
+     * </ul>
+     *
+     * @param axis The axis for which to set the graduation.
+     * @param isX  {@code true} if the given axis is a X axis.
+     */
+    private void inferGraduation(final Axis2D axis, final boolean isX) throws NoninvertibleTransformException {
+        Point2D P1 = axis.getP1();
+        Point2D P2 = axis.getP2();
+        P1 = zoom.inverseTransform(P1, P1);
+        P2 = zoom.inverseTransform(P2, P2);
+        double min, max;
+        if (isX) {
+            min = P1.getX();
+            max = P2.getX();
+        } else {
+            min = P1.getY();
+            max = P2.getY();
+        }
+        if (min > max) {
+            final double tmp = max;
+            max = min;
+            min = tmp;
+        }
+        final AbstractGraduation grad = (AbstractGraduation) axis.getGraduation();
+        grad.setMinimum(min);
+        grad.setMaximum(max);
+    }
+
+    /**
+     * Paints the axes and all series. At the opposite of typical {@link ZoomPane} subclasses, this
+     * method does not use directly the {@linkplain #zoom zoom} transform. The zoom is honored only
+     * indirectly since the axis graduations have been determined from the zoom by the
+     * {@link #transform(AffineTransform)} method.
      */
     @Override
     protected void paintComponent(final Graphics2D graphics) {
@@ -1006,6 +1100,17 @@ public class Plot2D extends ZoomPane {
         @Override
         public Shape path() {
             return path;
+        }
+
+        /**
+         * Returns a string representation for debugging purpose.
+         */
+        @Override
+        public String toString() {
+            final Rectangle2D bounds = this.bounds;
+            return "Series[\"" + name + "\", " +
+                   "x=[" + bounds.getMinX() + " \u2026 " + bounds.getMaxX() + "], " +
+                   "y=[" + bounds.getMinY() + " \u2026 " + bounds.getMaxY() + "]]";
         }
     }
 }

@@ -766,6 +766,13 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     }
 
     /**
+     * Indicates whether the zoom is the result of a {@link #reset} operation.
+     */
+    final boolean zoomIsReset() {
+        return zoomIsReset;
+    }
+
+    /**
      * Sets the policy for the zoom when the content is initially drawn or when the user resets the
      * zoom. Value {@code true} means that the panel should initially be completely filled, even if
      * the content partially falls outside the panel's bounds. Value {@code false} means that the
@@ -1050,13 +1057,13 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Returns the current {@linkplain #zoom} scale factor. A value of 1/100 means that 100 metres
-     * are displayed as 1 pixel (provided that the logical coordinates of {@link #getArea} are
+     * are displayed as 1 pixel (assuming that the logical coordinates of {@link #getArea} are
      * expressed in metres). Scale factors for X and Y axes can be computed separately using the
      * following equations:
      * <p>
      * <table align="center" width="600" cellspacing="3"><tr>
-     * <td width=50%>X scale = <IMG src="../referencing/operation/matrix/doc-files/scaleX0.png"></td>
-     * <td width=50%>Y scale = <IMG src="../referencing/operation/matrix/doc-files/scaleY0.png"></td>
+     * <td width=50%>X scale = <IMG src="../../referencing/operation/matrix/doc-files/scaleX0.png"></td>
+     * <td width=50%>Y scale = <IMG src="../../referencing/operation/matrix/doc-files/scaleY0.png"></td>
      * </tr></table>
      * <p>
      * This method combines scale along both axes, which is correct if this {@code ZoomPane} has
@@ -1066,6 +1073,38 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      */
     public double getScaleFactor() {
         return XAffineTransform.getScale(zoom);
+    }
+
+    /**
+     * Returns a clone of the current {@link #zoom} transform.
+     *
+     * @return A clone of the current transform.
+     */
+    public AffineTransform getTransform() {
+        return (AffineTransform) zoom.clone();
+    }
+
+    /**
+     * Sets the {@link #zoom} transform to the given value. The default implementation computes an
+     * affine transform which is the change needed for going from the current {@linkplain #zoom}
+     * to the given transform, then calls {@link #transform(AffineTransform)} with that change.
+     * This is done that way for giving listeners a chance to track the changes.
+     *
+     * @param tr The new transform.
+     */
+    public void setTransform(final AffineTransform tr) {
+        final AffineTransform change;
+        try {
+            change = zoom.createInverse();
+        } catch (NoninvertibleTransformException exception) {
+            // Note: we won't be able to invoke fireZoomChanged since we can't compute the change.
+            Logging.unexpectedException(LOGGER, ZoomPane.class, "setTransform", exception);
+            zoom.setTransform(tr);
+            return;
+        }
+        change.concatenate(tr);
+        XAffineTransform.round(change, EPS);
+        transform(change);
     }
 
     /**
@@ -1295,18 +1334,22 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Signals that a zoom change has taken place. Every object registered by the
-     * {@link #addZoomChangeListener} method will be notified of the change as soon as possible.
+     * {@link #addZoomChangeListener(ZoomChangeListener)} method will be notified
+     * of the change as soon as possible.
      * <p>
      * If {@code oldZoom} and {@code newZoom} are the affine transforms of the old and new zoom
-     * respectively, the change is computed in such a way that the relation
+     * respectively, the change is computed in such a way that the following relation is respected
+     * within rounding errors:
      *
-     * <code>newZoom = oldZoom.{@link AffineTransform#concatenate concatenate}(change)</code>
+     * (@preformat java
+     *     newZoom = oldZoom.concatenate(change)
+     * }
      *
-     * is respected within rounding errors. <strong>Note: This method may modify
-     * the given {@code change}</strong> to combine several consecutive calls of
-     * {@code fireZoomChanged} in a single transformation.
+     * <strong>Note: This method may modify the given {@code change} transform</strong> to
+     * combine several consecutive calls of {@code fireZoomChanged} in a single transformation.
      *
      * @param change Affine transform which represents the change in the zoom.
+     *        The value of this argument may be changed by this method call.
      */
     protected void fireZoomChanged(final AffineTransform change) {
         visibleArea.setRect(getVisibleArea());
@@ -2340,7 +2383,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      */
     private void unexpectedException(String methodName, NoninvertibleTransformException exception) {
         zoom.setToIdentity();
-        Logging.unexpectedException(ZoomPane.class, methodName, exception);
+        Logging.unexpectedException(LOGGER, ZoomPane.class, methodName, exception);
     }
 
     /**
@@ -2351,7 +2394,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * @param exception  The exception.
      */
     private static void unexpectedException(String methodName, RuntimeException exception) {
-        Logging.unexpectedException(ZoomPane.class, methodName, exception);
+        Logging.unexpectedException(LOGGER, ZoomPane.class, methodName, exception);
     }
 
     /**

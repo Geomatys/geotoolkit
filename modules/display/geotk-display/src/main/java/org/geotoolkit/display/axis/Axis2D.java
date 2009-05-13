@@ -667,7 +667,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
 
     /**
      * Creates an affine transform mapping logical to pixels coordinates for a pair
-     * of axis. The affine transform will maps coordinates in the following way:
+     * of axes. The affine transform will maps coordinates in the following way:
      * <p>
      * <ul>
      *   <li>For each input coordinates (<var>x</var>,<var>y</var>), the <var>x</var> and
@@ -1062,14 +1062,14 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
          * Cette méthode s'utilise typiquement comme suit:
          *
          * {@preformat java
-         * Graphics2D           graphics = ...
-         * FontRenderContext fontContext = graphics.getFontRenderContext();
-         * TickIterator         iterator = axis.new TickIterator(graphics.getFontRenderContext());
-         * Font                     font = iterator.getTitleFont();
-         * String                  title = axis.getGraduation().getTitle(true);
-         * GlyphVector            glyphs = font.createGlyphVector(fontContext, title);
-         * Rectangle2D            bounds = centerAxisLabel(glyphs.getVisualBounds());
-         * graphics.drawGlyphVector(glyphs, (float) bounds.getMinX(), (float) bounds.getMaxY());
+         *     Graphics2D  graphics = ...
+         *     FontRenderContext fc = graphics.getFontRenderContext();
+         *     TickIterator      it = axis.new TickIterator(fc);
+         *     Font            font = it.getTitleFont();
+         *     String         title = axis.getGraduation().getTitle(true);
+         *     GlyphVector   glyphs = font.createGlyphVector(fontContext, title);
+         *     Rectangle2D   bounds = centerAxisLabel(glyphs.getVisualBounds());
+         *     graphics.drawGlyphVector(glyphs, (float) bounds.getMinX(), (float) bounds.getMaxY());
          * }
          *
          * @param bounds

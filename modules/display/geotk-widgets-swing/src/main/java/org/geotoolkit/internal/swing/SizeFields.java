@@ -25,6 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -37,7 +39,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 3.0
  * @module
  */
-public class SizeFields extends JPanel {
+public class SizeFields extends JPanel implements ChangeListener {
     /**
      * For cross-version compatibility.
      */
@@ -73,6 +75,8 @@ public class SizeFields extends JPanel {
         c.gridx++; c.weightx=1; c.insets.left=3; c.insets.right=9;
         c.gridy=0; add(width,  c);
         c.gridy++; add(height, c);
+        width .addChangeListener(this);
+        height.addChangeListener(this);
     }
 
     /**
@@ -93,5 +97,44 @@ public class SizeFields extends JPanel {
     public void setSizeValue(final Dimension size) {
         width .setValue(size.width);
         height.setValue(size.height);
+    }
+
+    /**
+     * Adds a litener to notify of changes.
+     *
+     * @param listener The listener to add.
+     */
+    public void addChangeListener(final ChangeListener listener) {
+        listenerList.add(ChangeListener.class, listener);
+    }
+
+    /**
+     * Removes a litener.
+     *
+     * @param listener The listener to remove.
+     */
+    public void removeChangeListener(final ChangeListener listener) {
+        listenerList.remove(ChangeListener.class, listener);
+    }
+
+    /**
+     * Invoked everytime a change in width or height occurs. This method is public
+     * as an implementation side-effect, but should never be invoked directly.
+     *
+     * @param event The change event.
+     */
+    @Override
+    public void stateChanged(ChangeEvent event) {
+        // TODO: If we want to link the change of width and height, do it here.
+        event = null;
+        final Object[] listeners = listenerList.getListenerList();
+        for (int i=listeners.length; (i-=2)>=0;) {
+            if (listeners[i] == ChangeListener.class) {
+                if (event == null) {
+                    event = new ChangeEvent(this);
+                }
+                ((ChangeListener) listeners[i+1]).stateChanged(event);
+            }
+        }
     }
 }

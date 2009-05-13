@@ -19,9 +19,14 @@ package org.geotoolkit.gui.swing.image;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.SwingWorker;
+import javax.swing.JProgressBar;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import org.geotoolkit.math.Vector;
 import org.geotoolkit.math.VectorPair;
@@ -67,9 +72,24 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
     private final long seed;
 
     /**
+     * If {@code true}, automatically clears the plot before to add the result of a new computation.
+     */
+    private boolean clearBeforePlot = true;
+
+    /**
      * Number of samplings to performs per subsampling.
      */
     private int imagesPerSubsampling = 100;
+
+    /**
+     * The worker which will computes the graph in background.
+     */
+    private transient volatile Worker worker;
+
+    /**
+     * The progress bar to inform of lengthly operation, or {@code null} if none.
+     */
+    private JProgressBar progressBar;
 
     /**
      * Creates a default graph.
@@ -104,6 +124,58 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
     }
 
     /**
+     * Returns the progress bar given to the last to {@link #setProgressBar(JProgressBar)}.
+     * The default value is {@code null}, i.e. this widget do not provides any progress bar
+     * by itself.
+     *
+     * @return The progress bar given to the last to {@code setProgressBar}.
+     */
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    /**
+     * Sets the progress bar to inform of lengthly operation, or {@code null} if none.
+     * The given progress bar is expected to accept a range of values from 0 to 100 inclusive.
+     * If the progress bar accepts a wider range of values, only the [0 &hellip; 100] range
+     * will be used.
+     * <p>
+     * The given progress bar is not displayed in this widget. It is caller
+     * responsability to provide a progress bar visible in his own widget.
+     *
+     * @param bar The progress bar, or {@code null} if none.
+     */
+    public void setProgressBar(final JProgressBar bar) {
+        final JProgressBar old = progressBar;
+        progressBar = bar;
+        firePropertyChange("progressBar", old, bar);
+    }
+
+    /**
+     * If {@code true}, any call to {@code plotCostEstimation} will clear the previous plot
+     * before to add the result of a new calculation. If {@code false}, then the result of
+     * {@code plotCostEstimation} will be a new series added to the existing ones.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @return Whatever the result of {@code plotCostEstimation} will replace any previous plot.
+     */
+    public boolean getClearBeforePlot() {
+        return clearBeforePlot;
+    }
+
+    /**
+     * Sets whatever the result of {@code plotCostEstimation} should replace any previous plot.
+     *
+     * @param clear Whatever the result of {@code plotCostEstimation} should replace any previous plot.
+     */
+    public void setClearBeforePlot(final boolean clear) {
+        final boolean old = clearBeforePlot;
+        clearBeforePlot = clear;
+        firePropertyChange("clearBeforePlot", old, clear);
+    }
+
+    /**
      * Replaces NaN values by the previous value in the given array.
      */
     private static void replaceNaN(final float[] array) {
@@ -133,6 +205,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @throws IOException if an I/O operation was required and failed.
      */
     public void plotCostEstimation(final String name, final MosaicProfiler profiler) throws IOException {
+        final Worker worker = this.worker;
         final Dimension minSubsampling = profiler.getMinSubsampling();
         final Dimension maxSubsampling = profiler.getMaxSubsampling();
         final int ms = Math.max(minSubsampling.width, minSubsampling.height);
@@ -142,6 +215,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         final float[] high = new float[ns];
         final float[] low  = new float[ns];
         for (int i=0; i<ns; i++) {
+            if (worker != null) {
+                worker.progress(i*100 / ns);
+            }
             profiler.setSeed(seed); // Use the same random values for each subsamplings.
             profiler.setMinSubsampling(i+ms);
             final Statistics stats = profiler.costSampling(imagesPerSubsampling);
@@ -175,8 +251,11 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         lower.omitColinearPoints(EPS, EPS);
         final Vector xs = upper.getX().concatenate(lower.getX().reverse());
         final Vector ys = upper.getY().concatenate(lower.getY().reverse());
-        SwingUtilities.invokeAndWait(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
+                if (getClearBeforePlot()) {
+                    clear();
+                }
                 final int ns = getSeries().size();
                 final Color color = DEFAULT_COLORS.get((ns/2) % DEFAULT_COLORS.size());
                 final Color trans = new Color(color.getRGB() & 0x20FFFFFF, true);
@@ -193,9 +272,6 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 properties.remove("Fill");
                 properties.put("Paint", color);
                 addSeries(properties, main.getX(), main.getY());
-                if (ns == 0) {
-                    reset();
-                }
             }
         });
     }
@@ -241,19 +317,157 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @param name The name to given to the plot, or {@code null} if none.
      * @param builder The mosaic builder to use for creating a {@link TileManager}.
      * @param delay How long to wait (in milliseconds) before to perform the calculation.
-     *
-     * @todo The delayed calculation is not yet implemented.
      */
     public void plotLater(final String name, final MosaicBuilder builder, final long delay) {
-        try {
-            plotCostEstimation(name, builder.createTileManager());
-        } catch (Exception e) {
-            /*
-             * The IOException should not happen since if they were some I/O operation to perform,
-             * they have usually been done before we reach this point. However a RuntimeException
-             * may happen if some parameters given to the MosaicBuilder are incomplete or invalid.
-             */
-            ExceptionMonitor.show(this, e);
+        EventQueue.invokeLater(new Runnable() {
+            @Override public void run() {
+                Worker worker = MosaicPerformanceGraph.this.worker;
+                if (worker == null) {
+                    worker = new Worker();
+                    final JProgressBar progress = getProgressBar();
+                    if (progress != null) {
+                        progress.setEnabled(true);
+                        progress.setIndeterminate(true);
+                    }
+                }
+                while (!worker.schedule(name, builder, delay)) {
+                    worker = new Worker();
+                }
+                MosaicPerformanceGraph.this.worker = worker;
+                worker.execute();
+            }
+        });
+    }
+
+    /**
+     * The worker which will computes the graph in background. An instance of this class will
+     * be created everytime needed, but will wait an arbitrary amount of time before to begin
+     * its job in case the builder configuration change.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.0
+     *
+     * @since 3.0
+     * @module
+     */
+    private final class Worker extends SwingWorker implements PropertyChangeListener {
+        /**
+         * The name of the plot to add.
+         */
+        private String name;
+
+        /**
+         * The mosaic builder for which to plot the performance graph.
+         */
+        private MosaicBuilder builder;
+
+        /**
+         * When to starts computation, in milliseconds since January 1st, 1970.
+         */
+        private long time;
+
+        /**
+         * {@code true} if this worker started its job.
+         */
+        private boolean running;
+
+        /**
+         * Creates a new worker.
+         */
+        Worker() {
+            addPropertyChangeListener(this);
+        }
+
+        /**
+         * Schedule a plot for the given builder. Returns {@code true} on success, or
+         * {@code false} if an other instance of {@code Worker} needs to be created.
+         */
+        synchronized boolean schedule(final String name, final MosaicBuilder builder, final long delay) {
+            if (running) {
+                return false;
+            }
+            this.name    = name;
+            this.builder = builder;
+            this.time    = delay + System.currentTimeMillis();
+            return true;
+        }
+
+        /**
+         * Waits for the delay, then plot the graph.
+         */
+        @Override
+        protected Object doInBackground() {
+            final String name;
+            final MosaicBuilder builder;
+            synchronized (this) {
+                long delay;
+                while ((delay = time - System.currentTimeMillis()) > 1) {
+                    try {
+                        wait(delay);
+                    } catch (InterruptedException ex) {
+                        // Ignore and go back to work.
+                    }
+                }
+                name    = this.name;
+                builder = this.builder;
+                running = true;
+            }
+            try {
+                plotCostEstimation(name, builder);
+            } catch (Exception e) {
+                /*
+                 * The IOException should not happen since if they were some I/O operation to perform,
+                 * they have usually been done before we reach this point. However a RuntimeException
+                 * may happen if some parameters given to the MosaicBuilder are incomplete or invalid.
+                 */
+                ExceptionMonitor.show(MosaicPerformanceGraph.this, e);
+            }
+            return null;
+        }
+
+        /**
+         * Invoked by {@code plotCostEstimation} for setting the progress. Defined here because
+         * {@code setProgress} has protected access.
+         *
+         * @param p The progress as a value in the [0 ... 100] range.
+         */
+        public void progress(final int p) {
+            if (!isDone()) {
+                setProgress(p);
+            }
+        }
+
+        /**
+         * Invoked from the event dispath thread after a call to {@link #progress}.
+         * Performs the actual update of the progress bar.
+         */
+        @Override
+        public void propertyChange(final PropertyChangeEvent event) {
+            if (event.getPropertyName().equals("progress")) {
+                final JProgressBar progress = getProgressBar();
+                if (progress != null) {
+                    progress.setIndeterminate(false);
+                    progress.setValue(getProgress());
+                }
+            }
+        }
+
+        /**
+         * Executed from the event dispatch thread. Discarts the reference to the worker if it
+         * was this instance. This is needed for letting {@link MosaicPerformanceGraph#plotLater}
+         * know that it can set the state of the progress bar when a new plot is requested.
+         */
+        @Override
+        protected void done() {
+            if (worker == this) {
+                worker = null;
+            }
+            final JProgressBar progress = getProgressBar();
+            if (progress != null) {
+                progress.setIndeterminate(false);
+                progress.setValue(100);
+                progress.setEnabled(false);
+            }
         }
     }
 

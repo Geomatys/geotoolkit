@@ -39,6 +39,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
@@ -72,6 +73,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  * @since 2.5
  * @module
  */
+@ThreadSafe
 public class MosaicBuilder {
     /**
      * The default tile size in pixels.
@@ -167,7 +169,7 @@ public class MosaicBuilder {
      *
      * @return The current logging level.
      */
-    public Level getLogLevel() {
+    public synchronized Level getLogLevel() {
         return logLevel;
     }
 
@@ -177,7 +179,7 @@ public class MosaicBuilder {
      *
      * @param level The new logging level.
      */
-    public void setLogLevel(Level level) {
+    public synchronized void setLogLevel(Level level) {
         if (level == null) {
             level = Level.FINE;
         }
@@ -204,7 +206,7 @@ public class MosaicBuilder {
      *
      * @return An identification of current tile layout.
      */
-    public TileLayout getTileLayout() {
+    public synchronized TileLayout getTileLayout() {
         return layout;
     }
 
@@ -215,7 +217,7 @@ public class MosaicBuilder {
      *
      * @param layout An identification of new tile layout.
      */
-    public void setTileLayout(final TileLayout layout) {
+    public synchronized void setTileLayout(final TileLayout layout) {
         if (layout != null) {
             switch (layout) {
                 case CONSTANT_TILE_SIZE:
@@ -239,7 +241,7 @@ public class MosaicBuilder {
      *
      * @return The current tiles directory.
      */
-    public File getTileDirectory() {
+    public synchronized File getTileDirectory() {
         return directory;
     }
 
@@ -249,7 +251,7 @@ public class MosaicBuilder {
      *
      * @param directory The new tiles directory.
      */
-    public void setTileDirectory(final File directory) {
+    public synchronized void setTileDirectory(final File directory) {
         this.directory = directory;
     }
 
@@ -260,7 +262,7 @@ public class MosaicBuilder {
      *
      * @return The current image reader provider for tiles.
      */
-    public ImageReaderSpi getTileReaderSpi() {
+    public synchronized ImageReaderSpi getTileReaderSpi() {
         return tileReaderSpi;
     }
 
@@ -271,7 +273,7 @@ public class MosaicBuilder {
      *
      * @param provider The new image reader provider for tiles.
      */
-    public void setTileReaderSpi(final ImageReaderSpi provider) {
+    public synchronized void setTileReaderSpi(final ImageReaderSpi provider) {
         this.tileReaderSpi = provider;
     }
 
@@ -284,6 +286,7 @@ public class MosaicBuilder {
      * @throws IllegalArgumentException if no provider was found for the given name.
      */
     public void setTileReaderSpi(String format) throws IllegalArgumentException {
+        // No need to synchronize.
         ImageReaderSpi spi = null;
         if (format != null) {
             format = format.trim();
@@ -306,7 +309,7 @@ public class MosaicBuilder {
      *
      * @return The current envelope, or {@code null} if none.
      */
-    public Envelope getMosaicEnvelope() {
+    public synchronized Envelope getMosaicEnvelope() {
         return (mosaicEnvelope != null) ? mosaicEnvelope.clone() : null;
     }
 
@@ -329,7 +332,7 @@ public class MosaicBuilder {
      *
      * @see #createGridToEnvelopeMapper
      */
-    public void setMosaicEnvelope(final Envelope envelope) {
+    public synchronized void setMosaicEnvelope(final Envelope envelope) {
         mosaicEnvelope = (envelope != null) ? new GeneralEnvelope(envelope) : null;
     }
 
@@ -339,7 +342,7 @@ public class MosaicBuilder {
      *
      * @return The current untiled image bounds.
      */
-    public Rectangle getUntiledImageBounds() {
+    public synchronized Rectangle getUntiledImageBounds() {
         return (untiledBounds != null) ? (Rectangle) untiledBounds.clone() : null;
     }
 
@@ -349,7 +352,7 @@ public class MosaicBuilder {
      *
      * @param bounds The new untiled image bounds.
      */
-    public void setUntiledImageBounds(final Rectangle bounds) {
+    public synchronized void setUntiledImageBounds(final Rectangle bounds) {
         untiledBounds = (bounds != null) ? new Rectangle(bounds) : null;
     }
 
@@ -362,7 +365,7 @@ public class MosaicBuilder {
      *
      * @see #suggestedTileSize
      */
-    public Dimension getTileSize() {
+    public synchronized Dimension getTileSize() {
         if (tileSize == null) {
             final Rectangle untiledBounds = getUntiledImageBounds();
             if (untiledBounds == null) {
@@ -382,7 +385,7 @@ public class MosaicBuilder {
      *
      * @param size The new tile size.
      */
-    public void setTileSize(final Dimension size) {
+    public synchronized void setTileSize(final Dimension size) {
         if (size == null) {
             tileSize = null;
         } else {
@@ -643,7 +646,7 @@ public class MosaicBuilder {
      *
      * @return The current subsamplings for each overview levels.
      */
-    public Dimension[] getSubsamplings() {
+    public synchronized Dimension[] getSubsamplings() {
         if (subsamplings == null) {
             final Rectangle untiledBounds = getUntiledImageBounds();
             if (untiledBounds == null) {
@@ -767,7 +770,7 @@ public class MosaicBuilder {
      *
      * @param subsamplings The new subsamplings for each overview levels.
      */
-    public void setSubsamplings(final Dimension... subsamplings) {
+    public synchronized void setSubsamplings(final Dimension... subsamplings) {
         final int[] newSubsamplings;
         if (subsamplings == null) {
             newSubsamplings = null;
@@ -797,6 +800,7 @@ public class MosaicBuilder {
      * @param subsamplings The new subsamplings for each overview levels.
      */
     public void setSubsamplings(final int... subsamplings) {
+        // No need to synchronize.
         final Dimension[] newSubsamplings;
         if (subsamplings == null) {
             newSubsamplings = null;
@@ -827,7 +831,7 @@ public class MosaicBuilder {
      * @throws IOException if an I/O operation was required and failed. The default implementation
      *         does not perform any I/O, but subclasses are allowed to do so.
      */
-    public TileManager createTileManager() throws IOException {
+    public synchronized TileManager createTileManager() throws IOException {
         return createFromInput(null);
     }
 
@@ -1158,7 +1162,7 @@ public class MosaicBuilder {
      * @return The tiles, or {@code null} if the process has been aborted.
      * @throws IOException if an error occured while reading the untiled image.
      */
-    public TileManager createTileManager(final Object input) throws IOException {
+    public synchronized TileManager createTileManager(final Object input) throws IOException {
         return createTileManager(input, TileWritingPolicy.NO_WRITE);
     }
 
@@ -1179,8 +1183,8 @@ public class MosaicBuilder {
      *
      * @since 3.0
      */
-    public TileManager createTileManager(final Object input, final TileWritingPolicy policy)
-            throws IOException
+    public synchronized TileManager createTileManager(final Object input,
+            final TileWritingPolicy policy) throws IOException
     {
         return createTileManager(input, 0, policy, true);
     }
@@ -1205,8 +1209,8 @@ public class MosaicBuilder {
      * @throws IOException if an error occured while reading the untiled image or (only if
      *         {@code writeTiles} is {@code true}) while writting the tiles to disk.
      */
-    public TileManager createTileManager(final Object input, final int inputIndex,
-                                         final TileWritingPolicy policy) throws IOException
+    public synchronized TileManager createTileManager(final Object input, final int inputIndex,
+            final TileWritingPolicy policy) throws IOException
     {
         return createTileManager(input, inputIndex, policy, false);
     }

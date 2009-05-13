@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.image;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.awt.EventQueue;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -421,15 +422,17 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      * @throws IOException if an error occured while reading a tile.
      */
     public TileManager[] getTileManager() throws IOException {
-        final TileManager[] managers = TileManagerFactory.DEFAULT.create(getElements());
+        final Tile[] elements = getElements();
+        final TileManager[] managers = TileManagerFactory.DEFAULT.create(elements);
         /*
          * TileManagerFactory has computed some properties previously unavailable,
          * like the tile location computed from the "gridToCRS" affine transform.
          * Fire a "row updates" event so we can see the updated values in the table.
          */
-        SwingUtilities.invokeAndWait(new Runnable() {
+        final int last = elements.length - 1;
+        EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
-                fireTableRowsUpdated(0, elements.size()-1);
+                fireTableRowsUpdated(0, last);
             }
         });
         return managers;
