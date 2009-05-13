@@ -2,6 +2,12 @@
 package org.geotoolkit.gui.swing.debug;
 
 
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -1316,15 +1322,15 @@ public class ContextBuilder {
             AttributeType type = att.getType();
             Class cla = type.getBinding();
 
-            nStyle = RANDOM_FACTORY.createRandomVectorStyle(fs);
+//            nStyle = RANDOM_FACTORY.createRandomVectorStyle(fs);
 
-//            if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
-//                nStyle = createNewPolygonStyle();
-//            } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
-//                nStyle = createNewLineStyle();
-//            } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
-//                nStyle = createNewPointStyle();
-//            }
+            if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
+                nStyle = SF.style(SF.polygonSymbolizer());
+            } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
+                nStyle = SF.style(SF.lineSymbolizer());
+            } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
+                nStyle = SF.style(SF.pointSymbolizer());
+            }
 
             MapLayer layer = MapBuilder.createFeatureLayer(fs, nStyle);
             layer.setDescription(SF.description(file.getName(), ""));

@@ -39,7 +39,7 @@ public class BenchBigShapes {
 
 
 //        MapContext context = BenchContextBuilder.buildBigRoadContext();
-        MapContext context = ContextBuilder.buildRealCityContext();
+        MapContext context = ContextBuilder.buildMassiveVectorsContext();
 
 //        MapLayer[] layers = context.getLayers();
 //
@@ -70,9 +70,8 @@ public class BenchBigShapes {
         //make 3 pass to load stuffs
         testBasicService(context,null,"imageGO2.png");
         testBasicService(context,null,"imageGO2.png");
-        testBasicService(context,null,"imageGO2.png");
 
-        int NBPASS = 10;
+        int NBPASS = 5;
 
         float[] times = new float[NBPASS];
 

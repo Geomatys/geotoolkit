@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.filter.accessor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
 
+import org.geotoolkit.util.collection.Cache;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
@@ -47,6 +50,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static final PropertyAccessor FID_ACCESS = new FidSimpleFeaturePropertyAccessor();
     private static final Pattern idPattern = Pattern.compile("@(\\w+:)?id");
     private static final Pattern propertyPattern = Pattern.compile("(\\w+:)?(\\w+)");
+    private static final Cache<String,PropertyAccessor> CACHE = new Cache<String, PropertyAccessor>();
 
     /**
      * {@inheritDoc }
@@ -61,18 +65,45 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         if (!Feature.class.isAssignableFrom(type) && !FeatureType.class.isAssignableFrom(type)) {
             return null; // we only work with feature
         }
+
+
+
+        //try to find the accessor in the cache
+        PropertyAccessor accessor = CACHE.peek(xpath);
+        if(accessor != null){
+            return accessor;
+        }
+
         //if ("".equals(xpath) && target == Geometry.class)
         if (xpath.isEmpty()) {
+            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = DEFAULT_GEOMETRY_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
             return DEFAULT_GEOMETRY_ACCESS;
         }
 
         //check for fid access
         if (idPattern.matcher(xpath).matches()) {
+            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = FID_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
             return FID_ACCESS;
         }
 
         //check for simple property acess
         if (propertyPattern.matcher(xpath).matches()) {
+            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = ATTRIBUTE_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
             return ATTRIBUTE_ACCESS;
         }
 
@@ -114,7 +145,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         @Override
         public Object get(Object object, String xpath, Class target) {
             Feature feature = (Feature) object;
-            return feature.getIdentifier();
+            return feature.getIdentifier().getID();
         }
 
         @Override
