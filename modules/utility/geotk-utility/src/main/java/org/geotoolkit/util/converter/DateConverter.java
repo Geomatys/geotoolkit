@@ -76,4 +76,37 @@ abstract class DateConverter<T> extends SimpleConverter<Date,T> implements Seria
             return INSTANCE;
         }
     }
+
+    /**
+     * Converter from dates to timestamp.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.0
+     *
+     * @since 3.0
+     */
+    static final class Timestamp extends DateConverter<java.sql.Timestamp> {
+        private static final long serialVersionUID = 3798633184562706892L;
+        public static final Timestamp INSTANCE = new Timestamp();
+        private Timestamp() {
+        }
+
+        @Override
+        public Class<java.sql.Timestamp> getTargetClass() {
+            return java.sql.Timestamp.class;
+        }
+
+        @Override
+        public java.sql.Timestamp convert(final Date source) {
+            if (source == null) {
+                return null;
+            }
+            return new java.sql.Timestamp(source.getTime());
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
 }

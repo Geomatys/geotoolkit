@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.util.converter;
 
+import java.util.Date;
+import java.sql.Timestamp;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
@@ -68,5 +70,16 @@ public class SystemConverterTest {
         assertEquals(Float.valueOf(3.0f), system.converter(Number .class, Float.class).convert(3));
         assertEquals(Float.valueOf(0.5f), system.converter(Double .class, Float.class).convert(0.5));
         assertEquals(Float.valueOf(2.5f), system.converter(Number .class, Float.class).convert(2.5));
+    }
+
+    /**
+     * Tests conversions from dates to timestamps.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     */
+    @Test
+    public void testDateToTimestamp() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        assertEquals(new Timestamp(2000), system.converter(Date.class, Timestamp.class).convert(new Date(2000)));
     }
 }

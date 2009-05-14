@@ -79,6 +79,7 @@ public class ConverterRegistry {
             s.register(NumberConverter.Byte   .INSTANCE);
             s.register(NumberConverter.Boolean.INSTANCE);
             s.register(NumberConverter.Color  .INSTANCE);
+            s.register(DateConverter.Timestamp.INSTANCE);
             s.register(DateConverter  .Long   .INSTANCE);
             s.register(LongConverter  .Date   .INSTANCE);
             system = s; // Only on success.
