@@ -15,46 +15,24 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.filter.identity;
+package org.geotoolkit.filter;
 
-import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.identity.FeatureId;
 
-import static org.junit.Assert.*;
-import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class IdTest {
+public class FilterTest {
 
     
-    public IdTest() {
+    public FilterTest() {
     }
 
     @Test
     public void testFeatureId() {
-        String strid = "testFeatureType.1";
-
-        FeatureId id1 = FF.featureId(strid);
-        FeatureId id2 = FF.featureId(strid);
-
-        assertEquals(strid, id1.getID());
-        assertEquals(id1, id2);
-
-        assertTrue(id1.matches(FEATURE_1));
-    }
-
-    @Test
-    public void testGmlFeatureId(){
-        //geotoolkit doesnt handle GML objects
+        
     }
 
 }

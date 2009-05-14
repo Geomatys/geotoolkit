@@ -45,7 +45,7 @@ public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expr
             return false;
         }
 
-        return leftGeom.equals(right);
+        return leftGeom.equals(rightGeom);
     }
 
     /**

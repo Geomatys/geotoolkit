@@ -15,16 +15,11 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.filter.identity;
+package org.geotoolkit.filter.accessor;
 
-import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import com.vividsolutions.jts.geom.Geometry;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.feature.Feature;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -33,28 +28,22 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class IdTest {
+public class FeaturePropertyAccessorTest {
 
-    
-    public IdTest() {
+    public FeaturePropertyAccessorTest() {
     }
 
     @Test
-    public void testFeatureId() {
-        String strid = "testFeatureType.1";
+    public void testAccessor() {
+        PropertyAccessor accessor = Accessors.getAccessor(Feature.class, "testGeometry", null);
+        assertNotNull(accessor);
+        Geometry geom = (Geometry) accessor.get(FEATURE_1, "testGeometry", Geometry.class);
+        assertEquals(geom, FEATURE_1.getDefaultGeometry());
 
-        FeatureId id1 = FF.featureId(strid);
-        FeatureId id2 = FF.featureId(strid);
-
-        assertEquals(strid, id1.getID());
-        assertEquals(id1, id2);
-
-        assertTrue(id1.matches(FEATURE_1));
-    }
-
-    @Test
-    public void testGmlFeatureId(){
-        //geotoolkit doesnt handle GML objects
+        accessor = Accessors.getAccessor(Feature.class, "@id", null);
+        assertNotNull(accessor);
+        Object id = accessor.get(FEATURE_1, "@id", null);
+        assertEquals(id, FEATURE_1.getIdentifier().getID());
     }
 
 }
