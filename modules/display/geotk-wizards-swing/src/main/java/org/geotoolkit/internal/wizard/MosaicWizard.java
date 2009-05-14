@@ -56,6 +56,11 @@ public final class MosaicWizard extends WizardPanelProvider {
     private MosaicChooser chooser;
 
     /**
+     * The mosaic to create.
+     */
+    private TileManager mosaic;
+
+    /**
      * Creates a new wizard.
      */
     public MosaicWizard() {
@@ -78,8 +83,11 @@ public final class MosaicWizard extends WizardPanelProvider {
      */
     @Override
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
-        final JComponent component;
+        JComponent component;
         if (id.equals("Select")) {
+            // -------------------------------------------------------------------
+            //     Panel 1:  Select source tiles
+            // -------------------------------------------------------------------
             final class Chooser extends MosaicChooser implements ChangeListener {
                 private static final long serialVersionUID = -6696539336904269650L;
                 @Override public void stateChanged(final ChangeEvent event) {
@@ -98,11 +106,43 @@ public final class MosaicWizard extends WizardPanelProvider {
             chooser.addChangeListener(c);
             c.stateChanged(null); // Force the call to controller.setProblem("..."),
         } else {
-            final MosaicBuilderEditor editor;
-            component = editor = new MosaicBuilderEditor();
+            // -------------------------------------------------------------------
+            //     Panel 2:  Define pyramid tiling
+            // -------------------------------------------------------------------
+            @SuppressWarnings("serial")
+            final class Editor extends MosaicBuilderEditor {
+                Editor() {
+                }
+
+                Editor(final TileManager... input) throws IOException {
+                    super(input);
+                }
+
+                /** Invoked when the values in the form changed. */
+                @Override protected void plotCostEstimation() {
+                    mosaic = null; // Lets GC do its work.
+                    controller.setProblem("Calculation in progress...");
+                    super.plotCostEstimation();
+                }
+
+                /** Invoked on success. */
+                @Override public void done(final TileManager output) {
+                    super.done(output);
+                    mosaic = output;
+                    controller.setProblem(null);
+                }
+
+                /** Invoked on failure - can't move to the next step. */
+                @Override public void failed(final Throwable exception) {
+                    super.failed(exception);
+                    mosaic = null; // Lets GC do its work.
+                    controller.setProblem(exception.getLocalizedMessage());
+                }
+            }
             try {
-                editor.initializeForTiles(chooser.getSelectedTiles());
+                component = new Editor(chooser.getSelectedTiles());
             } catch (IOException exception) {
+                component = new Editor();
                 controller.setProblem(exception.toString());
             }
         }

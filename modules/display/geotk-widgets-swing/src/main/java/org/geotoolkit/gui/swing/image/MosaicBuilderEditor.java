@@ -18,15 +18,11 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
-import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.prefs.Preferences;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -49,6 +45,7 @@ import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXTitledPanel;
 
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -66,18 +63,16 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
 
 /**
  * Configures a {@link MosaicBuilder} according the input provided by a user. The caller can
- * invoke one of the {@code initializeForXXX} methods (optional but recommanded) in order to
- * initialize the widgets with a set of default values. After the widget has been displayed,
- * the caller can invoke {@link #getMosaicBuilder()} in order to get the user's choices in
- * an object ready for use.
+ * invoke one of the no-argument constructors (optional but recommanded) in order to initialize
+ * the widgets with a set of default values. After the widget has been displayed, the caller can
+ * invoke {@link #getTileManager()} in order to get the user's choices in an object ready for use.
  * <p>
  * <b>Example:</b>
  *
  * {@preformat java
- *     MosaicBuilderEditor editor = new MosaicBuilderEditor();
- *     editor.initializeForBounds(boundsOfTheWholeMosaic);
+ *     MosaicBuilderEditor editor = new MosaicBuilderEditor(boundsOfTheWholeMosaic);
  *     if (editor.showDialog(null, "Define pyramid tiling")) {
- *         MosaicBuilder builder = editor.getMosaicBuilder();
+ *         TileManager mosaic = editor.getTileManager();
  *         // Process here.
  *     }
  * }
@@ -89,7 +84,7 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
  * @module
  */
 @SuppressWarnings("serial")
-public class MosaicBuilderEditor extends JPanel implements Dialog {
+public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGraph.Delayed, Dialog {
     /**
      * The default tile size. If {@link MosaicBuilder} can not suggest a tile size,
      * we will use the size specified by the WMTS (<cite>Web Map Tile Service</cite>)
@@ -105,29 +100,29 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
     /**
      * The mosaic builder to configure. This is the instance given to the constructor.
      * This builder may not be synchronized with the content of this widget - the
-     * synchronization happen only when {@link #getMosaicBuilder()} is invoked.
+     * synchronization happen only when {@link #getTileManager()} is invoked.
      */
     protected final MosaicBuilder builder;
 
     /**
-     * The subsampling selection.
+     * The table model for the subsampling selection.
      */
-    private final List<Dimension> subsamplings = new ArrayList<Dimension>();
+    private final Subsamplings subsamplingTable;
 
     /**
      * The size of output tiles.
      */
-    private final SizeFields tileSize;
+    private final SizeFields sizeFields;
 
     /**
      * The target file format for writing tiles.
      */
-    private final JComboBox format;
+    private final JComboBox formatChoices;
 
     /**
      * The output directory.
      */
-    private final FileField directory;
+    private final FileField directoryField;
 
     /**
      * A plot of the estimated cost of loading tiles at given resolution.
@@ -135,15 +130,47 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
     private final MosaicPerformanceGraph plot;
 
     /**
-     * The progress in the calculation of the performance graph.
+     * The progress during the calculation of the performance graph.
      */
-    private final JProgressBar progress;
+    private final JProgressBar progressBar;
 
     /**
      * Creates a new panel for configuring a default mosaic builder.
      */
     public MosaicBuilderEditor() {
         this(new MosaicBuilder());
+    }
+
+    /**
+     * Creates a new panel suitable for tiles in a mosaic of the given size.
+     *
+     * @param bounds The bounds of the whole mosaic.
+     */
+    public MosaicBuilderEditor(final Rectangle bounds) {
+        this(create(bounds));
+    }
+
+    /**
+     * Work around for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
+     */
+    private static MosaicBuilder create(final Rectangle bounds) {
+        final MosaicBuilder builder = new MosaicBuilder();
+        builder.setUntiledImageBounds(bounds);
+        return builder;
+    }
+
+    /**
+     * Creates a new panel suitable for the given tiles, specified as {@code TileManager} objects.
+     * Only one tile manager is usually provided. However more managers can be provided if, for
+     * example, {@link org.geotoolkit.image.io.mosaic.TileManagerFactory} failed to create only
+     * one instance from a set of tiles.
+     *
+     * @param  managers The tiles for which to setup default values.
+     * @throws IOException If an I/O operation was necessary and failed.
+     */
+    public MosaicBuilderEditor(final TileManager... managers) throws IOException {
+        this(bounds(managers));
     }
 
     /**
@@ -156,45 +183,51 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
         /*
-         * Determines the default values.
+         * Determines the default values. We fetch the values from the MosaicBuilder
+         * if they are defined, or from the user's preferences otherwise.
          */
-        final Preferences prefs = Preferences.userNodeForPackage(MosaicBuilderEditor.class);
-        File initialDirectory = builder.getTileDirectory();
-        if (initialDirectory == null) {
-            initialDirectory = new File(prefs.get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
-        }
-        ImageReaderSpi reader = builder.getTileReaderSpi();
-        String preferredFormat;
-        if (reader != null) {
-            // FormatNames can not be a null or empty array according the method contract.
-            preferredFormat = reader.getFormatNames()[0];
-        } else {
-            preferredFormat = prefs.get(OUTPUT_FORMAT, "png");
+        File directory;
+        Dimension tileSize, minSize;
+        final String preferredFormat;
+        final Dimension[] subsamplings;
+        /* Block for reducing variable scope */ {
+            final ImageReaderSpi reader;
+            final Preferences prefs = Preferences.userNodeForPackage(MosaicBuilderEditor.class);
+            synchronized (builder) {
+                reader       = builder.getTileReaderSpi();
+                directory    = builder.getTileDirectory();
+                subsamplings = builder.getSubsamplings();
+                tileSize     = builder.getTileSize();
+            }
+            if (reader != null) {
+                // FormatNames can not be a null or empty array according the method contract.
+                preferredFormat = reader.getFormatNames()[0];
+            } else {
+                preferredFormat = prefs.get(OUTPUT_FORMAT, "png");
+            }
+            if (directory == null) {
+                directory = new File(prefs.get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+            }
+            if (tileSize == null) {
+                tileSize = DEFAULT_TILE_SIZE;
+            }
+            /*
+             * A minimal size is essential, because too small size will cause too many tiles
+             * to be created, which cause a OutOfMemoryError.
+             */
+            minSize = new Dimension(256, 256);
         }
         /*
          * The table where to specifies subsampling, together with a "Remove" botton for
          * removing rows. There is no "add" button given that subsampling can be added on
          * the last row.
          */
-        final List<Dimension> subsamplings = this.subsamplings;
-        final Subsamplings subsamplingModel = new Subsamplings(subsamplings, resources);
-        final JTable subsamplingTable = new JTable(subsamplingModel);
+        subsamplingTable = new Subsamplings(resources);
+        subsamplingTable.setElements(subsamplings);
+        final JTable subsamplingTable = new JTable(this.subsamplingTable);
         subsamplingTable.setDefaultRenderer(Integer.class, new LabeledTableCellRenderer.Numeric(locale, true));
         final JButton removeButton = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
         removeButton.setEnabled(false);
-        final class RemoveSubsampling implements ActionListener, ListSelectionListener {
-            @Override public void actionPerformed(final ActionEvent event) {
-                subsamplingModel.remove(subsamplingTable.getSelectedRows());
-            }
-
-            @Override public void valueChanged(final ListSelectionEvent event) {
-                final int min = ((ListSelectionModel) event.getSource()).getMinSelectionIndex();
-                removeButton.setEnabled(min >= 0 && min < subsamplings.size());
-            }
-        }
-        final RemoveSubsampling removeAction = new RemoveSubsampling();
-        removeButton.addActionListener(removeAction);
-        subsamplingTable.getSelectionModel().addListSelectionListener(removeAction);
         JPanel subsamplingPane = new JPanel(new BorderLayout());
         subsamplingPane.add(new JScrollPane(subsamplingTable), BorderLayout.CENTER);
         subsamplingPane.add(removeButton, BorderLayout.SOUTH);
@@ -202,19 +235,13 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         /*
          * The panel where to select the tile size, file format and the output directory.
          */
-        tileSize = new SizeFields(locale, DEFAULT_TILE_SIZE);
-        {
-            final Set<ImageFormatEntry> preferredEntries = new LinkedHashSet<ImageFormatEntry>();
-            format = new JComboBox(ImageFormatEntry.list(preferredFormat, preferredEntries));
-            final Iterator<ImageFormatEntry> it = preferredEntries.iterator();
-            if (it.hasNext()) {
-                format.setSelectedItem(it.next());
-            }
-        }
-        format.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
-        directory = new FileField(locale, null, true);
-        directory.setFile(initialDirectory);
-        directory.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OUTPUT_DIRECTORY)));
+        sizeFields = new SizeFields(locale, DEFAULT_TILE_SIZE, minSize);
+        sizeFields.setSizeValue(tileSize);
+        formatChoices = ImageFormatEntry.comboBox(preferredFormat);
+        formatChoices.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
+        directoryField = new FileField(locale, null, true);
+        directoryField.setFile(directory);
+        directoryField.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OUTPUT_DIRECTORY)));
         final JLabel explain = new JLabel(); // No purpose other than fill space at this time.
         /*
          * Assembles the control panel which is on the right side of the subsampling table.
@@ -224,21 +251,21 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         c.insets.bottom=9;
         c.weightx=1; c.fill=GridBagConstraints.HORIZONTAL;
         c.gridx=0; c.anchor=GridBagConstraints.LINE_START;
-        c.gridy=0; controlPane.add(tileSize,  c);
-        c.gridy++; controlPane.add(format,    c);
-        c.gridy++; controlPane.add(directory, c); c.weighty=1; c.fill=GridBagConstraints.BOTH;
+        c.gridy=0; controlPane.add(sizeFields, c);
+        c.gridy++; controlPane.add(formatChoices, c);
+        c.gridy++; controlPane.add(directoryField, c); c.weighty=1; c.fill=GridBagConstraints.BOTH;
         c.gridy++; controlPane.add(explain, c);
         /*
          * Creates the panel which will contains the plot of estimated performance.
          */
         plot = new MosaicPerformanceGraph();
         plot.setMargin(new Insets(15, 45, 45, 15));
-        progress = new JProgressBar();
-        progress.setEnabled(false);
-        plot.setProgressBar(progress);
+        progressBar = new JProgressBar();
+        progressBar.setEnabled(false);
+        plot.setProgressBar(progressBar);
         final JPanel plotPanel = new JPanel(new BorderLayout());
         plotPanel.add(plot, BorderLayout.CENTER);
-        plotPanel.add(progress, BorderLayout.SOUTH);
+        plotPanel.add(progressBar, BorderLayout.SOUTH);
         /*
          * Layout all the above components. The divider location has been determined
          * empirically for allowing the subsamplings columns to be fully visible.
@@ -252,23 +279,50 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         setLayout(new BorderLayout());
         add(sp, BorderLayout.CENTER);
         setPreferredSize(new Dimension(800, 300));
-        initializeForBounds(null); // Sets default values inferred from the MosaicBuilder.
         /*
          * Adds listeners to be notified when a property that may affect the MosaicBuilder
          * changed. They will trig a repaint of the graph of estimated tiles loading cost.
+         * Defines also listeners for controlling the removal of rows in the subsampling table.
          */
-        final class Listener implements TableModelListener, ChangeListener {
+        final class Listener implements TableModelListener, ChangeListener, ActionListener, ListSelectionListener {
+            /** Invoked when a subsampling value in the table has been edited. */
             @Override public void tableChanged(final TableModelEvent event) {
-                stateChanged(null);
+                plotCostEstimation();
             }
 
+            /** Invoked when a tile size (width or height) value changed. */
             @Override public void stateChanged(final ChangeEvent event) {
-                plot.plotLater(null, getMosaicBuilder(), DELAY);
+                plotCostEstimation();
+            }
+
+            /** Invoked when the "Remove" button is pressed. */
+            @Override public void actionPerformed(final ActionEvent event) {
+                // The insertion row is not a "real" row and must be omitted.
+                final int insertionRow = subsamplingTable.getModel().getRowCount() - 1;
+                int[] selected = subsamplingTable.getSelectedRows();
+                int count = 0;
+                for (int i=0; i<selected.length; i++) {
+                    final int row = selected[i];
+                    if (row < insertionRow) {
+                        selected[count++] = row;
+                    }
+                }
+                selected = XArrays.resize(selected, count);
+                ((Subsamplings) subsamplingTable.getModel()).remove(selected);
+            }
+
+            /** Invoked when the row selection in the subsampling table changed. */
+            @Override public void valueChanged(final ListSelectionEvent event) {
+                final int min = ((ListSelectionModel) event.getSource()).getMinSelectionIndex();
+                removeButton.setEnabled(min >= 0 && min < subsamplingTable.getModel().getRowCount() - 1);
             }
         }
         final Listener listener = new Listener();
-        subsamplingModel.addTableModelListener(listener);
-        tileSize.addChangeListener(listener);
+        this.subsamplingTable.addTableModelListener(listener);
+        this.sizeFields.addChangeListener(listener);
+        removeButton.addActionListener(listener);
+        subsamplingTable.getSelectionModel().addListSelectionListener(listener);
+        plotCostEstimation();
     }
 
     /**
@@ -281,9 +335,13 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
      * @throws IOException If an I/O operation was necessary and failed.
      */
     public void initializeForTiles(final TileManager... managers) throws IOException {
-        /*
-         * Searchs for a rectangle that encompass every tiles.
-         */
+        initializeForBounds(bounds(managers));
+    }
+
+    /**
+     * Searchs for a rectangle that encompass every tiles.
+     */
+    private static Rectangle bounds(final TileManager... managers) throws IOException {
         Rectangle bounds = null;
         for (final TileManager manager : managers) {
             final ImageGeometry geom = manager.getGridGeometry();
@@ -296,7 +354,7 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
                 }
             }
         }
-        initializeForBounds(bounds);
+        return bounds;
     }
 
     /**
@@ -306,8 +364,8 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
      */
     public void initializeForBounds(final Rectangle bounds) {
         synchronized (getTreeLock()) {
-            Dimension size;
-            final Dimension[] sub;
+            Dimension tileSize;
+            final Dimension[] subsamplings;
             final MosaicBuilder builder = this.builder;
             synchronized (builder) {
                 /*
@@ -319,19 +377,14 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
                     builder.setSubsamplings((Dimension[]) null);
                     builder.setUntiledImageBounds(bounds);
                 }
-                sub  = builder.getSubsamplings();
-                size = builder.getTileSize();
+                subsamplings = builder.getSubsamplings();
+                tileSize = builder.getTileSize();
             }
-            if (size == null) {
-                size = DEFAULT_TILE_SIZE;
+            if (tileSize == null) {
+                tileSize = DEFAULT_TILE_SIZE;
             }
-            tileSize.setSizeValue(size);
-            subsamplings.clear();
-            if (sub != null) {
-                subsamplings.addAll(Arrays.asList(sub));
-            } else {
-                subsamplings.add(new Dimension(1,1));
-            }
+            sizeFields.setSizeValue(tileSize);
+            subsamplingTable.setElements(subsamplings);
         }
     }
 
@@ -358,14 +411,14 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         /**
          * Creates a default set of subsampling values.
          */
-        Subsamplings(final List<Dimension> subsamplings, final Vocabulary resources) {
-            super(Dimension.class, subsamplings);
+        Subsamplings(final Vocabulary resources) {
+            super(Dimension.class, new ArrayList<Dimension>());
             titles = new String[] {
                 resources.getString(Vocabulary.Keys.LEVEL),
                 resources.getString(Vocabulary.Keys.AXIS_$1, "x"),
                 resources.getString(Vocabulary.Keys.AXIS_$1, "y")
             };
-            Collections.sort(subsamplings, this);
+            Collections.sort(elements, this);
         }
 
         /**
@@ -383,6 +436,30 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         @Override
         public int compare(final Dimension s1, final Dimension s2) {
             return XMath.sgn(areaSquared(s1) - areaSquared(s2));
+        }
+
+        /**
+         * Replaces all current values by the given ones.
+         */
+        public void setElements(final Dimension[] sub) {
+            elements.clear();
+            if (sub != null) {
+                elements.addAll(Arrays.asList(sub));
+            } else {
+                elements.add(new Dimension(1,1));
+            }
+            fireTableDataChanged();
+        }
+
+        /**
+         * Overrides the method inherited from the subclass in order to execute it from the
+         * current thread rather than the Swing thread. This is required in order to avoid
+         * deadlock. Should be okay since this method is invoked inside a block synchronized
+         * on the AWT tree lock.
+         */
+        @Override
+        public Dimension[] getElements() {
+            return elements.toArray(new Dimension[elements.size()]);
         }
 
         /**
@@ -480,21 +557,34 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
     }
 
     /**
-     * Configures the mosaic {@linkplain #builder} with the informations provided by the user
-     * and returns it.
+     * Refreshes the plot of the estimated cost. This method is invoked automatically when the
+     * values of some fields changed. The default implementation starts the calculation in a
+     * background thread.
+     */
+    protected void plotCostEstimation() {
+        plot.plotLater(null, this, DELAY);
+    }
+
+    /**
+     * Configures the {@linkplain #builder builder} with the informations provided by the user
+     * and create the mosaic. This method is automatically invoked when a graph is about to be
+     * plot. It can also be invoked directly by the user, but may block if the builder is
+     * currently in use by an other thread.
      *
      * @return The configured mosaic builder.
+     * @throws IOException if an I/O operation was required and failed.
      */
-    public MosaicBuilder getMosaicBuilder() {
+    @Override
+    public TileManager getTileManager() throws IOException {
         final File directory;
         final Dimension tileSize;
-        final Dimension[] sub;
+        final Dimension[] subsamplings;
         final ImageFormatEntry tileFormat;
         synchronized (getTreeLock()) {
-            directory  = this.directory.getFile();
-            tileFormat = (ImageFormatEntry) format.getSelectedItem();
-            tileSize   = this.tileSize.getSizeValue();
-            sub        = subsamplings.toArray(new Dimension[subsamplings.size()]);
+            directory    = directoryField.getFile();
+            tileFormat   = (ImageFormatEntry) formatChoices.getSelectedItem();
+            tileSize     = sizeFields.getSizeValue();
+            subsamplings = subsamplingTable.getElements();
         }
         final Preferences prefs = Preferences.userNodeForPackage(MosaicBuilderEditor.class);
         prefs.put(OUTPUT_FORMAT, tileFormat.getFormat());
@@ -503,10 +593,38 @@ public class MosaicBuilderEditor extends JPanel implements Dialog {
         synchronized (builder) {
             builder.setTileDirectory(directory);
             builder.setTileSize(tileSize);
-            builder.setSubsamplings(sub);
+            builder.setSubsamplings(subsamplings);
             builder.setTileReaderSpi(tileFormat.getReader());
+            return builder.createTileManager();
         }
-        return builder;
+    }
+
+    /**
+     * Notifies that a {@link TileManager} has been created from the parameter edited in this widget.
+     * This method is invoked automatically after the fields in this widget has been edited.
+     * It can also be invoked directly by the user. Current implementation does nothing, but
+     * subclasses can override this method for remembering the {@code TileManager}.
+     *
+     * @param mosaic The mosaic created from the information provided in this widget,
+     *        or {@code null} if the {@code TileManager} creation has been canceled
+     *        before completion.
+     */
+    @Override
+    public void done(TileManager mosaic) {
+    }
+
+    /**
+     * Notifies that the creation of a {@link TileManager} failed with the given exception. This
+     * method is invoked instead than {@link #done(TileManager)} if an exception occured during
+     * the execution of {@link MosaicPerformanceGraph#plotCostEstimation(String, TileManager)}.
+     * <p>
+     * The default implementation does nothing. Subclasses can override this method in order
+     * to report the error in the way that best suite their application.
+     *
+     * @param exception The exception which occured.
+     */
+    @Override
+    public void failed(Throwable exception) {
     }
 
     /**

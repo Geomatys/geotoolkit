@@ -76,7 +76,7 @@ public class MosaicProfiler {
     /**
      * The mosaic to profile.
      */
-    private final TileManager mosaic;
+    public final TileManager mosaic;
 
     /**
      * The area where to create random rectangle. <strong>Do not modify</strong>.

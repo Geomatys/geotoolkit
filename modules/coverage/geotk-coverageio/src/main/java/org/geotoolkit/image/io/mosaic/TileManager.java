@@ -33,6 +33,7 @@ import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -50,6 +51,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.5
  * @module
  */
+@ThreadSafe
 public abstract class TileManager implements Serializable {
     /**
      * For cross-version compatibility during serialization.

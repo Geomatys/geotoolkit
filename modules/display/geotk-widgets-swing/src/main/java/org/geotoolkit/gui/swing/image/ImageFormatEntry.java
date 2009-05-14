@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import javax.swing.JComboBox;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
@@ -64,13 +66,30 @@ final class ImageFormatEntry implements Comparable<ImageFormatEntry> {
     }
 
     /**
+     * Creates a new list of entries in a combo box. This method returns elements
+     * that describes formats available both for reading and for writing.
+     *
+     * @param defaultFormat The format to select by default (can not be {@code null}).
+     */
+    static JComboBox comboBox(final String defaultFormat) {
+        final Set<ImageFormatEntry> preferred = new LinkedHashSet<ImageFormatEntry>();
+        final JComboBox formatChoices = new JComboBox(list(defaultFormat, preferred));
+        final Iterator<ImageFormatEntry> it = preferred.iterator();
+        if (it.hasNext()) {
+            formatChoices.setSelectedItem(it.next());
+            // Select only one, ignore the other ones.
+        }
+        return formatChoices;
+    }
+
+    /**
      * Creates a new list of entries. This method returns elements that describes formats
      * available both for reading and for writing.
      *
      * @param defaultFormat The format to select by default (can not be {@code null}).
      * @param preferred Where to store the entry for the preferred format.
      */
-    static ImageFormatEntry[] list(final String defaultFormat, final Set<ImageFormatEntry> preferred) {
+    private static ImageFormatEntry[] list(final String defaultFormat, final Set<ImageFormatEntry> preferred) {
         final Map<String,ImageFormatEntry> formatsDone = new HashMap<String,ImageFormatEntry>();
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         /*

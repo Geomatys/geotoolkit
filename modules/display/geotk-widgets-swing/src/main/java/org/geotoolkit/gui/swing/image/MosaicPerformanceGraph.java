@@ -21,8 +21,9 @@ import java.awt.Dimension;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.JProgressBar;
 import java.beans.PropertyChangeEvent;
@@ -32,14 +33,13 @@ import org.geotoolkit.math.Vector;
 import org.geotoolkit.math.VectorPair;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.gui.swing.Dialog;
-import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.gui.swing.Plot2D;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.image.io.mosaic.TileManager;
-import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicProfiler;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -202,9 +202,11 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      *
      * @param  name The name to given to the plot, or {@code null} if none.
      * @param  profiler The profiler to use for estimating the cost of loading images.
+     * @return The mosaic which has been profiled, or {@code null} if the operation has
+     *         been canceled before completion.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public void plotCostEstimation(final String name, final MosaicProfiler profiler) throws IOException {
+    public TileManager plotCostEstimation(final String name, final MosaicProfiler profiler) throws IOException {
         final Worker worker = this.worker;
         final Dimension minSubsampling = profiler.getMinSubsampling();
         final Dimension maxSubsampling = profiler.getMaxSubsampling();
@@ -216,6 +218,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         final float[] low  = new float[ns];
         for (int i=0; i<ns; i++) {
             if (worker != null) {
+                if (worker.isCancelled()) {
+                    return null;
+                }
                 worker.progress(i*100 / ns);
             }
             profiler.setSeed(seed); // Use the same random values for each subsamplings.
@@ -274,6 +279,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 addSeries(properties, main.getX(), main.getY());
             }
         });
+        return profiler.mosaic;
     }
 
     /**
@@ -287,51 +293,89 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @param  name The name to given to the plot, or {@code null} if none.
      * @param  tiles The mosaic for which to plot the estimated cost of loading images.
      * @throws IOException if an I/O operation was required and failed.
+     * @return The mosaic which has been profiled (which is the given {@code tiles} argument),
+     *         or {@code null} if the operation has been canceled before completion.
      */
-    public void plotCostEstimation(final String name, final TileManager tiles) throws IOException {
+    public TileManager plotCostEstimation(final String name, final TileManager tiles) throws IOException {
         final MosaicProfiler profiler = new MosaicProfiler(tiles);
         profiler.setSubsamplingChangeAllowed(true);
-        plotCostEstimation(name, profiler);
+        return plotCostEstimation(name, profiler);
     }
 
     /**
-     * Adds a plot for the mosaic created by the given builder.
-     * <p>
-     * This method can be invoked from any thread - it doesn't need to be the <cite>Swing</cite>
-     * one. Since this method may take a while, it is recommanded to invoke it from a background
-     * thread.
+     * Specifies a mosaic to be profiled in a background thread. An instance of this interface
+     * can be given to the {@link MosaicPerformanceGraph#plotLater(String, Delayed, long)} method.
+     * The methods defined in this interface will be called in a background thread some time after
+     * {@code plotLater}. The workflow is as below:
      *
-     * @param  name The name to given to the plot, or {@code null} if none.
-     * @param  builder The mosaic builder to use for creating a {@link TileManager}.
-     * @throws IOException if an I/O operation was required and failed.
+     * <ol>
+     *   <li><p>An instance of {@code Delayed} is given to the {@code plotLater} method.</p></li>
+     *   <li><p>A background thread will sleep the specified amount of time. If {@code plotLater}
+     *       is invoked again while the background thread is sleeping, then the old {@code Delayed}
+     *       instance is discarted and replaced by the new one.</p></li>
+     *   <li><p>After the above delay, the {@link #getTileManager()} method is
+     *       invoked in the background thread. The returned mosaic is given to
+     *       {@link MosaicPerformanceGraph#plotCostEstimation(String, TileManager)}.</p></li>
+     *   <li><p>After the {@code plotCostEstimation} method terminated, exactly one of the
+     *       following methods is invoked in the <cite>Swing</cite> thread:
+     *       <ul>
+     *         <li>{@link #done(TileManager)} on success.</li>
+     *         <li>{@link #failed(Throwable)} on failure.</li>
+     *       </ul></p></li>
+     * </ol>
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.0
+     *
+     * @since 3.0
+     * @module
      */
-    public void plotCostEstimation(final String name, final MosaicBuilder builder) throws IOException {
-        plotCostEstimation(name, builder.createTileManager());
+    public static interface Delayed {
+        /**
+         * Returns the mosaic to profile. This method is invoked in a background
+         * thread before the profiling begin.
+         *
+         * @return The mosaic as a tile manager.
+         * @throws IOException if an I/O operation was required and failed.
+         */
+        TileManager getTileManager() throws IOException;
+
+        /**
+         * Invoked on the <cite>Swing</cite> thread after the profiling has been completed.
+         * This is usually the instance returned by {@link #getTileManager()}.
+         *
+         * @param mosaic The mosaic which has been profiled.
+         */
+        void done(TileManager mosaic);
+
+        /**
+         * Invoked on the <cite>Swing</cite> thread if an exception occured during the profiling.
+         *
+         * @param exception The exception which occured.
+         */
+        void failed(Throwable exception);
     }
 
     /**
-     * Adds a plot for the mosaic created by the given builder. This method can be invoked from
-     * any thread and returns immediately. The actual plot calculation is delegated to a background
+     * Adds a plot for the mosaic created by a given builder. This method can be invoked from any
+     * thread and returns immediately. The actual plot calculation is delegated to a background
      * thread.
      *
      * @param name The name to given to the plot, or {@code null} if none.
-     * @param builder The mosaic builder to use for creating a {@link TileManager}.
+     * @param delayed Provides the {@link TileManager} and the methods to callback on success or failure.
      * @param delay How long to wait (in milliseconds) before to perform the calculation.
      */
-    public void plotLater(final String name, final MosaicBuilder builder, final long delay) {
+    public void plotLater(final String name, final Delayed delayed, final long delay) {
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
                 Worker worker = MosaicPerformanceGraph.this.worker;
-                if (worker == null) {
+                while (worker == null || !worker.schedule(name, delayed, delay)) {
                     worker = new Worker();
-                    final JProgressBar progress = getProgressBar();
-                    if (progress != null) {
-                        progress.setEnabled(true);
-                        progress.setIndeterminate(true);
-                    }
                 }
-                while (!worker.schedule(name, builder, delay)) {
-                    worker = new Worker();
+                final JProgressBar progress = getProgressBar();
+                if (progress != null) {
+                    progress.setEnabled(true);
+                    progress.setIndeterminate(true);
                 }
                 MosaicPerformanceGraph.this.worker = worker;
                 worker.execute();
@@ -350,16 +394,16 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @since 3.0
      * @module
      */
-    private final class Worker extends SwingWorker implements PropertyChangeListener {
+    private final class Worker extends SwingWorker<TileManager,Object> implements PropertyChangeListener {
         /**
          * The name of the plot to add.
          */
         private String name;
 
         /**
-         * The mosaic builder for which to plot the performance graph.
+         * Provides the mosaic builder for which to plot the performance graph.
          */
-        private MosaicBuilder builder;
+        private Delayed delayed;
 
         /**
          * When to starts computation, in milliseconds since January 1st, 1970.
@@ -382,23 +426,24 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
          * Schedule a plot for the given builder. Returns {@code true} on success, or
          * {@code false} if an other instance of {@code Worker} needs to be created.
          */
-        synchronized boolean schedule(final String name, final MosaicBuilder builder, final long delay) {
+        synchronized boolean schedule(final String name, final Delayed delayed, final long delay) {
             if (running) {
+                cancel(false);
                 return false;
             }
             this.name    = name;
-            this.builder = builder;
+            this.delayed = delayed;
             this.time    = delay + System.currentTimeMillis();
             return true;
         }
 
         /**
-         * Waits for the delay, then plot the graph.
+         * Waits for the delay, then plots the graph.
          */
         @Override
-        protected Object doInBackground() {
+        protected TileManager doInBackground() throws IOException {
             final String name;
-            final MosaicBuilder builder;
+            final Delayed delayed;
             synchronized (this) {
                 long delay;
                 while ((delay = time - System.currentTimeMillis()) > 1) {
@@ -409,20 +454,10 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                     }
                 }
                 name    = this.name;
-                builder = this.builder;
+                delayed = this.delayed;
                 running = true;
             }
-            try {
-                plotCostEstimation(name, builder);
-            } catch (Exception e) {
-                /*
-                 * The IOException should not happen since if they were some I/O operation to perform,
-                 * they have usually been done before we reach this point. However a RuntimeException
-                 * may happen if some parameters given to the MosaicBuilder are incomplete or invalid.
-                 */
-                ExceptionMonitor.show(MosaicPerformanceGraph.this, e);
-            }
-            return null;
+            return plotCostEstimation(name, delayed.getTileManager());
         }
 
         /**
@@ -461,12 +496,27 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         protected void done() {
             if (worker == this) {
                 worker = null;
-            }
-            final JProgressBar progress = getProgressBar();
-            if (progress != null) {
-                progress.setIndeterminate(false);
-                progress.setValue(100);
-                progress.setEnabled(false);
+                if (!isCancelled()) {
+                    /*
+                     * Note: get() below should not return null even if plotCostEstimation(...)
+                     * returned null, because the later call should occur only when the plot has
+                     * been cancelled and we checked in the above line that this is not the case.
+                     */
+                    try {
+                        delayed.done(get());
+                    } catch (ExecutionException e) {
+                        delayed.failed(e.getCause());
+                    } catch (InterruptedException e) {
+                        // Should never happen, since the task is completed.
+                        Logging.unexpectedException(MosaicPerformanceGraph.class, "plotCostEstimation", e);
+                    }
+                    final JProgressBar progress = getProgressBar();
+                    if (progress != null) {
+                        progress.setIndeterminate(false);
+                        progress.setValue(100);
+                        progress.setEnabled(false);
+                    }
+                }
             }
         }
     }

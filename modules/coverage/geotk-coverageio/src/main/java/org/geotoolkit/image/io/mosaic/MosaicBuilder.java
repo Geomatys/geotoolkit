@@ -41,6 +41,7 @@ import org.geotoolkit.math.Fraction;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
@@ -944,6 +945,10 @@ public class MosaicBuilder {
             for (int i=1; i<=n; i++) {
                 subsamplings[i-1] = new Dimension(i,i);
             }
+        }
+        if (subsamplings.length == 0) {
+            throw new IllegalStateException(Errors.format(Errors.Keys.MISSING_PARAMETER_VALUE_$1,
+                    Vocabulary.format(Vocabulary.Keys.SUBSAMPLING)));
         }
         final List<Tile> tiles;
         final OverviewLevel[] levels;

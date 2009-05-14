@@ -56,15 +56,22 @@ public class SizeFields extends JPanel implements ChangeListener {
     private final JSpinner height;
 
     /**
+     * {@code true} if the width and height are in the process of being adjusted together.
+     * This is used in order to fire only one change event instead than two.
+     */
+    private transient boolean isAdjusting;
+
+    /**
      * Creates a new panel initialized to the given value.
      *
-     * @param locale The locale to use for creating the panel.
-     * @param size The initial value to display in the fields.
+     * @param locale  The locale to use for creating the panel.
+     * @param size    The initial value to display in the fields.
+     * @param minSize The minimal size allowed.
      */
-    public SizeFields(final Locale locale, final Dimension size) {
+    public SizeFields(final Locale locale, final Dimension size, final Dimension minSize) {
         super(new GridBagLayout());
-        width  = new JSpinner((new SpinnerNumberModel(size.width,  10, null, 1)));
-        height = new JSpinner((new SpinnerNumberModel(size.height, 10, null, 1)));
+        width  = new JSpinner((new SpinnerNumberModel(size.width,  minSize.width,  null, 1)));
+        height = new JSpinner((new SpinnerNumberModel(size.height, minSize.height, null, 1)));
         final Vocabulary resources = Vocabulary.getResources(locale);
         setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.TILES_SIZE)));
         final GridBagConstraints c = new GridBagConstraints();
@@ -95,8 +102,14 @@ public class SizeFields extends JPanel implements ChangeListener {
      * @param size The value to be displayed in the fields.
      */
     public void setSizeValue(final Dimension size) {
-        width .setValue(size.width);
-        height.setValue(size.height);
+        isAdjusting = true;
+        try {
+            width .setValue(size.width);
+            height.setValue(size.height);
+        } finally {
+            isAdjusting = false;
+        }
+        fireStateChanged();
     }
 
     /**
@@ -126,7 +139,16 @@ public class SizeFields extends JPanel implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent event) {
         // TODO: If we want to link the change of width and height, do it here.
-        event = null;
+        if (!isAdjusting) {
+            fireStateChanged();
+        }
+    }
+
+    /**
+     * Invoked when the dimension changed.
+     */
+    private void fireStateChanged() {
+        ChangeEvent event = null;
         final Object[] listeners = listenerList.getListenerList();
         for (int i=listeners.length; (i-=2)>=0;) {
             if (listeners[i] == ChangeListener.class) {
