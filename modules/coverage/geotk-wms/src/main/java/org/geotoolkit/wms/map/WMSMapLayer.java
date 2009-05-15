@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.wms.map;
 
@@ -52,6 +67,9 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         this.layers = layers;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Envelope getBounds() {
         return MAXEXTEND_ENV;
@@ -63,6 +81,9 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return request;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URL query(final RenderingContext context) throws PortrayalException{
 
@@ -101,6 +122,9 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return request.getURL();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(RenderingContext context) throws PortrayalException {
         if( !(context instanceof RenderingContext2D)){

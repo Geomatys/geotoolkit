@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.wms;
 
@@ -31,101 +47,161 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         this.version = version;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String[] getLayers() {
         return layers;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setLayers(String... layers) {
         this.layers = layers;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Envelope getEnvelope() {
         return enveloppe;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setEnvelope(Envelope env) {
         this.enveloppe = env;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Dimension getDimension() {
         return dimension;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setDimension(Dimension dim) {
         this.dimension = dim;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getFormat() {
         return format;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setFormat(String format) {
         this.format = format;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getExceptions() {
         return exception;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setExceptions(String ex) {
         this.exception = ex;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String[] getStyles() {
         return styles;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setStyles(String... styles) {
         this.styles = styles;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getSld(){
         return sld;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setSld(String sld){
         this.sld = sld;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getSldBody(){
         return sldBody;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setSldBody(String sldBody){
         this.sldBody = sldBody;
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean getTransparent(){
         return transparent;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setTransparent(boolean transparent){
         this.transparent = transparent;
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Map<String,String> dimensions(){
         return dims;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URL getURL() throws MalformedURLException {
         if(layers == null || layers.length == 0){
