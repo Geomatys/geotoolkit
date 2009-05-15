@@ -1,8 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,33 +18,37 @@ package org.geotoolkit.filter;
 
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
-import org.geotoolkit.filter.expression.DefaultExpression;
-import org.geotoolkit.filter.expression.ExpressionType;
 
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
 /**
+ * Immutable property name expression.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultPropertyName extends DefaultExpression implements PropertyName{
+public class DefaultPropertyName extends AbstractExpression implements PropertyName{
 
     private final String property;
 
     public DefaultPropertyName(String property) {
-        super(ExpressionType.ATTRIBUTE);
         if(property == null){
             throw new NullPointerException("Property name can not be null");
         }
         this.property = property;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getPropertyName() {
         return property;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object evaluate(Object candidate) {
         PropertyAccessor accessor = Accessors.getAccessor(candidate.getClass(),property, null);
@@ -55,11 +59,25 @@ public class DefaultPropertyName extends DefaultExpression implements PropertyNa
     	return accessor.get( candidate, property, null );
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object accept(ExpressionVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return property;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -75,16 +93,14 @@ public class DefaultPropertyName extends DefaultExpression implements PropertyNa
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 73 * hash + (this.property != null ? this.property.hashCode() : 0);
         return hash;
-    }
-
-    @Override
-    public String toString() {
-        return property;
     }
 
 }

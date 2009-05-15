@@ -20,7 +20,6 @@ package org.geotoolkit.filter.accessor;
  * Used to get and set object properties based on an xpath expression.
  *
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
 public interface PropertyAccessor {
     

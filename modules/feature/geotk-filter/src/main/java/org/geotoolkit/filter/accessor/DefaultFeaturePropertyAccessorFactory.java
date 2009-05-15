@@ -19,8 +19,10 @@ package org.geotoolkit.filter.accessor;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.util.collection.Cache;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -37,7 +39,6 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  * 
  * @author Justin Deoliveira, The Open Planning Project
- * 
  */
 public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFactory {
 
@@ -47,7 +48,11 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static final PropertyAccessor FID_ACCESS = new FidSimpleFeaturePropertyAccessor();
     private static final Pattern idPattern = Pattern.compile("@(\\w+:)?id");
     private static final Pattern propertyPattern = Pattern.compile("(\\w+:)?(\\w+)");
+    private static final Cache<String,PropertyAccessor> CACHE = new Cache<String, PropertyAccessor>();
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {
 
@@ -56,20 +61,47 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         if (!Feature.class.isAssignableFrom(type) && !FeatureType.class.isAssignableFrom(type)) {
-            return null; // we only work with simple feature
+            return null; // we only work with feature
         }
+
+
+
+        //try to find the accessor in the cache
+        PropertyAccessor accessor = CACHE.peek(xpath);
+        if(accessor != null){
+            return accessor;
+        }
+
         //if ("".equals(xpath) && target == Geometry.class)
         if (xpath.isEmpty()) {
+            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = DEFAULT_GEOMETRY_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
             return DEFAULT_GEOMETRY_ACCESS;
         }
 
         //check for fid access
         if (idPattern.matcher(xpath).matches()) {
+            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = FID_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
             return FID_ACCESS;
         }
 
         //check for simple property acess
         if (propertyPattern.matcher(xpath).matches()) {
+            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = ATTRIBUTE_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
             return ATTRIBUTE_ACCESS;
         }
 
@@ -88,7 +120,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
      * @return xpath with any XML prefixes removed
      */
     private static String stripPrefix(String xpath) {
-        int split = xpath.indexOf(":");
+        int split = xpath.indexOf(':');
         if (split != -1) {
             return xpath.substring(split + 1);
         }
@@ -111,7 +143,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         @Override
         public Object get(Object object, String xpath, Class target) {
             Feature feature = (Feature) object;
-            return feature.getIdentifier();
+            return feature.getIdentifier().getID();
         }
 
         @Override
@@ -142,7 +174,9 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public Object get(Object object, String xpath, Class target) {
-            if (object instanceof Feature) {
+            if(object instanceof SimpleFeature){
+                return ((SimpleFeature) object).getDefaultGeometry();
+            }else if (object instanceof Feature) {
                 return ((Feature) object).getDefaultGeometryProperty().getValue();
             }
             if (object instanceof FeatureType) {
@@ -188,7 +222,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             xpath = stripPrefix(xpath);
 
             if (object instanceof Feature) {
-                return ((Feature) object).getProperty(xpath);
+                return ((Feature) object).getProperty(xpath).getValue();
             }
 
             if (object instanceof FeatureType) {
@@ -208,7 +242,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             }
 
             if (object instanceof FeatureType) {
-                throw new IllegalArgumentException("feature type is immutable");
+                throw new IllegalArgumentException("Feature type is immutable");
             }
 
         }

@@ -1,8 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
- * 
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,11 @@ package org.geotoolkit.filter.identity;
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 
+/**
+ * Immutable feature id.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public class DefaultFeatureId implements FeatureId {
 
     private final String id;
@@ -30,11 +35,17 @@ public class DefaultFeatureId implements FeatureId {
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean matches(Object object) {
         if (object instanceof Feature) {
@@ -43,11 +54,17 @@ public class DefaultFeatureId implements FeatureId {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -63,6 +80,9 @@ public class DefaultFeatureId implements FeatureId {
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 7;

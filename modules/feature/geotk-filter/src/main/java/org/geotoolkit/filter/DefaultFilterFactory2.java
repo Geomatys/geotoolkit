@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *
@@ -21,7 +21,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsEqualTo;
+import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThan;
+import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThanOrEqualTo;
+import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsLessThan;
+import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsLessThanOrEqualTo;
 import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsNotEqualTo;
+import org.geotoolkit.filter.binaryexpression.DefaultAdd;
+import org.geotoolkit.filter.binaryexpression.DefaultDivide;
+import org.geotoolkit.filter.binaryexpression.DefaultMultiply;
+import org.geotoolkit.filter.binaryexpression.DefaultSubtract;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.filter.identity.DefaultGmlObjectId;
 import org.geotoolkit.filter.binarylogic.DefaultAnd;
@@ -37,9 +45,22 @@ import org.geotoolkit.filter.binaryspatial.DefaultIntersect;
 import org.geotoolkit.filter.binaryspatial.DefaultOverlaps;
 import org.geotoolkit.filter.binaryspatial.DefaultTouches;
 import org.geotoolkit.filter.binaryspatial.DefaultWithin;
+import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
+import org.geotoolkit.filter.capability.DefaultComparisonOperators;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFunctionName;
+import org.geotoolkit.filter.capability.DefaultFunctions;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
+import org.geotoolkit.filter.capability.DefaultOperator;
+import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialOperator;
+import org.geotoolkit.filter.capability.DefaultSpatialOperators;
+import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -97,6 +118,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default implementation of a GeoAPI filterFactory.
@@ -106,20 +128,19 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class DefaultFilterFactory2 implements FilterFactory2{
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyName property(Name name) {
-        return new DefaultPropertyName(name.getURI());
-    }
+////////////////////////////////////////////////////////////////////////////////
+//
+//  SPATIAL FILTERS
+//
+////////////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public BBOX bbox(String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+        final PropertyName name = property(propertyName);
+        return bbox(name,minx,miny,maxx,maxy,srs);
     }
 
     /**
@@ -129,13 +150,34 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public BBOX bbox(Expression e, double minx, double miny, double maxx, double maxy, String srs) {
 
         final DefaultBoundingBox env;
+        CoordinateReferenceSystem crs = null;
         try {
-            env = new DefaultBoundingBox(CRS.decode(srs));
+            crs = CRS.decode(srs);
         } catch (NoSuchAuthorityCodeException ex) {
-            throw new IllegalArgumentException("Could not fine CRS for srs " + srs, ex);
+            Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
         } catch (FactoryException ex) {
-            throw new IllegalArgumentException("Could not fine CRS for srs " + srs, ex);
+            Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
         }
+
+        if(crs == null && !srs.startsWith("EPSG:")){
+            //we presume all epsg given are using the epsg authority
+            //this is a necessity since the last geotools modules aren't correctly providing the authority
+            srs = "EPSG:"+srs;
+
+            try {
+                crs = CRS.decode(srs);
+            } catch (NoSuchAuthorityCodeException ex) {
+                Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+            } catch (FactoryException ex) {
+                Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+            }
+        }
+
+        if(crs == null){
+            throw new IllegalArgumentException("Invalid srs : " +srs);
+        }
+
+        env = new DefaultBoundingBox(crs);
         env.setRange(0, minx, maxx);
         env.setRange(1, miny, maxy);
 
@@ -157,8 +199,28 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
+    public Beyond beyond(String propertyName, Geometry geometry, double distance, String units) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return beyond(name, geom,distance,units);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Beyond beyond(Expression left, Expression right, double distance, String units) {
         return new DefaultBeyond(left, right, distance, units);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Contains contains(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return contains(name, geom);
     }
 
     /**
@@ -173,8 +235,28 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
+    public Crosses crosses(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return crosses(name, geom);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Crosses crosses(Expression left, Expression right) {
         return new DefaultCrosses(left, right);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Disjoint disjoint(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return disjoint(name, geom);
     }
 
     /**
@@ -189,8 +271,28 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
+    public DWithin dwithin(String propertyName, Geometry geometry, double distance, String units) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return dwithin(name, geom,distance,units);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public DWithin dwithin(Expression left, Expression right, double distance, String units) {
         return new DefaultDWithin(left, right, distance, units);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Equals equals(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return equal(name, geom);
     }
 
     /**
@@ -205,8 +307,28 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
+    public Intersects intersects(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return intersects(name, geom);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Intersects intersects(Expression left, Expression right) {
         return new DefaultIntersect(left, right);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Overlaps overlaps(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return overlaps(name, geom);
     }
 
     /**
@@ -221,8 +343,28 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
+    public Touches touches(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return touches(name, geom);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Touches touches(Expression left, Expression right) {
         return new DefaultTouches(left, right);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Within within(String propertyName, Geometry geometry) {
+        final PropertyName name = property(propertyName);
+        final Literal geom = literal(geometry);
+        return within(name, geom);
     }
 
     /**
@@ -232,6 +374,12 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public Within within(Expression left, Expression right) {
         return new DefaultWithin(left, right);
     }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  IDENTIFIERS
+//
+////////////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc }
@@ -249,6 +397,12 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         return new DefaultGmlObjectId(id);
     }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+//  FILTERS
+//
+////////////////////////////////////////////////////////////////////////////////
+    
     /**
      * {@inheritDoc }
      */
@@ -295,6 +449,14 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     @Override
     public Id id(Set<? extends Identifier> ids) {
         return new DefaultId(ids);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public PropertyName property(Name name) {
+        return property(name.getURI());
     }
 
     /**
@@ -350,7 +512,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsGreaterThan greater(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return greater(expr1,expr2,false);
     }
 
     /**
@@ -358,7 +520,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsGreaterThan greater(Expression expr1, Expression expr2, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsGreaterThan(expr1, expr2, matchCase);
     }
 
     /**
@@ -366,7 +528,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsGreaterThanOrEqualTo greaterOrEqual(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return greaterOrEqual(expr1, expr2,false);
     }
 
     /**
@@ -374,7 +536,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsGreaterThanOrEqualTo greaterOrEqual(Expression expr1, Expression expr2, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsGreaterThanOrEqualTo(expr1, expr2, matchCase);
     }
 
     /**
@@ -382,7 +544,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsLessThan less(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return less(expr1, expr2, false);
     }
 
     /**
@@ -390,7 +552,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsLessThan less(Expression expr1, Expression expr2, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsLessThan(expr1, expr2, matchCase);
     }
 
     /**
@@ -398,7 +560,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsLessThanOrEqualTo lessOrEqual(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return lessOrEqual(expr1, expr2, false);
     }
 
     /**
@@ -406,7 +568,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsLessThanOrEqualTo lessOrEqual(Expression expr1, Expression expr2, boolean matchCase) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsLessThanOrEqualTo(expr1, expr2, matchCase);
     }
 
     /**
@@ -414,7 +576,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsLike like(Expression expr, String pattern) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return like(expr,pattern,"*","?","\\");
     }
 
     /**
@@ -422,7 +584,15 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return like(expr,pattern,wildcard,singleChar,escape,false);
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape, boolean matchCase) {
+        return new DefaultPropertyIsLike(expr, pattern, wildcard, singleChar, escape, matchCase);
     }
 
     /**
@@ -430,103 +600,21 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyIsNull isNull(Expression expr) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultPropertyIsNull(expr);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BBOX bbox(String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Beyond beyond(String propertyName, Geometry geometry, double distance, String units) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Contains contains(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Crosses crosses(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Disjoint disjoint(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public DWithin dwithin(String propertyName, Geometry geometry, double distance, String units) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Equals equals(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Intersects intersects(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Overlaps overlaps(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Touches touches(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Within within(String propertyName, Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+////////////////////////////////////////////////////////////////////////////////
+//
+//  EXPRESSIONS
+//
+////////////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc }
      */
     @Override
     public Add add(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultAdd(expr1, expr2);
     }
 
     /**
@@ -534,7 +622,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Divide divide(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultDivide(expr1, expr2);
     }
 
     /**
@@ -542,7 +630,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Multiply multiply(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultMultiply(expr1, expr2);
     }
 
     /**
@@ -550,39 +638,15 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Subtract subtract(Expression expr1, Expression expr2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultSubtract(expr1, expr2);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Function function(String name, Expression[] args) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function function(String name, Expression arg1) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function function(String name, Expression arg1, Expression arg2) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function function(String name, Expression arg1, Expression arg2, Expression arg3) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Function function(String name, Expression ... parameters) {
+        return org.geotoolkit.filter.function.Functions.function(name, null, parameters);
     }
 
     /**
@@ -657,20 +721,33 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         return new DefaultLiteral<Boolean>(b);
     }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+//  SORT BY
+//
+////////////////////////////////////////////////////////////////////////////////
+
     /**
      * {@inheritDoc }
      */
     @Override
     public SortBy sort(String propertyName, SortOrder order) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final PropertyName name = property(propertyName);
+        return new DefaultSortBy(name,order);
     }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  CAPABILITIES
+//
+////////////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc }
      */
     @Override
     public Operator operator(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultOperator(name);
     }
 
     /**
@@ -678,7 +755,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public SpatialOperator spatialOperator(String name, GeometryOperand[] geometryOperands) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultSpatialOperator(name, geometryOperands);
     }
 
     /**
@@ -686,7 +763,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public FunctionName functionName(String name, int nargs) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultFunctionName(name, null, nargs);
     }
 
     /**
@@ -694,7 +771,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Functions functions(FunctionName[] functionNames) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultFunctions(functionNames);
     }
 
     /**
@@ -702,7 +779,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public SpatialOperators spatialOperators(SpatialOperator[] spatialOperators) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultSpatialOperators(spatialOperators);
     }
 
     /**
@@ -710,7 +787,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public ComparisonOperators comparisonOperators(Operator[] comparisonOperators) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultComparisonOperators(comparisonOperators);
     }
 
     /**
@@ -718,7 +795,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public ArithmeticOperators arithmeticOperators(boolean simple, Functions functions) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultArithmeticOperators(simple, functions);
     }
 
     /**
@@ -726,7 +803,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public ScalarCapabilities scalarCapabilities(ComparisonOperators comparison, ArithmeticOperators arithmetic, boolean logical) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultScalarCapabilities(logical, comparison, arithmetic);
     }
 
     /**
@@ -734,7 +811,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public SpatialCapabilities spatialCapabilities(GeometryOperand[] geometryOperands, SpatialOperators spatial) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultSpatialCapabilities(geometryOperands, spatial);
     }
 
     /**
@@ -742,7 +819,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public IdCapabilities idCapabilities(boolean eid, boolean fid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultIdCapabilities(eid, fid);
     }
 
     /**
@@ -750,7 +827,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public FilterCapabilities capabilities(String version, ScalarCapabilities scalar, SpatialCapabilities spatial, IdCapabilities id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultFilterCapabilities(version, id, spatial, scalar);
     }
 
 }

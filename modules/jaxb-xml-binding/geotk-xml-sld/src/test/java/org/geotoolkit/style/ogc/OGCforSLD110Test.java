@@ -386,37 +386,6 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testExpFunction() throws JAXBException{
-        final String valueName = "sin";
-        
-        //Read test
-        Object obj = unMarshall(FILE_EXP_FUNCTION);
-        assertNotNull(obj);
-        
-        JAXBElement<FunctionType> jax = (JAXBElement<FunctionType>) obj;
-        Function fct = (Function) TRANSFORMER_GT.visitExpression(jax);
-        assertNotNull(fct);
-        
-        assertEquals(fct.getName(),valueName);
-        
-        PropertyName left = (PropertyName) fct.getParameters().get(0);
-        assertNotNull(left);
-        
-        assertEquals(left.getPropertyName(), valueStr);        
-        
-        //Write test
-        ParameterValueType pvt = TRANSFORMER_OGC.visitExpression(fct);
-        assertNotNull(pvt);
-        
-        jax = (JAXBElement<FunctionType>) pvt.getContent().get(0);
-        assertNotNull(jax);
-                        
-        JAXBElement<PropertyNameType> ele1 = (JAXBElement<PropertyNameType>) jax.getValue().getExpression().get(0);
-        
-        MARSHALLER.marshal(jax, TEST_FILE_EXP_FUNCTION);
-    }
-
-    @Test
     public void testExpLiteral() throws JAXBException{
         
         //Read test

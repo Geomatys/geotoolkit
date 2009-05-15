@@ -1064,7 +1064,6 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT label placement in jaxb label placement.
      * @return
      */
-    @Override
     public LabelPlacementType visit(LabelPlacement labelPlacement, Object data) {
         LabelPlacementType lpt = se_factory.createLabelPlacementType();
         if(labelPlacement instanceof LinePlacement){
@@ -1090,7 +1089,6 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a GT onlineResource in jaxb online resource.
      */
-    @Override
     public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnLineResource onlineResource, Object data) {
         OnlineResourceType ort = se_factory.createOnlineResourceType();
         try {
@@ -1235,7 +1233,6 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * transform a GT overlap in xml string representation.
      */
-    @Override
     public String visit(OverlapBehavior overlapBehavior, Object data) {
         switch(overlapBehavior){
             case AVERAGE : return SEJAXBStatics.OVERLAP_AVERAGE;

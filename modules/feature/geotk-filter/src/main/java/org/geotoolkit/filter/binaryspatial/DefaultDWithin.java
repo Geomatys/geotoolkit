@@ -1,9 +1,9 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
- * 
- *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -22,7 +22,11 @@ import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.DWithin;
 
-
+/**
+ * Immutable "dwithin" filter.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements DWithin {
 
     private final double distance;
@@ -34,16 +38,25 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
         this.unit = unit;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public double getDistance() {
         return distance;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getDistanceUnits() {
         return unit;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean evaluate(Object object) {
         final Geometry leftGeom = left.evaluate(object, Geometry.class);
@@ -60,9 +73,65 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
         return leftGeom.isWithinDistance(rightGeom, distance);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object accept(FilterVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder("DWithin{")
+                .append(left).append(',')
+                .append(right).append(',')
+                .append(distance).append(',')
+                .append(unit).append('}')
+                .toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultDWithin other = (DefaultDWithin) obj;
+        if (this.left != other.left && !this.left.equals(other.left)) {
+            return false;
+        }
+        if (this.right != other.right && !this.right.equals(other.right)) {
+            return false;
+        }
+        if (this.distance != other.distance) {
+            return false;
+        }
+        if (!this.unit.equals(other.unit)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 19;
+        hash = 71 * hash + this.left.hashCode();
+        hash = 71 * hash + this.right.hashCode();
+        hash = 71 * hash + (int)this.distance;
+        hash = 71 * hash + this.unit.hashCode();
+        return hash;
     }
 
 }

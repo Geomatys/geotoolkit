@@ -141,7 +141,7 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         }
 
         if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Float.class);
+            opacity = expOpa.evaluate(null, Number.class).floatValue();
         }else{
             opacity = 0.6f;
         }
@@ -171,7 +171,7 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         }
 
         if(NonSI.PIXEL.equals(uom) && GO2Utilities.isStatic(expWidth)){
-            width = expWidth.evaluate(null, Float.class);
+            width = expWidth.evaluate(null, Number.class).floatValue();
 
             if(stroke.getDashArray() != null && stroke.getDashArray().length >0){
                 dashes = stroke.getDashArray();
@@ -214,7 +214,7 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         }
 
         if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Float.class);
+            opacity = expOpa.evaluate(null, Number.class).floatValue();
         }else{
             opacity = 0.6f;
         }

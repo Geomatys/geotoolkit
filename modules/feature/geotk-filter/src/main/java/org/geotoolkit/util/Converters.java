@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.util;
 
@@ -7,6 +22,11 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.logging.Logging;
 
+/**
+ * Utility class to converter objects.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public final class Converters {
 
     protected static final ConverterRegistry CONVERTERS = ConverterRegistry.system();
@@ -14,6 +34,7 @@ public final class Converters {
     private Converters(){}
 
     public static <T> T convert(Object candidate, Class<T> target) {
+        if(candidate == null) return null;
         return (T) convert(candidate, (Class) candidate.getClass(), target);
     }
 

@@ -125,6 +125,22 @@ public class Operation extends AbstractOperation {
             return null;
         }
     }
+
+    /**
+     * Get a parameter from the specified parameter name
+     */
+    public DomainType getParameterIgnoreCase(String name) {
+        if (parameter == null) {
+            return null;
+        } else {
+            for (DomainType domain: parameter) {
+                if (domain.getName().equalsIgnoreCase(name))
+                    return domain;
+            }
+            return null;
+        }
+    }
+
     /**
      * Gets the value of the constraint property.
      */

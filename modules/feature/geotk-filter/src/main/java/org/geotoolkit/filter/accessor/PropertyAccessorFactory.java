@@ -22,7 +22,6 @@ import org.geotoolkit.factory.Hints;
  * Factory used to create instances of {@link PropertyAccessor}
  *
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
 public interface PropertyAccessorFactory {
     /**

@@ -1,8 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
- * 
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,11 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.filter.identity;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.GmlObjectId;
 
+/**
+ * Immutable gml object id.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public class DefaultGmlObjectId implements GmlObjectId {
 
     private final String id;
@@ -30,11 +36,17 @@ public class DefaultGmlObjectId implements GmlObjectId {
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean matches(Object object) {
         if (object instanceof Feature) {
@@ -44,11 +56,17 @@ public class DefaultGmlObjectId implements GmlObjectId {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -64,6 +82,9 @@ public class DefaultGmlObjectId implements GmlObjectId {
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 5;
