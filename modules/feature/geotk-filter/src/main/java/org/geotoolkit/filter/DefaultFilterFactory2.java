@@ -60,6 +60,7 @@ import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -117,6 +118,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default implementation of a GeoAPI filterFactory.
@@ -148,13 +150,34 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public BBOX bbox(Expression e, double minx, double miny, double maxx, double maxy, String srs) {
 
         final DefaultBoundingBox env;
+        CoordinateReferenceSystem crs = null;
         try {
-            env = new DefaultBoundingBox(CRS.decode(srs));
+            crs = CRS.decode(srs);
         } catch (NoSuchAuthorityCodeException ex) {
-            throw new IllegalArgumentException("Could not fine CRS for srs " + srs, ex);
+            Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
         } catch (FactoryException ex) {
-            throw new IllegalArgumentException("Could not fine CRS for srs " + srs, ex);
+            Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
         }
+
+        if(crs == null && !srs.startsWith("EPSG:")){
+            //we presume all epsg given are using the epsg authority
+            //this is a necessity since the last geotools modules aren't correctly providing the authority
+            srs = "EPSG:"+srs;
+
+            try {
+                crs = CRS.decode(srs);
+            } catch (NoSuchAuthorityCodeException ex) {
+                Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+            } catch (FactoryException ex) {
+                Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+            }
+        }
+
+        if(crs == null){
+            throw new IllegalArgumentException("Invalid srs : " +srs);
+        }
+
+        env = new DefaultBoundingBox(crs);
         env.setRange(0, minx, maxx);
         env.setRange(1, miny, maxy);
 

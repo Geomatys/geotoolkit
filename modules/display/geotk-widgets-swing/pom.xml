@@ -116,12 +116,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-world-image</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-widgets-swing</artifactId>
     </dependency>
@@ -129,12 +123,6 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-jasperreport</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-wms</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -162,12 +150,7 @@
       <groupId>org.geotools</groupId>
       <artifactId>gtm-postgis</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-shapefile</artifactId>
-    </dependency>
-
+    
     <dependency>
       <groupId>net.java.dev.timingframework</groupId>
       <artifactId>timingframework</artifactId>
