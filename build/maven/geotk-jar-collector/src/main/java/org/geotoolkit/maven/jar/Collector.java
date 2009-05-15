@@ -98,6 +98,10 @@ public class Collector extends AbstractMojo {
             parent = parent.getParent();
         }
         collectDirectory = parent.getBuild().getDirectory();
+        if (collectDirectory.startsWith("${")) {
+            getLog().warn("Unresolved directory: " + collectDirectory);
+            return;
+        }
         /*
          * Now collects the JARs.
          */
