@@ -45,9 +45,9 @@ public interface GetMapRequest {
 
     void setSldBody(String sldBody);
     
-    Boolean getTransparent();
+    boolean getTransparent();
 
-    void setTransparent(Boolean transparent);
+    void setTransparent(boolean transparent);
 
     Map<String,String> dimensions();
 

@@ -28,6 +28,7 @@ public class AbstractRequest implements Request{
 
     }
 
+    @Override
     public URL getURL() throws MalformedURLException {
         final StringBuilder sb = new StringBuilder();
         final List<String> keys = new ArrayList<String>(requestParameters.keySet());

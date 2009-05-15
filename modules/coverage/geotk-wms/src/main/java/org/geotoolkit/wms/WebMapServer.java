@@ -7,7 +7,10 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBException;
+import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetMap111;
+import org.geotoolkit.wms.v130.GetCapabilities130;
 import org.geotoolkit.wms.v130.GetMap130;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
@@ -42,20 +45,15 @@ public class WebMapServer {
         this.serverURL = serverURL;
     }
 
-    public AbstractWMSCapabilities getCapabilities() throws MalformedURLException {
-        if(capabilities == null){
-            StringBuilder sb = new StringBuilder();
-            sb.append(new GetCapabilities(serverURL.toString(), version.getCode()).getURL().toString());  
-            
-            try {
-                URL url = new URL(sb.toString());
-                capabilities = WMSBindingUtilities.unmarshall(url, version);
-                Logger.getLogger(WebMapServer.class.getName()).log(Level.INFO, "GetCapabilities request and marshalling succeed, url was : " + sb.toString());
-            } catch (Exception ex) {
-                Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "GetCapabilities request failed, probably the url requested  is malformed : " + sb.toString(), ex);
-            }
+    public AbstractWMSCapabilities getCapabilities() throws MalformedURLException, JAXBException {
 
+        if(capabilities != null){
+            return capabilities;
         }
+
+        GetCapabilitiesRequest request = createGetCapabilities();
+        capabilities = WMSBindingUtilities.unmarshall(request.getURL(), version);
+
         return capabilities;
     }
 
@@ -67,6 +65,14 @@ public class WebMapServer {
         switch(version){
             case v111 : return new GetMap111(serverURL.toString());
             case v130 : return new GetMap130(serverURL.toString());
+            default: throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    public GetCapabilitiesRequest createGetCapabilities(){
+        switch(version){
+            case v111 : return new GetCapabilities111(serverURL.toString());
+            case v130 : return new GetCapabilities130(serverURL.toString());
             default: throw new IllegalArgumentException("Version was not defined");
         }
     }

@@ -31,78 +31,97 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         this.version = version;
     }
 
+    @Override
     public String[] getLayers() {
         return layers;
     }
 
+    @Override
     public void setLayers(String... layers) {
         this.layers = layers;
     }
 
+    @Override
     public Envelope getEnvelope() {
         return enveloppe;
     }
 
+    @Override
     public void setEnvelope(Envelope env) {
         this.enveloppe = env;
     }
 
+    @Override
     public Dimension getDimension() {
         return dimension;
     }
 
+    @Override
     public void setDimension(Dimension dim) {
         this.dimension = dim;
     }
 
+    @Override
     public String getFormat() {
         return format;
     }
 
+    @Override
     public void setFormat(String format) {
         this.format = format;
     }
 
+    @Override
     public String getExceptions() {
         return exception;
     }
 
+    @Override
     public void setExceptions(String ex) {
         this.exception = ex;
     }
 
+    @Override
     public String[] getStyles() {
         return styles;
     }
 
+    @Override
     public void setStyles(String... styles) {
         this.styles = styles;
     }
 
+    @Override
     public String getSld(){
         return sld;
     }
 
+    @Override
     public void setSld(String sld){
         this.sld = sld;
     }
 
+    @Override
     public String getSldBody(){
         return sldBody;
     }
 
+    @Override
     public void setSldBody(String sldBody){
         this.sldBody = sldBody;
     }
     
-    public Boolean getTransparent(){
+    @Override
+    public boolean getTransparent(){
         return transparent;
     }
 
-    public void setTransparent(Boolean transparent){
+    @Override
+    public void setTransparent(boolean transparent){
         this.transparent = transparent;
     }
     
+    @Override
     public Map<String,String> dimensions(){
         return dims;
     }
@@ -125,7 +144,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
         requestParameters.put("LAYERS",     toString(layers));
         requestParameters.put("STYLES",     toString(styles));
-        requestParameters.put("TRANSPARENT",     transparent.toString().toUpperCase());
+        requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
 
         if (sld != null) {
             requestParameters.put("SLD",sld);
