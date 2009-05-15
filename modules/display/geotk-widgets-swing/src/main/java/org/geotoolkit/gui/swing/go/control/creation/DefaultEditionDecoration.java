@@ -32,12 +32,15 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import javax.swing.JToolBar;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -92,6 +95,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     private final MouseListen mouseListener = new MouseListen();
 
+    private final ButtonGroup group = new ButtonGroup();
     private final JComboBox guiLayers = new JComboBox();
     private final JButton guiStart = new JButton(new AbstractAction("Start") {
         @Override
@@ -184,6 +188,14 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     DefaultEditionDecoration() {
 
+        group.add(guiEdit);
+        group.add(guiSingleLine);
+        group.add(guiSinglePoint);
+        group.add(guiSinglePolygon);
+        group.add(guiMultiLine);
+        group.add(guiMultiPoint);
+        group.add(guiMultiPolygon);
+
         guiLayers.setRenderer(new LayerListRenderer());
 
         guiLayers.addActionListener(new ActionListener() {
@@ -212,18 +224,25 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
                 super.paintComponent(g);
             }
         };
-        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+//        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
+
+        guiEdit.setBorderPainted(false);
+        guiSinglePoint.setBorderPainted(false);
+        guiSingleLine.setBorderPainted(false);
 
         panel.setOpaque(false);
         panel.add(guiLayers);
         panel.add(guiStart);
+        panel.add(new JLabel("      "));
+        panel.add(guiEdit);
         panel.add(guiSinglePoint);
         panel.add(guiSingleLine);
         panel.add(guiSinglePolygon);
         panel.add(guiMultiPoint);
         panel.add(guiMultiLine);
         panel.add(guiMultiPolygon);
+        panel.add(new JLabel("      "));
         panel.add(guiEnd);
 
         add(BorderLayout.NORTH, panel);
