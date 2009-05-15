@@ -32,7 +32,9 @@ import org.opengis.filter.spatial.DWithin;
 import org.opengis.filter.spatial.Disjoint;
 import org.opengis.filter.spatial.Equals;
 import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.spatial.Within;
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
@@ -45,6 +47,7 @@ public class BinarySpatialTest {
 
     private final Geometry GEOM_DISTANCE_1;
     private final Geometry GEOM_DISTANCE_3;
+    private final Geometry GEOM_INTERSECT;
     private final Geometry GEOM_CONTAINS;
     private final Geometry GEOM_CROSSES;
     private final Geometry GEOM_TOUCHES;
@@ -69,6 +72,15 @@ public class BinarySpatialTest {
         GEOM_DISTANCE_3 = GF.createPolygon(ring, new LinearRing[0]);
 
         coords = new Coordinate[5];
+        coords[0] = new Coordinate(7, 3);
+        coords[1] = new Coordinate(9, 3);
+        coords[2] = new Coordinate(9, 6);
+        coords[3] = new Coordinate(7, 6);
+        coords[4] = new Coordinate(7, 3);
+        ring = GF.createLinearRing(coords);
+        GEOM_INTERSECT = GF.createPolygon(ring, new LinearRing[0]);
+
+        coords = new Coordinate[5];
         coords[0] = new Coordinate(1, 1);
         coords[1] = new Coordinate(11, 1);
         coords[2] = new Coordinate(11, 20);
@@ -86,7 +98,7 @@ public class BinarySpatialTest {
         coords = new Coordinate[3];
         coords[0] = new Coordinate(4, 2);
         coords[1] = new Coordinate(7, 5);
-        coords[2] = new Coordinate(3, 9);
+        coords[2] = new Coordinate(9, 3);
         GEOM_TOUCHES = GF.createLineString(coords);
 
     }
@@ -184,6 +196,9 @@ public class BinarySpatialTest {
         intersect = FF.intersects(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
         assertTrue(intersect.evaluate(FEATURE_1));
 
+        intersect = FF.intersects(FF.literal(GEOM_INTERSECT), FF.property("testGeometry"));
+        assertTrue(intersect.evaluate(FEATURE_1));
+
         intersect = FF.intersects(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
         assertFalse(intersect.evaluate(FEATURE_1));
 
@@ -194,6 +209,18 @@ public class BinarySpatialTest {
 
     @Test
     public void testOverlaps() {
+
+        Overlaps overlaps = FF.overlaps(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
+        assertFalse(overlaps.evaluate(FEATURE_1));
+
+        overlaps = FF.overlaps(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
+        assertFalse(overlaps.evaluate(FEATURE_1));
+
+        overlaps = FF.overlaps(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
+        assertFalse(overlaps.evaluate(FEATURE_1));
+
+        overlaps = FF.overlaps(FF.literal(GEOM_INTERSECT), FF.property("testGeometry"));
+        assertTrue(overlaps.evaluate(FEATURE_1));
 
     }
 
@@ -216,6 +243,21 @@ public class BinarySpatialTest {
 
     @Test
     public void testWithin() {
+
+        Within within = FF.within(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
+        assertFalse(within.evaluate(FEATURE_1));
+
+        within = FF.within(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
+        assertFalse(within.evaluate(FEATURE_1));
+
+        within = FF.within(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
+        assertFalse(within.evaluate(FEATURE_1));
+
+        within = FF.within(FF.literal(GEOM_TOUCHES), FF.property("testGeometry"));
+        assertFalse(within.evaluate(FEATURE_1));
+
+        within = FF.within(FF.property("testGeometry"), FF.literal(GEOM_CONTAINS) );
+        assertTrue(within.evaluate(FEATURE_1));
 
     }
     

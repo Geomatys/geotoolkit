@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
+import java.sql.Timestamp;
 import org.geotoolkit.referencing.CRS;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -76,6 +77,7 @@ public class FilterTestConstants {
         ftb.add("time", java.sql.Time.class);
         ftb.add("datetime1", java.util.Date.class);
         ftb.add("datetime2", java.sql.Timestamp.class);
+        ftb.add("testNull", String.class);
         SimpleFeatureType testSchema = ftb.buildFeatureType();
 
         Coordinate[] coords = new Coordinate[5];
@@ -96,7 +98,7 @@ public class FilterTestConstants {
         WRONG_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
 
         // Builds the test feature
-        Object[] attributes = new Object[15];
+        Object[] attributes = new Object[16];
         attributes[0] = RIGHT_GEOMETRY;
         attributes[1] = new Boolean(true);
         attributes[2] = new Character('t');
@@ -114,7 +116,9 @@ public class FilterTestConstants {
         attributes[11] = new java.sql.Date(DATE.getTime());
         attributes[12] = new java.sql.Time(DATE.getTime());
         attributes[13] = DATE;
-        attributes[14] = new java.sql.Timestamp(DATE.getTime());
+        Timestamp stamp = new java.sql.Timestamp(DATE.getTime());
+        attributes[14] = stamp;
+        attributes[15] = null;
 
         // Creates the feature
         FEATURE_1 = SimpleFeatureBuilder.build(testSchema, attributes, "testFeatureType.1");
