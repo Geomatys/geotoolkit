@@ -17,7 +17,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-go3</artifactId>
     <packaging>jar</packaging>
-    <name>GO3 - OpenGL Renderer</name>
+    <name>Rendering engine GO3 OpenGL</name>
     <description>New generation 3D engine.</description>
     <licenses>
         <license>
@@ -56,6 +56,16 @@
        <dependency>
           <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-render</artifactId>
+          <version>${geotoolkit.version}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-wms</artifactId>
+          <version>${geotoolkit.version}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-world-image</artifactId>
           <version>${geotoolkit.version}</version>
        </dependency>
        <dependency>
