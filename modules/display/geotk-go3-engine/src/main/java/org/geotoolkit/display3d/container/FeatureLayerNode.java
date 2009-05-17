@@ -7,6 +7,7 @@ import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.math.type.ReadOnlyColorRGBA;
 import com.ardor3d.renderer.IndexMode;
+import com.ardor3d.renderer.Renderer;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
@@ -46,6 +47,7 @@ public class FeatureLayerNode extends A3DGraphic{
     private final FeatureMapLayer layer;
 
     public FeatureLayerNode(A3DCanvas canvas, FeatureMapLayer layer) {
+        super(canvas);
         this.layer = layer;
 
         GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();

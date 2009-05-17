@@ -90,10 +90,18 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         light.setLocation(new Vector3(0, 200, 0));
         light.setEnabled(true);
 
+        final DirectionalLight light2 = new DirectionalLight();
+        light2.setDirection(new Vector3(0.2, 0.7, 0.1));
+        light2.setDiffuse(new ColorRGBA(0.6f, 0.6f, 0.6f, 0.4f));
+        light2.setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 0.2f));
+        light2.setAttenuate(false);
+        light2.setEnabled(true);
+
         /** Attach the light to a lightState and the lightState to rootNode. */
         LightState lightState = new LightState();
         lightState.setEnabled(true);
         lightState.attach(light);
+        lightState.attach(light2);
         root.setRenderState(lightState);
 
         WireframeState wireframeState = new WireframeState();

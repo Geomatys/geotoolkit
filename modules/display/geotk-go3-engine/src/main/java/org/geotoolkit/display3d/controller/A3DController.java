@@ -73,7 +73,11 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     private Camera getCamera(){
-        return canvas.getNativeCanvas().getCanvasRenderer().getCamera();
+        AwtCanvas nativ = canvas.getNativeCanvas();
+        if(nativ != null && nativ.getCanvasRenderer() != null){
+            return nativ.getCanvasRenderer().getCamera();
+        }
+        return null;
     }
 
     @MainThread

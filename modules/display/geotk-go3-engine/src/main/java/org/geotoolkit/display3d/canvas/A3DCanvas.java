@@ -1,16 +1,14 @@
 
 package org.geotoolkit.display3d.canvas;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 
-import com.ardor3d.framework.ArdorModule;
 import com.ardor3d.framework.Canvas;
+import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.framework.awt.AwtCanvas;
 import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
@@ -26,12 +24,9 @@ import com.ardor3d.input.logical.InputTrigger;
 import com.ardor3d.input.logical.KeyPressedCondition;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.input.logical.TriggerAction;
+import com.ardor3d.util.Timer;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-
-import javax.swing.JComponent;
+import java.lang.ref.WeakReference;
 import org.geotoolkit.display3d.controller.A3DController;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
@@ -47,38 +42,55 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class A3DCanvas extends ReferencedCanvas{
 
-    public static final ArdorModule  ARDOR_3D = new ArdorModule();
-    public static final Injector     INJECTOR = Guice.createInjector(Stage.PRODUCTION, ARDOR_3D);
-    public static final FrameHandler FRAMEWORK = INJECTOR.getInstance(FrameHandler.class);
-    public static final LogicalLayer LOGICAL_LAYER = INJECTOR.getInstance(LogicalLayer.class);
-
+    private final FrameHandler refresher = new FrameHandler(new Timer());
+    private final LogicalLayer logicalLayer = new LogicalLayer();
     private final A3DContainer container = new A3DContainer(this);
-    private final A3DController controller = new A3DController(this, LOGICAL_LAYER);
-    private final JPanel swingPane = new JPanel(new BorderLayout());
-    private AwtCanvas canvas = null;
+    private final A3DController controller = new A3DController(this, logicalLayer);
+    private final JScrollPane swingPane;
+    private final AwtCanvas canvas;
 
-    public A3DCanvas(CoordinateReferenceSystem objectiveCRS, Hints hints) {
+    public A3DCanvas(CoordinateReferenceSystem objectiveCRS, Hints hints) throws LWJGLException{
         super(objectiveCRS,hints);
-        try {
-            initContext();
-        } catch (LWJGLException ex) {
-            Logger.getLogger(A3DCanvas.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        canvas = initContext();
 
-        swingPane.add(BorderLayout.CENTER,canvas);
+        swingPane = new JScrollPane(canvas);
+        swingPane.setBorder(null);
+        swingPane.setWheelScrollingEnabled(false);
+        swingPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        swingPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
         swingPane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                swingPane.remove(canvas);
-                try {
-                    updateCanvas(swingPane.getSize());
-                } catch (LWJGLException ex) {
-                    ex.printStackTrace();
+
+                CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
+
+                if (canvasRenderer.getCamera() != null) {
+                    // tell our camera the correct new size
+                    canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
+
+                    // keep our aspect ratio the same.
+                    canvasRenderer.getCamera().setFrustumPerspective(45.0,
+                            canvas.getWidth() / (float) canvas.getHeight(), 1, 3000);
                 }
-                swingPane.add(BorderLayout.CENTER,canvas);
-                swingPane.revalidate();
             }
         });
+
+        new Thread(){
+            private final WeakReference<AwtCanvas> ref = new WeakReference<AwtCanvas>(canvas);
+            @Override
+            public void run(){
+                while(true){
+                    AwtCanvas canvas = ref.get();
+                    if(canvas == null) break;
+                    synchronized(canvas){
+                        if(canvas.isShowing()){
+                            refresher.updateFrame();
+                        }
+                    }
+                }
+            }
+        }.start();
 
     }
 
@@ -104,24 +116,15 @@ public class A3DCanvas extends ReferencedCanvas{
         return canvas;
     }
 
-    private void initContext() throws LWJGLException{
-        FRAMEWORK.addUpdater(controller);
+    private AwtCanvas initContext() throws LWJGLException{
+        refresher.addUpdater(controller);
         controller.init();
-        updateCanvas(new Dimension(200,200));
-    }
 
-    private AwtCanvas updateCanvas(Dimension dim) throws LWJGLException{
-
-        //unregister the previous canvas
-        if(canvas != null){
-            FRAMEWORK.removeCanvas(canvas);
-        }
-
-        canvas = new AwtCanvas();
+        final AwtCanvas canvas = new AwtCanvas();
         LwjglCanvasRenderer renderer = new LwjglCanvasRenderer(container);
         canvas.setCanvasRenderer(renderer);
-        canvas.setSize(dim);
-        canvas.setPreferredSize(new Dimension(100,100));
+        canvas.setSize(new Dimension(100, 100));
+        canvas.setPreferredSize(new Dimension(1,1));
         canvas.setVisible(true);
 
         final AwtMouseWrapper    mouseWrapper    = new AwtMouseWrapper(canvas);
@@ -131,9 +134,9 @@ public class A3DCanvas extends ReferencedCanvas{
 
         final PhysicalLayer pl = new PhysicalLayer(keyboardWrapper, mouseWrapper, focusWrapper);
 
-        LOGICAL_LAYER.registerInput(canvas, pl);
+        logicalLayer.registerInput(canvas, pl);
 
-        LOGICAL_LAYER.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.H),
+        logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.H),
             new TriggerAction() {
             @Override
                 public void perform(Canvas source, InputState inputState, double tpf) {
@@ -142,7 +145,7 @@ public class A3DCanvas extends ReferencedCanvas{
                     }
                 }
             }));
-        LOGICAL_LAYER.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.J),
+        logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.J),
             new TriggerAction() {
             @Override
                 public void perform(Canvas source, InputState inputState, double tpf) {
@@ -154,7 +157,7 @@ public class A3DCanvas extends ReferencedCanvas{
                 }
             }));
 
-        FRAMEWORK.addCanvas(canvas);
+        refresher.addCanvas(canvas);
 
         return canvas;
     }

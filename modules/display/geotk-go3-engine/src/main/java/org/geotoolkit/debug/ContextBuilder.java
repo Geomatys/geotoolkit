@@ -815,9 +815,26 @@ public class ContextBuilder {
 
         MapContext context = null;
         MapLayer layer;
+        CoverageReader reader;
 
         try {
             context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+
+            reader = readWorldImage(new File("/home/eclesia/GIS_DATA/JEU_VILLE/ortho/1998-0897-1797-83.jpg"));
+            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage");
+            context.layers().add(layer);
+
+            reader = readWorldImage(new File("/home/eclesia/GIS_DATA/JEU_VILLE/ortho/1998-0897-1798-83.tif"));
+            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage2");
+            context.layers().add(layer);
+
+            reader = readWorldImage(new File("/home/eclesia/GIS_DATA/JEU_VILLE/ortho/1998-0897-1799-83.tif"));
+            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage3");
+            context.layers().add(layer);
+
+            reader = readWorldImage(new File("/home/eclesia/GIS_DATA/JEU_VILLE/ortho/1998-0897-1800-83.tif"));
+            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage4");
+            context.layers().add(layer);
 
             Map<String,Object> params = new HashMap<String,Object>();
             File shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");

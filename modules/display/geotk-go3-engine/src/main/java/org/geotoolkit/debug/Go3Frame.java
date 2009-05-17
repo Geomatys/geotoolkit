@@ -64,9 +64,6 @@ public class Go3Frame extends JFrame{
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
 
-        while (true) {
-            A3DCanvas.FRAMEWORK.updateFrame();
-        }
     }
 
     public static void main(String[] args) throws Exception {

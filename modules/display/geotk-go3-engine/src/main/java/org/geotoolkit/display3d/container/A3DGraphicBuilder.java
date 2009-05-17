@@ -33,7 +33,7 @@ public class A3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
         if(layer instanceof FeatureMapLayer){
             graphics.add(new FeatureLayerNode(a3dcanvas, (FeatureMapLayer)layer));
         }else if(layer instanceof CoverageMapLayer){
-            //TODO, not handle yet
+            graphics.add(new CoverageLayerNode(a3dcanvas, (CoverageMapLayer)layer));
         }else if(layer instanceof DynamicMapLayer){
             //TODO not handle yet
         }

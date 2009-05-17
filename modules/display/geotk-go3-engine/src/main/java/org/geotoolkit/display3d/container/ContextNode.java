@@ -32,6 +32,7 @@ public class ContextNode extends A3DGraphic{
     private final MapContext context;
 
     public ContextNode(A3DCanvas canvas, MapContext context) {
+        super(canvas);
         this.context = context;
 
 //        attachChild(buildPlan());

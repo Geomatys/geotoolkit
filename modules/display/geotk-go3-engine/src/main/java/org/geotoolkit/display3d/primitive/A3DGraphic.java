@@ -2,6 +2,7 @@
 package org.geotoolkit.display3d.primitive;
 
 import com.ardor3d.scenegraph.Node;
+import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -10,10 +11,11 @@ import org.opengis.display.primitive.Graphic;
  */
 public abstract class A3DGraphic extends Node implements Graphic{
 
+    protected final A3DCanvas canvas;
     protected boolean visible = true;
 
-    protected A3DGraphic(){
-
+    protected A3DGraphic(A3DCanvas canvas){
+        this.canvas = canvas;
     }
 
     @Override
