@@ -27,13 +27,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotools.data.DefaultQuery;
+import org.geotools.data.FeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
+
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-
-import org.geotools.data.DefaultQuery;
-import org.geotools.data.FeatureSource;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -47,8 +48,6 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 
@@ -58,11 +57,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.display2d.style.GO2Utilities.*;
@@ -114,40 +111,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         if(!objtoDisp.equals(params.objectiveToDisplay)){
             params.objectiveToDisplay.setTransform(objtoDisp);
-
+            params.updateGeneralizationFactor(context, dataCRS);
             try {
                 params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(dataCRS, context.getDisplayCRS()));
             } catch (FactoryException ex) {
                 ex.printStackTrace();
             }
 
-            Boolean generalize = (Boolean) context.getCanvas().getRenderingHint(GO2Hints.KEY_GENERALIZE);
-
-            if(generalize == null || generalize == true){
-                params.decimate = true;
-                try {
-                    final MathTransform trs = context.getMathTransform(context.getObjectiveCRS(), dataCRS);
-                    DirectPosition vect = new DirectPosition2D(context.getResolution()[0], context.getResolution()[1]);
-                    vect = trs.transform(vect, vect);
-                    double[] decim = vect.getCoordinate();
-                    params.decimation = (decim[0]<decim[1]) ? decim[0] : decim[1] ;
-                    params.decimation = params.decimation * 1.3f;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    params.decimation = 0;
-                }
-
-                for(StatefullProjectedFeature gra : cache.values()){
-                    //clear decimation at the data level
-                    gra.clearDataCache();
-                }
-            }else{
-                params.decimate = false;
-                for(StatefullProjectedFeature gra : cache.values()){
-                    //clear decimation at the display level
-                    gra.clearDisplayCache();
-                }
-            }
         }
     }
 

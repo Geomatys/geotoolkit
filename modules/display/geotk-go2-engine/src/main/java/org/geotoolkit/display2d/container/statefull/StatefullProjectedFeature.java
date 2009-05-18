@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.TransformException;
 public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     private final StatefullContextParams params;
-    private final SimpleFeature feature;
+    private SimpleFeature feature;
     private Geometry geom = null;
 
     private Geometry    objectiveGeometry = null;
@@ -53,24 +53,35 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     private Rectangle   displayBounds = null;
 
 
+    public StatefullProjectedFeature(StatefullContextParams params){
+        this(params,null);
+    }
+
     public StatefullProjectedFeature(StatefullContextParams params, SimpleFeature feature){
         this.params = params;
         this.feature = feature;
     }
 
-    public void clearDataCache(){
+    public synchronized void setFeature(SimpleFeature feature) {
+        if(this.feature != feature){
+            clearDataCache();
+        }
+        this.feature = feature;
+    }
+
+    public synchronized void clearDataCache(){
         clearObjectiveCache();
         this.geom = null;
     }
 
-    public void clearObjectiveCache(){
+    public synchronized void clearObjectiveCache(){
         clearDisplayCache();
         objectiveGeometry = null;
         objectiveShape = null;
         objectiveBounds = null;
     }
     
-    public void clearDisplayCache(){
+    public synchronized void clearDisplayCache(){
         displayGeometry = null;
         displayShape = null;
         displayBounds = null;

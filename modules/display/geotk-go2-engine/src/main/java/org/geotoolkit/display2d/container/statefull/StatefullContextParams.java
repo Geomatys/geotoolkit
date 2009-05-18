@@ -17,8 +17,13 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.geom.AffineTransform;
+import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
@@ -36,8 +41,28 @@ public class StatefullContextParams {
 
     public MathTransform dataToObjective = null;
 
-    StatefullContextParams(FeatureMapLayer layer){
+    public StatefullContextParams(FeatureMapLayer layer){
         this.layer = layer;
+    }
+
+    public void updateGeneralizationFactor(RenderingContext2D renderingContext, CoordinateReferenceSystem dataCRS){
+        //check if needed generalization
+        final Boolean generalize = (Boolean) renderingContext.getCanvas().getRenderingHint(GO2Hints.KEY_GENERALIZE);
+        if(generalize == null || generalize == true){
+            decimate = true;
+            try {
+                final MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), dataCRS);
+                DirectPosition vect = new DirectPosition2D(renderingContext.getResolution()[0], renderingContext.getResolution()[1]);
+                vect = trs.transform(vect, vect);
+                double[] decim = vect.getCoordinate();
+                decimation = (decim[0]<decim[1]) ? decim[0] : decim[1] ;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                decimation = 0;
+            }
+        }else{
+            decimate = false;
+        }
     }
 
 }
