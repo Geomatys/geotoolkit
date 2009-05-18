@@ -154,9 +154,9 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         try {
             crs = CRS.decode(srs);
         } catch (NoSuchAuthorityCodeException ex) {
-            Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+            Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
         } catch (FactoryException ex) {
-            Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+            Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
         }
 
         if(crs == null && !srs.startsWith("EPSG:")){
