@@ -56,6 +56,20 @@ public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
     private final Color headerForeground;
 
     /**
+     * The background to use for unselected cells other than the first column.
+     * The default value is {@code null}. Subclasses can assign a different
+     * value before to invoke {@code super.getTableCellRendererComponent}.
+     */
+    protected Color background;
+
+    /**
+     * The foreground to use for unselected cells other than the first column.
+     * The default value is {@code null}. Subclasses can assign a different
+     * value before to invoke {@code super.getTableCellRendererComponent}.
+     */
+    protected Color foreground;
+
+    /**
      * Constructs a cell renderer.
      *
      * @param locale The locale of the widget which will contain this renderer.
@@ -75,12 +89,11 @@ public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
     {
         if (column == 0) {
             hasFocus   = false;
-            isSelected = false;
-            setBackground(headerBackground);
-            setForeground(headerForeground);
+            setBackground(isSelected ? null : headerBackground);
+            setForeground(isSelected ? null : headerForeground);
         } else {
-            setBackground(null);
-            setForeground(null);
+            setBackground(background);
+            setForeground(foreground);
         }
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }

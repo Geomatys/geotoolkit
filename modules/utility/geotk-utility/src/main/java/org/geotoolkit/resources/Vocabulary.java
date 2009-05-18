@@ -1229,6 +1229,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int SEARCH = 228;
 
         /**
+         * Selected colors
+         */
+        public static final int SELECTED_COLORS = 297;
+
+        /**
          * Service
          */
         public static final int SERVICE = 229;

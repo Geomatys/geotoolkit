@@ -19,7 +19,9 @@ package org.geotoolkit.util.collection;
 import java.util.Arrays;
 import java.util.AbstractList;
 import java.util.RandomAccess;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.ObjectOutputStream;
 
 import org.opengis.util.Cloneable;
 import org.geotoolkit.util.XArrays;
@@ -253,11 +255,12 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, mask));
         }
+        final int last = size;
         final int length = length(++size);
         if (length > values.length) {
             values = Arrays.copyOf(values, 2*values.length);
         }
-        setUnchecked(size - 1, value);
+        setUnchecked(last, value);
     }
 
     /**
@@ -279,10 +282,21 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      */
-    public int getInteger(int index) throws IndexOutOfBoundsException {
+    public int getInteger(final int index) throws IndexOutOfBoundsException {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
         }
+        return getUnchecked(index);
+    }
+
+    /**
+     * Returns the element at the given index as the {@code int} primitive type.
+     * This argument does not check argument validity, since it is assumed already done.
+     *
+     * @param index The element index.
+     * @return The value at the given index.
+     */
+    private int getUnchecked(int index) {
         index *= bitCount;
         int base   = index >>> BASE_SHIFT;
         int offset = index & OFFSET_MASK;
@@ -339,8 +353,6 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      *
      * @param index The element index.
      * @param value The value at the given index.
-     * @throws IndexOutOfBoundsException if the given index is out of bounds.
-     * @throws IllegalArgumentException if the given value is out of bounds.
      */
     private void setUnchecked(int index, int value) {
         index *= bitCount;
@@ -357,6 +369,43 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
     }
 
     /**
+     * Removes the element at the given index.
+     *
+     * @param  index The index of the element to remove.
+     * @return The previous value of the element at the given index.
+     * @throws IndexOutOfBoundsException if the given index is out of bounds.
+     *
+     * @since 3.0
+     */
+    @Override
+    public Integer remove(final int index) throws IndexOutOfBoundsException {
+        final Integer old = get(index);
+        removeRange(index, index+1);
+        return old;
+    }
+
+    /**
+     * Removes all values in the given range of index. Shifts any succeeding elements to the
+     * left (reduces their index).
+     *
+     * @param lower Index of the first element to remove, inclusive.
+     * @param upper Index after the last element to be removed.
+     *
+     * @since 3.0
+     */
+    @Override
+    protected void removeRange(int lower, int upper) {
+        final int size = this.size;
+        if (lower < 0 || upper >= size || lower > upper) {
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
+        }
+        while (upper < size) {
+            setUnchecked(lower++, getUnchecked(upper++));
+        }
+        this.size -= (upper - lower);
+    }
+
+    /**
      * Returns the occurence of the given value in this list.
      *
      * @param value The value to search for.
@@ -364,9 +413,9 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      */
     public int occurence(final int value) {
         int count = 0;
-        final int size = size();
+        final int size = this.size;
         for (int i=0; i<size; i++) {
-            if (getInteger(i) == value) {
+            if (getUnchecked(i) == value) {
                 count++;
             }
         }
@@ -395,5 +444,13 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
         }
         clone.values = clone.values.clone();
         return clone;
+    }
+
+    /**
+     * Invokes {@link #trimToSize()} before serialization in order to make the stream more compact.
+     */
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        trimToSize();
+        out.defaultWriteObject();
     }
 }

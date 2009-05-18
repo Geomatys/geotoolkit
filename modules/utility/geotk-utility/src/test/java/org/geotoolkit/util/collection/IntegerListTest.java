@@ -51,7 +51,7 @@ public final class IntegerListTest {
         // Use half the lenght as initial capacity in order to test dynamic resizing.
         list = new IntegerList(length / 2, maximalValue);
         assertTrue(list.maximalValue() >= maximalValue);
-        final List<Integer> copy = new ArrayList<Integer>();
+        final List<Integer> copy = new ArrayList<Integer>(length);
         for (int i=0; i<length; i++) {
             assertEquals(i, list.size());
             final Integer value = nextInt(maximalValue);
@@ -60,6 +60,9 @@ public final class IntegerListTest {
         }
         assertEquals(copy, list);
         assertEquals(copy.hashCode(), list.hashCode());
+        /*
+         * Overwrite 1/10 of the values.
+         */
         for (int i=0; i<length; i+=10) {
             final Integer value = nextInt(maximalValue);
             final Integer old = copy.set(i, value);
@@ -72,6 +75,16 @@ public final class IntegerListTest {
         assertEquals(copy, list);
         assertEquals(copy.hashCode(), list.hashCode());
         assertNotSame(list, serialize(list));
+        /*
+         * Tests cloning and removal of values.
+         */
+        final List<Integer> clone = list.clone();
+        assertEquals(copy, clone);
+        assertEquals(copy.remove(100), clone.remove(100));
+        assertEquals(copy, clone);
+        copy .subList(200, 300).clear();
+        clone.subList(200, 300).clear();
+        assertEquals(copy, clone);
     }
 
     /**

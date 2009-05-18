@@ -31,6 +31,7 @@ import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
+import org.geotoolkit.gui.swing.image.MultiColorChooser;
 
 
 /**
@@ -51,7 +52,7 @@ public final class MosaicWizard extends WizardPanelProvider {
     private static final Dimension SIZE = new Dimension(800, 400);
 
     /**
-     * The mosaic chooser, which is the first step in the wizard.
+     * The chooser for the input mosaic, which is the first step in the wizard.
      */
     private MosaicChooser chooser;
 
@@ -61,15 +62,27 @@ public final class MosaicWizard extends WizardPanelProvider {
     private TileManager mosaic;
 
     /**
+     * {@code true} if the input mosaic changed.  This is set to {@code true} if the
+     * first panel is revisited, in order to tells the second panel that it needs to
+     * configure itself for a new input mosaic.
+     * <p>
+     * If the user is navigating back from the third panel, then the second panel is
+     * not changed.
+     */
+    private boolean inputChanged;
+
+    /**
      * Creates a new wizard.
      */
     public MosaicWizard() {
         super("Geotoolkit Pyramid Builder", new String[] {
             "Select",
-            "Layout"
+            "Layout",
+            "Colors"
         }, new String[] {
             "Select source tiles",
-            "Define pyramid tiling"
+            "Define pyramid tiling",
+            "Remove opaque border"
         });
     }
 
@@ -105,7 +118,7 @@ public final class MosaicWizard extends WizardPanelProvider {
             component = chooser = c = new Chooser();
             chooser.addChangeListener(c);
             c.stateChanged(null); // Force the call to controller.setProblem("..."),
-        } else {
+        } else if (id.equals("Layout")) {
             // -------------------------------------------------------------------
             //     Panel 2:  Define pyramid tiling
             // -------------------------------------------------------------------
@@ -119,10 +132,10 @@ public final class MosaicWizard extends WizardPanelProvider {
                 }
 
                 /** Invoked when the values in the form changed. */
-                @Override protected void plotCostEstimation() {
+                @Override protected void plotCostEstimation(final long delay) {
                     mosaic = null; // Lets GC do its work.
                     controller.setProblem("Calculation in progress...");
-                    super.plotCostEstimation();
+                    super.plotCostEstimation(delay);
                 }
 
                 /** Invoked on success. */
@@ -145,6 +158,8 @@ public final class MosaicWizard extends WizardPanelProvider {
                 component = new Editor();
                 controller.setProblem(exception.toString());
             }
+        } else {
+            component = new MultiColorChooser();
         }
         component.setPreferredSize(SIZE);
         component.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));
@@ -163,15 +178,21 @@ public final class MosaicWizard extends WizardPanelProvider {
     protected void recycleExistingPanel(final String id, final WizardController controller,
             final Map settings, final JComponent panel)
     {
-        if (id.equals("Layout")) {
-            final MosaicBuilderEditor editor = (MosaicBuilderEditor) panel;
-            try {
-                editor.initializeForTiles(chooser.getSelectedTiles());
-                controller.setProblem(null); // In case IOException was previously set.
-            } catch (IOException exception) {
-                controller.setProblem(exception.toString());
+        if (id.equals("Select")) {
+            inputChanged = true;
+        } else if (id.equals("Layout")) {
+            if (inputChanged) {
+                inputChanged = false;
+                final MosaicBuilderEditor editor = (MosaicBuilderEditor) panel;
+                try {
+                    editor.initializeForTiles(chooser.getSelectedTiles());
+                } catch (IOException exception) {
+                    controller.setProblem(exception.toString());
+                    return;
+                }
             }
         }
+        controller.setProblem(null);
     }
 
     /**

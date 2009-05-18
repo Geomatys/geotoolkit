@@ -287,12 +287,12 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         final class Listener implements TableModelListener, ChangeListener, ActionListener, ListSelectionListener {
             /** Invoked when a subsampling value in the table has been edited. */
             @Override public void tableChanged(final TableModelEvent event) {
-                plotCostEstimation();
+                plotCostEstimation(DELAY);
             }
 
             /** Invoked when a tile size (width or height) value changed. */
             @Override public void stateChanged(final ChangeEvent event) {
-                plotCostEstimation();
+                plotCostEstimation(DELAY);
             }
 
             /** Invoked when the "Remove" button is pressed. */
@@ -322,7 +322,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         this.sizeFields.addChangeListener(listener);
         removeButton.addActionListener(listener);
         subsamplingTable.getSelectionModel().addListSelectionListener(listener);
-        plotCostEstimation();
+        plotCostEstimation(0);
     }
 
     /**
@@ -471,11 +471,11 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         }
 
         /**
-         * Returns the number of columns, which is 3 including the title column.
+         * Returns the number of columns, which is 3 including the header column.
          */
         @Override
         public int getColumnCount() {
-            return 3;
+            return titles.length;
         }
 
         /**
@@ -533,8 +533,8 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
                 if (rowIndex < elements.size()) {
                     s = elements.get(rowIndex);
                     switch (columnIndex) {
-                        case 1: s.width  = n; break;
-                        case 2: s.height = n; break;
+                        case 1: if (s.width  == n) return; else s.width  = n; break;
+                        case 2: if (s.height == n) return; else s.height = n; break;
                     }
                 } else {
                     s = new Dimension(n, n);
@@ -560,9 +560,11 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
      * Refreshes the plot of the estimated cost. This method is invoked automatically when the
      * values of some fields changed. The default implementation starts the calculation in a
      * background thread.
+     *
+     * @param delay How long to wait (in milliseconds) before to perform the calculation.
      */
-    protected void plotCostEstimation() {
-        plot.plotLater(null, this, DELAY);
+    protected void plotCostEstimation(final long delay) {
+        plot.plotLater(null, this, delay);
     }
 
     /**
