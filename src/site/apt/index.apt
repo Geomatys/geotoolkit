@@ -43,9 +43,10 @@ The Geotoolkit library
   greater. The JAI libraries can be obtained from {{{https://jai.dev.java.net/binary-builds.html}the
   JAI website}}. When installed, the JAI download will place a JAR file and some native code into
   the Java Runtime Environment.
-~~The coverage-io module further requires the JAI Image I/O library, version 1.1 or greater. That
-~~library can be obtained from {{{https://jai-imageio.dev.java.net/binary-builds.html}the
-~~JAI-imageio website}} and also installed into the JRE.
+
+  The coverage-io module further requires the JAI Image I/O library, version 1.1 or greater.
+  That library can be obtained from {{{https://jai-imageio.dev.java.net/binary-builds.html}the
+  JAI-imageio website}} and also installed into the JRE.
 
   The {{{download.html}download page}} explains in detail how to obtain pre-compiled binaries of
   Geotoolkit either from the {{{http://maven.geotoolkit.org/}Maven\ 2 repository}} or from the

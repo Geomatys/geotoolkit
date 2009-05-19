@@ -122,19 +122,18 @@ Geotoolkit History
   originally intended and GeoTools releases were only being made when needed for a new version of
   GeoServer.
 
-  While the GeoTools project was considered as a success by some, it did not gain wide adoption. The
-  project successfully provided the functionalities needed by the GeoServer and uDig projects,
-  which were the main driver of GeoTools development. However GeoTools failed to get widely adopted
-  as a library by external (non-contributing) projects which could have been expected to use it such
-  as the <Deegree>, <World Wind Java>, <OpenJump> or <gvSig> projects. In informal communications,
-  some of those projects explicitly cited their lack of confidence in the code quality as the main
-  reason for not adopting GeoTools.
+  While the GeoTools project was considered as a success by some, it did not gain wide adoption.
+  The project successfully provided the functionalities needed by the GeoServer and uDig projects,
+  which were the main driver of GeoTools development. While a few projects adopted GeoTools, the
+  library failed to become widely used by external (non-contributing) projects which might have
+  been expected to use it. In informal communications, some of those projects explicitly cited
+  their lack of confidence in the quality of the code as the main reason for not adopting GeoTools.
 
 
 * The Geotidy proposal (2008 -2009)
 
   In response to the deteriorating quality of the GeoTools code base, Martin Desruisseaux embarked
-  on a major cleanup effort. On July\ 15,\ 2008, he created a new, initially empty, source code
+  on a major cleanup effort. In July 2008, Martin created a new, initially empty, source code
   repository and proceeded to copy the GeoTools classes to this new repository one-by-one, cleaning
   and harmonizing them in the process. The project was codenamed "Geotidy" and intended to be
   offered as a new direction for the GeoTools project, probably starting the 3.x series of GeoTools.
