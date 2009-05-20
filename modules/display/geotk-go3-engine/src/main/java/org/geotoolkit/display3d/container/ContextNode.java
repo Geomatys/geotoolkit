@@ -1,24 +1,17 @@
 
 package org.geotoolkit.display3d.container;
 
-import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.math.Matrix3;
-import com.ardor3d.math.Vector3;
-import com.ardor3d.renderer.IndexMode;
-import com.ardor3d.scenegraph.Line;
-import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.shape.Quad;
-import com.ardor3d.util.geom.BufferUtils;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+
 import org.opengis.geometry.Envelope;
 
 /**
@@ -34,8 +27,6 @@ public class ContextNode extends A3DGraphic{
     public ContextNode(A3DCanvas canvas, MapContext context) {
         super(canvas);
         this.context = context;
-
-//        attachChild(buildPlan());
 
         for(final MapLayer layer : context.layers()){
 
@@ -70,9 +61,6 @@ public class ContextNode extends A3DGraphic{
             Logger.getLogger(ContextNode.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-
     }
-
-
 
 }

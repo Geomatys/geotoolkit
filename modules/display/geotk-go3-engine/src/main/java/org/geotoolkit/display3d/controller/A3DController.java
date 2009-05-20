@@ -59,6 +59,21 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     @Override
+    public double[] getCameraPosition() {
+        Camera cam = getCamera();
+
+        if(cam != null){
+            double[] coords = new double[3];
+            coords[0] = cam.getLocation().getX();
+            coords[1] = cam.getLocation().getY();
+            coords[2] = cam.getLocation().getZ();
+            return coords;
+        }
+
+        return null;
+    }
+
+    @Override
     public void setCameraPosition(double x, double y, double z) {
         synchronized(updateLocation){
             updateLocation.setX(x);

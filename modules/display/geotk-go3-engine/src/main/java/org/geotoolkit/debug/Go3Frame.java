@@ -15,7 +15,6 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.gui.swing.go3.control.JNavigationBar;
 import org.geotoolkit.gui.swing.maptree.JContextTree;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
 /**
@@ -23,13 +22,13 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
  */
 public class Go3Frame extends JFrame{
 
-    private final A3DCanvas gui3DPane = new A3DCanvas(DefaultGeographicCRS.WGS84, null);
+    private final A3DCanvas gui3DPane;
     private final JContextTree guiTree = new JContextTree();
     private final JNavigationBar guiNavBar = new JNavigationBar();
 
     public Go3Frame() throws Exception {
         final MapContext context = ContextBuilder.buildRealCityContext();
-        gui3DPane.getController().setObjectiveCRS(context.getCoordinateReferenceSystem());
+        gui3DPane = new A3DCanvas(context.getCoordinateReferenceSystem(), null);
         gui3DPane.getContainer2().setContext(context);
         guiTree.setContext(context);
         guiNavBar.setFloatable(false);

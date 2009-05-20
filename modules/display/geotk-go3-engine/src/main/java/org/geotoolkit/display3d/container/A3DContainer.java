@@ -21,6 +21,7 @@ import com.ardor3d.math.type.ReadOnlyVector3;
 import com.ardor3d.renderer.Camera;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.renderer.Renderer;
+import com.ardor3d.renderer.lwjgl.LwjglRenderer;
 import com.ardor3d.renderer.queue.RenderBucketType;
 import com.ardor3d.renderer.state.BlendState;
 import com.ardor3d.renderer.state.BlendState.DestinationFunction;
@@ -40,6 +41,7 @@ import com.ardor3d.scenegraph.shape.Box;
 import com.ardor3d.scenegraph.shape.Quad;
 import com.ardor3d.util.TextureManager;
 import com.ardor3d.util.geom.BufferUtils;
+import com.ardor3d.util.geom.Debugger;
 import java.nio.FloatBuffer;
 import java.util.Collection;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
@@ -83,25 +85,21 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
 
         // ---- LIGHTS
         /** Set up a basic, default light. */
-        final PointLight light = new PointLight();
-        light.setAttenuate(false);
-        light.setDiffuse(new ColorRGBA(0.75f, 0.75f, 0.75f, 0.75f));
-        light.setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 1f));
-        light.setLocation(new Vector3(0, 200, 0));
-        light.setEnabled(true);
+        final DirectionalLight dLight = new DirectionalLight();
+        dLight.setEnabled(true);
+        dLight.setDiffuse(new ColorRGBA(1, 1, 1, 1));
+        dLight.setDirection(new Vector3(-1, -1, -1));
+        final DirectionalLight dLight2 = new DirectionalLight();
+        dLight2.setEnabled(true);
+        dLight2.setDiffuse(new ColorRGBA(1, 1, 1, 1));
+        dLight2.setDirection(new Vector3(1, 1, 1));
 
-        final DirectionalLight light2 = new DirectionalLight();
-        light2.setDirection(new Vector3(0.2, 0.7, 0.1));
-        light2.setDiffuse(new ColorRGBA(0.6f, 0.6f, 0.6f, 0.4f));
-        light2.setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 0.2f));
-        light2.setAttenuate(false);
-        light2.setEnabled(true);
-
-        /** Attach the light to a lightState and the lightState to rootNode. */
-        LightState lightState = new LightState();
+        /** Attach the light to a lightState and the lightState to root */
+        final LightState lightState = new LightState();
+        lightState.attach(dLight);
+        lightState.attach(dLight2);
+        lightState.setTwoSidedLighting(false);
         lightState.setEnabled(true);
-        lightState.attach(light);
-        lightState.attach(light2);
         root.setRenderState(lightState);
 
         WireframeState wireframeState = new WireframeState();
@@ -109,25 +107,24 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         root.setRenderState(wireframeState);
         root.setRenderBucketType(RenderBucketType.Opaque);
 
+        root.setLightCombineMode(LightCombineMode.Replace);
 
         // Setup some standard states for the scene.
         final CullState cullFrontFace = new CullState();
         cullFrontFace.setEnabled(true);
         cullFrontFace.setCullFace(CullState.Face.None);
         root.setRenderState(cullFrontFace);
-
         root.setRenderState(buildFog());
 
         //build the skybox
         AWTImageLoader.registerLoader();
 
+
 //        skydomeUp = buildSkyDome();
-
-        root.attachChild(buildSkyBox());
 //        root.attachChild(skydomeUp);
-        root.attachChild(buildPlan());
-
         
+        root.attachChild(buildSkyBox());
+        root.attachChild(buildPlan());
     }
 
     public MapContext getContext() {
@@ -154,7 +151,9 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     @MainThread
     @Override
     public boolean renderUnto(final Renderer renderer) {
+
         renderer.draw(root);
+//        Debugger.drawNormals(root, renderer);
         return true;
     }
 
@@ -195,14 +194,8 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     }
 
     public void update(Camera camera, double tpf, boolean b) {
-        
         skybox.setTranslation(camera.getLocation());
-
-//        if(contextNode != null){
-//            contextNode.updateGeometricState(tpf, b);
-//        }
     }
-
 
     private Node buildPlan(){
         final Node plan = new Node("plan");

@@ -1,11 +1,9 @@
 
 package org.geotoolkit.debug;
 
-
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,17 +15,13 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.wi.WorldImageFactory;
-import org.geotools.data.DataSourceException;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.postgis.PostgisDataStoreFactory;
-import org.geotoolkit.wms.WebMapServer;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotools.feature.FeatureCollection;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -51,7 +45,6 @@ import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -61,7 +54,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.opengis.sld.SLDFactory;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -85,7 +77,6 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
-import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -99,723 +90,17 @@ public class ContextBuilder {
     public static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2(null);
     public static final RandomStyleFactory RANDOM_FACTORY = new RandomStyleFactory();
 
-    public static MapContext buildMNTContext(){
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            File gridFile;
-
-            CoverageReader cover = null;
-            gridFile = new File("/home/sorel/GIS_DATA/mnt/16_bit_dem_large.tif");
-            try {
-                cover = readWorldImage(gridFile);
-            } catch (DataSourceException ex) {
-                ex.printStackTrace();
-            }catch (IOException ex){
-                ex.printStackTrace();
-            }
-
-            layer = MapBuilder.createCoverageLayer(cover, createRasterStyle(),"bigDem");
-            layer.setDescription(SF.description("bigDem", ""));
-            context.layers().add(layer);
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-    }
-
-    public static MapContext buildArcheoContext(){
-        MapContext context = null;
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            context.layers().add(createVectorLayer("/home/sorel/GIS_DATA/other/countries.shp"));
-            context.layers().add(createPostGISLayer());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-    }
-    
-    public static MapContext buildLocalContext() {
-        MapContext context = null;
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            context.layers().add(createVectorLayer("/home/eclesia/GIS_DATA/normandy/bn_Lim_departements.shp"));
-            context.layers().add(createVectorLayer("/home/eclesia/GIS_DATA/normandy/TRONCON_ROUTE.SHP"));
-            context.layers().add(createVectorLayer("/home/eclesia/GIS_DATA/normandy/Patrimoine.SHP"));
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return context;
-
-    }
-    
-    public static MapContext buildBMContext(){
-        
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            Map<String,Object> params;
-            File shape;
-            DataStore store;
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-            MutableStyle style;
-            File gridFile;
-            
-            CoverageReader cover = null;
-            gridFile = new File("/home/eclesia/GIS_DATA/bluemarble/bm_winter.png");
-            try {
-                cover = readWorldImage(gridFile);
-            } catch (DataSourceException ex) {
-                ex.printStackTrace();
-            }catch (IOException ex){
-                ex.printStackTrace();
-            }
-            
-            layer = MapBuilder.createCoverageLayer(cover, createRasterStyle(),"blueMarble");
-            layer.setDescription(SF.description("blueMarble", ""));
-            context.layers().add(layer);
-                        
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-        
-    }
-    
-    public static MapContext buildGridOneBandContext(){
-        
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            File gridFile;
-            
-            CoverageReader cover = null;
-            gridFile = new File("/home/sorel/GIS_DATA/1.tif");
-            try {
-                cover = readWorldImage(gridFile);
-            } catch (DataSourceException ex) {
-                ex.printStackTrace();
-            }catch (IOException ex){
-                ex.printStackTrace();
-            }
-            
-            layer = MapBuilder.createCoverageLayer(cover, createRasterStyle(),"elevation");
-            layer.setDescription(SF.description("elevation", ""));
-            context.layers().add(layer);
-                        
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-        
-    }
-    
-    public static MapContext buildSmallVectorContext() {
-
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            Map<String,Object> params;
-            File shape;
-            DataStore store;
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-            MutableStyle style;
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/RESROU_TRONCON_ROUTE.SHP");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = createNewLineStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("line", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = createNewPolygonStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("polygons", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/clip_POLYGONE.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = createNewPolygonStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("clip", ""));
-            context.layers().add(layer);
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("small vector context", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-
-    }
-
-    public static MapContext buildBigVectorsContext() {
-
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            Map<String,Object> params;
-            File shape;
-            DataStore store;
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-            MutableStyle style;
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/ROADL.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("road", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/RAILRDL.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("railroad", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/TUNDRAA.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("tundra", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/POLBNDA.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("polbnda", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/GRASSA.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("grass", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/CROPA.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("crop", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/INWATERA.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("inwater", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/TREESA.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("trees", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/WATRCRSL.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("watercrsl", ""));
-            context.layers().add(layer);
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/CONTOURL.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("contour", ""));
-            context.layers().add(layer);
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-
-    }
-
-    public static MapContext buildBigRoadContext() {
-
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            Map<String,Object> params;
-            File shape;
-            DataStore store;
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-            MutableStyle style;
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/ROADL.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("road", ""));
-            context.layers().add(layer);
-
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/INWATERA.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("inwater", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/TREESA.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("tree", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/CONTOURL.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("contour", ""));
-//            context.layers().add(layer);
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Big road context", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-
-    }
-
-    public static MapContext buildCiteTest130Context() {
-
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            Map<String,Object> params;
-            File shape;
-            DataStore store;
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-            MutableStyle style;
-
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:BasicPolygons.shp");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("poly", ""));
-            context.layers().add(layer);
-
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:Bridges.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("brifges", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:BuildingCenters.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("building center", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:Buildings.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("building", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:DividedRoutes.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("Divided routes", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:Forests.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("forest", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:Lakes.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("lakes", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:MapNeatline.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("map neatline", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:NamedPlaces.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("named places", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:Ponds.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("ponds", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:RoadSegments.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("road segments", ""));
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/data-wms-1.3.0/shapefile/cite:Streams.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("streams", ""));
-//            context.layers().add(layer);
-
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-
-    }
-
-    public static MapContext buildJGrassDataContext(){
-        
-        MapContext context = null;
-        MapLayer layer;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            File gridFile;
-            
-            CoverageReader cover = null;
-            gridFile = new File("/home/sorel/GIS_DATA/orto/024120.jpg");
-            try {
-                cover = readWorldImage(gridFile);
-            } catch (DataSourceException ex) {
-                ex.printStackTrace();
-            }catch (IOException ex){
-                ex.printStackTrace();
-            }
-            
-            layer = MapBuilder.createCoverageLayer(cover, createRasterStyle(),"024120");
-            layer.setDescription(SF.description("raster1", ""));
-            context.layers().add(layer);
-            
-//
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/024160.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//
-//            layer = MAP_BUILDER.createCoverageLayer(cover, createRasterStyle(),"024160");
-//            layer.setDescription(SF.description("raster1", ""));
-//            context.layers().add(layer);
-//
-//
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025090.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//
-//            layer = MAP_BUILDER.createCoverageLayer(cover, createRasterStyle(),"025090");
-//            layer.setDescription(SF.description("raster1", ""));
-//            context.layers().add(layer);
-//
-//
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025100.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//
-//            layer = MAP_BUILDER.createCoverageLayer(cover, createRasterStyle(),"025100");
-//            layer.setDescription(SF.description("raster1", ""));
-//            context.layers().add(layer);
-//
-//
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025110.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//
-//            layer = MAP_BUILDER.createCoverageLayer(cover, createRasterStyle(),"025110");
-//            layer.setDescription(SF.description("raster1", ""));
-//            context.layers().add(layer);
-//            
-//            
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025120.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//            
-//            layer = LAYER_BUILDER.create(cover, createRasterStyle(),"025120");
-//            layer.setDescription(STYLE_FACTORY.description("raster1", ""));
-//            context.layers().add(layer);
-//            
-//            
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025130.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//            
-//            layer = LAYER_BUILDER.create(cover, createRasterStyle(),"025130");
-//            layer.setDescription(STYLE_FACTORY.description("raster1", ""));
-//            context.layers().add(layer);
-            
-            
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025140.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//            
-//            layer = LAYER_BUILDER.create(cover, createRasterStyle(),"025140");
-//            layer.setDescription(STYLE_FACTORY.description("raster1", ""));
-//            context.layers().add(layer);
-            
-            
-//            gridFile = new File("/home/sorel/GIS_DATA/orto/025150.jpg");
-//            try {
-//                cover = readWorldImage(gridFile);
-//            } catch (DataSourceException ex) {
-//                ex.printStackTrace();
-//            }catch (IOException ex){
-//                ex.printStackTrace();
-//            }
-//            
-//            layer = LAYER_BUILDER.create(cover, createRasterStyle(),"025150");
-//            layer.setDescription(STYLE_FACTORY.description("raster1", ""));
-//            context.layers().add(layer);
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-        
-    }
-
-    public static MapContext buildMassiveVectorsContext() {
-
-        MapContext context = null;
-        MapLayer layer = null;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            Map<String,Object> params;
-            File shape;
-            DataStore store;
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-            Style style;
-
-            File DefaultPrjFile = new File("/home/sorel/GIS_DATA/GIS/DCW_South-America_Africa_shp/AA.prj");
-            File folder = new File("/home/sorel/GIS_DATA/GIS/DCW_South-America_Africa_shp");
-
-            File[] list = folder.listFiles();
-            if (list != null){
-                for (File file : list) {
-                    if(file.getName().toLowerCase().endsWith("shp")){
-
-                        String prjName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length()-3) + "prj";
-
-                        File prjFile = new File(prjName);
-                        if(!prjFile.exists()){
-                            copier(DefaultPrjFile, prjFile);
-                        }
-
-                        layer = createVectorLayer(file);
-                        context.layers().add(layer);
-                    }
-                }
-            }
-
-            context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
-            context.setAreaOfInterest(context.getBounds());
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-
-    }
-
     public static MapContext buildRealCityContext() {
 
         MapContext context = null;
         MapLayer layer;
         CoverageReader reader;
+
+        Map<String,Object> params;
+        File shape;
+        DataStore store;
+        FeatureSource fs;
+        MutableStyle style;
 
         try {
             context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
@@ -836,16 +121,16 @@ public class ContextBuilder {
             layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage4");
             context.layers().add(layer);
 
-            Map<String,Object> params = new HashMap<String,Object>();
-            File shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
-            params.put( "url", shape.toURI().toURL() );
-            DataStore store = DataStoreFinder.getDataStore(params);
-            FeatureSource fs = store.getFeatureSource(store.getTypeNames()[0]);
-            MutableStyle style = createNewLineStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("communes", ""));
-            layer.setName("communes");
-            context.layers().add(layer);
+//            params = new HashMap<String,Object>();
+//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
+//            params.put( "url", shape.toURI().toURL() );
+//            store = DataStoreFinder.getDataStore(params);
+//            fs = store.getFeatureSource(store.getTypeNames()[0]);
+//            style = createNewLineStyle();
+//            layer = MapBuilder.createFeatureLayer(fs, style);
+//            layer.setDescription(SF.description("communes", ""));
+//            layer.setName("communes");
+//            context.layers().add(layer);
 
 //            params = new HashMap<String,Object>();
 //            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
@@ -884,6 +169,7 @@ public class ContextBuilder {
 //            layer.setVisible(true);
 //            context.layers().add(layer);
 
+
             params = new HashMap<String,Object>();
             shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
             params.put( "url", shape.toURI().toURL() );
@@ -920,17 +206,17 @@ public class ContextBuilder {
 //            layer.setVisible(true);
 //            context.layers().add(layer);
 
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_PYLONE.SHP");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = createLabeledPointStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("pylone", ""));
-            layer.setName("pylone");
-            layer.setVisible(true);
-            context.layers().add(layer);
+//            params = new HashMap<String,Object>();
+//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_PYLONE.SHP");
+//            params.put( "url", shape.toURI().toURL() );
+//            store = DataStoreFinder.getDataStore(params);
+//            fs = store.getFeatureSource(store.getTypeNames()[0]);
+//            style = createLabeledPointStyle();
+//            layer = MapBuilder.createFeatureLayer(fs, style);
+//            layer.setDescription(SF.description("pylone", ""));
+//            layer.setName("pylone");
+//            layer.setVisible(true);
+//            context.layers().add(layer);
 
 //            params = new HashMap<String,Object>();
 //            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/TOPON_TOPONYME.SHP");
@@ -953,231 +239,6 @@ public class ContextBuilder {
         return context;
 
     }
-
-//    public static MapContext buildWMSContext() {
-//        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-//        MapLayer layer;
-//
-//        try {
-//            WebMapServer wms = new WebMapServer(new URL("http://demo.geomatys.fr/constellation/WS/wms?"),"1.1.1");
-////            WebMapServer wms = new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1");
-////            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"Bathymetry,Countries");
-//            WMSMapLayer wmsLayer = new WMSMapLayer(wms,"BlueMarble");
-////            wmsLayer.setName("Builtup+areas,Bathymetry,Countries,Topography,Coastlines,Waterbodies,Inundated,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Settlements,Spot+elevations,Airports,Ocean+features");
-////            wmsLayer.setDescription(SF.description("wms layer", ""));
-////            wmsLayer.setOutputFormat("image/gif");
-//
-////            context.layers().add(wmsLayer);
-////            context.layers().add(createVectorLayer("/home/eclesia/GIS_DATA/normandy/bn_Lim_departements.shp"));
-//
-////            Map<String,Object> params = new HashMap<String,Object>();
-////            File shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/COASTL.shp");
-////            params.put( "url", shape.toURI().toURL() );
-////
-////            DataStore store = DataStoreFinder.getDataStore(params);
-////            FeatureSource<SimpleFeatureType, SimpleFeature> fs = store.getFeatureSource(store.getTypeNames()[0]);
-////            MutableStyle style = createNewLineStyle();
-////            layer = MAP_BUILDER.createFeatureLayer(fs, style);
-////            layer.setDescription(SF.description("points", ""));
-////            context.layers().add(layer);
-//
-//            context.setDescription(SF.description("Democontext", ""));
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        return context;
-//    }
-
-    public static MapContext buildMixedContext() {
-        MapContext context = null;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            context.setDescription(SF.description("Democontext", ""));
-
-            String format = "image/png";
-            String version = "1.1.1";
-
-//            WMSMapLayer wmsLayer0 = new WMSMapLayer(new WebMapServer(new URL(" http://demo.geomatys.fr/seagis/WS/wms"),"1.1.1"));
-//            wmsLayer0.setName("BlueMarble");
-//            wmsLayer0.setVersion(version);
-//            wmsLayer0.setOutputFormat(format);
-//            wmsLayer0.setDescription(SF.description("Geomatys BlueMarble", ""));
-//
-//            WMSMapLayer wmsLayer1 = new WMSMapLayer(new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1"));
-//            wmsLayer1.setName("Bathymetry,Countries,Topography,Builtup areas,Coastlines,Waterbodies,Inundated,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Settlements,Spot+elevations,Airports,Ocean+features");
-//            wmsLayer1.setVersion(version);
-//            wmsLayer1.setOutputFormat(format);
-//            wmsLayer1.setDescription(SF.description("Demis General", ""));
-//
-//            WMSMapLayer wmsLayer2 = new WMSMapLayer(new WebMapServer(new URL("http://demo.geomatys.fr/geoserver/wms"),"1.1.1"));
-//            wmsLayer2.setName("topp:states");
-//            wmsLayer2.setVersion(version);
-//            wmsLayer2.setOutputFormat(format);
-//            wmsLayer2.setDescription(SF.description("Geomatys States", ""));
-//
-//
-//            Map<String,Object> params;
-//            File shape;
-//            DataStore store;
-//            FeatureSource<SimpleFeatureType, SimpleFeature> fs;
-//            MutableStyle style;
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/ROADL.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            MapLayer local0 = MAP_BUILDER.createFeatureLayer(fs, style);
-//            local0.setDescription(SF.description("roads", ""));
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/GRASSA.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            MapLayer local1 = MAP_BUILDER.createFeatureLayer(fs, style);
-//            local1.setDescription(SF.description("grass", ""));
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/GIS/DCW_Europe_North-Asia_shp/CONTOURL.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = RANDOM_FACTORY.createRandomVectorStyle(fs);
-//            MapLayer local2 = MAP_BUILDER.createFeatureLayer(fs, style);
-//            local2.setDescription(SF.description("contour", ""));
-//
-//            wmsLayer1.setStyles("");
-//            wmsLayer2.setStyles("");
-//            context.layers().add(wmsLayer0);
-//            context.layers().add(wmsLayer1);
-//            context.layers().add(wmsLayer2);
-//            context.layers().add(local0);
-//            context.layers().add(local1);
-//            context.layers().add(local2);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-    }
-
-    public static MapContext buildSeveralWMSContext() {
-        MapContext context = null;
-
-        try {
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            context.setDescription(SF.description("Democontext", ""));
-
-////            String format = "image/png";
-////            String version = "1.1.1";
-////
-////            WMSMapLayer wmsLayer0 = new WMSMapLayer(new WebMapServer(new URL(" http://demo.geomatys.fr/seagis/WS/wms"),"1.1.1"));
-////            wmsLayer0.setName("BlueMarble");
-////            wmsLayer0.setVersion(version);
-////            wmsLayer0.setOutputFormat(format);
-////            wmsLayer0.setDescription(SF.description("Geomatys BlueMarble", ""));
-////
-////            WMSMapLayer wmsLayer1 = new WMSMapLayer(new WebMapServer(new URL("http://www2.demis.nl/WMS/wms.asp?wms=WorldMap"),"1.1.1"));
-////            wmsLayer1.setName("Bathymetry,Countries,Topography,Builtup areas,Coastlines,Waterbodies,Inundated,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Settlements,Spot+elevations,Airports,Ocean+features");
-////            wmsLayer1.setVersion(version);
-////            wmsLayer1.setOutputFormat(format);
-////            wmsLayer1.setDescription(SF.description("Demis General", ""));
-////
-////            WMSMapLayer wmsLayer2 = new WMSMapLayer(new WebMapServer(new URL("http://demo.geomatys.fr/geoserver/wms"),"1.1.1"));
-////            wmsLayer2.setName("topp:states");
-////            wmsLayer2.setVersion(version);
-////            wmsLayer2.setOutputFormat(format);
-////            wmsLayer2.setDescription(SF.description("Geomatys States", ""));
-////
-//////            WMSMapLayer wmsLayer3 = new WMSMapLayer(new WebMapServer(new URL("http://sigma.openplans.org:8080/geoserver/wms"),"1.1.1"));
-//////            wmsLayer3.setName("topp:major_roads");
-//////            wmsLayer3.setVersion(version);
-//////            wmsLayer3.setOutputFormat(format);
-//////            wmsLayer3.setTitle("Sigma roads");
-////
-////            WMSMapLayer wmsLayer4 = new WMSMapLayer(new WebMapServer(new URL("http://labs.metacarta.com/wms/vmap0"),"1.1.1"));
-////            wmsLayer4.setName("basic");
-////            wmsLayer4.setVersion(version);
-////            wmsLayer4.setOutputFormat(format);
-////            wmsLayer4.setDescription(SF.description("MetaCarta basic", ""));
-////
-////            WMSMapLayer wmsLayer5 = new WMSMapLayer(new WebMapServer(new URL("http://atlas.nrcan.gc.ca/cgi-bin/toporamawms_en"),"1.1.1"));
-////            wmsLayer5.setName("wms_atlasofcanada_eng");
-////            wmsLayer5.setVersion(version);
-////            wmsLayer5.setOutputFormat(format);
-////            wmsLayer5.setDescription(SF.description("NRCan atlas", ""));
-////
-////            wmsLayer1.setStyles("");
-////            wmsLayer2.setStyles("");
-//////            wmsLayer3.setStyles("");
-////            wmsLayer4.setStyles("");
-////            wmsLayer5.setStyles("");
-////            context.layers().add(wmsLayer0);
-////            context.layers().add(wmsLayer1);
-////            context.layers().add(wmsLayer2);
-//            context.layers().add(wmsLayer3);
-//            context.layers().add(wmsLayer4);
-//            context.layers().add(wmsLayer5);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-    }
-
-    public static MapContext buildNeptuneContext(){
-        MapContext context = null;
-        
-        
-        try {
-            final Map params = new HashMap<String, Object>();
-            params.put("dbtype", "postgis");
-            params.put(PostgisDataStoreFactory.HOST.key, "localhost");
-            params.put(PostgisDataStoreFactory.PORT.key, 5432);
-            params.put(PostgisDataStoreFactory.SCHEMA.key, "public");
-            params.put(PostgisDataStoreFactory.DATABASE.key, "neptune");
-            params.put(PostgisDataStoreFactory.USER.key, "admin");
-            params.put(PostgisDataStoreFactory.PASSWD.key, "adminadmin");
-
-            DataStore store = DataStoreFinder.getDataStore(params);
-
-            FeatureSource fs = store.getFeatureSource("Troncon");
-//            fs.getBounds();
-//            FeatureCollection coll = fs.getFeatures();
-//            org.geotools.feature.FeatureIterator ite = coll.features();
-//            try{
-//            while(ite.hasNext()){
-//                SimpleFeature f = (SimpleFeature) ite.next();
-//
-//    //            f.getProperty("NOTEXISTINGPROPERTY"); //THIS LINE RAISE AN ERROR
-//                f.getDefaultGeometryProperty().getValue();
-//            }
-//            }catch(Exception ex){
-//                ex.printStackTrace();
-//            }finally{
-//                ite.close();
-//            }
-            
-            
-            
-            context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            context.layers().add(createVectorLayer("/home/sorel/GIS_DATA/other/countries.shp"));
-            context.layers().add(MapBuilder.createFeatureLayer(fs, SF.style(SF.lineSymbolizer())));
-            context.setDescription(SF.description("Democontext", ""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return context;
-    }
-
 
     public static MapLayer createPostGISLayer() throws IOException{
         

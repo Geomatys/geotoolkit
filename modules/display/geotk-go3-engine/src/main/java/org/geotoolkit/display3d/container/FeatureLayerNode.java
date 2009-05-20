@@ -1,22 +1,17 @@
 
 package org.geotoolkit.display3d.container;
 
-import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.math.Vector3;
 import com.ardor3d.math.type.ReadOnlyColorRGBA;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.shape.Box;
-import com.ardor3d.scenegraph.shape.Cylinder;
 import com.ardor3d.scenegraph.shape.Tube;
 import com.ardor3d.util.geom.BufferUtils;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -25,6 +20,8 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.data.FeatureSource;
@@ -50,58 +47,15 @@ public class FeatureLayerNode extends A3DGraphic{
         super(canvas);
         this.layer = layer;
 
-        GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
-
-        FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
-        try {
-            dataToObjectiveTransformer.setMathTransform(
-                    CRS.findMathTransform(source.getSchema().getCoordinateReferenceSystem(),
-                    canvas.getController().getObjectiveCRS(),true));
-
-            FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures();
-
-            final FeatureIterator<SimpleFeature> ite = collection.features();
-
-            ColorRGBA isolineColor = new ColorRGBA(0,0.5f,0,1);
-            ReadOnlyColorRGBA pointColor = ColorRGBA.RED;
-
-            try{
-                while(ite.hasNext()){
-                    SimpleFeature sf = ite.next();
-                    Geometry geom = dataToObjectiveTransformer.transform((Geometry) sf.getDefaultGeometry());
-
-                    if(geom instanceof Polygon || geom instanceof MultiPolygon){
-                        this.attachChild(toNodePoly(geom, sf));
-                    }else if(geom instanceof LineString ){
-                        this.attachChild(toNodeLine((LineString)geom, sf,isolineColor));
-                    }else if(geom instanceof MultiLineString ){
-                        this.attachChild(toNodeLine((MultiLineString)geom, sf,isolineColor));
-                    }else if(geom instanceof Point ){
-                        this.attachChild(toNodePoint((Point)geom, sf,pointColor));
-                    }else if(geom instanceof MultiPoint ){
-                        this.attachChild(toNodePoint((MultiPoint)geom, sf,pointColor));
-                    }
-
-                }
-            }finally{
-                ite.close();
-            }
-
-        } catch (Exception ex) {
-            Logger.getLogger(FeatureLayerNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        LoadingThread loader = new LoadingThread();
+        loader.setPriority(Thread.MIN_PRIORITY);
+        loader.start();
 
 
     }
 
     private Mesh toNodePoly(Geometry geom,SimpleFeature sf){
-        double minz = ((Double)sf.getAttribute("Z_MIN"))/5;
-        double maxz = ((Double)sf.getAttribute("Z_MAX"))/5;
-        Envelope env = geom.getEnvelopeInternal();
-        Box box = new Box(sf.getID(), new Vector3(env.getMinX(), minz, env.getMinY()), new Vector3(env.getMaxX(), maxz, env.getMaxY()));
-        box.setModelBound(new BoundingSphere());
-        box.updateModelBound();
-        return box;
+        return new DefaultPolygonFeatureMesh2(sf, geom);
     }
 
     private Mesh toNodeLine(LineString geom,SimpleFeature sf,ColorRGBA color){
@@ -163,5 +117,102 @@ public class FeatureLayerNode extends A3DGraphic{
 
         return node;
     }
+
+    @Override
+    public void draw(Renderer r) {
+
+        if(update){
+            synchronized(meshes){
+                for(Object m : meshes){
+                    if(m instanceof Mesh){
+                        this.attachChild((Mesh)m);
+                    }else if(m instanceof Node){
+                        this.attachChild((Node)m);
+                    }
+                }
+                meshes.clear();
+                update = false;
+            }
+        }
+
+        super.draw(r);
+    }
+
+
+    private volatile boolean update = false;
+    private final List<Object> meshes = new ArrayList<Object>();
+
+    private class LoadingThread extends Thread{
+
+        @Override
+        public void run() {
+            try {
+                sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FeatureLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
+
+            FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
+            try {
+                dataToObjectiveTransformer.setMathTransform(
+                        CRS.findMathTransform(source.getSchema().getCoordinateReferenceSystem(),
+                        canvas.getController().getObjectiveCRS(),true));
+
+                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures();
+
+                final FeatureIterator<SimpleFeature> ite = collection.features();
+
+                ColorRGBA isolineColor = new ColorRGBA(0,0.5f,0,1);
+                ReadOnlyColorRGBA pointColor = ColorRGBA.RED;
+
+                try{
+                    while(ite.hasNext()){
+                        SimpleFeature sf = ite.next();
+                        Geometry geom = dataToObjectiveTransformer.transform((Geometry) sf.getDefaultGeometry());
+
+                        Object obj = null;
+
+                        if(geom instanceof Polygon){
+                            obj = toNodePoly(geom, sf);
+                        }else if(geom instanceof MultiPolygon ){
+                            MultiPolygon multi = (MultiPolygon) geom;
+                            Node mp = new Node();
+                            for(int i=0,n=multi.getNumGeometries();i<n;i++){
+                                mp.attachChild(toNodePoly(multi.getGeometryN(i), sf));
+                            }
+                            obj = mp;
+                        }else if(geom instanceof LineString ){
+                            obj = toNodeLine((LineString)geom, sf,isolineColor);
+                        }else if(geom instanceof MultiLineString ){
+                            obj = toNodeLine((MultiLineString)geom, sf,isolineColor);
+                        }else if(geom instanceof Point ){
+                            obj = toNodePoint((Point)geom, sf,pointColor);
+                        }else if(geom instanceof MultiPoint ){
+                            obj = toNodePoint((MultiPoint)geom, sf,pointColor);
+                        }
+
+                        if(obj != null){
+                            synchronized(meshes){
+                                meshes.add(obj);
+                                update = true;
+                            }
+                        }
+
+                    }
+                }finally{
+                    ite.close();
+                }
+
+            } catch (Exception ex) {
+                Logger.getLogger(FeatureLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+        }
+
+    }
+
 
 }

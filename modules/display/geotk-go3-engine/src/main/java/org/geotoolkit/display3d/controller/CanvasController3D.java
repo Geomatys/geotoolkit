@@ -11,6 +11,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public interface CanvasController3D extends CanvasController{
 
+    double[] getCameraPosition();
+
     void setCameraPosition(double x, double y, double z);
 
     void setCameraSpeed(double speed);
