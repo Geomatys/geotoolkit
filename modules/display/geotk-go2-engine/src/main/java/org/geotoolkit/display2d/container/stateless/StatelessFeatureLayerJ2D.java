@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d.container.stateless;
 
 
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +34,10 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display2d.canvas.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
@@ -44,6 +48,7 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 
@@ -59,6 +64,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -245,16 +251,19 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         final CoordinateReferenceSystem dataCRS      = features.getSchema().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
+        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
 
-        final StatelessProjectedFeature projectedFeature = new StatelessProjectedFeature(getCanvas(), objectiveCRS);
 
+        final StatefullContextParams params = new StatefullContextParams(layer);
+        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
+        params.objectiveToDisplay.setTransform(objtoDisp);
+        params.updateGeneralizationFactor(renderingContext, dataCRS);
         try {
-            final MathTransform dataToDisp = CRS.findMathTransform(dataCRS, displayCRS,true);
-            final MathTransform dataToObj = CRS.findMathTransform(dataCRS, objectiveCRS,true);
-            projectedFeature.initContext(dataToDisp, dataToObj);
+            params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
+            params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
+            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
         } catch (FactoryException ex) {
             monitor.exceptionOccured(ex, Level.SEVERE);
-            return;
         }
 
 
@@ -264,7 +273,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
             while(iterator.hasNext()){
                 if(monitor.stopRequested()) return;
                 final SimpleFeature feature = iterator.next();
-                projectedFeature.initFeature(feature);
+                projectedFeature.setFeature(feature);
 
                 for (final CachedRule rule : rules) {
                     final Filter ruleFilter = rule.getFilter();
@@ -355,25 +364,41 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         final CoordinateReferenceSystem dataCRS      = features.getSchema().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
+        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
 
-        // iterate and find the first graphic that hit the given point
-        final FeatureIterator<SimpleFeature> iterator = features.features();
-        final StatelessProjectedFeature graphic = new StatelessProjectedFeature(getCanvas(), getCanvas().getObjectiveCRS());
 
+        final StatefullContextParams params = new StatefullContextParams(layer);
+        final StatefullProjectedFeature graphic = new StatefullProjectedFeature(params);
+        params.objectiveToDisplay.setTransform(objtoDisp);
+        params.updateGeneralizationFactor(renderingContext, dataCRS);
         try {
-            MathTransform dataToDisp = CRS.findMathTransform(dataCRS, displayCRS,true);
-            MathTransform dataToObj = CRS.findMathTransform(dataCRS, objectiveCRS,true);
-            graphic.initContext(dataToDisp, dataToObj);
+            params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
+            params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
+            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
         } catch (FactoryException ex) {
             ex.printStackTrace();
             return graphics;
         }
 
 
+        // iterate and find the first graphic that hit the given point
+        final FeatureIterator<SimpleFeature> iterator = features.features();
+//        final StatelessProjectedFeature graphic = new StatelessProjectedFeature(getCanvas(), getCanvas().getObjectiveCRS());
+
+//        try {
+//            MathTransform dataToDisp = CRS.findMathTransform(dataCRS, displayCRS,true);
+//            MathTransform dataToObj = CRS.findMathTransform(dataCRS, objectiveCRS,true);
+//            graphic.initContext(dataToDisp, dataToObj);
+//        } catch (FactoryException ex) {
+//            ex.printStackTrace();
+//            return graphics;
+//        }
+
+
         try{
             while(iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
-                graphic.initFeature(feature);
+                graphic.setFeature(feature);
 
                 for (final CachedRule rule : rules) {
                     final Filter ruleFilter = rule.getFilter();

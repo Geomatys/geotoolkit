@@ -55,8 +55,8 @@ import org.geotoolkit.display2d.style.renderer.DefaultPointLabelDescriptor;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display.shape.XRectangle2D;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
