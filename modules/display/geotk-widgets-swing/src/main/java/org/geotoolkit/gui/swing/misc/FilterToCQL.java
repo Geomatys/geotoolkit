@@ -331,7 +331,7 @@ public class FilterToCQL implements FilterVisitor, ExpressionVisitor {
         char esc = filter.getEscape().charAt(0);
         char multi = filter.getWildCard().charAt(0);
         char single = filter.getSingleChar().charAt(0);
-        String pattern = LikeFilterImpl.convertToSQL92(esc, multi, single, filter.getLiteral());
+        String pattern = LikeFilterImpl.convertToSQL92(esc, multi, single, false, filter.getLiteral());
 
 
         Expression att = filter.getExpression();
