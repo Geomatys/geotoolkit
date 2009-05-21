@@ -127,6 +127,14 @@ public abstract class CommandLine implements Runnable {
     public static final int SQL_EXCEPTION_EXIT_CODE = 101;
 
     /**
+     * The code given to {@link System#exit} when the program failed because the
+     * system is in a state that does not allow the execution of the program.
+     *
+     * @since 3.0
+     */
+    public static final int ILLEGAL_STATE_EXIT_CODE = 190;
+
+    /**
      * The code given to {@link System#exit} when the program failed because of an
      * internal error.
      *

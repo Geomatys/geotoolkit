@@ -268,6 +268,11 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int REGISTERED_JAI_OPERATIONS = 41;
 
         /**
+         * Registered RMI services for {0}.
+         */
+        public static final int REGISTERED_RMI_SERVICES_$1 = 55;
+
+        /**
          * Select an image of "{0}" decimated to level {1} of {2}.
          */
         public static final int RESSAMPLING_RENDERED_IMAGE_$3 = 42;
