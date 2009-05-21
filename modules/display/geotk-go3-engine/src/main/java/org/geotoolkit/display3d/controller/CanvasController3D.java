@@ -19,4 +19,6 @@ public interface CanvasController3D extends CanvasController{
 
     CoordinateReferenceSystem getObjectiveCRS();
 
+    void addLocationSensitiveGraphic(LocationSensitiveGraphic graphic, double distance);
+
 }

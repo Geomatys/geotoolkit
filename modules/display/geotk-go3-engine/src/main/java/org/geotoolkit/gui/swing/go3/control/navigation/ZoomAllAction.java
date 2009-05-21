@@ -50,7 +50,9 @@ public class ZoomAllAction extends AbstractAction {
             Envelope env;
             try {
                 env = context.getBounds();
-                map.getController().setCameraPosition(env.getMedian(0),env.getMedian(1),5);
+//                map.getController().setCameraPosition(1,1,1);
+                System.out.println(env.getMedian(0)+" "+5 +" "+ env.getMedian(1));
+                map.getController().setCameraPosition(env.getMedian(0),5,env.getMedian(1));
             } catch (IOException ex) {
                 Logger.getLogger(ZoomAllAction.class.getName()).log(Level.SEVERE, null, ex);
             }

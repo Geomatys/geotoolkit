@@ -2,13 +2,14 @@
 package org.geotoolkit.display3d.canvas;
 
 import java.awt.Dimension;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
 import com.ardor3d.framework.Canvas;
+import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.awt.AwtCanvas;
 import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
 import com.ardor3d.input.InputState;
@@ -23,17 +24,14 @@ import com.ardor3d.input.logical.InputTrigger;
 import com.ardor3d.input.logical.KeyPressedCondition;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.input.logical.TriggerAction;
-import com.ardor3d.util.Timer;
 
-import java.lang.ref.WeakReference;
-import java.util.concurrent.CountDownLatch;
-import javax.swing.SwingUtilities;
 import org.geotoolkit.display3d.controller.A3DController;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.util.logging.Logging;
 
 import org.lwjgl.LWJGLException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -44,11 +42,10 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class A3DCanvas extends ReferencedCanvas{
 
+    private static final Logger LOGGER = Logging.getLogger(A3DCanvas.class);
+
     public static final String CAMERA_POSITION = "camera_position";
 
-    private final Timer timer = new Timer();
-
-//    private final FrameHandler refresher = new FrameHandler(new Timer());
     private final LogicalLayer logicalLayer = new LogicalLayer();
     private final A3DContainer container = new A3DContainer(this);
     private final A3DController controller;
@@ -67,75 +64,27 @@ public class A3DCanvas extends ReferencedCanvas{
         swingPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         swingPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-//        swingPane.addComponentListener(new ComponentAdapter() {
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//
-//                CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
-//
-//                if (canvasRenderer.getCamera() != null) {
-//                    // tell our camera the correct new size
-//                    canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
-//
-//                    // keep our aspect ratio the same.
-//                    canvasRenderer.getCamera().setFrustumPerspective(45.0,
-//                            canvas.getWidth() / (float) canvas.getHeight(), 1, 3000);
-//                }
-//            }
-//        });
-
-
-        SwingUtilities.invokeLater(new Runnable() {
-
+        swingPane.addComponentListener(new ComponentAdapter() {
             @Override
-            public void run() {
+            public void componentResized(ComponentEvent e) {
 
-                new Thread() {
+                CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
 
-                    private final WeakReference<AwtCanvas> ref = new WeakReference<AwtCanvas>(canvas);
+                if (canvasRenderer.getCamera() != null) {
+                    // tell our camera the correct new size
+                    canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
 
-                    @Override
-                    public void run() {
-
-                        while (true) {
-                            final AwtCanvas canvas = ref.get();
-                            if (canvas == null) {
-                                break;
-                            }
-                            synchronized (canvas) {
-                                if (canvas.isShowing()) {
-                                    System.out.println("top");
-//                            if(first){
-//                                try {
-//                                    sleep(5000);
-//                                } catch (InterruptedException ex) {
-//                                    Logger.getLogger(A3DCanvas.class.getName()).log(Level.SEVERE, null, ex);
-//                                }
-//
-//                                canvas.init();
-//                                first = false;
-//                            }
-
-                                    timer.update();
-                                    controller.update(timer);
-                                    final CountDownLatch latch = new CountDownLatch(1);
-                                    //                            canvas.repaint();
-                                    canvas.draw(latch);
-                                }
-
-
-                            }
-                        }
-                    }
-                }.start();
-
-
+                    // keep our aspect ratio the same.
+                    canvasRenderer.getCamera().setFrustumPerspective(45.0,
+                            canvas.getWidth() / (float) canvas.getHeight(), 1, 3000);
+                }
             }
         });
 
+        Thread updater = new A3DPaintingUpdater(canvas, controller);
+        updater.setPriority(Thread.MAX_PRIORITY);
+        updater.start();
     }
-
-    private boolean first= true;
 
     @Override
     public synchronized void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
