@@ -8,14 +8,17 @@ import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.state.MaterialState;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.util.geom.BufferUtils;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -37,7 +40,7 @@ public class DefaultPolygonFeatureMesh2 extends Mesh {
         final double minz = (Double)feature.getAttribute("Z_MIN")/5;
         final double maxz = (Double)feature.getAttribute("Z_MAX")/5;
 
-        ConformingDelaunayTriangulationBuilder builder = new ConformingDelaunayTriangulationBuilder();
+        final ConformingDelaunayTriangulationBuilder builder = new ConformingDelaunayTriangulationBuilder();
         builder.setSites(geom);
         builder.setConstraints(geom);
         builder.setTolerance(EPS);
@@ -47,19 +50,17 @@ public class DefaultPolygonFeatureMesh2 extends Mesh {
         
         final List<Coordinate[]> triangles = new ArrayList<Coordinate[]>();
         for(int i=0;i<num;i++){
-            Polygon poly = (Polygon) pieces.getGeometryN(i);
-//            triangles.add(poly.getCoordinates());
+            final Polygon poly = (Polygon) pieces.getGeometryN(i);
             
             if(geom.contains(poly)){
                 triangles.add(poly.getCoordinates());
             }
+
             //sometimes polygon arn't contain because of calculation number rounding
             if(geom.overlaps(poly)){
                 double a = poly.getArea();
                 double b = poly.intersection(geom).getArea();
-//                System.out.println(a + " <> " + b);
                 if(Math.abs(a - b) < EPS * Math.max(Math.abs(a), Math.abs(b))){
-//                    System.out.println("one case");
                     triangles.add(poly.getCoordinates());
                 }
             }

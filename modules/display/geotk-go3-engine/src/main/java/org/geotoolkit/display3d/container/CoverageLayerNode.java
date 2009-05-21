@@ -52,11 +52,11 @@ public class CoverageLayerNode extends A3DGraphic{
         super(canvas);
         this.layer = layer;
 
-        LoadingThread loader = new LoadingThread();
-        loader.setPriority(Thread.MIN_PRIORITY);
-        loader.start();
+//        LoadingThread loader = new LoadingThread();
+//        loader.setPriority(Thread.MIN_PRIORITY);
+//        loader.start();
 
-//        attachChild(buildQuad());
+        attachChild(buildQuad());
 
 //        UpdateThread.nodes.put(this, new double[3]);
     }
