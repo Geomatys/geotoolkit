@@ -63,7 +63,7 @@
  *   </ul>
  *   <p>Values must be localized descriptions to be printed when the
  *   {@linkplain org.geotoolkit.console.CommandLine#help() help} action is executed. See
- *   <a href="http://hg.geotoolkit.org/Geotoolkit/file/tip/modules/referencing/geotk-referencing/src/main/resources/org/geotoolkit/console/ReferencingCommands.properties">here</a>
+ *   <a href="http://hg.geotoolkit.org/geotoolkit/file/tip/modules/referencing/geotk-referencing/src/main/resources/org/geotoolkit/console/ReferencingCommands.properties">here</a>
  *   for an example of such properties file.
  * </p></li>
  * </ul>

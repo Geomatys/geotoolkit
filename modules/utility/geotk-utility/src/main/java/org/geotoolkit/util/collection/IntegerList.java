@@ -399,8 +399,28 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
         if (lower < 0 || upper >= size || lower > upper) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
         }
-        while (upper < size) {
-            setUnchecked(lower++, getUnchecked(upper++));
+        int lo = lower * bitCount;
+        int hi = upper * bitCount;
+        final int offset = (lo & OFFSET_MASK);
+        if (offset == (hi & OFFSET_MASK)) {
+            /*
+             * Optimisation for a special case which can be handled by a call
+             * to System.arracopy, which is much faster than our loop.
+             */
+            lo >>>= BASE_SHIFT;
+            hi >>>= BASE_SHIFT;
+            final long mask = (1L << offset) - 1;
+            final long save = values[lo] & mask;
+            System.arraycopy(values, hi, values, lo, length(size) - hi);
+            values[lo] = (values[lo] & ~mask) | save;
+        } else {
+            /*
+             * The general case, when the packed values after the range
+             * removal don't have the same offset than the original values.
+             */
+            while (upper < size) {
+                setUnchecked(lower++, getUnchecked(upper++));
+            }
         }
         this.size -= (upper - lower);
     }

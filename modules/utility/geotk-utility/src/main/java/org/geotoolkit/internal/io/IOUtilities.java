@@ -213,7 +213,7 @@ public final class IOUtilities {
 
     /**
      * Unzip the given stream to the given target directory.
-     * This convenience method does not log the progress.
+     * This convenience method does not report the progress.
      *
      * @param  in The input stream to unzip. The stream will be closed.
      * @param  target The destination directory.

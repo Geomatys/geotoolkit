@@ -82,8 +82,8 @@ public final class IntegerListTest {
         assertEquals(copy, clone);
         assertEquals(copy.remove(100), clone.remove(100));
         assertEquals(copy, clone);
-        copy .subList(200, 300).clear();
-        clone.subList(200, 300).clear();
+        copy .subList(128, 256).clear();
+        clone.subList(128, 256).clear();
         assertEquals(copy, clone);
     }
 
