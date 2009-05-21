@@ -34,8 +34,6 @@ public class DefaultPolygonFeatureMesh2 extends Mesh {
     public DefaultPolygonFeatureMesh2(SimpleFeature feature, Geometry geom) {
         this.feature = feature;
 
-//        final double minz = 0;
-//        final double maxz = ((Double)feature.getAttribute("Z_MAX"))/5 - ((Double)feature.getAttribute("Z_MIN"))/5;
 
         final double minz = (Double)feature.getAttribute("Z_MIN")/5;
         final double maxz = (Double)feature.getAttribute("Z_MAX")/5;
@@ -72,7 +70,6 @@ public class DefaultPolygonFeatureMesh2 extends Mesh {
         final Coordinate[] faces = hull.getCoordinates();
 
         num += 3*(faces.length-1)*2;
-
 
         final int[] indices = new int[3*num];
         _meshData.setVertexBuffer(BufferUtils.createVector3Buffer(3*num));
@@ -135,19 +132,16 @@ public class DefaultPolygonFeatureMesh2 extends Mesh {
 
         }
 
-        _meshData.setIndexBuffer(BufferUtils.createIntBuffer(indices));
+//        _meshData.setIndexBuffer(BufferUtils.createIntBuffer(indices));
 
         final MaterialState ms = new MaterialState();
         ms.setEnabled(true);
         ms.setDiffuse(new ColorRGBA(0.6f, 0.6f, 0.7f, .5f));
-//        ms.setSpecular(new ColorRGBA(0.8f, 0.7f, 0.7f, .6f));
-//        ms.setShininess(10);
         this.setRenderState(ms);
-
 
         setModelBound(new BoundingSphere());
         updateModelBound();
-    }
 
+    }
 
 }

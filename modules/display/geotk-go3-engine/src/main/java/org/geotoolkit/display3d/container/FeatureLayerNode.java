@@ -67,7 +67,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     }
 
     private Mesh toNodePoly(Geometry geom,SimpleFeature sf){
-        return new DefaultPolygonFeatureMesh2(sf, geom);
+        return new DefaultPolygonFeatureMesh3(sf, geom);
     }
 
     private Mesh toNodeLine(LineString geom,SimpleFeature sf,ColorRGBA color){
