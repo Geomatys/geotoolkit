@@ -18,7 +18,6 @@ import com.ardor3d.renderer.Camera;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.renderer.queue.RenderBucketType;
 import com.ardor3d.renderer.state.CullState;
-import com.ardor3d.renderer.state.FogState;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
@@ -55,8 +54,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
 
     private final A3DCanvas canvas;
     private final Node root = new Node("root");
-
-    private final double farPlane = 2000.0;
+    private final Node scene = new Node("scene");
     private final Skybox skybox = buildSkyBox();
 
     private ContextNode contextNode = null;
@@ -100,22 +98,22 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         cullFrontFace.setEnabled(true);
         cullFrontFace.setCullFace(CullState.Face.None);
         root.setRenderState(cullFrontFace);
-        root.setRenderState(buildFog());
+//        root.setRenderState(buildFog());
 
         // Skybox --------------------------------------------------------------
         root.attachChild(skybox);
+        root.attachChild(scene);
     }
 
     private double translateX = 0;
     private double translateY = 0;
-    private final double scaleX = 0.2;
-    private final double scaleY = 0.2;
+    private double scaling = 1f;
 
 
     public ReadOnlyVector3 correctLocation(Vector3 vect){
         Vector3 corrected = new Vector3(vect);
-        corrected.setX(corrected.getX()/scaleX +translateX);
-        corrected.setZ(corrected.getZ()/scaleY +translateY);
+        corrected.setX(corrected.getX()/scaling +translateX);
+        corrected.setZ(corrected.getZ()/scaling +translateY);
         return corrected;
     }
 
@@ -133,18 +131,18 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         contextNode = new ContextNode(canvas, context);
         try {
             Envelope env = context.getBounds();
-            contextNode.setScale(0.2f,1, 0.2f);
             translateX = env.getMedian(0);
             translateY = env.getMedian(1);
-            contextNode.setTranslation(-translateX*scaleX,0,-translateY*scaleY);
+            contextNode.setTranslation(-translateX*scaling,0,-translateY*scaling);
 
         } catch (IOException ex) {
             Logger.getLogger(A3DContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        contextNode.setScale(0.2f, 1, 0.2f);
-        root.attachChild(contextNode);
-//        // setup a target to LightNode, if you dont want terrain with light's effect remove it.
-//        skydomeUp.setTarget(contextNode);
+        scene.attachChild(contextNode);
+    }
+
+    public void setScaling(double scaling) {
+        this.scaling = scaling;
     }
 
     public Node getRoot() {
@@ -155,6 +153,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     @Override
     public boolean renderUnto(final Renderer renderer) {
 
+        
         renderer.draw(root);
 //        Debugger.drawNormals(root, renderer);
         return true;
@@ -193,10 +192,13 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
 
     @Override
     public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void update(Camera camera, double tpf, boolean b) {
+        if(scene.getScale().getX() != scaling){
+            scene.setScale(scaling);
+        }
+        
         skybox.setTranslation(camera.getLocation());
     }
 
@@ -269,17 +271,17 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     /**
      * Setup fog.
      */
-    private FogState buildFog() {
-        final FogState fogState = new FogState();
-        fogState.setDensity(1.0f);
-        fogState.setEnabled(true);
-        fogState.setColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
-        fogState.setEnd((float) farPlane);
-        fogState.setStart((float) farPlane / 10.0f);
-        fogState.setDensityFunction(FogState.DensityFunction.Linear);
-        fogState.setQuality(FogState.Quality.PerVertex);
-        return fogState;
-    }
+//    private FogState buildFog() {
+//        final FogState fogState = new FogState();
+//        fogState.setDensity(1.0f);
+//        fogState.setEnabled(true);
+//        fogState.setColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
+//        fogState.setEnd((float) farPlane);
+//        fogState.setStart((float) farPlane / 10.0f);
+//        fogState.setDensityFunction(FogState.DensityFunction.Linear);
+//        fogState.setQuality(FogState.Quality.PerVertex);
+//        return fogState;
+//    }
 
     /**
      * Builds the sky box.

@@ -76,7 +76,7 @@ public class A3DCanvas extends ReferencedCanvas{
 
                     // keep our aspect ratio the same.
                     canvasRenderer.getCamera().setFrustumPerspective(45.0,
-                            canvas.getWidth() / (float) canvas.getHeight(), 1, 3000);
+                            canvas.getWidth() / (float) canvas.getHeight(), 1, 30000);
                 }
             }
         });

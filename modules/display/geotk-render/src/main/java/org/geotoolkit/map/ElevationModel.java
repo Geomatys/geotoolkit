@@ -31,9 +31,11 @@ import org.opengis.geometry.DirectPosition;
  */
 public interface ElevationModel {
 
-    Expression getCorrection();
+    Expression getBaseOffset();
+    
+    Expression getBaseScale();
 
-    double getHeight(DirectPosition position, Unit<Length> lenght);
+    double getModelHeight(DirectPosition position, Unit<Length> lenght);
 
     CoverageReader getCoverageReader();
     

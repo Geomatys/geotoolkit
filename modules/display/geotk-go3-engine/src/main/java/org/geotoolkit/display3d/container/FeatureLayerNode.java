@@ -1,6 +1,7 @@
 
 package org.geotoolkit.display3d.container;
 
+import org.geotoolkit.display3d.geom.DefaultPolygonMesh;
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.type.ReadOnlyColorRGBA;
@@ -36,6 +37,7 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.controller.LocationSensitiveGraphic;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.map.ElevationModel;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
@@ -59,19 +61,10 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         super(canvas);
         this.layer = layer;
 
-//        LoadingThread loader = new LoadingThread();
-//        loader.setPriority(Thread.MIN_PRIORITY);
-//        loader.start();
-
         canvas.getController().addLocationSensitiveGraphic(this, 10);
     }
 
-    private Mesh toNodePoly(Geometry geom,SimpleFeature sf){
-        return new DefaultPolygonFeatureMesh3(sf, geom);
-    }
-
-    private Mesh toNodeLine(LineString geom,SimpleFeature sf,ColorRGBA color){
-        double z = ((Double)sf.getAttribute("ALTITUDE"))/5;
+    private Mesh toNodeLine(LineString geom, float z ,ColorRGBA color){
         
         Node n = new Node();
         
@@ -94,22 +87,19 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         return line;
     }
 
-    private Node toNodeLine(MultiLineString geom,SimpleFeature sf,ColorRGBA color){
+    private Node toNodeLine(MultiLineString geom, float z ,ColorRGBA color){
 
         Node node = new Node();
 
         for(int i=0,n=geom.getNumGeometries();i<n;i++){
             LineString ln = (LineString) geom.getGeometryN(i);
-            node.attachChild(toNodeLine(ln, sf,color));
+            node.attachChild(toNodeLine(ln, z,color));
         }
 
         return node;
     }
 
-    private Mesh toNodePoint(Point geom,SimpleFeature sf,ReadOnlyColorRGBA color){
-
-        double z = ((Double)sf.getAttribute("ALTITUDE"))/5;
-
+    private Mesh toNodePoint(Point geom,float z,ReadOnlyColorRGBA color){
         Tube cy = new Tube("cy", 4, 5, 10);
         cy.setTranslation(geom.getCoordinate().x, z,geom.getCoordinate().y);
         cy.setDefaultColor(color);
@@ -118,13 +108,13 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         return cy;
     }
 
-    private Node toNodePoint(MultiPoint geom,SimpleFeature sf,ReadOnlyColorRGBA color){
+    private Node toNodePoint(MultiPoint geom,float z,ReadOnlyColorRGBA color){
 
         Node node = new Node();
 
         for(int i=0,n=geom.getNumGeometries();i<n;i++){
             Point ln = (Point) geom.getGeometryN(i);
-            node.attachChild(toNodePoint(ln, sf,color));
+            node.attachChild(toNodePoint(ln, z,color));
         }
 
         return node;
@@ -176,12 +166,13 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
             GeometryFactory gf = new GeometryFactory();
 
+            final int extent = 5000;
             LinearRing ring = gf.createLinearRing(new Coordinate[]{
-               new Coordinate(cameraPosition.getX()-1000,cameraPosition.getZ()-1000),
-               new Coordinate(cameraPosition.getX()-1000,cameraPosition.getZ()+1000),
-               new Coordinate(cameraPosition.getX()+1000,cameraPosition.getZ()+1000),
-               new Coordinate(cameraPosition.getX()+1000,cameraPosition.getZ()-1000),
-               new Coordinate(cameraPosition.getX()-1000,cameraPosition.getZ()-1000),
+               new Coordinate(cameraPosition.getX()-extent,cameraPosition.getZ()-extent),
+               new Coordinate(cameraPosition.getX()-extent,cameraPosition.getZ()+extent),
+               new Coordinate(cameraPosition.getX()+extent,cameraPosition.getZ()+extent),
+               new Coordinate(cameraPosition.getX()+extent,cameraPosition.getZ()-extent),
+               new Coordinate(cameraPosition.getX()-extent,cameraPosition.getZ()-extent),
             });
 
             Geometry fgeom = gf.createPolygon(ring, new LinearRing[0]);
@@ -202,8 +193,12 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
             final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(f);
             final FeatureIterator<SimpleFeature> ite = collection.features();
 
-            ColorRGBA isolineColor = new ColorRGBA(0,0.5f,0,1);
-            ReadOnlyColorRGBA pointColor = ColorRGBA.RED;
+            final ColorRGBA isolineColor = new ColorRGBA(0,0.5f,0,1);
+            final ReadOnlyColorRGBA pointColor = ColorRGBA.RED;
+
+            final ElevationModel model = layer.getElevationModel();
+
+
 
             try{
                 while(ite.hasNext()){
@@ -238,26 +233,38 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                         continue;
                     }
 
+
+                    final float minz;
+                    final float maxz;
+
+                    if(model == null){
+                        minz = 0;
+                        maxz = 1;
+                    }else{
+                        minz = model.getBaseOffset().evaluate(sf, Float.class);
+                        maxz = minz+1;
+                    }
+
                     //feature is not in cache or has been removed, load it
                     final Geometry geom = dataToObjectiveTransformer.transform((Geometry) sf.getDefaultGeometry());
 
                     if(geom instanceof Polygon){
-                        obj = toNodePoly(geom, sf);
+                        obj = new DefaultPolygonMesh((Polygon)geom,0,1);
                     }else if(geom instanceof MultiPolygon ){
                         MultiPolygon multi = (MultiPolygon) geom;
                         Node mp = new Node();
                         for(int i=0,n=multi.getNumGeometries();i<n;i++){
-                            mp.attachChild(toNodePoly(multi.getGeometryN(i), sf));
+                            mp.attachChild(new DefaultPolygonMesh((Polygon) multi.getGeometryN(i),minz,maxz));
                         }
                         obj = mp;
                     }else if(geom instanceof LineString ){
-                        obj = toNodeLine((LineString)geom, sf,isolineColor);
+                        obj = toNodeLine((LineString)geom, minz,isolineColor);
                     }else if(geom instanceof MultiLineString ){
-                        obj = toNodeLine((MultiLineString)geom, sf,isolineColor);
+                        obj = toNodeLine((MultiLineString)geom, minz,isolineColor);
                     }else if(geom instanceof Point ){
-                        obj = toNodePoint((Point)geom, sf,pointColor);
+                        obj = toNodePoint((Point)geom, minz,pointColor);
                     }else if(geom instanceof MultiPoint ){
-                        obj = toNodePoint((MultiPoint)geom, sf,pointColor);
+                        obj = toNodePoint((MultiPoint)geom, minz,pointColor);
                     }
 
                     if(obj != null){

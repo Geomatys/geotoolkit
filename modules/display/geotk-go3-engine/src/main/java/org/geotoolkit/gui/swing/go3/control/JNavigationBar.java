@@ -18,6 +18,8 @@ package org.geotoolkit.gui.swing.go3.control;
 import javax.swing.JToolBar;
 
 import org.geotoolkit.display3d.canvas.A3DCanvas;
+import org.geotoolkit.gui.swing.go3.control.navigation.CameraSpeedSlider;
+import org.geotoolkit.gui.swing.go3.control.navigation.SceneScalingSlider;
 import org.geotoolkit.gui.swing.go3.control.navigation.ZoomAllAction;
 
 /**
@@ -29,6 +31,8 @@ import org.geotoolkit.gui.swing.go3.control.navigation.ZoomAllAction;
 public class JNavigationBar extends JToolBar {
 
     private final ZoomAllAction actionZoomAll = new ZoomAllAction();
+    private final CameraSpeedSlider cameraSpeed = new CameraSpeedSlider();
+    private final SceneScalingSlider scaling = new SceneScalingSlider();
 
     private A3DCanvas map = null;
 
@@ -45,6 +49,8 @@ public class JNavigationBar extends JToolBar {
      */
     public JNavigationBar(A3DCanvas pane) {
         add(actionZoomAll);
+        add(cameraSpeed);
+        add(scaling);
         setMap(pane);
     }
 
@@ -55,5 +61,7 @@ public class JNavigationBar extends JToolBar {
     public void setMap(A3DCanvas map2d) {
         map = map2d;
         actionZoomAll.setMap(map);
+        cameraSpeed.setMap(map);
+        scaling.setMap(map);
     }
 }

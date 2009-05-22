@@ -1,20 +1,17 @@
 
 
-package org.geotoolkit.display3d.container;
+package org.geotoolkit.display3d.geom;
 
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.renderer.IndexMode;
-import com.ardor3d.renderer.NormalsMode;
 import com.ardor3d.renderer.state.MaterialState;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.util.geom.BufferUtils;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
@@ -23,26 +20,17 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
-import org.opengis.feature.simple.SimpleFeature;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class DefaultPolygonFeatureMesh3 extends Mesh {
+public class DefaultPolygonMesh extends Mesh {
 
     private static final double EPS = 1E-3;
 
-    private final SimpleFeature feature;
-
-    public DefaultPolygonFeatureMesh3(SimpleFeature feature, Geometry geom) {
-        this.feature = feature;
-
-
-        final float minz = ((Number)feature.getAttribute("Z_MIN")).floatValue()/5;
-        final float maxz = ((Number)feature.getAttribute("Z_MAX")).floatValue()/5;
+    public DefaultPolygonMesh(Polygon geom, float minz, float maxz) {
 
         final ConformingDelaunayTriangulationBuilder builder = new ConformingDelaunayTriangulationBuilder();
         builder.setSites(geom);
@@ -75,14 +63,13 @@ public class DefaultPolygonFeatureMesh3 extends Mesh {
         final int nbTriangleVertex = vertexes.size();
 
         //find the facades
-        final Polygon hull = (Polygon) geom;
         final List<Coordinate[]> rings = new ArrayList<Coordinate[]>();
-        final Coordinate[] exteriorRing = hull.getExteriorRing().getCoordinates();
+        final Coordinate[] exteriorRing = geom.getExteriorRing().getCoordinates();
         rings.add(exteriorRing);
         int nbQuadVertex = 4*(exteriorRing.length-1) ;
 
-        for(int i=0,n=hull.getNumInteriorRing();i<n;i++){
-            final Coordinate[] hole = hull.getInteriorRingN(i).getCoordinates();
+        for(int i=0,n=geom.getNumInteriorRing();i<n;i++){
+            final Coordinate[] hole = geom.getInteriorRingN(i).getCoordinates();
             nbQuadVertex += 4*(hole.length-1);
             rings.add(hole);
         }

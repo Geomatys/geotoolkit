@@ -7,10 +7,12 @@ import com.ardor3d.framework.awt.AwtCanvas;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Camera;
+import com.ardor3d.util.Constants;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
 
+import com.ardor3d.util.stat.StatCollector;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 
 import org.opengis.geometry.DirectPosition;
@@ -91,10 +93,10 @@ public class A3DController implements Updater,CanvasController3D {
     public void update(final ReadOnlyTimer timer) {
         double tpf = timer.getTimePerFrame();
 
-//        /** update stats, if enabled. */
-//        if (Constants.stats) {
-//            StatCollector.update();
-//        }
+        /** update stats, if enabled. */
+        if (Constants.stats) {
+            StatCollector.update();
+        }
 
         //ensure we dont have big movements
         if(tpf > 0.5) tpf = 0.5d;

@@ -121,54 +121,18 @@ public class ContextBuilder {
 //            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage4");
 //            context.layers().add(layer);
 
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createNewLineStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("communes", ""));
-//            layer.setName("communes");
-//            context.layers().add(layer);
-
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createNewLineStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("isoligne", ""));
-//            layer.setName("isoligne");
-//            layer.setVisible(true);
-//            context.layers().add(layer);
-
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/RESFER_TRONCON_VOIE_FERREE.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createRealTrainStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("chemin de fer", ""));
-//            layer.setName("chemin de fer");
-//            layer.setVisible(true);
-//            context.layers().add(layer);
-//
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/RESROU_TRONCON_ROUTE.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createRealRoadStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("routes", ""));
-//            layer.setName("routes");
-//            layer.setVisible(true);
-//            context.layers().add(layer);
-
+            params = new HashMap<String,Object>();
+            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
+            params.put( "url", shape.toURI().toURL() );
+            store = DataStoreFinder.getDataStore(params);
+            fs = store.getFeatureSource(store.getTypeNames()[0]);
+            style = createNewLineStyle();
+            layer = MapBuilder.createFeatureLayer(fs, style);
+            layer.setDescription(SF.description("isoligne", ""));
+            layer.setName("isoligne");
+            layer.setVisible(true);
+            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
+            context.layers().add(layer);
 
             params = new HashMap<String,Object>();
             shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
@@ -180,54 +144,21 @@ public class ContextBuilder {
             layer.setDescription(SF.description("batiments", ""));
             layer.setName("batiments");
             layer.setVisible(true);
+            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("Z_MIN"), FF.literal(0)));
             context.layers().add(layer);
 
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/MER.shp");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createRealWaterStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("mer", ""));
-//            layer.setName("mer");
-//            layer.setVisible(true);
-//            context.layers().add(layer);
-//
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_LIGNE_ELEC.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createElecLineStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("ligne electrique", ""));
-//            layer.setName("ligne electrique");
-//            layer.setVisible(true);
-//            context.layers().add(layer);
-
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_PYLONE.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createLabeledPointStyle();
-//            layer = MapBuilder.createFeatureLayer(fs, style);
-//            layer.setDescription(SF.description("pylone", ""));
-//            layer.setName("pylone");
-//            layer.setVisible(true);
-//            context.layers().add(layer);
-
-//            params = new HashMap<String,Object>();
-//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/TOPON_TOPONYME.SHP");
-//            params.put( "url", shape.toURI().toURL() );
-//            store = DataStoreFinder.getDataStore(params);
-//            fs = store.getFeatureSource(store.getTypeNames()[0]);
-//            style = createRealPointStyle();
-//            layer = LAYER_BUILDER.create(fs, style);
-//            layer.setDescription(STYLE_FACTORY.description("points", ""));
-//            context.layers().add(layer);
-
+            params = new HashMap<String,Object>();
+            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_PYLONE.SHP");
+            params.put( "url", shape.toURI().toURL() );
+            store = DataStoreFinder.getDataStore(params);
+            fs = store.getFeatureSource(store.getTypeNames()[0]);
+            style = createLabeledPointStyle();
+            layer = MapBuilder.createFeatureLayer(fs, style);
+            layer.setDescription(SF.description("pylone", ""));
+            layer.setName("pylone");
+            layer.setVisible(true);
+            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
+            context.layers().add(layer);
 
             context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
             context.setAreaOfInterest(context.getBounds());
