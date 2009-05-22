@@ -2,7 +2,6 @@
 package org.geotoolkit.display3d.container;
 
 import com.ardor3d.annotation.MainThread;
-import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.framework.Scene;
 import com.ardor3d.image.Image;
 import com.ardor3d.image.Texture;
@@ -10,7 +9,6 @@ import com.ardor3d.image.util.AWTImageLoader;
 import com.ardor3d.intersection.PickResults;
 import com.ardor3d.light.DirectionalLight;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.math.Matrix3;
 import com.ardor3d.math.Ray3;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.math.type.ReadOnlyVector3;
@@ -22,10 +20,8 @@ import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.Spatial;
 import com.ardor3d.scenegraph.Spatial.LightCombineMode;
 import com.ardor3d.scenegraph.extension.Skybox;
-import com.ardor3d.scenegraph.shape.Quad;
 import com.ardor3d.util.TextureManager;
 
 import java.io.IOException;
@@ -66,7 +62,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         // Zbuffer -------------------------------------------------------------
         final ZBufferState buf = new ZBufferState();
         buf.setEnabled(true);
-        buf.setFunction(ZBufferState.TestFunction.LessThanOrEqualTo);
+        buf.setFunction(ZBufferState.TestFunction.LessThan);
         root.setRenderState(buf);
 
         // Lights --------------------------------------------------------------
@@ -152,8 +148,6 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     @MainThread
     @Override
     public boolean renderUnto(final Renderer renderer) {
-
-        
         renderer.draw(root);
 //        Debugger.drawNormals(root, renderer);
         return true;
@@ -202,71 +196,6 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         skybox.setTranslation(camera.getLocation());
     }
 
-    private Node buildPlan(final Envelope env){
-        final Node plan = new Node("plan");
-        plan.setLightCombineMode(LightCombineMode.Off);
-
-        final float over = 0.1f;
-        final float width = 1.2f;
-        final float minx = (float) env.getMinimum(0);
-        final float maxx = (float) env.getMaximum(0);
-        final float miny = (float) env.getMinimum(1);
-        final float maxy = (float) env.getMaximum(1);
-
-        final Quad back = new Quad();
-        back.initialize(env.getSpan(0), env.getSpan(1));
-        back.setDefaultColor(new ColorRGBA(1, 1, 1, 0.6f));
-        back.setTranslation(env.getMedian(0), env.getMedian(1), 0);
-        back.setModelBound(new BoundingBox());
-        back.updateModelBound();
-
-//        final BlendState blend = new BlendState();
-//        blend.setBlendEnabled(true);
-//        blend.setSourceFunction(SourceFunction.SourceAlpha);
-//        blend.setDestinationFunction(DestinationFunction.OneMinusSourceAlpha);
-//
-//        final int nbGrid = 50;
-//        float step = (float) (env.getSpan(0) / nbGrid);
-
-//        for(int i=0;i<=nbGrid;i++){
-//            final FloatBuffer verts = BufferUtils.createVector3Buffer(2);
-//            verts.put(minx +step*i).put(miny).put(over);
-//            verts.put(minx +step*i).put(maxy).put(over);
-//            Line line = new Line("Lines", verts, null, null, null);
-//            line.getMeshData().setIndexMode(IndexMode.LineStrip);
-//            line.setLineWidth(width);
-//            line.setDefaultColor(ColorRGBA.DARK_GRAY);
-//            line.setAntialiased(true);
-//            line.setModelBound(new BoundingBox());
-//            line.updateModelBound();
-//            plan.attachChild(line);
-//        }
-//
-//        step = (float) (env.getSpan(1) / nbGrid);
-//
-//        for(int i=0;i<=nbGrid;i++){
-//            final FloatBuffer verts = BufferUtils.createVector3Buffer(2);
-//            verts.put(miny +step*i).put(minx).put(over);
-//            verts.put(miny +step*i).put(maxx).put(over);
-//            Line line = new Line("Lines", verts, null, null, null);
-//            line.getMeshData().setIndexMode(IndexMode.LineStrip);
-//            line.setLineWidth(width);
-//            line.setDefaultColor(ColorRGBA.DARK_GRAY);
-//            line.setAntialiased(true);
-//            line.setModelBound(new BoundingBox());
-//            line.updateModelBound();
-//            plan.attachChild(line);
-//        }
-
-
-        plan.attachChild(back);
-//        plan.setRenderState(blend);
-        plan.setCullHint(Spatial.CullHint.Never);
-
-        plan.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
-
-        return plan;
-    }
 
     /**
      * Setup fog.
@@ -289,7 +218,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     private static Skybox buildSkyBox() {
         Skybox skybox = new Skybox("skybox", 10,10,10);
 
-        final String name = "default";
+        final String name = "mystic";
         final String dir = "/images/skybox/"+name+"/";
 
         final Texture north = TextureManager.load(

@@ -16,9 +16,7 @@ import com.ardor3d.scenegraph.shape.Tube;
 import com.ardor3d.util.geom.BufferUtils;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -37,6 +35,7 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.controller.LocationSensitiveGraphic;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.map.ElevationModel;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -55,19 +54,20 @@ import org.opengis.filter.FilterFactory2;
  */
 public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGraphic{
 
+    private static final FilterFactory2 FF = new DefaultFilterFactory2();
+    private static final int searchExtent = 50000;
+
     private final FeatureMapLayer layer;
 
     public FeatureLayerNode(A3DCanvas canvas, FeatureMapLayer layer) {
         super(canvas);
         this.layer = layer;
 
-        canvas.getController().addLocationSensitiveGraphic(this, 10);
+        canvas.getController().addLocationSensitiveGraphic(this, 20);
     }
 
     private Mesh toNodeLine(LineString geom, float z ,ColorRGBA color){
-        
-        Node n = new Node();
-        
+                
         final Coordinate[] coords = geom.getCoordinates();
         final FloatBuffer verts = BufferUtils.createVector3Buffer((coords.length));
         
@@ -164,31 +164,12 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                     CRS.findMathTransform(source.getSchema().getCoordinateReferenceSystem(),
                     canvas.getController().getObjectiveCRS(),true));
 
-            GeometryFactory gf = new GeometryFactory();
 
-            final int extent = 5000;
-            LinearRing ring = gf.createLinearRing(new Coordinate[]{
-               new Coordinate(cameraPosition.getX()-extent,cameraPosition.getZ()-extent),
-               new Coordinate(cameraPosition.getX()-extent,cameraPosition.getZ()+extent),
-               new Coordinate(cameraPosition.getX()+extent,cameraPosition.getZ()+extent),
-               new Coordinate(cameraPosition.getX()+extent,cameraPosition.getZ()-extent),
-               new Coordinate(cameraPosition.getX()-extent,cameraPosition.getZ()-extent),
-            });
+            final DefaultBoundingBox bb = new DefaultBoundingBox(layer.getBounds());
+            bb.setRange(0, cameraPosition.getX()-searchExtent, cameraPosition.getX()+searchExtent);
+            bb.setRange(1, cameraPosition.getZ()-searchExtent, cameraPosition.getZ()+searchExtent);
 
-            Geometry fgeom = gf.createPolygon(ring, new LinearRing[0]);
-
-            FilterFactory2 ff = new DefaultFilterFactory2();
-            Filter f = ff.intersects(
-                    ff.property(source.getSchema().getGeometryDescriptor().getLocalName()),
-                    ff.literal(fgeom));
-
-//                f = ff.bbox(source.getSchema().getGeometryDescriptor().getLocalName(),
-//                        cameraPosition.getX()-1000,
-//                        cameraPosition.getZ()-1000,
-//                        cameraPosition.getX()+1000,
-//                        cameraPosition.getZ()+1000,
-//                        CRS.lookupIdentifier(layer.getBounds().getCoordinateReferenceSystem(),true));
-
+            final Filter f = FF.bbox(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),bb);
 
             final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(f);
             final FeatureIterator<SimpleFeature> ite = collection.features();
@@ -235,14 +216,17 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
 
                     final float minz;
-                    final float maxz;
+                    float maxz;
 
                     if(model == null){
                         minz = 0;
                         maxz = 1;
                     }else{
                         minz = model.getBaseOffset().evaluate(sf, Float.class);
-                        maxz = minz+1;
+                        maxz = minz +1;
+                        if(sf.getAttribute("Z_MAX") != null){
+                            maxz = Float.valueOf(sf.getAttribute("Z_MAX").toString());
+                        }
                     }
 
                     //feature is not in cache or has been removed, load it

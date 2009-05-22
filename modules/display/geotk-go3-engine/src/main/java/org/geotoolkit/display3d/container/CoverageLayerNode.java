@@ -72,7 +72,7 @@ public class CoverageLayerNode extends A3DGraphic{
 
         final Quad back = new Quad();
         back.initialize(env.getSpan(0), env.getSpan(1));
-        back.setTranslation(env.getMinimum(0) + env.getSpan(0)/2, -0.1, env.getMinimum(1) + env.getSpan(1)/2);
+        back.setTranslation(env.getMinimum(0) + env.getSpan(0)/2, 0, env.getMinimum(1) + env.getSpan(1)/2);
         back.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
         back.setModelBound(new BoundingBox());
         back.updateModelBound();
