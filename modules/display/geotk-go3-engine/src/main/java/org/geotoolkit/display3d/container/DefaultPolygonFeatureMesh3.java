@@ -20,8 +20,10 @@ import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -65,51 +67,59 @@ public class DefaultPolygonFeatureMesh3 extends Mesh {
             }
         }
 
+        //compress triangulation
+        final List<Integer> indexes = new ArrayList<Integer>();
+        final List<Coordinate> vertexes = new ArrayList<Coordinate>();
+        compress(triangles, vertexes, indexes);
+
         final Geometry hull = geom;
         final Coordinate[] faces = hull.getCoordinates();
-        final int nbTriangleVertex = 3*triangles.size();
-        final int nbQuadVertex = 2*faces.length;
+        final int nbTriangleVertex = vertexes.size();
+        final int nbQuadVertex = 4*(faces.length-1);
 
         final FloatBuffer vertexBuffer  = BufferUtils.createVector3Buffer(nbTriangleVertex+nbQuadVertex);
         final FloatBuffer normalBuffer  = BufferUtils.createVector3Buffer(nbTriangleVertex+nbQuadVertex);
-        final IntBuffer indexBuffer     = BufferUtils.createIntBuffer(nbTriangleVertex+nbQuadVertex);
-
-        int index = 0;
-        //make the top face
-        for(Coordinate[] triangle : triangles){
-            vertexBuffer.put((float)triangle[0].x).put(maxz).put((float)triangle[0].y);
-            vertexBuffer.put((float)triangle[1].x).put(maxz).put((float)triangle[1].y);
-            vertexBuffer.put((float)triangle[2].x).put(maxz).put((float)triangle[2].y);
-            normalBuffer.put(0).put(1).put(0);
-            normalBuffer.put(0).put(1).put(0);
-            normalBuffer.put(0).put(1).put(0);
-            indexBuffer.put(index++).put(index++).put(index++);
-        }
+        final IntBuffer indexBuffer     = BufferUtils.createIntBuffer(indexes.size()+nbQuadVertex);
 
         //make the facades
-        Coordinate previous = faces[faces.length-1];
-        for(Coordinate coord : faces){
+        int index = 0;
+        for(int i=0,n=faces.length-1;i<n;i++){
+            Coordinate previous = faces[i];
+            Coordinate coord = faces[i+1];
 
             double a = Math.PI/2;
             double x = previous.x - coord.x;
             double y = previous.y - coord.y;
             float nx = (float) (x * Math.cos(a) - y * Math.sin(a));
             float ny = (float) (x * Math.sin(a) + y * Math.cos(a));
-            previous = coord;
 
-            vertexBuffer.put((float)coord.x).put(maxz).put((float)coord.y);
+            vertexBuffer.put((float)previous.x).put(maxz).put((float)previous.y);
+            vertexBuffer.put((float)previous.x).put(minz).put((float)previous.y);
             vertexBuffer.put((float)coord.x).put(minz).put((float)coord.y);
+            vertexBuffer.put((float)coord.x).put(maxz).put((float)coord.y);
+            normalBuffer.put(nx).put(0).put(ny);
+            normalBuffer.put(nx).put(0).put(ny);
             normalBuffer.put(nx).put(0).put(ny);
             normalBuffer.put(nx).put(0).put(ny);
             indexBuffer.put(index++).put(index++);
+            indexBuffer.put(index++).put(index++);
         }
+
+        //make the top face
+        for(Coordinate c : vertexes){
+            vertexBuffer.put((float)c.x).put(maxz).put((float)c.y);
+            normalBuffer.put(0).put(1).put(0);
+        }
+        for(Integer i : indexes){
+            indexBuffer.put(index+i);
+        }
+
 
         _meshData.setVertexBuffer(vertexBuffer);
         _meshData.setNormalBuffer(normalBuffer);
         _meshData.setIndexBuffer(indexBuffer);
-        _meshData.setIndexLengths(  new int[] {nbTriangleVertex, nbQuadVertex} );
-        _meshData.setIndexModes(    new IndexMode[] { IndexMode.Triangles, IndexMode.QuadStrip } );
-
+        _meshData.setIndexLengths(  new int[] {nbQuadVertex, indexes.size() } );
+        _meshData.setIndexModes(    new IndexMode[] {IndexMode.Quads, IndexMode.Triangles } );
 
         final MaterialState ms = new MaterialState();
         ms.setEnabled(true);
@@ -119,5 +129,29 @@ public class DefaultPolygonFeatureMesh3 extends Mesh {
         setModelBound(new BoundingSphere());
         updateModelBound();
     }
+
+    private static void compress(List<Coordinate[]> coords, List<Coordinate> vertexes, List<Integer> indexes){
+        Map<Coordinate,Integer> lst = new HashMap<Coordinate,Integer>();
+        
+        int inc = -1;
+
+        for(Coordinate[] coord : coords){
+            for(int i=0;i<3;i++){
+                //use only 3 first coords, the 4th one is the same as the first one
+                Coordinate c = coord[i];
+                Integer index = lst.get(c);
+                if(index != null){
+                    indexes.add(index);
+                }else{
+                    inc++;
+                    vertexes.add(c);
+                    indexes.add(inc);
+                    lst.put(c, inc);
+                }
+            }
+        }
+
+    }
+
 
 }
