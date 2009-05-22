@@ -14,6 +14,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
@@ -71,11 +72,21 @@ public class DefaultPolygonFeatureMesh3 extends Mesh {
         final List<Integer> indexes = new ArrayList<Integer>();
         final List<Coordinate> vertexes = new ArrayList<Coordinate>();
         compress(triangles, vertexes, indexes);
-
-        final Geometry hull = geom;
-        final Coordinate[] faces = hull.getCoordinates();
         final int nbTriangleVertex = vertexes.size();
-        final int nbQuadVertex = 4*(faces.length-1);
+
+        //find the facades
+        final Polygon hull = (Polygon) geom;
+        final List<Coordinate[]> rings = new ArrayList<Coordinate[]>();
+        final Coordinate[] exteriorRing = hull.getExteriorRing().getCoordinates();
+        rings.add(exteriorRing);
+        int nbQuadVertex = 4*(exteriorRing.length-1) ;
+
+        for(int i=0,n=hull.getNumInteriorRing();i<n;i++){
+            final Coordinate[] hole = hull.getInteriorRingN(i).getCoordinates();
+            nbQuadVertex += 4*(hole.length-1);
+            rings.add(hole);
+        }
+
 
         final FloatBuffer vertexBuffer  = BufferUtils.createVector3Buffer(nbTriangleVertex+nbQuadVertex);
         final FloatBuffer normalBuffer  = BufferUtils.createVector3Buffer(nbTriangleVertex+nbQuadVertex);
@@ -83,26 +94,28 @@ public class DefaultPolygonFeatureMesh3 extends Mesh {
 
         //make the facades
         int index = 0;
-        for(int i=0,n=faces.length-1;i<n;i++){
-            Coordinate previous = faces[i];
-            Coordinate coord = faces[i+1];
+        for(Coordinate[] faces : rings){
+            for(int i=0,n=faces.length-1;i<n;i++){
+                Coordinate previous = faces[i];
+                Coordinate coord = faces[i+1];
 
-            double a = Math.PI/2;
-            double x = previous.x - coord.x;
-            double y = previous.y - coord.y;
-            float nx = (float) (x * Math.cos(a) - y * Math.sin(a));
-            float ny = (float) (x * Math.sin(a) + y * Math.cos(a));
+                double a = Math.PI/2;
+                double x = previous.x - coord.x;
+                double y = previous.y - coord.y;
+                float nx = (float) (x * Math.cos(a) - y * Math.sin(a));
+                float ny = (float) (x * Math.sin(a) + y * Math.cos(a));
 
-            vertexBuffer.put((float)previous.x).put(maxz).put((float)previous.y);
-            vertexBuffer.put((float)previous.x).put(minz).put((float)previous.y);
-            vertexBuffer.put((float)coord.x).put(minz).put((float)coord.y);
-            vertexBuffer.put((float)coord.x).put(maxz).put((float)coord.y);
-            normalBuffer.put(nx).put(0).put(ny);
-            normalBuffer.put(nx).put(0).put(ny);
-            normalBuffer.put(nx).put(0).put(ny);
-            normalBuffer.put(nx).put(0).put(ny);
-            indexBuffer.put(index++).put(index++);
-            indexBuffer.put(index++).put(index++);
+                vertexBuffer.put((float)previous.x).put(maxz).put((float)previous.y);
+                vertexBuffer.put((float)previous.x).put(minz).put((float)previous.y);
+                vertexBuffer.put((float)coord.x).put(minz).put((float)coord.y);
+                vertexBuffer.put((float)coord.x).put(maxz).put((float)coord.y);
+                normalBuffer.put(nx).put(0).put(ny);
+                normalBuffer.put(nx).put(0).put(ny);
+                normalBuffer.put(nx).put(0).put(ny);
+                normalBuffer.put(nx).put(0).put(ny);
+                indexBuffer.put(index++).put(index++);
+                indexBuffer.put(index++).put(index++);
+            }
         }
 
         //make the top face
@@ -152,6 +165,5 @@ public class DefaultPolygonFeatureMesh3 extends Mesh {
         }
 
     }
-
 
 }
