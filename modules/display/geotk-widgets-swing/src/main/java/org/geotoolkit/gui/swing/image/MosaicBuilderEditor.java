@@ -100,9 +100,9 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
     /**
      * The mosaic builder to configure. This is the instance given to the constructor.
      * This builder may not be synchronized with the content of this widget - the
-     * synchronization happen only when {@link #getTileManager()} is invoked.
+     * synchronization happen only when {@link #getMosaicBuilder()} is invoked.
      */
-    protected final MosaicBuilder builder;
+    private final MosaicBuilder builder;
 
     /**
      * The table model for the subsampling selection.
@@ -568,16 +568,42 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
     }
 
     /**
-     * Configures the {@linkplain #builder builder} with the informations provided by the user
-     * and create the mosaic. This method is automatically invoked when a graph is about to be
-     * plot. It can also be invoked directly by the user, but may block if the builder is
-     * currently in use by an other thread.
+     * Configures the {@code MosaicBuilder} with the informations provided by the user
+     * and return it.
+     *
+     * {@note Use this method when the widget state will not change anymore. If the user is still
+     * editing the values in the widget, then invoking <code>getTileManager()</code> is preferable
+     * than <code>getTileBuilder().getTileManager()</code> for synchronisation reasons.}
      *
      * @return The configured mosaic builder.
      * @throws IOException if an I/O operation was required and failed.
      */
+    public MosaicBuilder getMosaicBuilder() throws IOException {
+        getTileManager(false);
+        return builder;
+    }
+
+    /**
+     * Configures the {@code MosaicBuilder} with the informations provided by the user
+     * and create the mosaic. This method is automatically invoked when a graph is about to be
+     * plot. It can also be invoked directly by the user, but may block if the builder is
+     * currently in use by an other thread.
+     *
+     * @return The selected tiles as a {@code TileManager} object.
+     * @throws IOException if an I/O operation was required and failed.
+     */
     @Override
     public TileManager getTileManager() throws IOException {
+        return getTileManager(true);
+    }
+
+    /**
+     * Implementation of {@link #getTileManager} when the last step (the invocation of
+     * {@link MosaicBuilder#createTileManager()}) is disabled if {@code run} is {@code false}.
+     * This method exists because we want {@code builder.createTileManager()} to be invoked in
+     * the same synchronization block than the one that configured the builer.
+     */
+    private TileManager getTileManager(final boolean run) throws IOException {
         final File directory;
         final Dimension tileSize;
         final Dimension[] subsamplings;
@@ -597,7 +623,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
             builder.setTileSize(tileSize);
             builder.setSubsamplings(subsamplings);
             builder.setTileReaderSpi(tileFormat.getReader());
-            return builder.createTileManager();
+            return run ? builder.createTileManager() : null;
         }
     }
 

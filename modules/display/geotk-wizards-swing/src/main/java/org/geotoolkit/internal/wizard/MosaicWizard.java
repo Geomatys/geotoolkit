@@ -23,6 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -57,9 +58,9 @@ public final class MosaicWizard extends WizardPanelProvider {
     private MosaicChooser chooser;
 
     /**
-     * The mosaic to create.
+     * The editor for the layout of the mosaic to create.
      */
-    private TileManager mosaic;
+    private MosaicBuilderEditor creator;
 
     /**
      * {@code true} if the input mosaic changed.  This is set to {@code true} if the
@@ -133,7 +134,6 @@ public final class MosaicWizard extends WizardPanelProvider {
 
                 /** Invoked when the values in the form changed. */
                 @Override protected void plotCostEstimation(final long delay) {
-                    mosaic = null; // Lets GC do its work.
                     controller.setProblem("Calculation in progress...");
                     super.plotCostEstimation(delay);
                 }
@@ -141,23 +141,22 @@ public final class MosaicWizard extends WizardPanelProvider {
                 /** Invoked on success. */
                 @Override public void done(final TileManager output) {
                     super.done(output);
-                    mosaic = output;
                     controller.setProblem(null);
                 }
 
                 /** Invoked on failure - can't move to the next step. */
                 @Override public void failed(final Throwable exception) {
                     super.failed(exception);
-                    mosaic = null; // Lets GC do its work.
                     controller.setProblem(exception.getLocalizedMessage());
                 }
             }
             try {
-                component = new Editor(chooser.getSelectedTiles());
+                creator = new Editor(chooser.getSelectedTiles());
             } catch (IOException exception) {
-                component = new Editor();
+                creator = new Editor();
                 controller.setProblem(exception.toString());
             }
+            component = creator;
         } else {
             component = new MultiColorChooser();
         }
