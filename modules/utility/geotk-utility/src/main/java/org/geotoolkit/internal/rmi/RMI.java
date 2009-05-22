@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.internal.rmi;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.rmi.ServerError;
@@ -26,7 +27,9 @@ import java.rmi.registry.LocateRegistry;
 import java.util.concurrent.ExecutionException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -41,22 +44,77 @@ import org.geotoolkit.factory.Hints;
 @Static
 public final class RMI {
     /**
-     * Key for the name of a machine where to delegate the work.
-     * A value for this key can be given to the system default hints.
+     * The name of a master node where to delegate the tasks, or {@code null} if none.
+     * If null (which is the default), then all tasks will be run locally.
      */
-    public static final Hints.Key REMOTE_EXECUTOR = new Hints.Key(String.class);
+    private static String master;
 
     /**
      * The executor. Will be created only when first needed, in order to give a chance to the
      * caller to configure his system first, and to propagate the {@link RemoteException} to
-     * the caller in case of failure.
+     * the caller in case of failure to locate the RMI registry.
      */
     private static TaskExecutor executor;
+
+    /**
+     * The temporary directory visible to all nodes, or {@code null} if none.
+     */
+    private static volatile File sharedTemporaryDirectory;
 
     /**
      * Do not allow instantiation of this class.
      */
     private RMI() {
+    }
+
+    /**
+     * Sets the name of a master node where to delegate the tasks, or {@code null} if none.
+     * If null (which is the default), then all tasks will be run locally.
+     * <p>
+     * If a task is already running on the current master, then its execution will be completed
+     * normally on its current master and this method will applies only to the next tasks to be
+     * submitted.
+     *
+     * @param master The name of a master node, or {@code null}.
+     */
+    @Configuration
+    public static synchronized void setMaster(final String master) {
+        if (!Utilities.equals(master, RMI.master)) {
+            RMI.master = master;
+            executor = null;
+        }
+    }
+
+    /**
+     * Sets a temporary directory visible to all nodes.
+     * By default there is no such shared directory.
+     *
+     * @param directory The new shared temporary directory, or {@code null} if none.
+     * @throws IllegalArgumentException if the argument is not a valid directory.
+     */
+    @Configuration
+    public static void setSharedTemporaryDirectory(final File directory) {
+        if (directory != null && !directory.isDirectory()) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
+        }
+        sharedTemporaryDirectory = directory;
+    }
+
+    /**
+     * Returns the temporary directory, preferably visible to every nodes. By default this
+     * method returns the value of {@code System.getProperty("java.io.tmpdir")}, which is usually
+     * <strong>not</strong> a directory shared by every nodes. If a shared directory exists, it
+     * should have been declared by a call to {@link #setSharedTemporaryDirectory(String)}
+     * before the call to this method.
+     *
+     * @return The temporary directory to use.
+     */
+    public static File getSharedTemporaryDirectory() {
+        File directory = sharedTemporaryDirectory;
+        if (directory == null) {
+            directory = new File(System.getProperty("java.io.tmpdir", "/tmp"));
+        }
+        return directory;
     }
 
     /**
@@ -81,46 +139,33 @@ public final class RMI {
         synchronized (RMI.class) {
             executor = RMI.executor;
             if (executor == null) {
-                final Object server = Hints.getSystemDefault(REMOTE_EXECUTOR);
-                if (server == null) {
-                    executor = new LocalExecutor();
+                if (master == null) {
+                    executor = new LocalExecutor(false);
                 } else try {
-                    executor = (TaskExecutor) LocateRegistry.getRegistry(server.toString()).lookup(RemoteExecutor.NAME);
+                    executor = (TaskExecutor) LocateRegistry.getRegistry(master).lookup(RemoteExecutor.NAME);
                 } catch (NotBoundException exception) {
                     RemoteService.logger().warning(exception.toString());
-                    executor = new LocalExecutor();
+                    executor = new LocalExecutor(false);
                 }
                 RMI.executor = executor;
             }
         }
         final TaskFuture<Output> result = executor.submit(task);
+        boolean success = false;
         try {
-            return result.get();
+            final Output output = result.get();
+            success = true;
+            return output;
         } catch (ExecutionException exception) {
             final Throwable cause = exception.getCause();
             /*
-             * Unwrap Error only if the task was executed on the local machine. We do not unwrap
-             * Error otherwise because it is closely tied to the configuration of the machine that
-             * executed the code (classpath, available memory, etc.), so an error that occured on
-             * a remote machine may be unrelevant to this local machine. This argument is less
-             * strong for Runtime but still somewhat applicable.
+             * Unwrap IOException only if it was executed on the same thread,
+             * in order to make the stack trace shorter.
              */
-            if (executor instanceof LocalExecutor) {
-                if (cause instanceof Error) {
-                    throw (Error) cause;
+            if (result instanceof LocalFuture && !((LocalFuture) result).isThreaded()) {
+                if (cause instanceof IOException) {
+                    throw (IOException) cause;
                 }
-                if (cause instanceof RuntimeException) {
-                    throw (RuntimeException) cause;
-                }
-            }
-            /*
-             * Unwrap IOException no matter if the task was run on the local or on a remote machine,
-             * because our current design implies that every machine see the same files (typically
-             * on a shared file system like NFS), so an error that occured on a remote machine
-             * would in principle be applicable to the local machine as well.
-             */
-            if (cause instanceof IOException) {
-                throw (IOException) cause;
             }
             /*
              * Other kind of errors.
@@ -137,6 +182,10 @@ public final class RMI {
             final InterruptedIOException e = new InterruptedIOException(exception.getLocalizedMessage());
             e.initCause(exception);
             throw e;
+        } finally {
+            if (!success) {
+                result.rollback();
+            }
         }
     }
 }

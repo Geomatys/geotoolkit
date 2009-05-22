@@ -48,4 +48,12 @@ public interface TaskFuture<Output> extends Remote {
      * @throws InterruptedException If the worker thread was interrupted while waiting.
      */
     Output get() throws RemoteException, ExecutionException, InterruptedException;
+
+    /**
+     * Invoked in case of failures for deleting resources created by this task.
+     * The resources may be for example temporary files.
+     *
+     * @throws RemoteException If a RMI error occured.
+     */
+    void rollback() throws RemoteException;
 }

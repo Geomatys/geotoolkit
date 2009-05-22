@@ -18,6 +18,7 @@ package org.geotoolkit.internal.rmi;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -84,5 +85,31 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
             output = task.aggregate(results);
         }
         return output;
+    }
+
+    /**
+     * Invoked in case of failures for deleting the resources that the task may have created.
+     *
+     * @throws RemoteException If a RMI error occured.
+     */
+    @Override
+    public synchronized void rollback() throws RemoteException {
+        RemoteException failure = null;
+        for (final ListIterator<TaskFuture<Output>> it=futures.listIterator(futures.size()); it.hasPrevious();) {
+            final TaskFuture<Output> future = it.previous();
+            it.remove(); // Remove as we rollback.
+            try {
+                future.rollback();
+            } catch (RemoteException e) {
+                // Remember the first failure, and continue the rollbacks
+                // before to report that failure.
+                if (failure == null) {
+                    failure = e;
+                }
+            }
+        }
+        if (failure != null) {
+            throw failure;
+        }
     }
 }

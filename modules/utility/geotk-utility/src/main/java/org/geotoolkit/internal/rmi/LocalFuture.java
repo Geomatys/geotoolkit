@@ -38,12 +38,26 @@ final class LocalFuture<Output> implements TaskFuture<Output> {
     private final Future<Output> future;
 
     /**
+     * The task being run.
+     */
+    private final ShareableTask<?,Output> task;
+
+    /**
      * Creates a new {@code LocalFuture}.
      *
      * @param future The {@code Future} given by {@link java.util.concurrent.ExecutorService}.
+     * @param task The task being run.
      */
-    LocalFuture(final Future<Output> future) {
+    LocalFuture(final Future<Output> future, final ShareableTask<?,Output> task) {
         this.future = future;
+        this.task = task;
+    }
+
+    /**
+     * Returns {@code true} if the task is executed on a different thread.
+     */
+    public boolean isThreaded() {
+        return future != null;
     }
 
     /**
@@ -54,6 +68,22 @@ final class LocalFuture<Output> implements TaskFuture<Output> {
      */
     @Override
     public Output get() throws ExecutionException, InterruptedException {
-        return future.get();
+        if (future != null) {
+            return future.get();
+        } else try {
+            return task.call();
+        } catch (RuntimeException e) {
+            throw e; // Let them propagates, for simplier task trace.
+        } catch (Exception e) {
+            throw new ExecutionException(e);
+        }
+    }
+
+    /**
+     * Invoked in case of failures for deleting the resources that the task may have created.
+     */
+    @Override
+    public void rollback() {
+        task.rollback();
     }
 }

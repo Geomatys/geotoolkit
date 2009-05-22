@@ -48,6 +48,26 @@ public final class IOUtilities {
     }
 
     /**
+     * If the two given files are equals, return that file. Otherwise returns the first
+     * common parent found.
+     *
+     * @param  root The file which is the most likely to be the root.
+     * @param  file The other file, which is more likely to be in a sub-directory of the root.
+     * @return The root or a common parent, or {@code null} if no common parent has been found.
+     */
+    public static File commonParent(File root, final File file) {
+        while (root != null) {
+            for (File candidate=file; candidate!=null; candidate=candidate.getParentFile()) {
+                if (root.equals(candidate)) {
+                    return root;
+                }
+            }
+            root = root.getParentFile();
+        }
+        return null;
+    }
+
+    /**
      * Parses the following path as a {@link File} if possible, or a {@link URL} otherwise.
      *
      * @param path The path to parse.

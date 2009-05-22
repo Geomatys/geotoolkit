@@ -19,9 +19,13 @@ package org.geotoolkit.internal.rmi;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectOutputStream;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.ObjectStream;
 
 
@@ -122,6 +126,41 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
             }
         }
         return output;
+    }
+
+    /**
+     * Convenience method which returns a map containing all elements of all given maps.
+     * This is used for implementation of {@link #aggregate(Collection)} by subclasses.
+     *
+     * @param  <K> The type of keys in the map.
+     * @param  <V> The type of values in the map.
+     * @param  outputs The collection of maps to aggregate.
+     * @return The aggregated map.
+     * @throws IllegalArgumentException If at least one key is defined in more than one map.
+     */
+    protected static <K,V> Map<K,V> aggregateMap(final Collection<Map<K,V>> outputs)
+            throws IllegalArgumentException
+    {
+        int size = 0;
+        for (final Map<K,V> output : outputs) {
+            size += output.size();
+        }
+        final Map<K,V> aggregate = new HashMap<K,V>(Utilities.hashMapCapacity(size));
+        for (final Map<K,V> output : outputs) {
+            aggregate.putAll(output);
+        }
+        size -= aggregate.size();
+        if (size != 0) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_COUNT_$1, size));
+        }
+        return aggregate;
+    }
+
+    /**
+     * Invoked in case of failures for deleting the files that the task may have created.
+     * The default implementation does nothing.
+     */
+    public void rollback() {
     }
 
     /**

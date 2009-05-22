@@ -281,6 +281,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DUPLICATED_VALUES_$1 = 45;
 
         /**
+         * Found {0} duplicated values.
+         */
+        public static final int DUPLICATED_VALUES_COUNT_$1 = 216;
+
+        /**
          * Elliptical projection not supported.
          */
         public static final int ELLIPTICAL_NOT_SUPPORTED = 46;
@@ -680,6 +685,11 @@ public final class Errors extends IndexedResourceBundle {
          * Value "{0}" is not a valid integer.
          */
         public static final int NOT_AN_INTEGER_$1 = 125;
+
+        /**
+         * Not a directory: {0}
+         */
+        public static final int NOT_A_DIRECTORY_$1 = 217;
 
         /**
          * Points dont seem to be distributed on a regular grid.

@@ -66,7 +66,12 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
         slaves = new ArrayList<TaskExecutor>(1);
         this.master = master;
         if (master != null) {
-            slaves.add(new LocalExecutor());
+            /*
+             * Created a local executor without thread pool. We usually don't need to dispatch
+             * the task in background thread since, when invoked from remote machine, the call
+             * is already run un its own thread.
+             */
+            slaves.add(new LocalExecutor(false));
             master.slave(this, true);
         }
     }
@@ -90,10 +95,11 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
     {
         /*
          * If this executor has no slave, add an executor which will run the tasks locally.
-         * It happen only if a master got no slave, which should be uncommon.
+         * It happen only if a master got no slave, which should be uncommon. Note that the
+         * executor doesn't use thread pool for the same reasons than in the constructor.
          */
         if (slaves.isEmpty()) {
-            slaves.add(new LocalExecutor());
+            slaves.add(new LocalExecutor(false));
         }
         /*
          * Now gives the tasks to every slaves.

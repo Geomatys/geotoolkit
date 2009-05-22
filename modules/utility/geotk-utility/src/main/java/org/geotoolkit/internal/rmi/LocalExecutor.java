@@ -40,9 +40,12 @@ final class LocalExecutor implements TaskExecutor {
 
     /**
      * Creates a new executor.
+     *
+     * @param threaded {@code true} for using an executor service, or {@code false} for running
+     *        the task directly in the current thread. The later has simplier task trace.
      */
-    LocalExecutor() {
-        executor = Executors.newCachedThreadPool();
+    LocalExecutor(final boolean threaded) {
+        executor = threaded ? Executors.newCachedThreadPool() : null;
     }
 
     /**
@@ -72,7 +75,7 @@ final class LocalExecutor implements TaskExecutor {
      */
     @Override
     public <Input,Output> TaskFuture<Output> submit(final ShareableTask<Input,Output> task) {
-        return new LocalFuture<Output>(executor.submit(task));
+        return new LocalFuture<Output>(executor != null ? executor.submit(task) : null, task);
     }
 
     /**
