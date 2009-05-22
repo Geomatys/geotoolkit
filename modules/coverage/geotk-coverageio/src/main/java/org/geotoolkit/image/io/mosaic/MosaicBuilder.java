@@ -1223,13 +1223,13 @@ public class MosaicBuilder {
     /**
      * Implements the public {@code createTileManager} method.
      *
-     * @param reject If {@code true}, then the operation fails if the input contains more than one
-     *        image. This is often necessary if the input is a collection of {@link TileManager}s,
+     * @param onlyOneImage If {@code true}, then the operation fails if the input contains more than
+     *        one image. This is often necessary if the input is a collection of {@link TileManager}s,
      *        since more than 1 image means that the manager failed to create a single mosaic from
      *        a set of source images.
      */
     private TileManager createTileManager(final Object input, final int inputIndex,
-            final TileWritingPolicy policy, final boolean reject) throws IOException
+            final TileWritingPolicy policy, final boolean onlyOneImage) throws IOException
     {
         formatter.ensurePrefixSet(input);
         final Writer writer = new Writer(inputIndex, policy);
@@ -1237,7 +1237,7 @@ public class MosaicBuilder {
         final MosaicImageWriteParam param = writer.getDefaultWriteParam();
         param.setTileWritingPolicy(policy);
         try {
-            if (!writer.writeFromInput(input, inputIndex, param, reject)) {
+            if (!writer.writeFromInput(input, inputIndex, param, onlyOneImage)) {
                 return null;
             }
         } finally {

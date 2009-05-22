@@ -110,13 +110,18 @@ public abstract class TestBase {
     @Before
     public final void initTileManager() throws IOException {
         assertTrue("Assertions should be enabled.", MosaicBuilder.class.desiredAssertionStatus());
-
+        /*
+         * Creates now an unitialized MosaicBuilder, except for the ImageReaderSpi.
+         * This is a convenient way to get that ImageReaderSpi from a format name.
+         */
         builder = new MosaicBuilder(getTileManagerFactory());
         assertNull("No initial provider expected.", builder.getTileReaderSpi());
         builder.setTileReaderSpi("png");
         final ImageReaderSpi spi = builder.getTileReaderSpi();
         assertNotNull("Provider should be defined.", spi);
-
+        /*
+         * Creates the tiles to be used as sources for creating the mosaic.
+         */
         final File directory = new File("geodata"); // Dummy directory - will not be read.
         final int S = SOURCE_SIZE; // For making reading easier below.
         sourceTiles = new Tile[] {
@@ -129,6 +134,13 @@ public abstract class TestBase {
             new Tile(spi, new File(directory, "C2.png"), 0, new Rectangle(2*S, S, S, S)),
             new Tile(spi, new File(directory, "D2.png"), 0, new Rectangle(3*S, S, S, S))
         };
+        final TileManager[] sourceMosaic = builder.factory.create(sourceTiles);
+        assertEquals(1, sourceMosaic.length);
+        assertEquals(directory, sourceMosaic[0].rootDirectory());
+        assertEquals(8L*S*S,    sourceMosaic[0].diskUsage());
+        /*
+         * Now process to the creation of the target mosaic.
+         */
         final Dimension[] subsamplings = new Dimension[
                 Math.max(X_SUBSAMPLING.length, Y_SUBSAMPLING.length)];
         assertEquals(subsamplings.length, X_SUBSAMPLING.length);
@@ -139,7 +151,7 @@ public abstract class TestBase {
         builder.setSubsamplings(subsamplings);
         builder.setTileSize(new Dimension(TARGET_SIZE, TARGET_SIZE));
         builder.setTileDirectory(new File("S960")); // Dummy directory - will not be written.
-        manager = builder.createTileManager(sourceTiles);
+        manager = builder.createTileManager(sourceMosaic);
         targetTiles = manager.getTiles().toArray(new Tile[manager.getTiles().size()]);
     }
 

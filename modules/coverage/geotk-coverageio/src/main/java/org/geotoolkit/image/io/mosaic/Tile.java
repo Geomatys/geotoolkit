@@ -504,7 +504,8 @@ public class Tile implements Comparable<Tile>, Serializable {
     }
 
     /**
-     * Dispose the given reader after closing its {@linkplain ImageReader#getInput input stream}.
+     * Disposes the given reader after closing its {@linkplain ImageReader#getInput input stream}.
+     * This method can be used for disposing the reader created by {@link #getImageReader()}.
      *
      * @param  reader The reader to dispose.
      * @throws IOException if an error occured while closing the input stream.
@@ -1167,11 +1168,13 @@ public class Tile implements Comparable<Tile>, Serializable {
      * at the given subsampling. This method is invoked by {@link TileManager} when two or more
      * tile overlaps, in order to choose the tiles that would minimize the amount of pixels to
      * read. The default implementation computes the sum of:
+     * <p>
      * <ul>
      *   <li>the amount of tile pixels skipped because of the given subsampling</li>
      *   <li>the amount of pixels in this {@linkplain #getRegion tile region} that are outside
      *       the given region, including the pixels below the bottom.</li>
      * </ul>
+     * <p>
      * The later is conservative since many file formats will stop reading as soon as they reach
      * the region bottom. We may consider allowing overriding in order to alter this calculation
      * if a subclass is sure that pixels below the region have no disk seed cost.

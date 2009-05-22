@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -37,6 +38,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -196,7 +198,7 @@ public abstract class TileManager implements Serializable {
      * only one element, but more are allowed. In the later case, the entries in the set are
      * sorted from the most frequently used provider to the less frequently used.
      *
-     * @return The image reader providers.
+     * @return The image reader providers (never {@code null}).
      * @throws IOException If an I/O operation was required and failed.
      *
      * @see MosaicImageReader#getTileReaderSpis
@@ -383,6 +385,63 @@ public abstract class TileManager implements Serializable {
                 reader.dispose();
             }
         }
+    }
+
+    /**
+     * Returns the root directory of all tiles, or {@code null} if unknown. This method searchs
+     * for a common {@linkplain File#getParentFile() parent directory} of every tiles.
+     *
+     * @return The root directory, or {@code null} if unknown.
+     * @throws IOException If an I/O error occured.
+     *
+     * @since 3.0
+     */
+    public File rootDirectory() throws IOException {
+        File root = null;
+        for (final Tile tile : getInternalTiles()) {
+            Object input = tile.getInput();
+            if (input instanceof File) {
+                final File parent = ((File) input).getParentFile();
+                if (parent == null) {
+                    return new File(".");
+                }
+                if (root == null) {
+                    root = parent;
+                } else {
+                    root = IOUtilities.commonParent(root, parent);
+                }
+            }
+        }
+        return root;
+    }
+
+    /**
+     * Returns the disk space which would be required if every tiles were saved on disk in
+     * the uncompressed RAW format.
+     *
+     * @return The required disk space for uncompressed tiles.
+     * @throws IOException If an I/O error occured.
+     *
+     * @since 3.0
+     */
+    public long diskUsage() throws IOException {
+        long space = 0;
+        final Collection<Tile> tiles = getInternalTiles();
+        final FrequencySortedSet<Tile> ft;
+        if (tiles instanceof FrequencySortedSet) {
+            ft = (FrequencySortedSet<Tile>) tiles;
+        } else {
+            ft = null;
+        }
+        for (final Tile tile : tiles) {
+            final Dimension size = tile.getSize();
+            long length = ((long) size.width) * ((long) size.height);
+            if (ft != null) {
+                length *= ft.frequency(tile);
+            }
+            space += length;
+        }
+        return space;
     }
 
     /**
