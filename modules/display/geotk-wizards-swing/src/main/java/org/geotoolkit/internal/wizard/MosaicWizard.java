@@ -23,10 +23,10 @@ import javax.swing.JComponent;
 import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.jdesktop.swingx.JXLabel;
 
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanelProvider;
 
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -46,21 +46,26 @@ import org.geotoolkit.gui.swing.image.MultiColorChooser;
  *
  * @todo Needs localization.
  */
-public final class MosaicWizard extends WizardPanelProvider {
+public final class MosaicWizard extends AbstractWizard {
     /**
      * The default size for content panes.
      */
     private static final Dimension SIZE = new Dimension(800, 400);
 
     /**
-     * The chooser for the input mosaic, which is the first step in the wizard.
+     * The ID of the chooser for the input mosaic, which is the first step in the wizard.
      */
-    private MosaicChooser chooser;
+    static final String SELECT = "Select";
 
     /**
-     * The editor for the layout of the mosaic to create.
+     * The ID for the editor of the layout of the mosaic to create.
      */
-    private MosaicBuilderEditor creator;
+    static final String LAYOUT = "Layout";
+
+    /**
+     * The ID for the selecting the colors to make transparent.
+     */
+    static final String COLORS = "Colors";
 
     /**
      * {@code true} if the input mosaic changed.  This is set to {@code true} if the
@@ -77,13 +82,15 @@ public final class MosaicWizard extends WizardPanelProvider {
      */
     public MosaicWizard() {
         super("Geotoolkit Pyramid Builder", new String[] {
-            "Select",
-            "Layout",
-            "Colors"
+            SELECT,
+            LAYOUT,
+            COLORS,
+            "Confirm"
         }, new String[] {
             "Select source tiles",
             "Define pyramid tiling",
-            "Remove opaque border"
+            "Remove opaque border",
+            "Confirm"
         });
     }
 
@@ -98,14 +105,19 @@ public final class MosaicWizard extends WizardPanelProvider {
     @Override
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
         JComponent component;
-        if (id.equals("Select")) {
+        if (id.equals(SELECT)) {
             // -------------------------------------------------------------------
             //     Panel 1:  Select source tiles
             // -------------------------------------------------------------------
             final class Chooser extends MosaicChooser implements ChangeListener {
+                Chooser() {
+                    addChangeListener(this);
+                    stateChanged(null); // Force the call to controller.setProblem("..."),
+                }
+
                 private static final long serialVersionUID = -6696539336904269650L;
                 @Override public void stateChanged(final ChangeEvent event) {
-                    final TileManager[] tiles = chooser.getSelectedTiles();
+                    final TileManager[] tiles = getSelectedTiles();
                     final String problem;
                     switch (tiles.length) {
                         case 0:  problem = "At least one tile must be selected."; break;
@@ -115,11 +127,9 @@ public final class MosaicWizard extends WizardPanelProvider {
                     controller.setProblem(problem);
                 }
             }
-            final Chooser c;
-            component = chooser = c = new Chooser();
-            chooser.addChangeListener(c);
-            c.stateChanged(null); // Force the call to controller.setProblem("..."),
-        } else if (id.equals("Layout")) {
+            component = new Chooser();
+            addSetting(settings, SELECT, component);
+        } else if (id.equals(LAYOUT)) {
             // -------------------------------------------------------------------
             //     Panel 2:  Define pyramid tiling
             // -------------------------------------------------------------------
@@ -150,15 +160,28 @@ public final class MosaicWizard extends WizardPanelProvider {
                     controller.setProblem(exception.getLocalizedMessage());
                 }
             }
+            final MosaicChooser chooser = (MosaicChooser) settings.get(SELECT);
             try {
-                creator = new Editor(chooser.getSelectedTiles());
+                component = new Editor(chooser.getSelectedTiles());
             } catch (IOException exception) {
-                creator = new Editor();
+                component = new Editor();
                 controller.setProblem(exception.toString());
             }
-            component = creator;
-        } else {
+            addSetting(settings, LAYOUT, component);
+        } else if (id.equals(COLORS)) {
+            // -------------------------------------------------------------------
+            //     Panel 3:  Remove opaque border
+            // -------------------------------------------------------------------
             component = new MultiColorChooser();
+            addSetting(settings, COLORS, component);
+        } else {
+            // -------------------------------------------------------------------
+            //     Panel 4:  Confirm
+            // -------------------------------------------------------------------
+            final JXLabel label = new JXLabel("The wizard has now enough informations for " +
+                    "creating the mosaic. Press \"Finish\" to confirm.");
+            label.setLineWrap(true);
+            component = label;
         }
         component.setPreferredSize(SIZE);
         component.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));
@@ -177,11 +200,12 @@ public final class MosaicWizard extends WizardPanelProvider {
     protected void recycleExistingPanel(final String id, final WizardController controller,
             final Map settings, final JComponent panel)
     {
-        if (id.equals("Select")) {
+        if (id.equals(SELECT)) {
             inputChanged = true;
-        } else if (id.equals("Layout")) {
+        } else if (id.equals(LAYOUT)) {
             if (inputChanged) {
                 inputChanged = false;
+                final MosaicChooser chooser = (MosaicChooser) settings.get(SELECT);
                 final MosaicBuilderEditor editor = (MosaicBuilderEditor) panel;
                 try {
                     editor.initializeForTiles(chooser.getSelectedTiles());
@@ -192,6 +216,17 @@ public final class MosaicWizard extends WizardPanelProvider {
             }
         }
         controller.setProblem(null);
+    }
+
+    /**
+     * Invoked when the user finished to go through wizard steps.
+     *
+     * @param  settings The settings provided by the user.
+     * @return The object which will create the mosaic.
+     */
+    @Override
+    protected Object finish(final Map settings) {
+        return new MosaicCreator();
     }
 
     /**

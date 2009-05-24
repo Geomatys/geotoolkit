@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
@@ -23,6 +24,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
@@ -50,16 +52,39 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.internal.image.io.Compressions;
+import org.geotoolkit.internal.image.io.RawFile;
+import org.geotoolkit.internal.rmi.RMI;
 
 
 /**
- * An image writer that delegates to a mosaic of other image writers. The mosaic is specified as a
- * collection of {@link Tile} objects given to {@link #setOutput(Object)} method. While this class
- * can write a {@link RenderedImage}, the preferred approach is to invoke {@link #writeFromInput}
- * with a {@link File} input in argument. This approach is non-standard but often required since
- * images to mosaic are typically bigger than {@link RenderedImage} capacity.
+ * An image writer which takes a large image (potentially tiled) in input and write tiles as
+ * output. The mosaic to write is specified as a collection of {@link Tile} objects given to
+ * the {@link #setOutput(Object)} method. The pixel values to write can be specified either
+ * as a {@link RenderedImage} (this is the {@linkplain #write standard API}), or as a single
+ * {@link File} or a collection of source tiles given to the {@link #writeFromInput(Object,
+ * ImageReadParam} method. The later alternative is non-standard but often required since
+ * the image to mosaic is typically bigger than the capacity of a single {@link RenderedImage}.
+ *
+ * {@section Caching of source tiles}
+ * This class may be slow when reading source images encoded in a compressed format like PNG,
+ * because multiple passes over the same image may be necessary for writing different tiles
+ * and compression makes the seeks harder. This problem can be mitigated by copying the source
+ * images to temporary files in an uncompressed RAW format. The inconvenient is that a large
+ * amount of disk space will be temporarily required until the write operation is completed.
+ * <p>
+ * Caching are enabled by default. If the environment is contrained by disk space or if the
+ * source tiles are known to be already uncompressed, then caching can be disabled by overriding
+ * the {@link #isCachingEnabled(ImageReader,int)} method.
+ *
+ * {@section Filtering source images}
+ * It is possible to apply an operation on source images before to create the target tiles. The
+ * operation can be specified by the {@link MosaicImageWriteParam#setSourceTileFilter(BufferedImageOp)}
+ * method, for example in order to add transparency to fully opaque images. Note that if an operation
+ * is applied, then the source tiles will be cached in temporary RAW files as described in the above
+ * section even if {@link #isCachingEnabled(ImageReader,int)} returns {@code false}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
@@ -87,6 +112,11 @@ public class MosaicImageWriter extends ImageWriter {
     private ExecutorService executor;
 
     /**
+     * The temporary files created for each input tile.
+     */
+    private final Map<Tile,RawFile> temporaryFiles;
+
+    /**
      * Constructs an image writer with the default provider.
      */
     public MosaicImageWriter() {
@@ -100,6 +130,7 @@ public class MosaicImageWriter extends ImageWriter {
      */
     public MosaicImageWriter(final ImageWriterSpi spi) {
         super(spi != null ? spi : Spi.DEFAULT);
+        temporaryFiles = new HashMap<Tile,RawFile>();
     }
 
     /**
@@ -262,26 +293,30 @@ public class MosaicImageWriter extends ImageWriter {
     /**
      * Implements the public {@code writeFromInput} method.
      *
-     * @param reject If {@code true}, then the operation fails if the input contains more than one
-     *        image. This is often necessary if the input is a collection of {@link TileManager}s,
+     * @param onlyOneImage If {@code true}, then the operation fails if the input contains more than
+     *        one image. This is often necessary if the input is a collection of {@link TileManager}s,
      *        since more than 1 image means that the manager failed to create a single mosaic from
      *        a set of source images.
      */
     final boolean writeFromInput(final Object input, final int inputIndex,
-            final ImageWriteParam param, boolean reject) throws IOException
+            final ImageWriteParam param, boolean onlyOneImage) throws IOException
     {
         final boolean success;
-        final ImageReader reader = getImageReader(input);
+        final ImageReader reader = getImageReader(input, inputIndex, param);
         try {
-            if (reject && reader.getNumImages(false) <= 1) {
-                reject = false;
+            if (onlyOneImage && reader.getNumImages(false) <= 1) {
+                onlyOneImage = false;
             }
-            success = !reject && writeFromReader(reader, inputIndex, param);
+            success = !onlyOneImage && writeFromReader(reader, inputIndex, param);
             close(reader.getInput(), input);
         } finally {
-            reader.dispose();
+            try {
+                reader.dispose();
+            } finally {
+                deleteTemporaryFiles();
+            }
         }
-        if (reject) {
+        if (onlyOneImage) {
             throw new IIOException(Errors.format(Errors.Keys.INVALID_MOSAIC_INPUT));
         }
         return success;
@@ -292,7 +327,7 @@ public class MosaicImageWriter extends ImageWriter {
      * It is the caller responsability to dispose the reader when writing is done.
      */
     private boolean writeFromReader(final ImageReader reader, final int inputIndex,
-                                    final ImageWriteParam writeParam) throws IOException
+            final ImageWriteParam writeParam) throws IOException
     {
         clearAbortRequest();
         final int outputIndex;
@@ -792,6 +827,133 @@ search: for (final Tile tile : tiles) {
     }
 
     /**
+     * Returns {@code true} if this writer is allowed to copy source images to temporary
+     * uncompressed RAW files. Doing so can speed up considerably the creation of large
+     * mosaics, at the expense of temporary disk space.
+     * <p>
+     * The default implementation returns {@code true} if the following conditions are meet:
+     * <p>
+     * <ul>
+     *   <li>The input tiles format is not an uncompressed format like RAW, BMP or TIFF (the
+     *       later is assumed uncompressed, while this is not always true). There is no
+     *       advantage to copy an uncompressed format to an other uncompressed format.</li>
+     *   <li>The {@linkplain File#getUsableSpace() usable space} in the temporary directory
+     *       is greater then the space required for writing the input tiles in RAW format.</li>
+     *   <li>The usable space in the output directory is greater than the space required for
+     *       writing the output tiles in their output format (a very approximative compression
+     *       factor is guessed).</li>
+     *   <li>Other conditions (not documented because they may change in future implementations).
+     *       In case of doubt, it is safer to conservatively return {@code false}.</li>
+     * </ul>
+     * <p>
+     * Subclasses should override this method if they can provide a better answer, or if they
+     * known that their source tiles are already uncompressed.
+     *
+     * {@note This method is invoked only in the context of <code>writeFromInput(Object, &hellip;)</code>
+     *        methods, which get the image to write from an <code>ImageReader</code>. This method is
+     *        not invoked in the context of the <code>write(RenderedImage)</code> method because an
+     *        image available in memory (ignoring JAI tiling) is assumed to not need disk cache. For
+     *        this reason there is no <code>isCachingEnabled(RenderedImage)</code> method.}
+     *
+     * @param  input The input image or mosaic, an an {@code ImageReader} with its
+     *         {@linkplain ImageReader#getInput() input} set.
+     * @param  inputIndex The image index to read from the given input file.
+     * @return {@code true} if this writer can cache the source tiles.
+     * @throws IOException If this method required an I/O operation and that operation failed.
+     *
+     * @since 3.0
+     */
+    protected boolean isCachingEnabled(final ImageReader input, final int inputIndex) throws IOException {
+        if (true) return false; // Disabled until more extensively tested.
+        /*
+         * Gets an estimation of the available memory. This will be used for computing the maximal
+         * size of input images. The calculation will need to take in account the number of bits per
+         * pixels. Note that we use "bits", not "bytes". We do not divide bitPerPixels by Byte.SIZE
+         * now, because we don't want the rounding toward zero here.
+         */
+        final Runtime rt = Runtime.getRuntime(); rt.gc();
+        final long maxInputSize = rt.maxMemory() - (rt.totalMemory() - rt.freeMemory());
+        final int bitPerPixels = Compressions.bitsPerPixel(input.getRawImageType(inputIndex).getSampleModel());
+        /*
+         * Checks the space available in the temporary directory, which
+         * will contain the temporary uncompressed files for source tiles.
+         */
+        long available = RMI.getSharedTemporaryDirectory().getUsableSpace();
+        long required = 4L * 1024 * 1024; // Arbitrary margin of 4 Mb.
+        if (input instanceof MosaicImageReader) {
+            boolean compressed = false;
+            for (final TileManager tiles : ((MosaicImageReader) input).getInput()) {
+                if (!compressed) {
+                    for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
+                        if (Compressions.guessForFormat(spi) != 1) {
+                            compressed = true;
+                            break;
+                        }
+                    }
+                }
+                required += tiles.diskUsage() * bitPerPixels / Byte.SIZE;
+                if (required > available || tiles.largestTileArea() * bitPerPixels / Byte.SIZE > maxInputSize) {
+                    return false;
+                }
+            }
+            /*
+             * If every tiles are written in an uncompressed format like RAW, then there
+             * is no advantage to copy them to an other uncompressed format. Note that we
+             * consider TIFF as uncompressed, which is what we get by default using the
+             * Java image I/O writers.
+             */
+            if (!compressed) {
+                return false;
+            }
+        } else {
+            /*
+             * Same tests than above, but in the case where the source is a single image
+             * instead than a mosaic of source tiles.
+             */
+            if (Compressions.guessForFormat(input.getOriginatingProvider()) == 1) {
+                return false;
+            }
+            final int width  = input.getWidth (inputIndex);
+            final int height = input.getHeight(inputIndex);
+            final long size = ((long) width) * ((long) height) * bitPerPixels / Byte.SIZE;
+            if (size > maxInputSize || (required += size) > available) {
+                return false;
+            }
+        }
+        /*
+         * Checks the space available for the target tiles, which may be compressed.
+         * Note that we do not reset the 'required' count to zero - we assume that
+         * the target directory is on the same device than the temporary directory,
+         * so the required space needs to be summed. I'm not aware of an easy way to
+         * check if we are on the same device in Java 6, however new Java 7 API would
+         * allow to do so.
+         */
+        final TileManager[] outputs = getOutput();
+        if (outputs != null) {
+            for (final TileManager tiles : outputs) {
+                final File root = tiles.rootDirectory();
+                if (root == null) {
+                    continue; // Not a file - there is nothing we can do.
+                }
+                available = root.getUsableSpace();
+                long usage = tiles.diskUsage() * bitPerPixels / Byte.SIZE;
+                for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
+                    int ir = Compressions.guessForFormat(spi);
+                    if (ir != 0) {
+                        usage /= ir;
+                        break; // Use the first known format as the reference.
+                    }
+                }
+                required += usage;
+                if (required > available) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Invoked after {@code MosaicImageWriter} has created a reader and
      * {@linkplain ImageReader#setInput(Object) set the input}. Users can override this method
      * for performing additional configuration and may returns {@code false} if the given reader
@@ -861,6 +1023,47 @@ search: for (final Tile tile : tiles) {
      * @throws IOException if an I/O operation was required and failed.
      */
     protected void onTileWrite(final Tile tile, ImageWriteParam parameters) throws IOException {
+    }
+
+    /**
+     * Gets and initializes an {@linkplain ImageReader image reader} that can decode the
+     * {@linkplain BufferedImageOp#filter filtered} input. The returned reader has its
+     * {@linkplain ImageReader#setInput input} already set. If the reader input is different than
+     * the specified one, then it is probably an {@linkplain ImageInputStream image input stream}
+     * and closing it is caller's responsability.
+     *
+     * @param  input The input to read.
+     * @param  inputIndex The image index to read from the given input file.
+     * @param  The parameters given by the user, or {@code null} if none.
+     * @return The image reader that seems to be the most appropriated (never {@code null}).
+     * @throws IOException If no suitable image reader has been found or if an error occured
+     *         while creating an image reader or initiazing it.
+     */
+    private ImageReader getImageReader(final Object input, final int inputIndex,
+            final ImageWriteParam parameters) throws IOException
+    {
+        BufferedImageOp op = null;
+        ImageReader reader = getImageReader(input);
+        if (parameters instanceof MosaicImageWriteParam) {
+            final MosaicImageWriteParam param = (MosaicImageWriteParam) parameters;
+            if (TileWritingPolicy.NO_WRITE.equals(param.getTileWritingPolicy())) {
+                return reader;
+            }
+            op = param.getSourceTileFilter();
+        }
+        if (op != null || isCachingEnabled(reader, inputIndex)) {
+            final Collection<Tile> tiles = new ArrayList<Tile>();
+            if (reader instanceof MosaicImageReader) {
+                for (final TileManager manager : ((MosaicImageReader) reader).getInput()) {
+                    tiles.addAll(manager.getTiles());
+                }
+            } else {
+                tiles.add(new Tile(reader.getOriginatingProvider(), reader.getInput(),
+                        0, new Point(), (Dimension) null));
+            }
+            temporaryFiles.putAll(RMI.execute(new TileCopier(tiles, op)));
+        }
+        return reader;
     }
 
     /**
@@ -1117,7 +1320,27 @@ search: for (final Tile tile : tiles) {
     }
 
     /**
-     * Disposes resources held by this writter. This method should be invoked when this
+     * Deletes all temporary files.
+     */
+    private void deleteTemporaryFiles() {
+        for (final Iterator<RawFile> it=temporaryFiles.values().iterator(); it.hasNext();) {
+            it.next().file.delete();
+            it.remove();
+        }
+    }
+
+    /**
+     * Resets this writer to its initial state. If there is any temporary files,
+     * they will be deleted.
+     */
+    @Override
+    public void reset() {
+        deleteTemporaryFiles();
+        super.reset();
+    }
+
+    /**
+     * Disposes resources held by this writer. This method should be invoked when this
      * writer is no longer in use, in order to release some threads created by the writer.
      */
     @Override
@@ -1126,6 +1349,7 @@ search: for (final Tile tile : tiles) {
             executor.shutdown();
             executor = null;
         }
+        deleteTemporaryFiles();
         super.dispose();
     }
 

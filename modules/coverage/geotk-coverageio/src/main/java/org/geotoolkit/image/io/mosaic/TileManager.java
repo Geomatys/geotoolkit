@@ -388,15 +388,38 @@ public abstract class TileManager implements Serializable {
     }
 
     /**
+     * Returns the greatest number of pixels found in all tiles.
+     *
+     * @return The greatest number of pixels found in all tiles.
+     * @throws IOException If an I/O error occured.
+     *
+     * @since 3.0
+     */
+    final long largestTileArea() throws IOException {
+        long max = 0;
+        for (final Tile tile : getInternalTiles()) {
+            final Dimension size = tile.getSize();
+            final long area = ((long) size.width) * ((long) size.height);
+            if (area > max) {
+                max = area;
+            }
+        }
+        return max;
+    }
+
+    /**
      * Returns the root directory of all tiles, or {@code null} if unknown. This method searchs
      * for a common {@linkplain File#getParentFile() parent directory} of every tiles.
+     *
+     * @todo This method is not yet public because the current implementation doesn't recognize
+     *       the {@link String} patterns used by {@link GridTileManager}.
      *
      * @return The root directory, or {@code null} if unknown.
      * @throws IOException If an I/O error occured.
      *
      * @since 3.0
      */
-    public File rootDirectory() throws IOException {
+    final File rootDirectory() throws IOException {
         File root = null;
         for (final Tile tile : getInternalTiles()) {
             Object input = tile.getInput();
@@ -417,14 +440,17 @@ public abstract class TileManager implements Serializable {
 
     /**
      * Returns the disk space which would be required if every tiles were saved on disk in
-     * the uncompressed RAW format.
+     * the uncompressed RAW format. Current implementation assumes that the image have only
+     * one band - consequently the returned value should be multiplied by the amount of bands.
+     * <p>
+     * This method is not public because of the above-cited "single banded" assumption.
      *
      * @return The required disk space for uncompressed tiles.
      * @throws IOException If an I/O error occured.
      *
      * @since 3.0
      */
-    public long diskUsage() throws IOException {
+    final long diskUsage() throws IOException {
         long space = 0;
         final Collection<Tile> tiles = getInternalTiles();
         final FrequencySortedSet<Tile> ft;

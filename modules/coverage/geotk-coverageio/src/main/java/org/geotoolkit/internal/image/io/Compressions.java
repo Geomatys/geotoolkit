@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.awt.image.SampleModel;
 import javax.imageio.spi.ImageReaderWriterSpi;
+
 import org.geotoolkit.lang.Static;
 
 
@@ -45,21 +47,39 @@ public final class Compressions {
      * @return The inverse of a guess of compression ratio (1 is uncompressed), or 0 if unknown.
      */
     public static int guessForFormat(final ImageReaderWriterSpi spi) {
-        for (final String format : spi.getFormatNames()) {
-            if (format.equalsIgnoreCase("png")) {
-                return 4;
-            }
-            if (format.equalsIgnoreCase("jpeg")) {
-                return 8;
-            }
-            if (format.equalsIgnoreCase("tiff")) {
-                // TIFF are uncompressed unless explicitly specified.
-                return 1;
-            }
-            if (format.equalsIgnoreCase("bmp") || format.equalsIgnoreCase("raw")) {
-                return 1;
+        if (spi != null) {
+            for (final String format : spi.getFormatNames()) {
+                if (format.equalsIgnoreCase("png")) {
+                    return 4;
+                }
+                if (format.equalsIgnoreCase("jpeg")) {
+                    return 8;
+                }
+                if (format.equalsIgnoreCase("tiff")) {
+                    // TIFF are uncompressed unless explicitly specified.
+                    return 1;
+                }
+                if (format.equalsIgnoreCase("bmp") || format.equalsIgnoreCase("raw")) {
+                    return 1;
+                }
             }
         }
         return 0;
+    }
+
+    /**
+     * Guess the number of bits per pixel for an image to be saved on the disk in the RAW format.
+     * Current implementation ignores the leading or trailing bits which could exists on each
+     * lines.
+     *
+     * @param  sm The sample model of the image to be saved.
+     * @return Expected number of bits per pixel.
+     */
+    public static int bitsPerPixel(final SampleModel sm) {
+        int size = 0;
+        for (final int s : sm.getSampleSize()) {
+            size += s;
+        }
+        return size;
     }
 }
