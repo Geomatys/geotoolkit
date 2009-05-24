@@ -20,8 +20,8 @@ import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.Spatial.LightCombineMode;
 import com.ardor3d.scenegraph.extension.Skybox;
+import com.ardor3d.scenegraph.hint.DataMode;
 import com.ardor3d.util.TextureManager;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         // Zbuffer -------------------------------------------------------------
         final ZBufferState buf = new ZBufferState();
         buf.setEnabled(true);
-        buf.setFunction(ZBufferState.TestFunction.LessThan);
+        buf.setFunction(ZBufferState.TestFunction.LessThanOrEqualTo);
         root.setRenderState(buf);
 
         // Lights --------------------------------------------------------------
@@ -81,13 +81,12 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         lightState.setTwoSidedLighting(false);
         lightState.setEnabled(true);
         root.setRenderState(lightState);
-        root.setLightCombineMode(LightCombineMode.Replace);
 
         // ---------------------------------------------------------------------
-        WireframeState wireframeState = new WireframeState();
+        final WireframeState wireframeState = new WireframeState();
         wireframeState.setEnabled(false);
         root.setRenderState(wireframeState);
-        root.setRenderBucketType(RenderBucketType.Opaque);
+        root.getSceneHints().setRenderBucketType(RenderBucketType.Opaque);
 
         // ---------------------------------------------------------------------
         final CullState cullFrontFace = new CullState();
@@ -95,6 +94,9 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         cullFrontFace.setCullFace(CullState.Face.None);
         root.setRenderState(cullFrontFace);
 //        root.setRenderState(buildFog());
+
+        //speed up a bit the performances
+        root.getSceneHints().setDataMode(DataMode.VBOInterleaved);
 
         // Skybox --------------------------------------------------------------
         root.attachChild(skybox);

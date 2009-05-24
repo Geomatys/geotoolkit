@@ -74,7 +74,6 @@ public class DefaultPolygonMesh extends Mesh {
             rings.add(hole);
         }
 
-
         final FloatBuffer vertexBuffer  = BufferUtils.createVector3Buffer(nbTriangleVertex+nbQuadVertex);
         final FloatBuffer normalBuffer  = BufferUtils.createVector3Buffer(nbTriangleVertex+nbQuadVertex);
         final IntBuffer indexBuffer     = BufferUtils.createIntBuffer(indexes.size()+nbQuadVertex);
@@ -122,8 +121,7 @@ public class DefaultPolygonMesh extends Mesh {
         _meshData.setIndexModes(    new IndexMode[] {IndexMode.Quads, IndexMode.Triangles } );
 
         final MaterialState ms = new MaterialState();
-        ms.setEnabled(true);
-        ms.setDiffuse(new ColorRGBA(0.6f, 0.6f, 0.7f, .5f));
+        ms.setDiffuse(ColorRGBA.RED);
         this.setRenderState(ms);
 
         setModelBound(new BoundingSphere());

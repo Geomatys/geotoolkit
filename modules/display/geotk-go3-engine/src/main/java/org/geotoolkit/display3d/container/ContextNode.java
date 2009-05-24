@@ -5,11 +5,9 @@ import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.IndexMode;
-import com.ardor3d.renderer.state.BlendState;
-import com.ardor3d.renderer.state.BlendState.DestinationFunction;
-import com.ardor3d.renderer.state.BlendState.SourceFunction;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
+import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.scenegraph.shape.Box;
 import com.ardor3d.util.geom.BufferUtils;
 
@@ -39,7 +37,8 @@ public class ContextNode extends A3DGraphic{
     public ContextNode(A3DCanvas canvas, MapContext context) {
         super(canvas);
         this.context = context;
-        
+
+
         try {
             this.attachChild(buildPlan(context.getBounds()));
         } catch (IOException ex) {
@@ -62,7 +61,7 @@ public class ContextNode extends A3DGraphic{
 
     private Node buildPlan(final Envelope env){
         final Node plan = new Node("plan");
-        plan.setLightCombineMode(LightCombineMode.Off);
+        plan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
         final float over = -10f;
         final float width = 1f;
@@ -72,55 +71,29 @@ public class ContextNode extends A3DGraphic{
         final float maxy = (float) env.getMaximum(1);
 
         Box back = new Box("ceiling", new Vector3(minx, -env.getSpan(0)/20 -11, miny), new Vector3(maxx, -11, maxy));
-        back.setDefaultColor(new ColorRGBA(1, 1, 1, 0.6f));
-        back.setModelBound(new BoundingBox());
-        back.updateModelBound();
-
-        final BlendState blend = new BlendState();
-        blend.setBlendEnabled(true);
-        blend.setSourceFunction(SourceFunction.SourceAlpha);
-        blend.setDestinationFunction(DestinationFunction.OneMinusSourceAlpha);
+        back.setDefaultColor(new ColorRGBA(1, 1, 1, 1f));
 
         final int nbGrid = 10;
         float step = (float) (env.getSpan(0) / nbGrid);
-
+        FloatBuffer verts = BufferUtils.createVector3Buffer(4*(nbGrid+1));
         for(int i=0;i<=nbGrid;i++){
-            final FloatBuffer verts = BufferUtils.createVector3Buffer(2);
             verts.put(minx +step*i).put(over).put(miny);
             verts.put(minx +step*i).put(over).put(maxy);
-            Line line = new Line("Lines", verts, null, null, null);
-            line.getMeshData().setIndexMode(IndexMode.Lines);
-            line.setLineWidth(width);
-            line.setDefaultColor(ColorRGBA.LIGHT_GRAY);
-            line.setAntialiased(true);
-            line.setModelBound(new BoundingBox());
-            line.updateModelBound();
-            plan.attachChild(line);
         }
-
         step = (float) (env.getSpan(1) / nbGrid);
-
         for(int i=0;i<=nbGrid;i++){
-            final FloatBuffer verts = BufferUtils.createVector3Buffer(2);
             verts.put(minx).put(over).put(miny +step*i);
             verts.put(maxx).put(over).put(miny +step*i);
-            Line line = new Line("Lines", verts, null, null, null);
-            line.getMeshData().setIndexMode(IndexMode.Lines);
-            line.setLineWidth(width);
-            line.setDefaultColor(ColorRGBA.LIGHT_GRAY);
-            line.setAntialiased(true);
-            line.setModelBound(new BoundingBox());
-            line.updateModelBound();
-            plan.attachChild(line);
         }
+        Line line = new Line("Lines", verts, null, null, null);
+        line.getMeshData().setIndexMode(IndexMode.Lines);
+        line.setLineWidth(width);
+        line.setDefaultColor(ColorRGBA.LIGHT_GRAY);
+        line.setModelBound(new BoundingBox());
+        line.updateModelBound();
 
-
+        plan.attachChild(line);
         plan.attachChild(back);
-//        plan.setRenderState(blend);
-//        plan.setCullHint(Spatial.CullHint.Never);
-
-//        plan.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
-
         return plan;
     }
 

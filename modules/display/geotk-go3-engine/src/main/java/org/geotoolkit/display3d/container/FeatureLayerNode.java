@@ -12,6 +12,7 @@ import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.Spatial;
+import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.scenegraph.shape.Tube;
 import com.ardor3d.util.geom.BufferUtils;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -55,7 +56,7 @@ import org.opengis.filter.FilterFactory2;
 public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGraphic{
 
     private static final FilterFactory2 FF = new DefaultFilterFactory2();
-    private static final int searchExtent = 50000;
+    private static final int searchExtent = 5000;
 
     private final FeatureMapLayer layer;
 
@@ -63,7 +64,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         super(canvas);
         this.layer = layer;
 
-        canvas.getController().addLocationSensitiveGraphic(this, 20);
+        canvas.getController().addLocationSensitiveGraphic(this, 1);
     }
 
     private Mesh toNodeLine(LineString geom, float z ,ColorRGBA color){
@@ -80,7 +81,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         line.setLineWidth(0.5f);
         line.setDefaultColor(color);
 //        line.setAntialiased(true);
-        line.setLightCombineMode(LightCombineMode.Off);
+        line.getSceneHints().setLightCombineMode(LightCombineMode.Off);
         line.setModelBound(new BoundingSphere());
         line.updateModelBound();
 
@@ -103,7 +104,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         Tube cy = new Tube("cy", 4, 5, 10);
         cy.setTranslation(geom.getCoordinate().x, z,geom.getCoordinate().y);
         cy.setDefaultColor(color);
-        cy.setLightCombineMode(LightCombineMode.Off);
+        cy.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
         return cy;
     }
@@ -170,6 +171,8 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
             bb.setRange(1, cameraPosition.getZ()-searchExtent, cameraPosition.getZ()+searchExtent);
 
             final Filter f = FF.bbox(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),bb);
+//            Filter f = FF.dwithin(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),
+//                    FF.literal(new Coordinate(cameraPosition.getX(), cameraPosition.getZ())), searchExtent, "");
 
             final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(f);
             final FeatureIterator<SimpleFeature> ite = collection.features();

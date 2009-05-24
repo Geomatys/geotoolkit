@@ -113,10 +113,11 @@ public class A3DController implements Updater,CanvasController3D {
             if(camera != null && camera != lastCamera){
                 lastCamera = camera;
                 camera.setFrustumPerspective(
-                45.0,
-                (float) camera.getWidth()
-                        / (float) camera.getHeight(), 1, 10000.0f);
-                    camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
+                    45.0,
+                    (float) camera.getWidth()/ (float) camera.getHeight(),
+                    1,
+                    5000);
+                camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
             }
 
 

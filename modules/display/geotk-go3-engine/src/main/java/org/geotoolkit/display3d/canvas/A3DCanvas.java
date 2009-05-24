@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.CanvasRenderer;
+import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.awt.AwtCanvas;
 import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
 import com.ardor3d.input.InputState;
@@ -71,12 +72,13 @@ public class A3DCanvas extends ReferencedCanvas{
                 CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
 
                 if (canvasRenderer.getCamera() != null) {
+                    System.out.println("resized");
                     // tell our camera the correct new size
                     canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
 
                     // keep our aspect ratio the same.
                     canvasRenderer.getCamera().setFrustumPerspective(45.0,
-                            canvas.getWidth() / (float) canvas.getHeight(), 1, 30000);
+                            canvas.getWidth() / (float) canvas.getHeight(), 1, 5000);
                 }
             }
         });
@@ -116,7 +118,8 @@ public class A3DCanvas extends ReferencedCanvas{
     private AwtCanvas initContext() throws LWJGLException{
 //        refresher.addUpdater(controller);
 
-        final AwtCanvas canvas = new AwtCanvas();
+        final DisplaySettings settings = new DisplaySettings(1, 1, 0, 0, 0, 32, 0, 4, false, false);
+        final AwtCanvas canvas = new AwtCanvas(settings);
         LwjglCanvasRenderer renderer = new LwjglCanvasRenderer(container);
         canvas.setCanvasRenderer(renderer);
         canvas.setSize(new Dimension(100, 100));
