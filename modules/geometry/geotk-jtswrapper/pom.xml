@@ -46,10 +46,6 @@
   <!-- =========================================================== -->
   <dependencies>
       <dependency>
-          <groupId>org.geotools</groupId>
-          <artifactId>gtm-main</artifactId>
-      </dependency>
-      <dependency>
           <groupId>com.vividsolutions</groupId>
           <artifactId>jts</artifactId>
       </dependency>
@@ -63,7 +59,6 @@
           <version>${geotoolkit.version}</version>
           <scope>provided</scope>
       </dependency>
-
   </dependencies>
             
   </project>

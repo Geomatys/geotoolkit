@@ -16,37 +16,29 @@
  */
 package org.geotoolkit.geometry.isoonjts;
 
-/*import com.polexis.go.FactoryManager;
-import com.polexis.go.typical.coord.LatLonAlt;
-import com.polexis.referencing.crs.CRSUtils;
-import com.polexis.referencing.cs.CSUtils;
-import com.polexis.units.UnitUtils;*/
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
-//apache dependencies
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.logging.Logging;
 
-//openGIS dependencies
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
@@ -64,10 +56,6 @@ import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 
-//geotools dpendencies
-import org.geotools.factory.BasicFactories;
-import org.geotoolkit.referencing.CRS;
-
 /**
  * @author crossley
  *
@@ -75,7 +63,8 @@ import org.geotoolkit.referencing.CRS;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public final class GeometryUtils {
-    
+
+    private static final Logger LOGGER = Logging.getLogger(GeometryUtils.class);
 
     //*************************************************************************
     //  Static Fields
@@ -89,11 +78,10 @@ public final class GeometryUtils {
             try {
                 crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
             } catch (Exception nsace){
-                getLog().warn("could not get crs for EPSG:4326");
+                LOGGER.warning("could not get crs for EPSG:4326");
             }
             
-            final BasicFactories commonFactory = BasicFactories.getDefault();
-            final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(crs);
+            final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
             
             final DirectPosition lowerCorner = geometryFactory.createDirectPosition(new double[] { -90, -180 });
             final DirectPosition upperCorner = geometryFactory.createDirectPosition(new double[] { 90, 180 });
@@ -145,8 +133,7 @@ public final class GeometryUtils {
             final double miny,
             final double maxx,
             final double maxy) {
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(crs);
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
         
         final DirectPosition lowerCorner = geometryFactory.createDirectPosition();
         lowerCorner.setOrdinate(0, minx);
@@ -176,8 +163,7 @@ public final class GeometryUtils {
             final double maxx,
             final double maxy,
             final Unit unit) {
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(crs);
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
         
         final CoordinateSystem cs = crs.getCoordinateSystem();
         
@@ -348,7 +334,7 @@ public final class GeometryUtils {
         DirectPosition[] returnable = new DirectPosition[length];
         for (int i = 0; i < length; i++) {
             
-            getLog().debug("need to make a DirectPosition");
+            LOGGER.fine("need to make a DirectPosition");
             // umm, how am i gonna make a DirectPosition here?
             //FactoryManager.getCommonFactory().getGeometryFactory(crs).createDirectPosition
         }
@@ -432,7 +418,7 @@ public final class GeometryUtils {
         try {
                 wgs84crs = (GeographicCRS) CRS.decode("EPSG:4327");
         } catch (Exception nsace){
-                getLog().warn("could not get crs for EPSG:4327");
+                LOGGER.warning("could not get crs for EPSG:4327");
         }
     	
         //have doubts about following line, was the commented out 2nd clause to condition doing anything - colin       
@@ -452,16 +438,16 @@ public final class GeometryUtils {
         //can use transform util in org.geotoolkit.referencing.CRS instaed
         //CoordinateReferenceSystem crs2 = dim == 2 ? wgs84crs : CRSUtils.WGS84_PROJ;
         //same equality issues as above
-        DirectPosition dp2 = BasicFactories.getDefault().getGeometryFactory(wgs84crs).createDirectPosition();
+        DirectPosition dp2 = new JTSGeometryFactory(wgs84crs).createDirectPosition();
         try{
             MathTransform transform = CRS.findMathTransform(crs, wgs84crs);
             transform.transform(dp, dp2);
         } catch (FactoryException fe) {
-        	getLog().warn("Could not create CoordinateOperation to convert DirectPosition CRS "
+        	LOGGER.log(Level.WARNING,"Could not create CoordinateOperation to convert DirectPosition CRS "
         		+ crs.getName() + " to WGS84, using original ordinates", fe);
         	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (TransformException e) {
-        	getLog().warn("Could not transform DirectPosition CRS "
+        	LOGGER.log(Level.WARNING,"Could not transform DirectPosition CRS "
         		+ crs.getName() + " to WGS84, using original ordinates", e);
         	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (MismatchedDimensionException e) {
@@ -469,7 +455,7 @@ public final class GeometryUtils {
         	// than just throw an exception.  Normally we only care about lat and lon,
         	// and if one has altitude and the other doesn't that shouldn't
         	// be a showstopper.
-        	getLog().warn("Dimension mismatch prevented conversion of DirectPosition CRS "
+        	LOGGER.log(Level.WARNING,"Dimension mismatch prevented conversion of DirectPosition CRS "
         		+ crs.getName() + " to WGS84, using original ordinates", e);
         	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
         }
@@ -698,8 +684,7 @@ public final class GeometryUtils {
     public static PolyhedralSurface createPolyhedralSurface(final DirectPosition[][] patchPoints) {
         // get the crs and factories
         final CoordinateReferenceSystem crs = patchPoints[0][0].getCoordinateReferenceSystem();
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(crs);
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
         
         // create polygons from each of the arrays of directPositions
         final List polygons = new ArrayList(patchPoints.length);
@@ -720,9 +705,8 @@ public final class GeometryUtils {
             final DirectPosition[][] interiorRingsPoints) {
         
         final CoordinateReferenceSystem crs = exteriorRingPoints[0].getCoordinateReferenceSystem();
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(crs);
-        final PrimitiveFactory primitiveFactory = commonFactory.getPrimitiveFactory(crs);
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
         
         final Ring exteriorRing = createRing(primitiveFactory, exteriorRingPoints);
         
@@ -744,8 +728,7 @@ public final class GeometryUtils {
             final DirectPosition[] exteriorRingPoints,
             final DirectPosition[][] interiorRingsPoints) {
         final CoordinateReferenceSystem crs = exteriorRingPoints[0].getCoordinateReferenceSystem();
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final PrimitiveFactory primitiveFactory = commonFactory.getPrimitiveFactory(crs);
+        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
         return createSurfaceBoundary(primitiveFactory, exteriorRingPoints, interiorRingsPoints);
     }
     
@@ -770,8 +753,7 @@ public final class GeometryUtils {
     
     public static Ring createRing(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final PrimitiveFactory primitiveFactory = commonFactory.getPrimitiveFactory(crs);
+        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
         return createRing(primitiveFactory, points);
     }
     
@@ -787,8 +769,7 @@ public final class GeometryUtils {
     
     public static Curve createCurve(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final PrimitiveFactory primitiveFactory = commonFactory.getPrimitiveFactory(crs);
+        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
         return createCurve(primitiveFactory, points);
     }
     
@@ -796,8 +777,7 @@ public final class GeometryUtils {
             final PrimitiveFactory primitiveFactory, 
             final DirectPosition[] points) {
         
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(primitiveFactory.getCoordinateReferenceSystem());
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(primitiveFactory.getCoordinateReferenceSystem());
         
         final List curveSegmentList = Collections.singletonList(createLineString(geometryFactory, points));
         
@@ -807,8 +787,7 @@ public final class GeometryUtils {
 
     public static LineString createLineString(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final BasicFactories commonFactory = BasicFactories.getDefault();
-        final GeometryFactory geometryFactory = commonFactory.getGeometryFactory(crs);
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
         return createLineString(geometryFactory, points);
     }
     
@@ -824,68 +803,15 @@ public final class GeometryUtils {
     //*************************************************************************
     //  private static methods
     //*************************************************************************
-    
-    /**
-     * Gets the log.
-     * @return the log
-     */
-    protected static Log getLog() {
-        if (log == null) {
-            log = LogFactory.getLog(GeometryUtils.class);
-        }
-        return log;
-    }
-    
-    //*************************************************************************
-    //  Static Fields
-    //*************************************************************************
-    
-    /**
-     * commons log.
-     */
-    private static transient Log log;
-    
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
+     
     
     /**
      * Prevents creating a new {@code GeometryUtils}.
      */
     private GeometryUtils() { }
 
-    /*public static void main(String[] args) {
-        CoordinateReferenceSystem crs = CRSUtils.createCoordinateReferenceSystem("4327");
-        LatLonAlt[] positions = new LatLonAlt[] {
-                new LatLonAlt(Math.PI/4, Math.PI/4, 1, SI.RADIAN, NonSI.MILE, crs),
-                new LatLonAlt(-Math.PI/4, -Math.PI/4, .5, SI.RADIAN, NonSI.MILE, crs),
-                new LatLonAlt(Math.PI/3, Math.PI/3, 0, SI.RADIAN, NonSI.MILE, crs)
-        };
-        System.out.println("converting "+positions[0]+", "+positions[1]+", "+positions[2]);
-        AxisDirection[] targetDirections = new AxisDirection[] {
-                AxisDirection.EAST,
-                AxisDirection.NORTH,
-                AxisDirection.UP
-        };
-        System.out.println("directions "+targetDirections[0]+", "+targetDirections[1]+", "+targetDirections[2]);
-        Unit[] targetUnits = new Unit[] {
-                //SI.RADIAN,
-                //SI.RADIAN,
-                //NonSI.FOOT
-                NonSI.DEGREE_ANGLE,
-                NonSI.DEGREE_ANGLE,
-                SI.METER
-        };
-        System.out.println("units      "+targetUnits[0]+", "+targetUnits[1]+", "+targetUnits[2]);
-        
-        double[] points = getPoints(positions, targetDirections, targetUnits);
-        System.out.println("response a "+points[0]+", "+points[1]+", "+points[2]);
-        System.out.println("response b "+points[3]+", "+points[4]+", "+points[5]);
-        System.out.println("response c "+points[6]+", "+points[7]+", "+points[8]);
-        
-    }*/
     
-         /**
+    /**
      * Check if a reference coordinate system has the expected number of dimensions.
      * - code lifted from com.polexis.referencing.CRSUtils - thanks Jesse!
      * - not sure i see the need for both this method and CRS.ensureDimensionMatch()

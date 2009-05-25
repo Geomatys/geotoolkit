@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.factory.Factory;
-import org.geotools.factory.Hints;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.geometry.aggregate.AggregateFactory;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiPoint;
@@ -31,42 +29,53 @@ import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Implementation of AggregateFactory able to make MultiPointImpl but
- * little else.
+ * Implementation of AggregateFactory able to make MultiPointImpl but little else.
  * 
  * @author Jody Garnett
+ * @author Johann Sorel (Geomatys)
  */
 public class JTSAggregateFactory extends Factory implements AggregateFactory {
-    private CoordinateReferenceSystem crs;
-    /**
-     * No argument constructor for FactorySPI
-     */
+
+    private final CoordinateReferenceSystem crs;
+
     public JTSAggregateFactory(){
         this( DefaultGeographicCRS.WGS84);
     }
-    /**
-     * Hints constructor for FactoryRegistry
-     */
-    public JTSAggregateFactory( Hints hints ){
-        this( (CoordinateReferenceSystem) hints.get( Hints.CRS ) );
-    }
-    /**
-     * Direct constructor for test cases
-     */
+
     public JTSAggregateFactory( CoordinateReferenceSystem crs ) {
         this.crs = crs;
-        hints.put( Hints.CRS, crs );
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public MultiCurve createMultiCurve( Set arg0 ) {
         throw new UnsupportedOperationException("MultiCurve not implemented");
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public MultiPoint createMultiPoint( Set arg0 ) {
         return new MultiPointImpl( crs );
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public MultiPrimitive createMultiPrimitive( Set arg0 ) {
         throw new UnsupportedOperationException("MultiPrimitive not implemented");
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public MultiSurface createMultiSurface( Set arg0 ) {
         throw new UnsupportedOperationException("MultiSurface not implemented");
     }
+
 }

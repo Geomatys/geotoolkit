@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Set;
 
 // OpenGIS direct dependencies
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
@@ -33,9 +34,6 @@ import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.geometry.complex.Composite;
-
-//geotools dependencies
-import org.geotools.factory.BasicFactories;
 
 //import com.polexis.lite.referencing.operation.CoordinateOperationFactoryImpl;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -126,8 +124,7 @@ public class PointImpl extends GeometryImpl implements Point {
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {
-                	BasicFactories commonFactory = BasicFactories.getDefault(); 
-                    CoordinateOperationFactory cof = commonFactory.getCoordinateOperationFactory();
+                    CoordinateOperationFactory cof = FactoryFinder.getCoordinateOperationFactory(null);
                     CoordinateOperation coordOp = cof.createOperation(pointCRS, myCRS);
                     MathTransform mt = coordOp.getMathTransform();
                     mt.transform(position, copy);

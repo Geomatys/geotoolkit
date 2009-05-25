@@ -9,14 +9,11 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-import org.geotools.factory.Hints;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.factory.Factory;
@@ -24,6 +21,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImp
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.EnvelopeImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PolyhedralSurfaceImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfaceBoundaryImpl;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -81,18 +79,12 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public JTSGeometryFactory(){
         this( DefaultGeographicCRS.WGS84);
     }
-    /**
-     * Hints constructor for FactoryRegistry
-     */
-    public JTSGeometryFactory( Hints hints ){
-        this( (CoordinateReferenceSystem) hints.get( Hints.CRS ) );
-    }
+
     /**
      * Direct constructor for test cases
      */
     public JTSGeometryFactory( CoordinateReferenceSystem crs ) {
         this.crs = crs;
-        hints.put( Hints.CRS, crs );
     }
 
     //*************************************************************************

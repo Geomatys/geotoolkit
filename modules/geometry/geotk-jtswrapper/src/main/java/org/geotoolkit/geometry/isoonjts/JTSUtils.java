@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.measure.unit.NonSI;
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -54,9 +52,6 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 // a result DiretPosition.
 
 //geotools dependencies
-import org.geotools.factory.BasicFactories;
-import org.geotools.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
@@ -87,9 +82,8 @@ public final class JTSUtils {
             final com.vividsolutions.jts.geom.Geometry jtsGeom,
             final CoordinateReferenceSystem crs) {
 
-        Hints hints = new Hints( Hints.CRS, crs );
         PrimitiveFactory pf = new PrimitiveFactoryImpl(crs);//FactoryFinder.getPrimitiveFactory(hints);
-        GeometryFactory gf = new JTSGeometryFactory(hints); //FactoryFinder.getGeometryFactory(hints);
+        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         String geomType = jtsGeom.getGeometryType();
         if (geomType.equalsIgnoreCase("Point")) {
@@ -227,8 +221,7 @@ public final class JTSUtils {
             com.vividsolutions.jts.geom.Coordinate c,
             CoordinateReferenceSystem crs) {
         
-        Hints hints = new Hints( Hints.CRS, crs );
-        GeometryFactory gf = new JTSGeometryFactory(hints); //FactoryFinder.getGeometryFactory(hints);
+        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
          
         double [] vertices;
         if (crs == null)
@@ -297,9 +290,9 @@ public final class JTSUtils {
         if (! jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints-1))) {
             throw new IllegalArgumentException("LineString must be a ring");
         }
-        Hints hints = new Hints( Hints.CRS, crs );
+        
         PrimitiveFactory pf = new PrimitiveFactoryImpl(crs); //FactoryFinder.getPrimitiveFactory(hints);
-        GeometryFactory gf = new JTSGeometryFactory(hints); //FactoryFinder.getGeometryFactory(hints);
+        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
         
         LineString ls = gf.createLineString(new ArrayList());
         List pointList = ls.getControlPoints().positions();

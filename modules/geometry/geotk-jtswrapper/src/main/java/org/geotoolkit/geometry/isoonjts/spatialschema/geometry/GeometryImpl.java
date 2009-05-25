@@ -17,10 +17,10 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.CurveBoundaryImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfaceBoundaryImpl;
+import org.geotoolkit.referencing.CRS;
+
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
@@ -36,19 +36,12 @@ import org.opengis.geometry.primitive.Ring;
 import org.opengis.util.Cloneable;
 
 
-//geotools dependencies
-import org.geotools.factory.BasicFactories;
-
 /**
- * Base class for our JTS-based implementation of the various ISO 19107 geometry
- * classes.
+ * Base class for our JTS-based implementation of the various ISO 19107 geometry classes.
+ * 
+ * @author Johann Sorel (Geomatys)
  */
-public abstract class GeometryImpl 
-	implements Geometry, Serializable, Cloneable, JTSGeometry {
-
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
+public abstract class GeometryImpl implements Geometry, Serializable, Cloneable, JTSGeometry {
 
     /**
      * True if we're allowing changes to the geometry.  False if not.
@@ -112,7 +105,8 @@ public abstract class GeometryImpl
     public void setParent(JTSGeometry parent) {
         this.parent = parent;
     }
-    
+
+    @Override
     public Precision getPrecision() {
         return precision;
     }
@@ -127,6 +121,7 @@ public abstract class GeometryImpl
      * This method must be called by subclasses whenever the user makes a change
      * to the geometry so that the cached JTS object can be recreated.
      */
+    @Override
     public final void invalidateCachedJTSPeer() {
         jtsPeer = null;
         if (parent != null) parent.invalidateCachedJTSPeer();
@@ -146,6 +141,7 @@ public abstract class GeometryImpl
      * changed since the last time this method was called, it will return the
      * exact same object.
      */
+    @Override
     public final com.vividsolutions.jts.geom.Geometry getJTSGeometry() {
         if (jtsPeer == null) {
             jtsPeer = computeJTSPeer();
@@ -160,6 +156,7 @@ public abstract class GeometryImpl
     /**
      * Returns the CRS that was given to the constructor.
      */
+    @Override
     public final CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return coordinateReferenceSystem;
     }
@@ -168,6 +165,7 @@ public abstract class GeometryImpl
      * Returns a Geometry that represents the minimum bounding region of this
      * geometry.
      */
+    @Override
     public final Geometry getMbRegion() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         return JTSUtils.jtsToGo1(jtsGeom.getEnvelope(), getCoordinateReferenceSystem());
@@ -176,6 +174,7 @@ public abstract class GeometryImpl
     /**
      * Returns a point interior to the geometry.
      */
+    @Override
     public final DirectPosition getRepresentativePoint() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Point p = jtsGeom.getInteriorPoint();
@@ -186,6 +185,7 @@ public abstract class GeometryImpl
      * Returns the boundary of this geometry.  Returns null if the boundary is
      * empty.
      */
+    @Override
     public Boundary getBoundary() {
         // PENDING(CSD):
         // Need to find out if MultiPrimitives are handled correctly.  (I think
@@ -280,6 +280,7 @@ public abstract class GeometryImpl
      * This method is not implemented.  Always throws an
      * UnsupportedOperationException.
      */
+    @Override
     public final Complex getClosure() {
         throw new UnsupportedOperationException("Closure not supported");
     }
@@ -287,11 +288,13 @@ public abstract class GeometryImpl
     /**
      * Returns true if this object does not cross itself.
      */
+    @Override
     public final boolean isSimple() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         return jtsGeom.isSimple();
     }
 
+    @Override
     public final boolean isCycle() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsBoundary = jtsGeom.getBoundary();
@@ -320,6 +323,7 @@ public abstract class GeometryImpl
      * at the given point, this returns the least dimension of those geometries.
      * Returns Integer.MAX_VALUE if the given point is not on this geometry.
      */
+    @Override
     public final int getDimension(final DirectPosition point) {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         if (jtsGeom instanceof com.vividsolutions.jts.geom.GeometryCollection) {
@@ -360,6 +364,7 @@ public abstract class GeometryImpl
      * delegates to the coordinate reference system, so it may throw a null
      * pointer exception if this geometry has no coordinate reference system.
      */
+    @Override
     public final int getCoordinateDimension() {
         return getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
     }
@@ -371,6 +376,7 @@ public abstract class GeometryImpl
      * add some memory usage and bookkeeping headaches for functionality that
      * will rarely, if ever, be used.  This this method always returns null.
      */
+    @Override
     public final Set getMaximalComplex() {
         return null;
     }
@@ -380,13 +386,10 @@ public abstract class GeometryImpl
      * creates a new geometry by invoking that transform on each control point
      * of this geometry.
      */
+    @Override
     public final Geometry transform(final CoordinateReferenceSystem newCRS) throws TransformException {
         try {
-            BasicFactories commonFactory = BasicFactories.getDefault(); 
-            CoordinateOperationFactory cof = commonFactory.getCoordinateOperationFactory();
-            CoordinateReferenceSystem oldCRS = getCoordinateReferenceSystem();
-            CoordinateOperation coordOp = cof.createOperation(oldCRS, newCRS);
-            MathTransform mt = coordOp.getMathTransform();
+            MathTransform mt = CRS.findMathTransform(getCoordinateReferenceSystem(), newCRS, true);
             return transform(newCRS, mt);
         }
         catch (OperationNotFoundException e) {
@@ -401,6 +404,7 @@ public abstract class GeometryImpl
      * Creates a new Geometry out of this one by invoking the given transform
      * on each control point of this geometry.
      */
+    @Override
     public final Geometry transform(final CoordinateReferenceSystem newCRS, 
             final MathTransform transform) throws TransformException {
         // Get the JTS geometry
@@ -419,6 +423,7 @@ public abstract class GeometryImpl
      * @inheritDoc
      * @see org.opengis.geometry.coordinate.#getEnvelope()
      */
+    @Override
     public final Envelope getEnvelope() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Envelope jtsEnv = jtsGeom.getEnvelopeInternal();
@@ -435,6 +440,7 @@ public abstract class GeometryImpl
     /**
      * Returns the centroid of this geometry.
      */
+    @Override
     public final DirectPosition getCentroid() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Point jtsCentroid = jtsGeom.getCentroid();
@@ -445,6 +451,7 @@ public abstract class GeometryImpl
     /**
      * Returns the geometric convex hull of this geometry.
      */
+    @Override
     public final Geometry getConvexHull() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsHull = jtsGeom.convexHull();
@@ -454,6 +461,7 @@ public abstract class GeometryImpl
     /**
      * Returns an approximate buffer around this object.
      */
+    @Override
     public final Geometry getBuffer(final double distance) {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsBuffer = jtsGeom.buffer(distance);
@@ -463,6 +471,7 @@ public abstract class GeometryImpl
     /**
      * Returns true if this geometry can be changed.
      */
+    @Override
     public final boolean isMutable() {
         return mutable;
     }
@@ -471,6 +480,7 @@ public abstract class GeometryImpl
      * Creates an immutable copy of this object or just returns this object if
      * it's already immutable.
      */
+    @Override
     public final Geometry toImmutable() {
         if (isMutable()) {
 	        GeometryImpl result = (GeometryImpl) clone();
@@ -488,6 +498,7 @@ public abstract class GeometryImpl
      * that all of the (private) members of GeometryImpl are already immutable
      * so this method simply delegates to the superclass (Object) clone.
      */
+    @Override
     public GeometryImpl clone() {
         try {
             return (GeometryImpl) super.clone();
@@ -501,6 +512,7 @@ public abstract class GeometryImpl
      * Returns true if the given position lies in this geometry within the
      * tolerance of the floating point representation.
      */
+    @Override
     public boolean contains(DirectPosition point) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -511,6 +523,7 @@ public abstract class GeometryImpl
     /**
      * Returns true if this geometry completely contains the given geometry.
      */
+    @Override
     public boolean contains(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -518,10 +531,12 @@ public abstract class GeometryImpl
         return JTSUtils.contains(jtsGeom1, jtsGeom2);
     }
 
+    @Override
     public double distance( Geometry otherGeometry ) {
         return getDistance( otherGeometry );
     }
     
+    @Override
     public TransfiniteSet difference(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -530,6 +545,7 @@ public abstract class GeometryImpl
                 getCoordinateReferenceSystem());
     }
 
+    @Override
     public boolean equals(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -537,6 +553,7 @@ public abstract class GeometryImpl
         return JTSUtils.equals(jtsGeom1, jtsGeom2);
     }
 
+    @Override
     public TransfiniteSet intersection(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -545,6 +562,7 @@ public abstract class GeometryImpl
                 getCoordinateReferenceSystem());
     }
 
+    @Override
     public boolean intersects(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -552,6 +570,7 @@ public abstract class GeometryImpl
         return JTSUtils.intersects(jtsGeom1, jtsGeom2);
     }
 
+    @Override
     public TransfiniteSet symmetricDifference(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -560,6 +579,7 @@ public abstract class GeometryImpl
                 getCoordinateReferenceSystem());
     }
 
+    @Override
     public TransfiniteSet union(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
@@ -570,54 +590,67 @@ public abstract class GeometryImpl
 
     public static Set listAsSet(final List list) {
         return new Set() {
+            @Override
             public int size() {
                 return list.size();
             }
 
+            @Override
             public void clear() {
                 list.clear();
             }
 
+            @Override
             public boolean isEmpty() {
                 return list.isEmpty();
             }
 
+            @Override
             public Object [] toArray() {
                 return list.toArray();
             }
 
+            @Override
             public boolean add(Object o) {
                 return list.add(o);
             }
 
+            @Override
             public boolean contains(Object o) {
                 return list.contains(o);
             }
 
+            @Override
             public boolean remove(Object o) {
                 return list.remove(o);
             }
 
+            @Override
             public boolean addAll(Collection c) {
                 return list.addAll(c);
             }
 
+            @Override
             public boolean containsAll(Collection c) {
                 return list.containsAll(c);
             }
 
+            @Override
             public boolean removeAll(Collection c) {
                 return list.removeAll(c);
             }
 
+            @Override
             public boolean retainAll(Collection c) {
                 return list.retainAll(c);
             }
 
+            @Override
             public Iterator iterator() {
                 return list.iterator();
             }
 
+            @Override
             public Object [] toArray(Object [] a) {
                 return list.toArray(a);
             }
@@ -641,6 +674,7 @@ public abstract class GeometryImpl
             dst = new DirectPositionImpl(newCRS);
         }
 
+        @Override
         public void filter(com.vividsolutions.jts.geom.Coordinate coord) {
             // Load the input into a DirectPosition
             JTSUtils.coordinateToDirectPosition(coord, src);
