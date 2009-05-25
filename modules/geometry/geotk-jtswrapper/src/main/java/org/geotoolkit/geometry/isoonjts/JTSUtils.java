@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -52,7 +53,6 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 // a result DiretPosition.
 
 //geotools dependencies
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
 
@@ -436,8 +436,8 @@ public final class JTSUtils {
         // rather than geo coordinate; only way to be sure is to check Units
         DirectPosition topCorner = envelope.getUpperCorner();
         DirectPosition botCorner = envelope.getLowerCorner();
-        DirectPosition topLeft = new DirectPositionImpl(topCorner);
-        DirectPosition botRight = new DirectPositionImpl(botCorner);
+        DirectPosition topLeft = new GeneralDirectPosition(topCorner);
+        DirectPosition botRight = new GeneralDirectPosition(botCorner);
         
         //Again, making assumption we can ignore this LatLonAlt stuff - colin
         

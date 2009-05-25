@@ -15,8 +15,8 @@ import java.util.Set;
 
 // OpenGIS direct dependencies
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -85,7 +85,7 @@ public class PointImpl extends GeometryImpl implements Point {
      */
     public PointImpl(final DirectPosition position, final CoordinateReferenceSystem crs) {
         super(crs);
-        this.position = (position == null) ? new DirectPositionImpl(crs) : position;
+        this.position = (position == null) ? new GeneralDirectPosition(crs) : position;
     }
 
     //*************************************************************************
@@ -103,7 +103,7 @@ public class PointImpl extends GeometryImpl implements Point {
      * the values of the object and we would not know.
      */
     public DirectPosition getDirectPosition() {
-        return new DirectPositionImpl(position);
+        return new GeneralDirectPosition(position);
     }
 
     @Deprecated
@@ -120,7 +120,7 @@ public class PointImpl extends GeometryImpl implements Point {
         if (isMutable()) {
             CoordinateReferenceSystem myCRS = getCoordinateReferenceSystem();
             CoordinateReferenceSystem pointCRS = position.getCoordinateReferenceSystem();
-            DirectPosition copy = new DirectPositionImpl(position);
+            DirectPosition copy = new GeneralDirectPosition(position);
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {

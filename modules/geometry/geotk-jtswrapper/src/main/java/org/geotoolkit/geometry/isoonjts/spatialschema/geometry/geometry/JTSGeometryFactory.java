@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.EnvelopeImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PolyhedralSurfaceImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfaceBoundaryImpl;
@@ -100,10 +100,10 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     
 
     public Position createPosition( DirectPosition point ) {
-        return new DirectPositionImpl( point );
+        return new GeneralDirectPosition( point );
     }
     public DirectPosition createDirectPosition() {
-        return new DirectPositionImpl(crs);
+        return new GeneralDirectPosition(crs);
     }
     
     /**
@@ -111,7 +111,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * @see org.opengis.geometry.coordinate.Factory#createDirectPosition(double[])
      */
     public DirectPosition createDirectPosition(final double[] coordinates) {
-        return new DirectPositionImpl(crs, coordinates);
+        GeneralDirectPosition pos = new GeneralDirectPosition(coordinates);
+        pos.setCoordinateReferenceSystem(crs);
+        return pos;
     }
     
     

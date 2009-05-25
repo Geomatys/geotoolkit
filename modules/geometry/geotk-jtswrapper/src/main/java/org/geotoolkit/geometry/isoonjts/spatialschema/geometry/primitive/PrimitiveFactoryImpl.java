@@ -9,10 +9,9 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 // J2SE direct dependencies
 
-import java.util.Collection;
 import java.util.List;
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GeometryFactoryImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PolygonImpl;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -102,10 +101,13 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      * @return
      */
     public DirectPosition createDirectPosition(final double[] coordinates) {
-        if (coordinates != null) {
-            return new DirectPositionImpl(crs, coordinates);
-        } else {
-            return new DirectPositionImpl(crs);
+        if(coordinates == null){
+            GeneralDirectPosition position = new GeneralDirectPosition(crs);
+            return position;
+        }else{
+            GeneralDirectPosition position = new GeneralDirectPosition(coordinates);
+            position.setCoordinateReferenceSystem(crs);
+            return position;
         }
     }
 

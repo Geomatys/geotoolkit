@@ -13,9 +13,9 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayList;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
@@ -134,7 +134,7 @@ public class PointArrayImpl extends NotifyingArrayList<Position> implements Poin
      *          to this array, or should we left the decision to the implementor?
      */
     public Position get(int column) throws IndexOutOfBoundsException {
-        return new DirectPositionImpl((DirectPosition)super.get(column));
+        return new GeneralDirectPosition((DirectPosition)super.get(column));
     }
 
     /**
@@ -153,7 +153,7 @@ public class PointArrayImpl extends NotifyingArrayList<Position> implements Poin
     public DirectPosition getDirectPosition(int column, DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition position = (DirectPosition) get(column);
         if (dest == null) {
-            dest = new DirectPositionImpl(position.getCoordinateReferenceSystem());
+            dest = new GeneralDirectPosition(position.getCoordinateReferenceSystem());
         }
         for (int i = 0; i < position.getDimension(); i++) {
             dest.setOrdinate(i, position.getOrdinate(i));
@@ -198,7 +198,7 @@ public class PointArrayImpl extends NotifyingArrayList<Position> implements Poin
         int n = size();
         DirectPosition [] result = new DirectPosition[n];
         for (int i=0; i<n; i++) {
-            result[i] = new DirectPositionImpl((DirectPosition)get(i));
+            result[i] = new GeneralDirectPosition((DirectPosition)get(i));
         }
         return result;
     }

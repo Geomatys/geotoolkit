@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.CurveBoundaryImpl;
@@ -428,12 +430,11 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Envelope jtsEnv = jtsGeom.getEnvelopeInternal();
         CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
-        Envelope result = new EnvelopeImpl(
-                new DirectPositionImpl(crs,
-                        new double [] { jtsEnv.getMinX(), jtsEnv.getMinY() }),
-                new DirectPositionImpl(crs,
-                        new double [] { jtsEnv.getMaxX(), jtsEnv.getMaxY() })
-        );
+        DirectPosition2D lower = new DirectPosition2D(jtsEnv.getMinX(), jtsEnv.getMinY());
+        lower.setCoordinateReferenceSystem(crs);
+        DirectPosition2D upper = new DirectPosition2D(jtsEnv.getMaxX(), jtsEnv.getMaxY());
+        upper.setCoordinateReferenceSystem(crs);
+        Envelope result = new EnvelopeImpl(lower,upper);
         return result;
     }
 
@@ -670,8 +671,8 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
                 CoordinateReferenceSystem oldCRS,
                 CoordinateReferenceSystem newCRS) {
             this.transform = transform;
-            src = new DirectPositionImpl(oldCRS);
-            dst = new DirectPositionImpl(newCRS);
+            src = new GeneralDirectPosition(oldCRS);
+            dst = new GeneralDirectPosition(newCRS);
         }
 
         @Override

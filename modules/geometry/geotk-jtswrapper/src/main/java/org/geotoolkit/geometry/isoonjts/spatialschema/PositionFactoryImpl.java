@@ -18,8 +18,9 @@ package org.geotoolkit.geometry.isoonjts.spatialschema;
 
 import java.util.List;
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PointArrayImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PositionImpl;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -30,7 +31,8 @@ import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class PositionFactoryImpl implements PositionFactory {
-	private CoordinateReferenceSystem crs;
+
+	private final CoordinateReferenceSystem crs;
 	
 	/**
 	 * No argument constructor for the plugin system.
@@ -41,13 +43,18 @@ public class PositionFactoryImpl implements PositionFactory {
 	public PositionFactoryImpl( CoordinateReferenceSystem crs ){
 		this.crs = crs;
 	}
-	public DirectPosition createDirectPosition(double[] ordiantes)
+    
+    @Override
+	public DirectPosition createDirectPosition(double[] ordinates)
 			throws MismatchedDimensionException {
-		return new DirectPositionImpl( crs, ordiantes );
+        GeneralDirectPosition position = new GeneralDirectPosition(ordinates);
+        position.setCoordinateReferenceSystem(crs);
+		return position;
 	}
 
+    @Override
 	public Position createPosition(Position position) {
-		return new DirectPositionImpl( position.getPosition() );
+        return new GeneralDirectPosition(position.getDirectPosition());
 	}
 
 	public List createPositionList() {
@@ -91,13 +98,17 @@ public class PositionFactoryImpl implements PositionFactory {
 		if (D == 2) {
 			for (int i = start; i < end; i += D) {
 				double[] ordinates = new double[] { array[i], array[i + 1] };
-				pointArray.add(new DirectPositionImpl(crs, ordinates));
+                GeneralDirectPosition pos = new GeneralDirectPosition(ordinates);
+                pos.setCoordinateReferenceSystem(crs);
+				pointArray.add(pos);
 			}
 		} else if (D == 3) {
 			for (int i = start; i < end; i += D) {
 				double[] ordinates = new double[] { array[i], array[i + 1],
 						array[i + 2] };
-				pointArray.add(new DirectPositionImpl(crs, ordinates));
+                GeneralDirectPosition pos = new GeneralDirectPosition(ordinates);
+                pos.setCoordinateReferenceSystem(crs);
+				pointArray.add(pos);
 			}
 		} else {
 			for (int i = start; i < end; i += D) {
@@ -105,7 +116,9 @@ public class PositionFactoryImpl implements PositionFactory {
 				for (int o = 0; i < D; i++) {
 					ordinates[o] = array[i + o];
 				}
-				pointArray.add(new DirectPositionImpl(crs, ordinates));
+                GeneralDirectPosition pos = new GeneralDirectPosition(ordinates);
+                pos.setCoordinateReferenceSystem(crs);
+				pointArray.add(pos);
 			}
 		}
 		return pointArray;

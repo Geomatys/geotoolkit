@@ -12,6 +12,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 import javax.measure.unit.NonSI;
 
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
@@ -59,8 +60,8 @@ public class EnvelopeImpl implements Envelope {
     public EnvelopeImpl(
             final DirectPosition lowerCorner, 
             final DirectPosition upperCorner) {
-        this.lowerCorner = new DirectPositionImpl(lowerCorner);
-        this.upperCorner = new DirectPositionImpl(upperCorner);
+        this.lowerCorner = new GeneralDirectPosition(lowerCorner);
+        this.upperCorner = new GeneralDirectPosition(upperCorner);
     }
 
     //*************************************************************************
@@ -130,7 +131,7 @@ public class EnvelopeImpl implements Envelope {
      * @see org.opengis.geometry.coordinate.Envelope#getUpperCorner()
      */
     public final DirectPosition getUpperCorner() {
-        return new DirectPositionImpl(upperCorner);
+        return new GeneralDirectPosition(upperCorner);
     }
 
     /**
@@ -138,7 +139,7 @@ public class EnvelopeImpl implements Envelope {
      * @see org.opengis.geometry.coordinate.Envelope#getLowerCorner()
      */
     public final DirectPosition getLowerCorner() {
-        return new DirectPositionImpl(lowerCorner);
+        return new GeneralDirectPosition(lowerCorner);
     }
     
     /**

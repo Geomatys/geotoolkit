@@ -14,9 +14,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.List;
 
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.DirectPositionImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.CurveBoundaryImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointImpl;
 import org.opengis.geometry.DirectPosition;
@@ -146,7 +146,7 @@ public class LineStringImpl extends GenericCurveImpl
         List list = pa.positions();
         int n = controlPoints.length();
         for (int i=n-1; i>=0; i--) {
-            list.add(new DirectPositionImpl(controlPoints.positions().get(i).getPosition()));
+            list.add(new GeneralDirectPosition(controlPoints.positions().get(i).getPosition()));
         }
         return result;
     }
