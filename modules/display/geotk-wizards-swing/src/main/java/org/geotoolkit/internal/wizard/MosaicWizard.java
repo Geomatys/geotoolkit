@@ -38,6 +38,7 @@ import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
+import org.geotoolkit.internal.SwingUtilities;
 
 
 /**
@@ -188,7 +189,7 @@ public final class MosaicWizard extends AbstractWizard {
             // -------------------------------------------------------------------
             //     Panel 4:  Confirm
             // -------------------------------------------------------------------
-            final LoggingPanel logging = new LoggingPanel("org.geotoolkit.image.io");
+            final LoggingPanel logging = new LoggingPanel("org.geotoolkit.image.io.mosaic");
             logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
             final JXLabel label = new JXLabel("The wizard has now enough informations for " +
                     "creating the mosaic. Press \"Finish\" to confirm.");
@@ -266,6 +267,7 @@ public final class MosaicWizard extends AbstractWizard {
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
+        SwingUtilities.setLookAndFeel(MosaicWizard.class, "main");
         Registry.setDefaultCodecPreferences();
         final MosaicWizard wizard = new MosaicWizard();
         WizardDisplayer.showWizard(wizard.createWizard());

@@ -890,14 +890,23 @@ public class MosaicBuilder {
             }
         }
         /*
-         * After TileManager creation, computes the "grid to CRS" transform
-         * if an envelope was given to this builder.
+         * After TileManager creation, computes the "grid to CRS" transform if an envelope
+         * was given to this builder. If no envelope were given but a transform was already
+         * specified in the input tiles, inherit that transform.
          */
         if (mosaicEnvelope != null && !mosaicEnvelope.isNull()) {
             final GridToEnvelopeMapper mapper = createGridToEnvelopeMapper(output);
             mapper.setGridRange(new GridEnvelope2D(untiledBounds));
             mapper.setEnvelope(mosaicEnvelope);
             output.setGridToCRS((AffineTransform) mapper.createTransform());
+        } else if (input != null) {
+            final ImageGeometry geometry = input.getGridGeometry();
+            if (geometry != null) {
+                final AffineTransform gridToCRS = geometry.getGridToCRS();
+                if (gridToCRS != null) {
+                    output.setGridToCRS(gridToCRS);
+                }
+            }
         }
         return output;
     }

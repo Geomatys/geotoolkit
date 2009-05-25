@@ -26,6 +26,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
@@ -56,6 +57,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Compressions;
+import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.internal.rmi.RMI;
 
@@ -545,6 +547,13 @@ public class MosaicImageWriter extends ImageWriter {
                                         if (tileInput instanceof File) {
                                             ((File) tileInput).delete();
                                         }
+                                    }
+                                }
+                                // Write the TFW file.
+                                if (tileInput instanceof File) {
+                                    AffineTransform gridToCRS = tile.getGridToCRS();
+                                    if (gridToCRS != null) {
+                                        SupportFiles.writeTFW((File) tileInput, gridToCRS);
                                     }
                                 }
                             }

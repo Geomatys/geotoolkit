@@ -19,9 +19,11 @@ package org.geotoolkit.internal.wizard;
 
 import java.awt.Color;
 import java.util.Map;
+import java.util.logging.Level;
 import org.netbeans.spi.wizard.DeferredWizardResult;
 import org.netbeans.spi.wizard.ResultProgressHandle;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
@@ -59,6 +61,7 @@ final class MosaicCreator extends DeferredWizardResult {
             final MosaicBuilder builder = ((MosaicBuilderEditor) settings.get(MosaicWizard.LAYOUT)).getMosaicBuilder();
             final Color[]       colors  = ((MultiColorChooser)   settings.get(MosaicWizard.COLORS)).getSelectedColors();
             // TODO: needs an API for giving the colors to the MosaicBuilder.
+            Logging.getLogger(MosaicBuilder.class).setLevel(Level.FINE);
             tiles = builder.createTileManager(inputs, TileWritingPolicy.WRITE_NEWS_NONEMPTY);
         } catch (Throwable exception) {
             progress.failed(exception.getLocalizedMessage(), false);

@@ -173,7 +173,7 @@ public final class Logging {
         }
         String name = classe.getName();
         final int separator = name.lastIndexOf('.');
-        name = (separator >= 1) ? name.substring(0, separator-1) : "";
+        name = (separator >= 1) ? name.substring(0, separator) : "";
         return getLogger(name);
     }
 

@@ -17,13 +17,7 @@
  */
 package org.geotoolkit.internal.image.io;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.BufferedReader;
-import java.io.LineNumberReader;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.referencing.FactoryException;
@@ -48,6 +42,11 @@ import org.geotoolkit.io.ContentFormatException;
  */
 @Static
 public final class SupportFiles {
+    /**
+     * The encoding of TFW files.
+     */
+    private static final String ENCODING = "ISO-8859-1";
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -136,6 +135,35 @@ attempts:   for (int i=0; ; i++) {
     }
 
     /**
+     * Writes the given affine transform as a TFW file.
+     *
+     * @param  file The filename of the <strong>image</strong>. The suffix will be replaced.
+     * @param  tr The affine transform to write.
+     * @throws IOException if an error occured while writing the file.
+     */
+    public static void writeTFW(File file, final AffineTransform tr) throws IOException {
+        final String suffix = toSuffixTFW(file);
+        String name = file.getName();
+        final int s = name.lastIndexOf('.');
+        if (s >= 0) {
+            if (!name.substring(s+1).endsWith("fw")) {
+                name = name.substring(0, s+1) + suffix;
+            }
+        } else {
+            name = name + '.' + suffix;
+        }
+        file = new File(file.getParent(), name);
+        final BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
+        final double[] matrix = new double[6];
+        tr.getMatrix(matrix);
+        for (int i=0; i<matrix.length; i++) {
+            out.write(String.valueOf(matrix[i]));
+            out.newLine();
+        }
+        out.close();
+    }
+
+    /**
      * Parses a TFW file and returns its content as an affine transform.
      *
      * @param  file The file to parse. If it doesn't end with the {@code ".tfw"} suffix (for TIFF
@@ -151,7 +179,7 @@ attempts:   for (int i=0; ; i++) {
             // Formats our own error message instead of the JSE one in order to localize it.
             throw new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, file.getName()));
         }
-        final LineNumberReader in = new LineNumberReader(new FileReader(file));
+        final LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(file), ENCODING));
         final double[] m = new double[6];
         int count = 0;
         String line;
