@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-
 import javax.xml.bind.JAXBException;
+
 import org.geotools.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.wi.WorldImageFactory;
 import org.geotools.data.DataStore;
@@ -40,8 +40,6 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
-import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
-import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.opengis.feature.simple.SimpleFeature;
@@ -503,13 +501,6 @@ public class ContextBuilder {
         style.featureTypeStyles().add(fts);
 
         layer.styles().add(style);
-
-        XMLUtilities xml = new XMLUtilities();
-        try {
-            xml.writeSLD(new File("test.xml"), sld, StyledLayerDescriptor.V_1_0_0);
-        } catch (JAXBException ex) {
-            Logger.getLogger(ContextBuilder.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         return style;
     }

@@ -17,7 +17,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-go3</artifactId>
     <packaging>jar</packaging>
-    <name>Rendering engine GO3 OpenGL</name>
+    <name>Display engine GO3 OpenGL</name>
     <description>New generation 3D engine.</description>
     <licenses>
         <license>
