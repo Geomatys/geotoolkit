@@ -17,7 +17,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-go2-style-extension</artifactId>
     <packaging>jar</packaging>
-    <name>Rendering engine GO2 style extension</name>
+    <name>Display engine GO2 unnormalized extension</name>
     <description>Styles extensions for GO2 engine.</description>
     <licenses>
         <license>

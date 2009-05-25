@@ -118,10 +118,11 @@
   <!-- =========================================================== -->
   <modules>
     <module>referencing</module>
+    <module>geometry</module>
     <module>feature</module>
+    <module>display</module>
     <module>jaxb-xml-binding</module>
     <module>coverage</module>
-    <module>display</module>
   </modules>
 
 

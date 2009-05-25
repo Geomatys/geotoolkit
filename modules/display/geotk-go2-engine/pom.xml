@@ -17,7 +17,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-go2</artifactId>
     <packaging>jar</packaging>
-    <name>Rendering engine GO2</name>
+    <name>Display engine GO2</name>
     <description>New generation of Java2D renderer based on GeoAPI Display package.</description>
     <licenses>
         <license>

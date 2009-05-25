@@ -15,7 +15,7 @@
   
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>display</artifactId>
+    <artifactId>geometry</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -24,13 +24,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-style</artifactId>
+  <artifactId>geotk-jtswrapper</artifactId>
   <packaging>jar</packaging>
-  <name>Display style</name>
+  <name>Geometry JTS wrapper</name>
     
   <description>
-    The style module contains a thread safe and mutable implementation of
-    GeoAPI style and sld interface.
+    Wrapping of JTS classes to ISO.
   </description>
 
   <licenses>
@@ -47,8 +46,12 @@
   <!-- =========================================================== -->
   <dependencies>
       <dependency>
+          <groupId>com.vividsolutions</groupId>
+          <artifactId>jts</artifactId>
+      </dependency>
+      <dependency>
           <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-metadata</artifactId>
+          <artifactId>geotk-utility</artifactId>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit.project</groupId>
@@ -57,10 +60,6 @@
           <scope>provided</scope>
       </dependency>
 
-      <dependency>
-          <groupId>org.geotools</groupId>
-          <artifactId>gtm-main</artifactId>
-      </dependency>
   </dependencies>
             
   </project>
