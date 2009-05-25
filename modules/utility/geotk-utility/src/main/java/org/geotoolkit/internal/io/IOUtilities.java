@@ -34,9 +34,9 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @Static

@@ -27,9 +27,9 @@ package org.geotoolkit.util.converter;
  * @param <T> The base type of converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {

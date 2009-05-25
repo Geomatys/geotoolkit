@@ -40,11 +40,13 @@ import org.geotoolkit.util.NullArgumentException;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @since 2.1
- * @module
+ * @version 3.00
  *
  * @see Collections#checkedList
  * @see Collections#synchronizedList
+ *
+ * @since 2.1
+ * @module
  */
 @ThreadSafe
 public class CheckedArrayList<E> extends ArrayList<E> implements CheckedCollection<E>, Cloneable {

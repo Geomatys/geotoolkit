@@ -28,9 +28,9 @@ import org.geotoolkit.util.Utilities;
  * A set of utilities for {@link org.geotoolkit.factory.FactoryRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @Static

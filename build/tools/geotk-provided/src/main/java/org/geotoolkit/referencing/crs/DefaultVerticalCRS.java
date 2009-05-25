@@ -37,9 +37,9 @@ import org.opengis.util.GenericName;
  * he may get a {@link NoClassDefFoundError}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public class DefaultVerticalCRS implements VerticalCRS {
     private DefaultVerticalCRS() {

@@ -22,7 +22,7 @@ package org.geotoolkit.coverage.processing;
  * but the specified grid coverage can't be scaled.
  *
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

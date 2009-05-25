@@ -21,7 +21,7 @@ package org.geotoolkit.image.io.mosaic;
  * The policy for {@linkplain MosaicImageReader#getImageTypes computing image types} in a mosaic.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see MosaicImageReadParam#getImageTypePolicy
  * @see MosaicImageReader#getDefaultImageTypePolicy

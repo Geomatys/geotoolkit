@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  */

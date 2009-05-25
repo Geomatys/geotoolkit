@@ -40,7 +40,7 @@ import org.geotoolkit.internal.LazySet;
  * yet defined an interface abstract enough for {@code GridCoverageFactory}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -125,7 +125,7 @@ public final class CoverageFactoryFinder {
      *
      * @see Hints#GRID_COVERAGE_PROCESSOR
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static synchronized GridCoverageProcessor getCoverageProcessor(Hints hints)
             throws FactoryRegistryException
@@ -143,7 +143,7 @@ public final class CoverageFactoryFinder {
      * @param  hints An optional map of hints, or {@code null} if none.
      * @return Set of available coverage processor implementations.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static synchronized Set<GridCoverageProcessor> getCoverageProcessors(Hints hints) {
         if (hints == null) {

@@ -19,7 +19,7 @@
  * A set of Java2D {@linkplain java.awt.Shape shapes} and a few utility methods.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

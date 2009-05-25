@@ -45,7 +45,7 @@ import org.geotoolkit.util.logging.Logging;
  * so cloning an {@link RTree} can be seen as creating a new worker for the same tree.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

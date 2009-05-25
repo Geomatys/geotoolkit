@@ -25,7 +25,7 @@ import org.opengis.referencing.FactoryException;
  * The description name will be fetched when first needed and returned by {@link #toString}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

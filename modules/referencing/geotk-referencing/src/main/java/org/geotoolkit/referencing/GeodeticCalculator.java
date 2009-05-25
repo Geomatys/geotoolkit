@@ -89,7 +89,7 @@ import org.geotoolkit.util.NullArgumentException;
  *
  * @author Daniele Franzoni
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

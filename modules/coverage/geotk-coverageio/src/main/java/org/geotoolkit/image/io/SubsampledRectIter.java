@@ -23,7 +23,7 @@ import javax.media.jai.iterator.RectIter;
  * A {@link RectIter} with subsampling.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

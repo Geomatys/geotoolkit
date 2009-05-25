@@ -85,7 +85,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @since 2.5
  *
- * @version 3.0
+ * @version 3.00
  * @module
  */
 public class GridCoverageBuilder {
@@ -462,7 +462,7 @@ public class GridCoverageBuilder {
      * Variables are created by {@link GridCoverageBuilder#newVariable}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.5
      * @module

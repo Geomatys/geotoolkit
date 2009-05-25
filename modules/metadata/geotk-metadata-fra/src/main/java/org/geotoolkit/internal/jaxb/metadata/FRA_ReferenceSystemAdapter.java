@@ -30,9 +30,9 @@ import org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter implements RegisterableAdapter {

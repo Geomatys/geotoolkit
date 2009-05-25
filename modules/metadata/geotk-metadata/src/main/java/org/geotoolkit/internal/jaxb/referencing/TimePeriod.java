@@ -34,9 +34,9 @@ import org.opengis.temporal.Position;
  * The adapter for time period.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  *
  * TODO: The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we do

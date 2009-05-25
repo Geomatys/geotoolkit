@@ -37,7 +37,7 @@ import static java.lang.Double.doubleToLongBits;
  * <center><img src="doc-files/Arrow2D.png"></center>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

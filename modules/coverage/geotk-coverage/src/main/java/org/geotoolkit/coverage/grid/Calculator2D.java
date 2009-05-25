@@ -23,7 +23,7 @@ package org.geotoolkit.coverage.grid;
  * performing some additional calculation in its {@code evaluate} methods.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

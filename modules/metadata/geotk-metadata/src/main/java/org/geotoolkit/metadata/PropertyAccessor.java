@@ -49,7 +49,7 @@ import org.geotoolkit.util.collection.CheckedCollection;
  * declared in the Geotoolkit implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

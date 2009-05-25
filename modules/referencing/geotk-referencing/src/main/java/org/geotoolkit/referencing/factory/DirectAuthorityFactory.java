@@ -36,7 +36,7 @@ import org.geotoolkit.factory.Hints;
  * an other factory.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

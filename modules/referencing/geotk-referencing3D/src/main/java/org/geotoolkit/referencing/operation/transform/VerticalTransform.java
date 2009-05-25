@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.TransformException;
  * transformations are usually backed by some ellipsoid-dependent database.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -78,7 +78,7 @@ public abstract class VerticalTransform extends AbstractMathTransform {
      *
      * @throws TransformException If the point can't be transformed.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)

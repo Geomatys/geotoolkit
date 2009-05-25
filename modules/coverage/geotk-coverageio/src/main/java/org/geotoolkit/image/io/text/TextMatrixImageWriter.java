@@ -38,7 +38,7 @@ import org.geotoolkit.resources.Descriptions;
  * An image encoder for matrix of floating-point numbers.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -119,7 +119,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
      * Service provider interface (SPI) for {@link TextMatrixImageWriter}s.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

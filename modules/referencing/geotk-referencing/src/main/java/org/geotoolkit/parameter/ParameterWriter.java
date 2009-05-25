@@ -53,7 +53,7 @@ import static org.geotoolkit.parameter.ParameterTableRow.isNumeric;
  * drawing box characters (e.g. unicode).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -611,7 +611,7 @@ header: for (int i=0; ; i++) {
      *
      * @return The authorities to filter, or {@code null} if no restriction.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Set<String> getAuthorities() {
         synchronized (lock) {
@@ -633,7 +633,7 @@ header: for (int i=0; ; i++) {
      *
      * @param authorities The authorities to filter, or {@code null} for accepting all of them.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setAuthorities(String... authorities) {
         Set<String> copy = null;
@@ -651,7 +651,7 @@ header: for (int i=0; ; i++) {
      *
      * @return {@code true} if this writer is allowed to send X3.64 sequences.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean isColorEnabled() {
         synchronized (lock) {
@@ -666,7 +666,7 @@ header: for (int i=0; ; i++) {
      *
      * @param enabled {@code true} to allow this writer to send X3.64 sequences.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setColorEnabled(final boolean enabled) {
         synchronized (lock) {

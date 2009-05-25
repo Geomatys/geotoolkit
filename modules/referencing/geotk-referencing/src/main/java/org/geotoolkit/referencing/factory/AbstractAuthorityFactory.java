@@ -62,7 +62,7 @@ import org.geotoolkit.resources.Errors;
  * However, other methods may be overridden as well for better performances.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -71,7 +71,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     /**
      * The name factory to use for creating {@link GenericName}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected final NameFactory nameFactory;
 

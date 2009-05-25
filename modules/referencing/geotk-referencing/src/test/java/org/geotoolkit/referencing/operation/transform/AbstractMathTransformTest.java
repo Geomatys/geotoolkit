@@ -37,9 +37,9 @@ import org.geotoolkit.test.Depend;
  * the purpose of this test is to check the default implementations of methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(IterationStrategyTest.class)
 public final class AbstractMathTransformTest {

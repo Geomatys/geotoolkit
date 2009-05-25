@@ -30,9 +30,9 @@ import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.*;
  * modify the translation term on the <var>y</var> axis.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(MercatorTest.class)
 public class AlbersEqualAreaTest extends ProjectionTestCase {

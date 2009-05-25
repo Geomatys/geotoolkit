@@ -37,7 +37,7 @@ import static org.geotoolkit.measure.Units.MILLISECOND;
  * A graduation using dates on a linear axis.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

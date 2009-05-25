@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  * field because the type may vary.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

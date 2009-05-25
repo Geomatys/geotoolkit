@@ -30,7 +30,7 @@ import static org.opengis.test.Validators.*;
  * Tests the {@link ParameterGroup} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  */

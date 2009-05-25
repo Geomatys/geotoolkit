@@ -63,7 +63,7 @@ import org.geotoolkit.xml.Namespaces;
  * Conversely, these names shall not be used in any other context.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see AbstractCS
  * @see Unit
@@ -559,7 +559,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject
      * and the unit is dimensionless. This constant is sometime used as a placeholder
      * for axes that were not properly defined.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final DefaultCoordinateSystemAxis UNDEFINED = new DefaultCoordinateSystemAxis(
             Vocabulary.Keys.UNDEFINED, "?", AxisDirection.OTHER, Unit.ONE);

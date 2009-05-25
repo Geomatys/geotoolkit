@@ -50,7 +50,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * serializable if all their step transforms are serializables.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -254,7 +254,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @param tr3 The third math transform.
      * @return    The concatenated transform.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform create(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
         return create(create(tr1, tr2), tr3);
@@ -427,7 +427,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * returned list is equal to the value returned by {@link #getStepCount}.
      *
      * @return All math transforms performed by this concatenated transform.
-     * @since 3.0
+     * @since 3.00
      */
     public final List<MathTransform> getSteps() {
         final List<MathTransform> transforms = new ArrayList<MathTransform>(5);

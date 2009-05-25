@@ -45,7 +45,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
  * instance of {@code TransformedCoverage} for each thread.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

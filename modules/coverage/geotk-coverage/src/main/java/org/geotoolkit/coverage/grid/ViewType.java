@@ -43,7 +43,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
  * can not be processed directly by an {@linkplain IndexColorModel index color model}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see GridCoverage2D#view
  *

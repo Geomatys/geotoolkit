@@ -45,9 +45,9 @@ import org.geotoolkit.util.logging.Logging;
  * but appropriate for the purpose of testing the image reader.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @SuppressWarnings("serial")
 public class MosaicImageViewer extends JPanel implements ChangeListener {

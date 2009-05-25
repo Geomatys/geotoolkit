@@ -72,7 +72,7 @@ import org.geotoolkit.resources.Errors;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.1
  * @module
@@ -766,7 +766,7 @@ public class ColorRamp extends JComponent {
      * à certains événements.
      *
      * @author Martin Desruisseaux (MPO, IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module

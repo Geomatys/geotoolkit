@@ -34,11 +34,11 @@ import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see AnchoredCharSequenceAdapter
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class AnchoredInternationalStringAdapter extends InternationalStringAdapter {

@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Errors;
  * ambiguity.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ImageGeometry
  * @see GeneralGridGeometry

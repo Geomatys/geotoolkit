@@ -31,7 +31,7 @@ import javax.measure.converter.ConversionException;
  * Unfortunatly, this pseudo-unit is extensively used in the EPSG database.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

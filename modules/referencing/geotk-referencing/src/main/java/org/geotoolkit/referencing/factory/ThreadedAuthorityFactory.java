@@ -43,7 +43,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * needed, some of the threads will block until an instance become available.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -185,7 +185,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      *        maximal amount of threads that can use this factory without blocking each other
      *        when the requested objects are not in the cache.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected ThreadedAuthorityFactory(final Hints userHints,
             final int maxStrongReferences, final int maxBackingStores)
@@ -356,7 +356,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      *
      * @return {@code true} if this factory contains at least one active backing store.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public synchronized boolean isActive() {
         return isActive;
@@ -367,7 +367,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      *
      * @return The current timeout.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public synchronized long getTimeout() {
         return timeout;

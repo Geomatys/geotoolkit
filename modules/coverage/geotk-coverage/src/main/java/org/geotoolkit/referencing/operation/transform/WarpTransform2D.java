@@ -63,7 +63,7 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.operation.builder.LocalizationGrid#getPolynomialTransform(int)
  * @see Warp

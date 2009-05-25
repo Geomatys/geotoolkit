@@ -87,7 +87,7 @@ import org.geotoolkit.internal.io.Installation;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -136,7 +136,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * </TR>
      * </TABLE>
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final String CONFIGURATION_FILE = "EPSG-DataSource.properties";
 
@@ -160,7 +160,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * is invoked, and is used by {@link #createBackingStore(Hints)}. Subclasses can change
      * this value in their {@code createDataSource} implementation.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected String schema, user, password;
 
@@ -195,7 +195,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *
      * @param source The data source for the EPSG database, or {@code null}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public ThreadedEpsgFactory(final DataSource source) {
         this(EMPTY_HINTS);
@@ -379,7 +379,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * @throws SQLException if the connection to the database failed.
      * @throws FactoryException if the operation failed for an other reason.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected DataSource createDataSource(final Properties properties)
             throws FactoryException, SQLException

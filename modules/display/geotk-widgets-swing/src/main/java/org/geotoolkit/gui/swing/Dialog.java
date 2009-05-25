@@ -23,9 +23,9 @@ import java.awt.Component;
  * Interface for widgets that can be used as a dialog box.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public interface Dialog {

@@ -40,7 +40,7 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see EquatorialStereographic
  * @see ObliqueStereographic
@@ -64,7 +64,7 @@ public class PolarStereographic extends Stereographic {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)
@@ -269,7 +269,7 @@ public class PolarStereographic extends Stereographic {
      * @author André Gosselin (MPO)
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
      * @author Rueben Schulz (UBC)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -382,7 +382,7 @@ public class PolarStereographic extends Stereographic {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

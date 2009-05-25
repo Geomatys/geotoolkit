@@ -47,7 +47,7 @@ import org.geotoolkit.util.converter.Classes;
  * which match the primitive types expected by the {@link Raster} API.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

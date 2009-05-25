@@ -52,7 +52,7 @@ import org.geotoolkit.util.collection.CheckedCollection;
  * }
  *
  * @author Martin Desruisseaux (MPO, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -379,7 +379,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * values of this vector will be reflected in the returned view and vis-versa.
      *
      * @param  first  Index of the first value to be included in the returned view.
-     * @param  step	  The index increment in this vector between two consecutive values
+     * @param  step   The index increment in this vector between two consecutive values
      *                in the returned vector. Can be positive, zero or negative.
      * @param  length The length of the vector to be returned. Can not be greater than
      *                the length of this vector, except if the {@code step} is zero.
@@ -433,7 +433,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * A view over an other vector at pre-selected indexes.
      *
      * @author Martin Desruisseaux (MPO, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 1.0
      * @module
@@ -573,7 +573,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * A view over an other vector in a range of index.
      *
      * @author Martin Desruisseaux (MPO, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 1.0
      * @module

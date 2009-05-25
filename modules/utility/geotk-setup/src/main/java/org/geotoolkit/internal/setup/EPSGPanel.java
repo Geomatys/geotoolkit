@@ -51,9 +51,9 @@ import static java.awt.GridBagConstraints.*;
  * The panel displaying a configuration form for the current epsg database.
  *
  * @author Johann Sorel (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class EPSGPanel extends JPanel{

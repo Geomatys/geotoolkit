@@ -27,9 +27,9 @@ import org.geotoolkit.util.logging.Logging;
  * Executes {@linkplain ShareableTask shareable tasks} on the local machine.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class LocalExecutor implements TaskExecutor {

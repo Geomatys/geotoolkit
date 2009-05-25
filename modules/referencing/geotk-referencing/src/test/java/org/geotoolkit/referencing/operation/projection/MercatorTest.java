@@ -34,9 +34,9 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  * Tests the {@link Mercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend({ProjectionParametersTest.class, UnitaryProjectionTest.class})
 public final class MercatorTest extends ProjectionTestCase {

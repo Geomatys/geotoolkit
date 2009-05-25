@@ -57,7 +57,7 @@ import javax.imageio.IIOParamController;
  * and can be queried once the reading is finished.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

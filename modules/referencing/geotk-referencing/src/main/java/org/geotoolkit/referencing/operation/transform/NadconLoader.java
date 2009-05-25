@@ -44,9 +44,9 @@ import static org.geotoolkit.internal.io.Installation.NADCON;
  * object used only at loading time and discarted once the transform is built.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 abstract class NadconLoader {
@@ -232,9 +232,9 @@ abstract class NadconLoader {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Text extends NadconLoader {

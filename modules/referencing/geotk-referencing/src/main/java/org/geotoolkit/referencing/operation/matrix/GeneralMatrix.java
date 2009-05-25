@@ -47,7 +47,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @see javax.vecmath.GMatrix
  * @see java.awt.geom.AffineTransform

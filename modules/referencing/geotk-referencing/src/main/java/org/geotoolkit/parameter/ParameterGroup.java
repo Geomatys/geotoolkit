@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultParameterDescriptorGroup
  * @see Parameter

@@ -46,11 +46,11 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.AbstractReferenceSystem
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @XmlRootElement(name = "MD_ReferenceSystem")

@@ -56,6 +56,9 @@ import static org.junit.Assume.assumeTrue;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
+ * @version 3.00
+ *
+ * @since 3.00
  */
 public class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
     /**

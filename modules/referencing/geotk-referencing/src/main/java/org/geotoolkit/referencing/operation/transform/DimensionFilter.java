@@ -52,7 +52,7 @@ import org.geotoolkit.util.XArrays;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @todo This class contains a set of static methods that could be factored out in
  *       some kind of {@code org.geotoolkit.util.SortedIntegerSet} implementation.

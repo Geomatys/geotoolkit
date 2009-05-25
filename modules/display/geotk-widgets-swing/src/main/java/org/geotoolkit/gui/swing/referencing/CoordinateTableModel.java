@@ -57,7 +57,7 @@ import org.geotoolkit.geometry.TransformedDirectPosition;
  * @author Cédric Briançon (Geomatys)
  * @author Hoa Nguyen (Geomatys)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -287,7 +287,7 @@ public class CoordinateTableModel extends AbstractTableModel {
      *
      * @author Cédric Briançon (Geomaty)
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module

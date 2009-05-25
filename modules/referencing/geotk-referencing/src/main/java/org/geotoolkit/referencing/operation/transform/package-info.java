@@ -34,7 +34,7 @@
  *
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.operation.provider
  *

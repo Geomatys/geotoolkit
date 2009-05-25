@@ -93,7 +93,7 @@ import org.geotoolkit.util.XArrays;
  * and target coordinate systems.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

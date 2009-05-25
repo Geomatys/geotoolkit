@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * <A HREF="http://logging.apache.org/log4j">Log4J</A> framework.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

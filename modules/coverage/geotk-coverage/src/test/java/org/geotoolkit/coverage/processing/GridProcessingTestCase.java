@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  * methods performing some operations on {@link GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  */

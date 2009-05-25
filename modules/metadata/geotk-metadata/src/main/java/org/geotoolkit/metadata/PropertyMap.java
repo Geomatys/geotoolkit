@@ -31,7 +31,7 @@ import org.geotoolkit.util.Utilities;
  * are the value returned by the {@code getFoo()} method using reflection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -134,7 +134,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
      * A map entry for a given property.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -225,7 +225,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
      * The iterator over the {@link Property} elements contained in a {@link Entries} set.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -301,7 +301,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
      * View of the mapping contained in the map.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */

@@ -39,7 +39,7 @@ import org.geotoolkit.image.io.StreamImageWriter;
  * containing pixel values (often geophysical values, like sea level anomalies).
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -314,7 +314,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * }
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

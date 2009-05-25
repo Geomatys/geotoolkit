@@ -22,7 +22,7 @@ package org.geotoolkit.coverage.processing;
  * but the specified grid coverage can't be reprojected.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

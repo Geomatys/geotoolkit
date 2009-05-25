@@ -38,7 +38,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  * Tests the {@link URN_AuthorityFactory} class backed by WMS or AUTO factories.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

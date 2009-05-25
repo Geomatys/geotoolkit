@@ -26,7 +26,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * entry from the collection when the entry is garbage-collected.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

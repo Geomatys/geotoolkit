@@ -28,9 +28,9 @@ import org.geotoolkit.util.SimpleInternationalString;
  * so we don't expose it publicly.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  *
  * @deprecated To be deleted after we removed the deprecated methods from {@link org.opengis.util.NameFactory}.

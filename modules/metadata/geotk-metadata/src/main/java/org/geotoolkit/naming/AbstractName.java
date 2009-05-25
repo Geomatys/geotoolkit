@@ -55,7 +55,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  *        separator between name elements.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -286,7 +286,7 @@ public abstract class AbstractName implements GenericName, Serializable {
      * An international string built from a snapshot of {@link GenericName}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      */

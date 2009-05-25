@@ -29,9 +29,9 @@ import java.lang.annotation.RetentionPolicy;
  * See "Use" javadoc link for a list of annotated methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @Documented

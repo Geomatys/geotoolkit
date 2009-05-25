@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -174,7 +174,7 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
      * Returns {@code true} if this factory meets the requirements specified by a map of hints.
      * This information is for {@link org.geotoolkit.factory.FactoryRegistry} usage only.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected boolean hasCompatibleHints(final Hints hints) {
@@ -185,7 +185,7 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
      * Sets the ordering of this factory relative to other factories. By default
      * {@code HTTP_AuthorityFactory} positions itself last.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void setOrdering(final Organizer organizer) {

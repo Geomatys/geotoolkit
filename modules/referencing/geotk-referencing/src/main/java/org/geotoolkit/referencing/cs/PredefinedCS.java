@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
  * not public at this time.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

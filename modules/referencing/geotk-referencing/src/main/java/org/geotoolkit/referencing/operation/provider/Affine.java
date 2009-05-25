@@ -44,7 +44,7 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ProjectiveTransform
  * @see org.geotoolkit.referencing.operation.transform.AffineTransform2D

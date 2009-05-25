@@ -33,7 +33,7 @@ import org.geotoolkit.resources.Vocabulary;
  * A temporal datum defines the origin of a temporal coordinate reference system.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests {@link GeographicImageWriter}, especially the {@link RectIter} creation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  */

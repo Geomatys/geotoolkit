@@ -22,7 +22,7 @@ package org.geotoolkit.image.io.mosaic;
  * when a file to be written already exists.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see MosaicImageWriteParam#setTileWritingPolicy
  * @see MosaicBuilder#createTileManager

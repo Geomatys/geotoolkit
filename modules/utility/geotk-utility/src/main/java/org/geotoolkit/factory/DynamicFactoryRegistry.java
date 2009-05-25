@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

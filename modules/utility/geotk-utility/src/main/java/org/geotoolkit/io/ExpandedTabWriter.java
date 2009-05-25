@@ -29,7 +29,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * Writes characters to a stream while expanding tabs ({@code '\t'}) into spaces.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

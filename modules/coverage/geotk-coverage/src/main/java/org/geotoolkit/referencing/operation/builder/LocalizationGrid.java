@@ -113,7 +113,7 @@ import org.geotoolkit.resources.Errors;
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.opengis.referencing.crs.DerivedCRS
  *

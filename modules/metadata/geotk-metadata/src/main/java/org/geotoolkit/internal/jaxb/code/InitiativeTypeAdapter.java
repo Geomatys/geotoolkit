@@ -26,9 +26,9 @@ import org.opengis.metadata.identification.InitiativeType;
  * about the handling of CodeList in ISO-19139.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class InitiativeTypeAdapter extends CodeListAdapter<InitiativeTypeAdapter, InitiativeType> {

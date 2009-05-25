@@ -46,7 +46,7 @@ import org.geotoolkit.util.Range;
  * to {@link DataBuffer} types.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

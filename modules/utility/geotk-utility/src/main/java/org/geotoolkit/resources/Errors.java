@@ -24,7 +24,7 @@ import java.util.MissingResourceException;
  * Locale-dependent resources for error messages.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -37,7 +37,7 @@ public final class Errors extends IndexedResourceBundle {
      * pools of compiled classes.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.2
      */

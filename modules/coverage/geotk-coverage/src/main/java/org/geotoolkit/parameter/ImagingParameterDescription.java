@@ -32,7 +32,7 @@ import org.geotoolkit.util.AbstractInternationalString;
  * This is used by {@link ImagingParameterDescriptors}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

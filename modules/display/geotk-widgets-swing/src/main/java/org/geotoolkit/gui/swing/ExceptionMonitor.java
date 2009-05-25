@@ -64,7 +64,7 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -132,7 +132,7 @@ public final class ExceptionMonitor {
      * same thread as the <cite>Swing</cite> thread.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

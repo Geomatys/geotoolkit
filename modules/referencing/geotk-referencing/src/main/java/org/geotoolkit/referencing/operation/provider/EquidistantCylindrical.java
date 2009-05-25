@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author John Grange
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

@@ -161,7 +161,7 @@
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.operation.provider
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>

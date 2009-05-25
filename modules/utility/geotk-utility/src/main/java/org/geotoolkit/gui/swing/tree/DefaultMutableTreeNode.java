@@ -24,7 +24,7 @@ package org.geotoolkit.gui.swing.tree;
  * implementation but seems to have been forgotten in all Swing interfaces.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

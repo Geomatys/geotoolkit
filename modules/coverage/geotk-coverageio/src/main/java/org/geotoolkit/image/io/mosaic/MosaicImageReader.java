@@ -56,7 +56,7 @@ import org.geotoolkit.resources.Vocabulary;
  * is to read efficiently only subsets of big tiled images.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module
@@ -1467,7 +1467,7 @@ public class MosaicImageReader extends ImageReader {
      * Service provider for {@link MosaicImageReader}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.5
      * @module

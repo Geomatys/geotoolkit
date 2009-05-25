@@ -3,12 +3,21 @@
 # ---------------------------------------------------------------
 # Checks for @module tag in source code. Only source files to be
 # part of aggregated javadoc should contain this tag.  The other
-# files should not.
+# files should not. Opportunist check of @since and @version tags
+# is also performed.
 # ---------------------------------------------------------------
 
 if ! cd modules
 then exit 1; fi
 
+echo "Files missing @version javadoc tag:"
+find . -name "*.java" -exec grep --files-without-match "@version" '{}' \;
+
+echo
+echo "Files missing @since javadoc tag:"
+find . -name "*.java" -exec grep --files-without-match "@since" '{}' \;
+
+echo
 echo "Files missing @module javadoc tag:"
 find . -regex ".*/src/main/java/.*\\.java" -exec grep --files-without-match "@module" '{}' \;
 

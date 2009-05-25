@@ -30,7 +30,7 @@ import org.geotoolkit.resources.Errors;
  * out-of-bounds ordinate is known.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

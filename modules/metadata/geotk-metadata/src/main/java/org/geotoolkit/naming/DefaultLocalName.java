@@ -41,7 +41,7 @@ import org.geotoolkit.xml.Namespaces;
  * Identifier within a {@linkplain DefaultNameSpace name space}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

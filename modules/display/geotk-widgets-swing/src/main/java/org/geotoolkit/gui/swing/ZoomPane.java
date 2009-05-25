@@ -134,7 +134,7 @@ import static java.awt.GridBagConstraints.*;
  * {@link #transform}.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.1
  * @module
@@ -372,7 +372,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * size of a {@code ZoomPane} object as well as drawing it.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -482,7 +482,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * changes in the size of the component (to adjust the zoom), etc.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -1080,7 +1080,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      *
      * @return A clone of the current transform.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public AffineTransform getTransform() {
         return (AffineTransform) zoom.clone();
@@ -1094,7 +1094,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      *
      * @param tr The new transform.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setTransform(final AffineTransform tr) {
         final AffineTransform change;
@@ -1680,7 +1680,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * place the user clicked when this menu was invoked.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -1878,7 +1878,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * cooperate with transformations already handled by {@link ZoomPane#zoom}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -2043,7 +2043,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * {@link BoundedRangeModel} objects on one {@code ZoomPane} object.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

@@ -39,7 +39,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Martin Desruisseaux (MPO, IRD)
  * @author Howard Freeland (MPO, for algorithmic inspiration)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

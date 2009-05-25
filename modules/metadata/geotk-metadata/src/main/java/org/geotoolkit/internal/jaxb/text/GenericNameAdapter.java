@@ -36,7 +36,7 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

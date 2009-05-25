@@ -63,7 +63,7 @@ import org.geotoolkit.coverage.processing.FilterOperation;
  * </table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.coverage.processing.Operations#nodataFilter(GridCoverage,int,int)
  *

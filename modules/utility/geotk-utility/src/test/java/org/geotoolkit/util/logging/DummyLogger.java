@@ -23,7 +23,7 @@ import java.util.logging.Level;
  * A dummy implementation of {@link LoggingAdapter} class for testing purpose.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

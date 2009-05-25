@@ -49,7 +49,7 @@ import org.junit.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
  * reponsability.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module
@@ -375,7 +375,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * @return The previous value of the element at the given index.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     public Integer remove(final int index) throws IndexOutOfBoundsException {
@@ -391,7 +391,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * @param lower Index of the first element to remove, inclusive.
      * @param upper Index after the last element to be removed.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void removeRange(int lower, int upper) {

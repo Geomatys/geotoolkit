@@ -44,7 +44,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * A factory for {@link AbstractName} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.factory.FactoryFinder#getNameFactory
  *
@@ -89,7 +89,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *          typically {@code ":"}.
      * @return A namespace having the given name and separator.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     public NameSpace createNameSpace(final GenericName name,
@@ -114,7 +114,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *        <code>{@linkplain #createGenericName createGenericName}(null, parsedNames)</code>.
      * @return A namespace having the given name and separator.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public NameSpace createNameSpace(final GenericName name) {
         return createNameSpace(name, DEFAULT_SEPARATOR_STRING, DEFAULT_SEPARATOR_STRING);
@@ -130,7 +130,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @return The local name for the given character sequence.
      * @throws IllegalArgumentException If the {@code name} argument is null.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     public LocalName createLocalName(NameSpace scope, CharSequence name)
@@ -157,7 +157,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @return The generic name for the given parsed names.
      * @throws IllegalArgumentException If the given array is empty.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     public GenericName createGenericName(NameSpace scope, CharSequence[] parsedNames)

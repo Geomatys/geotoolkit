@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * @author Yann Cézard (IRD)
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  */

@@ -21,9 +21,9 @@ package org.geotoolkit.util.converter;
  * A filter for {@link Class} instances. This is used in iterations over a set of classes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public interface ClassFilter {

@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Vocabulary;
  * gain yet more control on character encoding by overriding the {@link #getCharset} method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -318,7 +318,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * }
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

@@ -61,7 +61,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * process from the super-class is used as a fallback.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -146,7 +146,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * should have priority over a plain (not backed by an authority)
      * {@code DefaultCoordinateOperationFactory}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void setOrdering(final Organizer organizer) {

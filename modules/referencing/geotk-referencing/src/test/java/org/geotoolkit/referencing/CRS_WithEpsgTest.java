@@ -45,7 +45,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

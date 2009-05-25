@@ -29,9 +29,9 @@ import java.io.InputStream;
  * Those files will be open in read-only mode.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class PackInput implements Closeable {
     /**

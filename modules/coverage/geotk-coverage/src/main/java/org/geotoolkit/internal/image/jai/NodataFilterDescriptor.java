@@ -28,7 +28,7 @@ import static org.geotoolkit.image.jai.NodataFilter.OPERATION_NAME;
  * The descriptor for the {@link NodataFilter} operation.
  *
  * @author Lionel Flahaut (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

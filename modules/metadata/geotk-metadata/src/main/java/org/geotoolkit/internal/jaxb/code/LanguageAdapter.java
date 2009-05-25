@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
  * of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

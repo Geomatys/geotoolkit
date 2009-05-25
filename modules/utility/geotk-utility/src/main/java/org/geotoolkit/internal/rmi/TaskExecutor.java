@@ -28,11 +28,11 @@ import org.geotoolkit.lang.ThreadSafe;
  * work can be performed on a remote machine.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see java.util.concurrent.ExecutorService
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @ThreadSafe

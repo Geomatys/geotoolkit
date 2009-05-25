@@ -30,9 +30,9 @@ import static org.geotoolkit.test.Commons.*;
  * Tests some {@link Writer} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend({UtilitiesTest.class, X364Test.class})
 public final class WriterTest {

@@ -25,7 +25,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * Projective transform in 2D case.
  *
  * @author Jan Jezek (UWB)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

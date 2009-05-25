@@ -43,7 +43,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Andrea Aime (TOPP)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

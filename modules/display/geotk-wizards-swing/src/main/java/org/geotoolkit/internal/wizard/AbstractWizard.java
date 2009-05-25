@@ -25,9 +25,9 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  * Base class of wizards provided in the {@link org.geotoolkit.internal.wizard} package.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class AbstractWizard extends WizardPanelProvider {

@@ -22,7 +22,7 @@ package org.geotoolkit.measure;
  * latitudes are South. This class has no direct OpenGIS equivalent.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Longitude
  * @see AngleFormat

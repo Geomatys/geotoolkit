@@ -25,9 +25,9 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * A pass-through transform in the two-dimensional case.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class PassThroughTransform2D extends PassThroughTransform implements MathTransform2D {

@@ -28,7 +28,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * A matrix of fixed {@value #SIZE}&times;{@value #SIZE} size.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -80,7 +80,7 @@ public class Matrix2 implements XMatrix, Serializable {
      *
      * @param elements Elements of the matrix. Column indice vary fastest.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Matrix2(final double[] elements) {
         if (elements.length != (SIZE*SIZE)) {

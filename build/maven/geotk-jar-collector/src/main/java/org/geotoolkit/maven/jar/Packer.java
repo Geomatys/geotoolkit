@@ -31,9 +31,9 @@ import java.io.InputStream;
  * Creates PAC200 files from the JAR builds by Maven.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public final class Packer implements FilenameFilter {
     /**

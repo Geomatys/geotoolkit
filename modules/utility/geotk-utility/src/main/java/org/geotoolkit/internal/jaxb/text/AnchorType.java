@@ -29,7 +29,7 @@ import org.geotoolkit.xml.Namespaces;
  * The {@code AnchorType} element, which is included in {@code CharacterString} elements.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

@@ -26,9 +26,9 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * Tests the {@link Directions} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public final class DirectionsTest extends ReferencingTestCase {
     /**

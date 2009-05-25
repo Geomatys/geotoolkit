@@ -60,7 +60,7 @@ import static org.geotoolkit.util.converter.Classes.*;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Andrea Aime (TOPP)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -225,7 +225,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * Returns the type of elements in this collection. This is typically the {@link NumberRange}
      * or {@link DateRange} class, or failing that the plain {@link Range} class.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -1048,7 +1048,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * All elements are {@link Range} objects.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      */
@@ -1118,7 +1118,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * This method may be invoked after a set construction is completed in order to
      * free unused memory.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public final void trimToSize() {
         // This method is final because equals(Object) and other relies on this behavior.

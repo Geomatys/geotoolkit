@@ -60,7 +60,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * }
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -960,7 +960,7 @@ public class TableWriter extends FilterWriter {
      * This class if for internal use only.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      */

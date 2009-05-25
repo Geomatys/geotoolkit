@@ -69,7 +69,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

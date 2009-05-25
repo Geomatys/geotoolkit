@@ -27,7 +27,7 @@ import org.geotoolkit.resources.Errors;
  * Simple mathematical functions in addition to the ones provided in {@link Math}.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -234,7 +234,7 @@ public final class XMath {
      * @param  sign The parameter providing the sign to <cite>xor</cite> with the value.
      * @return The provided value with its sign reversed if the {@code sign} parameter is negative.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static double xorSign(final double value, final double sign) {
         return Double.longBitsToDouble(Double.doubleToRawLongBits(value) ^

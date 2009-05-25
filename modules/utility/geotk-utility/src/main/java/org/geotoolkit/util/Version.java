@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
  * major, minor and revision parts are compared as numbers when possible, or as strings otherwise.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

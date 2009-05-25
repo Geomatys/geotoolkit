@@ -29,9 +29,9 @@ import static org.junit.Assert.*;
  * Tests the shape implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public class ShapeTest {
     /** The bounds of the shape to test. */

@@ -31,7 +31,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * not be wrapped in a {@link CodeListProxy}.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

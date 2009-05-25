@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  * tile manager} is created for those target tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  */

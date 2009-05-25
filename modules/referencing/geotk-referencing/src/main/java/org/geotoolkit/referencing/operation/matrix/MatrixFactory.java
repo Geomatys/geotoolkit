@@ -28,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * it may be more efficient to invoke directly the constructor of the appropriate class instead.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -88,7 +88,7 @@ public final class MatrixFactory {
      * @param  elements Elements of the matrix. Column indice vary fastest.
      * @return A matrix initialized to the given elements.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static XMatrix create(final int numRow, final int numCol, final double[] elements) {
         if (numRow * numCol != elements.length) {

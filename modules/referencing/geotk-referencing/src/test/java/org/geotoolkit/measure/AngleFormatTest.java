@@ -27,7 +27,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests formatting done by the {@link AngleFormat} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  */

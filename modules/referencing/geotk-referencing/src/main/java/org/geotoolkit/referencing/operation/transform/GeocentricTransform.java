@@ -64,7 +64,7 @@ import static java.lang.Double.doubleToLongBits;
  *
  * @author Martin Desruisseaux (IRD)
  * @author PROJ4 Project for formulas
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -575,7 +575,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * for Geocentric to Geodetic Coordinate Conversion</cite>", by Ralph Toms, Feb 1996.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

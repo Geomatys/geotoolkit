@@ -50,7 +50,7 @@ import org.geotoolkit.util.converter.Classes;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -146,7 +146,7 @@ public final class Logging {
      * @param classe The class for which to obtain a logger.
      * @param record The record to log.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static void log(final Class<?> classe, final LogRecord record) {
         final Logger logger = getLogger(classe);
@@ -398,7 +398,7 @@ public final class Logging {
      * invoked on {@code Logging} class initialization. However developpers may invoke it if
      * new {@code LoggerFactory}s are added later on the classpath of a running JVM.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Configuration
     public void scanLoggerFactory() {
@@ -728,7 +728,7 @@ search:     while (configs.hasMoreElements()) try {
      * @return {@code true} if the error has been logged, or {@code false} if the logger
      *         doesn't log anything at the specified level.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static boolean severeException(final Logger logger, final Class<?> classe,
                                           final String method, final Throwable error)

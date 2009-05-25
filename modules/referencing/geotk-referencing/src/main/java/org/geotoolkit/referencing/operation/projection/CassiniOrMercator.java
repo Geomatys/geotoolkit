@@ -32,9 +32,9 @@ import static java.lang.Math.*;
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 abstract class CassiniOrMercator extends UnitaryProjection {

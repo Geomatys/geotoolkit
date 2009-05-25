@@ -60,7 +60,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  *        package for that reason.}
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -123,9 +123,9 @@ public class CoverageReferences {
      * be comparable with {@link Ref} objects.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Lookup {
@@ -175,7 +175,7 @@ public class CoverageReferences {
      * A reference to a coverage, to be stored in {@link CoverageReferences#pool}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module
@@ -254,7 +254,7 @@ public class CoverageReferences {
      * The thread for removing dead references.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

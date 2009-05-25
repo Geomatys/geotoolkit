@@ -25,7 +25,7 @@ import static java.lang.Float.floatToIntBits;
  * Implements {@link Dimension2D} using single-precision floating point values.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

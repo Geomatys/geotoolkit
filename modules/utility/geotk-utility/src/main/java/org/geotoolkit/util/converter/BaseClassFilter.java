@@ -24,9 +24,9 @@ import java.io.Serializable;
  * {@linkplain Class#isAssignableFrom assignable to} a given base class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class BaseClassFilter implements ClassFilter, Serializable {
@@ -79,9 +79,9 @@ public class BaseClassFilter implements ClassFilter, Serializable {
      * Implementation of {@link ClassFilter} which is the negation of the enclosing class.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     private final class Negate implements ClassFilter, Serializable {
         /**

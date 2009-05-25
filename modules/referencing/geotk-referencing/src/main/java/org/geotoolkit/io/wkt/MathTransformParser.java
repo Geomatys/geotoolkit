@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  *

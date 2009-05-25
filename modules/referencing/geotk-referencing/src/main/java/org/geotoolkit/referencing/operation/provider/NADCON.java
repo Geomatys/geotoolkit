@@ -52,7 +52,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -30,9 +30,9 @@ import static org.junit.Assert.*;
  * Tests the {@link ScriptRunner} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public final class ScriptRunnerTest {
     /**

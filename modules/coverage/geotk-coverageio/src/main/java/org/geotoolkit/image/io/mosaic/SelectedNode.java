@@ -25,7 +25,7 @@ import java.awt.Rectangle;
  * It contains an estimation of the cost of reading this tile and its children.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

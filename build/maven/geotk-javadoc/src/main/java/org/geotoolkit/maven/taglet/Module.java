@@ -30,7 +30,7 @@ import com.sun.tools.doclets.Taglet;
  * @author Martin Desruisseaux (IRD)
  * @since 2.2
  *
- * @version 3.0
+ * @version 3.00
  */
 public final class Module implements Taglet {
     /**

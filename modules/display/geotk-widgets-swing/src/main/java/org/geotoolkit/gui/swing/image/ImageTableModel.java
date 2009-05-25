@@ -36,7 +36,7 @@ import javax.swing.table.AbstractTableModel;
  * underlying {@link RenderedImage} is serializable.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ImageSampleValues
  *
@@ -366,7 +366,7 @@ public class ImageTableModel extends AbstractTableModel {
      * scroll pane's row header} for an image table.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @see JScrollPane#setRowHeader
      *

@@ -67,7 +67,7 @@ import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLine
  * override those methods in order to extend the factory capability to some more CRS.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -147,7 +147,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * to other factories. The current implementation specifies that this factory should defer to
      * {@link CachingCoordinateOperationFactory}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void setOrdering(final Organizer organizer) {

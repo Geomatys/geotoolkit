@@ -127,7 +127,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
  *
@@ -180,7 +180,7 @@ public class Stereographic extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)
@@ -340,7 +340,7 @@ public class Stereographic extends UnitaryProjection {
      * @author André Gosselin (MPO)
      * @author Martin Desruisseaux (MPO, IRD)
      * @author Rueben Schulz (UBC)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

@@ -76,7 +76,7 @@ import static java.awt.image.DataBuffer.*;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

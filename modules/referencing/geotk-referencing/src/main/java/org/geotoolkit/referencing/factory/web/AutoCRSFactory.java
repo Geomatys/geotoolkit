@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

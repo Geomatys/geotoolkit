@@ -46,7 +46,7 @@ import org.geotoolkit.util.NullArgumentException;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

@@ -75,7 +75,7 @@ import org.geotoolkit.resources.Loggings;
  * @param <T> The type of objects to be included in this set.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -101,7 +101,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     /**
      * The type of objects included in this set.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected final Class<T> type;
 
@@ -341,7 +341,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      *
      * @return The authority factory.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected AuthorityFactory getAuthorityFactory() {
         return proxy.getAuthorityFactory();
@@ -409,7 +409,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * {@linkplain IdentifiedObject identified objects} when first needed.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.2
      * @module

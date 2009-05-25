@@ -43,7 +43,7 @@ import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransfo
  * class, however doing so may simplify their implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -113,9 +113,9 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * of the enclosing {@link AbstractMathTransform2D}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     protected abstract class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {
@@ -212,9 +212,9 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      *        XML are more appropriate.}
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @level advanced
      * @module
      */

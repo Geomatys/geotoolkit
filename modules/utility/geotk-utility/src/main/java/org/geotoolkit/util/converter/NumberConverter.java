@@ -25,7 +25,7 @@ import java.io.ObjectStreamException;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -57,7 +57,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -87,9 +87,9 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * Converter from numbers to doubles.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Double extends NumberConverter<java.lang.Double> {
         private static final long serialVersionUID = 1643009985070268985L;
@@ -117,9 +117,9 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * Converter from numbers to floats.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Float extends NumberConverter<java.lang.Float> {
         private static final long serialVersionUID = -5900985555014433974L;
@@ -147,9 +147,9 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * Converter from numbers to longs.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Long extends NumberConverter<java.lang.Long> {
         private static final long serialVersionUID = -5320144566275003574L;
@@ -177,9 +177,9 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * Converter from numbers to integers.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Integer extends NumberConverter<java.lang.Integer> {
         private static final long serialVersionUID = 2661178278691398269L;
@@ -207,9 +207,9 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * Converter from numbers to shorts.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Short extends NumberConverter<java.lang.Short> {
         private static final long serialVersionUID = -5943559376400249179L;
@@ -237,9 +237,9 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * Converter from numbers to shorts.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Byte extends NumberConverter<java.lang.Byte> {
         private static final long serialVersionUID = 1381038535870541045L;
@@ -269,7 +269,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -300,7 +300,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */

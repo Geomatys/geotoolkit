@@ -35,7 +35,7 @@ import org.geotoolkit.util.NumberRange;
  * the identity transform, or {@code null} if this category is a qualitative one.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -180,7 +180,7 @@ final class GeophysicsCategory extends Category {
      * 18 and 20 is a "gray area" where we don't know for sure what the user intend to do.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @see GeophysicsCategory#getRange
      *

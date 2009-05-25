@@ -38,7 +38,7 @@ import org.geotoolkit.resources.Errors;
  *        in most cases and <code>isAffine()</code> would be useless.}
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -70,7 +70,7 @@ public class AffineMatrix3 extends AffineTransform implements Matrix {
      * @param m02 the X translation element.
      * @param m12 the Y translation element.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public AffineMatrix3(final double m00, final double m10,
                          final double m01, final double m11,

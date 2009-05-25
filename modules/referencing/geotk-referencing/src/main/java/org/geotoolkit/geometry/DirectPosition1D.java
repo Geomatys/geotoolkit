@@ -28,7 +28,7 @@ import org.geotoolkit.resources.Errors;
  * Holds the coordinates for a one-dimensional position within some coordinate reference system.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DirectPosition2D
  * @see GeneralDirectPosition

@@ -41,7 +41,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -172,7 +172,7 @@ public class TransverseMercator extends MapProjection {
      * <cite>false westing</cite> (FW) and <cite>false southing</cite> (FS) respectively.
      *
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @see org.geotoolkit.referencing.operation.projection.TransverseMercator
      *

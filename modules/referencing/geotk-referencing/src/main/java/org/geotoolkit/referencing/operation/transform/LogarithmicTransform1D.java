@@ -53,7 +53,7 @@ import static java.lang.Double.doubleToLongBits;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ExponentialTransform1D
  * @see LinearTransform1D

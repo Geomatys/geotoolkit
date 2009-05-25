@@ -33,7 +33,7 @@ import javax.measure.unit.Unit;
  * graduation for dates is handled in a different way than a graduation for numbers.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

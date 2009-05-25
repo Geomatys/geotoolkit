@@ -27,9 +27,9 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class VerticalDatumAdapter extends MetadataAdapter<VerticalDatumAdapter,VerticalDatum> {

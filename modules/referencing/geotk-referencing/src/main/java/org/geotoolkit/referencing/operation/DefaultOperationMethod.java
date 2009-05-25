@@ -51,7 +51,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * use none. Each coordinate operation using the method assigns values to these parameters.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultOperation
  *

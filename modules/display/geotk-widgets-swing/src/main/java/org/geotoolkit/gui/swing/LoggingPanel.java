@@ -67,7 +67,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * This level can be changed with a call to <code>{@linkplain #getHandler}.setLevel(aLevel)</code>.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -78,7 +78,7 @@ public class LoggingPanel extends JPanel {
      * Enumeration class for columns to be shown in a {@link LoggingPanel}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @see LoggingPanel#setColumnVisible
      *

@@ -67,7 +67,7 @@ import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -232,7 +232,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      * @param dz       The <var>z</var> translation in meters.
      * @return A transform for the given parameters.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform create(final boolean abridged,
             final double  a, final double  b, final boolean source3D,

@@ -54,7 +54,7 @@
  * for example. If such an ambiguity is found, an exception will be thrown.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

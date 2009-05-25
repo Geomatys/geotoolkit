@@ -42,7 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * use in immutable objects.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -104,7 +104,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      *
      * @param strings The strings in various locales, or {@code null} if none.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public DefaultInternationalString(final Map<Locale,String> strings) {
         if (strings == null || strings.isEmpty()) {

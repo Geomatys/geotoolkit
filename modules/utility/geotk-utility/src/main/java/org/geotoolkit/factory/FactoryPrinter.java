@@ -42,7 +42,7 @@ import org.geotoolkit.resources.Vocabulary;
  * Prints a list of factory.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

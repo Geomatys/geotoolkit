@@ -55,9 +55,9 @@ import org.geotoolkit.resources.Vocabulary;
  * object.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
@@ -139,9 +139,9 @@ public class MultiColorChooser extends JPanel implements Dialog {
      * display the expected text in the cells.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Colors extends ListTableModel<Integer> {
@@ -237,9 +237,9 @@ public class MultiColorChooser extends JPanel implements Dialog {
      * The renderer to use for columns of type {@link Color} in the the table of colors.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class CellRenderer extends DefaultTableCellRenderer {

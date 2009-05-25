@@ -48,7 +48,7 @@ import static java.awt.image.DataBuffer.TYPE_BYTE;
  * @author Martin Desruisseaux (Geomatys)
  * @author Simone Giannecchini (Geosolutions)
  * @author Bryce Nordgren
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -59,7 +59,7 @@ public class ImageInspector {
      * Saturation) color space. This color space is also known as HSI or HIS and is implemented
      * in <cite>Java Advanced Imaging</cite> by the {@link IHSColorSpace} class.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final PaletteInterpretation IHS = PaletteInterpretation.valueOf("IHS");
 
@@ -73,7 +73,7 @@ public class ImageInspector {
      * @see #isGrayScale
      * @see #setRenderingHint
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final Hints.Key IGNORE_FULLY_TRANSPARENT_PIXELS = new Hints.Key(Boolean.class);
 
@@ -580,7 +580,7 @@ public class ImageInspector {
      *
      * @see ImageWorker#tile
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean isTiled() {
         return image.getNumXTiles() != 1 || image.getNumYTiles() != 1;
@@ -648,7 +648,7 @@ public class ImageInspector {
      *
      * @see #IGNORE_FULLY_TRANSPARENT_PIXELS
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean isGrayScale() {
         final ColorModel cm = image.getColorModel();
@@ -695,7 +695,7 @@ public class ImageInspector {
      *
      * @see ImageWorker#setColorSpaceType
      *
-     * @since 3.0
+     * @since 3.00
      */
     public PaletteInterpretation getColorSpaceType() {
         final ColorModel cm = image.getColorModel();

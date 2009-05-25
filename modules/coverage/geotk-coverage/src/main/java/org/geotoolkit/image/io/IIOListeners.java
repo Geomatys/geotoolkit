@@ -34,7 +34,7 @@ import org.geotoolkit.util.XArrays;
  * {@link ImageReader} instance is not yet know or available.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -26,9 +26,9 @@ import org.geotoolkit.util.SimpleInternationalString;
  * {@link InternationalStringAdapter}, this converter doesn't wrap the string in a new object.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class InternationalStringConverter extends XmlAdapter<String,InternationalString> {

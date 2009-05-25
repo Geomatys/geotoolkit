@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Note that some conversions have no parameters.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultTransformation
  *

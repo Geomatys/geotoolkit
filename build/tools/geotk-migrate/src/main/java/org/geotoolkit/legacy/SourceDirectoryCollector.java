@@ -25,9 +25,9 @@ import java.util.*;
  * use the standard Maven layout, which is the case of GeoTools and Geotoolkit projects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class SourceDirectoryCollector implements FileFilter {
     /**

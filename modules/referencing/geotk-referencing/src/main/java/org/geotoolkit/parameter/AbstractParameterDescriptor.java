@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * Abstract definition of a parameter or group of parameters used by an operation method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see AbstractParameter
  *

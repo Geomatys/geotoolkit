@@ -25,7 +25,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * {@linkplain GeographicMetadataFormat geographic metadata format}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

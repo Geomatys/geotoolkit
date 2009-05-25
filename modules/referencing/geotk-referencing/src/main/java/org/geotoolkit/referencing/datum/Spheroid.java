@@ -30,7 +30,7 @@ import static java.lang.Math.*;
  * {@link #orthodromicDistance} method.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

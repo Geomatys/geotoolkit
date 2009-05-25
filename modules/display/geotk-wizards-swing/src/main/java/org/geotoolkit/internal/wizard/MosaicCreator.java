@@ -34,9 +34,9 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
  * The object that create a mosaic once {@link MosaicWizard} finished to collect all information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class MosaicCreator extends DeferredWizardResult {

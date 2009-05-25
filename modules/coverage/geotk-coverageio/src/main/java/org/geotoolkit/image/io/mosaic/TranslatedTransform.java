@@ -27,7 +27,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * {@link RegionCalculator} only.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.6
  * @module

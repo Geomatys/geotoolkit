@@ -33,7 +33,7 @@ import org.opengis.metadata.extent.GeographicDescription;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -32,7 +32,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * look and feel Graphics Repository</A>.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

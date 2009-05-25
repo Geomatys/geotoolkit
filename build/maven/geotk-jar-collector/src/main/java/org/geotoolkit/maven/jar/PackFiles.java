@@ -27,9 +27,9 @@ import java.util.zip.ZipOutputStream;
  * Packs javadoc and source files.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class PackFiles implements FileFilter, Comparator<File> {
     /**

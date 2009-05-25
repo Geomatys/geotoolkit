@@ -45,7 +45,7 @@ import org.geotoolkit.internal.image.jai.*;
  * {@link javax.imageio.ImageReader}/{@link javax.imageio.ImageWriter}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -209,7 +209,7 @@ public final class Registry {
      *        {@code ImageWriterSpi.class} to set the writer.
      * @param allowed {@code false} to disallow native acceleration.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Configuration
     public static synchronized <T extends ImageReaderWriterSpi> void setNativeCodecAllowed(
@@ -259,7 +259,7 @@ public final class Registry {
      * invoke this method <strong>after</strong> the {@linkplain java.awt.Window} has been
      * created but before it is made visible.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Configuration
     public static synchronized void setDefaultCodecPreferences() {

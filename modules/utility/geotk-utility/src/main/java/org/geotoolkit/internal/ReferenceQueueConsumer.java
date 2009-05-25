@@ -27,9 +27,9 @@ import org.geotoolkit.util.logging.Logging;
  * @param <T> The type of objects being referenced.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class ReferenceQueueConsumer<T> extends Thread {

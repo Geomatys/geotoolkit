@@ -25,7 +25,7 @@ import org.geotoolkit.util.Utilities;
  * A pair of {@link ImageReader} with its input. Only used as keys in hash map.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

@@ -28,9 +28,9 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * not the ISO 19139 one.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class VerticalCRSAdapter extends MetadataAdapter<VerticalCRSAdapter,VerticalCRS> {

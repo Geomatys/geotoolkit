@@ -66,7 +66,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -355,7 +355,7 @@ public class CoordinateFormat extends Format {
      *
      * @return The pattern for number fields, or {@code null} if not applicable.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public String getNumberPattern() {
         final NumberFormat format = getNumberFormat();
@@ -386,7 +386,7 @@ public class CoordinateFormat extends Format {
      *
      * @return The pattern for angle fields, or {@code null} if not applicable.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public String getAnglePattern() {
         return getAngleFormat().toPattern();
@@ -411,7 +411,7 @@ public class CoordinateFormat extends Format {
      *
      * @return The pattern for date fields, or {@code null} if not applicable.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public String getDatePattern() {
         final DateFormat format = getDateFormat();
@@ -441,7 +441,7 @@ public class CoordinateFormat extends Format {
      *
      * @return The current time zone for dates.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public TimeZone getTimeZone() {
         return getDateFormat().getTimeZone();

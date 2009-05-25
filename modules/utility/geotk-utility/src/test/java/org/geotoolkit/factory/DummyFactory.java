@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * than {@code DummyFactory.class}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  */
@@ -38,7 +38,7 @@ interface InternalFactory {
  * Dummy factory interface for {@link FactoryRegistryTest}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  */

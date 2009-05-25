@@ -761,7 +761,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
      * underlying {@link Axis2D} may thrown a {@link ConcurrentModificationException}.
      *
      * @author Martin Desruisseaux (MPO, IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -1263,7 +1263,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
      * to the user.
      *
      * @author Martin Desruisseaux (MPO, IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -1482,7 +1482,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
      * Cet itérateur balaye aussi les étiquettes de graduations.
      *
      * @author Martin Desruisseaux (MPO, IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

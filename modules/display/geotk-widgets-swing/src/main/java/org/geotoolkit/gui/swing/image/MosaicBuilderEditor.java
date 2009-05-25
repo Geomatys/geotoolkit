@@ -78,9 +78,9 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
@@ -392,9 +392,9 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
      * The table model for the subsamplings table.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Subsamplings extends ListTableModel<Dimension> implements Comparator<Dimension> {
@@ -642,7 +642,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
     }
 
     /**
-     * Notifies that the creation of a {@link TileManager} failed with the given exception. This
+     * Notifies that the creation of a {@link TileManager} failed with the given exception. This
      * method is invoked instead than {@link #done(TileManager)} if an exception occured during
      * the execution of {@link MosaicPerformanceGraph#plotCostEstimation(String, TileManager)}.
      * <p>

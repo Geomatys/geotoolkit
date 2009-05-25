@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  * context is ambiguous, an explicit {@code isHighIncluded} argument is required.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see GridEnvelope2D
  *

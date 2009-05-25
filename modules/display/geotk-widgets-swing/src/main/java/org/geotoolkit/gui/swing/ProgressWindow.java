@@ -44,7 +44,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -453,7 +453,7 @@ public class ProgressWindow implements ProgressListener {
      * positive identifiers and are executed by the {@link EventQueue#invokeLater} method.
      *
      * @author Martin Desruisseaux (MPO, IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

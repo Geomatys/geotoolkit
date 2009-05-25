@@ -24,9 +24,9 @@ import java.io.PrintStream;
  * This utility class is not used during the tests; only during the writing of those tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public final class Tools {
     /**

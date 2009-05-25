@@ -111,7 +111,7 @@ import org.geotoolkit.io.X364;
  * </table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

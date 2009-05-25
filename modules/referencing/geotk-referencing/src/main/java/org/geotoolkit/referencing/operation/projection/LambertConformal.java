@@ -84,7 +84,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -117,7 +117,7 @@ public class LambertConformal extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)
@@ -352,7 +352,7 @@ public class LambertConformal extends UnitaryProjection {
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
      * @author André Gosselin (MPO)
      * @author Rueben Schulz (UBC)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

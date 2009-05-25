@@ -90,7 +90,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Lionel Flahaut (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ImageProperties
  * @see ParameterEditor
@@ -345,7 +345,7 @@ public class OperationTreeBrowser extends JPanel implements Dialog {
      * The listener for various event in the {@link OperationTreeBrowser} widget.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module
@@ -494,7 +494,7 @@ public class OperationTreeBrowser extends JPanel implements Dialog {
      * The tree cell renderer, which select icons according the selected object type.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module

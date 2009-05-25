@@ -28,7 +28,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * and vertical or temporal directions like {@linkplain AxisDirection#UP Up} are last.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

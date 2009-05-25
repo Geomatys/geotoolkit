@@ -28,7 +28,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * See package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

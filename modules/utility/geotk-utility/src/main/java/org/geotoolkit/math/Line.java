@@ -39,7 +39,7 @@ import static java.lang.Double.*;
  * {@link #x} compute the converse and should work even if the line is vertical.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Point2D
  * @see Line2D

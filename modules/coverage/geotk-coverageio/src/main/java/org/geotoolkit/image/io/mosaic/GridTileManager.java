@@ -36,7 +36,7 @@ import org.geotoolkit.util.collection.FrequencySortedSet;
  * A tile manager for the particular case of tile distributed on a regular grid.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

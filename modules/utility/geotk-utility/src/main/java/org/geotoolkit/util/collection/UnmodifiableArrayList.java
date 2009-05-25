@@ -41,7 +41,7 @@ import org.geotoolkit.util.NullArgumentException;
  * @param <E> The type of elements in the list.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -104,7 +104,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * @return The given array wrapped in an unmodifiable list.
      * @throws IndexOutOfBoundsException If the lower or upper value are out of bounds.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static <E> UnmodifiableArrayList<E> wrap(final E[] array, final int lower, final int upper)
             throws IndexOutOfBoundsException
@@ -154,7 +154,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      *
      * @return The length of the backing array.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public final int arraySize() {
         return array.length;
@@ -273,9 +273,9 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * @param <E> The type of elements in the list.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private final static class SubList<E> extends UnmodifiableArrayList<E> {

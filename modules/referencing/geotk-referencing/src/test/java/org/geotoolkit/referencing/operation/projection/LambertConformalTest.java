@@ -36,9 +36,9 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  * long as we make this value varying, the latitude of origin is the simpliest approach.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(MercatorTest.class)
 public final class LambertConformalTest extends ProjectionTestCase {

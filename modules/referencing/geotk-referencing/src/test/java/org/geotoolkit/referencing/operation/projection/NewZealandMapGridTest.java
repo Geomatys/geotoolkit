@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Tests the {@link NewZealandMapGrid} implementation.
  *
  * @author Justin Deoliveira (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  */

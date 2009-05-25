@@ -54,7 +54,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
  * named {@code PARAMETERS}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
@@ -108,7 +108,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * <p>
      * This is a Geotoolkit-specific parameter.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<Boolean>(
             Citations.GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
@@ -120,7 +120,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * This is an ESRI-specific parameter, but its usage could be extended to any projection.
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ParameterDescriptor<Double> X_SCALE = createOptionalDescriptor(
             new NamedIdentifier[] {
@@ -135,7 +135,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * This is an ESRI-specific parameter, but its usage could be extended to any projection.
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ParameterDescriptor<Double> Y_SCALE = createOptionalDescriptor(
             new NamedIdentifier[] {
@@ -152,7 +152,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * This is an ESRI-specific parameter, but its usage could be extended to any projections.
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ParameterDescriptor<Double> XY_PLANE_ROTATION = createOptionalDescriptor(
             /*

@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  * Most methods in this implementation are final for performance reason.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DirectPosition1D
  * @see DirectPosition2D

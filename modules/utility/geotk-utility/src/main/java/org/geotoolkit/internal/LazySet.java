@@ -29,7 +29,7 @@ import java.util.AbstractSet;
  * @param <E> The type of elements in the set.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -136,7 +136,7 @@ public final class LazySet<E> extends AbstractSet<E> {
      * The iterator implementation for the {@linkplain LazySet lazy set}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      */
     private final class Iter implements Iterator<E> {
         /**

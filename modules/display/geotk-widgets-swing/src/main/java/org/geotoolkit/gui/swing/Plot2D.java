@@ -88,7 +88,7 @@ import static java.lang.Math.hypot;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.1
  * @module
@@ -539,7 +539,7 @@ public class Plot2D extends ZoomPane {
      *
      * @return The margin between widget bounds and the area where the graph is plotted.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Insets getMargin() {
         return new Insets(top, left, bottom, right);
@@ -551,7 +551,7 @@ public class Plot2D extends ZoomPane {
      *
      * @param margin The new margin between widget bounds and the area where the graph is plotted.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setMargin(final Insets margin) {
         top    = margin.top;
@@ -945,7 +945,7 @@ public class Plot2D extends ZoomPane {
      * to plot as a {@link Shape} object and the {@link Paint} to use for drawing the lines.
      *
      * @author Martin Desruisseaux (MPO, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 1.1
      * @module
@@ -985,7 +985,7 @@ public class Plot2D extends ZoomPane {
      * Default implementation of {@link Plot2D.Series}.
      *
      * @author Martin Desruisseaux (MPO, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 1.1
      * @module

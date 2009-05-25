@@ -26,9 +26,9 @@ import org.geotoolkit.test.Depend;
  * Tests {@link FallbackConverter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(StringConverterTest.class)
 public final class FallbackConverterTest {

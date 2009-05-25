@@ -21,7 +21,7 @@ package org.geotoolkit.referencing.factory.epsg;
  * Private structure for {@link DirectEpsgFactory#createBursaWolfParameters} usage.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

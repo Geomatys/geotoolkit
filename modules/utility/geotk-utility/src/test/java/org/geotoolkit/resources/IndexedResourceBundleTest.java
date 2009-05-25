@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Tests the {@link IndexedResourceBundle} subclasses, especially {@link Vocabulary}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  */

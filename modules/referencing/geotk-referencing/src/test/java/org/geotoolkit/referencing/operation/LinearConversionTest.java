@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  * Tests some operation steps involved in coordinate operation creation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  */

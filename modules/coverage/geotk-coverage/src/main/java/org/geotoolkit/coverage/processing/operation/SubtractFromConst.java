@@ -56,7 +56,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * </table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.coverage.processing.Operations#subtractFrom
  * @see SubtractFromConstDescriptor

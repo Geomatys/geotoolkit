@@ -26,9 +26,9 @@ package org.geotoolkit.referencing.operation.projection;
  * exceptions in the way they usually do for normal projection exceptions.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class ProjectionError extends ProjectionException {

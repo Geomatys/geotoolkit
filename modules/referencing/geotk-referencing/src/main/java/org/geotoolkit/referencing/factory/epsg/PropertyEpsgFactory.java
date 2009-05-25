@@ -81,6 +81,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Andrea Aime (TOPP)
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -147,7 +148,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      *         Note that do exception is thrown if there is no file - in this case
      *         the factory is only considered not {@linkplain #isAvailable() available}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public PropertyEpsgFactory(final Hints userHints, final String filename, final Citation... authorities)
             throws IOException

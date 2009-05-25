@@ -21,7 +21,7 @@ package org.geotoolkit.io;
  * Escape codes from ANSI X3.64 standard (aka ECMA-48 and ISO/IEC 6429).
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>
  *

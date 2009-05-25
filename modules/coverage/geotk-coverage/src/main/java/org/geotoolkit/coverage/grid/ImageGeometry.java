@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
  * instances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see GridGeometry2D
  * @see GeneralGridGeometry
@@ -100,7 +100,7 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
      *
      * @return The image envelope in "real world" coordinates.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Rectangle2D getEnvelope() {
         return getEnvelope(PixelOrientation.CENTER);
@@ -121,7 +121,7 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
      *         is not provided, the default value is {@link PixelOrientation#CENTER CENTER}.
      * @return The image envelope in "real world" coordinates.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Rectangle2D getEnvelope(final PixelOrientation orientation) {
         // Reminder: this algorithm must be consistent with GeneralEnvelope(GridEnvelope, ...).

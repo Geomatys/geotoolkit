@@ -24,9 +24,9 @@ import org.geotoolkit.util.converter.Classes;
  * A vector wich is the concatenation of two other vectors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class ConcatenatedVector extends Vector implements Serializable {

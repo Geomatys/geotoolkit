@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * Static methods operating on shapes from the {@link java.awt.geom} package.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.1
  * @module

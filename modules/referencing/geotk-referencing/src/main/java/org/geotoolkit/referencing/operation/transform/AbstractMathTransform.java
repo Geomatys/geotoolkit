@@ -78,7 +78,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * However more performance may be gained by overriding the other {@code transform} method as well.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -322,7 +322,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *               stored in the destination array.
      * @throws TransformException If the point can't be transformed.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected abstract void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws TransformException;
@@ -1056,7 +1056,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *         position. If {@code false}, a small departure it tolerated.
      * @return {@code true} if the two objects are equivalent.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean equivalent(final MathTransform object, final boolean strict) {
         return equals(object);
@@ -1159,7 +1159,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * math transform is also serializable.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

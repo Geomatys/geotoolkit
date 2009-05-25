@@ -54,7 +54,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  */

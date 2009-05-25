@@ -33,9 +33,9 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * set of predefined directions and never create new ones.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @Static

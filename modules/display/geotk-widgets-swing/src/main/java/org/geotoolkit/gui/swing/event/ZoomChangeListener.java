@@ -24,7 +24,7 @@ import java.util.EventListener;
  * {@link java.awt.geom.AffineTransform}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

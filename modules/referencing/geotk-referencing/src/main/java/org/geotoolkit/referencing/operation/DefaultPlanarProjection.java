@@ -32,7 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Base class for for azimuthal (or planar) map projections.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.crs.DefaultProjectedCRS
  * @see <A HREF="http://mathworld.wolfram.com/AzimuthalProjection.html">Azimuthal projection on MathWorld</A>

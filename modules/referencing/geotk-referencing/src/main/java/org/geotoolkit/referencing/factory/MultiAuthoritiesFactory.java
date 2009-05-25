@@ -54,7 +54,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * a set of names determined from all available authority factories.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -135,7 +135,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * @return The factories on which this {@code MultiAuthoritiesFactory} will delegate
      *         object creations, in iteration order.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public List<AuthorityFactory> getFactories() {
         return factories;

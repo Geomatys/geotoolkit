@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -71,7 +71,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     /**
      * WGS 1972 ellipsoid (EPSG:7043) with axis in {@linkplain SI#METRE metres}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final DefaultEllipsoid WGS72 =
             createFlattenedSphere("WGS72", 6378135.0, 298.26, SI.METRE);

@@ -76,7 +76,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * situation, a plain {@link org.geotoolkit.referencing.cs.AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

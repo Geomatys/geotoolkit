@@ -41,7 +41,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -199,7 +199,7 @@ public class ObliqueMercator extends MapProjection {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @see org.geotoolkit.referencing.operation.projection.ObliqueMercator
      *

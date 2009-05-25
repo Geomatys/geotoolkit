@@ -24,9 +24,9 @@ import static org.junit.Assert.*;
  * Tests the {@link JNDI} implementation.
  *
  * @author Jody Garnett (Refractions)
- * @version 2.4
+ * @version 3.00
  *
- * @since 3.0
+ * @since 2.4
  */
 public final class JNDITest {
     /**

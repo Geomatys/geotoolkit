@@ -82,7 +82,7 @@ import org.geotoolkit.resources.Errors;
  * implementations are not garanteed to be thread-safe neither.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -205,7 +205,7 @@ public class LineFormat extends Format {
      * @return
      *          The base type of columns, or {@code null} if no non-filtered column was found.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Class<?> getElementType(final ClassFilter filter) {
         Class<?> type = null;

@@ -43,7 +43,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Adapted from Hans Muller
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see JSpinner
  * @see SpinnerNumberModel
@@ -217,7 +217,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
      *
      * @author Adapted from Hans Muller
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module
@@ -302,7 +302,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
      *
      * @author Adapted from Hans Muller
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module

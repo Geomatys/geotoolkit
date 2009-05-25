@@ -35,7 +35,7 @@ import org.geotoolkit.test.Depend;
  * Tests the {@link MetadataStandard} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

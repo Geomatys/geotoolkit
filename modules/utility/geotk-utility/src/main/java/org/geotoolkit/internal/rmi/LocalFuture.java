@@ -26,9 +26,9 @@ import java.util.concurrent.ExecutionException;
  * @param <Output> The return value of the task.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class LocalFuture<Output> implements TaskFuture<Output> {

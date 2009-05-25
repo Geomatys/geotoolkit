@@ -24,7 +24,7 @@
  * in incompatible ways in any future version.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

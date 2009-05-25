@@ -78,7 +78,7 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see Mercator
  * @see ObliqueMercator
@@ -97,9 +97,9 @@ public class TransverseMercator extends CassiniOrMercator {
      * convenience methods for computing the zone of current projection.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     protected static class Parameters extends UnitaryProjection.Parameters {
@@ -258,7 +258,7 @@ public class TransverseMercator extends CassiniOrMercator {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)
@@ -361,7 +361,7 @@ public class TransverseMercator extends CassiniOrMercator {
      * @author André Gosselin (MPO)
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @author Rueben Schulz (UBC)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

@@ -54,7 +54,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * convenience utility for inspecting the dependencies between Geotoolkit referencing factories.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -172,7 +172,7 @@ public class FactoryDependencies {
      * @return {@code true} if only the first node of duplicated factories will be reported,
      *         except for the first occurence.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean isAbridged() {
         return abridged;
@@ -186,7 +186,7 @@ public class FactoryDependencies {
      * @param abridged {@code true} for an abridged tree, or {@code false} for expanding
      *        every branches inconditionnaly.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setAbridged(final boolean abridged) {
         this.abridged = abridged;
@@ -195,7 +195,7 @@ public class FactoryDependencies {
     /**
      * Prints the dependencies as a tree to the {@linkplain System#out standard output stream}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void print() {
         final PrintWriter out;

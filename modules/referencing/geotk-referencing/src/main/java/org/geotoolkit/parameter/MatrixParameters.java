@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * {@linkplain ParameterDescriptorGroup operation parameter group}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see MatrixParameterDescriptors
  *

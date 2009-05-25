@@ -72,7 +72,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -295,7 +295,7 @@ public final class Parameters {
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static <T> T value(final ParameterDescriptor<T> param,
                               final ParameterValueGroup    group)
@@ -314,7 +314,7 @@ public final class Parameters {
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static String stringValue(final ParameterDescriptor<?> param,
                                      final ParameterValueGroup    group)
@@ -333,7 +333,7 @@ public final class Parameters {
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Integer integerValue(final ParameterDescriptor<?> param,
                                        final ParameterValueGroup    group)
@@ -354,7 +354,7 @@ public final class Parameters {
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static double doubleValue(final ParameterDescriptor<?> param,
                                      final ParameterValueGroup    group)

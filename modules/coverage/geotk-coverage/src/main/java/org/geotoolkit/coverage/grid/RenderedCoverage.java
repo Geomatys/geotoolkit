@@ -25,7 +25,7 @@ import org.opengis.coverage.grid.GridCoverage;
  * A grid coverage backed by a {@linkplain RenderedImage rendered image}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -36,7 +36,7 @@ import org.geotoolkit.util.converter.Classes;
  * handled.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -273,7 +273,7 @@ public abstract class StreamImageReader extends GeographicImageReader {
      * Service provider interface (SPI) for {@link StreamImageReader}s.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

@@ -42,7 +42,7 @@ package org.geotoolkit.util.converter;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -73,7 +73,7 @@ public interface ObjectConverter<S,T> {
      *
      * @return {@code true} if this converter accepts only a subset of {@code S} values.
      *
-     * @since 3.0
+     * @since 3.00
      */
     boolean hasRestrictions();
 
@@ -92,7 +92,7 @@ public interface ObjectConverter<S,T> {
      *
      * @return {@code true} if this converter preserve order.
      *
-     * @since 3.0
+     * @since 3.00
      */
     boolean isOrderPreserving();
 
@@ -114,7 +114,7 @@ public interface ObjectConverter<S,T> {
      *
      * @return {@code true} if this converter reverse order.
      *
-     * @since 3.0
+     * @since 3.00
      */
     boolean isOrderReversing();
 

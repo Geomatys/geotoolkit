@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

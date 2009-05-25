@@ -31,9 +31,9 @@ import static org.junit.Assume.assumeTrue;
  * Tests the combinaison of EPSG database with grids like NADCON.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(CRS_WithEpsgTest.class)
 public class GridsTest extends ReferencingTestCase {

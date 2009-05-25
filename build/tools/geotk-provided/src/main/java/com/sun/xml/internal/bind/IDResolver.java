@@ -28,9 +28,9 @@ import org.xml.sax.SAXException;
  * the "real" Sun's class will be used instead since it come first in the classpath.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public abstract class IDResolver {
     public IDResolver() {

@@ -46,7 +46,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * Reports progress by sending email to the specified address at regular interval.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

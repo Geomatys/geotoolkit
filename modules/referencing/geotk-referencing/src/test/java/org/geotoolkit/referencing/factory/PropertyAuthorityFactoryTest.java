@@ -47,9 +47,9 @@ import static org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory.FILENA
  * Tests {@link PropertyAuthorityFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(WKTFormatTest.class)
 public final class PropertyAuthorityFactoryTest {

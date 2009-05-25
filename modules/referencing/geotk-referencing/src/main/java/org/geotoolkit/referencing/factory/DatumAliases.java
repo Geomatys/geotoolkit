@@ -74,7 +74,7 @@ import org.geotoolkit.util.XArrays;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @todo Invokes {@link #freeUnused} automatically after some amount of time, in order to release
  *       memory for unusued aliases. A timer should be set in {@code reload()} method.
@@ -177,7 +177,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      * to other factories. The current implementation specifies that this factory should have
      * precedence over {@link ReferencingObjectFactory}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void setOrdering(final Organizer organizer) {

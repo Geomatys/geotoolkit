@@ -63,7 +63,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * @author Martin Desruisseaux (IRD)
  * @author Richard Gould
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @see Factory
  * @see Hints

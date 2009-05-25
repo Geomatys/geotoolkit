@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @param <BoundType> The interface being adapted.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see XmlAdapter
  *

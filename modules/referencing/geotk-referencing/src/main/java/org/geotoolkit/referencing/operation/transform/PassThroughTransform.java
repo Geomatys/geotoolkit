@@ -43,7 +43,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * meters without affecting the latitude and longitude values.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DimensionFilter
  *

@@ -29,7 +29,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * better accuracy than {@link GeneralMatrix} for matrix inversion and multiplication.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -81,7 +81,7 @@ public class Matrix3 extends Matrix3d implements XMatrix {
      *
      * @param elements Elements of the matrix. Column indice vary fastest.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Matrix3(final double[] elements) {
         super(elements[0], elements[1], elements[2],
@@ -221,7 +221,7 @@ public class Matrix3 extends Matrix3d implements XMatrix {
      * @return The affine transform for this matrix.
      * @throws IllegalStateException if the last row is not {@code [0 0 1]}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public AffineTransform toAffineTransform() throws IllegalStateException {
         if (isAffine()) {

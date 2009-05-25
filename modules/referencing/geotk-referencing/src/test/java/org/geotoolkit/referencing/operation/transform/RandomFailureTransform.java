@@ -28,9 +28,9 @@ import static org.junit.Assert.*;
  * A pseudo-transform where some coordinate fail to be transformed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class RandomFailureTransform extends PseudoTransform {
     /**

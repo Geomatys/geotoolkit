@@ -35,9 +35,9 @@ import org.opengis.referencing.operation.Operation;
  *        example it may be implemented by proxies during WKT formatting.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public interface Parameterized {

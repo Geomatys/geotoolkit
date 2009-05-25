@@ -77,7 +77,7 @@ import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -399,7 +399,7 @@ public class About extends JPanel implements Dialog {
      * Cette liste se mettre automatiquement à jour de façon périodique.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -580,7 +580,7 @@ public class About extends JPanel implements Dialog {
      * @param  title The title to write in the window bar.
      * @return Always {@code false} for this component.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {

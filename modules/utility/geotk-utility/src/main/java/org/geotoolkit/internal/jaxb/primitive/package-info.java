@@ -32,7 +32,7 @@
  * namespace URL.</p>
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *

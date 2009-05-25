@@ -43,7 +43,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * {@link javax.swing.tree.TreeModel} in some future Geotoolkit implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

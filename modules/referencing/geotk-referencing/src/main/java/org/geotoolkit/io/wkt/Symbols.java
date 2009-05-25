@@ -29,7 +29,7 @@ import java.text.DecimalFormat;
  * brackets as in {@code DATUM("WGS84")}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @level advanced
@@ -181,7 +181,7 @@ public class Symbols implements Serializable {
      *
      * @return The characters acceptable as opening bracket.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public final char[] getOpeningBrackets() {
         return openingBrackets.clone();
@@ -194,7 +194,7 @@ public class Symbols implements Serializable {
      *
      * @return The characters acceptable as closing bracket.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public final char[] getClosingBrackets() {
         return closingBrackets.clone();
@@ -205,7 +205,7 @@ public class Symbols implements Serializable {
      *
      * @return The character used for quoting texts
      *
-     * @since 3.0
+     * @since 3.00
      */
     public final char getQuote() {
         return quote;

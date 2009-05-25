@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * @author Martin Desruisseaux (Geomatys)
  * @since 2.1
  *
- * @version 3.0
+ * @version 3.00
  */
 public final class GeodeticCalculatorTest {
     /**

@@ -44,7 +44,7 @@ import org.geotoolkit.lang.Static;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -168,7 +168,7 @@ public final class Factories {
      *
      * @see FactoryFinder#listProviders
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static void listProviders(final Collection<FactoryRegistry> registries,
             final Writer out, final Locale locale) throws IOException

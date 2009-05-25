@@ -69,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  * instance of {@code SpatioTemporalCoverage3D} for each thread.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -577,7 +577,7 @@ control:    for (int p=0; p<=1; p++) {
      * Constructs rendered images on demand.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

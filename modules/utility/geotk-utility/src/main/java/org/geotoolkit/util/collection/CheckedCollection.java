@@ -27,7 +27,7 @@ import java.util.Collection;
  * @param <E> The base type of elements in the collection.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

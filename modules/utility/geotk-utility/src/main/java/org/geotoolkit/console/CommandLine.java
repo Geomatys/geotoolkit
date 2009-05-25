@@ -86,7 +86,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module
@@ -130,7 +130,7 @@ public abstract class CommandLine implements Runnable {
      * The code given to {@link System#exit} when the program failed because the
      * system is in a state that does not allow the execution of the program.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final int ILLEGAL_STATE_EXIT_CODE = 190;
 
@@ -138,7 +138,7 @@ public abstract class CommandLine implements Runnable {
      * The code given to {@link System#exit} when the program failed because of an
      * internal error.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final int INTERNAL_ERROR_EXIT_CODE = 200;
 
@@ -150,7 +150,7 @@ public abstract class CommandLine implements Runnable {
     /**
      * {@code true} if the {@code --debug} option has been passed on the command line.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Option
     protected boolean debug;
@@ -174,7 +174,7 @@ public abstract class CommandLine implements Runnable {
      * This is the value specified by the {@code --colors} arguments if present,
      * or a value inferred from the system otherwise.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Option
     protected Boolean colors;
@@ -197,7 +197,7 @@ public abstract class CommandLine implements Runnable {
      * This input stream use the encoding specified by the {@code "--encoding"} argument,
      * if presents.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected Reader in;
 
@@ -241,7 +241,7 @@ public abstract class CommandLine implements Runnable {
      *        If {@code null}, default to {@code "java <classname>"}.
      * @param arguments The command-line arguments specified after the command.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected CommandLine(String command, final String[] arguments) {
         this.arguments = arguments;
@@ -280,7 +280,7 @@ public abstract class CommandLine implements Runnable {
      * @return The converted value.
      * @throws NonconvertibleObjectException if the value can't be converted.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected <T> T convert(final String value, final Class<T> type) throws NonconvertibleObjectException {
         return ConverterRegistry.system().converter(String.class, type).convert(value);
@@ -660,7 +660,7 @@ public abstract class CommandLine implements Runnable {
      * @param action The unrecognized action, or {@code null} if the user didn't supplied
      *        any action.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected void unknownAction(final String action) {
         if (action == null) {
@@ -677,7 +677,7 @@ public abstract class CommandLine implements Runnable {
      * a summary of available {@linkplain Action actions} and {@linkplain Option options}.
      * Subclasses can override this method if they want to print different informations.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected void summary() {
         final Descriptions resources = Descriptions.getResources(locale);
@@ -1138,7 +1138,7 @@ public abstract class CommandLine implements Runnable {
      *
      * @return A set of examples to be printed after the help screen.
      *
-     * @since 3.0
+     * @since 3.00
      */
     Map<String,String> examples() {
         return Collections.emptyMap();
@@ -1157,7 +1157,7 @@ public abstract class CommandLine implements Runnable {
      *
      * @param exception The exception that forced the exit.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected void printException(final Throwable exception) {
         out.flush();
@@ -1195,7 +1195,7 @@ public abstract class CommandLine implements Runnable {
      *
      * @param code One of the {@code EXIT_CODE} constants.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected void exit(final int code) {
         if (out != null) out.flush();

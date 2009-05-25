@@ -25,7 +25,7 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
  * JAXB jar instead than the implementation bundled in JDK 6.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

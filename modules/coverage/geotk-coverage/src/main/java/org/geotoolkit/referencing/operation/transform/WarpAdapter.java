@@ -31,7 +31,7 @@ import org.geotoolkit.resources.Errors;
  * when no standard warp operation has been found applicable.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -25,7 +25,7 @@ import static org.geotoolkit.image.jai.Hysteresis.OPERATION_NAME;
  * The descriptor for the {@link Hysteresis} operation.
  *
  * @author Lionel Flahaut (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

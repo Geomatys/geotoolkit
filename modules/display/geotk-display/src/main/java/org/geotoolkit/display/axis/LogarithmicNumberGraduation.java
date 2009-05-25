@@ -24,7 +24,7 @@ import javax.measure.unit.Unit;
  * A graduation using numbers on a logarithmic axis.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

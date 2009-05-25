@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * handled.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -218,7 +218,7 @@ public abstract class StreamImageWriter extends GeographicImageWriter {
      * Service provider interface (SPI) for {@link StreamImageWriter}s.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

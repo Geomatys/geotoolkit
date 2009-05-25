@@ -34,9 +34,9 @@ import org.junit.*;
  * Base class for the tests which will require a connection to an EPSG database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public abstract class EpsgFactoryTestCase extends ReferencingTestCase {
     /**

@@ -53,7 +53,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * to overrides the {@link #getParameterValues} method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultOperationMethod
  *

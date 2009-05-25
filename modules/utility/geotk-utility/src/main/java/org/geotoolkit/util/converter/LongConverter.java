@@ -24,7 +24,7 @@ import java.io.ObjectStreamException;
  * Handles conversions from {@link java.lang.Long} to various objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -47,7 +47,7 @@ abstract class LongConverter<T> extends SimpleConverter<Long,T> implements Seria
      * Converter from long integers to dates.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */

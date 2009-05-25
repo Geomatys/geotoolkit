@@ -27,7 +27,7 @@ import org.geotoolkit.util.XArrays;
  * @author Martin Desruisseaux (IRD)
  * @since 2.4
  *
- * @version 3.0
+ * @version 3.00
  * @module
  */
 final class FactoryIteratorProviders {

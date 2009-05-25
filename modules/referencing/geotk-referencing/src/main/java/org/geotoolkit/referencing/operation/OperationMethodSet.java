@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.OperationMethod;
  * by {@link javax.imageio.spi.ServiceRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -93,7 +93,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
      * The iterator implementation.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      */
     private static class Iter implements Iterator<OperationMethod> {
         /**

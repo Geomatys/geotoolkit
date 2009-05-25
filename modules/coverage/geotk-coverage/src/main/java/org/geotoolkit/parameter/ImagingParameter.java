@@ -33,7 +33,7 @@ import org.geotoolkit.resources.Errors;
  * A particular parameter in a JAI's {@link ParameterList}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

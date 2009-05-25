@@ -42,9 +42,9 @@ import javax.media.jai.PlanarImage;
  * for execution on a remote server.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class SimpleBufferedImageOp implements BufferedImageOp, Serializable {

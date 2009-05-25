@@ -28,7 +28,7 @@ import org.geotoolkit.util.converter.Classes;
  * An image dimension, including the number of bands.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

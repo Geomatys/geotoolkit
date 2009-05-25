@@ -63,7 +63,7 @@
  *
  * @author Martin Desruisseaux (IRD)
  * @author Antoine Hnawia (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

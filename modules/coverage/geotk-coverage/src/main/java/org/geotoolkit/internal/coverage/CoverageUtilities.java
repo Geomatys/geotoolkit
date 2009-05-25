@@ -57,7 +57,7 @@ import org.geotoolkit.util.NumberRange;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

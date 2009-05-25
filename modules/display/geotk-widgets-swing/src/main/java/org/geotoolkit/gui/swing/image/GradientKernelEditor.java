@@ -45,7 +45,7 @@ import static java.awt.GridBagConstraints.*;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see KernelEditor
  * @see GradientMagnitudeDescriptor
@@ -201,7 +201,7 @@ public class GradientKernelEditor extends JComponent implements Dialog {
      * A kernel editor for horizontal or vertical gradient kernel.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module

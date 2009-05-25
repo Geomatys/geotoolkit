@@ -43,9 +43,9 @@ import org.geotoolkit.geometry.DirectPosition2D;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class GridTransform2D extends GridTransform implements MathTransform2D {
@@ -131,9 +131,9 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private final class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {

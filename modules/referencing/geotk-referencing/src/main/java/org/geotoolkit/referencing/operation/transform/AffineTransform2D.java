@@ -56,7 +56,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ProjectiveTransform
  *
@@ -81,7 +81,7 @@ public class AffineTransform2D extends XAffineTransform
      * to {@code true} during construction, but <strong>must</strong> be reset to
      * {@code false} before a reference to {@link AffineTransform2D} is made public.
      *
-     * @since 3.0
+     * @since 3.00
      */
     transient boolean mutable;
 
@@ -90,7 +90,7 @@ public class AffineTransform2D extends XAffineTransform
      * temporarily set the {@linkplain #mutable} flag to {@code true} for initializing the
      * affine transform.
      *
-     * @since 3.0
+     * @since 3.00
      */
     AffineTransform2D() {
         super();

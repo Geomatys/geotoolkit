@@ -26,9 +26,9 @@ import org.opengis.metadata.citation.ResponsibleParty;
  * A citation to be declared as a public static final constant.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class CitationConstant extends DefaultCitation {
@@ -104,9 +104,9 @@ final class CitationConstant extends DefaultCitation {
      * citation returns the singleton, which help both memory usage and performance.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static class Serialized implements Serializable {

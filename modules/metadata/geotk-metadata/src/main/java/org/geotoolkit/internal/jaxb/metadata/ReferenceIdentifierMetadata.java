@@ -38,7 +38,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
  * to the referencing module.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.6
  * @module

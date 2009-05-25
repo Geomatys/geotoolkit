@@ -79,7 +79,7 @@ import static java.awt.GridBagConstraints.*;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see GradientKernelEditor
  * @see ConvolveDescriptor
@@ -435,7 +435,7 @@ public class KernelEditor extends JComponent implements Dialog {
      * events (like changing the size of the table).
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.3
      * @module

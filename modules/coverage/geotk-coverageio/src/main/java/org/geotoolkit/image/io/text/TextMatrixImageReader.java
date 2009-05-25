@@ -49,7 +49,7 @@ import org.geotoolkit.image.io.metadata.GeographicMetadata;
  * the {@link #getRawDataType} method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -387,7 +387,7 @@ public class TextMatrixImageReader extends TextImageReader {
      * and {@code Spi}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

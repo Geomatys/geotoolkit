@@ -47,7 +47,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * system centered in this ellipsoid (or sphere).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see Ellipsoid
  * @see PrimeMeridian
@@ -92,7 +92,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      * Default WGS 1972 datum (EPSG:6322).
      * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final DefaultGeodeticDatum WGS72;
     static {

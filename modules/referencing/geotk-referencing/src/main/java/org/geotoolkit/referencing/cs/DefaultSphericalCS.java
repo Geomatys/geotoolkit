@@ -40,7 +40,7 @@ import org.geotoolkit.resources.Vocabulary;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

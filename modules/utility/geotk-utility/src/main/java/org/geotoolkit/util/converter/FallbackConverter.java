@@ -35,9 +35,9 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * @param <T>  The base type of converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConverter<S,T>, Serializable {

@@ -29,9 +29,9 @@ import org.apache.maven.plugin.MojoExecutionException;
  * can also be invoked directly from the command line (without Maven).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  *
  * @goal compile
  * @phase process-sources

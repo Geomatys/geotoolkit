@@ -30,7 +30,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
  * into coincidence with another, generally measured in degrees, sexagesimal degrees or grads.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Latitude
  * @see Longitude

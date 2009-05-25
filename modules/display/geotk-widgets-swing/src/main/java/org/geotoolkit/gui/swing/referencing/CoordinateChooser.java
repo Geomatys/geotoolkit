@@ -82,7 +82,7 @@ import org.geotoolkit.gui.swing.Dialog;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -176,8 +176,11 @@ public class CoordinateChooser extends JPanel implements Dialog {
     /**
      * Class encompassing various listeners for users selections.
      *
-     * @version $Id: CoordinateChooser.java 30655 2008-06-12 20:24:25Z acuster $
      * @author Martin Desruisseaux (IRD)
+     * @version 3.00
+     *
+     * @since 2.3
+     * @module
      */
     private final class Listeners implements ActionListener, ChangeListener {
         /**

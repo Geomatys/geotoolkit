@@ -28,9 +28,9 @@ import org.geotoolkit.referencing.operation.provider.NADCON;
  * Tests {@link NadconTransform}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public class NadconTransformTest extends TransformTestCase {
     /**

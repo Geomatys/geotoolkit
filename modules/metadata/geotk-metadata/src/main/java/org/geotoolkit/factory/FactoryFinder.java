@@ -71,7 +71,7 @@ import org.geotoolkit.internal.LazySet;
  * itself is just a convenience wrapper around a {@code FactoryRegistry} instance.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @level basic
@@ -184,7 +184,7 @@ public class FactoryFinder {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         {@link NameFactory} interface.
      *
-     * @since 3.0
+     * @since 3.00
      * @category Metadata
      *
      * @see Hints#NAME_FACTORY
@@ -199,7 +199,7 @@ public class FactoryFinder {
      * @param  hints An optional map of hints, or {@code null} for the default ones.
      * @return Set of available name factory implementations.
      *
-     * @since 3.0
+     * @since 3.00
      * @category Metadata
      */
     public static Set<NameFactory> getNameFactories(final Hints hints) {
@@ -214,7 +214,7 @@ public class FactoryFinder {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         {@link CitationFactory} interface.
      *
-     * @since 3.0
+     * @since 3.00
      * @category Metadata
      *
      * @see Hints#CITATION_FACTORY
@@ -229,7 +229,7 @@ public class FactoryFinder {
      * @param  hints An optional map of hints, or {@code null} for the default ones.
      * @return Set of available citation factory implementations.
      *
-     * @since 3.0
+     * @since 3.00
      * @category Metadata
      */
     public static Set<CitationFactory> getCitationFactories(final Hints hints) {
@@ -416,7 +416,7 @@ public class FactoryFinder {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         {@link FilterFactory} interface.
      *
-     * @since 3.0
+     * @since 3.00
      *
      * @see Hints#FILTER_FACTORY
      */
@@ -430,7 +430,7 @@ public class FactoryFinder {
      * @param  hints An optional map of hints, or {@code null} for the default ones.
      * @return Set of available filter factory implementations.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Set<FilterFactory> getFilterFactories(final Hints hints) {
         return getFactories(FilterFactory.class, hints);
@@ -444,7 +444,7 @@ public class FactoryFinder {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         {@link StyleFactory} interface.
      *
-     * @since 3.0
+     * @since 3.00
      *
      * @see Hints#STYLE_FACTORY
      */
@@ -458,7 +458,7 @@ public class FactoryFinder {
      * @param  hints An optional map of hints, or {@code null} for the default ones.
      * @return Set of available style factory implementations.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Set<StyleFactory> getStyleFactories(final Hints hints) {
         return getFactories(StyleFactory.class, hints);
@@ -574,7 +574,7 @@ public class FactoryFinder {
      * @param  locale The locale for the list, or {@code null}.
      * @throws IOException if an error occurs while writting to {@code out}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static synchronized void listProviders(final Writer out, final Locale locale)
             throws IOException

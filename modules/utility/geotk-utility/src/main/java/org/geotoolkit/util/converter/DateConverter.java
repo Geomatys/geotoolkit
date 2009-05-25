@@ -25,7 +25,7 @@ import java.io.ObjectStreamException;
  * Handles conversions from {@link java.util.Date} to various objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -48,7 +48,7 @@ abstract class DateConverter<T> extends SimpleConverter<Date,T> implements Seria
      * Converter from dates to long integers.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -81,9 +81,9 @@ abstract class DateConverter<T> extends SimpleConverter<Date,T> implements Seria
      * Converter from dates to timestamp.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Timestamp extends DateConverter<java.sql.Timestamp> {
         private static final long serialVersionUID = 3798633184562706892L;

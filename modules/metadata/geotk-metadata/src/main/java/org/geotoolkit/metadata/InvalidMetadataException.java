@@ -22,7 +22,7 @@ package org.geotoolkit.metadata;
  * is in a invalid state, usually because a mandatory attribute is missing.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

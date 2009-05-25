@@ -39,7 +39,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Beate Stollberg
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -144,9 +144,9 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *
      * @author Beate Stollberg
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     public static class Spherical extends LambertAzimuthalEqualArea {

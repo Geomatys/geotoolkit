@@ -29,9 +29,9 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * for testing purpose, because it is the simpliest non-trivial projection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(ProjectionParametersTest.class)
 public final class UnitaryProjectionTest extends ProjectionTestCase {

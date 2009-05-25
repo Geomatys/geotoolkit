@@ -64,9 +64,9 @@ import static org.geotoolkit.util.Utilities.hashMapCapacity;
  * The current approach is too specific to deserve a public API.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @Static

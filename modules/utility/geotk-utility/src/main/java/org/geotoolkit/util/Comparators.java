@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
  * General purpose comparators.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

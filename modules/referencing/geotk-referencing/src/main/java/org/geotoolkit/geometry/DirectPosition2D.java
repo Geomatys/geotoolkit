@@ -59,7 +59,7 @@ import org.geotoolkit.resources.Errors;
  * are safe in all cases.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DirectPosition1D
  * @see GeneralDirectPosition

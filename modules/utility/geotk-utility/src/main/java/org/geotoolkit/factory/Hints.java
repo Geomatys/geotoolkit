@@ -65,7 +65,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @see Factory
  * @see FactoryRegistry
@@ -94,7 +94,7 @@ public class Hints extends RenderingHints {
      *
      * @see FactoryFinder#getNameFactory
      *
-     * @since 3.0
+     * @since 3.00
      * @category Metadata
      */
     public static final ClassKey NAME_FACTORY = new ClassKey(
@@ -105,7 +105,7 @@ public class Hints extends RenderingHints {
      *
      * @see FactoryFinder#getCitationFactory
      *
-     * @since 3.0
+     * @since 3.00
      * @category Metadata
      */
     public static final ClassKey CITATION_FACTORY = new ClassKey(
@@ -476,7 +476,7 @@ public class Hints extends RenderingHints {
      *
      * @see FactoryFinder#getFilterFactory
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ClassKey FILTER_FACTORY = new ClassKey("org.opengis.filter.FilterFactory");
 
@@ -485,7 +485,7 @@ public class Hints extends RenderingHints {
      *
      * @see FactoryFinder#getStyleFactory
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ClassKey STYLE_FACTORY = new ClassKey("org.opengis.style.StyleFactory");
 
@@ -764,7 +764,7 @@ public class Hints extends RenderingHints {
      * non-sense), but may impact other aspects of an application as well.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module
@@ -804,7 +804,7 @@ public class Hints extends RenderingHints {
          *
          * @param className Name of base class for all valid values.
          *
-         * @since 3.0
+         * @since 3.00
          */
         public Key(final String className) {
             super(count());
@@ -886,7 +886,7 @@ public class Hints extends RenderingHints {
      * {@code Class<T>}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -907,7 +907,7 @@ public class Hints extends RenderingHints {
          *
          * @param className Name of base class for all valid values.
          *
-         * @since 3.0
+         * @since 3.00
          */
         public ClassKey(final String className) {
             super(className);
@@ -974,7 +974,7 @@ public class Hints extends RenderingHints {
      *
      * @author Martin Desruisseaux (IRD)
      * @author Jody Garnett (Refractions)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -1036,7 +1036,7 @@ public class Hints extends RenderingHints {
      * A default value is provided and may be checked with {@link #getDefault()}.
      *
      * @author Jody Garnett (Refractions)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -1111,7 +1111,7 @@ public class Hints extends RenderingHints {
      * assurances - see {@link Hints#DATUM_SHIFT_METHOD} for example).
      *
      * @author Jody Garnett (Refractions)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -1169,7 +1169,7 @@ public class Hints extends RenderingHints {
      *        Websphere.}
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

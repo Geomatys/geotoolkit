@@ -30,7 +30,7 @@ import org.geotoolkit.image.jai.Hysteresis;
  * The factory for the {@link Hysteresis} operation.
  *
  * @author Lionel Flahaut (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

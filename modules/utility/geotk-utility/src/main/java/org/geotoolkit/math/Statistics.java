@@ -67,7 +67,7 @@ import static java.lang.Double.doubleToLongBits;
  * }
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module
@@ -295,7 +295,7 @@ public class Statistics implements Cloneable, Serializable {
      *
      * @return The sum.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public double sum() {
         return sum;
@@ -360,7 +360,7 @@ public class Statistics implements Cloneable, Serializable {
      * @param  locale The locale for the formatter, or {@code null} for the default.
      * @return A proposed formatter for data described by this statistics.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public NumberFormat getNumberFormat(Locale locale) {
         if (locale == null) {
@@ -494,7 +494,7 @@ public class Statistics implements Cloneable, Serializable {
      * @param  statistics The statistics to format.
      * @param  locale     The locale, or {@code null} for the default locale.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static void printTable(CharSequence[] header, Statistics[] statistics, Locale locale) {
         final Writer out;
@@ -521,7 +521,7 @@ public class Statistics implements Cloneable, Serializable {
      * @param  locale     The locale, or {@code null} for the default locale.
      * @throws IOException if an error occured while writting to {@code out}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static void writeTable(final Writer out, final CharSequence[] header,
             final Statistics[] statistics, Locale locale) throws IOException
@@ -634,7 +634,7 @@ public class Statistics implements Cloneable, Serializable {
      * which are stored in a {@link #getDeltaStatistics delta} statistics object.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 1.0
      */

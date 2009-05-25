@@ -59,7 +59,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  */

@@ -40,7 +40,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultCartesianCS
  *
@@ -178,7 +178,7 @@ public class DefaultAffineCS extends AbstractCS implements AffineCS {
      * @return A coordinate system with axis using the specified units.
      * @throws IllegalArgumentException If the specified unit is incompatible with the expected one.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public DefaultAffineCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
         final CoordinateSystemAxis[] axis = axisUsingUnit(unit);

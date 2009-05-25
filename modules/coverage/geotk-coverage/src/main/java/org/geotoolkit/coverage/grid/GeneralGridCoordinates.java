@@ -31,7 +31,7 @@ import org.geotoolkit.util.converter.Classes;
  * {@linkplain GridPoint grid point} within the {@linkplain Grid grid}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see GridCoordinates2D
  *
@@ -220,7 +220,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Serializable {
      * final in order to prevent subclasses from making it mutable again.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.5
      * @module

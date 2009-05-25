@@ -96,7 +96,7 @@ import org.geotoolkit.resources.Errors;
  * (<var>longitude</var>, <var>latitude</var>) order just appears to be the default one.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
  * @see Hints#FORCE_STANDARD_AXIS_UNITS

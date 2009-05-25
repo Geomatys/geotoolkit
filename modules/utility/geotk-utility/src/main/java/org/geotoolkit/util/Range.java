@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see javax.media.jai.util.Range
  *

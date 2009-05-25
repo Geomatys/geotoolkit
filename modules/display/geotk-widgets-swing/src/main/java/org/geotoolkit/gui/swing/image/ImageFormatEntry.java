@@ -37,9 +37,9 @@ import org.geotoolkit.util.XArrays;
  * combo box.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class ImageFormatEntry implements Comparable<ImageFormatEntry> {

@@ -60,7 +60,7 @@ import org.geotoolkit.lang.Static;
  * {@linkplain java.io.Serializable} classes can use {@code (int) serialVersionUID} for example.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -618,7 +618,7 @@ public final class Utilities {
      * @param elements The number of elements to be put into the hash map or hash set.
      * @return The optimal initial capacity to be given to the hash map constructor.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static int hashMapCapacity(int elements) {
         final int r = elements >>> 2;
@@ -639,7 +639,7 @@ public final class Utilities {
      * @param text The string from which to remove leading and trailing whitespaces.
      * @return A string with leading and trailing whitespaces removed.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static String trim(String text) {
         if (text != null) {

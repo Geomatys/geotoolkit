@@ -90,7 +90,7 @@ import static java.lang.Double.isInfinite;
  * synchronized externally.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Angle
  * @see Latitude

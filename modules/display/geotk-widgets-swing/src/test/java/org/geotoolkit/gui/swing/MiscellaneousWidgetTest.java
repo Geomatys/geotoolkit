@@ -44,7 +44,7 @@ import static java.awt.Color.*;
  * Tests a set of widgets.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  */

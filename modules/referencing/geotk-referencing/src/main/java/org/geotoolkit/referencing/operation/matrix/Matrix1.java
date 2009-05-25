@@ -29,7 +29,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * result of {@linkplain org.opengis.referencing.operation.MathTransform1D} derivative computation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

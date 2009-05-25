@@ -52,7 +52,7 @@ import org.geotoolkit.image.TransfertRectIter;
  * operation name is {@code "org.geotoolkit.SampleTranscode"}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

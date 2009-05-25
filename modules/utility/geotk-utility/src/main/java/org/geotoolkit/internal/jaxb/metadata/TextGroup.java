@@ -30,7 +30,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see LocalisedCharacterString
  *

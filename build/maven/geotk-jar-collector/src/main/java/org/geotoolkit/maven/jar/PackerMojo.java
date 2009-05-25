@@ -34,9 +34,9 @@ import org.apache.maven.project.MavenProject;
  * many time.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  *
  * @goal pack
  * @phase install

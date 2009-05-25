@@ -63,7 +63,7 @@ import static java.lang.Math.*;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.crs.DefaultProjectedCRS
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>

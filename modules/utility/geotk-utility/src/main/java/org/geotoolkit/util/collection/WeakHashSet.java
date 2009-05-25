@@ -47,7 +47,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @param <E> The type of elements in the set.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see java.util.WeakHashMap
  *

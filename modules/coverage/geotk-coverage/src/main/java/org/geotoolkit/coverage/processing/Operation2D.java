@@ -49,7 +49,7 @@ import org.geotoolkit.resources.Errors;
  * {@linkplain #extractSources extracting the sources} as {@code GridCoverage2D} objects.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -98,7 +98,7 @@ public abstract class Operation2D extends AbstractOperation {
      * Convenience constant for the second source {@link GridCoverage2D}. The parameter name
      * is {@code "source1"} (for compatibility with <cite>Java Advanced Imaging</cite>).
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ParameterDescriptor<GridCoverage2D> SOURCE_1;
 
@@ -106,7 +106,7 @@ public abstract class Operation2D extends AbstractOperation {
      * Convenience constant for the third source {@link GridCoverage2D}. The parameter name
      * is {@code "source2"} (for compatibility with <cite>Java Advanced Imaging</cite>).
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final ParameterDescriptor<GridCoverage2D> SOURCE_2;
     static {
@@ -149,7 +149,7 @@ public abstract class Operation2D extends AbstractOperation {
      *
      * @see GridCoverage2D#view(ViewType)
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected ViewType getComputationView(final ParameterValueGroup parameters) {
         return ViewType.GEOPHYSICS;
@@ -180,7 +180,7 @@ public abstract class Operation2D extends AbstractOperation {
      * @throws InvalidParameterValueException
      *          If a source doesn't contain a value of type {@link GridCoverage2D}.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected ViewType extractSources(final ParameterValueGroup parameters,
                                       final GridCoverage2D[]    sources)

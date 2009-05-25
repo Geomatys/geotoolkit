@@ -108,7 +108,7 @@ import org.geotoolkit.util.Version;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

@@ -76,7 +76,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -50,7 +50,7 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.remov
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="https://portal.opengeospatial.org/files/?artifact_id=8814">URNs of definitions
  *      in OGC namespace</A>
@@ -315,7 +315,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
      * Returns {@code true} if this factory meets the requirements specified by a map of hints.
      * This information is for {@link org.geotoolkit.factory.FactoryRegistry} usage only.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected boolean hasCompatibleHints(final Hints hints) {
@@ -326,7 +326,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
      * Sets the ordering of this factory relative to other factories. By default
      * {@code URN} positions itself last.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void setOrdering(final Organizer organizer) {

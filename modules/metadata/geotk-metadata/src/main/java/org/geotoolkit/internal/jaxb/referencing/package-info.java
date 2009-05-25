@@ -25,11 +25,11 @@
  * substituted to that interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {

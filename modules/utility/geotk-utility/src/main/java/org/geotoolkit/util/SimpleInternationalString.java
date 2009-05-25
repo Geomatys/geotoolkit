@@ -31,7 +31,7 @@ import org.opengis.util.InternationalString;
  * effective than other implementations provided in this package.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

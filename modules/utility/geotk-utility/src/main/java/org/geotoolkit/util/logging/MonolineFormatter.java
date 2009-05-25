@@ -79,7 +79,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -364,7 +364,7 @@ loop:   for (int i=0; ; i++) {
      * @param  level The level for which to get the color.
      * @return The color for the given level, or {@code null} if none.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public synchronized X364 getLevelColor(final Level level) {
         return (colors != null) ? colors.get(level) : null;
@@ -377,7 +377,7 @@ loop:   for (int i=0; ; i++) {
      * @param level The level for which to set a new color.
      * @param color The new color, or {@code null} if none.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public synchronized void setLevelColor(final Level level, final X364 color) {
         boolean changed = false;
@@ -402,7 +402,7 @@ loop:   for (int i=0; ; i++) {
      * Clears all colors setting. If this formatter was inserting X3.64 escape sequences
      * for colored output, invoking this method will force the formatting of plain text.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public synchronized void clearLevelColors() {
         colors = null;

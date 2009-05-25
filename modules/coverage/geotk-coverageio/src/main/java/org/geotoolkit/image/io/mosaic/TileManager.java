@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
  * But subclasses can make such assumption for better performances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module
@@ -393,7 +393,7 @@ public abstract class TileManager implements Serializable {
      * @return The greatest number of pixels found in all tiles.
      * @throws IOException If an I/O error occured.
      *
-     * @since 3.0
+     * @since 3.00
      */
     final long largestTileArea() throws IOException {
         long max = 0;
@@ -417,7 +417,7 @@ public abstract class TileManager implements Serializable {
      * @return The root directory, or {@code null} if unknown.
      * @throws IOException If an I/O error occured.
      *
-     * @since 3.0
+     * @since 3.00
      */
     final File rootDirectory() throws IOException {
         File root = null;
@@ -448,7 +448,7 @@ public abstract class TileManager implements Serializable {
      * @return The required disk space for uncompressed tiles.
      * @throws IOException If an I/O error occured.
      *
-     * @since 3.0
+     * @since 3.00
      */
     final long diskUsage() throws IOException {
         long space = 0;

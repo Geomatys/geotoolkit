@@ -24,9 +24,9 @@ import org.geotoolkit.metadata.iso.DefaultMetaData;
  * Declares the classes of objects to be marshalled using a default {@code MarshallerPool}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class MetadataTypes implements RegisterableTypes {

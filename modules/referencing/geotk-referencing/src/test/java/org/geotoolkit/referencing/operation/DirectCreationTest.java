@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * not exactly spherical).
  *
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  */

@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see OrderedAxisAuthorityFactory
  * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
@@ -103,7 +103,7 @@ public class LongitudeFirstEpsgFactory extends OrderedAxisAuthorityFactory imple
      * So by default, the referencing framework will create CRS objects with axis order as defined
      * by the EPSG database in preference to CRS objects having the longitude before the latitude.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     protected void setOrdering(final Organizer organizer) {

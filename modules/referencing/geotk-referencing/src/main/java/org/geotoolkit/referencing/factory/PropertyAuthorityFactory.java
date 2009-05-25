@@ -52,7 +52,7 @@ import org.geotoolkit.util.logging.Logging;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory
  *
@@ -89,7 +89,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      * @throws IOException
      *          If the definitions can't be read.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public PropertyAuthorityFactory(final Hints userHints, final URL definitionFile,
             final Citation... authorities) throws IOException
@@ -117,7 +117,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      * @throws IOException
      *          If the definitions can't be read.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public PropertyAuthorityFactory(final Hints userHints, final Collection<URL> definitionFiles,
             final Citation... authorities) throws IOException
@@ -164,7 +164,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      * @throws IOException
      *          If the definitions can't be read.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public PropertyAuthorityFactory(final Hints userHints, final Hints.FileKey directoryKey,
             final Class<?> resourceLoader, final String filename, final Citation... authorities)
@@ -239,7 +239,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      * @param authorities
      *          The organizations or parties responsible for definition and maintenance of the database.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @SuppressWarnings("unchecked")
     protected PropertyAuthorityFactory(final Hints userHints, final Citation... authorities) {
@@ -254,7 +254,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      *         from the values returned by {@link ClassLoader#getResources(String)}.
      * @throws IOException If the definition files can't be read.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected synchronized void load(final Collection<URL> definitionFiles) throws IOException {
         ensureNonNull("definitionFiles", definitionFiles);

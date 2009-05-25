@@ -24,9 +24,9 @@ package com.sun.xml.internal.bind.marshaller;
  * the "real" Sun's class will be used instead since it come first in the classpath.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public abstract class NamespacePrefixMapper {
     public abstract String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix);

@@ -32,7 +32,7 @@ import org.opengis.coverage.grid.GridEnvelope;
  * opposite of Java2D usage where {@link Rectangle} maximal values are exclusive.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see GeneralGridEnvelope
  *

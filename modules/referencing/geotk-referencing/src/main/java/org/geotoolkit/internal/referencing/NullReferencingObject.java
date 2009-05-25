@@ -44,9 +44,9 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * constructor required by JAXB.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class NullReferencingObject implements GeocentricCRS, GeographicCRS, ProjectedCRS,

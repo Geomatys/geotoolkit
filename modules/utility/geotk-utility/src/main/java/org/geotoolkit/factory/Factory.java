@@ -131,7 +131,7 @@ import org.geotoolkit.resources.Errors;
  * @author Ian Schneider
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.0
+ * @version 3.00
  *
  * @see Hints
  * @see FactoryRegistry
@@ -154,7 +154,7 @@ public abstract class Factory {
      * An immutable empty set of hints. This is different than a {@code null} hints, which means
      * <em>default</em> hints and may not be empty.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final Hints EMPTY_HINTS = new EmptyHints();
 
@@ -206,9 +206,9 @@ public abstract class Factory {
      * or {@linkplain #after(Class, boolean) after} an other factory.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     protected static final class Organizer {
@@ -369,7 +369,7 @@ public abstract class Factory {
      * @param organizer A handler given by {@link FactoryRegistry} for controlling the ordering
      *        of this factory relative to other factories.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected void setOrdering(final Organizer organizer) {
     }
@@ -430,7 +430,7 @@ public abstract class Factory {
      * @param hints The user requirements (never {@code null}).
      * @return {@code true} if this factory meets the hints requirements.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected boolean hasCompatibleHints(final Hints hints) {
         /*
@@ -577,7 +577,7 @@ public abstract class Factory {
      *        {@link org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory}
      *        may shutdown the JavaDB embedded database.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected synchronized void dispose(boolean shutdown) {
         hints.clear();

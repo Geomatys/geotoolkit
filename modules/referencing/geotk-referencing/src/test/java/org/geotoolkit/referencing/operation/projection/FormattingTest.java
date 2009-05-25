@@ -41,9 +41,9 @@ import static org.geotoolkit.test.Commons.*;
  * was created from a single set of parameters.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(ConcatenatedTransformTest.class)
 public final class FormattingTest extends ProjectionTestCase {

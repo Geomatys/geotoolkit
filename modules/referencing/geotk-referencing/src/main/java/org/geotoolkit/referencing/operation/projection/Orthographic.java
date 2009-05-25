@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -105,7 +105,7 @@ public class Orthographic extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)

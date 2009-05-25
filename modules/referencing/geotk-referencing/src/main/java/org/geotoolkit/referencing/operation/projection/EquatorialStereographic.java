@@ -31,7 +31,7 @@ import static java.lang.Math.*;
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see PolarStereographic
  * @see ObliqueStereographic
@@ -98,7 +98,7 @@ public class EquatorialStereographic extends Stereographic {
      * @author André Gosselin (MPO)
      * @author Martin Desruisseaux (MPO, IRD)
      * @author Rueben Schulz (UBC)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

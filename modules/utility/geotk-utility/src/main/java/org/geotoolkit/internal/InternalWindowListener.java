@@ -27,7 +27,7 @@ import javax.swing.event.InternalFrameListener;
  * {@link java.awt.Frame} and {@link javax.swing.JInternalFrame}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

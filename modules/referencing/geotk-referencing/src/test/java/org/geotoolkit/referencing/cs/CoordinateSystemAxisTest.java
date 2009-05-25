@@ -36,7 +36,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  * Tests {@link DefaultCoordinateSystemAxis}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  */

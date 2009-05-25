@@ -27,9 +27,9 @@ import static org.geotoolkit.display.shape.ShapeTest.*;
  * {@link Arrow2D} shape.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @SuppressWarnings("serial")
 final class ShapeViewer extends JPanel {

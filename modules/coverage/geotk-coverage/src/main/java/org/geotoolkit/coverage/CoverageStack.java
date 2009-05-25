@@ -114,7 +114,7 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
  * {@code CoverageStack} implementation is thread-safe.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -140,7 +140,7 @@ public class CoverageStack extends AbstractCoverage {
      * (which may be useful for large images database backed by a distant server).
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module
@@ -226,7 +226,7 @@ public class CoverageStack extends AbstractCoverage {
      * @author Martin Desruisseaux (IRD)
      * @since 2.1
      *
-     * @version 3.0
+     * @version 3.00
      * @module
      */
     public static class Adapter implements Element {
@@ -1557,7 +1557,7 @@ public class CoverageStack extends AbstractCoverage {
      * log a message when an image is about to be loaded.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

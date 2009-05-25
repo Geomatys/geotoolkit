@@ -68,7 +68,7 @@ import org.geotoolkit.xml.Namespaces;
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultCoordinateSystemAxis
  * @see javax.measure.unit.Unit

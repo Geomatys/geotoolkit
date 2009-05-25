@@ -42,9 +42,9 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * service (WKT parsing, object comparisons, <cite>etc.</cite>).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(CoordinateReferenceSystemTest.class)
 public final class CRS_Test {

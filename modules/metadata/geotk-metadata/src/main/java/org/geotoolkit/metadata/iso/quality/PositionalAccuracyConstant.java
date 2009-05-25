@@ -38,11 +38,11 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * package-privated class that users can not instantiate themself.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4891511">Issue 4891511</a>
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class PositionalAccuracyConstant extends AbstractPositionalAccuracy

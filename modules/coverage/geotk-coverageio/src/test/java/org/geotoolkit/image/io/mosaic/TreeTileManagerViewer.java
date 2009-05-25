@@ -30,9 +30,9 @@ import org.geotoolkit.gui.swing.tree.TreeNode;
  * A panel showing the content of a {@link TreeTileManager}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @SuppressWarnings("serial")
 final class TreeTileManagerViewer extends JPanel implements TreeSelectionListener {

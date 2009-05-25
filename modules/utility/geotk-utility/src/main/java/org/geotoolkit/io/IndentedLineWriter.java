@@ -30,7 +30,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * to 0 spaces. Users must invoke {@link #setIndentation} in order to set a different value.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -72,7 +72,7 @@ public class IndentedLineWriter extends FilterWriter {
      * @param width The indentation.
      * @param out The underlying stream to write to.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public IndentedLineWriter(final Writer out, final int width) {
         super(out);

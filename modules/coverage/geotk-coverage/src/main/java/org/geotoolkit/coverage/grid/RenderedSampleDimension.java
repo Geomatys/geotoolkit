@@ -45,7 +45,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * Describes the band values for a grid coverage.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

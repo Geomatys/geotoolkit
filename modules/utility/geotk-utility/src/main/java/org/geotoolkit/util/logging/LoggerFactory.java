@@ -30,7 +30,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
  *            used by external frameworks like Log4J.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Logging
  * @see LoggerAdapter
@@ -48,7 +48,7 @@ public abstract class LoggerFactory<L> {
      *
      * @see Logging#setLoggerFactory(String)
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final String COMMONS_LOGGING = "org.geotoolkit.util.logging.CommonsLoggerFactory";
 
@@ -60,7 +60,7 @@ public abstract class LoggerFactory<L> {
      *
      * @see Logging#setLoggerFactory(String)
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final String LOG4J = "org.geotoolkit.util.logging.Log4JLoggerFactory";
 

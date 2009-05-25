@@ -49,7 +49,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -417,7 +417,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
      * The inverse transform. This inner class is the inverse of the enclosing math transform.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

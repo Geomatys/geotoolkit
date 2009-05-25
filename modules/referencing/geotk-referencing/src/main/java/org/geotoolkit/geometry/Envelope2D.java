@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  * on the {@linkplain java.awt.Graphics2D#getTransform affine transform in the graphics context}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see GeneralEnvelope
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope

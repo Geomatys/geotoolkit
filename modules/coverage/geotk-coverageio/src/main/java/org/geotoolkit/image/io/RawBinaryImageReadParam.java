@@ -43,7 +43,7 @@ import javax.media.jai.PlanarImage;
  * to specify those missing informations.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

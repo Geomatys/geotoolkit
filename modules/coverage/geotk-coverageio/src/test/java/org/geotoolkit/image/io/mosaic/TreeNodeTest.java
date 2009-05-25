@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * tested here (see {@link TileManagerTest} for that).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  */

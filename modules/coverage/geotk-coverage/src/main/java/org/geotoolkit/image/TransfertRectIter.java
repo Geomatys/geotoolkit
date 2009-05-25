@@ -45,7 +45,7 @@ import javax.media.jai.iterator.WritableRectIter;
  * an instance of {@code TransfertRectIter}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -104,7 +104,7 @@ public final class TransfertRectIter implements WritableRectIter {
      *         It will be an instance of {@code TransfertRectIter} if and only if the source
      *         and destination images are not the same.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static WritableRectIter create(RenderedImage src, WritableRenderedImage dst, Rectangle bounds) {
         if (dst instanceof BufferedImage) {
@@ -133,7 +133,7 @@ public final class TransfertRectIter implements WritableRectIter {
      *         It will be an instance of {@code TransfertRectIter} if and only if the source
      *         and destination rasters are not the same.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static WritableRectIter create(RenderedImage src, WritableRaster dst, Rectangle bounds) {
         final Raster tile = uniqueTile(src, bounds);
@@ -155,7 +155,7 @@ public final class TransfertRectIter implements WritableRectIter {
      *         It will be an instance of {@code TransfertRectIter} if and only if the source
      *         and destination rasters are not the same.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static WritableRectIter create(Raster src, WritableRaster dst, Rectangle bounds) {
         WritableRectIter iter = RectIterFactory.createWritable(dst, bounds);

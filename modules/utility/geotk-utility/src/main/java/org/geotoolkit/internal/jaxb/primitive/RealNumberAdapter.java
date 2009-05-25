@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * The role of this class is to add such wrapping.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

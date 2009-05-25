@@ -27,9 +27,9 @@ import org.xml.sax.SAXException;
  * implementation instead than the one bundled in JDK 6, so we must be able to support both.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public abstract class IDResolver {
     public IDResolver() {

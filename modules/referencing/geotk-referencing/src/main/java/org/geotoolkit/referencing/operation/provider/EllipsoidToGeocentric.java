@@ -51,7 +51,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * one. To avoid ambiguity, use the OGC name instead: {@code "Ellipsoid_To_Geocentric"}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see GeocentricTransform
  *

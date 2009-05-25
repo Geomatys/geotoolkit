@@ -44,7 +44,7 @@ import static org.geotoolkit.referencing.operation.transform.EarthGravitationalM
  * This tranformation uses a Earth Gravitational Model.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -198,7 +198,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @throws UnsupportedOperationException if the referencing module is not on the classpath.
      * @throws TransformException if the envelope can't be transformed.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public DefaultGeographicBoundingBox(final Rectangle2D bounds, final CoordinateReferenceSystem crs)
             throws TransformException

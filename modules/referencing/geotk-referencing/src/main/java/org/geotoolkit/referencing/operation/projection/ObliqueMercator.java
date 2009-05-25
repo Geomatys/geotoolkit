@@ -153,7 +153,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see Mercator
  * @see TransverseMercator
@@ -179,9 +179,9 @@ public class ObliqueMercator extends UnitaryProjection {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     protected static class Parameters extends UnitaryProjection.Parameters {
@@ -388,7 +388,7 @@ public class ObliqueMercator extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)

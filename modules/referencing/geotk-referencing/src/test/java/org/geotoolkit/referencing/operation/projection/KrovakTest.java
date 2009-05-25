@@ -28,9 +28,9 @@ import org.geotoolkit.test.Depend;
  * Tests the {@link Krovak} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Depend(MercatorTest.class)
 public class KrovakTest extends ProjectionTestCase {

@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.Projection;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

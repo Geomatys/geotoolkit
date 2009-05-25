@@ -131,9 +131,9 @@ import org.geotoolkit.resources.Errors;
  * @param <V> The type of value objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @ThreadSafe
@@ -565,9 +565,9 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * @param <V> The type of value objects.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     public static interface Handler<V> {

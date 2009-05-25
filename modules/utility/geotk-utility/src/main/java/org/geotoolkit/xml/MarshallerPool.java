@@ -38,9 +38,9 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  *
  * @todo Need a timeout for disposing marshallers that have been unused for a while.

@@ -42,9 +42,9 @@ import org.geotoolkit.internal.jaxb.metadata.ReferenceIdentifierMetadata;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @XmlType(name = "FRA_DirectReferenceSystem_Type")

@@ -81,7 +81,7 @@ import org.geotoolkit.resources.Errors;
  * externally.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @level advanced
@@ -235,7 +235,7 @@ public class Formatter {
      * @param colors  The syntax coloring, or {@code null} if none.
      * @param indentation The amount of spaces to use in indentation. Typical values are 2 or 4.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public Formatter(final Symbols symbols, final Colors colors, final int indentation) {
         if (symbols == null) {
@@ -883,7 +883,7 @@ public class Formatter {
      *
      * @see FormattableObject#INTERNAL
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean isInternalWKT() {
         return FormattableObject.INTERNAL.equals(authority);

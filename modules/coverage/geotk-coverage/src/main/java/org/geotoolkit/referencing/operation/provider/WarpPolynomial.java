@@ -45,7 +45,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * and wraps it in a {@link WarpTransform2D} object.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

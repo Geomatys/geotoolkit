@@ -50,7 +50,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

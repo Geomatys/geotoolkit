@@ -40,7 +40,7 @@ import static org.geotoolkit.io.X364.*;
  * should override.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -147,7 +147,7 @@ public abstract class CommandConsole implements Runnable {
      *
      * @param commands The command line, or {@code null} if none.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected CommandConsole(final CommandLine commands) {
         this.commands = commands;
@@ -185,7 +185,7 @@ public abstract class CommandConsole implements Runnable {
      *
      * @param in  The input stream (can not be null).
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected CommandConsole(final LineNumberReader in) {
         this(in, new PrintWriter(System.out, true));
@@ -198,7 +198,7 @@ public abstract class CommandConsole implements Runnable {
      * @param in  The input stream (can not be null).
      * @param out The output stream (can not be null).
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected CommandConsole(final LineNumberReader in, final PrintWriter out) {
         commands = null;
@@ -276,7 +276,7 @@ public abstract class CommandConsole implements Runnable {
      * @param closingBrackets List of caracters acceptable as closing bracket.
      * @param quote The character used for quoting texts, or 0 if none.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected void setSymbols(char[] openingBrackets, char[] closingBrackets, char quote) {
         ensureNonNull("openingBrackets", openingBrackets);

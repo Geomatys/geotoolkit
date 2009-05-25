@@ -38,9 +38,9 @@ import org.geotoolkit.internal.io.Installation;
  * The panel displaying available data and giving the opportunity to download them.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")

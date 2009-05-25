@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Loggings;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Andrea Aime (TOPP)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

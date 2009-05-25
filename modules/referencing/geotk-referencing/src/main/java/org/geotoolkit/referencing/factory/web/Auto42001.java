@@ -53,7 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

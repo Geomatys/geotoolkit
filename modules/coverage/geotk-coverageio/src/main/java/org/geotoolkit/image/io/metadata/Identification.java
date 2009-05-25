@@ -24,7 +24,7 @@ import org.geotoolkit.util.Utilities;
  * An immutable ({@code "name"}, {@code "type"}) pair.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

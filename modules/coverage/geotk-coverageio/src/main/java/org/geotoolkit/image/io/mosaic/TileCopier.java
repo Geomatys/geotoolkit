@@ -48,9 +48,9 @@ import org.geotoolkit.internal.image.io.RawFile;
  * Copies a set of tiles to temporary RAW files.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {

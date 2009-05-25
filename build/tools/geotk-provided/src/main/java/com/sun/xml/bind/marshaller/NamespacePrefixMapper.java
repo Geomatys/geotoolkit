@@ -23,9 +23,9 @@ package com.sun.xml.bind.marshaller;
  * implementation instead than the one bundled in JDK 6, so we must be able to support both.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public abstract class NamespacePrefixMapper {
     public abstract String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix);

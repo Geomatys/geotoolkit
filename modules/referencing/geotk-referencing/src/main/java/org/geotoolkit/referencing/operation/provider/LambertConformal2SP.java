@@ -41,7 +41,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -197,7 +197,7 @@ public class LambertConformal2SP extends MapProjection {
      *
      * @author Martin Desruisseaux (IRD)
      * @author Rueben Schulz (UBC)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.2
      * @module
@@ -245,7 +245,7 @@ public class LambertConformal2SP extends MapProjection {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @see LambertConformal
      *

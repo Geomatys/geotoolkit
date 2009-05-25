@@ -93,7 +93,7 @@ import org.geotoolkit.resources.Loggings;
  * class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -758,10 +758,13 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * allow interoperability with <A HREF="http://java.sun.com/products/java-media/2D/">Java2D</A>
      * for a two-dimensional slice of a grid coverage.
      *
-     * @version $Id: GridCoverage2D.java 31445 2008-09-07 18:14:23Z desruisseaux $
      * @author Martin Desruisseaux (IRD)
+     * @version 3.00
      *
      * @see AbstractCoverage#getRenderableImage
+     *
+     * @since 2.0
+     * @module
      *
      * @todo Override {@link #createRendering} and use the affine transform operation.
      *       Also uses the JAI's "Transpose" operation is x and y axis are interchanged.

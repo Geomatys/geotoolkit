@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Vocabulary;
  * This is sometime useful for testing purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  */
@@ -67,7 +67,7 @@ public class NullImageWriter extends GeographicImageWriter {
      * Service provider interface (SPI) for {@link NullImageWriter}s.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.5
      */

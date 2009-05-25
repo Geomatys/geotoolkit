@@ -35,9 +35,9 @@ import org.geotoolkit.util.logging.Logging;
  * method is invoked and a new reference is pushed for a new check after some delay.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class StoreDisposer extends Thread {
@@ -169,9 +169,9 @@ final class StoreDisposer extends Thread {
      * will need to be invoked for disposing expired backing stores.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Ref extends WeakReference<ThreadedAuthorityFactory> implements Delayed {

@@ -47,7 +47,7 @@ import org.geotoolkit.xml.Namespaces;
  * Abstract coordinate reference system, usually defined by a coordinate system and a datum.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum

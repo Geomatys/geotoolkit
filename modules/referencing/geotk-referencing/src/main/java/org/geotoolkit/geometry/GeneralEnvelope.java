@@ -65,7 +65,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope

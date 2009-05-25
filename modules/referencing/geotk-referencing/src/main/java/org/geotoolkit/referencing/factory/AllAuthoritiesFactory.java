@@ -48,7 +48,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * is wanted, then users need to invoke explicitly the {@link #getInstance} method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -82,7 +82,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
      * @param  hints An optional set of hints, or {@code null} if none.
      * @return A factory using the specified hints.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static AllAuthoritiesFactory getInstance(final Hints hints) {
         return POOL.unique(new AllAuthoritiesFactory(hints));
@@ -106,7 +106,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
      * @return The factories on which this {@code AllAuthoritiesFactory} will delegate
      *         object creations, in iteration order.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Override
     public synchronized List<AuthorityFactory> getFactories() {

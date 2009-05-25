@@ -67,7 +67,7 @@ import static java.awt.image.DataBuffer.TYPE_BYTE;
  * @author Martin Desruisseaux (Geomatys)
  * @author Simone Giannecchini (Geosolutions)
  * @author Bryce Nordgren
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module
@@ -521,7 +521,7 @@ public class ImageWorker extends ImageInspector {
      * @see #getColorSpaceType
      * @see ColorConvertDescriptor
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setColorSpaceType(final PaletteInterpretation type) {
         ensureNonNull("type", type);

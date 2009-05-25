@@ -54,9 +54,9 @@ import org.geotoolkit.util.logging.Logging;
  * background thread.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
@@ -348,9 +348,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * </ol>
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     public static interface Delayed {
@@ -415,9 +415,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * its job in case the builder configuration change.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private final class Worker extends SwingWorker<TileManager,Object> implements PropertyChangeListener {

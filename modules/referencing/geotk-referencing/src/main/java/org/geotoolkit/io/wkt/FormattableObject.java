@@ -51,7 +51,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
  * class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -76,7 +76,7 @@ public class FormattableObject implements Formattable {
      *
      * @see Citations#OGC
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final Citation OGC = Citations.OGC;
 
@@ -86,7 +86,7 @@ public class FormattableObject implements Formattable {
      *
      * @see Citations#EPSG
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final Citation EPSG = Citations.EPSG;
 
@@ -96,7 +96,7 @@ public class FormattableObject implements Formattable {
      *
      * @see Citations#GEOTIFF
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final Citation GEOTIFF = Citations.GEOTIFF;
 
@@ -110,7 +110,7 @@ public class FormattableObject implements Formattable {
      * <p>
      * This citation is used only for debugging purpose.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static final Citation INTERNAL;
     static {
@@ -145,7 +145,7 @@ public class FormattableObject implements Formattable {
      * {@note We don't use the standard error stream (the stream used by logging) because it
      *        is independant of the stream used by the console.}
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void print() {
         PrintWriter out = null;
@@ -305,7 +305,7 @@ public class FormattableObject implements Formattable {
      *
      * @return The default indentation.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static int getDefaultIndentation() {
         return defaultIndentation;
@@ -316,7 +316,7 @@ public class FormattableObject implements Formattable {
      *
      * @param indentation The new default value for indentation.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @Configuration
     public static void setDefaultIndentation(final int indentation) {

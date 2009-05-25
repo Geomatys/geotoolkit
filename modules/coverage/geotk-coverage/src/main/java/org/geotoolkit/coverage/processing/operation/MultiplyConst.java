@@ -55,7 +55,7 @@ import javax.media.jai.operator.MultiplyConstDescriptor;
  * </table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.coverage.processing.Operations#multiply
  * @see MultiplyConstDescriptor

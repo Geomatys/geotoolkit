@@ -37,7 +37,7 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * previews, but should not be used as a "real" renderer for full precision images.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

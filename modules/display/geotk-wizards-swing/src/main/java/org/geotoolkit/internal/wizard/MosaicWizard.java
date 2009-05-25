@@ -43,9 +43,9 @@ import org.geotoolkit.gui.swing.image.MultiColorChooser;
  * Guides the user through the steps of creating a set of {@linkplain Tile tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  *
  * @todo Needs localization.

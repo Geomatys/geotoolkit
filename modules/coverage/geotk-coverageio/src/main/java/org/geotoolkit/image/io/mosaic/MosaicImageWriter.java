@@ -88,7 +88,7 @@ import org.geotoolkit.internal.rmi.RMI;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module
@@ -263,7 +263,7 @@ public class MosaicImageWriter extends ImageWriter {
      * @return {@code true} on success, or {@code false} if the process has been aborted.
      * @throws IOException If an error occured while reading or writing.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean writeFromInput(final Object input, final ImageWriteParam param) throws IOException {
         return writeFromInput(input, 0, param, true);
@@ -861,7 +861,7 @@ search: for (final Tile tile : tiles) {
      * @return {@code true} if this writer can cache the source tiles.
      * @throws IOException If this method required an I/O operation and that operation failed.
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected boolean isCachingEnabled(final ImageReader input, final int inputIndex) throws IOException {
         if (true) return false; // Disabled until more extensively tested.
@@ -1361,7 +1361,7 @@ search: for (final Tile tile : tiles) {
      *
      * @author Martin Desruisseaux (Geomatys)
      * @author Cédric Briançon (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.5
      * @module

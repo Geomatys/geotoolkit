@@ -46,7 +46,7 @@ import org.geotoolkit.math.Complex;
  *
  * @author Justin Deoliveira (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -107,7 +107,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)

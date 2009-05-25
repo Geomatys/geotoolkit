@@ -25,7 +25,7 @@ import static java.lang.Double.doubleToLongBits;
  * Implements {@link Dimension2D} using double-precision floating point values.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

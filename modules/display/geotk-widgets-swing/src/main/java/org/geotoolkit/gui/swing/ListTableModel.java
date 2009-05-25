@@ -52,9 +52,9 @@ import org.geotoolkit.internal.SwingUtilities;
  * @param <E> The type of elements in the list backing this table model.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class ListTableModel<E> extends AbstractTableModel {

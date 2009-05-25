@@ -39,7 +39,7 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.force
  * Tests the {@link HTTP_AuthorityFactory} class backed by WMS or AUTO factories.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

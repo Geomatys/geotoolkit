@@ -29,7 +29,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -70,9 +70,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * The finest suitable kind of number will be selected.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Number extends StringConverter<java.lang.Number> {
         private static final long serialVersionUID = 1557277544742023571L;
@@ -108,9 +108,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Double}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Double extends StringConverter<java.lang.Double> {
         private static final long serialVersionUID = -9094071164371643060L;
@@ -146,9 +146,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Float}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Float extends StringConverter<java.lang.Float> {
         private static final long serialVersionUID = -2815192289550338333L;
@@ -184,9 +184,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Long}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Long extends StringConverter<java.lang.Long> {
         private static final long serialVersionUID = -2171263041723939779L;
@@ -222,9 +222,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Integer}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Integer extends StringConverter<java.lang.Integer> {
         private static final long serialVersionUID = 763211364703205967L;
@@ -260,9 +260,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Short}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Short extends StringConverter<java.lang.Short> {
         private static final long serialVersionUID = -1770870328699572960L;
@@ -298,9 +298,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Byte}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class Byte extends StringConverter<java.lang.Byte> {
         private static final long serialVersionUID = 2084870859391804185L;
@@ -350,7 +350,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -406,7 +406,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -445,7 +445,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Examples of locale in string form: {@code "fr"}, {@code "fr_CA"}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      */
@@ -490,7 +490,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      */
@@ -529,9 +529,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.io.File}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class File extends StringConverter<java.io.File> {
         private static final long serialVersionUID = 6445208470928432376L;
@@ -563,9 +563,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.net.URI}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class URI extends StringConverter<java.net.URI> {
         private static final long serialVersionUID = -2804405634789179706L;
@@ -601,9 +601,9 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.net.URL}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      */
     static final class URL extends StringConverter<java.net.URL> {
         private static final long serialVersionUID = 2303928306635765592L;

@@ -24,9 +24,9 @@ import java.rmi.RemoteException;
  * It should be the very last executor to be shutdown.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class FinalExecutor extends RemoteExecutor implements Runnable {

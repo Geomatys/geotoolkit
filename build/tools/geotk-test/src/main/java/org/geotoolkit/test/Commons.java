@@ -32,9 +32,9 @@ import static org.junit.Assert.*;
  * Provides assertion methods in addition of the JUnit ones.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public final class Commons {
     /**

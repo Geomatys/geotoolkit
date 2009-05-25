@@ -44,11 +44,11 @@ import org.geotoolkit.internal.io.ObjectStream;
  * @param <Output> The return value of the task.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see Callable
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class ShareableTask<Input,Output> implements Callable<Output>, Serializable {

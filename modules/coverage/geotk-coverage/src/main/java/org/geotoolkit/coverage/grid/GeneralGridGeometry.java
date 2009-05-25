@@ -63,7 +63,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @see GridGeometry2D
  * @see ImageGeometry

@@ -30,10 +30,9 @@ import static org.junit.Assert.*;
  * Tests the {@link MosaicProfiler} using the Blue Marble mosaic.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
- * @module
+ * @since 3.00
  */
 public final class MosaicProfilerTest extends TestBase {
     /**

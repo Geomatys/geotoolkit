@@ -36,6 +36,9 @@ import static org.junit.Assert.*;
  *
  * @author Cory Horner (Refractions)
  * @author Martin Desruisseaux (Geomatys)
+ * @version 3.00
+ *
+ * @since 3.00
  */
 public final class CacheTest {
     /**

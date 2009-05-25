@@ -35,7 +35,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

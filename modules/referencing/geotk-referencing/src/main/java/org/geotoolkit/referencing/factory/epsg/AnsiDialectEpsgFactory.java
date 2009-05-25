@@ -38,7 +38,7 @@ import org.geotoolkit.factory.Hints;
  * @author Martin Desruisseaux (IRD)
  * @author Didier Richard (IGN)
  * @author John Grange
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -167,7 +167,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * @param  metadata The database metadata.
      * @throws SQLException If an error occured while querying the database metadata.
      *
-     * @since 3.0
+     * @since 3.00
      */
     final void autoconfig(final DatabaseMetaData metadata) throws SQLException {
         for (int i=SENTINAL.length; --i>=0;) {

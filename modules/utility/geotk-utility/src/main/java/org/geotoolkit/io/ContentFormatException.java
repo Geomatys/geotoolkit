@@ -25,7 +25,7 @@ import java.io.IOException;
  * It is similar in spirit to {@link java.util.InvalidPropertiesFormatException}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see java.util.InvalidPropertiesFormatException
  *
@@ -41,7 +41,7 @@ public class ContentFormatException extends IOException {
     /**
      * Constructs a new exception with no detail message.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public ContentFormatException() {
     }

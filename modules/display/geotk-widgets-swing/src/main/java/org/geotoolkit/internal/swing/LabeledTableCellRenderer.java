@@ -34,9 +34,9 @@ import javax.swing.table.DefaultTableCellRenderer;
  * can be masked by a horizontal scrolling.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
@@ -103,9 +103,9 @@ public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
      * for the row.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     public static class Numeric extends LabeledTableCellRenderer {

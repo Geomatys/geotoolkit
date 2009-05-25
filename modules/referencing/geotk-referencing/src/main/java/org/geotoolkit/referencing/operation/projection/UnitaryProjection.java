@@ -101,12 +101,12 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public abstract class UnitaryProjection extends AbstractMathTransform2D implements Serializable {
@@ -555,9 +555,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * Inverse of a normalized map projection.
      *
      * @author Martin Desruisseaux (MPO, IRD)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private final class Inverse extends AbstractMathTransform2D.Inverse {
@@ -855,9 +855,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *        XML are more appropriate.}
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     protected static class Parameters extends AbstractMathTransform2D.Parameters {

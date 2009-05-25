@@ -34,7 +34,7 @@ import org.geotoolkit.util.NullArgumentException;
  * end of lines, but this behavior can be changed by overriding {@link #isWhitespace}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

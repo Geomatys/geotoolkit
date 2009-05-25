@@ -28,9 +28,9 @@ import org.opengis.referencing.cs.AxisDirection;
  * complying with ISO-19139 standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionType, AxisDirection> {

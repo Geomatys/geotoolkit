@@ -30,7 +30,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * Concatenated transform where both transforms are two-dimensional.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

@@ -32,7 +32,7 @@ import org.geotoolkit.lang.Static;
  * the given array already has the requested length.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Arrays
  *

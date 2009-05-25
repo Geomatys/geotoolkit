@@ -21,9 +21,9 @@ package org.geotoolkit.resources;
  * Thrown when the {@link IndexedResourceCompiler} exit abnormally.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @SuppressWarnings("serial")
 final class ResourceCompilerException extends RuntimeException {

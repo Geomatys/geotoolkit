@@ -28,7 +28,7 @@ import org.geotoolkit.util.converter.Classes;
  * primitive type, but array of wrappers are also accepted.
  *
  * @author Martin Desruisseaux (MPO, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

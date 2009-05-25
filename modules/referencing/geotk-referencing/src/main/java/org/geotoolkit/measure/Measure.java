@@ -24,7 +24,7 @@ import org.geotoolkit.util.Utilities;
  * A scalar with an unit.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

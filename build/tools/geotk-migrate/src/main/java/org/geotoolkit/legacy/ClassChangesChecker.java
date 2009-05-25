@@ -27,9 +27,9 @@ import java.util.*;
  * to standard output.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class ClassChangesChecker extends MigrateFromGeoTools {
     /**
@@ -43,7 +43,7 @@ final class ClassChangesChecker extends MigrateFromGeoTools {
      * Checks if all classes in the {@link #table} exists.
      * The current directory must be the root of the maven project.
      *
-     * @param geotoolkit {@code false} for testing GeoTools sources, or
+     * @param geotoolkit {@code false} for testing GeoTools sources, or
      *        {@code true} for testing Geotoolkit sources.
      */
     void check(final boolean geotoolkit) {

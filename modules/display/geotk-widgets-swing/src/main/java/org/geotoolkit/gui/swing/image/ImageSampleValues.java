@@ -50,7 +50,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * and scroll bars for the table.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ImageTableModel
  *

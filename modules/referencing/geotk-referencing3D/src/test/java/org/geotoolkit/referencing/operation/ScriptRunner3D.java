@@ -24,7 +24,7 @@ import org.geotoolkit.console.ReferencingConsole;
  * A console for running test scripts. Most of the work is already done by the subclass.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  */

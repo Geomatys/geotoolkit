@@ -29,9 +29,9 @@ import java.lang.annotation.RetentionPolicy;
  * In the main time we use this one for documentation purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 @Inherited
 @Documented

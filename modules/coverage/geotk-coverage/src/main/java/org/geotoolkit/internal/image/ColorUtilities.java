@@ -39,7 +39,7 @@ import org.geotoolkit.lang.Static;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

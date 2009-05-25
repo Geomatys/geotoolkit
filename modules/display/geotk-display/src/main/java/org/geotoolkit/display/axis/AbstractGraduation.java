@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * Base class for graduation.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

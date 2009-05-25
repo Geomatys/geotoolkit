@@ -30,9 +30,9 @@ import org.geotoolkit.image.jai.SilhouetteMask;
  * The factory for the {@link SilhouetteMask} operation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class SilhouetteMaskCRIF extends CRIFImpl {

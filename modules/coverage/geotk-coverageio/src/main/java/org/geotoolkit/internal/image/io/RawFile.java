@@ -26,9 +26,9 @@ import org.geotoolkit.util.Utilities;
  * An entry for a temporary RAW file associated with its color and sample model.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class RawFile implements Serializable {

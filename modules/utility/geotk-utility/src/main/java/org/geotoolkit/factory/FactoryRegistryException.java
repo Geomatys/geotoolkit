@@ -21,7 +21,7 @@ package org.geotoolkit.factory;
  * Thrown when a factory can't be found or can't be instantiate.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

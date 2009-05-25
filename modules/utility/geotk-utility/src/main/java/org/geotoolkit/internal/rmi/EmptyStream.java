@@ -27,9 +27,9 @@ import org.geotoolkit.internal.io.ObjectStream;
  * @param <E> The type of elements returned by the stream.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 final class EmptyStream<E> implements ObjectStream<E>, Serializable {

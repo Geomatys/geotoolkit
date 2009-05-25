@@ -27,7 +27,7 @@ import org.geotoolkit.math.XMath;
  * valeur minimale jusqu'à la valeur maximale.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

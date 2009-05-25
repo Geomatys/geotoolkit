@@ -25,9 +25,9 @@ import static org.geotoolkit.io.X364.*;
  * Tests the {@link X364} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public class X364Test {
     /**

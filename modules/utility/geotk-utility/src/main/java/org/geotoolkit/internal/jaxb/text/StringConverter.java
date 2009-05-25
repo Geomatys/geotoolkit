@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * defined in a package-info class.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class StringConverter extends XmlAdapter<String,String> {

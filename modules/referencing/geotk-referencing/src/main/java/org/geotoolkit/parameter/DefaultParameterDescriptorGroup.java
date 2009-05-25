@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * The definition of a group of related parameters used by an operation method.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ParameterGroup
  * @see DefaultParameterDescriptor

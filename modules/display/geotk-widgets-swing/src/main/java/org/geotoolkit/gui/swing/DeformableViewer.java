@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
  * pixel position in order to get the position we would have if no deformations existed.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

@@ -46,9 +46,9 @@ import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @XmlType(name = "FRA_LegalConstraints_Type")

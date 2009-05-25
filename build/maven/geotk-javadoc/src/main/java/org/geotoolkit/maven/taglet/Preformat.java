@@ -28,9 +28,9 @@ import com.sun.tools.doclets.formats.html.ConfigurationImpl;
  * The remainding is the text to format.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @since 3.0
+ * @since 3.00
  *
- * @version 3.0
+ * @version 3.00
  */
 public final class Preformat implements Taglet {
     /**

@@ -45,7 +45,7 @@ import java.io.Serializable;
  * @param <E> The type of elements in this set.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -373,7 +373,7 @@ public class DisjointSet<E> extends AbstractSet<E> implements Serializable {
      * The iterator for {@link DisjointSet}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      */

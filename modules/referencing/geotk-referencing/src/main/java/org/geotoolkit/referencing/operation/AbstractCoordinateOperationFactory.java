@@ -65,7 +65,7 @@ import static org.geotoolkit.resources.Vocabulary.formatInternational;
  * more "intelligent" job is left to subclasses.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @level advanced

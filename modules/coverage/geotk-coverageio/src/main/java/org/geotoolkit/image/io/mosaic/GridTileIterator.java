@@ -27,7 +27,7 @@ import org.geotoolkit.util.logging.Logging;
  * at finer levels once the iterator on the level given at construction time is done.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

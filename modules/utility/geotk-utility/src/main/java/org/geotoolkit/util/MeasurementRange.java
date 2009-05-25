@@ -30,7 +30,7 @@ import org.geotoolkit.util.converter.Classes;
  * @param <T> The type of range elements as a subclass of {@link Number}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

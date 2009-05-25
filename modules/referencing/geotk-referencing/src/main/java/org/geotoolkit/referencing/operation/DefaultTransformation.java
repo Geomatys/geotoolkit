@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * in multiple (different) versions of the same coordinate transformation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultConversion
  *

@@ -29,7 +29,7 @@ import java.util.Iterator;
  * the Eclipse platform for instance.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see Factories#addFactoryIteratorProvider
  *

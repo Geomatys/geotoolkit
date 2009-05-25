@@ -49,7 +49,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
  * The provider for "<cite>Position Vector 7-parameters transformation</cite>" (EPSG:9606).
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

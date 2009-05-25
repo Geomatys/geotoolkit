@@ -38,9 +38,9 @@ import org.geotoolkit.lang.ThreadSafe;
  * @param <V> The type of value objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @ThreadSafe // Assuming that the set given to the constructor is concurrent.

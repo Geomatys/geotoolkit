@@ -30,9 +30,9 @@ import org.geotoolkit.image.jai.Mask;
  * The factory for the {@link Mask} operation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class MaskCRIF extends CRIFImpl {

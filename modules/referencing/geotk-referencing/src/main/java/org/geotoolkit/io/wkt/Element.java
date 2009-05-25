@@ -43,7 +43,7 @@ import org.geotoolkit.util.logging.LoggedFormat;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @level advanced

@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Vocabulary;
  * Format grid coverage operation parameters in a tabular format.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.grid.ImageGeometry;
  * failures throw {@link AssertionError}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

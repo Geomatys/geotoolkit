@@ -43,7 +43,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  *
  * @author Justin Deoliveira (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module

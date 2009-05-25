@@ -25,7 +25,7 @@ import javax.imageio.event.IIOReadProgressListener;
  * class are empty. This class exists as convenience for creating listener objects.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module

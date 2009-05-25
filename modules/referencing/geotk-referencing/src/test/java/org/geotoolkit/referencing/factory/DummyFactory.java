@@ -39,9 +39,9 @@ import static org.junit.Assert.*;
  * A dummy factory which returns {@link DefaultGeographicCRS#WGS84} for all codes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class DummyFactory extends AbstractAuthorityFactory {
     /**

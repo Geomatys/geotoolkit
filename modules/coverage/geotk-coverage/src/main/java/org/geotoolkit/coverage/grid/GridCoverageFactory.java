@@ -87,7 +87,7 @@ import org.geotoolkit.util.Utilities;
  * want to intercept the creation of all {@link GridCoverage2D} objects in this factory.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

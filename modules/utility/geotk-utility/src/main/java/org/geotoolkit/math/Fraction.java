@@ -29,7 +29,7 @@ package org.geotoolkit.math;
  * This class is final for performance reason.
  *
  * @author Martin Desruisseaux (MPO)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

@@ -35,9 +35,9 @@ import static java.util.jar.Pack200.Packer.*;
  * A JAR file to be created for output by {@link Packer}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class PackOutput implements Closeable {
     /**

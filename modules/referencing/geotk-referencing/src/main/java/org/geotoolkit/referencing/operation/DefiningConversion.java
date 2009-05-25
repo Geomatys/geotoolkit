@@ -36,7 +36,7 @@ import org.geotoolkit.io.wkt.Formatter;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Matthias Basler
- * @version 3.0
+ * @version 3.00
  *
  * @see org.opengis.referencing.operation.CoordinateOperationFactory#createDefiningConversion
  *

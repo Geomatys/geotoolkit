@@ -62,7 +62,7 @@ import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
  *
  * @author Pierre Cardinal
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

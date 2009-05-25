@@ -24,9 +24,9 @@ import java.util.Iterator;
  * This iterator is insensitive to the EOL style (Windows or Unix).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 final class StringIterator implements Iterator<String> {
     /**

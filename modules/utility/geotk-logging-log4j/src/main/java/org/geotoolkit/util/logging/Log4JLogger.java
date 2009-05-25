@@ -25,7 +25,7 @@ import java.util.logging.Level;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Saul Farber (MassGIS)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

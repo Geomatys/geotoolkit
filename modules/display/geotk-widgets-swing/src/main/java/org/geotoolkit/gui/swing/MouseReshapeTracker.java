@@ -98,7 +98,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -1475,7 +1475,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
      * the text which is manually edited, the visor will be repositioned.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

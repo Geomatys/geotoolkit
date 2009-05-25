@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * Concatenated transform in which the resulting transform is one-dimensional.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

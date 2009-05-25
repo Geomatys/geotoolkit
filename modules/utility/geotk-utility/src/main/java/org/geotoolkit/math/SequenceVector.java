@@ -25,7 +25,7 @@ import org.geotoolkit.util.converter.Classes;
  * A vector which is a sequence of numbers.
  *
  * @author Martin Desruisseaux (MPO, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.0
  * @module

@@ -31,9 +31,9 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * Tests the {@link DefaultLocalName} and {@link DefaultScopedName} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  */
 public class GenericNameTest {
     /**

@@ -77,7 +77,7 @@ import org.geotoolkit.xml.Namespaces;
  * "<cite>Digital Chart of the World</cite>").
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

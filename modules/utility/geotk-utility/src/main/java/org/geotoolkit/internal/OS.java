@@ -21,9 +21,9 @@ package org.geotoolkit.internal;
  * The operation system on which Geotoolkit is running.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public enum OS {

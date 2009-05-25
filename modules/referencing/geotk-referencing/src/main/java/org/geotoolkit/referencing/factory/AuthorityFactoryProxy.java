@@ -56,7 +56,7 @@ import org.geotoolkit.util.converter.Classes;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -174,9 +174,9 @@ abstract class AuthorityFactoryProxy {
      * This probably is most common case in Geotoolkit implementation.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Geotoolkit extends AuthorityFactoryProxy {
@@ -224,7 +224,7 @@ abstract class AuthorityFactoryProxy {
      * a specialized, more efficient, implementation.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -310,7 +310,7 @@ abstract class AuthorityFactoryProxy {
      * An implementation for {@link CoordinateReferenceSystem} objects.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -343,7 +343,7 @@ abstract class AuthorityFactoryProxy {
      * An implementation for {@link GeographicCRS} objects.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module
@@ -367,7 +367,7 @@ abstract class AuthorityFactoryProxy {
      * An implementation for {@link ProjectedCRS} objects.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.4
      * @module

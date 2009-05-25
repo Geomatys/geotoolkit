@@ -32,7 +32,7 @@ import org.geotoolkit.image.io.metadata.GeographicMetadata;
  * A null implementation of {@link GeographicImageReader} for testing purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  */

@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * {@code "*"} and {@code "?"} wildcards.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see javax.swing.filechooser.FileNameExtensionFilter
  *

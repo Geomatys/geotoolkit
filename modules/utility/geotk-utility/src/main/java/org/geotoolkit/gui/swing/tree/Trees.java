@@ -41,7 +41,7 @@ import org.geotoolkit.util.XArrays;
  * Convenience static methods for trees operations.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module
@@ -66,7 +66,7 @@ public final class Trees {
      * @param node The node for which to get the user object, or {@code null}.
      * @return The user object, or {@code null} if none.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Object getUserObject(final TreeNode node) {
         if (node instanceof org.geotoolkit.gui.swing.tree.TreeNode) {

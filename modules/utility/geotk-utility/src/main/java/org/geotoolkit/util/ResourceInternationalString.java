@@ -50,7 +50,7 @@ import org.opengis.util.InternationalString;
  * for Italian, <cite>etc.</cite>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -116,7 +116,7 @@ public class ResourceInternationalString extends AbstractInternationalString imp
      *
      * @see ResourceBundle#getBundle(String,Locale)
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected ResourceBundle getBundle(final Locale locale) {
         return ResourceBundle.getBundle(resources, locale);

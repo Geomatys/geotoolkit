@@ -108,12 +108,12 @@
  * interoperability with ESRI definitions of coordinate reference systems.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.referencing.operation.transform
  * @see org.geotoolkit.referencing.operation.projection
  *
- * @since 3.0
+ * @since 3.00
  * @level advanced
  * @module
  */

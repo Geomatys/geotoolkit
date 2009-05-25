@@ -47,7 +47,7 @@ import org.geotoolkit.util.converter.Classes;
  * Abstract parameter value or group of parameter values.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see AbstractParameterDescriptor
  *

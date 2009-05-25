@@ -38,7 +38,7 @@ import org.geotoolkit.resources.Errors;
  * wrappers.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module
@@ -202,7 +202,7 @@ public final class Classes {
      * @param  objects The collection of objects.
      * @return The set of classes of all objects in the given collection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static <T> Set<Class<? extends T>> getClasses(final Collection<? extends T> objects) {
         final Set<Class<? extends T>> types = new LinkedHashSet<Class<? extends T>>();
@@ -294,7 +294,7 @@ public final class Classes {
      * @return The most specific class common to the supplied classes, or {@code null}
      *         if both {@code c1} and {@code c2} are null.
      *
-     * @since 3.0
+     * @since 3.00
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends T> commonClass(Class<? extends T> c1, Class<? extends T> c2) {
@@ -559,7 +559,7 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Class<? extends Number> finestClass(final long value) {
         // Tests MAX_VALUE before MIN_VALUE because it is more likely to fail.
@@ -593,7 +593,7 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Number finestNumber(final long value) {
         // Tests MAX_VALUE before MIN_VALUE because it is more likely to fail.
@@ -610,7 +610,7 @@ compare:for (int i=0; i<c1.length; i++) {
      * @return The finest type capable to hold the given value.
      * @throws NumberFormatException if the given value can not be parsed as a number.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static Number finestNumber(String value) throws NumberFormatException {
         value = value.trim();

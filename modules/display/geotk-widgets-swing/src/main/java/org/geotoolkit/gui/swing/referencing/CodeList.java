@@ -35,7 +35,7 @@ import org.opengis.referencing.IdentifiedObject;
  * is worth to do lazy loading here.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

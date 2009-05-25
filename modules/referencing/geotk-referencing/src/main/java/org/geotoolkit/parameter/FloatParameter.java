@@ -43,7 +43,7 @@ import org.geotoolkit.resources.Errors;
  * than {@code Parameter} since it avoid the creation of {@link Double} wrapper objects.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see DefaultParameterDescriptor
  * @see ParameterGroup

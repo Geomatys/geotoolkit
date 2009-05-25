@@ -40,7 +40,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * The provider for "<cite>Longitude rotation</cite>" (EPSG:9601).
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see ProjectiveTransform
  *

@@ -67,7 +67,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.gui.swing.image.MosaicBuilderEditor
  *
@@ -1186,7 +1186,7 @@ public class MosaicBuilder {
      * @throws IOException if an error occured while reading the untiled image or (only if
      *         {@code writeTiles} is {@code true}) while writting the tiles to disk.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public synchronized TileManager createTileManager(final Object input,
             final TileWritingPolicy policy) throws IOException

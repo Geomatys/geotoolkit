@@ -76,7 +76,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  * @see <A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A>
@@ -218,7 +218,7 @@ public class ReferencingParser extends MathTransformParser {
      *
      * @return {@code true} if {@code AXIS[...]} elements will be ignored during parsing.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public boolean isAxisIgnored() {
         return axisIgnored;
@@ -237,7 +237,7 @@ public class ReferencingParser extends MathTransformParser {
      *
      * @param ignored {@code true} if {@code AXIS[...]} elements should be ignored during parsing.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public void setAxisIgnored(final boolean ignored) {
         axisIgnored = ignored;

@@ -32,7 +32,7 @@ import static java.lang.Double.doubleToLongBits;
  * A graduation using numbers on a linear axis.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.0
  * @module

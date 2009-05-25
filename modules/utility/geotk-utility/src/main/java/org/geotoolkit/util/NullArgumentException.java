@@ -28,9 +28,9 @@ package org.geotoolkit.util;
  *        is now the recommanded one in the <cite>Effective Java</cite> book.}
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class NullArgumentException extends NullPointerException {

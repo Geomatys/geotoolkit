@@ -48,7 +48,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
  * {@link org.geotoolkit.coverage.processing.operation.Recolor} operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.coverage.processing.operation.Recolor
  *

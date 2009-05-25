@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * The {@link Long#MIN_VALUE} is used as a sentinal value meaning "no date".
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public final class DateAsLongAdapter extends XmlAdapter<DateAdapter, Long> {

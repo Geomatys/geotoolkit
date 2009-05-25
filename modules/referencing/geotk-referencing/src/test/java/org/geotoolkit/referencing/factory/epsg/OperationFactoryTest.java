@@ -42,7 +42,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * Tests the usage of {@link CoordinateOperationFactory} with the help of the EPSG database.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  */

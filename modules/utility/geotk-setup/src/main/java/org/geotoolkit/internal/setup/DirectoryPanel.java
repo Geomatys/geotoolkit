@@ -36,9 +36,9 @@ import static java.awt.GridBagConstraints.*;
  * The panel for setting directories. Values are read from and stored in preferences.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")

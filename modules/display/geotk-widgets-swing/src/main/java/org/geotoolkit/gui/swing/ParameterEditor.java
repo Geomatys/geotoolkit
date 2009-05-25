@@ -76,7 +76,7 @@ import static java.awt.GridBagConstraints.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @see org.geotoolkit.gui.swing.image.KernelEditor
  * @see org.geotoolkit.gui.swing.image.ImageProperties
@@ -595,7 +595,7 @@ public class ParameterEditor extends JPanel {
      * The interface for editor capable to returns the edited value.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -619,7 +619,7 @@ public class ParameterEditor extends JPanel {
      * {@link Number}, {@link Date}, {@link Angle}, {@link Boolean} or {@link String}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -747,9 +747,9 @@ public class ParameterEditor extends JPanel {
      * particular if the underlying model is {@link Matrix}), this class does nothing special.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     @SuppressWarnings("serial")
@@ -799,7 +799,7 @@ public class ParameterEditor extends JPanel {
      * Instance of this class are created by {@link #updateEditor} when first needed.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module
@@ -931,7 +931,7 @@ public class ParameterEditor extends JPanel {
      * are created by {@link #updateEditor} when first needed.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.0
      * @module

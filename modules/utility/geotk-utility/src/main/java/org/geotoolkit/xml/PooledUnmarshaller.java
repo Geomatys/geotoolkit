@@ -42,9 +42,9 @@ import org.xml.sax.InputSource;
  * This is done in order to make the unmarshaller safer for reuse.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 @Decorator(Unmarshaller.class)

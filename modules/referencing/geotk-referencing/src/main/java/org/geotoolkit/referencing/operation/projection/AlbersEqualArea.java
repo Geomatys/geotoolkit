@@ -69,7 +69,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see <A HREF="http://srmwww.gov.bc.ca/gis/bceprojection.html">British Columbia Albers Standard Projection</A>
  *
@@ -115,7 +115,7 @@ public class AlbersEqualArea extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)
@@ -312,7 +312,7 @@ public class AlbersEqualArea extends UnitaryProjection {
      * @author Gerald Evenden (USGS)
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
      * @since 2.1
      * @module

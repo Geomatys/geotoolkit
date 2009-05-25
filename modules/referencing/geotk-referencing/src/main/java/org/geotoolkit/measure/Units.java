@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
  * A set of units to use in addition of {@link SI} and {@link NonSI}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module
@@ -97,7 +97,7 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and temporal.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static boolean isTemporal(final Unit<?> unit) {
         return (unit != null) && unit.getStandardUnit().equals(SI.SECOND);
@@ -110,7 +110,7 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and linear.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static boolean isLinear(final Unit<?> unit) {
         return (unit != null) && unit.getStandardUnit().equals(SI.METRE);
@@ -127,7 +127,7 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and angular.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static boolean isAngular(final Unit<?> unit) {
         return (unit != null) && unit.getStandardUnit().equals(SI.RADIAN);
@@ -140,7 +140,7 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and a dimensionless scale.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static boolean isScale(final Unit<?> unit) {
         return (unit != null) && unit.getStandardUnit().equals(Unit.ONE);

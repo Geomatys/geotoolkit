@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * Tests every implementation in the {@link org.geotoolkit.metadata.iso} package.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  *

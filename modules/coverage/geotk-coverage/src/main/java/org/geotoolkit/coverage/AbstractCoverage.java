@@ -106,7 +106,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -696,10 +696,13 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * for a two-dimensional slice of a coverage (which may or may not be a
      * {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid coverage}).
      *
-     * @version $Id: AbstractCoverage.java 30776 2008-06-20 17:00:11Z desruisseaux $
      * @author Martin Desruisseaux (IRD)
+     * @version 3.00
      *
      * @see AbstractCoverage#getRenderableImage
+     *
+     * @since 2.0
+     * @module
      */
     protected class Renderable extends PropertySourceImpl implements RenderableImage, ImageFunction {
         /**

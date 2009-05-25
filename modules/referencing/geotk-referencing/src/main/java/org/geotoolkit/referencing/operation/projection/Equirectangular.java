@@ -57,7 +57,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.*;
  *
  * @author John Grange
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.2
  * @module
@@ -79,7 +79,7 @@ public class Equirectangular extends UnitaryProjection {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
                                          final ParameterValueGroup values)
@@ -140,9 +140,9 @@ public class Equirectangular extends UnitaryProjection {
      * an affine transform.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @module
      */
     private static final class Affine extends ParameterizedAffine {

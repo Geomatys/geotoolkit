@@ -47,7 +47,7 @@ import static org.geotoolkit.image.io.mosaic.Tile.MASK;
  * be considered as an implementation details exposed because this class is not public.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

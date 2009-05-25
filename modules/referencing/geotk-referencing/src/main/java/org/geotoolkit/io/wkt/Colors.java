@@ -25,9 +25,9 @@ import org.geotoolkit.io.X364;
  * The colors to use for formatting <cite>Well Known Text</cite> (WKT) objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class Colors implements Serializable {
@@ -57,9 +57,9 @@ public class Colors implements Serializable {
      * Keys for syntatic elements to be colorized.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.0
+     * @version 3.00
      *
-     * @since 3.0
+     * @since 3.00
      * @level advanced
      * @module
      */

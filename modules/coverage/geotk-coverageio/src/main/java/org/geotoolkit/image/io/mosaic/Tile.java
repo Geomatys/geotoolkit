@@ -115,7 +115,7 @@ import static java.lang.Math.max;
  * serializable, but its class must be known to {@link IIORegistry} at deserialization time.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see TileManagerFactory
  * @see org.geotoolkit.gui.swing.image.MosaicTableModel

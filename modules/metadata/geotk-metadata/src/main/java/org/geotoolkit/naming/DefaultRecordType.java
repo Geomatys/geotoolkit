@@ -45,7 +45,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Jody Garnet (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module
@@ -86,7 +86,7 @@ public class DefaultRecordType implements RecordType, Serializable {
      *
      * @param recordType The {@code RecordType} to copy.
      *
-     * @since 3.0
+     * @since 3.00
      */
     public DefaultRecordType(final RecordType recordType) {
         parent = recordType.getContainer();

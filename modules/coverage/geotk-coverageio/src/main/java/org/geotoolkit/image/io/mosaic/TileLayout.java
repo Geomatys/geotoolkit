@@ -34,7 +34,7 @@ package org.geotoolkit.image.io.mosaic;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see MosaicBuilder
  *

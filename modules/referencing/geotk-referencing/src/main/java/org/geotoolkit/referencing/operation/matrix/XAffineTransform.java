@@ -44,7 +44,7 @@ import static java.lang.Math.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -64,7 +64,7 @@ public class XAffineTransform extends AffineTransform {
      *        instantation of identity transforms that are not of some subclass, which is
      *        likely to be useless since <code>XAffineTransform</code> is immutable.}
      *
-     * @since 3.0
+     * @since 3.00
      */
     protected XAffineTransform() {
         super();

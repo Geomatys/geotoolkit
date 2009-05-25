@@ -31,7 +31,7 @@ import java.io.IOException;
  * before a mosaic is built from it.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  * @module

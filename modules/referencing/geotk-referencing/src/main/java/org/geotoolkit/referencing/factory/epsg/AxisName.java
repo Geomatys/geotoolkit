@@ -23,7 +23,7 @@ import org.geotoolkit.util.Utilities;
  * A (name, description) pair for a coordinate system axis.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.3
  * @module

@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * or {@link org.opengis.util.Cloneable} interfaces is left to implementors.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.4
  * @module

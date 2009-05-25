@@ -35,7 +35,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
  * of {@link ColorModel} are shared among all callers in the running virtual machine.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.1
  * @module

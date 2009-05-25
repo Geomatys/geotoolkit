@@ -66,7 +66,7 @@
  * @author Martin Desruisseaux (MPO, IRD)
  * @since 2.0
  *
- * @version 3.0
+ * @version 3.00
  * @module
  */
 package org.geotoolkit.nature;

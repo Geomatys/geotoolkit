@@ -83,11 +83,11 @@ import org.geotoolkit.internal.SwingUtilities;
  * This model is serialiable if the underlying list of tiles is serializable.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @see MosaicChooser
  *
- * @since 3.0
+ * @since 3.00
  * @module
  */
 public class MosaicTableModel extends ListTableModel<Tile> {

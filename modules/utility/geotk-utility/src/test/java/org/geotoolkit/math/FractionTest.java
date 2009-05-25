@@ -25,7 +25,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests the {@link Fraction} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.0
+ * @version 3.00
  *
  * @since 2.5
  */
