@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-temporal</artifactId>
   <packaging>jar</packaging>
-  <name>Temporal implementation</name>
+  <name>Referencing temporal</name>
   <url>
 	http://maven.geotools.fr/reports/modules/unsupported/temporal/
   </url>

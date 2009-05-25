@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-widgets-swing-pending</artifactId>
   <packaging>jar</packaging>
-  <name>Swing widgets pending</name>
+  <name>Display swing widgets</name>
   <url>http://maven.geotools.fr/reports/modules/unsupported/widgets-swing-pending/</url>
 
   <scm>
@@ -106,12 +106,6 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-style</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-xml-sld</artifactId>
       <version>${project.version}</version>
     </dependency>
 

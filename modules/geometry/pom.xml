@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>feature</artifactId>
+  <artifactId>geometry</artifactId>
   <packaging>pom</packaging>
-  <name>Feature</name>
+  <name>Geometry</name>
 
   <description>
-    Projects group for pending filter and feature.
+    Projects group for pending geometries.
   </description>
 
 
@@ -91,7 +91,8 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-filter</module>
+    <module>geotk-geometry</module>
+    <module>geotk-jtswrapper</module>
   </modules>
 
 </project>

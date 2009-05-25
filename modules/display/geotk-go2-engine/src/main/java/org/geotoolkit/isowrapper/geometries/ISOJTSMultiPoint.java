@@ -1,50 +1,48 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.isowrapper.geometries;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.geotoolkit.geometry.DirectPosition2D;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.Precision;
-import org.opengis.geometry.TransfiniteSet;
-import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.geometry.aggregate.MultiPoint;
-import org.opengis.geometry.complex.Complex;
-import org.opengis.geometry.complex.Composite;
-import org.opengis.geometry.coordinate.Position;
-import org.opengis.geometry.primitive.Bearing;
-import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Point;
-import org.opengis.geometry.primitive.Primitive;
-import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
  */
 public class ISOJTSMultiPoint extends AbstractISOJTSGeometry<com.vividsolutions.jts.geom.MultiPoint> implements MultiPoint{
 
-    public ISOJTSMultiPoint(com.vividsolutions.jts.geom.MultiPoint point) {
-        super(point);
+    private Set<Point> points;
+
+    public ISOJTSMultiPoint(com.vividsolutions.jts.geom.MultiPoint point, CoordinateReferenceSystem crs) {
+        super(point,crs);
     }
 
     @Override
-    public Set<Point> getElements() {
-        Set<Point> points = new HashSet<Point>();
-        int num = jtsGeometry.getNumGeometries();
-
-        for(int i=0; i<num;i++){
-            com.vividsolutions.jts.geom.Point p = (com.vividsolutions.jts.geom.Point) jtsGeometry.getGeometryN(i);
-            points.add(new ISOJTSPoint(p));
+    public synchronized Set<Point> getElements() {
+        if(points == null){
+            points = new HashSet<Point>();
+            for(int i=0,n=jtsGeometry.getNumGeometries(); i<n; i++){
+                com.vividsolutions.jts.geom.Point p = (com.vividsolutions.jts.geom.Point) jtsGeometry.getGeometryN(i);
+                points.add(new ISOJTSPoint(p,crs));
+            }
         }
 
         return points;

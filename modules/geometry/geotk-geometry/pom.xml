@@ -15,7 +15,7 @@
   
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>feature</artifactId>
+    <artifactId>geometry</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -26,7 +26,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-geometry</artifactId>
   <packaging>jar</packaging>
-  <name>Feature geometry</name>
+  <name>Geometry base implementation</name>
     
   <description>
     Implementation of GeoAPI geometries interface.
