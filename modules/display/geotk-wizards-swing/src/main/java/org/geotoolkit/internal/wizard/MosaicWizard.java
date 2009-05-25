@@ -19,6 +19,9 @@ package org.geotoolkit.internal.wizard;
 import java.io.IOException;
 import java.util.Map;
 import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.util.logging.Level;
+import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
@@ -30,6 +33,7 @@ import org.netbeans.spi.wizard.WizardController;
 
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
@@ -63,9 +67,14 @@ public final class MosaicWizard extends AbstractWizard {
     static final String LAYOUT = "Layout";
 
     /**
-     * The ID for the selecting the colors to make transparent.
+     * The ID for the panel selecting the colors to make transparent.
      */
     static final String COLORS = "Colors";
+
+    /**
+     * The ID for the panel asking confirmation.
+     */
+    static final String CONFIRM = "Confirm";
 
     /**
      * {@code true} if the input mosaic changed.  This is set to {@code true} if the
@@ -85,7 +94,7 @@ public final class MosaicWizard extends AbstractWizard {
             SELECT,
             LAYOUT,
             COLORS,
-            "Confirm"
+            CONFIRM
         }, new String[] {
             "Select source tiles",
             "Define pyramid tiling",
@@ -178,10 +187,16 @@ public final class MosaicWizard extends AbstractWizard {
             // -------------------------------------------------------------------
             //     Panel 4:  Confirm
             // -------------------------------------------------------------------
+            final LoggingPanel logging = new LoggingPanel("org.geotoolkit.image.io");
+            logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
             final JXLabel label = new JXLabel("The wizard has now enough informations for " +
                     "creating the mosaic. Press \"Finish\" to confirm.");
             label.setLineWrap(true);
-            component = label;
+            final JPanel panel = new JPanel(new BorderLayout());
+            panel.add(logging, BorderLayout.CENTER);
+            panel.add(label, BorderLayout.SOUTH);
+            component = panel;
+            addSetting(settings, CONFIRM, logging);
         }
         component.setPreferredSize(SIZE);
         component.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));
@@ -216,6 +231,21 @@ public final class MosaicWizard extends AbstractWizard {
             }
         }
         controller.setProblem(null);
+    }
+
+    /**
+     * Invoked when the user cancel the wizard.
+     *
+     * @param  settings The settings provided by the user.
+     * @return {@code true} in all cases, for allowing cancelation.
+     */
+    @Override
+    public boolean cancel(final Map settings) {
+        final LoggingPanel logging = (LoggingPanel) settings.get(CONFIRM);
+        if (logging != null) {
+            logging.dispose();
+        }
+        return super.cancel(settings);
     }
 
     /**

@@ -162,7 +162,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             /*
              * Writes the temporary file.
              */
-            final RandomAccessFile raf = new RandomAccessFile(file, "w");
+            final RandomAccessFile raf = new RandomAccessFile(file, "rw");
             final FileChannel channel = raf.getChannel();
             final FileChannelImageOutputStream stream = new FileChannelImageOutputStream(channel);
             writer.setOutput(stream);

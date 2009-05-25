@@ -22,6 +22,7 @@ import org.netbeans.spi.wizard.DeferredWizardResult;
 import org.netbeans.spi.wizard.ResultProgressHandle;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
@@ -61,6 +62,8 @@ final class MosaicCreator extends DeferredWizardResult {
         } catch (Throwable exception) {
             progress.failed(exception.getLocalizedMessage(), false);
             return;
+        } finally {
+            ((LoggingPanel) settings.get(MosaicWizard.CONFIRM)).dispose();
         }
         progress.finished(tiles);
     }
