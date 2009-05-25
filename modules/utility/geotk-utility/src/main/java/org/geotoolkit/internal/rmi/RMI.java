@@ -113,7 +113,14 @@ public final class RMI {
     public static File getSharedTemporaryDirectory() {
         File directory = sharedTemporaryDirectory;
         if (directory == null) {
-            directory = new File(System.getProperty("java.io.tmpdir", "/tmp"));
+            directory = new File(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit");
+            if (!directory.isDirectory()) {
+                if (!directory.mkdir()) {
+                    // If we can't create the Geotoolkit subdirectory,
+                    // stay in the usual tmp directory.
+                    directory = directory.getParentFile();
+                }
+            }
         }
         return directory;
     }

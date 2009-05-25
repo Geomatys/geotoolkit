@@ -68,7 +68,7 @@ import org.geotoolkit.internal.rmi.RMI;
  * the {@link #setOutput(Object)} method. The pixel values to write can be specified either
  * as a {@link RenderedImage} (this is the {@linkplain #write standard API}), or as a single
  * {@link File} or a collection of source tiles given to the {@link #writeFromInput(Object,
- * ImageReadParam} method. The later alternative is non-standard but often required since
+ * ImageReadParam)} method. The later alternative is non-standard but often required since
  * the image to mosaic is typically bigger than the capacity of a single {@link RenderedImage}.
  *
  * {@section Caching of source tiles}
@@ -549,10 +549,15 @@ public class MosaicImageWriter extends ImageWriter {
                                         }
                                     }
                                 }
-                                // Write the TFW file.
+                                /*
+                                 * Write the TFW file.
+                                 */
                                 if (tileInput instanceof File) {
                                     AffineTransform gridToCRS = tile.getGridToCRS();
                                     if (gridToCRS != null) {
+                                        gridToCRS = new AffineTransform(gridToCRS);
+                                        final Point location = tile.getLocation();
+                                        gridToCRS.translate(location.x, location.y);
                                         SupportFiles.writeTFW((File) tileInput, gridToCRS);
                                     }
                                 }

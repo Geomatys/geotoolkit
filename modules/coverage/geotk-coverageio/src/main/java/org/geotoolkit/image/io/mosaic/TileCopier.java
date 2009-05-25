@@ -40,6 +40,7 @@ import javax.imageio.IIOException;
 import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
 import org.geotoolkit.internal.rmi.ShareableTask;
 import org.geotoolkit.internal.image.io.RawFile;
@@ -105,6 +106,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
         final Map<ImageTypeSpecifier,ImageTypeSpecifier> types =
                 new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
         final ImageWriter writer = getTemporaryTileWriter();
+        final File directory = RMI.getSharedTemporaryDirectory();
         BufferedImage sourceImage = null;
         BufferedImage targetImage = null;
         Tile tile;
@@ -148,7 +150,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             } else {
                 image = sourceImage;
             }
-            final File file = File.createTempFile("IMW", "raw");
+            final File file = File.createTempFile("IMW", "raw", directory);
             file.deleteOnExit();
             ImageTypeSpecifier look = ImageTypeSpecifier.createFromRenderedImage(image);
             ImageTypeSpecifier type = types.get(look);
