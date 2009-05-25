@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>utility</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,14 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit</groupId>
-  <artifactId>utility</artifactId>
-  <packaging>pom</packaging>
-  <name>Utilities</name>
+  <artifactId>geotk-clustering</artifactId>
+  <packaging>jar</packaging>
+  <name>Clustering</name>
 
   <description>
-    Projects group for miscellaneous utilities.
+    Starts an application waiting for tasks to be executed on a master and nodes.
+    This module uses a mechanism based on Remote Method Invocation (RMI) as a
+    simple way to dispatch some lengthly tasks on a cluster.
   </description>
 
 
@@ -43,21 +45,42 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
+  <!--     JAR packaging                                           -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-utility</module>
-    <module>geotk-clustering</module>
-    <module>geotk-logging-commons</module>
-    <module>geotk-logging-log4j</module>
-    <module>geotk-setup</module>
-  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.geotoolkit.internal.rmi.ClusterCommands</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
 </project>
