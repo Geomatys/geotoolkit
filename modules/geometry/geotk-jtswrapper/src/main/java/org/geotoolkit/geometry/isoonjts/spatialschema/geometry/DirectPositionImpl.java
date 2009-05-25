@@ -39,7 +39,7 @@ import org.opengis.util.Cloneable;
  * @revisit Version number: I suggest to use <strong>specification</strong> version number
  *          (here 2.0).
  */
-public class DirectPositionImpl implements Cloneable, DirectPosition, Position, Serializable {
+public class DirectPositionImpl implements Cloneable, DirectPosition, Serializable {
     
     //*************************************************************************
     //  Fields
