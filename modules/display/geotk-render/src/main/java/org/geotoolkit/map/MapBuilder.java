@@ -29,6 +29,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -92,6 +93,18 @@ public final class MapBuilder {
             throw new NullPointerException("Name can not be null");
         }
         return new DefaultCoverageMapLayer(reader, style, new NameImpl(name) );
+    }
+
+    /**
+     * Create a default elevation model based on a grid coverage reader.
+     *
+     * @param grid : Coverage reader holding elevation values
+     * @param correction : expression used to modified on the fly the elevation value
+     * @return ElevationModel
+     */
+    public static ElevationModel createElevationModel(final CoverageReader grid){
+        FilterFactory FF = FactoryFinder.getFilterFactory(null);
+        return new DefaultElevationModel(grid, FF.literal(0),FF.literal(1));
     }
 
     /**
