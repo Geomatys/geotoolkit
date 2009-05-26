@@ -16,19 +16,13 @@
  */
 package org.geotoolkit.map;
 
-import java.io.IOException;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.io.CoverageReadParam;
 import org.geotools.coverage.io.CoverageReader;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Default implementation of elevation model.
@@ -37,39 +31,49 @@ import org.opengis.referencing.operation.TransformException;
  */
 final class DefaultElevationModel implements ElevationModel{
 
-    private final Expression correction;
 
     private final CoverageReader coverage;
+    private final Expression offset;
+    private final Expression scale;
 
-    DefaultElevationModel(final CoverageReader coverage, final Expression correction){
-        if(coverage == null){
-            throw new NullPointerException("Coverage can not be null");
-        }
+
+    DefaultElevationModel(CoverageReader coverage, Expression offset, Expression scale){
         this.coverage = coverage;
-        this.correction = correction;
+        this.offset = offset;
+        this.scale = scale;
     }
+
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Expression getCorrection() {
-        return correction;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public double getHeight(DirectPosition position, Unit<Length> lenght) {
+    public double getModelHeight(DirectPosition position, Unit<Length> lenght) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
      * {@inheritDoc }
-     */@Override
+     */
+    @Override
     public CoverageReader getCoverageReader() {
         return coverage;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Expression getBaseOffset() {
+        return offset;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Expression getBaseScale() {
+        return scale;
     }
 
 }

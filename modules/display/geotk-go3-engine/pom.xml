@@ -17,7 +17,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-go3</artifactId>
     <packaging>jar</packaging>
-    <name>GO3 - OpenGL Renderer</name>
+    <name>Display engine GO3 OpenGL</name>
     <description>New generation 3D engine.</description>
     <licenses>
         <license>
@@ -51,13 +51,12 @@
     <dependencies>
        <dependency>
           <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-examples</artifactId>       </dependency>
+          <artifactId>ardor3d-awt</artifactId>
+       </dependency>
        <dependency>
           <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-awt</artifactId>       </dependency>
-       <dependency>
-          <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-jogl</artifactId>
+          <artifactId>ardor3d-collada</artifactId>
+          <version>0.5-SNAPSHOT</version>
        </dependency>
        <dependency>
           <groupId>org.geotoolkit.pending</groupId>
@@ -66,9 +65,26 @@
        </dependency>
        <dependency>
           <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-wms</artifactId>
+          <version>${geotoolkit.version}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-world-image</artifactId>
+          <version>${geotoolkit.version}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-widgets-swing-pending</artifactId>
           <version>${geotoolkit.version}</version>
        </dependency>
+
+       <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gtm-shapefile</artifactId>
+          <version>${geomodified.version}</version>
+       </dependency>
+
     </dependencies>
         
     

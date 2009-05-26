@@ -101,9 +101,8 @@ public final class MapBuilder {
      * @param correction : expression used to modified on the fly the elevation value
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageReader grid, final Expression correction){
-        return new DefaultElevationModel(grid, correction);
+    public static ElevationModel createElevationModel(final CoverageReader grid, Expression offset, Expression scale){
+        return new DefaultElevationModel(grid, offset,scale);
     }
-
 
 }

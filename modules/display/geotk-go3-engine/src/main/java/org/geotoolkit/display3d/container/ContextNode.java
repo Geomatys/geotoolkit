@@ -1,24 +1,43 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.display3d.container;
 
+import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.math.Matrix3;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.shape.Quad;
+import com.ardor3d.scenegraph.hint.LightCombineMode;
+import com.ardor3d.scenegraph.shape.Box;
 import com.ardor3d.util.geom.BufferUtils;
+
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+
 import org.opengis.geometry.Envelope;
 
 /**
@@ -32,9 +51,15 @@ public class ContextNode extends A3DGraphic{
     private final MapContext context;
 
     public ContextNode(A3DCanvas canvas, MapContext context) {
+        super(canvas);
         this.context = context;
 
-//        attachChild(buildPlan());
+
+        try {
+            this.attachChild(buildPlan(context.getBounds()));
+        } catch (IOException ex) {
+            Logger.getLogger(ContextNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         for(final MapLayer layer : context.layers()){
 
@@ -44,34 +69,48 @@ public class ContextNode extends A3DGraphic{
                 builder = DEFAULT_BUILDER;
             }
 
-            Collection<? extends A3DGraphic> graphics = builder.createGraphics(layer, canvas);
-
-            for(A3DGraphic gra : graphics){
+            for(A3DGraphic gra : builder.createGraphics(layer, canvas)){
                 this.attachChild(gra);
             }
         }
-
-        final Envelope env;
-        try {
-            env = context.getBounds();
-
-            float minX = (float) env.getMinimum(0);
-            float minY = (float) env.getMinimum(1);
-            float maxX = (float) env.getMaximum(0);
-            float maxY = (float) env.getMaximum(1);
-
-            setScale(0.2f,1, 0.2f);
-            setTranslation(-env.getMedian(0)/5, 1f, -env.getMedian(1)/5);
-
-
-
-        } catch (IOException ex) {
-            Logger.getLogger(ContextNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
     }
 
+    private Node buildPlan(final Envelope env){
+        final Node plan = new Node("plan");
+        plan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
+        final float over = -10f;
+        final float width = 1f;
+        final float minx = (float) env.getMinimum(0);
+        final float maxx = (float) env.getMaximum(0);
+        final float miny = (float) env.getMinimum(1);
+        final float maxy = (float) env.getMaximum(1);
+
+        Box back = new Box("ceiling", new Vector3(minx, -env.getSpan(0)/20 -11, miny), new Vector3(maxx, -11, maxy));
+        back.setDefaultColor(new ColorRGBA(1, 1, 1, 1f));
+
+        final int nbGrid = 10;
+        float step = (float) (env.getSpan(0) / nbGrid);
+        FloatBuffer verts = BufferUtils.createVector3Buffer(4*(nbGrid+1));
+        for(int i=0;i<=nbGrid;i++){
+            verts.put(minx +step*i).put(over).put(miny);
+            verts.put(minx +step*i).put(over).put(maxy);
+        }
+        step = (float) (env.getSpan(1) / nbGrid);
+        for(int i=0;i<=nbGrid;i++){
+            verts.put(minx).put(over).put(miny +step*i);
+            verts.put(maxx).put(over).put(miny +step*i);
+        }
+        Line line = new Line("Lines", verts, null, null, null);
+        line.getMeshData().setIndexMode(IndexMode.Lines);
+        line.setLineWidth(width);
+        line.setDefaultColor(ColorRGBA.LIGHT_GRAY);
+        line.setModelBound(new BoundingBox());
+        line.updateModelBound();
+
+        plan.attachChild(line);
+        plan.attachChild(back);
+        return plan;
+    }
 
 }

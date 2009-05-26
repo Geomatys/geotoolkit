@@ -1,17 +1,32 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.display3d.canvas;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.logging.Logger;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 
-import com.ardor3d.framework.ArdorModule;
 import com.ardor3d.framework.Canvas;
-import com.ardor3d.framework.FrameHandler;
+import com.ardor3d.framework.CanvasRenderer;
+import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.awt.AwtCanvas;
 import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
 import com.ardor3d.input.InputState;
@@ -27,59 +42,71 @@ import com.ardor3d.input.logical.KeyPressedCondition;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.input.logical.TriggerAction;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-
-import javax.swing.JComponent;
 import org.geotoolkit.display3d.controller.A3DController;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.util.logging.Logging;
 
 import org.lwjgl.LWJGLException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class A3DCanvas extends ReferencedCanvas{
 
-    public static final ArdorModule  ARDOR_3D = new ArdorModule();
-    public static final Injector     INJECTOR = Guice.createInjector(Stage.PRODUCTION, ARDOR_3D);
-    public static final FrameHandler FRAMEWORK = INJECTOR.getInstance(FrameHandler.class);
-    public static final LogicalLayer LOGICAL_LAYER = INJECTOR.getInstance(LogicalLayer.class);
+    private static final Logger LOGGER = Logging.getLogger(A3DCanvas.class);
 
+    public static final String CAMERA_POSITION = "camera_position";
+
+    private final LogicalLayer logicalLayer = new LogicalLayer();
     private final A3DContainer container = new A3DContainer(this);
-    private final A3DController controller = new A3DController(this, LOGICAL_LAYER);
-    private final JPanel swingPane = new JPanel(new BorderLayout());
-    private AwtCanvas canvas = null;
+    private final A3DController controller;
+    private final JScrollPane swingPane;
+    private final AwtCanvas canvas;
 
-    public A3DCanvas(CoordinateReferenceSystem objectiveCRS, Hints hints) {
+    public A3DCanvas(CoordinateReferenceSystem objectiveCRS, Hints hints) throws LWJGLException{
         super(objectiveCRS,hints);
-        try {
-            initContext();
-        } catch (LWJGLException ex) {
-            Logger.getLogger(A3DCanvas.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        canvas = initContext();
+        controller = new A3DController(this, logicalLayer);
+        controller.init();
 
-        swingPane.add(BorderLayout.CENTER,canvas);
+        swingPane = new JScrollPane(canvas);
+        swingPane.setBorder(null);
+        swingPane.setWheelScrollingEnabled(false);
+        swingPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        swingPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
         swingPane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                swingPane.remove(canvas);
-                try {
-                    updateCanvas(swingPane.getSize());
-                } catch (LWJGLException ex) {
-                    ex.printStackTrace();
+
+                CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
+
+                if (canvasRenderer.getCamera() != null) {
+                    System.out.println("resized");
+                    // tell our camera the correct new size
+                    canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
+
+                    // keep our aspect ratio the same.
+                    canvasRenderer.getCamera().setFrustumPerspective(45.0,
+                            canvas.getWidth() / (float) canvas.getHeight(), 1, 5000);
                 }
-                swingPane.add(BorderLayout.CENTER,canvas);
-                swingPane.revalidate();
             }
         });
 
+        Thread updater = new A3DPaintingUpdater(canvas, controller);
+        updater.setPriority(Thread.MAX_PRIORITY);
+        updater.start();
+    }
+
+    @Override
+    public synchronized void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
+        throw new TransformException("You are not allowed to change CRS after creation on 3D canvas");
     }
 
     @Override
@@ -104,24 +131,15 @@ public class A3DCanvas extends ReferencedCanvas{
         return canvas;
     }
 
-    private void initContext() throws LWJGLException{
-        FRAMEWORK.addUpdater(controller);
-        controller.init();
-        updateCanvas(new Dimension(200,200));
-    }
+    private AwtCanvas initContext() throws LWJGLException{
+//        refresher.addUpdater(controller);
 
-    private AwtCanvas updateCanvas(Dimension dim) throws LWJGLException{
-
-        //unregister the previous canvas
-        if(canvas != null){
-            FRAMEWORK.removeCanvas(canvas);
-        }
-
-        canvas = new AwtCanvas();
+        final DisplaySettings settings = new DisplaySettings(1, 1, 0, 0, 0, 32, 0, 4, false, false);
+        final AwtCanvas canvas = new AwtCanvas(settings);
         LwjglCanvasRenderer renderer = new LwjglCanvasRenderer(container);
         canvas.setCanvasRenderer(renderer);
-        canvas.setSize(dim);
-        canvas.setPreferredSize(new Dimension(100,100));
+        canvas.setSize(new Dimension(100, 100));
+        canvas.setPreferredSize(new Dimension(1,1));
         canvas.setVisible(true);
 
         final AwtMouseWrapper    mouseWrapper    = new AwtMouseWrapper(canvas);
@@ -131,9 +149,9 @@ public class A3DCanvas extends ReferencedCanvas{
 
         final PhysicalLayer pl = new PhysicalLayer(keyboardWrapper, mouseWrapper, focusWrapper);
 
-        LOGICAL_LAYER.registerInput(canvas, pl);
+        logicalLayer.registerInput(canvas, pl);
 
-        LOGICAL_LAYER.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.H),
+        logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.H),
             new TriggerAction() {
             @Override
                 public void perform(Canvas source, InputState inputState, double tpf) {
@@ -142,7 +160,7 @@ public class A3DCanvas extends ReferencedCanvas{
                     }
                 }
             }));
-        LOGICAL_LAYER.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.J),
+        logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.J),
             new TriggerAction() {
             @Override
                 public void perform(Canvas source, InputState inputState, double tpf) {
@@ -154,7 +172,7 @@ public class A3DCanvas extends ReferencedCanvas{
                 }
             }));
 
-        FRAMEWORK.addCanvas(canvas);
+//        refresher.addCanvas(canvas);
 
         return canvas;
     }

@@ -308,17 +308,7 @@
 
       <dependency>
         <groupId>com.ardor3d</groupId>
-        <artifactId>ardor3d-examples</artifactId>
-        <version>0.5-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>com.ardor3d</groupId>
         <artifactId>ardor3d-awt</artifactId>
-        <version>0.5-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>com.ardor3d</groupId>
-        <artifactId>ardor3d-jogl</artifactId>
         <version>0.5-SNAPSHOT</version>
       </dependency>
       
@@ -676,6 +666,16 @@
       <id>geotoolkit</id>
       <name>Geotoolkit repository</name>
       <url>http://maven.geotoolkit.org/</url>
+    </repository>
+    <repository>
+      <id>ardor3d</id>
+      <name>ardor3d repository</name>
+      <url>http://ardor3d.com:8081/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>ardor3d_thirdparty</id>
+      <name>ardor3d thirdparty repository</name>
+      <url>http://ardor3d.com:8081/nexus/content/repositories/thirdparty/</url>
     </repository>
   </repositories>
 

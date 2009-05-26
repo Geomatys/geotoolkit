@@ -1,6 +1,21 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.debug;
-
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -15,7 +30,6 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.gui.swing.go3.control.JNavigationBar;
 import org.geotoolkit.gui.swing.maptree.JContextTree;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
 /**
@@ -23,13 +37,13 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
  */
 public class Go3Frame extends JFrame{
 
-    private final A3DCanvas gui3DPane = new A3DCanvas(DefaultGeographicCRS.WGS84, null);
+    private final A3DCanvas gui3DPane;
     private final JContextTree guiTree = new JContextTree();
     private final JNavigationBar guiNavBar = new JNavigationBar();
 
     public Go3Frame() throws Exception {
         final MapContext context = ContextBuilder.buildRealCityContext();
-        gui3DPane.getController().setObjectiveCRS(context.getCoordinateReferenceSystem());
+        gui3DPane = new A3DCanvas(context.getCoordinateReferenceSystem(), null);
         gui3DPane.getContainer2().setContext(context);
         guiTree.setContext(context);
         guiNavBar.setFloatable(false);
@@ -64,9 +78,6 @@ public class Go3Frame extends JFrame{
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
 
-        while (true) {
-            A3DCanvas.FRAMEWORK.updateFrame();
-        }
     }
 
     public static void main(String[] args) throws Exception {

@@ -16,184 +16,253 @@
  */
 package org.geotoolkit.gui.swing.go.control.selection;
 
-import java.awt.Cursor;
-import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ResourceBundle;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
-import javax.swing.ImageIcon;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.event.MouseInputListener;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
+import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.gui.swing.go.CanvasHandler;
 import org.geotoolkit.gui.swing.go.GoMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
+
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.FeatureId;
 
 /**
- * Default selection handler
+ * Selection handler
  * 
  * @author Johann Sorel
  */
-public class DefaultSelectionHandler implements SelectionHandler {
+public class DefaultSelectionHandler implements CanvasHandler {
 
+    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     
-    private static final ImageIcon ICON = IconBundle.getInstance().getIcon("16_select_default");
-    private static final String title = ResourceBundle.getBundle("org/geotools/gui/swing/map/map2d/handler/Bundle").getString("default");
     
-    protected final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-    private final MouseInputListener mouseInputListener = new MouseListen();
+    private final MouseInputListener mouseInputListener;
     private final DefaultSelectionDecoration selectionPane = new DefaultSelectionDecoration();
-    private GoMap2D map2D = null;
-    private boolean installed = false;
-    protected Cursor CUR_SELECT;
+    private final GraphicVisitor visitor = new AbstractGraphicVisitor() {
+
+        private final Map<MapLayer,Set<FeatureId>> selection = new HashMap<MapLayer, Set<FeatureId>>();
+
+        @Override
+        public void startVisit() {
+            super.startVisit();
+            selection.clear();
+        }
+
+        @Override
+        public void endVisit() {
+            super.endVisit();
+
+            for(final MapLayer layer : selection.keySet()){
+                Filter f = layer.getSelectionFilter();
+                f = FF.id(selection.get(layer));
+
+                layer.setSelectionFilter(f);
+            }
+
+            selection.clear();
+        }
+
+        @Override
+        public void visit(ProjectedFeature feature, Shape queryArea) {
+
+            final FeatureMapLayer layer = feature.getSource();
+            Set<FeatureId> ids = selection.get(layer);
+
+            if(ids == null){
+                ids = new HashSet<FeatureId>();
+                selection.put(layer, ids);
+            }
+
+            ids.add(feature.getFeatureId());
+        }
+
+        @Override
+        public void visit(GraphicCoverageJ2D coverage, Shape queryArea) {
+        }
+    };
+    private boolean squareArea;
+    private boolean withinArea;
+    private boolean geographicArea;
+    private GoMap2D map2D;
+
 
     public DefaultSelectionHandler() {
-        buildCursors();
+        mouseInputListener = new MouseListen();
     }
 
-    private void buildCursors() {
-//        Toolkit tk = Toolkit.getDefaultToolkit();
-//        ImageIcon ico_select = IconBundle.getResource().getIcon("16_select");
-//
-//        BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-//        img.getGraphics().drawImage(ico_select.getImage(), 0, 0, null);
-//        CUR_SELECT = tk.createCustomCursor(img, new java.awt.Point(1, 1), "select");
-
+    public boolean isGeographicArea() {
+        return geographicArea;
     }
 
-    private void doMouseSelection(int mx, int my) {
+    public boolean isSquareArea() {
+        return squareArea;
+    }
 
-        Geometry geometry = mousePositionToGeometry(mx, my);
-        if (geometry != null) {
-//            map2D.doSelection(geometry);
+    public boolean isWithinArea() {
+        return withinArea;
+    }
+
+    public void setGeographicArea(boolean geographicArea) {
+        this.geographicArea = geographicArea;
+    }
+
+    public void setSquareArea(boolean squareArea) {
+        this.squareArea = squareArea;
+    }
+
+    public void setWithinArea(boolean withinArea) {
+        this.withinArea = withinArea;
+    }
+
+    public GoMap2D getMap() {
+        return map2D;
+    }
+
+    public void setMap(GoMap2D map2D) {
+        this.map2D = map2D;
+    }
+    
+    private void doSelection(List<Point> points) {
+
+        if (points.size() > 2) {
+
+            final GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+            path.moveTo(points.get(0).x, points.get(0).y);
+
+
+            for(int i=1;i<points.size();i++){
+                Point p = points.get(i);
+                path.lineTo(p.x, p.y);
+            }
+
+            map2D.getCanvas().getGraphicsIn(path, visitor, (withinArea) ? VisitFilter.WITHIN : VisitFilter.INTERSECTS);
+            map2D.getCanvas().getController().repaint();
         }
+
     }
 
-    /**
-     *  transform a mouse coordinate in JTS Geometry using the CRS of the mapcontext
-     * @param mx : x coordinate of the mouse on the map (in pixel)
-     * @param my : y coordinate of the mouse on the map (in pixel)
-     * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
-     */
-    private Geometry mousePositionToGeometry(int mx, int my) {
-        return null;
-//        Coordinate[] coord = new Coordinate[5];
-//        int taille = 4;
-//
-//        StreamingStrategy strategy = map2D.getRenderingStrategy();
-//        coord[0] = strategy.toMapCoord(mx - taille, my - taille);
-//        coord[1] = strategy.toMapCoord(mx - taille, my + taille);
-//        coord[2] = strategy.toMapCoord(mx + taille, my + taille);
-//        coord[3] = strategy.toMapCoord(mx + taille, my - taille);
-//        coord[4] = coord[0];
-//
-//        LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
-//        return GEOMETRY_FACTORY.createPolygon(lr1, null);
+    @Override
+    public ReferencedCanvas2D getCanvas() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void doMouseSelection(int mx, int my, int ex, int ey) {
-//        Coordinate[] coord = new Coordinate[5];
-//
-//        StreamingStrategy strategy = map2D.getRenderingStrategy();
-//        coord[0] = strategy.toMapCoord(mx, my);
-//        coord[1] = strategy.toMapCoord(mx, ey);
-//        coord[2] = strategy.toMapCoord(ex, ey);
-//        coord[3] = strategy.toMapCoord(ex, my);
-//        coord[4] = coord[0];
-//
-//        LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
-//        Geometry geometry = GEOMETRY_FACTORY.createPolygon(lr1, null);
-//
-//        map2D.doSelection(geometry);
+    @Override
+    public void install(Component component) {
+        map2D.addDecoration(selectionPane);
+        map2D.getComponent().addMouseListener(mouseInputListener);
+        map2D.getComponent().addMouseMotionListener(mouseInputListener);
     }
 
-    public void install(GoMap2D map) {
-//        installed = true;
-//        map2D = map;
-//        map2D.addDecoration(selectionPane);
-//        map2D.getComponent().addMouseListener(mouseInputListener);
-//        map2D.getComponent().addMouseMotionListener(mouseInputListener);
-    }
-
-    public void uninstall() {
+    @Override
+    public void uninstall(Component component) {
         map2D.removeDecoration(selectionPane);
         map2D.getComponent().removeMouseListener(mouseInputListener);
         map2D.getComponent().removeMouseMotionListener(mouseInputListener);
-        map2D = null;
-        installed = false;
     }
-    
-    public boolean isInstalled() {
-        return installed;
-    }
-    
 
     private class MouseListen implements MouseInputListener {
 
-        int startX = 0;
-        int startY = 0;
-        int lastX = 0;
-        int lastY = 0;
+        Point lastValid = null;
+        final List<Point> points = new ArrayList<Point>();
+        private int startX = 0;
+        private int startY = 0;
 
-        private void drawRectangle(boolean view, boolean fill) {
-            int left = Math.min(startX, lastX);
-            int right = Math.max(startX, lastX);
-            int top = Math.max(startY, lastY);
-            int bottom = Math.min(startY, lastY);
-            int width = right - left;
-            int height = top - bottom;
-            selectionPane.setFill(fill);
-            selectionPane.setCoord(left, bottom, width, height, view);
-        //graphics.drawRect(left, bottom, width, height);
-        }
-
+        @Override
         public void mouseClicked(MouseEvent e) {
-            doMouseSelection(e.getX(), e.getY());
+            final Point point = e.getPoint();
+            points.clear();
+            points.add(new Point(point.x-1, point.y-1));
+            points.add(new Point(point.x-1, point.y+1));
+            points.add(new Point(point.x+1, point.y+1));
+            points.add(new Point(point.x+1, point.y-1));
+            doSelection(points);
+            points.clear();
         }
 
+        @Override
         public void mousePressed(MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
-            lastX = 0;
-            lastY = 0;
-
+            lastValid = e.getPoint();
+            points.clear();
+            if(squareArea){
+                startX = lastValid.x;
+                startY = lastValid.y;
+            }else{
+                points.add(lastValid);
+            }
         }
 
+        @Override
         public void mouseReleased(MouseEvent e) {
-            lastX = e.getX();
-            lastY = e.getY();
-            drawRectangle(false, true);
-            doMouseSelection(startX, startY, lastX, lastY);
+            final Point lastPoint = e.getPoint();
+            if(squareArea){
+                points.clear();
+                points.add(lastPoint);
+                points.add(new Point(lastPoint.x, startY));
+                points.add(new Point(startX, startY));
+                points.add(new Point(startX, lastPoint.y));
+            }else{
+                points.add(lastPoint);
+            }
+            doSelection(points);
+            selectionPane.setPoints(null);
+            points.clear();
         }
 
+        @Override
         public void mouseEntered(MouseEvent e) {
-            map2D.getComponent().setCursor(CUR_SELECT);
-
+            map2D.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         }
 
+        @Override
         public void mouseExited(MouseEvent e) {
         }
 
+        @Override
         public void mouseDragged(MouseEvent e) {
-            lastX = e.getX();
-            lastY = e.getY();
-            drawRectangle(true, true);
+            Point eventPoint = e.getPoint();
+            if(squareArea){
+                points.clear();
+                points.add(eventPoint);
+                points.add(new Point(eventPoint.x, startY));
+                points.add(new Point(startX, startY));
+                points.add(new Point(startX, eventPoint.y));
+                points.add(eventPoint);
+                selectionPane.setPoints(new ArrayList<Point>(points));
+            }else{
+                if(eventPoint.distance(lastValid) > 6){
+                    lastValid = eventPoint;
+                    points.add(new Point(e.getX(), e.getY()));
+                    selectionPane.setPoints(new ArrayList<Point>(points));
+                }
+            }
         }
 
+        @Override
         public void mouseMoved(MouseEvent e) {
         }
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public ImageIcon getIcon() {
-        return ICON;
-    }
-
-    
 }
