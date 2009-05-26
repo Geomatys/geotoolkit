@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */ 
-package org.geotools.geometry.jts.spatialschema.geometry;
+package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 
 import org.opengis.geometry.Geometry;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.geotoolkit.util.logging.Logging;
+import org.junit.Test;
 
 /**
  * This class represents the part of the JTS test XML file
@@ -103,4 +104,10 @@ public class GeometryTestCase {
         }
         return result;
     }
+
+    @Test
+    public void test(){
+        
+    }
+
 }

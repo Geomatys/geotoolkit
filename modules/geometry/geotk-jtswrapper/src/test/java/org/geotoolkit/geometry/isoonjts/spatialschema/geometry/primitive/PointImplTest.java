@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotools.geometry.jts.spatialschema.geometry.primitive;
+package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;

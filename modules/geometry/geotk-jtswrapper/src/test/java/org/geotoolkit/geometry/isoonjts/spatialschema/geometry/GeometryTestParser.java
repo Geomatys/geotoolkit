@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */ 
-package org.geotools.geometry.jts.spatialschema.geometry;
+package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 
 
@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GeometryFactoryImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.geotoolkit.io.wkt.GeometryParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -48,12 +49,12 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class GeometryTestParser {
 
-    private static final Logger LOG = Logging.getLogger(GeometryTestParser.class);
+    private static final Logger LOGGER = Logging.getLogger(GeometryTestParser.class);
 
     private DocumentBuilderFactory documentBuilderFactory;
     private DocumentBuilder documentBuilder;
 
-    private WKTParser wktFactory;
+    private GeometryParser wktFactory;
 
     /**
      * Constructor
@@ -69,7 +70,7 @@ public class GeometryTestParser {
         GeometryFactory geomFact = new GeometryFactoryImpl(DefaultGeographicCRS.WGS84);
         PrimitiveFactory primFact = new PrimitiveFactoryImpl(DefaultGeographicCRS.WGS84);
         PositionFactory posFact = null;
-        wktFactory = new WKTParser(geomFact, primFact, posFact, null );
+        wktFactory = new GeometryParser(geomFact, primFact, posFact, null );
     }
 
     /**
@@ -82,11 +83,11 @@ public class GeometryTestParser {
         try {
             doc = documentBuilder.parse(inputSource);
         } catch (SAXException e) {
-            LOG.log(Level.SEVERE,"", e);
+            LOGGER.log(Level.SEVERE,"", e);
             throw new RuntimeException("", e);
 
         } catch (IOException e) {
-            LOG.log(Level.SEVERE,"", e);
+            LOGGER.log(Level.SEVERE,"", e);
             throw new RuntimeException("", e);
 
         }
@@ -96,7 +97,7 @@ public class GeometryTestParser {
         try {
             test = processRootNode(element);
         } catch (ParseException e) {
-            LOG.log(Level.SEVERE,"", e);
+            LOGGER.log(Level.SEVERE,"", e);
             throw new RuntimeException("", e);
 
         }
@@ -203,7 +204,7 @@ public class GeometryTestParser {
             try {
                 expectedResult = wktFactory.parse(expectedString);
             } catch (ParseException e) {
-                LOG.debug("Couldn't parse [" + expectedString + "]", e);
+                LOGGER.log(Level.WARNING,"Couldn't parse [" + expectedString + "]", e);
                 throw new RuntimeException("Couldn't parse [" + expectedString + "]", e);
             }
         }
@@ -218,7 +219,7 @@ public class GeometryTestParser {
         try {
             geom = wktFactory.parse(wktString);
         } catch (ParseException e) {
-            LOG.debug("Can't parse [" + wktString + "]", e);
+            LOGGER.log(Level.WARNING,"Can't parse [" + wktString + "]", e);
             throw new RuntimeException("Can't parse [" + wktString + "]", e);
         }
         return geom;

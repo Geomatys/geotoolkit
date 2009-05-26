@@ -559,7 +559,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
             ((JTSGeometry) pointSet).getJTSGeometry();
-        return JTSUtils.jtsToGo1(JTSUtils.intersection(jtsGeom1, jtsGeom2),
+        return JTSUtils.jtsToGo1(jtsGeom1.intersection(jtsGeom2),
                 getCoordinateReferenceSystem());
     }
 
