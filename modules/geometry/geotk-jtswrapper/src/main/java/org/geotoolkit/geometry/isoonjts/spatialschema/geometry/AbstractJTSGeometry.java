@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
@@ -37,7 +36,6 @@ import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.util.Cloneable;
 
-
 /**
  * Base class for our JTS-based implementation of the various ISO 19107 geometry classes.
  * 
@@ -49,34 +47,25 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * True if we're allowing changes to the geometry.  False if not.
      */
     private boolean mutable;
-
     /**
      * CRS for this geometry.
      */
     private CoordinateReferenceSystem coordinateReferenceSystem;
-
     /**
      * The JTS equivalent of this geometry.  This gets set to null whenever we
      * make changes to the geometry so that we can recompute it.
      */
     private com.vividsolutions.jts.geom.Geometry jtsPeer;
-
     /**
      * If this object is part of a composite, this this member should hold a
      * pointer to that composite so that when our JTS geometry is invalidated,
      * we can also invalidate that of our parent.
      */
     private JTSGeometry parent;
-
-    
     /**
      * Precision model
      */
     private Precision precision;
-    
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
 
     /**
      * Creates a new mutable {@code GeometryImpl} with a null CRS.
@@ -126,7 +115,9 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     @Override
     public final void invalidateCachedJTSPeer() {
         jtsPeer = null;
-        if (parent != null) parent.invalidateCachedJTSPeer();
+        if (parent != null) {
+            parent.invalidateCachedJTSPeer();
+        }
     }
 
     /**
@@ -150,10 +141,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         }
         return jtsPeer;
     }
-
-    //*************************************************************************
-    //  implement the Geometry interface
-    //*************************************************************************
 
     /**
      * Returns the CRS that was given to the constructor.
@@ -212,17 +199,16 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         if (d == 0) {
             // If d is zero, then our geometry is a point.  So the boundary is
             // empty.  ISO 19107 defines the boundary of a point to 
-	    // be NULL.
+            // be NULL.
             return null;
-        }
-        else if (d == 1) {
+        } else if (d == 1) {
             // If d is 1, then the boundary is either empty (if it's a ring) or
             // it's two points at either end of the curve.
             // We've ruled out the possibility of multi-primitives (see the
             // instanceof check above), so we know that the boundary can't be
             // more than 2 points.
 
-            com.vividsolutions.jts.geom.Coordinate [] coords = jtsBoundary.getCoordinates();
+            com.vividsolutions.jts.geom.Coordinate[] coords = jtsBoundary.getCoordinates();
             // If coords is emtpy, then this geometry is a ring.  So we return
             // an empty CurveBoundary object (i.e. one with both points set to
             // null).
@@ -230,8 +216,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
                 JTSCurveBoundary result = new JTSCurveBoundary(
                         getCoordinateReferenceSystem(), null, null);
                 return result;
-            }
-            else {
+            } else {
                 // If it wasn't empty, then return a CurveBoundary with the two
                 // endpoints.
                 if (coords.length != 2) {
@@ -243,35 +228,32 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
                 CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
                 JTSCurveBoundary result = new JTSCurveBoundary(crs,
                         new JTSPoint(JTSUtils.coordinateToDirectPosition(
-                                coords[0], crs)),
+                        coords[0], crs)),
                         new JTSPoint(JTSUtils.coordinateToDirectPosition(
-                                coords[1], crs)));
+                        coords[1], crs)));
                 return result;
             }
-        }
-        else if (d == 2) {
+        } else if (d == 2) {
             // If d == 2, then the boundary is a collection of rings.
             // In particular, the JTS tests indicate that it'll be a
             // MultiLineString.
             com.vividsolutions.jts.geom.MultiLineString mls =
-                (com.vividsolutions.jts.geom.MultiLineString) jtsBoundary;
+                    (com.vividsolutions.jts.geom.MultiLineString) jtsBoundary;
             int n = mls.getNumGeometries();
             CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
             Ring exteriorRing = JTSUtils.linearRingToRing(
-                (com.vividsolutions.jts.geom.LineString) mls.getGeometryN(0),
-                crs);
-            Ring [] interiorRings = new Ring[n-1];
-            for (int i=1; i<n; i++) {
-                interiorRings[n-1] = JTSUtils.linearRingToRing(
-                    (com.vividsolutions.jts.geom.LineString)
-                    	mls.getGeometryN(i),
+                    (com.vividsolutions.jts.geom.LineString) mls.getGeometryN(0),
                     crs);
+            Ring[] interiorRings = new Ring[n - 1];
+            for (int i = 1; i < n; i++) {
+                interiorRings[n - 1] = JTSUtils.linearRingToRing(
+                        (com.vividsolutions.jts.geom.LineString) mls.getGeometryN(i),
+                        crs);
             }
             JTSSurfaceBoundary result = new JTSSurfaceBoundary(crs,
-                exteriorRing, interiorRings);
+                    exteriorRing, interiorRings);
             return result;
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Computing the boundary " +
                     "for geometries of dimension larger than 2 is not " +
                     "supported.");
@@ -312,7 +294,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public final double getDistance(final Geometry geometry) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) geometry).getJTSGeometry();
+                ((JTSGeometry) geometry).getJTSGeometry();
         return JTSUtils.distance(jtsGeom1, jtsGeom2);
     }
 
@@ -330,10 +312,9 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         if (jtsGeom instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             com.vividsolutions.jts.geom.Point p =
-                JTSUtils.directPositionToPoint(point);
+                    JTSUtils.directPositionToPoint(point);
             return getDimension(p, (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom);
-        }
-        else {
+        } else {
             return jtsGeom.getDimension();
         }
     }
@@ -343,20 +324,21 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
             final com.vividsolutions.jts.geom.GeometryCollection gc) {
         int min = Integer.MAX_VALUE;
         int n = gc.getNumGeometries();
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             int d = Integer.MAX_VALUE;
             com.vividsolutions.jts.geom.Geometry g = gc.getGeometryN(i);
             if (g instanceof com.vividsolutions.jts.geom.GeometryCollection) {
                 // If it was a nested GeometryCollection, then just recurse
                 // until we get down to non-collections.
                 d = getDimension(p, (com.vividsolutions.jts.geom.GeometryCollection) g);
-            }
-            else {
-                if (g.intersects(p))
+            } else {
+                if (g.intersects(p)) {
                     d = g.getDimension();
+                }
             }
-            if (d < min)
+            if (d < min) {
                 min = d;
+            }
         }
         return min;
     }
@@ -393,11 +375,9 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         try {
             MathTransform mt = CRS.findMathTransform(getCoordinateReferenceSystem(), newCRS, true);
             return transform(newCRS, mt);
-        }
-        catch (OperationNotFoundException e) {
+        } catch (OperationNotFoundException e) {
             throw new TransformException("Unable to find an operation", e);
-        }
-        catch (FactoryException e) {
+        } catch (FactoryException e) {
             throw new TransformException("Factory exception", e);
         }
     }
@@ -407,7 +387,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * on each control point of this geometry.
      */
     @Override
-    public final Geometry transform(final CoordinateReferenceSystem newCRS, 
+    public final Geometry transform(final CoordinateReferenceSystem newCRS,
             final MathTransform transform) throws TransformException {
         // Get the JTS geometry
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
@@ -434,7 +414,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         lower.setCoordinateReferenceSystem(crs);
         DirectPosition2D upper = new DirectPosition2D(jtsEnv.getMaxX(), jtsEnv.getMaxY());
         upper.setCoordinateReferenceSystem(crs);
-        Envelope result = new JTSEnvelope(lower,upper);
+        Envelope result = new JTSEnvelope(lower, upper);
         return result;
     }
 
@@ -484,11 +464,10 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     @Override
     public final Geometry toImmutable() {
         if (isMutable()) {
-	        AbstractJTSGeometry result = (AbstractJTSGeometry) clone();
-	        result.mutable = false;
-	        return result;
-        }
-        else {
+            AbstractJTSGeometry result = clone();
+            result.mutable = false;
+            return result;
+        } else {
             return this;
         }
     }
@@ -503,8 +482,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public AbstractJTSGeometry clone() {
         try {
             return (AbstractJTSGeometry) super.clone();
-        }
-        catch (CloneNotSupportedException cnse) {
+        } catch (CloneNotSupportedException cnse) {
             throw new AssertionError(cnse);
         }
     }
@@ -517,7 +495,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public boolean contains(DirectPosition point) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            JTSUtils.directPositionToPoint(point);
+                JTSUtils.directPositionToPoint(point);
         return JTSUtils.contains(jtsGeom1, jtsGeom2);
     }
 
@@ -528,20 +506,20 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public boolean contains(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.contains(jtsGeom1, jtsGeom2);
     }
 
     @Override
-    public double distance( Geometry otherGeometry ) {
-        return getDistance( otherGeometry );
+    public double distance(Geometry otherGeometry) {
+        return getDistance(otherGeometry);
     }
-    
+
     @Override
     public TransfiniteSet difference(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.jtsToGo1(JTSUtils.difference(jtsGeom1, jtsGeom2),
                 getCoordinateReferenceSystem());
     }
@@ -550,7 +528,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public boolean equals(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.equals(jtsGeom1, jtsGeom2);
     }
 
@@ -558,7 +536,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public TransfiniteSet intersection(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.jtsToGo1(jtsGeom1.intersection(jtsGeom2),
                 getCoordinateReferenceSystem());
     }
@@ -567,7 +545,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public boolean intersects(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.intersects(jtsGeom1, jtsGeom2);
     }
 
@@ -575,7 +553,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public TransfiniteSet symmetricDifference(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.jtsToGo1(JTSUtils.symmetricDifference(jtsGeom1, jtsGeom2),
                 getCoordinateReferenceSystem());
     }
@@ -584,13 +562,14 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public TransfiniteSet union(TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
-            ((JTSGeometry) pointSet).getJTSGeometry();
+                ((JTSGeometry) pointSet).getJTSGeometry();
         return JTSUtils.jtsToGo1(JTSUtils.union(jtsGeom1, jtsGeom2),
                 getCoordinateReferenceSystem());
     }
 
     public static Set listAsSet(final List list) {
         return new Set() {
+
             @Override
             public int size() {
                 return list.size();
@@ -607,7 +586,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
             }
 
             @Override
-            public Object [] toArray() {
+            public Object[] toArray() {
                 return list.toArray();
             }
 
@@ -652,7 +631,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
             }
 
             @Override
-            public Object [] toArray(Object [] a) {
+            public Object[] toArray(Object[] a) {
                 return list.toArray(a);
             }
         };
@@ -663,6 +642,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * MathTransform object to actually perform the work.
      */
     public static class MathTransformFilter implements com.vividsolutions.jts.geom.CoordinateFilter {
+
         private MathTransform transform;
         private DirectPosition src;
         private DirectPosition dst;
@@ -682,11 +662,9 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
             try {
                 // Do the transform math.
                 transform.transform(src, dst);
-            }
-            catch (MismatchedDimensionException e) {
+            } catch (MismatchedDimensionException e) {
                 throw new RuntimeException(e);
-            }
-            catch (TransformException e) {
+            } catch (TransformException e) {
                 throw new RuntimeException(e);
             }
             // Load the result back into the Coordinate.

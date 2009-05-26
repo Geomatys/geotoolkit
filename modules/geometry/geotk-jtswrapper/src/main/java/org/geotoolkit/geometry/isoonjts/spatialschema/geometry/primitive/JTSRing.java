@@ -9,23 +9,17 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
+import com.vividsolutions.jts.geom.LineString;
+
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-//import org.opengis.geometry.Geometry;
 import org.opengis.geometry.complex.CompositeCurve;
-//import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.primitive.OrientableCurve;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.Shell;
 import org.opengis.geometry.primitive.SurfaceBoundary;
-
-import com.vividsolutions.jts.geom.LineString;
-import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
-//import com.vividsolutions.jts.geom.Geometry;
-
-//import java.util.Iterator;
-//import java.util.List;
-
 
 /**
  * Represent a single connected component of a {@linkplain SurfaceBoundary surface boundary}.
@@ -53,6 +47,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompos
  * @see Shell
  */
 public class JTSRing extends JTSCompositeCurve implements Ring {
+
     /**
      * Constructs a new Ring instance with no CRS and no parent curve.
      */

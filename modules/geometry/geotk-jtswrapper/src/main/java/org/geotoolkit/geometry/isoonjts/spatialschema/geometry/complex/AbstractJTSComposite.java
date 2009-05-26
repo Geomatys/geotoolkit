@@ -11,6 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 import java.util.Collection;
 
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.primitive.Primitive;
@@ -27,14 +28,13 @@ import org.opengis.geometry.primitive.Primitive;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public abstract class JTSComposite
-	extends JTSComplex implements Composite {
+public abstract class AbstractJTSComposite extends JTSComplex implements Composite {
 
-    public JTSComposite() {
+    public AbstractJTSComposite() {
         this(null);
     }
 
-    public JTSComposite(CoordinateReferenceSystem crs) {
+    public AbstractJTSComposite(CoordinateReferenceSystem crs) {
         super(crs);
     }
 
@@ -49,6 +49,7 @@ public abstract class JTSComposite
      * @return The list of primitives in this composite.
      * @UML association generator
      */
+    @Override
     public Collection<? extends Primitive> getGenerators() {
         return null;
     }

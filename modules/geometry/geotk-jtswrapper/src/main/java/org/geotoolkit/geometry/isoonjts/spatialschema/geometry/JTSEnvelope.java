@@ -32,120 +32,106 @@ import org.opengis.geometry.Envelope;
  */
 public class JTSEnvelope implements Envelope {
 
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
-
     /**
      * DirectPosition that has the minimum values for each coordinate dimension
      * (e.g. min x and min y).
      */
-    private DirectPosition lowerCorner;
+    private final DirectPosition lowerCorner;
 
     /**
      * DirectPosition that has the maximum values for each coordinate dimension
      * (e.g. max x and max y).
      */
-    private DirectPosition upperCorner;
-
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
+    private final DirectPosition upperCorner;
 
     /**
      * Creates a new {@code EnvelopeImpl}.
      * @param lowerCorner
      * @param upperCorner
      */
-    public JTSEnvelope(
-            final DirectPosition lowerCorner, 
-            final DirectPosition upperCorner) {
+    public JTSEnvelope(final DirectPosition lowerCorner, final DirectPosition upperCorner) {
         this.lowerCorner = new GeneralDirectPosition(lowerCorner);
         this.upperCorner = new GeneralDirectPosition(upperCorner);
     }
 
-    //*************************************************************************
-    //  implement the Envelope interface
-    //*************************************************************************
-
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getDimension()
+     * {@inheritDoc }
      */
+    @Override
     public final int getDimension() {
         return upperCorner.getDimension();
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getMinimum(int)
+     * {@inheritDoc }
      */
+    @Override
     public final double getMinimum(int dimension) {
         return lowerCorner.getOrdinate(dimension);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getMaximum(int)
+     * {@inheritDoc }
      */
+    @Override
     public final double getMaximum(int dimension) {
         return upperCorner.getOrdinate(dimension);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getCenter(int)
+     * {@inheritDoc }
      */
     @Deprecated
+    @Override
     public final double getCenter(int dimension) {
         return 0.5 * (upperCorner.getOrdinate(dimension) + lowerCorner.getOrdinate(dimension));
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getMedian(int)
+     * {@inheritDoc }
      */
+    @Override
     public final double getMedian(int dimension) {
         return 0.5 * (upperCorner.getOrdinate(dimension) + lowerCorner.getOrdinate(dimension));
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getLength(int)
+     * {@inheritDoc }
      */
     @Deprecated
+    @Override
     public final double getLength(int dimension) {
         return upperCorner.getOrdinate(dimension) - lowerCorner.getOrdinate(dimension);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getSpan(int)
+     * {@inheritDoc }
      */
+    @Override
     public final double getSpan(int dimension) {
         return upperCorner.getOrdinate(dimension) - lowerCorner.getOrdinate(dimension);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getUpperCorner()
+     * {@inheritDoc }
      */
+    @Override
     public final DirectPosition getUpperCorner() {
         return new GeneralDirectPosition(upperCorner);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Envelope#getLowerCorner()
+     * {@inheritDoc }
      */
+    @Override
     public final DirectPosition getLowerCorner() {
         return new GeneralDirectPosition(lowerCorner);
     }
     
     /**
-     * @inheritDoc
-     * @see java.lang.Object#toString()
+     * {@inheritDoc }
      */
+    @Override
     public String toString() {
         final double[] bbox = GeometryUtils.getBBox(this, NonSI.DEGREE_ANGLE);
         
@@ -156,17 +142,26 @@ public class JTSEnvelope implements Envelope {
         return returnable.append("]").toString();
     }
     
-    
     /**
-     * @inheritDoc
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc }
      */
+    @Override
     public boolean equals(final Object obj) {
+
+        if(!(obj instanceof Envelope)){
+            return false;
+        }
+
         final Envelope that = (Envelope) obj;
         return GeometryUtils.equals(this, that);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return getUpperCorner().getCoordinateReferenceSystem();
     }
+
 }

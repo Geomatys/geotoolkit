@@ -9,13 +9,14 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
+import org.opengis.geometry.primitive.Point;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.aggregate.MultiPoint;
 
 /**
+ * @author Johann Sorel (Geomatys)
  */
-public class JTSMultiPoint extends JTSAggregate
-	implements MultiPoint {
+public class JTSMultiPoint extends AbstractJTSAggregate<Point>	implements MultiPoint {
 
     public JTSMultiPoint() {
         this(null);
@@ -25,7 +26,12 @@ public class JTSMultiPoint extends JTSAggregate
         super(crs);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public JTSMultiPoint clone() {
         return (JTSMultiPoint) super.clone();
     }
+
 }

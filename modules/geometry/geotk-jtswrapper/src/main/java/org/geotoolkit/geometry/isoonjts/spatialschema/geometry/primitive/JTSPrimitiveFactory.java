@@ -7,13 +7,12 @@
  ******************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-// J2SE direct dependencies
-
 import java.util.List;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -40,25 +39,15 @@ import org.opengis.geometry.primitive.SurfacePatch;
  * implemented in LiteGO1.
  */
 public class JTSPrimitiveFactory implements PrimitiveFactory {
-
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
     
     /**
      * a default CRS to use when creating primitives
      */
-    private CoordinateReferenceSystem crs;
+    private final CoordinateReferenceSystem crs;
 
     private GeometryFactory geomFact;
 
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
-    
-    /**
-     * DOCUMENT ME
-     */
+
     public JTSPrimitiveFactory() {
         this(null);
     }
@@ -82,6 +71,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      * {@linkPlain Primitive primitive}geometric objects to be created through
      * this interface.
      */
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
@@ -89,6 +79,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     /**
      * Not implemented. Returns null.
      */
+    @Override
     public Primitive createPrimitive(final Envelope envelope) {
         return null;
     }
@@ -114,6 +105,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     /**
      * Creates a point at the specified location specified by coordinates.
      */
+    @Override
     public Point createPoint(final double[] coordinates) {
         return new JTSPoint(createDirectPosition(coordinates), crs);
     }
@@ -121,6 +113,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     /**
      * Creates a point at the specified position.
      */
+    @Override
     public Point createPoint(final Position position) {
         return new JTSPoint(position.getPosition(), crs);
     }
@@ -132,6 +125,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      * the List contains objects that are not instances of the CurveSegment
      * interface.
      */
+    @Override
     public Curve createCurve(final List<CurveSegment> segments) {
         JTSCurve result = new JTSCurve(crs);
         if (segments != null)
@@ -145,6 +139,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      * interface. Returns null.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public Surface createSurface(final List<SurfacePatch> patches) {
         JTSSurface result = new JTSSurface(crs);
         List<?> cast = (List<?>) patches;   
@@ -153,9 +148,9 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.PrimitiveFactory#createSurface(org.opengis.geometry.primitive.SurfaceBoundary)
+     * {@inheritDoc }
      */
+    @Override
     public Surface createSurface(final SurfaceBoundary boundary) {
         // For now, our implementation has to assume that the boundary is a
         // polygon.
@@ -172,9 +167,9 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     
     
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.PrimitiveFactory#createSurfaceBoundary(org.opengis.geometry.primitive.Ring, java.util.List)
+     * {@inheritDoc }
      */
+    @Override
     public SurfaceBoundary createSurfaceBoundary(Ring exterior, List interiors)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
@@ -189,10 +184,15 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      * @param boundary
      * @return a {@code Solid} based on the given {@code boundary}
      */
+    @Override
     public Solid createSolid(final SolidBoundary boundary) {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Ring createRing(final List curves) {
         Ring result = new JTSRing(crs);
         if (curves != null)
@@ -200,10 +200,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
         return result;
     }
 
-    /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createPolyhedralSurface(java.util.List)
-     */
+    
     public PolyhedralSurface createPolyhedralSurface(List<Polygon> patches)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);

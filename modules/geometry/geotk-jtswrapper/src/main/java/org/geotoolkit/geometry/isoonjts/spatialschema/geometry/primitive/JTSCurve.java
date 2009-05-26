@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-// J2SE direct dependencies
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayList;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
@@ -29,7 +29,6 @@ import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
-
 import org.opengis.geometry.primitive.CurveBoundary;
 
 /**
@@ -44,19 +43,15 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     private List curveSegments;
 
-    //*************************************************************************
-    //  constructors
-    //*************************************************************************
-
     /**
-     * Creates a new {@code CurveImpl}.
+     * Creates a new {@code JTSCurve}.
      */
     public JTSCurve() {
         this(null);
     }
 
     /**
-     * Creates a new {@code CurveImpl}.
+     * Creates a new {@code JTSCurve}.
      * @param crs
      */
     public JTSCurve(final CoordinateReferenceSystem crs) {
@@ -64,58 +59,75 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         curveSegments = new NotifyingArrayList(this);
     }
 
-    //*************************************************************************
-    //  
-    //*************************************************************************
-
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public CurveBoundary getBoundary() {
         return (CurveBoundary) super.getBoundary();
     }
+
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.Curve#getSegments()
+     * {@inheritDoc }
      */
+    @Override
     public final List<CurveSegment> getSegments() {
         return curveSegments;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getStartPoint()
+     * {@inheritDoc }
      */
+    @Override
     public final DirectPosition getStartPoint() {
         return ((CurveSegment) curveSegments.get(0)).getStartPoint();
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getEndPoint()
+     * {@inheritDoc }
      */
+    @Override
     public final DirectPosition getEndPoint() {
         return ((CurveSegment) curveSegments.get(curveSegments.size()-1)).getEndPoint();
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getTangent(double)
+     * {@inheritDoc }
      */
+    @Override
     public double [] getTangent(double s) {
         // PENDING(CSD): Implement me!
         return new double[0];
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final double getStartParam() {
         return 0.0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final double getEndParam() {
         return this.length(0, getEndConstructiveParam());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final double getStartConstructiveParam() {
         return 0.0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final double getEndConstructiveParam() {
         return curveSegments.size();
     }
@@ -126,6 +138,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     // of curve i, i.e. C(i+d) = C_i((1-d)*scp + d*ecp), 0 <= d < 1, scp is the
     // start constructive param of curve segment i, ecp is the end constructive
     // param of curve segment i.
+    @Override
     public final DirectPosition forConstructiveParam(double cp) {
         int n = curveSegments.size();
         int i = (int) cp;
@@ -147,6 +160,10 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final DirectPosition forParam(double s) {
         return null;
     }
@@ -154,6 +171,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Not implemented.  Always just returns null.
      */
+    @Override
     public ParamForPoint getParamForPoint(DirectPosition p) {
         return null;
     }
@@ -161,6 +179,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Not implemented.  Always returns zero.
      */
+    @Override
     public double length(Position point1, Position point2) {
         return 0.0;
     }
@@ -170,6 +189,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * This wouldn't be hard to implement, though.  You'd just sum over the
      * CurveSegments that comprise this object.
      */
+    @Override
     public double length(double cparam1, double cparam2) {
         return 0.0;
     }
@@ -179,6 +199,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * in which case it returns a concatenation of all the LineStrings.
      * In future versions this could be implemented by delegating to the comprising segments.
      */
+    @Override
     public LineString asLineString(double maxSpacing, double maxOffset) {
     	int count = curveSegments.size();
     	if (count == 1) {
@@ -216,10 +237,12 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Returns null.
      */
+    @Override
     public CompositeCurve getComposite() {
         return null;
     }
 
+    @Override
     public int getOrientation() {
         return +1;
     }
@@ -227,6 +250,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Returns "this".  Should return the containing primitive, if any.
      */
+    @Override
     public Curve getPrimitive() {
         return this;
     }
@@ -234,6 +258,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Not implemented.  Always returns an empty set.
      */
+    @Override
     public Set getContainedPrimitives() {
         return Collections.EMPTY_SET;
     }
@@ -243,6 +268,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * association would require a lot of extra work).  Always returns an
      * empty set.
      */
+    @Override
     public Set getContainingPrimitives() {
         return Collections.EMPTY_SET;
     }
@@ -252,6 +278,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * association would require a lot of extra work).  Always returns an
      * empty set.
      */
+    @Override
     public Set getComplexes() {
         return Collections.EMPTY_SET;
     }
@@ -259,10 +286,15 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Not implemented.  Returns null.
      */
+    @Override
     public OrientableCurve[] getProxy() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         // For each segment that comprises us, get the JTS peer.
         int n = curveSegments.size();

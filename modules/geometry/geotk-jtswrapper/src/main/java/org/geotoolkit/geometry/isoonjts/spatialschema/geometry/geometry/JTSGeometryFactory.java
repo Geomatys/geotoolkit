@@ -59,20 +59,8 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  */
 public class JTSGeometryFactory extends Factory implements GeometryFactory {
     
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
+    private final CoordinateReferenceSystem crs;
     
-    /**
-     * Comment for {@code crs}.
-     */
-    private CoordinateReferenceSystem crs;
-    
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
-    
-
     /**
      * No argument constructor for FactorySPI
      */
@@ -90,10 +78,11 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     //*************************************************************************
     //  implement the GeometryFactory interface
     //*************************************************************************
+    
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#getCoordinateReferenceSystem()
+     * {@inheritDoc }
      */
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
@@ -102,34 +91,39 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public Position createPosition( DirectPosition point ) {
         return new GeneralDirectPosition( point );
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public DirectPosition createDirectPosition() {
         return new GeneralDirectPosition(crs);
     }
     
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createDirectPosition(double[])
+     * {@inheritDoc }
      */
+    @Override
     public DirectPosition createDirectPosition(final double[] coordinates) {
         GeneralDirectPosition pos = new GeneralDirectPosition(coordinates);
         pos.setCoordinateReferenceSystem(crs);
         return pos;
     }
     
-    
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createEnvelope(org.opengis.geometry.coordinate.DirectPosition, org.opengis.geometry.coordinate.DirectPosition)
+     * {@inheritDoc }
      */
+    @Override
     public Envelope createEnvelope(
             final DirectPosition lowerCorner, 
             final DirectPosition upperCorner) {
         return new JTSEnvelope(lowerCorner, upperCorner);
     }
+
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createLineSegment(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position)
+     * {@inheritDoc }
      */
+    @Override
     public LineSegment createLineSegment(final Position startPoint, final Position endPoint) {
         JTSLineSegment line = new JTSLineSegment();
         line.getControlPoints().add( startPoint );
@@ -139,9 +133,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createLineString(java.util.List)
+     * {@inheritDoc }
      */
+    @Override
     public LineString createLineString(final List/*<Position>*/ points) {
         LineString result = new JTSLineString();
         PointArray pa = result.getControlPoints();
@@ -167,25 +161,25 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createGeodesic(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position)
+     * {@inheritDoc }
      */
+    @Override
     public Geodesic createGeodesic(final Position startPoint, final Position endPoint) {
         return null;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createGeodesicString(java.util.List)
+     * {@inheritDoc }
      */
+    @Override
     public GeodesicString createGeodesicString(final List/*<Position>*/ points) {
         return null;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createArc(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position)
+     * {@inheritDoc }
      */
+    @Override
     public Arc createArc(
             final Position startPoint, 
             final Position midPoint, 
@@ -194,9 +188,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createArc(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position, double, double[])
+     * {@inheritDoc }
      */
+    @Override
     public Arc createArc(
             final Position startPoint, 
             final Position endPoint, 
@@ -206,17 +200,17 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createArcString(java.util.List)
+     * {@inheritDoc }
      */
+    @Override
     public ArcString createArcString(final List/*<Position>*/ points) {
         return null;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createArcByBulge(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position, double, double[])
+     * {@inheritDoc }
      */
+    @Override
     public ArcByBulge createArcByBulge(
             final Position startPoint, 
             final Position endPoint, 
@@ -226,9 +220,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createArcStringByBulge(java.util.List, double[], java.util.List)
+     * {@inheritDoc }
      */
+    @Override
     public ArcStringByBulge createArcStringByBulge(
             final List/*<Position>*/ points, 
             final double[] bulges,
@@ -236,11 +230,10 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
         return null;
     }
     
-    
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createBSplineCurve(int, org.opengis.geometry.coordinate.PointArray, java.util.List, org.opengis.geometry.coordinate.KnotType)
+     * {@inheritDoc }
      */
+    @Override
     public BSplineCurve createBSplineCurve(int arg0, PointArray arg1, List arg2, KnotType arg3)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
@@ -248,20 +241,19 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createPolygon(org.opengis.geometry.primitive.SurfaceBoundary)
+     * {@inheritDoc }
      */
+    @Override
     public Polygon createPolygon(SurfaceBoundary boundary) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary);
         return result;
     }
     
-    
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createPolygon(org.opengis.geometry.primitive.SurfaceBoundary, org.opengis.geometry.primitive.Surface)
+     * {@inheritDoc }
      */
+    @Override
     public Polygon createPolygon(SurfaceBoundary boundary, Surface spanningSurface)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary, Collections.singletonList(spanningSurface));
@@ -269,9 +261,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createTin(java.util.Set, java.util.Set, java.util.Set, double)
+     * {@inheritDoc }
      */
+    @Override
     public Tin createTin(Set arg0, Set arg1, Set arg2, double arg3)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
@@ -289,11 +281,10 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
     
-    
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createMultiPrimitive()
+     * {@inheritDoc }
      */
+    @Override
     public MultiPrimitive createMultiPrimitive() {
         throw new UnsupportedOperationException(
         "This is the JTS Wrapper Factory which only supports implementations that align with the Simple Feature for SQL Specification.");
@@ -301,9 +292,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     
     
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Factory#createPolyhedralSurface(java.util.List)
+     * {@inheritDoc }
      */
+    @Override
     public PolyhedralSurface createPolyhedralSurface(final List<Polygon> polygons)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
@@ -312,6 +303,10 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
         return result;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public BSplineSurface createBSplineSurface( List arg0, int[] arg1, List[] arg2, KnotType arg3 ) throws MismatchedReferenceSystemException, MismatchedDimensionException {
         throw new UnsupportedOperationException(
             "This is the JTS Wrapper Factory which only supports implementations that align with the Simple Feature for SQL Specification.");

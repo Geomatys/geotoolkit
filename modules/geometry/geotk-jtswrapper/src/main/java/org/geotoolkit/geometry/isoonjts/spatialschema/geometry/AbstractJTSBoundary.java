@@ -27,25 +27,20 @@ import org.opengis.geometry.Boundary;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class JTSBoundary extends JTSComplex implements Boundary {
-    
-    //*************************************************************************
-    //  
-    //*************************************************************************
-    
+public abstract class AbstractJTSBoundary extends JTSComplex implements Boundary {
+        
     /**
-     * Creates a new {@code BoundaryImpl}.
-     * 
+     * Creates a new {@code JTSBoundary}.
      */
-    public JTSBoundary() {
+    protected AbstractJTSBoundary() {
         this(null);
     }
 
     /**
-     * Creates a new {@code BoundaryImpl}.
+     * Creates a new {@code JTSBoundary}.
      * @param crs
      */
-    public JTSBoundary(final CoordinateReferenceSystem crs) {
+    protected AbstractJTSBoundary(final CoordinateReferenceSystem crs) {
         super(crs);
     }
 }

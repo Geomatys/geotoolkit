@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-// J2SE direct dependencies
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.List;
@@ -19,6 +18,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
@@ -37,7 +37,7 @@ import org.opengis.geometry.primitive.CurveSegment;
  * @author crossley
  * @version $Revision $
  */
-public class JTSLineString extends JTSGenericCurve
+public class JTSLineString extends AbstractJTSGenericCurve
 	implements LineString, JTSGeometry {
 
     /**
@@ -62,33 +62,33 @@ public class JTSLineString extends JTSGenericCurve
     //*************************************************************************
     
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.LineString#getControlPoints()
+     * {@inheritDoc }
      */
+    @Override
     public PointArray getControlPoints() {
         return controlPoints;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.LineString#asLineSegments()
+     * {@inheritDoc }
      */
+    @Override
     public List asLineSegments() {
         return null;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#getBoundary()
+     * {@inheritDoc }
      */
+    @Override
     public CurveBoundary getBoundary() {
         return new JTSCurveBoundary(null, new JTSPoint(getStartPoint()), new JTSPoint(getEndPoint()));
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#getCurve()
+     * {@inheritDoc }
      */
+    @Override
     public Curve getCurve() {
         if (parent instanceof Curve)
             return (Curve) parent;
@@ -97,9 +97,9 @@ public class JTSLineString extends JTSGenericCurve
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#getInterpolation()
+     * {@inheritDoc }
      */
+    @Override
     public CurveInterpolation getInterpolation() {
         return CurveInterpolation.LINEAR;
     }
@@ -113,33 +113,33 @@ public class JTSLineString extends JTSGenericCurve
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#getNumDerivativesAtEnd()
+     * {@inheritDoc }
      */
+    @Override
     public int getNumDerivativesAtEnd() {
         return Integer.MAX_VALUE;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#getNumDerivativesAtStart()
+     * {@inheritDoc }
      */
+    @Override
     public int getNumDerivativesAtStart() {
         return Integer.MAX_VALUE;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#getSamplePoints()
+     * {@inheritDoc }
      */
+    @Override
     public PointArray getSamplePoints() {
         return controlPoints;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveSegment#reverse()
+     * {@inheritDoc }
      */
+    @Override
     public CurveSegment reverse() {
         JTSLineString result = new JTSLineString();
         PointArray pa = result.getSamplePoints();
@@ -152,57 +152,57 @@ public class JTSLineString extends JTSGenericCurve
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getStartPoint()
+     * {@inheritDoc }
      */
+    @Override
     public DirectPosition getStartPoint() {
         return (DirectPosition) controlPoints.positions().get(0);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getEndPoint()
+     * {@inheritDoc }
      */
+    @Override
     public DirectPosition getEndPoint() {
         return (DirectPosition) controlPoints.positions().get(controlPoints.length() - 1);
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getTangent(double)
+     * {@inheritDoc }
      */
+    @Override
     public double [] getTangent(final double s) {
         return null;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getStartParam()
+     * {@inheritDoc }
      */
+    @Override
     public double getStartParam() {
         return 0;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getEndParam()
+     * {@inheritDoc }
      */
+    @Override
     public double getEndParam() {
         return 1;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getStartConstructiveParam()
+     * {@inheritDoc }
      */
+    @Override
     public double getStartConstructiveParam() {
         return 0;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getEndConstructiveParam()
+     * {@inheritDoc }
      */
+    @Override
     public double getEndConstructiveParam() {
         return 1;
     }
@@ -222,41 +222,41 @@ public class JTSLineString extends JTSGenericCurve
     }*/
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#getParamForPoint(org.opengis.geometry.coordinate.DirectPosition)
+     * {@inheritDoc }
      */
+    @Override
     public ParamForPoint getParamForPoint(final DirectPosition p) {
         return null;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#length(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position)
+     * {@inheritDoc }
      */
+    @Override
     public double length(final Position point1, final Position point2) {
         return 0;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#length(double, double)
+     * {@inheritDoc }
      */
+    @Override
     public double length(final double cparam1, final double cparam2) {
         return 0;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.GenericCurve#asLineString(double, double)
+     * {@inheritDoc }
      */
+    @Override
     public LineString asLineString(final double maxSpacing, final double maxOffset) {
         return null;
     }
 
     /**
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.geometry.GenericCurveImpl#computeJTSPeer()
+     * {@inheritDoc }
      */
+    @Override
     protected Geometry computeJTSPeer() {
         int n = controlPoints.length();
         com.vividsolutions.jts.geom.Coordinate [] coords =
@@ -272,24 +272,23 @@ public class JTSLineString extends JTSGenericCurve
      * We'd like to return "1", but the first derivative is undefined at the
      * corners.  The subclass, LineSegment, can override this to return 1.
      */
+    @Override
     public int getNumDerivativesInterior() {
         return 0;
     }
 
     /**
-     * @param cp
-     * @return
-     * @see org.opengis.geometry.coordinate.GenericCurve#forConstructiveParam(double)
+     * {@inheritDoc }
      */
+    @Override
     public DirectPosition forConstructiveParam(double cp) {
         return null;
     }
 
     /**
-     * @param s
-     * @return
-     * @see org.opengis.geometry.coordinate.GenericCurve#forParam(double)
+     * {@inheritDoc }
      */
+    @Override
     public DirectPosition forParam(double s) {
         return null;
     }

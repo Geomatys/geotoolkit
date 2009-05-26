@@ -11,7 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 // OpenGIS direct dependencies
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSBoundary;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSBoundary;
 import org.opengis.geometry.complex.ComplexBoundary;
 
 
@@ -26,5 +26,5 @@ import org.opengis.geometry.complex.ComplexBoundary;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class JTSComplexBoundary extends JTSBoundary implements ComplexBoundary {
+public class JTSComplexBoundary extends AbstractJTSBoundary implements ComplexBoundary {
 }

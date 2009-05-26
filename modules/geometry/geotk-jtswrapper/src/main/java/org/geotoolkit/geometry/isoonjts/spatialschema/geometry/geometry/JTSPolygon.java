@@ -21,12 +21,13 @@ import java.util.List;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
+
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.SurfaceInterpolation;
-
 import org.opengis.geometry.coordinate.PolyhedralSurface;
+
 
 public class JTSPolygon extends JTSSurfacePatch implements Polygon {
     

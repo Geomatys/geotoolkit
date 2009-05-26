@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-// OpenGIS direct dependencies
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.GenericSurface;
 
@@ -29,19 +28,8 @@ import org.opengis.geometry.coordinate.GenericSurface;
  *          ({@link org.opengis.geometry.primitive.Surface} and {@link org.opengis.geometry.primitive.SurfacePatch})
  *          belong to that package?
  */
-public abstract class JTSGenericSurface implements GenericSurface {
+public abstract class AbstractJTSGenericSurface implements GenericSurface {
     
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
-    
-    //*************************************************************************
-    //  Constructor
-    //*************************************************************************
-    
-    //*************************************************************************
-    //  implement the GenericSurface interface
-    //*************************************************************************
     
     /**
      * Returns a vector perpendicular to the {@code GenericSurface} at the
@@ -73,6 +61,7 @@ public abstract class JTSGenericSurface implements GenericSurface {
      * @return The upNormal unit vector.
      * @UML operation upNormal
      */
+    @Override
     public abstract double[] getUpNormal(DirectPosition point);
 
     /**
@@ -92,6 +81,7 @@ public abstract class JTSGenericSurface implements GenericSurface {
      * @unitof Length
      * @UML operation perimeter
      */
+    @Override
     public abstract double getPerimeter();
 
     /**
@@ -114,5 +104,6 @@ public abstract class JTSGenericSurface implements GenericSurface {
      *
      * @revisit In UML diagram, the return type is {@code Area}.
      */
+    @Override
     public abstract double getArea();
 }

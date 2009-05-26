@@ -9,9 +9,7 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-// OpenGIS direct dependencies
-
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSBoundary;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 
@@ -27,12 +25,8 @@ import org.opengis.geometry.primitive.PrimitiveBoundary;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class JTSPrimitiveBoundary extends JTSBoundary implements PrimitiveBoundary {
-    
-    //*************************************************************************
-    //  
-    //*************************************************************************
-    
+public class JTSPrimitiveBoundary extends AbstractJTSBoundary implements PrimitiveBoundary {
+        
     /**
      * Creates a new {@code PrimitiveBoundaryImpl}.
      * 

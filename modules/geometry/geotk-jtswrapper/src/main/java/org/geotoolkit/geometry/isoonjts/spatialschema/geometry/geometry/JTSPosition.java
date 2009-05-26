@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-// OpenGIS direct dependencies
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.Position;
 
@@ -27,39 +26,26 @@ import org.opengis.geometry.coordinate.Position;
  * @version 2.0
  */
 public class JTSPosition implements Position {
-    
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
-    
+        
     private DirectPosition position;
-    
-    //*************************************************************************
-    //  Constructor
-    //*************************************************************************
-    
+        
     public JTSPosition(final DirectPosition position) {
         this.position = position;
     }
     
-    //*************************************************************************
-    //  implement the Position interface
-    //*************************************************************************
-
-    
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Position#getPosition()
+     * {@inheritDoc }
      */
     @Deprecated
+    @Override
     public DirectPosition getPosition() {
         return position;
     }
     
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.coordinate.Position#getDirectPosition()
+     * {@inheritDoc }
      */
+    @Override
     public DirectPosition getDirectPosition() {
         return position;
     }

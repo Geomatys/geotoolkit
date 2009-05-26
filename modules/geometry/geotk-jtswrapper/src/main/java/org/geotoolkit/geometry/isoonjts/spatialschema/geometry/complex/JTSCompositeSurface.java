@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
-import java.util.List;
 import java.util.Set;
 
 import org.opengis.geometry.complex.Complex;
@@ -38,11 +37,8 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
  *          (returns TRUE for end points).
  */
-public class JTSCompositeSurface extends JTSComposite implements CompositeSurface {//, OrientableSurface {
+public class JTSCompositeSurface extends AbstractJTSComposite implements CompositeSurface {//, OrientableSurface {
     
-    //*************************************************************************
-    //  implement the CompositeSurface
-    //*************************************************************************
     
     /**
      * Returns the list of orientable surfaces in this composite.
@@ -55,6 +51,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      * @return The list of orientable surfaces in this composite.
      * @UML association generator
      */
+    @Override
     public Set<OrientableSurface> getGenerators() {
         return null;
     }
@@ -81,6 +78,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      * @return The sets of positions on the boundary.
      * @UML operation boundary
      */
+    @Override
     public SurfaceBoundary getBoundary() {
         return (SurfaceBoundary) super.getBoundary();
     }
@@ -94,6 +92,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      * @revisit I'm not sure to interpret correctly the ISO specification.
      *          Sound like ISO returns an array (or a sequence) here.
      */
+    @Override
     public CompositeSurface getComposite() {
         return null;
     }
@@ -111,6 +110,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      * @revisit The UML specify a {@code Sign} return type.
      *          Should we create a {@code Sign} class?
      */
+    @Override
     public int getOrientation() {
         return 0;
     }
@@ -127,6 +127,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      *
      * @see Primitive#getProxy
      */
+    @Override
     public Surface getPrimitive() {
         return null;
     }
@@ -171,6 +172,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      *
      * @see #getContainingPrimitives
      */
+    @Override
     public Set<Primitive> getContainedPrimitives() {
         return null;
     }
@@ -191,6 +193,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      *
      * @see #getContainedPrimitives
      */
+    @Override
     public Set<Primitive> getContainingPrimitives() {
         return null;
     }
@@ -206,6 +209,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      * @revisit Does it means that {@code Primitive} can't be immutable, since
      *          adding this primitive to a complex will change this set?
      */
+    @Override
     public Set<Complex> getComplexes() {
         return null;
     }
@@ -225,6 +229,7 @@ public class JTSCompositeSurface extends JTSComposite implements CompositeSurfac
      *
      * @revisit Should we use the plural form for the method names?
      */
+    @Override
     public OrientablePrimitive[] getProxy() {
         return null;
     }

@@ -25,6 +25,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * returned JTS object.
  */
 public interface JTSGeometry {
+    
     /**
      * Retrieves the equivalent JTS geometry for this object.  Note that this
      * operation may be expensive if the geometry must be computed.

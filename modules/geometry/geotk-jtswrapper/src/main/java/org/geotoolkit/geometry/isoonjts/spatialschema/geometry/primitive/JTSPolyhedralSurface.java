@@ -24,6 +24,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
@@ -41,7 +42,11 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  */
 public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {
     
-    protected List<JTSPolygon> patches;
+    protected final List<JTSPolygon> patches = new ArrayList();
+
+    public JTSPolyhedralSurface() {
+        this(null);
+    }
 
     /**
      * Creates a new {@code PolyhedralSurfaceImpl}.
@@ -49,58 +54,100 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
      */
     public JTSPolyhedralSurface(CoordinateReferenceSystem crs) {
         super(crs);
-        patches = new ArrayList();
     }
     
-    public JTSPolyhedralSurface() {
-        this(null);
-    }
-
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SurfaceBoundary getBoundary() {
         return (SurfaceBoundary) super.getBoundary();
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public List<JTSPolygon> getPatches() {
         return patches;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public double [] getUpNormal(DirectPosition point) {
         return new double [] { 0, 0, 1 };
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public double getPerimeter() {
         return getJTSGeometry().getBoundary().getLength();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public double getArea() {
         return getJTSGeometry().getArea();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public CompositeSurface getComposite() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int getOrientation() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Surface getPrimitive() {
         return this;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getComplexes() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getContainingPrimitives() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public OrientableSurface[] getProxy() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getContainedPrimitives() {
         return null;
     }
@@ -109,6 +156,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
      * @return
      * @see com.polexis.lite.spatialschema.geometry.GeometryImpl#computeJTSPeer()
      */
+    @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         if (patches.size() > 1) {
             //throw new UnsupportedOperationException("This implementation does not support surfaces with multiple patches.");
@@ -123,6 +171,10 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
         return ((JTSGeometry) patches.get(0)).getJTSGeometry();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public JTSPolyhedralSurface clone() {
         return (JTSPolyhedralSurface) super.clone();
     }

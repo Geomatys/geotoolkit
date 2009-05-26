@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-// OpenGIS direct dependencies
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.opengis.geometry.coordinate.GenericCurve;
 
@@ -21,11 +20,7 @@ import org.opengis.geometry.coordinate.GenericCurve;
  * @author crossley
  * @version $Revision $
  */
-public abstract class JTSGenericCurve implements GenericCurve, JTSGeometry {
-
-    //*************************************************************************
-    //  fields
-    //*************************************************************************
+public abstract class AbstractJTSGenericCurve implements GenericCurve, JTSGeometry {
 
     private com.vividsolutions.jts.geom.Geometry jtsPeer;
 
@@ -45,6 +40,7 @@ public abstract class JTSGenericCurve implements GenericCurve, JTSGeometry {
      * This method must be called by subclasses whenever the user makes a change
      * to the geometry so that the cached JTS object can be recreated.
      */
+    @Override
     public final void invalidateCachedJTSPeer() {
         jtsPeer = null;
         if (parent != null) parent.invalidateCachedJTSPeer();
@@ -64,6 +60,7 @@ public abstract class JTSGenericCurve implements GenericCurve, JTSGeometry {
      * changed since the last time this method was called, it will return the
      * exact same object.
      */
+    @Override
     public final com.vividsolutions.jts.geom.Geometry getJTSGeometry() {
         if (jtsPeer == null) {
             jtsPeer = computeJTSPeer();

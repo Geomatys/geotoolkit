@@ -9,7 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-// J2SE direct dependencies
 import java.util.ArrayList;
 import java.util.List;
 

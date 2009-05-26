@@ -9,14 +9,13 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-// J2SE direct dependencies
-import java.util.ArrayList;
 import java.util.List;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayList;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
@@ -89,6 +88,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @see List#size
      * @see PointGrid#width
      */
+    @Override
     public int length() {
         return size();
     }
@@ -103,6 +103,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *
      * @see DirectPosition#getDimension
      */
+    @Override
     public int getDimension() {
         return crs.getCoordinateSystem().getDimension();
     }
@@ -114,6 +115,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *
      * @see DirectPosition#getCoordinateReferenceSystem
      */
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
@@ -133,6 +135,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @revisit Should we specify that changes to the returned point will not be reflected
      *          to this array, or should we left the decision to the implementor?
      */
+    @Override
     public Position get(int column) throws IndexOutOfBoundsException {
         return new GeneralDirectPosition((DirectPosition)super.get(column));
     }
@@ -150,6 +153,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *
      * @see #get(int)
      */
+    @Override
     public DirectPosition getDirectPosition(int column, DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition position = (DirectPosition) get(column);
         if (dest == null) {
@@ -174,6 +178,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *
      * @see List#set
      */
+    @Override
     public void setDirectPosition(int column, DirectPosition position) throws IndexOutOfBoundsException {
         DirectPosition thisPosition = (DirectPosition) get(column);
         DirectPosition otherPosition = position.getPosition();
@@ -194,6 +199,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @revisit Should we specify that changes to the returned points will not be reflected
      *          into this array, or should we left the decision to the implementor?
      */
+    @Override
     public Object[] toArray() {
         int n = size();
         DirectPosition [] result = new DirectPosition[n];
@@ -211,10 +217,12 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @return The points in this array.
      * @UML mandatory column
      */
-    public List/*<Position>*/ positions() {
+    @Override
+    public List<Position> positions() {
         return this;
     }
 
+    @Override
     public com.vividsolutions.jts.geom.Geometry getJTSGeometry() {
         int n = super.size();
         com.vividsolutions.jts.geom.Coordinate [] coords =

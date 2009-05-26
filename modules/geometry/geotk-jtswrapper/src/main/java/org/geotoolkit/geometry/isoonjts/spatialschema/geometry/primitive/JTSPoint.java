@@ -9,18 +9,16 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-//J2SE dependencies
 import java.util.Collections;
 import java.util.Set;
 
-// OpenGIS direct dependencies
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -35,7 +33,6 @@ import org.opengis.geometry.primitive.Point;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.geometry.complex.Composite;
 
-//import com.polexis.lite.referencing.operation.CoordinateOperationFactoryImpl;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
@@ -53,15 +50,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
  */
 public class JTSPoint extends AbstractJTSGeometry implements Point {
 
-    //*************************************************************************
-    //  Members
-    //*************************************************************************
-
     private DirectPosition position;
-
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
 
     /**
      * Creates a new {@code PointImpl}.
@@ -92,7 +81,11 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     //  Methods
     //*************************************************************************
 
+    /**
+     * {@inheritDoc }
+     */
     @Deprecated
+    @Override
     public DirectPosition getPosition() {
         return getDirectPosition();
     }
@@ -102,11 +95,16 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * a reference to our internal object), otherwise the caller could modify
      * the values of the object and we would not know.
      */
+    @Override
     public DirectPosition getDirectPosition() {
         return new GeneralDirectPosition(position);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Deprecated
+    @Override
     public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         setDirectPosition(position);
     }
@@ -116,6 +114,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * point is not in the same coordinate reference system as this primitive,
      * then we attempt to convert it.
      */
+    @Override
     public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         if (isMutable()) {
             CoordinateReferenceSystem myCRS = getCoordinateReferenceSystem();
@@ -149,6 +148,10 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public PrimitiveBoundary getBoundary() {
         return (PrimitiveBoundary) super.getBoundary();
     }
@@ -156,6 +159,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     /**
      * Not supported in this implementation.
      */
+    @Override
     public Bearing getBearing(final Position toPoint) {
         throw new UnsupportedOperationException("Bearing calculation is not supported");
     }
@@ -163,30 +167,55 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     /**
      * Computes the JTS equivalent of this geometry.
      */
+    @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         return JTSUtils.directPositionToPoint(position);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getContainedPrimitives() {
         return Collections.EMPTY_SET;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getContainingPrimitives() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getComplexes() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Composite getComposite() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public OrientablePrimitive[] getProxy() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
 	public int hashCode() {
 		final int PRIME = 31;
 		int result = 1;
@@ -194,6 +223,10 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
 		return result;
 	}
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

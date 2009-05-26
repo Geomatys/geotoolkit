@@ -9,9 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
-// J2SE direct dependencies
-import com.vividsolutions.jts.geom.Geometry;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,8 +19,11 @@ import java.util.Set;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
+import org.opengis.geometry.primitive.Primitive;
 
 
 /**
@@ -54,31 +54,25 @@ import org.opengis.geometry.complex.Complex;
  *
  * @revisit Some associations are commented out for now.
  */
-public class JTSComplex extends AbstractJTSGeometry implements Complex {
+public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implements Complex {
 
-    //*************************************************************************
-    //  Fields
-    //*************************************************************************
-
-    private List elements;
+    private List<T> elements;
 
     protected Set setViewOfElements;
 
     private Set subComplexes;
 
-    //*************************************************************************
-    //  Constructors
-    //*************************************************************************
-
     public JTSComplex(CoordinateReferenceSystem crs) {
         super(crs);
         // Override a couple of methods to make sure that they invalidate our
         // cached JTS representation.
-        elements = new ArrayList() {
-            public boolean add(Object o) {
+        elements = new ArrayList<T>() {
+            @Override
+            public boolean add(T o) {
                 invalidateCachedJTSPeer();
                 return super.add(o);
             }
+            @Override
             public boolean remove(Object o) {
                 invalidateCachedJTSPeer();
                 return super.remove(o);
@@ -88,7 +82,7 @@ public class JTSComplex extends AbstractJTSGeometry implements Complex {
         subComplexes = new HashSet();
     }
 
-    protected List getElementList() {
+    protected List<T> getElementList() {
         return elements;
     }
 
@@ -101,6 +95,7 @@ public class JTSComplex extends AbstractJTSGeometry implements Complex {
      * contain this one.  Therefore it cannot be known if a complex is maximal.
      * So this method always returns false.
      */
+    @Override
     public final boolean isMaximal() {
         return false;
     }
@@ -109,6 +104,7 @@ public class JTSComplex extends AbstractJTSGeometry implements Complex {
      * This implementation does not support knowing about "larger" objects that
      * contain this one.  Therefore this method always returns null.
      */
+    @Override
     public final Complex[] getSuperComplexes() {
         return null;
     }
@@ -117,6 +113,7 @@ public class JTSComplex extends AbstractJTSGeometry implements Complex {
      * Returns an array that lists the subcomplexes currently added to this
      * object.
      */
+    @Override
     public final Complex[] getSubComplexes() {
         Complex [] result = new Complex[subComplexes.size()];
         subComplexes.toArray(result);
@@ -136,14 +133,16 @@ public class JTSComplex extends AbstractJTSGeometry implements Complex {
      * no attempt to keep the set of subComplexes up to date when this set is
      * modified, so modify with caution.
      */
-    public final Collection/*<Primitive>*/ getElements() {
+    @Override
+    public final Collection<Primitive> getElements() {
         return setViewOfElements;
     }
 
     /**
      * Creates the JTS peer.
      */
-    protected final Geometry computeJTSPeer() {
+    @Override
+    protected final com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         ArrayList subParts = new ArrayList();
         Iterator elemIt = elements.iterator();
         while (elemIt.hasNext()) {
@@ -154,5 +153,6 @@ public class JTSComplex extends AbstractJTSGeometry implements Complex {
         // combine geometries by putting them into the most specific collection
         // class it can.
         return JTSUtils.GEOMETRY_FACTORY.buildGeometry(subParts);
-    }    
+    }
+    
 }

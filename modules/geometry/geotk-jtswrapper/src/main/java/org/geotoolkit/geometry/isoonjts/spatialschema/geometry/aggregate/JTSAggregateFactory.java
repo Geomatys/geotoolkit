@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.*;
 import java.util.Set;
 
 import org.geotoolkit.factory.Factory;

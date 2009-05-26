@@ -9,16 +9,14 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-// J2SE direct dependencies
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
@@ -26,7 +24,6 @@ import org.opengis.geometry.primitive.OrientableSurface;
 import org.opengis.geometry.primitive.Primitive;
 import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfacePatch;
-
 import org.opengis.geometry.primitive.SurfaceBoundary;
 
 
@@ -67,51 +64,99 @@ public class JTSSurface extends AbstractJTSGeometry implements Surface {
         patches = new ArrayList();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @SuppressWarnings("unchecked")
+    @Override
     public List<JTSSurfacePatch> getPatches() {
         return patches;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SurfaceBoundary getBoundary() {
         return (SurfaceBoundary) super.getBoundary();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public double [] getUpNormal(DirectPosition point) {
         return new double [] { 0, 0, 1 };
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public double getPerimeter() {
         return getJTSGeometry().getBoundary().getLength();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public double getArea() {
         return getJTSGeometry().getArea();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public CompositeSurface getComposite() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int getOrientation() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Surface getPrimitive() {
         return this;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getComplexes() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getContainingPrimitives() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public OrientableSurface[] getProxy() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set getContainedPrimitives() {
         return null;
     }
@@ -120,6 +165,7 @@ public class JTSSurface extends AbstractJTSGeometry implements Surface {
      * @return
      * @see com.polexis.lite.spatialschema.geometry.GeometryImpl#computeJTSPeer()
      */
+    @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         if (patches.size() > 1) {
             //throw new UnsupportedOperationException("This implementation does not support surfaces with multiple patches.");

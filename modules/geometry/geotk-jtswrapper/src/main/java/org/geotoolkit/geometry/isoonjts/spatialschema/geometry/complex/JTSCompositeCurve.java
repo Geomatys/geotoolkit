@@ -9,9 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
-// J2SE direct dependencies
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +19,6 @@ import org.opengis.geometry.primitive.OrientableCurve;
 import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Primitive;
 import org.opengis.geometry.primitive.Curve;
-
 import org.opengis.geometry.primitive.CurveBoundary;
 
 /**
@@ -46,7 +42,8 @@ import org.opengis.geometry.primitive.CurveBoundary;
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
  *          (returns TRUE for end points).
  */
-public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
+public class JTSCompositeCurve extends AbstractJTSComposite implements CompositeCurve {
+    
     // A parent curve, if any.
     private CompositeCurve parent;
 
@@ -63,6 +60,7 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
     //  implement the CompositeCurve interface
     //*************************************************************************
 
+    @Override
     public CurveBoundary getBoundary() {
         return (CurveBoundary) super.getBoundary();
     }
@@ -77,6 +75,7 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
      * @return The list of orientable curves in this composite.
      * @UML association generator
      */
+    @Override
     public final List<OrientableCurve> getGenerators() {
         return getElementList();
     }
@@ -94,6 +93,7 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
      * @revisit I'm not sure to interpret correctly the ISO specification.
      *          Sound like ISO returns an array (or a sequence) here.
      */
+    @Override
     public final CompositeCurve getComposite() {
         return parent;
     }
@@ -106,6 +106,7 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
      * This implementation always returns +1, indicating that the curve is to
      * be traversed in its "natural" order.
      */
+    @Override
     public int getOrientation() {
         return +1;
     }
@@ -116,6 +117,7 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
      * method always returns "null".  (In the future, it might return the
      * positively oriented object for which this object is the negative proxy.)
      */
+    @Override
     public Curve getPrimitive() {
         return null;
     }
@@ -124,14 +126,17 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
      * This implementation doesn't support traversing this association in
      * this direction, so this method always returns null.
      */
+    @Override
     public final Set<Primitive> getContainingPrimitives() {
         return null;
     }
 
+    @Override
     public final Set<Complex> getComplexes() {
         return null;
     }
 
+    @Override
     public final Set getContainedPrimitives() {
         return setViewOfElements;
     }
@@ -143,6 +148,7 @@ public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
      * proxies for the positively and negatively oriented versions of this
      * primitive.
      */
+    @Override
     public OrientablePrimitive[] getProxy() {
         return null;
     }

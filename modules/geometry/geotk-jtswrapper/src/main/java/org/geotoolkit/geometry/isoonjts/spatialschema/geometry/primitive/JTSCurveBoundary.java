@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.CurveBoundary;
 import org.opengis.geometry.primitive.Point;
 
@@ -25,28 +24,12 @@ import org.opengis.geometry.primitive.Point;
  * superclass, which currently does nothing).
  */
 public class JTSCurveBoundary extends JTSPrimitiveBoundary implements CurveBoundary {
-    
-    //*************************************************************************
-    //  
-    //*************************************************************************
-    /**
-     * Comment for {@code EMPTY_COMPLEX_ARRAY}.
-     */
-    private static final Complex [] EMPTY_COMPLEX_ARRAY = new Complex[0];
-
-    //*************************************************************************
-    //  
-    //*************************************************************************
-    
+        
     private Point startPoint;
     
     private Point endPoint;
     
     private Set pointSet;
-
-    //*************************************************************************
-    //  
-    //*************************************************************************
     
     public JTSCurveBoundary(
             final CoordinateReferenceSystem crs, 
@@ -66,22 +49,18 @@ public class JTSCurveBoundary extends JTSPrimitiveBoundary implements CurveBound
         this.pointSet = Collections.unmodifiableSet(tempSet);
     }
 
-    //*************************************************************************
-    //  
-    //*************************************************************************
-
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveBoundary#getStartPoint()
+     * {@inheritDoc }
      */
+    @Override
     public Point getStartPoint() {
         return startPoint;
     }
 
     /**
-     * @inheritDoc
-     * @see org.opengis.geometry.primitive.CurveBoundary#getEndPoint()
+     * {@inheritDoc }
      */
+    @Override
     public Point getEndPoint() {
         return endPoint;
     }

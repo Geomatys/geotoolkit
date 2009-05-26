@@ -28,26 +28,14 @@ import org.opengis.geometry.primitive.Bearing;
  */
 public class JTSBearing implements Bearing {
     
-    //*************************************************************************
-    //  fields
-    //*************************************************************************
+    private final double[] angles;
     
-    private double[] angles;
-    
-    private double[] direction;
-    
-    //*************************************************************************
-    //  Constructor
-    //*************************************************************************
+    private final double[] direction;
     
     public JTSBearing(double[] angles, double[] direction) {
         this.angles = angles;
         this.direction = direction;
     }
-    
-    //*************************************************************************
-    //
-    //*************************************************************************
     
     /**
      * Returns the azimuth and (optionnaly) the altitude.
@@ -64,6 +52,7 @@ public class JTSBearing implements Bearing {
      *          {@code getAltitude()} methods instead? Should we provides
      *          a {@code getDimension()} method too?
      */
+    @Override
     public double[] getAngles() {
         return angles;
     }
@@ -76,6 +65,7 @@ public class JTSBearing implements Bearing {
      * @return The direction.
      * @UML operation direction
      */
+    @Override
     public double[] getDirection() {
         return direction;
     }

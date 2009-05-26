@@ -40,6 +40,7 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
     /**
      * Returns the exterior ring, or {@code null} if none.
      */
+    @Override
     public Ring getExterior() {
         return exterior;
     }
@@ -47,6 +48,7 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
     /**
      * Returns the interior rings.
      */
+    @Override
     public List getInteriors() {
         return interior;
     }
