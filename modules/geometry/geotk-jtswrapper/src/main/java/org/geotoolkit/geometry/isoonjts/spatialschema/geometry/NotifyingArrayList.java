@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.geotoolkit.geometry.isoonjts.JTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 
 /**
  * Helper class that notifies the containing geometry when the list has changed

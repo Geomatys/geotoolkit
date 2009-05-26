@@ -10,7 +10,7 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
 // OpenGIS direct dependencies
-import org.geotoolkit.geometry.isoonjts.JTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.opengis.geometry.coordinate.GenericCurve;
 
 

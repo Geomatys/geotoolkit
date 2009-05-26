@@ -15,7 +15,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.List;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.JTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.CurveBoundaryImpl;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointImpl;

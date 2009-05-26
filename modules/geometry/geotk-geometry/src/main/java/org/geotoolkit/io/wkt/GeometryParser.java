@@ -16,18 +16,16 @@
  */ 
 package org.geotoolkit.io.wkt;
 
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.aggregate.AggregateFactory;
 import org.opengis.geometry.aggregate.MultiPrimitive;
-import org.opengis.geometry.complex.ComplexFactory;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
+import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.Point;
-import org.opengis.geometry.primitive.Primitive;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -42,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import org.opengis.geometry.primitive.CurveSegment;
+import org.opengis.geometry.primitive.OrientableCurve;
 
 
 /**
@@ -85,6 +85,7 @@ import java.util.Set;
  * 
  * @author Jody Garnett
  * @author Joel Skelton
+ * @author Johann Sorel (Geomatys)
  * @since 2.5
  * @version $Id$
  */
@@ -123,7 +124,7 @@ public class GeometryParser {
      * Should be called prior to use.
      * @param factory
      */
-    public void setFactory( GeometryFactory factory){
+    public void setFactory(GeometryFactory factory){
         this.geometryFactory = factory;
     }
 
@@ -133,7 +134,7 @@ public class GeometryParser {
      * Should be called prior to use.
      * @param factory
      */
-    public void setFactory( PrimitiveFactory factory){
+    public void setFactory(PrimitiveFactory factory){
         this.primitiveFactory = factory;
     }
     /**
@@ -142,7 +143,7 @@ public class GeometryParser {
      * Should be called prior to use.
      * @param factory
      */
-    public void setFactory( PositionFactory factory){
+    public void setFactory(PositionFactory factory){
         this.positionFactory = factory;
     }
     
@@ -182,7 +183,7 @@ public class GeometryParser {
      *
      * @param tokenizer A <code>StreamTokenizer</code>
      */
-    private void setUpTokenizer(StreamTokenizer tokenizer) {
+    private static void setUpTokenizer(StreamTokenizer tokenizer) {
         final int char128 = 128;
         final int skip32 = 32;
         final int char255 = 255;
@@ -213,7 +214,7 @@ public class GeometryParser {
      * @throws IOException    if an I/O error occurs
      */
     private Geometry readGeometryTaggedText(StreamTokenizer tokenizer) throws IOException, ParseException {
-        String type = getNextWord(tokenizer);
+        final String type = getNextWord(tokenizer);
         if (type.equals("POINT")) {
             return readPointText(tokenizer);
         }  else if (type.equalsIgnoreCase("LINESTRING")) {
@@ -244,10 +245,10 @@ public class GeometryParser {
      * @throws IOException
      * @throws ParseException
      */
-    private List getCoordinates(StreamTokenizer tokenizer)
+    private List<Position> getCoordinates(StreamTokenizer tokenizer)
             throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
-        List coordinates = new ArrayList();
+        List<Position> coordinates = new ArrayList<Position>();
         if (!nextToken.equals(EMPTY)) {
             coordinates.add(getPreciseCoordinate(tokenizer));
             nextToken = getNextCloserOrComma(tokenizer);
@@ -269,15 +270,15 @@ public class GeometryParser {
      */
     private DirectPosition getPreciseCoordinate(StreamTokenizer tokenizer)
             throws IOException, ParseException {
-        DirectPosition pos = geometryFactory.createDirectPosition();
-        pos.setOrdinate(0, getNextNumber(tokenizer));
-        pos.setOrdinate(1, getNextNumber(tokenizer));
+        double[] coords = new double[2];
+        coords[0] = getNextNumber(tokenizer);
+        coords[1] = getNextNumber(tokenizer);
         if (isNumberNext(tokenizer)) {
-            pos.setOrdinate(1, getNextNumber(tokenizer));
+            coords[1] = getNextNumber(tokenizer);
         }
-        return pos;
+        
+        return positionFactory.createDirectPosition(coords);
     }
-
 
     private boolean isNumberNext(StreamTokenizer tokenizer) throws IOException {
         int type = tokenizer.nextToken();
@@ -467,11 +468,10 @@ public class GeometryParser {
      * @throws ParseException if an unexpected token was encountered
      */
     private Curve readLineStringText(StreamTokenizer tokenizer) throws IOException, ParseException {
-        List coordList = getCoordinates(tokenizer);
-        LineString lineString = geometryFactory.createLineString(coordList);
-        List curveSegmentList = Collections.singletonList(lineString);
-        Curve curve = primitiveFactory.createCurve(curveSegmentList);
-        return curve;
+        final List<Position> coordList = getCoordinates(tokenizer);
+        final LineString lineString = geometryFactory.createLineString(coordList);
+        final List<CurveSegment> curveSegmentList = Collections.singletonList((CurveSegment)lineString);
+        return primitiveFactory.createCurve(curveSegmentList);
     }
 
     /**
@@ -488,13 +488,10 @@ public class GeometryParser {
      */
     private Curve readLinearRingText(StreamTokenizer tokenizer)
             throws IOException, ParseException {
-        List coordList = getCoordinates(tokenizer);
+        List<Position> coordList = getCoordinates(tokenizer);
         LineString lineString = geometryFactory.createLineString(coordList);
-        List curveSegmentList = Collections.singletonList(lineString);
-        Curve curve = primitiveFactory.createCurve(curveSegmentList);
-        return curve;
-        //List curveList = Collections.singletonList(curve);
-        //return primitiveFactory.createRing(curveList);
+        List<CurveSegment> curveSegmentList = Collections.singletonList((CurveSegment)lineString);
+        return primitiveFactory.createCurve(curveSegmentList);
     }
 
     /**
@@ -506,8 +503,8 @@ public class GeometryParser {
      *         s <code>GeometryFactory</code>
      */
     private List toPoints(List coordinates) {
-        List points = new ArrayList();
-        for (int i = 0; i < coordinates.size(); i++) {
+        List<Position> points = new ArrayList<Position>();
+        for (int i=0,n=coordinates.size(); i<n; i++) {
             points.add(positionFactory.createPosition((Point)coordinates.get(i)));
         }
         return points;
@@ -530,14 +527,14 @@ public class GeometryParser {
             return null;
         }
         Curve curve = readLinearRingText(tokenizer);
-        List curveList = Collections.singletonList(curve);
+        List<OrientableCurve> curveList = Collections.singletonList((OrientableCurve)curve);
         Ring shell = primitiveFactory.createRing(curveList);
         //Ring shell = readLinearRingText(tokenizer);
-        List holes = new ArrayList();
+        List<Ring> holes = new ArrayList<Ring>();
         nextToken = getNextCloserOrComma(tokenizer);
         while (nextToken.equals(COMMA)) {
         	Curve holecurve = readLinearRingText(tokenizer);
-            List holeList = Collections.singletonList(holecurve);
+            List<OrientableCurve> holeList = Collections.singletonList((OrientableCurve)holecurve);
             Ring hole = primitiveFactory.createRing(holeList);
             //Ring hole = readLinearRingText(tokenizer);
             holes.add(hole);

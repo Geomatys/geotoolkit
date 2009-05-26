@@ -16,19 +16,17 @@
  */
 package org.geotoolkit.geometry.isoonjts;
 
-/*import com.polexis.go.FactoryManager;
-import com.polexis.go.typical.coord.LatLonAlt;
-import com.polexis.referencing.cs.CSUtils;
-*/
-
-// there are many more vividsolutions JTS depedecies further in the code
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryCollection;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -41,26 +39,25 @@ import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.primitive.Curve;
-import org.opengis.geometry.primitive.Point;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
-
-//**This comment is left from the polexis implementation**
-// This class depends on only two non-GO1 objects.  FactoryManager is used to
-// get the factories we need to create the objects.  CSUtils is used to get
-// the right axis (for EAST, NORTH, and UP) when assigning the ordinates of
-// a result DiretPosition.
-
-//geotools dependencies
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.opengis.geometry.coordinate.PointArray;
+import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.primitive.CurveSegment;
 
 /**
  * Class with static methods to help the conversion process between JTS
- * geometries and GO-1 geometries.
+ * geometries and ISO geometries.
  */
 public final class JTSUtils {
+
+    /**
+     * Common instance of GEOMETRY_FACTORY with the default JTS precision model
+     * that can be used to make new geometries.
+     */
+    public static final com.vividsolutions.jts.geom.GeometryFactory GEOMETRY_FACTORY = new com.vividsolutions.jts.geom.GeometryFactory();
+
     /**
      * This class has only static methods, so we make the constructor private
      * to prevent instantiation.
@@ -69,87 +66,68 @@ public final class JTSUtils {
     }
 
     /**
-     * Common instance of GEOMETRY_FACTORY with the default JTS precision model
-     * that can be used to make new geometries.
-     */
-    public static final com.vividsolutions.jts.geom.GeometryFactory
-    	GEOMETRY_FACTORY = new com.vividsolutions.jts.geom.GeometryFactory();
-
-    /**
      * Creates a 19107 primitive geometry from the given JTS geometry.
      */
-    public static Geometry jtsToGo1(
-            final com.vividsolutions.jts.geom.Geometry jtsGeom,
+    public static Geometry jtsToGo1(final com.vividsolutions.jts.geom.Geometry jtsGeom,
             final CoordinateReferenceSystem crs) {
 
-        PrimitiveFactory pf = new PrimitiveFactoryImpl(crs);//FactoryFinder.getPrimitiveFactory(hints);
-        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        if (jtsGeom == null) {
+            return null;
+        }
 
-        String geomType = jtsGeom.getGeometryType();
-        if (geomType.equalsIgnoreCase("Point")) {
-            com.vividsolutions.jts.geom.Point jtsPoint =
-                (com.vividsolutions.jts.geom.Point) jtsGeom;
-            DirectPosition dp = pointToDirectPosition(jtsPoint, crs);
-            Point result = pf.createPoint(dp);
-            return result;
-        
-        } else if (geomType.equalsIgnoreCase("LineString")) {
-            com.vividsolutions.jts.geom.LineString jtsLineString =
-                (com.vividsolutions.jts.geom.LineString) jtsGeom;
-            int numPoints = jtsLineString.getNumPoints();
-            LineString ls = gf.createLineString(new ArrayList());
-            List pointList = ls.getControlPoints().positions();
-            for (int i=0; i<numPoints; i++) {
-                pointList.add(coordinateToDirectPosition(jtsLineString.getCoordinateN(i), crs));
+        //TODO use factory finder when primitive factory and geometry factory are ready.
+        final PrimitiveFactory pf = new PrimitiveFactoryImpl(crs);//FactoryFinder.getPrimitiveFactory(hints);
+        final GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+
+        if (jtsGeom instanceof com.vividsolutions.jts.geom.Point) {
+            com.vividsolutions.jts.geom.Point candidate = (com.vividsolutions.jts.geom.Point) jtsGeom;
+            DirectPosition dp = pointToDirectPosition(candidate, crs);
+            return pf.createPoint(dp);
+
+        } else if (jtsGeom instanceof com.vividsolutions.jts.geom.LineString) {
+            com.vividsolutions.jts.geom.LineString candidate = (com.vividsolutions.jts.geom.LineString) jtsGeom;
+            LineString ls = gf.createLineString(new ArrayList<Position>());
+            PointArray pointList = ls.getControlPoints();
+            for (int i = 0, n = candidate.getNumPoints(); i < n; i++) {
+                pointList.add(coordinateToDirectPosition(candidate.getCoordinateN(i), crs));
             }
-            ArrayList segments = new ArrayList();
+            ArrayList<CurveSegment> segments = new ArrayList<CurveSegment>();
             segments.add(ls);
-            Curve result = pf.createCurve(segments);
-            return result;
-        
-        } else if (geomType.equalsIgnoreCase("LinearRing")) {
-            Ring result = linearRingToRing(
-                    (com.vividsolutions.jts.geom.LinearRing) jtsGeom, crs);
-            return result;
-        
-        } else if (geomType.equalsIgnoreCase("Polygon")) {
-            com.vividsolutions.jts.geom.Polygon jtsPolygon =
-                (com.vividsolutions.jts.geom.Polygon) jtsGeom;
+            return pf.createCurve(segments);
+
+        } else if (jtsGeom instanceof com.vividsolutions.jts.geom.LinearRing) {
+            return linearRingToRing((com.vividsolutions.jts.geom.LinearRing) jtsGeom, crs);
+
+        } else if (jtsGeom instanceof com.vividsolutions.jts.geom.Polygon) {
+            com.vividsolutions.jts.geom.Polygon jtsPolygon = (com.vividsolutions.jts.geom.Polygon) jtsGeom;
             Ring externalRing = linearRingToRing(
                     (com.vividsolutions.jts.geom.LinearRing) jtsPolygon.getExteriorRing(),
                     crs);
-            int n = jtsPolygon.getNumInteriorRing();
             ArrayList internalRings = new ArrayList();
-            for (int i=0; i<n; i++) {
+            for (int i = 0, n = jtsPolygon.getNumInteriorRing(); i < n; i++) {
                 internalRings.add(linearRingToRing(
-                    (com.vividsolutions.jts.geom.LinearRing) jtsPolygon.getInteriorRingN(i),
-                    crs));
+                        (com.vividsolutions.jts.geom.LinearRing) jtsPolygon.getInteriorRingN(i),
+                        crs));
             }
-            SurfaceBoundary boundary = pf.createSurfaceBoundary(externalRing,
-                    internalRings);
+            SurfaceBoundary boundary = pf.createSurfaceBoundary(externalRing, internalRings);
             Polygon polygon = gf.createPolygon(boundary);
-            ArrayList patches = new ArrayList();
+            ArrayList<Polygon> patches = new ArrayList<Polygon>();
             patches.add(polygon);
             PolyhedralSurface result = gf.createPolyhedralSurface(patches);
             return result;
-        
-        } else if (geomType.equalsIgnoreCase("GeometryCollection") ||
-                geomType.equalsIgnoreCase("MultiPoint") ||
-                geomType.equalsIgnoreCase("MultiLineString") ||
-                geomType.equalsIgnoreCase("MultiPolygon")) {
-            com.vividsolutions.jts.geom.GeometryCollection jtsCollection =
-                (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom;
-            int n = jtsCollection.getNumGeometries();
+
+        } else if (jtsGeom instanceof GeometryCollection) {
+            com.vividsolutions.jts.geom.GeometryCollection jtsCollection = (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom;
             MultiPrimitive result = gf.createMultiPrimitive();
             Set elements = result.getElements();
-            for (int i=0; i<n; i++) {
+            for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
                 //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
                 elements.add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
             }
             return result;
-        
+
         } else {
-            throw new IllegalArgumentException("Unsupported geometry type: " + geomType);
+            throw new IllegalArgumentException("Unsupported geometry type: " + jtsGeom.getGeometryType());
         }
     }
 
@@ -157,10 +135,9 @@ public final class JTSUtils {
      * Converts a DirectPosition to a JTS Coordinate.  Returns a newly
      * instantiated Coordinate object.
      */
-    public static com.vividsolutions.jts.geom.Coordinate
-    directPositionToCoordinate(DirectPosition dp) {
+    public static com.vividsolutions.jts.geom.Coordinate directPositionToCoordinate(DirectPosition dp) {
         double x = Double.NaN, y = Double.NaN, z = Double.NaN;
-        int d = dp.getDimension();
+        final int d = dp.getDimension();
         if (d >= 1) {
             x = dp.getOrdinate(0);
             if (d >= 2) {
@@ -179,25 +156,21 @@ public final class JTSUtils {
      * less than three, then the unused ordinates of the Coordinate are set to
      * Double.NaN.
      */
-    public static void directPositionToCoordinate(DirectPosition dp,
-            com.vividsolutions.jts.geom.Coordinate result) {
-        int d = dp.getDimension();
+    public static void directPositionToCoordinate(DirectPosition dp, com.vividsolutions.jts.geom.Coordinate result) {
+        final int d = dp.getDimension();
         if (d >= 1) {
             result.x = dp.getOrdinate(0);
             if (d >= 2) {
                 result.y = dp.getOrdinate(1);
                 if (d >= 3) {
                     result.z = dp.getOrdinate(3);
-                }
-                else {
+                } else {
                     result.z = Double.NaN;
                 }
-            }
-            else {
+            } else {
                 result.y = result.z = Double.NaN;
             }
-        }
-        else {
+        } else {
             // I can't imagine a DirectPosition with dimension zero, but it
             // can't hurt to have code to handle that case...
             result.x = result.y = result.z = Double.NaN;
@@ -209,25 +182,25 @@ public final class JTSUtils {
      * instantiated Point object that was created using the default
      * GeometryFactory instance.
      */
-    public static com.vividsolutions.jts.geom.Point
-    directPositionToPoint(DirectPosition dp) {
+    public static com.vividsolutions.jts.geom.Point directPositionToPoint(DirectPosition dp) {
         return GEOMETRY_FACTORY.createPoint(directPositionToCoordinate(dp));
     }
 
     /**
      * Converts a JTS Coordinate to a DirectPosition with the given CRS.
      */
-    public static DirectPosition coordinateToDirectPosition(
-            com.vividsolutions.jts.geom.Coordinate c,
+    public static DirectPosition coordinateToDirectPosition(com.vividsolutions.jts.geom.Coordinate c,
             CoordinateReferenceSystem crs) {
-        
+
         GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
-         
-        double [] vertices;
-        if (crs == null)
+
+        double[] vertices;
+        if (crs == null) {
             vertices = new double[3];
-        else
+        } else {
             vertices = new double[crs.getCoordinateSystem().getDimension()];
+        }
+
         DirectPosition result = gf.createDirectPosition(vertices);
         coordinateToDirectPosition(c, result);
         return result;
@@ -237,13 +210,12 @@ public final class JTSUtils {
      * Extracts the values of a JTS coordinate into an existing DirectPosition
      * object.
      */
-    public static void coordinateToDirectPosition(
-            com.vividsolutions.jts.geom.Coordinate c,
+    public static void coordinateToDirectPosition(com.vividsolutions.jts.geom.Coordinate c,
             DirectPosition result) {
         // Get the CRS so we can figure out the dimension of the result.
         CoordinateReferenceSystem crs = result.getCoordinateReferenceSystem();
         int d;
-        
+
         if (crs != null) {
             d = crs.getCoordinateSystem().getDimension();
         } else {
@@ -253,7 +225,7 @@ public final class JTSUtils {
             d = 2;
         }
         final CoordinateSystem cs = crs.getCoordinateSystem();
-        
+
         if (d >= 1) {
             int xIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.EAST);
             result.setOrdinate(xIndex, c.x);//0
@@ -267,9 +239,9 @@ public final class JTSUtils {
                     // (so far) left with their original values.  So we init
                     // them to zero here.
                     if (d > 3) {
-	                    for (int i=3; i<d; i++) {
-	                        result.setOrdinate(i, 0.0);
-	                    }
+                        for (int i = 3; i < d; i++) {
+                            result.setOrdinate(i, 0.0);
+                        }
                     }
                 }
             }
@@ -287,16 +259,16 @@ public final class JTSUtils {
     public static Ring linearRingToRing(com.vividsolutions.jts.geom.LineString jtsLinearRing,
             CoordinateReferenceSystem crs) {
         int numPoints = jtsLinearRing.getNumPoints();
-        if (! jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints-1))) {
+        if (!jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints - 1))) {
             throw new IllegalArgumentException("LineString must be a ring");
         }
-        
+
         PrimitiveFactory pf = new PrimitiveFactoryImpl(crs); //FactoryFinder.getPrimitiveFactory(hints);
         GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
-        
+
         LineString ls = gf.createLineString(new ArrayList());
         List pointList = ls.getControlPoints().positions();
-        for (int i=0; i<numPoints; i++) {
+        for (int i = 0; i < numPoints; i++) {
             pointList.add(coordinateToDirectPosition(jtsLinearRing.getCoordinateN(i), crs));
         }
         Curve curve = pf.createCurve(new ArrayList());
@@ -318,31 +290,31 @@ public final class JTSUtils {
         if (g1 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             double minDistance = Double.POSITIVE_INFINITY;
             com.vividsolutions.jts.geom.GeometryCollection gc1 =
-                (com.vividsolutions.jts.geom.GeometryCollection) g1;
+                    (com.vividsolutions.jts.geom.GeometryCollection) g1;
             int n = gc1.getNumGeometries();
-            for (int i=0; i<n; i++) {
+            for (int i = 0; i < n; i++) {
                 double d = distance(gc1.getGeometryN(i), g2);
-                if (d < minDistance)
+                if (d < minDistance) {
                     minDistance = d;
+                }
             }
             return minDistance;
-        }
-        else if (g2 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+        } else if (g2 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             double minDistance = Double.POSITIVE_INFINITY;
             com.vividsolutions.jts.geom.GeometryCollection gc2 =
-                (com.vividsolutions.jts.geom.GeometryCollection) g2;
+                    (com.vividsolutions.jts.geom.GeometryCollection) g2;
             int n = gc2.getNumGeometries();
-            for (int i=0; i<n; i++) {
+            for (int i = 0; i < n; i++) {
                 // This call will result in a redundant check of
                 // g1 instanceof GeometryCollection.  Maybe we oughta fix that
                 // somehow.
                 double d = distance(g1, gc2.getGeometryN(i));
-                if (d < minDistance)
+                if (d < minDistance) {
                     minDistance = d;
+                }
             }
             return minDistance;
-        }
-        else {
+        } else {
             return g1.distance(g2);
         }
     }
@@ -399,27 +371,27 @@ public final class JTSUtils {
             com.vividsolutions.jts.geom.Geometry g2) {
         if (g1 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             com.vividsolutions.jts.geom.GeometryCollection gc1 =
-                (com.vividsolutions.jts.geom.GeometryCollection) g1;
+                    (com.vividsolutions.jts.geom.GeometryCollection) g1;
             int n = gc1.getNumGeometries();
-            for (int i=0; i<n; i++) {
+            for (int i = 0; i < n; i++) {
                 com.vividsolutions.jts.geom.Geometry g = gc1.getGeometryN(i);
-                if (intersects(g, g2))
+                if (intersects(g, g2)) {
                     return true;
+                }
             }
             return false;
-        }
-        else if (g2 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+        } else if (g2 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             com.vividsolutions.jts.geom.GeometryCollection gc2 =
-                (com.vividsolutions.jts.geom.GeometryCollection) g2;
+                    (com.vividsolutions.jts.geom.GeometryCollection) g2;
             int n = gc2.getNumGeometries();
-            for (int i=0; i<n; i++) {
+            for (int i = 0; i < n; i++) {
                 com.vividsolutions.jts.geom.Geometry g = gc2.getGeometryN(i);
-                if (intersects(g1, g))
+                if (intersects(g1, g)) {
                     return true;
+                }
             }
             return false;
-        }
-        else {
+        } else {
             return g1.intersects(g2);
         }
     }
@@ -430,7 +402,7 @@ public final class JTSUtils {
      * @return A JTS Geometry 
      */
     public static com.vividsolutions.jts.geom.Geometry getEnvelopeGeometry(
-    		final Envelope envelope) {
+            final Envelope envelope) {
         // PENDING(NL): Add code to check for CRS compatibility
         // Must consider possibility that this is a pixel envelope
         // rather than geo coordinate; only way to be sure is to check Units
@@ -438,9 +410,9 @@ public final class JTSUtils {
         DirectPosition botCorner = envelope.getLowerCorner();
         DirectPosition topLeft = new GeneralDirectPosition(topCorner);
         DirectPosition botRight = new GeneralDirectPosition(botCorner);
-        
+
         //Again, making assumption we can ignore this LatLonAlt stuff - colin
-        
+
         /*
         // If the Envelope coordinates are LatLonAlts,
         // calling setOrdinate causes Error-level logging messages,
@@ -448,29 +420,29 @@ public final class JTSUtils {
         // though it still works.  But in principal we should
         // call get/setLat and get/setLon instead if we have LatLonAlts
         if (topLeft instanceof LatLonAlt && botRight instanceof LatLonAlt) {
-        	((LatLonAlt) topLeft).setLon(((LatLonAlt) 
-        			botCorner).getLon(NonSI.DEGREE_ANGLE), NonSI.DEGREE_ANGLE); 
-        	((LatLonAlt) botRight).setLon(((LatLonAlt) 
-        			topCorner).getLon(NonSI.DEGREE_ANGLE), NonSI.DEGREE_ANGLE); 
+        ((LatLonAlt) topLeft).setLon(((LatLonAlt)
+        botCorner).getLon(NonSI.DEGREE_ANGLE), NonSI.DEGREE_ANGLE);
+        ((LatLonAlt) botRight).setLon(((LatLonAlt)
+        topCorner).getLon(NonSI.DEGREE_ANGLE), NonSI.DEGREE_ANGLE);
         } else {*/
-	        
+
         topLeft.setOrdinate(1, botCorner.getOrdinate(1));
-	botRight.setOrdinate(1, topCorner.getOrdinate(1));
-        
-         //}//end of else statment associated with above LatLongAlt stuff
+        botRight.setOrdinate(1, topCorner.getOrdinate(1));
+
+        //}//end of else statment associated with above LatLongAlt stuff
         // Create a JTS Envelope
         Coordinate jtsTopRight =
-            JTSUtils.directPositionToCoordinate(topCorner);
+                JTSUtils.directPositionToCoordinate(topCorner);
         Coordinate jtsTopLeft =
-            JTSUtils.directPositionToCoordinate(topLeft);
+                JTSUtils.directPositionToCoordinate(topLeft);
         Coordinate jtsBotLeft =
-            JTSUtils.directPositionToCoordinate(botCorner);
+                JTSUtils.directPositionToCoordinate(botCorner);
         Coordinate jtsBotRight =
-            JTSUtils.directPositionToCoordinate(botRight);
+                JTSUtils.directPositionToCoordinate(botRight);
 
         com.vividsolutions.jts.geom.Geometry jtsEnv = GEOMETRY_FACTORY.createLineString(
-        	new Coordinate[] { jtsTopLeft, jtsTopRight, jtsBotRight, jtsBotLeft, 
-        			jtsTopLeft }).getEnvelope();
-    	return jtsEnv;
+                new Coordinate[]{jtsTopLeft, jtsTopRight, jtsBotRight, jtsBotLeft,
+                    jtsTopLeft}).getEnvelope();
+        return jtsEnv;
     }
 }

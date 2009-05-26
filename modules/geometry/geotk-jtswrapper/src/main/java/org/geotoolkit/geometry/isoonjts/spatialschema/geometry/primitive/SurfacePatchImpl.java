@@ -18,7 +18,7 @@ import org.opengis.geometry.primitive.SurfaceInterpolation;
 import org.opengis.geometry.primitive.SurfacePatch;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.geometry.isoonjts.JTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GenericSurfaceImpl;
 
 /**

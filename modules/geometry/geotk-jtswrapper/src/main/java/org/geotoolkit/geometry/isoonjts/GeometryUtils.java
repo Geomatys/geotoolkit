@@ -65,32 +65,32 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 public final class GeometryUtils {
 
     private static final Logger LOGGER = Logging.getLogger(GeometryUtils.class);
+    private static final Envelope WHOLE_WORLD;
 
-    //*************************************************************************
-    //  Static Fields
-    //*************************************************************************
-    
-    private static Envelope WHOLE_WORLD;
-    
-    public static Envelope getWholeWorld() {
-        if (WHOLE_WORLD == null) {
-            CoordinateReferenceSystem crs = null;
-            try {
-                crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
-            } catch (Exception nsace){
-                LOGGER.warning("could not get crs for EPSG:4326");
-            }
-            
-            final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
-            
-            final DirectPosition lowerCorner = geometryFactory.createDirectPosition(new double[] { -90, -180 });
-            final DirectPosition upperCorner = geometryFactory.createDirectPosition(new double[] { 90, 180 });
-            
-            WHOLE_WORLD = geometryFactory.createEnvelope(lowerCorner, upperCorner);
+    static{
+        CoordinateReferenceSystem crs = null;
+        try {
+            crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+        } catch (Exception ex){
+            LOGGER.warning("could not get crs for EPSG:4326");
         }
-        return WHOLE_WORLD;
+
+        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+
+        final DirectPosition lowerCorner = geometryFactory.createDirectPosition(new double[] {-90,-180});
+        final DirectPosition upperCorner = geometryFactory.createDirectPosition(new double[] {90,180});
+
+        WHOLE_WORLD = geometryFactory.createEnvelope(lowerCorner, upperCorner);
     }
 
+    /**
+     * Prevents creating a new {@code GeometryUtils}.
+     */
+    private GeometryUtils() { }
+
+    public static Envelope getWholeWorld() {
+        return WHOLE_WORLD;
+    }
 
     public static CoordinateReferenceSystem getCRS(final Envelope envelope) {
         return envelope.getLowerCorner().getCoordinateReferenceSystem();
@@ -798,19 +798,7 @@ public final class GeometryUtils {
         final LineString lineString = geometryFactory.createLineString(new ArrayList(Arrays.asList(points)));
         return lineString;
     }
-    
-    
-    //*************************************************************************
-    //  private static methods
-    //*************************************************************************
-     
-    
-    /**
-     * Prevents creating a new {@code GeometryUtils}.
-     */
-    private GeometryUtils() { }
-
-    
+      
     /**
      * Check if a reference coordinate system has the expected number of dimensions.
      * - code lifted from com.polexis.referencing.CRSUtils - thanks Jesse!

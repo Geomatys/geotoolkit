@@ -29,7 +29,7 @@ public class WKTParserTest extends TestCase {
         super.setUp();
         
         MockGeometryFactory mockFactory = new MockGeometryFactory();
-        parser = new GeometryParser( mockFactory, mockFactory, null, null );
+        parser = new GeometryParser( mockFactory, mockFactory, mockFactory, null );
     }
     
     public void testPoint1() throws Exception {

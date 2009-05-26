@@ -18,7 +18,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
 import java.util.List;
 
-import org.geotoolkit.geometry.isoonjts.JTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfacePatchImpl;
 import org.opengis.geometry.coordinate.Polygon;

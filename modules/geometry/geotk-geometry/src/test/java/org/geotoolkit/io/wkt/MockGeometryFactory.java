@@ -25,6 +25,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.Precision;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.UnmodifiableGeometryException;
@@ -75,7 +76,7 @@ import org.opengis.referencing.operation.TransformException;
  * 
  * @author Jody
  */
-public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory {
+public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, PositionFactory {
     CoordinateReferenceSystem crs;
     public Precision precision;
     public MockGeometryFactory() {
@@ -128,6 +129,31 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory {
 
     public DirectPosition createDirectPosition( double[] coordinates ) {
         return new MockDirectPosition(coordinates);
+    }
+
+    @Override
+    public Precision getPrecision() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Position createPosition(Position position) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PointArray createPointArray() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PointArray createPointArray(double[] coordinates, int start, int length) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PointArray createPointArray(float[] coordinates, int start, int length) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     class MockDirectPosition implements DirectPosition {
         double[] coordinates;

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geometry.isoonjts;
+package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 import com.vividsolutions.jts.geom.Geometry;
 
