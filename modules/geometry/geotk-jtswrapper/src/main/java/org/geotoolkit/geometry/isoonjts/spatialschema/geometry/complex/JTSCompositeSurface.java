@@ -38,7 +38,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
  *          (returns TRUE for end points).
  */
-public class CompositeSurfaceImpl extends CompositeImpl implements CompositeSurface {//, OrientableSurface {
+public class JTSCompositeSurface extends JTSComposite implements CompositeSurface {//, OrientableSurface {
     
     //*************************************************************************
     //  implement the CompositeSurface

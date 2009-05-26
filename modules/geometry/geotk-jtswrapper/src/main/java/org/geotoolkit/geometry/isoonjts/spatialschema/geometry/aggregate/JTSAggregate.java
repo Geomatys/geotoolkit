@@ -16,20 +16,20 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.aggregate.Aggregate;
 
 
 
-public abstract class AggregateImpl extends GeometryImpl implements Aggregate {
+public abstract class JTSAggregate extends AbstractJTSGeometry implements Aggregate {
     private Set/*<Primitive>*/ elements;
 
-    public AggregateImpl() {
+    public JTSAggregate() {
         super();
     }
 
-    public AggregateImpl(final CoordinateReferenceSystem crs) {
+    public JTSAggregate(final CoordinateReferenceSystem crs) {
         super(crs);
         this.elements = new HashSet();
     }

@@ -18,9 +18,9 @@ import java.util.Set;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.EnvelopeImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PolyhedralSurfaceImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfaceBoundaryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPolyhedralSurface;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
@@ -124,14 +124,14 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public Envelope createEnvelope(
             final DirectPosition lowerCorner, 
             final DirectPosition upperCorner) {
-        return new EnvelopeImpl(lowerCorner, upperCorner);
+        return new JTSEnvelope(lowerCorner, upperCorner);
     }
     /**
      * @inheritDoc
      * @see org.opengis.geometry.coordinate.Factory#createLineSegment(org.opengis.geometry.coordinate.Position, org.opengis.geometry.coordinate.Position)
      */
     public LineSegment createLineSegment(final Position startPoint, final Position endPoint) {
-        LineSegmentImpl line = new LineSegmentImpl();
+        JTSLineSegment line = new JTSLineSegment();
         line.getControlPoints().add( startPoint );
         line.getControlPoints().add( endPoint );
         
@@ -143,7 +143,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * @see org.opengis.geometry.coordinate.Factory#createLineString(java.util.List)
      */
     public LineString createLineString(final List/*<Position>*/ points) {
-        LineString result = new LineStringImpl();
+        LineString result = new JTSLineString();
         PointArray pa = result.getControlPoints();
         List list = pa;
         Iterator it = points.iterator();
@@ -253,7 +253,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     public Polygon createPolygon(SurfaceBoundary boundary) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
-        PolygonImpl result = new PolygonImpl(boundary);
+        JTSPolygon result = new JTSPolygon(boundary);
         return result;
     }
     
@@ -264,7 +264,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     public Polygon createPolygon(SurfaceBoundary boundary, Surface spanningSurface)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
-        PolygonImpl result = new PolygonImpl(boundary, Collections.singletonList(spanningSurface));
+        JTSPolygon result = new JTSPolygon(boundary, Collections.singletonList(spanningSurface));
         return result;
     }
 
@@ -286,7 +286,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * @see org.opengis.geometry.coordinate.Factory#createSurfaceBoundary(org.opengis.geometry.primitive.Ring, java.util.List)
      */
     public SurfaceBoundary createSurfaceBoundary(Ring exterior, List interiors) throws MismatchedReferenceSystemException {
-        return new SurfaceBoundaryImpl(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
+        return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
     
     
@@ -306,9 +306,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     public PolyhedralSurface createPolyhedralSurface(final List<Polygon> polygons)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
-        PolyhedralSurfaceImpl result = new PolyhedralSurfaceImpl(crs);
+        JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
         List<?> cast = (List<?>) polygons;
-        result.getPatches().addAll( (List<PolygonImpl>) cast);
+        result.getPatches().addAll( (List<JTSPolygon>) cast);
         return result;
     }
 

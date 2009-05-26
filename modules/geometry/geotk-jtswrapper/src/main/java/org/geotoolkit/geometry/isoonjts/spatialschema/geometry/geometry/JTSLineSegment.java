@@ -42,7 +42,7 @@ import org.opengis.geometry.coordinate.LineSegment;
  *
  * @see GeometryFactory#createLineSegment
  */
-public class LineSegmentImpl extends LineStringImpl implements LineSegment {
+public class JTSLineSegment extends JTSLineString implements LineSegment {
     
     //*************************************************************************
     //  Fields

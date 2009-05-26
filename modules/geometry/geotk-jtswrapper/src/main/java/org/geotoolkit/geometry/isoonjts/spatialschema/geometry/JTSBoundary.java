@@ -11,7 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 // OpenGIS direct dependencies
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.ComplexImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSComplex;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Boundary;
 
@@ -27,7 +27,7 @@ import org.opengis.geometry.Boundary;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class BoundaryImpl extends ComplexImpl implements Boundary {
+public class JTSBoundary extends JTSComplex implements Boundary {
     
     //*************************************************************************
     //  
@@ -37,7 +37,7 @@ public class BoundaryImpl extends ComplexImpl implements Boundary {
      * Creates a new {@code BoundaryImpl}.
      * 
      */
-    public BoundaryImpl() {
+    public JTSBoundary() {
         this(null);
     }
 
@@ -45,7 +45,7 @@ public class BoundaryImpl extends ComplexImpl implements Boundary {
      * Creates a new {@code BoundaryImpl}.
      * @param crs
      */
-    public BoundaryImpl(final CoordinateReferenceSystem crs) {
+    public JTSBoundary(final CoordinateReferenceSystem crs) {
         super(crs);
     }
 }

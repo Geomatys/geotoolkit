@@ -16,9 +16,9 @@ import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.CurveBoundaryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfaceBoundaryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.referencing.FactoryException;
@@ -43,7 +43,7 @@ import org.opengis.util.Cloneable;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public abstract class GeometryImpl implements Geometry, Serializable, Cloneable, JTSGeometry {
+public abstract class AbstractJTSGeometry implements Geometry, Serializable, Cloneable, JTSGeometry {
 
     /**
      * True if we're allowing changes to the geometry.  False if not.
@@ -81,7 +81,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
     /**
      * Creates a new mutable {@code GeometryImpl} with a null CRS.
      */
-    public GeometryImpl() {
+    public AbstractJTSGeometry() {
         this(null);
     }
 
@@ -89,7 +89,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
      * Creates a new mutable {@code GeometryImpl}.
      * @param coordinateReferenceSystem CRS for this geometry's vertices.
      */
-    public GeometryImpl(final CoordinateReferenceSystem coordinateReferenceSystem) {
+    public AbstractJTSGeometry(final CoordinateReferenceSystem coordinateReferenceSystem) {
         this(coordinateReferenceSystem, true);
     }
 
@@ -99,7 +99,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
      * @param coordinateReferenceSystem CRS for this geometry's vertices.
      * @param mutable Whether or not changes will be allowed.
      */
-    public GeometryImpl(final CoordinateReferenceSystem coordinateReferenceSystem, boolean mutable) {
+    public AbstractJTSGeometry(final CoordinateReferenceSystem coordinateReferenceSystem, boolean mutable) {
         this.coordinateReferenceSystem = coordinateReferenceSystem;
         this.mutable = mutable;
     }
@@ -227,7 +227,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
             // an empty CurveBoundary object (i.e. one with both points set to
             // null).
             if ((coords == null) || (coords.length == 0)) {
-                CurveBoundaryImpl result = new CurveBoundaryImpl(
+                JTSCurveBoundary result = new JTSCurveBoundary(
                         getCoordinateReferenceSystem(), null, null);
                 return result;
             }
@@ -241,10 +241,10 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
                             coords.length + ")");
                 }
                 CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
-                CurveBoundaryImpl result = new CurveBoundaryImpl(crs,
-                        new PointImpl(JTSUtils.coordinateToDirectPosition(
+                JTSCurveBoundary result = new JTSCurveBoundary(crs,
+                        new JTSPoint(JTSUtils.coordinateToDirectPosition(
                                 coords[0], crs)),
-                        new PointImpl(JTSUtils.coordinateToDirectPosition(
+                        new JTSPoint(JTSUtils.coordinateToDirectPosition(
                                 coords[1], crs)));
                 return result;
             }
@@ -267,7 +267,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
                     	mls.getGeometryN(i),
                     crs);
             }
-            SurfaceBoundaryImpl result = new SurfaceBoundaryImpl(crs,
+            JTSSurfaceBoundary result = new JTSSurfaceBoundary(crs,
                 exteriorRing, interiorRings);
             return result;
         }
@@ -434,7 +434,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
         lower.setCoordinateReferenceSystem(crs);
         DirectPosition2D upper = new DirectPosition2D(jtsEnv.getMaxX(), jtsEnv.getMaxY());
         upper.setCoordinateReferenceSystem(crs);
-        Envelope result = new EnvelopeImpl(lower,upper);
+        Envelope result = new JTSEnvelope(lower,upper);
         return result;
     }
 
@@ -484,7 +484,7 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
     @Override
     public final Geometry toImmutable() {
         if (isMutable()) {
-	        GeometryImpl result = (GeometryImpl) clone();
+	        AbstractJTSGeometry result = (AbstractJTSGeometry) clone();
 	        result.mutable = false;
 	        return result;
         }
@@ -500,9 +500,9 @@ public abstract class GeometryImpl implements Geometry, Serializable, Cloneable,
      * so this method simply delegates to the superclass (Object) clone.
      */
     @Override
-    public GeometryImpl clone() {
+    public AbstractJTSGeometry clone() {
         try {
-            return (GeometryImpl) super.clone();
+            return (AbstractJTSGeometry) super.clone();
         }
         catch (CloneNotSupportedException cnse) {
             throw new AssertionError(cnse);

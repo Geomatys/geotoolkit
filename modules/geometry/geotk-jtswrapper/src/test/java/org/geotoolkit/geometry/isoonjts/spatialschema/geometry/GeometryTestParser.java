@@ -26,8 +26,8 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GeometryFactoryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.io.wkt.GeometryParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -67,8 +67,8 @@ public class GeometryTestParser {
             throw new RuntimeException("", e);
         }
 
-        GeometryFactory geomFact = new GeometryFactoryImpl(DefaultGeographicCRS.WGS84);
-        PrimitiveFactory primFact = new PrimitiveFactoryImpl(DefaultGeographicCRS.WGS84);
+        GeometryFactory geomFact = new JTSGeometryFactory(DefaultGeographicCRS.WGS84);
+        PrimitiveFactory primFact = new JTSPrimitiveFactory(DefaultGeographicCRS.WGS84);
         PositionFactory posFact = null;
         wktFactory = new GeometryParser(geomFact, primFact, posFact, null );
     }

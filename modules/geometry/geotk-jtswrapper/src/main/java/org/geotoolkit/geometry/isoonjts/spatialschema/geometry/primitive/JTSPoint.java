@@ -17,7 +17,7 @@ import java.util.Set;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
  * @author cdillard
  * @version $Revision $
  */
-public class PointImpl extends GeometryImpl implements Point {
+public class JTSPoint extends AbstractJTSGeometry implements Point {
 
     //*************************************************************************
     //  Members
@@ -66,7 +66,7 @@ public class PointImpl extends GeometryImpl implements Point {
     /**
      * Creates a new {@code PointImpl}.
      */
-    public PointImpl() {
+    public JTSPoint() {
     	this( null, DefaultGeographicCRS.WGS84 );
     }
 
@@ -74,7 +74,7 @@ public class PointImpl extends GeometryImpl implements Point {
      * Creates a new {@code PointImpl}.
      * @param position
      */
-    public PointImpl(final DirectPosition position) {
+    public JTSPoint(final DirectPosition position) {
         this(position, position.getCoordinateReferenceSystem());
     }
 
@@ -83,7 +83,7 @@ public class PointImpl extends GeometryImpl implements Point {
      * @param position
      * @param crs
      */
-    public PointImpl(final DirectPosition position, final CoordinateReferenceSystem crs) {
+    public JTSPoint(final DirectPosition position, final CoordinateReferenceSystem crs) {
         super(crs);
         this.position = (position == null) ? new GeneralDirectPosition(crs) : position;
     }
@@ -201,7 +201,7 @@ public class PointImpl extends GeometryImpl implements Point {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final PointImpl other = (PointImpl) obj;
+		final JTSPoint other = (JTSPoint) obj;
 		if (position == null) {
 			if (other.position != null)
 				return false;

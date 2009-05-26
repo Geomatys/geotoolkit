@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
@@ -76,7 +76,7 @@ public final class JTSUtils {
         }
 
         //TODO use factory finder when primitive factory and geometry factory are ready.
-        final PrimitiveFactory pf = new PrimitiveFactoryImpl(crs);//FactoryFinder.getPrimitiveFactory(hints);
+        final PrimitiveFactory pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
         final GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         if (jtsGeom instanceof com.vividsolutions.jts.geom.Point) {
@@ -263,7 +263,7 @@ public final class JTSUtils {
             throw new IllegalArgumentException("LineString must be a ring");
         }
 
-        PrimitiveFactory pf = new PrimitiveFactoryImpl(crs); //FactoryFinder.getPrimitiveFactory(hints);
+        PrimitiveFactory pf = new JTSPrimitiveFactory(crs); //FactoryFinder.getPrimitiveFactory(hints);
         GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         LineString ls = gf.createLineString(new ArrayList());

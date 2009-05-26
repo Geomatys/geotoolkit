@@ -49,7 +49,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
      */
     @Override
     public CompositeCurve createCompositeCurve( List curves ) {
-        CompositeCurveImpl composite = new CompositeCurveImpl( null, crs );
+        JTSCompositeCurve composite = new JTSCompositeCurve( null, crs );
         composite.getElements().addAll( curves );
         return composite;
     }
@@ -67,7 +67,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
      */
     @Override
     public CompositeSurface createCompositeSurface( List list ) {
-        CompositeSurfaceImpl composite = new CompositeSurfaceImpl();
+        JTSCompositeSurface composite = new JTSCompositeSurface();
         composite.getElementList().addAll( list );        
         return composite;
     }

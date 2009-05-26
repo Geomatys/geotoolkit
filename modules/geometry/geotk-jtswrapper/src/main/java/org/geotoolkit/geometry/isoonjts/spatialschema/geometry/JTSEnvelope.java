@@ -30,7 +30,7 @@ import org.opengis.geometry.Envelope;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class EnvelopeImpl implements Envelope {
+public class JTSEnvelope implements Envelope {
 
     //*************************************************************************
     //  Fields
@@ -57,7 +57,7 @@ public class EnvelopeImpl implements Envelope {
      * @param lowerCorner
      * @param upperCorner
      */
-    public EnvelopeImpl(
+    public JTSEnvelope(
             final DirectPosition lowerCorner, 
             final DirectPosition upperCorner) {
         this.lowerCorner = new GeneralDirectPosition(lowerCorner);

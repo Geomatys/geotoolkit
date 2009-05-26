@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
@@ -55,20 +55,20 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @see PrimitiveFactory#createSurface(List)
  * @see PrimitiveFactory#createSurface(SurfaceBoundary)
  */
-public class SurfaceImpl extends GeometryImpl implements Surface {
-    protected List<SurfacePatchImpl> patches;
+public class JTSSurface extends AbstractJTSGeometry implements Surface {
+    protected List<JTSSurfacePatch> patches;
 
-    public SurfaceImpl() {
+    public JTSSurface() {
         this(null);
     }
 
-    public SurfaceImpl(CoordinateReferenceSystem crs) {
+    public JTSSurface(CoordinateReferenceSystem crs) {
         super(crs);
         patches = new ArrayList();
     }
 
     @SuppressWarnings("unchecked")
-    public List<SurfacePatchImpl> getPatches() {
+    public List<JTSSurfacePatch> getPatches() {
         return patches;
     }
 

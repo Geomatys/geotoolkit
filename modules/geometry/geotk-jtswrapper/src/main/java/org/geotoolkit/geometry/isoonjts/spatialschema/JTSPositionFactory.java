@@ -19,8 +19,8 @@ package org.geotoolkit.geometry.isoonjts.spatialschema;
 import java.util.List;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PointArrayImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PositionImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPointArray;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -30,17 +30,17 @@ import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-public class PositionFactoryImpl implements PositionFactory {
+public class JTSPositionFactory implements PositionFactory {
 
 	private final CoordinateReferenceSystem crs;
 	
 	/**
 	 * No argument constructor for the plugin system.
 	 */
-	public PositionFactoryImpl(){
+	public JTSPositionFactory(){
 	    this( DefaultGeographicCRS.WGS84);
 	}
-	public PositionFactoryImpl( CoordinateReferenceSystem crs ){
+	public JTSPositionFactory( CoordinateReferenceSystem crs ){
 		this.crs = crs;
 	}
     
@@ -58,11 +58,11 @@ public class PositionFactoryImpl implements PositionFactory {
 	}
 
 	public List createPositionList() {
-		return new PointArrayImpl( crs );
+		return new JTSPointArray( crs );
 	}
 
 	public List createPositionList(double[] coordinates, int start, int end) {
-		PointArray array = new PointArrayImpl( crs );
+		PointArray array = new JTSPointArray( crs );
 		int N = crs.getCoordinateSystem().getDimension();
 		for( int i=start; i < end ; i += N ){
 			double[] ords = new double[N];
@@ -73,7 +73,7 @@ public class PositionFactoryImpl implements PositionFactory {
 	}
 
 	public List createPositionList(float[] coordinates, int start, int end) {
-		PointArray array = new PointArrayImpl( crs );
+		PointArray array = new JTSPointArray( crs );
 		int N = crs.getCoordinateSystem().getDimension();
 		for( int i=start; i < end ; i += N ){
 			double[] ords = new double[N];
@@ -139,7 +139,7 @@ public class PositionFactoryImpl implements PositionFactory {
 		return pointArray;
 	}
 	public PointArray createPointArray() {
-		return new PointArrayImpl(crs);
+		return new JTSPointArray(crs);
 	}
 
 }

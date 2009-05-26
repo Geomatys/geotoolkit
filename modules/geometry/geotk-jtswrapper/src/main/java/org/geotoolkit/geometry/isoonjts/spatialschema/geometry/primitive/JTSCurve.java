@@ -17,9 +17,9 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayList;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.LineStringImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
@@ -38,7 +38,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  * any number of CurveSegment objects (such as LineStrings) that must be
  * connected end-to-end.
  */
-public class CurveImpl extends GeometryImpl implements Curve {
+public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Component parts of the Curve.  Each element must implement CurveSegment.
      */
@@ -51,7 +51,7 @@ public class CurveImpl extends GeometryImpl implements Curve {
     /**
      * Creates a new {@code CurveImpl}.
      */
-    public CurveImpl() {
+    public JTSCurve() {
         this(null);
     }
 
@@ -59,7 +59,7 @@ public class CurveImpl extends GeometryImpl implements Curve {
      * Creates a new {@code CurveImpl}.
      * @param crs
      */
-    public CurveImpl(final CoordinateReferenceSystem crs) {
+    public JTSCurve(final CoordinateReferenceSystem crs) {
         super(crs);
         curveSegments = new NotifyingArrayList(this);
     }
@@ -188,7 +188,7 @@ public class CurveImpl extends GeometryImpl implements Curve {
     		}
     	} else if (count > 0) {
 			boolean allLineString = true;
-			LineStringImpl lsi = new LineStringImpl();
+			JTSLineString lsi = new JTSLineString();
 			LineString ls = null;
 			List retList = lsi.getControlPoints().positions();
 			Object lastPoint = null;

@@ -28,7 +28,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
@@ -706,7 +706,7 @@ public final class GeometryUtils {
         
         final CoordinateReferenceSystem crs = exteriorRingPoints[0].getCoordinateReferenceSystem();
         final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
-        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
+        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
         
         final Ring exteriorRing = createRing(primitiveFactory, exteriorRingPoints);
         
@@ -728,7 +728,7 @@ public final class GeometryUtils {
             final DirectPosition[] exteriorRingPoints,
             final DirectPosition[][] interiorRingsPoints) {
         final CoordinateReferenceSystem crs = exteriorRingPoints[0].getCoordinateReferenceSystem();
-        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
+        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
         return createSurfaceBoundary(primitiveFactory, exteriorRingPoints, interiorRingsPoints);
     }
     
@@ -753,7 +753,7 @@ public final class GeometryUtils {
     
     public static Ring createRing(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
+        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
         return createRing(primitiveFactory, points);
     }
     
@@ -769,7 +769,7 @@ public final class GeometryUtils {
     
     public static Curve createCurve(final DirectPosition[] points) {
         final CoordinateReferenceSystem crs = points[0].getCoordinateReferenceSystem();
-        final PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl(crs);
+        final PrimitiveFactory primitiveFactory = new JTSPrimitiveFactory(crs);
         return createCurve(primitiveFactory, points);
     }
     

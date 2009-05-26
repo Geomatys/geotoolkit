@@ -44,7 +44,7 @@ import org.opengis.geometry.coordinate.Position;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class PointArrayImpl extends NotifyingArrayList<Position> implements PointArray, JTSGeometry {
+public class JTSPointArray extends NotifyingArrayList<Position> implements PointArray, JTSGeometry {
     private static final long serialVersionUID = -9202900942004287122L;
 
     //*************************************************************************
@@ -64,14 +64,14 @@ public class PointArrayImpl extends NotifyingArrayList<Position> implements Poin
     //  Constructor
     //*************************************************************************
 
-    public PointArrayImpl() {
+    public JTSPointArray() {
         this(null);
     }
 
-    public PointArrayImpl(CoordinateReferenceSystem crs) {
+    public JTSPointArray(CoordinateReferenceSystem crs) {
         this( null, crs );
     }
-    public PointArrayImpl(JTSGeometry parent,CoordinateReferenceSystem crs) {
+    public JTSPointArray(JTSGeometry parent,CoordinateReferenceSystem crs) {
         super( parent );
         this.crs = crs;
     }

@@ -21,7 +21,7 @@ import org.opengis.geometry.coordinate.GenericCurve;
  * @author crossley
  * @version $Revision $
  */
-public abstract class GenericCurveImpl implements GenericCurve, JTSGeometry {
+public abstract class JTSGenericCurve implements GenericCurve, JTSGeometry {
 
     //*************************************************************************
     //  fields

@@ -29,7 +29,7 @@ import org.opengis.geometry.coordinate.GenericSurface;
  *          ({@link org.opengis.geometry.primitive.Surface} and {@link org.opengis.geometry.primitive.SurfacePatch})
  *          belong to that package?
  */
-public abstract class GenericSurfaceImpl implements GenericSurface {
+public abstract class JTSGenericSurface implements GenericSurface {
     
     //*************************************************************************
     //  Fields

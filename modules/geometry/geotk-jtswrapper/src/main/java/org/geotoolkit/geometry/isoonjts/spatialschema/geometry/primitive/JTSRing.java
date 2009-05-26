@@ -20,7 +20,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 
 import com.vividsolutions.jts.geom.LineString;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.CompositeCurveImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 //import com.vividsolutions.jts.geom.Geometry;
 
 //import java.util.Iterator;
@@ -52,18 +52,18 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.Composite
  * @see SurfaceBoundary
  * @see Shell
  */
-public class RingImpl extends CompositeCurveImpl implements Ring {
+public class JTSRing extends JTSCompositeCurve implements Ring {
     /**
      * Constructs a new Ring instance with no CRS and no parent curve.
      */
-    public RingImpl() {
+    public JTSRing() {
         this(null, null);
     }
 
     /**
      * Constructs a new Ring instance with the given CRS and no parent curve.
      */
-    public RingImpl(CoordinateReferenceSystem crs) {
+    public JTSRing(CoordinateReferenceSystem crs) {
         this(null, crs);
     }
 
@@ -71,11 +71,11 @@ public class RingImpl extends CompositeCurveImpl implements Ring {
      * Constructs a new Ring instance with the given curve as its parent and
      * with the CRS retrieved from parentCurve.
      */
-    public RingImpl(CompositeCurve parentCurve) {
+    public JTSRing(CompositeCurve parentCurve) {
         this(parentCurve, parentCurve.getCoordinateReferenceSystem());
     }
 
-    public RingImpl(CompositeCurve parentCurve, CoordinateReferenceSystem crs) {
+    public JTSRing(CompositeCurve parentCurve, CoordinateReferenceSystem crs) {
         super(parentCurve, crs);
     }
     

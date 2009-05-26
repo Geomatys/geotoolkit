@@ -19,7 +19,7 @@ import org.opengis.geometry.primitive.SurfacePatch;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GenericSurfaceImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGenericSurface;
 
 /**
  * Defines a homogeneous portion of a {@linkplain Surface surface}.
@@ -30,13 +30,13 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GenericS
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public abstract class SurfacePatchImpl extends GenericSurfaceImpl implements SurfacePatch, JTSGeometry {
+public abstract class JTSSurfacePatch extends JTSGenericSurface implements SurfacePatch, JTSGeometry {
     private Surface surface;
     private SurfaceInterpolation interpolation;
     private SurfaceBoundary boundary;
     private com.vividsolutions.jts.geom.Geometry jtsPeer;
 
-    public SurfacePatchImpl(SurfaceInterpolation interpolation, SurfaceBoundary boundary) {
+    public JTSSurfacePatch(SurfaceInterpolation interpolation, SurfaceBoundary boundary) {
         this.interpolation = interpolation;
         this.boundary = boundary;
     }

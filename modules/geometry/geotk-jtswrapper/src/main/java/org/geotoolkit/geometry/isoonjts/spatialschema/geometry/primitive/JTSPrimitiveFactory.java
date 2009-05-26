@@ -12,8 +12,8 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 import java.util.List;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GeometryFactoryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PolygonImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -39,7 +39,7 @@ import org.opengis.geometry.primitive.SurfacePatch;
  * Factory that knows how to create instances of the 19107 primitives as
  * implemented in LiteGO1.
  */
-public class PrimitiveFactoryImpl implements PrimitiveFactory {
+public class JTSPrimitiveFactory implements PrimitiveFactory {
 
     //*************************************************************************
     //  Fields
@@ -59,7 +59,7 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
     /**
      * DOCUMENT ME
      */
-    public PrimitiveFactoryImpl() {
+    public JTSPrimitiveFactory() {
         this(null);
     }
 
@@ -68,9 +68,9 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      * 
      * @param crs
      */
-    public PrimitiveFactoryImpl(final CoordinateReferenceSystem crs) {
+    public JTSPrimitiveFactory(final CoordinateReferenceSystem crs) {
         this.crs = crs;
-        geomFact = new GeometryFactoryImpl(crs);
+        geomFact = new JTSGeometryFactory(crs);
     }
 
     //*************************************************************************
@@ -115,14 +115,14 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      * Creates a point at the specified location specified by coordinates.
      */
     public Point createPoint(final double[] coordinates) {
-        return new PointImpl(createDirectPosition(coordinates), crs);
+        return new JTSPoint(createDirectPosition(coordinates), crs);
     }
 
     /**
      * Creates a point at the specified position.
      */
     public Point createPoint(final Position position) {
-        return new PointImpl(position.getPosition(), crs);
+        return new JTSPoint(position.getPosition(), crs);
     }
 
     /**
@@ -133,7 +133,7 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      * interface.
      */
     public Curve createCurve(final List<CurveSegment> segments) {
-        CurveImpl result = new CurveImpl(crs);
+        JTSCurve result = new JTSCurve(crs);
         if (segments != null)
             result.getSegments().addAll(segments);
         return result;
@@ -146,9 +146,9 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      */
     @SuppressWarnings("unchecked")
     public Surface createSurface(final List<SurfacePatch> patches) {
-        SurfaceImpl result = new SurfaceImpl(crs);
+        JTSSurface result = new JTSSurface(crs);
         List<?> cast = (List<?>) patches;   
-        result.getPatches().addAll( (List<SurfacePatchImpl>) cast );
+        result.getPatches().addAll( (List<JTSSurfacePatch>) cast );
         return result;
     }
 
@@ -159,7 +159,7 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
     public Surface createSurface(final SurfaceBoundary boundary) {
         // For now, our implementation has to assume that the boundary is a
         // polygon.
-        Surface result = new SurfaceImpl(crs);
+        Surface result = new JTSSurface(crs);
         Polygon poly = geomFact.createPolygon(boundary);
         // PENDING(jdc): the following line is 1.5 specific.
         // the result.getPatches() list is a generic list with a type of "? extends SurfacePatch"
@@ -177,7 +177,7 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      */
     public SurfaceBoundary createSurfaceBoundary(Ring exterior, List interiors)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
-        return new SurfaceBoundaryImpl(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
+        return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
 
     /**
@@ -194,7 +194,7 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
     }
 
     public Ring createRing(final List curves) {
-        Ring result = new RingImpl(crs);
+        Ring result = new JTSRing(crs);
         if (curves != null)
             result.getGenerators().addAll(curves);
         return result;
@@ -206,9 +206,9 @@ public class PrimitiveFactoryImpl implements PrimitiveFactory {
      */
     public PolyhedralSurface createPolyhedralSurface(List<Polygon> patches)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
-        PolyhedralSurfaceImpl result = new PolyhedralSurfaceImpl(crs);
+        JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
         List<?> cast = (List<?>) patches;
-        result.getPatches().addAll((List<PolygonImpl>) cast );
+        result.getPatches().addAll((List<JTSPolygon>) cast );
         return result;
     }
 }

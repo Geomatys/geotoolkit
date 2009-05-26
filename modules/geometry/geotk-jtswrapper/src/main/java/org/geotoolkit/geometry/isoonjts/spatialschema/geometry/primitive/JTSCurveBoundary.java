@@ -24,7 +24,7 @@ import org.opengis.geometry.primitive.Point;
  * last few methods are still unimplemented (and just delegate to the
  * superclass, which currently does nothing).
  */
-public class CurveBoundaryImpl extends PrimitiveBoundaryImpl implements CurveBoundary {
+public class JTSCurveBoundary extends JTSPrimitiveBoundary implements CurveBoundary {
     
     //*************************************************************************
     //  
@@ -48,7 +48,7 @@ public class CurveBoundaryImpl extends PrimitiveBoundaryImpl implements CurveBou
     //  
     //*************************************************************************
     
-    public CurveBoundaryImpl(
+    public JTSCurveBoundary(
             final CoordinateReferenceSystem crs, 
             final Point startPoint, 
             final Point endPoint) {

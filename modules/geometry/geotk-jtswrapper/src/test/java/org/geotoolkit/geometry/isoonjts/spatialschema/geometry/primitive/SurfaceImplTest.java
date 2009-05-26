@@ -34,19 +34,19 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.geometry.isoonjts.spatialschema.PositionFactoryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfaceImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurface;
 
 public class SurfaceImplTest extends TestCase {
-    private PositionFactoryImpl postitionFactory;
-    private PrimitiveFactoryImpl primitiveFactory;
+    private JTSPositionFactory postitionFactory;
+    private JTSPrimitiveFactory primitiveFactory;
     private JTSGeometryFactory geometryFactory;
     
     protected void setUp() throws Exception {
-        postitionFactory = new PositionFactoryImpl( DefaultGeographicCRS.WGS84 );
-        primitiveFactory = new PrimitiveFactoryImpl( DefaultGeographicCRS.WGS84 );
+        postitionFactory = new JTSPositionFactory( DefaultGeographicCRS.WGS84 );
+        primitiveFactory = new JTSPrimitiveFactory( DefaultGeographicCRS.WGS84 );
         geometryFactory = new JTSGeometryFactory( DefaultGeographicCRS.WGS84 );
         // TODO Auto-generated method stub
         super.setUp();
@@ -82,7 +82,7 @@ public class SurfaceImplTest extends TestCase {
          curves.add( curve);
          Ring ring = primitiveFactory.createRing( curves );
          SurfaceBoundary boundary = primitiveFactory.createSurfaceBoundary(ring,new ArrayList());
-         SurfaceImpl surface = (SurfaceImpl) primitiveFactory.createSurface(boundary);
+         JTSSurface surface = (JTSSurface) primitiveFactory.createSurface(boundary);
          
          Geometry peer = surface.computeJTSPeer();
     }

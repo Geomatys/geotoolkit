@@ -11,7 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 // OpenGIS direct dependencies
 
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.BoundaryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 
@@ -27,7 +27,7 @@ import org.opengis.geometry.primitive.PrimitiveBoundary;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class PrimitiveBoundaryImpl extends BoundaryImpl implements PrimitiveBoundary {
+public class JTSPrimitiveBoundary extends JTSBoundary implements PrimitiveBoundary {
     
     //*************************************************************************
     //  
@@ -37,7 +37,7 @@ public class PrimitiveBoundaryImpl extends BoundaryImpl implements PrimitiveBoun
      * Creates a new {@code PrimitiveBoundaryImpl}.
      * 
      */
-    public PrimitiveBoundaryImpl() {
+    public JTSPrimitiveBoundary() {
         this(null);
     }
 
@@ -45,7 +45,7 @@ public class PrimitiveBoundaryImpl extends BoundaryImpl implements PrimitiveBoun
      * Creates a new {@code PrimitiveBoundaryImpl}.
      * @param crs
      */
-    public PrimitiveBoundaryImpl(final CoordinateReferenceSystem crs) {
+    public JTSPrimitiveBoundary(final CoordinateReferenceSystem crs) {
         super(crs);
     }
 }

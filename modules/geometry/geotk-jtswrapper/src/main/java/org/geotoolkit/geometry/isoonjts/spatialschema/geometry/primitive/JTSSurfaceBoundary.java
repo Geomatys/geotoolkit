@@ -20,18 +20,18 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 /**
  * LiteGO1 implementation of the SurfaceBoundary interface.
  */
-public class SurfaceBoundaryImpl extends PrimitiveBoundaryImpl implements SurfaceBoundary {
+public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceBoundary {
     private static final long serialVersionUID = 8658623156496260842L;
     
     private Ring exterior;
     private List interior;
 
-    public SurfaceBoundaryImpl(CoordinateReferenceSystem crs, Ring exterior, List interior) {
+    public JTSSurfaceBoundary(CoordinateReferenceSystem crs, Ring exterior, List interior) {
         super(crs);
         this.exterior = exterior;
         this.interior = interior;
     }
-    public SurfaceBoundaryImpl(CoordinateReferenceSystem crs, Ring exterior, Ring [] interior) {
+    public JTSSurfaceBoundary(CoordinateReferenceSystem crs, Ring exterior, Ring [] interior) {
         super(crs);
         this.exterior = exterior;
         this.interior = new ArrayList( Arrays.asList( interior) );

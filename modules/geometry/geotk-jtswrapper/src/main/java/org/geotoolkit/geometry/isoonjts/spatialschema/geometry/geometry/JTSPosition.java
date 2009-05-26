@@ -26,7 +26,7 @@ import org.opengis.geometry.coordinate.Position;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class PositionImpl implements Position {
+public class JTSPosition implements Position {
     
     //*************************************************************************
     //  Fields
@@ -38,7 +38,7 @@ public class PositionImpl implements Position {
     //  Constructor
     //*************************************************************************
     
-    public PositionImpl(final DirectPosition position) {
+    public JTSPosition(final DirectPosition position) {
         this.position = position;
     }
     

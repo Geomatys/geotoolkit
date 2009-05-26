@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.PolygonImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
@@ -39,20 +39,20 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @author dillard
  * @version $Revision $
  */
-public class PolyhedralSurfaceImpl extends GeometryImpl implements PolyhedralSurface {
+public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {
     
-    protected List<PolygonImpl> patches;
+    protected List<JTSPolygon> patches;
 
     /**
      * Creates a new {@code PolyhedralSurfaceImpl}.
      * @param crs
      */
-    public PolyhedralSurfaceImpl(CoordinateReferenceSystem crs) {
+    public JTSPolyhedralSurface(CoordinateReferenceSystem crs) {
         super(crs);
         patches = new ArrayList();
     }
     
-    public PolyhedralSurfaceImpl() {
+    public JTSPolyhedralSurface() {
         this(null);
     }
 
@@ -61,7 +61,7 @@ public class PolyhedralSurfaceImpl extends GeometryImpl implements PolyhedralSur
     }
 
     @SuppressWarnings("unchecked")
-    public List<PolygonImpl> getPatches() {
+    public List<JTSPolygon> getPatches() {
         return patches;
     }
 
@@ -123,7 +123,7 @@ public class PolyhedralSurfaceImpl extends GeometryImpl implements PolyhedralSur
         return ((JTSGeometry) patches.get(0)).getJTSGeometry();
     }
 
-    public PolyhedralSurfaceImpl clone() {
-        return (PolyhedralSurfaceImpl) super.clone();
+    public JTSPolyhedralSurface clone() {
+        return (JTSPolyhedralSurface) super.clone();
     }
 }

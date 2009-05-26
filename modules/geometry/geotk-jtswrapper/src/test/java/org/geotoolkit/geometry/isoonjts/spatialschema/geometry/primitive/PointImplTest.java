@@ -23,8 +23,8 @@ import org.opengis.geometry.primitive.Point;
 
 import junit.framework.TestCase;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.PositionFactoryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 
 /**
  * @author gdavis
@@ -33,7 +33,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointIm
 public class PointImplTest extends TestCase {
 
 	public void testNewEmptyPoint() {
-		Point point = new PointImpl();
+		Point point = new JTSPoint();
 		assertNotNull(point.getCoordinateReferenceSystem());
 		DirectPosition position = point.getPosition();
 		assertNotNull(position);
@@ -44,7 +44,7 @@ public class PointImplTest extends TestCase {
 		here.setOrdinate(0, 48.44);
 		here.setOrdinate(1, -123.37); // 48.44,-123.37
 
-		Point point = new PointImpl(here);
+		Point point = new JTSPoint(here);
 		assertNotNull(point.getCoordinateReferenceSystem());
 		assertEquals(here.getCoordinateReferenceSystem(), point
 				.getCoordinateReferenceSystem());
@@ -53,12 +53,12 @@ public class PointImplTest extends TestCase {
 	}
 
 	public void testNewFactoryPointHere() {
-		PositionFactory gFact = new PositionFactoryImpl(
+		PositionFactory gFact = new JTSPositionFactory(
 				DefaultGeographicCRS.WGS84);
 		double[] ords = { 48.44, -123.37 };
 		DirectPosition here = gFact.createDirectPosition(ords);
 
-		Point point = new PointImpl(here);
+		Point point = new JTSPoint(here);
 		assertNotNull(point.getCoordinateReferenceSystem());
 		assertEquals(here.getCoordinateReferenceSystem(), point
 				.getCoordinateReferenceSystem());
@@ -131,11 +131,11 @@ public class PointImplTest extends TestCase {
         
 		// Do actually test stuff		
 		double[] ords = { 48.44, -123.37, 0.0 };
-		PositionFactory factory = new PositionFactoryImpl(DefaultGeographicCRS.WGS84_3D);
+		PositionFactory factory = new JTSPositionFactory(DefaultGeographicCRS.WGS84_3D);
 		
 		assertNotNull(factory);
 		DirectPosition here = factory.createDirectPosition(ords);
-		Point point = new PointImpl(here);
+		Point point = new JTSPoint(here);
 		assertNotNull(point.getCoordinateReferenceSystem());
 		assertEquals(here.getCoordinateReferenceSystem(), point
 				.getCoordinateReferenceSystem());

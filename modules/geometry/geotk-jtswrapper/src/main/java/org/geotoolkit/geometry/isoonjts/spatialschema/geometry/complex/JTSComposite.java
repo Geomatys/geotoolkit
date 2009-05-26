@@ -27,14 +27,14 @@ import org.opengis.geometry.primitive.Primitive;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public abstract class CompositeImpl 
-	extends ComplexImpl implements Composite {
+public abstract class JTSComposite
+	extends JTSComplex implements Composite {
 
-    public CompositeImpl() {
+    public JTSComposite() {
         this(null);
     }
 
-    public CompositeImpl(CoordinateReferenceSystem crs) {
+    public JTSComposite(CoordinateReferenceSystem crs) {
         super(crs);
     }
 

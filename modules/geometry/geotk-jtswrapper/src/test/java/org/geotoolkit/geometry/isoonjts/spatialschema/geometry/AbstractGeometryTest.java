@@ -37,8 +37,8 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.Surface;
 
 import junit.framework.TestCase;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.GeometryFactoryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PrimitiveFactoryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 
 /**
  * Provided test case.
@@ -72,8 +72,8 @@ public abstract class AbstractGeometryTest extends TestCase{
         } catch (FactoryException ex) {
             Logger.getLogger(AbstractGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        GEOMETRY_FACTORY = new GeometryFactoryImpl(crs);
-        PRIMITIVE_FACTORY = new PrimitiveFactoryImpl(crs);
+        GEOMETRY_FACTORY = new JTSGeometryFactory(crs);
+        PRIMITIVE_FACTORY = new JTSPrimitiveFactory(crs);
     }
 
     protected DirectPosition createDirectPosition(double x, double y) {

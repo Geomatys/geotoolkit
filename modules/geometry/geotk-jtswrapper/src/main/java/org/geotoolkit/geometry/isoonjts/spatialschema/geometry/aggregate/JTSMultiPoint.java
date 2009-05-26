@@ -14,18 +14,18 @@ import org.opengis.geometry.aggregate.MultiPoint;
 
 /**
  */
-public class MultiPointImpl extends AggregateImpl 
+public class JTSMultiPoint extends JTSAggregate
 	implements MultiPoint {
 
-    public MultiPointImpl() {
+    public JTSMultiPoint() {
         this(null);
     }
 
-    public MultiPointImpl(final CoordinateReferenceSystem crs) {
+    public JTSMultiPoint(final CoordinateReferenceSystem crs) {
         super(crs);
     }
 
-    public MultiPointImpl clone() {
-        return (MultiPointImpl) super.clone();
+    public JTSMultiPoint clone() {
+        return (JTSMultiPoint) super.clone();
     }
 }

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.GeometryImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
 
@@ -54,7 +54,7 @@ import org.opengis.geometry.complex.Complex;
  *
  * @revisit Some associations are commented out for now.
  */
-public class ComplexImpl extends GeometryImpl implements Complex {
+public class JTSComplex extends AbstractJTSGeometry implements Complex {
 
     //*************************************************************************
     //  Fields
@@ -70,7 +70,7 @@ public class ComplexImpl extends GeometryImpl implements Complex {
     //  Constructors
     //*************************************************************************
 
-    public ComplexImpl(CoordinateReferenceSystem crs) {
+    public JTSComplex(CoordinateReferenceSystem crs) {
         super(crs);
         // Override a couple of methods to make sure that they invalidate our
         // cached JTS representation.

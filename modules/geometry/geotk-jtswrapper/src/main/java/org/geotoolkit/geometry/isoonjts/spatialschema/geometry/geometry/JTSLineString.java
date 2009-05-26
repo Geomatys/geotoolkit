@@ -17,8 +17,8 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.CurveBoundaryImpl;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.PointImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
@@ -37,7 +37,7 @@ import org.opengis.geometry.primitive.CurveSegment;
  * @author crossley
  * @version $Revision $
  */
-public class LineStringImpl extends GenericCurveImpl 
+public class JTSLineString extends JTSGenericCurve
 	implements LineString, JTSGeometry {
 
     /**
@@ -52,9 +52,9 @@ public class LineStringImpl extends GenericCurveImpl
     /**
      * Creates a new {@code LineStringImpl}.
      */
-    public LineStringImpl() {
-        controlPoints = new PointArrayImpl();
-        ((PointArrayImpl)controlPoints).setJTSParent(this);
+    public JTSLineString() {
+        controlPoints = new JTSPointArray();
+        ((JTSPointArray)controlPoints).setJTSParent(this);
     }
 
     //*************************************************************************
@@ -82,7 +82,7 @@ public class LineStringImpl extends GenericCurveImpl
      * @see org.opengis.geometry.primitive.CurveSegment#getBoundary()
      */
     public CurveBoundary getBoundary() {
-        return new CurveBoundaryImpl(null, new PointImpl(getStartPoint()), new PointImpl(getEndPoint()));
+        return new JTSCurveBoundary(null, new JTSPoint(getStartPoint()), new JTSPoint(getEndPoint()));
     }
 
     /**
@@ -141,7 +141,7 @@ public class LineStringImpl extends GenericCurveImpl
      * @see org.opengis.geometry.primitive.CurveSegment#reverse()
      */
     public CurveSegment reverse() {
-        LineStringImpl result = new LineStringImpl();
+        JTSLineString result = new JTSLineString();
         PointArray pa = result.getSamplePoints();
         List list = pa.positions();
         int n = controlPoints.length();

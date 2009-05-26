@@ -46,15 +46,15 @@ import org.opengis.geometry.primitive.CurveBoundary;
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
  *          (returns TRUE for end points).
  */
-public class CompositeCurveImpl extends CompositeImpl implements CompositeCurve {
+public class JTSCompositeCurve extends JTSComposite implements CompositeCurve {
     // A parent curve, if any.
     private CompositeCurve parent;
 
-    public CompositeCurveImpl(CompositeCurve parent) {
+    public JTSCompositeCurve(CompositeCurve parent) {
         this(parent, parent.getCoordinateReferenceSystem());
     }
 
-    public CompositeCurveImpl(CompositeCurve parent, CoordinateReferenceSystem crs) {
+    public JTSCompositeCurve(CompositeCurve parent, CoordinateReferenceSystem crs) {
         super(crs);
         this.parent = parent;
     }

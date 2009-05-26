@@ -26,7 +26,7 @@ import org.opengis.geometry.primitive.Bearing;
  *
  * @revisit Should we move this interface elsewhere (e.g. in some kind of units package)?
  */
-public class BearingImpl implements Bearing {
+public class JTSBearing implements Bearing {
     
     //*************************************************************************
     //  fields
@@ -40,7 +40,7 @@ public class BearingImpl implements Bearing {
     //  Constructor
     //*************************************************************************
     
-    public BearingImpl(double[] angles, double[] direction) {
+    public JTSBearing(double[] angles, double[] direction) {
         this.angles = angles;
         this.direction = direction;
     }

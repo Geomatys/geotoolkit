@@ -27,7 +27,7 @@ import org.opengis.geometry.coordinate.PointGrid;
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  */
-public class PointGridImpl implements PointGrid {
+public class JTSPointGrid implements PointGrid {
     
     //*************************************************************************
     //  Fields

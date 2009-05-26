@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.SurfacePatchImpl;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -28,7 +28,7 @@ import org.opengis.geometry.primitive.SurfaceInterpolation;
 
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 
-public class PolygonImpl extends SurfacePatchImpl implements Polygon {
+public class JTSPolygon extends JTSSurfacePatch implements Polygon {
     
     //*************************************************************************
     //  Fields
@@ -41,12 +41,12 @@ public class PolygonImpl extends SurfacePatchImpl implements Polygon {
     //  Constructors
     //*************************************************************************
     
-    public PolygonImpl(SurfaceBoundary boundary) {
+    public JTSPolygon(SurfaceBoundary boundary) {
         // We only support planar polygons
         this(boundary, null);
     }
 
-    public PolygonImpl(SurfaceBoundary boundary, List spanningSurface) {
+    public JTSPolygon(SurfaceBoundary boundary, List spanningSurface) {
         super(SurfaceInterpolation.PLANAR, boundary);
         this.spanningSurface = spanningSurface;
     }
