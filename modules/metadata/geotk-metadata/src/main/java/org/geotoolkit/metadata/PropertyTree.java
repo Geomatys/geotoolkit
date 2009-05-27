@@ -18,11 +18,16 @@
 package org.geotoolkit.metadata;
 
 import java.util.Map;
-import java.util.Date;
+import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Date;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import javax.swing.tree.TreeNode;
 
 import org.opengis.util.CodeList;
@@ -30,9 +35,11 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -98,6 +105,163 @@ final class PropertyTree {
         this.standard = standard;
         this.locale   = locale;
     }
+
+
+    // ---------------------- PARSING -------------------------------------------------------------
+
+    /**
+     * Fetches values from every nodes of the given tree except the root, and puts them in
+     * the given metadata object. The value of the root node is ignored (it is typically
+     * just the name of the metadata class).
+     *
+     * @param  node     The node from which to fetch the values.
+     * @param  metadata The metadata where to store the values.
+     * @throws ParseException If a value can not be stored in the given metadata object.
+     */
+    final void parse(final TreeNode node, final Object metadata) throws ParseException {
+        final Class<?> type = metadata.getClass();
+        final PropertyAccessor accessor = standard.getAccessorOptional(type);
+        if (accessor == null) {
+            throw new ParseException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type), 0);
+        }
+        parse(node, metadata, accessor, null);
+    }
+
+    /**
+     * Fetches values from every nodes of the given tree except the root, and puts them in
+     * the given metadata object. This method invokes itself recursively.
+     *
+     * @param  node       The node from which to fetch the values.
+     * @param  metadata   The metadata where to store the values.
+     * @param  accessor   The object to use for writing in the metadata object.
+     * @param  additional Non-null if multiple metadata instances are allowed, in which
+     *                    case additional instances will be added to that map.
+     * @throws ParseException If a value can not be stored in the given metadata object.
+     */
+    private void parse(final TreeNode node, Object metadata, final PropertyAccessor accessor,
+            final Collection<Object> additional) throws ParseException
+    {
+        final Set<String> done = new HashSet<String>();
+        final int childCount = node.getChildCount();
+        for (int i=0; i<childCount; i++) {
+            final TreeNode child = node.getChildAt(i);
+            final String name = child.toString();
+            if (!done.add(name)) {
+                /*
+                 * If a child of the same name occurs one more time, assume that it is
+                 * starting a new metadata object.
+                 */
+                metadata = newInstance(metadata.getClass());
+                additional.add(metadata);
+            }
+            final int index = accessor.indexOf(name);
+            if (index < 0) {
+                throw new ParseException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, name), 0);
+            }
+            /*
+             * If a value already exists in the metadata object for the current child,
+             * gets the old value. If no value is given, then an implementation type
+             * will be inferred from the return value type.
+             */
+            Object value = accessor.get(index, metadata);
+            final Class<?> type;
+            if (value != null) {
+                if (value instanceof CheckedCollection) {
+                    type = standard.getImplementation(((CheckedCollection) value).getElementType());
+                } else {
+                    type = value.getClass();
+                }
+            } else {
+                type = standard.getImplementation(accessor.type(index));
+                // Note: we could check if the type is assignable to Collection.class,
+                // and in such case fetch the parameterized type for the same raisons
+                // then we fetched CheckedCollection.getElementType() above. However
+                // this is not needed in Geotoolkit implementation since we never return
+                // a null collection (the collection can be empty but never null).
+            }
+            /*
+             * If the type is an other metadata implementation, invokes this method
+             * recursively for every childs of the current child, to be stored in
+             * the metadata object we just found (creating a new one if necessary).
+             */
+            final PropertyAccessor ca = standard.getAccessorOptional(type);
+            if (ca != null) {
+                if (value instanceof Collection) {
+                    final Collection<Object> childs;
+                    if (value instanceof List) {
+                        childs = new ArrayList<Object>(4);
+                    } else {
+                        childs = new HashSet<Object>(4);
+                    }
+                    childs.add(value = newInstance(type));
+                    parse(child, value, ca, childs);
+                    value = childs;
+                } else {
+                    // Singleton: create the instance if necessary.
+                    if (value == null) {
+                        value = newInstance(type);
+                    }
+                    parse(child, value, ca, null);
+                }
+            } else {
+                /*
+                 * Otherwise if the type is not an other metadata implementation, we assume that
+                 * this is some primitive (numbers, etc.), a date or a string. Stores them in the
+                 * current metadata object using the accessor.
+                 */
+                value = getUserObject(child);
+                if (value == null) {
+                    final int n = child.getChildCount();
+                    if (n == 0) {
+                        continue;
+                    }
+                    final TreeNode cn = child.getChildAt(0);
+                    value = getUserObject(cn);
+                    if (value == null) {
+                        value = cn.toString();
+                    }
+                    // TODO: needs to build a collection with other elements.
+                }
+                if (value instanceof CharSequence) {
+                    if (Number.class.isAssignableFrom(type)) {
+                        value = numberFormat.parse(value.toString());
+                    } else if (Date.class.isAssignableFrom(type)) {
+                        value = dateFormat.parse(value.toString());
+                    }
+                }
+            }
+            accessor.set(index, metadata, value, false);
+        }
+    }
+
+    /**
+     * Returns the user object of the given node if possible, or {@code null} otherwise.
+     */
+    private static Object getUserObject(final TreeNode node) {
+        if (false && node instanceof org.geotoolkit.gui.swing.tree.TreeNode) {
+            return ((org.geotoolkit.gui.swing.tree.TreeNode) node).getUserObject();
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new instance of the given type, wrapping the {@code java.lang.reflect}
+     * exceptions in the exception using by our parsing API.
+     */
+    private static <T> T newInstance(final Class<T> type) throws ParseException {
+        try {
+            return type.newInstance();
+        } catch (Exception cause) { // InstantiationException & IllegalAccessException
+            ParseException exception = new ParseException(Errors.format(
+                    Errors.Keys.CANT_CREATE_FROM_TEXT_$1, type), 0);
+            exception.initCause(cause);
+            throw exception;
+        }
+    }
+
+
+    // ---------------------- FORMATING -----------------------------------------------------------
+
 
     /**
      * Creates a tree for the specified metadata.
@@ -215,6 +379,9 @@ final class PropertyTree {
     /**
      * Localize the specified property name. In current version, this is merely
      * a hook for future development. For now we reformat the programatic name.
+     * <p>
+     * NOTE: If we localize the name, then we must find some way to allow the reverse
+     * association in the {@link #parse(AbstractMetadata, TreeNode)} method.
      */
     private String localize(String name) {
         name = name.trim();

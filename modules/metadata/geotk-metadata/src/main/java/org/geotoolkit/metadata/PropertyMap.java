@@ -105,7 +105,18 @@ final class PropertyMap extends AbstractMap<String,Object> {
     public Object put(final String key, final Object value)
             throws IllegalArgumentException, ClassCastException
     {
-        return accessor.set(accessor.requiredIndexOf(key), metadata, value);
+        return accessor.set(accessor.requiredIndexOf(key), metadata, value, true);
+    }
+
+    /**
+     * Puts every entries from the given map. This method is overloaded for performance
+     * raisons since we are not interrested in the return value of the {@link #put} method.
+     */
+    @Override
+    public void putAll(final Map<? extends String, ?> map) {
+        for (final Map.Entry<? extends String, ?> e : map.entrySet()) {
+            accessor.set(accessor.requiredIndexOf(e.getKey()), metadata, e.getValue(), false);
+        }
     }
 
     /**
@@ -183,7 +194,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
          */
         @Override
         public Object setValue(Object value) throws ClassCastException {
-            return accessor.set(index, metadata, value);
+            return accessor.set(index, metadata, value, true);
         }
 
         /**

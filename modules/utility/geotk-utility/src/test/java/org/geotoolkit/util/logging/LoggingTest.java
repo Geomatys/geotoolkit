@@ -31,6 +31,14 @@ import static org.junit.Assert.*;
  */
 public final class LoggingTest {
     /**
+     * Tests {@link Logging#getLogger(Class)}.
+     */
+    @Test
+    public void testGet() {
+        assertEquals("org.geotoolkit.util.logging", Logging.getLogger(Logging.class).getName());
+    }
+
+    /**
      * Checks {@link Logging#GEOTOOLKIT}.
      */
     @Test

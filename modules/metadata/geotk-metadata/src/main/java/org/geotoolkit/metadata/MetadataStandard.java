@@ -19,10 +19,13 @@ package org.geotoolkit.metadata;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.text.ParseException;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 
 
@@ -35,15 +38,15 @@ import org.geotoolkit.util.NullArgumentException;
  * This class provides some methods operating on metadata instances through
  * {@linkplain java.lang.reflect Java reflection}. The following rules are
  * assumed:
- * <p>
+ *
  * <ul>
- *   <li>Properties (or metadata attributes) are defined by the set of {@code get*()}
+ *   <li><p>Properties (or metadata attributes) are defined by the collection of {@code get*()}
  *       (arbitrary return type) or {@code is*()} (boolean return type) methods found
- *       in the <strong>interface</strong>. Getters declared in the implementation
- *       only are ignored.</li>
- *   <li>A property is <cite>writable</cite> if a {@code set*(...)} method is defined
+ *       in the <strong>interface</strong>. Getters declared only in the implementation
+ *       are ignored.</p></li>
+ *   <li><p>A property is <cite>writable</cite> if a {@code set*(...)} method is defined
  *       in the implementation class for the corresponding {@code get*()} method. The
- *       setter don't need to be defined in the interface.</li>
+ *       setter doesn't need to be defined in the interface.</p></li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -67,7 +70,8 @@ public final class MetadataStandard {
      * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
      * in the {@link org.opengis.metadata} package and subpackages.
      */
-    public static final MetadataStandard ISO_19115 = new MetadataStandard("org.opengis.metadata.");
+    public static final MetadataStandard ISO_19115 = new MetadataStandard("org.opengis.metadata.",
+            "org.geotoolkit.metadata.iso.", new String[] {"Default", "Abstract"});
 
     /**
      * An instance working on ISO 19119 standard as defined by
@@ -84,9 +88,26 @@ public final class MetadataStandard {
     private final String interfacePackage;
 
     /**
+     * The root packages for metadata implementations, or {@code null} if none.
+     */
+    private final String implementationPackage;
+
+    /**
+     * The prefix that implementation classes may have, or {@code null} if none.
+     * The most common prefix should be first, since the prefix will be tried in that order.
+     */
+    private final String[] prefix;
+
+    /**
      * Accessors for the specified implementations.
      */
     private final Map<Class<?>,PropertyAccessor> accessors = new HashMap<Class<?>,PropertyAccessor>();
+
+    /**
+     * Implementations for a given interface, or {@code null} if none.
+     * If non-null, then this map will be filled as needed.
+     */
+    private final Map<Class<?>,Class<?>> implementations;
 
     /**
      * Shared pool of {@link PropertyTree} instances, once for each thread
@@ -107,10 +128,31 @@ public final class MetadataStandard {
      * @param interfacePackage The root package for metadata interfaces.
      */
     public MetadataStandard(String interfacePackage) {
+        this(interfacePackage, null, null);
+    }
+
+    /**
+     * Creates a new instance working on implementation of interfaces defined
+     * in the specified package.
+     *
+     * @param interfacePackage The root package for metadata interfaces.
+     * @param implementationPackage The root package for metadata implementations.
+     */
+    private MetadataStandard(String interfacePackage, String implementationPackage, String[] prefix) {
         if (!interfacePackage.endsWith(".")) {
             interfacePackage += '.';
         }
-        this.interfacePackage = interfacePackage;
+        if (implementationPackage != null) {
+            if (!implementationPackage.endsWith(".")) {
+                implementationPackage += '.';
+            }
+            implementations = new HashMap<Class<?>,Class<?>>();
+        } else {
+            implementations = null;
+        }
+        this.interfacePackage      = interfacePackage;
+        this.implementationPackage = implementationPackage;
+        this.prefix                = prefix;
     }
 
     /**
@@ -173,6 +215,47 @@ public final class MetadataStandard {
     }
 
     /**
+     * Returns the implementation class for the given interface. If no implementation is found,
+     * then the given type is returned unchanged. This method is not public because returning
+     * the type unchanged is not consistent with the usual public API.
+     *
+     * @param  type The interface, typically from the {@code org.opengis.metadata} package.
+     * @return The implementation class.
+     */
+    final Class<?> getImplementation(final Class<?> type) {
+        if (type != null && implementations != null) {
+            synchronized (implementations) {
+                Class<?> candidate = implementations.get(type);
+                if (candidate != null) {
+                    return candidate;
+                }
+                String name = type.getName();
+                if (name.startsWith(interfacePackage)) {
+                    final StringBuilder buffer = new StringBuilder(implementationPackage)
+                            .append(name.substring(interfacePackage.length()));
+                    final int prefixPosition = buffer.lastIndexOf(".") + 1;
+                    int length = 0;
+                    if (prefix != null) {
+                        for (final String p : prefix) {
+                            name = buffer.replace(prefixPosition, prefixPosition+length, p).toString();
+                            try {
+                                candidate = Class.forName(name);
+                            } catch (ClassNotFoundException e) {
+                                Logging.recoverableException(MetadataStandard.class, "getImplementation", e);
+                                length = p.length();
+                                continue;
+                            }
+                            implementations.put(type, candidate);
+                            return candidate;
+                        }
+                    }
+                }
+            }
+        }
+        return type;
+    }
+
+    /**
      * Returns a view of the specified metadata object as a {@linkplain Map map}.
      * The map is backed by the metadata object using Java reflection, so changes
      * in the underlying metadata object are immediately reflected in the map.
@@ -211,6 +294,22 @@ public final class MetadataStandard {
     public TreeModel asTree(final Object metadata) throws ClassCastException {
         final PropertyTree builder = treeBuilders.get();
         return new DefaultTreeModel(builder.asTree(metadata), true);
+    }
+
+    /**
+     * Fetches values from every nodes of the given tree except the root, and puts them in
+     * the given metadata object. The value of the root node is ignored (it is typically
+     * just the name of the metadata class).
+     * <p>
+     * This method can parse the tree created by {@link #asTree(Object)}. The current implementation
+     * expects the {@linkplain TreeModel#getRoot tree root} to be an instance of {@link TreeNode}.
+     *
+     * @param  root     The tre from which to fetch the values.
+     * @param  metadata The metadata where to store the values.
+     * @throws ParseException If a value can not be stored in the given metadata object.
+     */
+    final void parse(final TreeModel tree, final Object metadata) throws ParseException {
+        treeBuilders.get().parse((TreeNode) tree.getRoot(), metadata);
     }
 
     /**

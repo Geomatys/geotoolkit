@@ -34,6 +34,7 @@ import java.net.URL;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
+import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
 import org.opengis.util.InternationalString;
 
@@ -43,6 +44,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.internal.CollectionUtilities;
 
 
 /**
@@ -371,7 +373,7 @@ final class PropertyAccessor {
      * @return The index of the given key, or -1 if none.
      */
     final int indexOf(String key) {
-        key = key.trim().toLowerCase(LOCALE);
+        key = key.trim().replace(" ", "").toLowerCase(LOCALE);
         final Integer index = mapping.get(key);
         return (index != null) ? index.intValue() : -1;
     }
@@ -410,6 +412,7 @@ final class PropertyAccessor {
 
     /**
      * Returns the name of the property at the given index, or {@code null} if none.
+     * The name is inferred from the method name, not from the UML annotation.
      */
     final String name(final int index) {
         if (index >= 0 && index < getters.length) {
@@ -440,7 +443,8 @@ final class PropertyAccessor {
     }
 
     /**
-     * Returns the type of the property at the given index.
+     * Returns the type of the property at the given index. The returned type is usually
+     * a GeoAPI interface (at least in the case of Geotoolkit implementation).
      */
     final Class<?> type(final int index) {
         if (index >= 0 && index < getters.length) {
@@ -495,11 +499,12 @@ final class PropertyAccessor {
      * @param  index The index of the property to set.
      * @param  metadata The metadata object on which to set the value.
      * @param  value The new value.
-     * @return The old value.
+     * @param  getOld {@code true} if this method should first fetches the old value.
+     * @return The old value, or {@code null} if {@code getOld} was {@code false}.
      * @throws IllegalArgumentException if the specified property can't be set.
      * @throws ClassCastException if the given value is not of the expected type.
      */
-    final Object set(final int index, final Object metadata, final Object value)
+    final Object set(final int index, final Object metadata, final Object value, final boolean getOld)
             throws IllegalArgumentException, ClassCastException
     {
         String key;
@@ -507,7 +512,13 @@ final class PropertyAccessor {
             final Method getter = getters[index];
             final Method setter = setters[index];
             if (setter != null) {
-                final Object old = get(getter, metadata);
+                Object old;
+                if (getOld) {
+                    old = get(getter, metadata);
+                    old = CollectionUtilities.copy(old);
+                } else {
+                    old = null;
+                }
                 set(getter, setter, metadata, new Object[] {value});
                 return old;
             } else {
@@ -588,6 +599,10 @@ final class PropertyAccessor {
              * Handles the strings in a special way (converting to URI, URL, File,
              * Number, etc.). If there is no known way to parse the string, or if
              * the parsing failed, an exception is thrown.
+             *
+             * TODO: We should use the converter package here. We need also to iterate
+             * over the elements in collections. When this is done, we need to remove
+             * the explicit use of converter in PropertyTree.parse(...) method.
              */
             Object parsed = null;
             Exception failure = null;
@@ -597,6 +612,8 @@ final class PropertyAccessor {
                 final String text = argument.toString();
                 if (InternationalString.class.isAssignableFrom(elementType)) {
                     parsed = new SimpleInternationalString(text);
+                } else if (CodeList.class.isAssignableFrom(elementType)) {
+                    parsed = CodeList.valueOf(elementType.asSubclass(CodeList.class), text);
                 } else if (File.class.isAssignableFrom(elementType)) {
                     parsed = new File(text);
                 } else if (URL.class.isAssignableFrom(elementType)) try {

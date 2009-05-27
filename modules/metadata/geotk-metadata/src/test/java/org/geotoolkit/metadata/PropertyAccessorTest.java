@@ -25,6 +25,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -120,14 +121,14 @@ public final class PropertyAccessorTest {
         Object value = "Random number";
         int index = accessor.indexOf("ISBN");
         assertTrue(index >= 0);
-        assertNull(accessor.set(index, citation, value));
+        assertNull(accessor.set(index, citation, value, true));
         assertSame(value, accessor.get(index, citation));
         assertSame(value, citation.getISBN());
 
         // Tries with the title. Automatic conversion from String to InternationalString expected.
         index = accessor.indexOf("title");
         assertTrue(index >= 0);
-        assertNull(accessor.set(index, citation, "A random title"));
+        assertNull(accessor.set(index, citation, "A random title", true));
         value = accessor.get(index, citation);
         assertTrue(value instanceof InternationalString);
         assertEquals("A random title", value.toString());
@@ -141,13 +142,18 @@ public final class PropertyAccessorTest {
         assertTrue(value instanceof Collection);
         assertTrue(((Collection<?>) value).isEmpty());
 
-        value = accessor.set(index, citation, "An other title");
+        value = accessor.set(index, citation, "An other title", true);
+        assertTrue(value instanceof Collection);
+        assertTrue(((Collection<?>) value).isEmpty());
+
+        value = accessor.set(index, citation, "Yet an other title", true);
         assertTrue(value instanceof Collection);
         assertEquals(1, ((Collection<?>) value).size());
 
-        value = accessor.set(index, citation, "Yet an other title");
-        assertTrue(value instanceof Collection);
-        assertEquals(2, ((Collection<?>) value).size());
+        final Set<Object> expected = new HashSet<Object>();
+        assertTrue(expected.add(new SimpleInternationalString("An other title")));
+        assertTrue(expected.add(new SimpleInternationalString("Yet an other title")));
+        assertEquals(expected, (Collection<?>) accessor.get(index, citation));
     }
 
     /**
@@ -176,9 +182,10 @@ public final class PropertyAccessorTest {
         assertEquals (source, target);
         assertTrue(containsEPSG(target));
 
-        assertSame(target, accessor.set(index, citation, null));
+        assertEquals(CollectionUtilities.copy(target), accessor.set(index, citation, null, true));
         final Object value = accessor.get(index, citation);
         assertNotNull(value);
+        assertSame(target, value);
         assertTrue(((Collection<?>) value).isEmpty());
 
         try {

@@ -24,8 +24,11 @@ import java.util.HashSet;
 import java.util.Collection;
 
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.quality.Completeness;
+
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.quality.AbstractCompleteness;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -42,6 +45,20 @@ import org.geotoolkit.test.Depend;
  */
 @Depend(PropertyAccessorTest.class)
 public final class MetadataStandardTest {
+    /**
+     * Tests the conversion between interface types and implementation types.
+     */
+    @Test
+    public void testTypeConversions() {
+        final MetadataStandard std = MetadataStandard.ISO_19115;
+
+        assertEquals(Citation.class, std.getInterface(DefaultCitation.class));
+        assertEquals(DefaultCitation.class, std.getImplementation(Citation.class));
+
+        assertEquals(AbstractCompleteness.class, std.getImplementation(Completeness.class));
+        assertEquals(Completeness.class, std.getInterface(AbstractCompleteness.class));
+    }
+
     /**
      * Tests the shallow equals and copy methods.
      */

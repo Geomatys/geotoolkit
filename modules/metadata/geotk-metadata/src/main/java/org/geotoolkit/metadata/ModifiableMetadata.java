@@ -435,9 +435,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * @param  elementType The element type (used only if {@code c} is null).
      * @return {@code c}, or a new collection if {@code c} is null.
      */
-    protected final <E> Collection<E> nonNullCollection(
-            final Collection<E> c, final Class<E> elementType)
-    {
+    protected final <E> Collection<E> nonNullCollection(final Collection<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
         if (c != null) {
             return c;
@@ -494,7 +492,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * A checked set synchronized on the enclosing {@link ModifiableMetadata}.
-     * Used for mutable sets only. Note that the lock most be modified after
+     * Used for mutable sets only. Note that the lock must be modified after
      * {@link #clone}. This is currently done in {@link #unmodifiable(Object)}.
      */
     private final class MutableSet<E> extends CheckedHashSet<E> {
@@ -521,7 +519,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * A checked list synchronized on the enclosing {@link ModifiableMetadata}.
-     * Used for mutable lists only. Note that the lock most be modified after
+     * Used for mutable lists only. Note that the lock must be modified after
      * {@link #clone}. This is currently done in {@link #unmodifiable(Object)}.
      */
     private final class MutableList<E> extends CheckedArrayList<E> {

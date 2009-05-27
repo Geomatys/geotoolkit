@@ -19,6 +19,7 @@ package org.geotoolkit.metadata;
 
 import java.util.Map;
 import java.util.logging.Logger;
+import java.text.ParseException;
 import javax.swing.tree.TreeModel;
 import org.geotoolkit.util.logging.Logging;
 
@@ -28,7 +29,7 @@ import org.geotoolkit.util.logging.Logging;
  * of some {@linkplain MetadataStandard metadata standard}. This class uses
  * {@linkplain java.lang.reflect Java reflection} in order to provide default
  * implementation of {@linkplain #AbstractMetadata(Object) copy constructor},
- * {@link #equals} and {@link #hashCode} methods.
+ * {@link #equals(Object)} and {@link #hashCode()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
@@ -130,8 +131,8 @@ public abstract class AbstractMetadata {
      * immediately reflected in the map. The keys are the property names as determined by the list
      * of {@code getFoo()} methods declared in the {@linkplain #getInterface metadata interface}.
      * <p>
-     * The map supports the {@link Map#put put} operations if the underlying
-     * metadata object contains {@code setFoo(...)} methods.
+     * The map supports the {@link Map#put put} and {@link Map#remove remove} operations
+     * if the underlying metadata object contains {@code setFoo(...)} methods.
      *
      * @return A view of this metadata object as a map.
      */
@@ -154,6 +155,25 @@ public abstract class AbstractMetadata {
      */
     public synchronized TreeModel asTree() {
         return getStandard().asTree(this);
+    }
+
+    /**
+     * Fetches values from every nodes of the given tree except the root, and puts them in
+     * this metadata object. The value of the root node is ignored (it is typically just the
+     * name of this metadata class).
+     * <p>
+     * This method can parse the tree created by {@link #asTree()}.
+     * <p>
+     * The current implementation expects the {@linkplain TreeModel#getRoot tree root}
+     * to be an instance of {@link javax.swing.tree.TreeNode}.
+     *
+     * @param  tree The tree from which to fetch the values.
+     * @throws ParseException If a value can not be stored in this metadata object.
+     *
+     * @since 3.00
+     */
+    public synchronized void parse(final TreeModel tree) throws ParseException {
+        getStandard().parse(tree, this);
     }
 
     /**

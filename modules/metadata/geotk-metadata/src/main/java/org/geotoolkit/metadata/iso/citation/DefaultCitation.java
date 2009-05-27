@@ -342,8 +342,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "citedResponsibleParty")
     public synchronized Collection<ResponsibleParty> getCitedResponsibleParties() {
-        return xmlOptional(citedResponsibleParties = nonNullCollection(citedResponsibleParties,
-                                                           ResponsibleParty.class));
+        return xmlOptional(citedResponsibleParties = nonNullCollection(citedResponsibleParties, ResponsibleParty.class));
     }
 
     /**
@@ -355,8 +354,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     public synchronized void setCitedResponsibleParties(
             final Collection<? extends ResponsibleParty> newValues)
     {
-        citedResponsibleParties = copyCollection(newValues, citedResponsibleParties,
-                                                 ResponsibleParty.class);
+        citedResponsibleParties = copyCollection(newValues, citedResponsibleParties, ResponsibleParty.class);
     }
 
     /**
@@ -365,8 +363,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "presentationForm")
     public synchronized Collection<PresentationForm> getPresentationForm() {
-        return xmlOptional(presentationForm = nonNullCollection(presentationForm,
-                PresentationForm.class));
+        return xmlOptional(presentationForm = nonNullCollection(presentationForm, PresentationForm.class));
     }
 
     /**
