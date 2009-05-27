@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSComplexFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 
@@ -33,7 +35,9 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.aggregate.MultiPrimitive;
+import org.opengis.geometry.complex.ComplexFactory;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.Polygon;
@@ -192,18 +196,28 @@ public final class JTSUtils {
     public static DirectPosition coordinateToDirectPosition(com.vividsolutions.jts.geom.Coordinate c,
             CoordinateReferenceSystem crs) {
 
-        GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        PositionFactory pf = new JTSPositionFactory(crs);
 
         double[] vertices;
         if (crs == null) {
             vertices = new double[3];
+            vertices[0] = c.x;
+            vertices[1] = c.y;
+            vertices[2] = c.z;
         } else {
             vertices = new double[crs.getCoordinateSystem().getDimension()];
+            if(vertices.length > 0){
+                vertices[0] = c.x;
+                if(vertices.length > 1){
+                    vertices[1] = c.y;
+                    if(vertices.length > 2){
+                        vertices[2] = c.z;
+                    }
+                }
+            }
         }
 
-        DirectPosition result = gf.createDirectPosition(vertices);
-        coordinateToDirectPosition(c, result);
-        return result;
+        return pf.createDirectPosition(vertices);
     }
 
     /**
@@ -259,7 +273,7 @@ public final class JTSUtils {
     public static Ring linearRingToRing(com.vividsolutions.jts.geom.LineString jtsLinearRing,
             CoordinateReferenceSystem crs) {
         int numPoints = jtsLinearRing.getNumPoints();
-        if (!jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints - 1))) {
+        if (numPoints != 0 && !jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints - 1))) {
             throw new IllegalArgumentException("LineString must be a ring");
         }
 

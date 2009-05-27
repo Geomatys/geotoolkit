@@ -41,7 +41,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Component parts of the Curve.  Each element must implement CurveSegment.
      */
-    private List curveSegments;
+    private List<CurveSegment> curveSegments;
 
     /**
      * Creates a new {@code JTSCurve}.
@@ -56,7 +56,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     public JTSCurve(final CoordinateReferenceSystem crs) {
         super(crs);
-        curveSegments = new NotifyingArrayList(this);
+        curveSegments = new NotifyingArrayList<CurveSegment>(this);
     }
 
     /**
@@ -80,7 +80,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     @Override
     public final DirectPosition getStartPoint() {
-        return ((CurveSegment) curveSegments.get(0)).getStartPoint();
+        return (curveSegments.get(0)).getStartPoint();
     }
 
     /**
@@ -88,7 +88,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     @Override
     public final DirectPosition getEndPoint() {
-        return ((CurveSegment) curveSegments.get(curveSegments.size()-1)).getEndPoint();
+        return (curveSegments.get(curveSegments.size() - 1)).getEndPoint();
     }
 
     /**
@@ -149,10 +149,10 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
             i = n;
         }
         if (i == n) {
-            return ((CurveSegment) curveSegments.get(n-1)).getEndPoint();
+            return (curveSegments.get(n - 1)).getEndPoint();
         }
         else {
-            CurveSegment cs = (CurveSegment) curveSegments.get(i);
+            CurveSegment cs = curveSegments.get(i);
             double d = cp - i; // 0 <= d < 1
             return cs.forConstructiveParam(
                 (1-d) * cs.getStartConstructiveParam() +
@@ -315,4 +315,21 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         allCoords.toArray(coords);
         return JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("JTSCurve{");
+        if(!curveSegments.isEmpty()){
+            sb.append("\n");
+            for(CurveSegment seg : curveSegments){
+                sb.append(seg.toString()).append("\n");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+
+
 }

@@ -292,4 +292,19 @@ public class JTSLineString extends AbstractJTSGenericCurve
     public DirectPosition forParam(double s) {
         return null;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("JTSLineString{");
+        if(!controlPoints.isEmpty()){
+            sb.append("\n");
+            for(Position pos : controlPoints){
+                sb.append("\t").append(pos.toString()).append("\n");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
 }

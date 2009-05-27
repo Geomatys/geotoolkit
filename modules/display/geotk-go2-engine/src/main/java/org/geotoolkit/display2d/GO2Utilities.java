@@ -40,11 +40,12 @@ import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
 
+import org.geotools.filter.visitor.IsStaticExpressionVisitor;
+
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
-
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
@@ -52,10 +53,10 @@ import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
-import org.geotools.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;
@@ -173,7 +174,7 @@ public class GO2Utilities {
     }
 
     public static Shape toJava2D(org.opengis.geometry.Geometry geom){
-        throw new UnsupportedOperationException("conversion ISO to java2d is not ready yet");
+        return new ISOGeometryJ2D(geom);
     }
 
     ////////////////////////////////////////////////////////////////////////////

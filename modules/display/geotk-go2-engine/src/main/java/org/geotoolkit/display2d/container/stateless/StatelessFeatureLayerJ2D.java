@@ -34,7 +34,6 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
@@ -48,7 +47,6 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 
@@ -64,11 +62,9 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
@@ -256,6 +252,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
 
         final StatefullContextParams params = new StatefullContextParams(layer);
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
+        params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);
         params.updateGeneralizationFactor(renderingContext, dataCRS);
         try {
@@ -369,6 +366,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
 
         final StatefullContextParams params = new StatefullContextParams(layer);
         final StatefullProjectedFeature graphic = new StatefullProjectedFeature(params);
+        params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);
         params.updateGeneralizationFactor(renderingContext, dataCRS);
         try {

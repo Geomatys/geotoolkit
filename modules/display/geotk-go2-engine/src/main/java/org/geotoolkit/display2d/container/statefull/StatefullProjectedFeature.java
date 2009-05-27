@@ -78,12 +78,14 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     public synchronized void clearObjectiveCache(){
         clearDisplayCache();
+        objectiveGeometryISO = null;
         objectiveGeometryJTS = null;
         objectiveShape = null;
         objectiveBounds = null;
     }
     
     public synchronized void clearDisplayCache(){
+        displayGeometryISO = null;
         displayGeometryJTS = null;
         displayShape = null;
         displayBounds = null;
@@ -118,7 +120,8 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     @Override
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null){
-            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
+            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryISO());
+//            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
         }
         return objectiveShape;
     }
@@ -126,7 +129,8 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     @Override
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null){
-            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
+            displayShape = GO2Utilities.toJava2D(getDisplayGeometryISO());
+//            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
         }
         return displayShape;
     }

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPolyhedralSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
 
@@ -286,8 +287,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     @Override
     public MultiPrimitive createMultiPrimitive() {
-        throw new UnsupportedOperationException(
-        "This is the JTS Wrapper Factory which only supports implementations that align with the Simple Feature for SQL Specification.");
+        return new JTSMultiPrimitive();
     }
     
     
