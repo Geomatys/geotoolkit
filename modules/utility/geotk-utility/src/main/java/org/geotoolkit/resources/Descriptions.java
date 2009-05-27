@@ -80,11 +80,6 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int ERROR_READING_SOME_FILES_$2 = 5;
 
         /**
-         * No EPSG database has been configured, an embedded javaDB database will be used.
-         */
-        public static final int NO_EPSG_USE_JAVADB = 8;
-
-        /**
          * Count:       {0}
          * Minimum:     {1}
          * Maximum:     {2}
@@ -93,6 +88,11 @@ public final class Descriptions extends IndexedResourceBundle {
          * Standard deviation:  {5}
          */
         public static final int STATISTICS_TO_STRING_$6 = 6;
+
+        /**
+         * Use {0,choice,0#the embedded|1#an explicit} database.
+         */
+        public static final int USE_EPSG_DATABASE_$1 = 8;
 
         /**
          * Use "help" to show available commands.
