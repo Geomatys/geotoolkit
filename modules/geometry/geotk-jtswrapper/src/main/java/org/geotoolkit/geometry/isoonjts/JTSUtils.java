@@ -68,7 +68,7 @@ public final class JTSUtils {
     /**
      * Creates a 19107 primitive geometry from the given JTS geometry.
      */
-    public static Geometry jtsToGo1(final com.vividsolutions.jts.geom.Geometry jtsGeom,
+    public static Geometry toISO(final com.vividsolutions.jts.geom.Geometry jtsGeom,
             final CoordinateReferenceSystem crs) {
 
         if (jtsGeom == null) {
@@ -122,7 +122,7 @@ public final class JTSUtils {
             Set elements = result.getElements();
             for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
                 //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
-                elements.add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
+                elements.add(toISO(jtsCollection.getGeometryN(i), crs));
             }
             return result;
 

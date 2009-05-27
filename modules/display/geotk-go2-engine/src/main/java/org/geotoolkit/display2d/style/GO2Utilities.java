@@ -112,7 +112,15 @@ public class GO2Utilities {
     }
     
     private GO2Utilities() {}
-    
+
+    public static void portray(final ProjectedFeature feature, CachedSymbolizer symbol,
+            RenderingContext2D context) throws PortrayalException{
+        SymbolizerRenderer renderer = findRenderer(symbol);
+        if(renderer != null){
+            renderer.portray(feature, symbol, context);
+        }
+    }
+
     public static void portray(final GraphicCoverageJ2D graphic, CachedSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException {
 

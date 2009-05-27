@@ -46,8 +46,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -58,7 +56,7 @@ import javax.media.jai.RenderedOp;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotools.coverage.io.CoverageReadParam;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
@@ -71,22 +69,25 @@ import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.converter.Classes;
-import org.geotools.resources.coverage.CoverageUtilities;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
+import org.geotoolkit.display2d.style.GO2Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 
+import org.geotools.resources.coverage.CoverageUtilities;
+import org.geotools.coverage.io.CoverageReadParam;
+
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -209,95 +210,8 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         //draw the border if there is one---------------------------------------
         CachedSymbolizer outline = symbol.getOutLine();
         if(outline != null){
-
-            final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-            final float coeff;
-            final MathTransform transform;
-
-            final Envelope2D env= dataCoverage.getEnvelope2D();
-            final GeometryFactory fact = new GeometryFactory();
-            final Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(env.getMinX(), env.getMinY()),
-                new Coordinate(env.getMinX(), env.getMaxY()),
-                new Coordinate(env.getMaxX(), env.getMaxY()),
-                new Coordinate(env.getMaxX(), env.getMinY()),
-                new Coordinate(env.getMinX(), env.getMinY()),
-            };
-            final LinearRing ring = fact.createLinearRing(coordinates);
-            Geometry geom = fact.createPolygon(ring, new LinearRing[0]);
-
-            //we adjust coefficient for rendering -----------------------
-            final CoordinateReferenceSystem coveragecrs = dataCoverage.getCoordinateReferenceSystem();
-
-            if(symbolUnit.equals(NonSI.PIXEL)){
-                //symbol is in display unit
-                context.switchToDisplayCRS();
-
-                try {
-                    transform = CRS.findMathTransform(coveragecrs, context.getDisplayCRS(), true);
-                } catch (FactoryException ex) {
-                    throw new PortrayalException(ex);
-                }
-
-                coeff = 1;
-            }else{
-                //we have a special unit we must adjust the coefficient
-                context.switchToObjectiveCRS();
-
-                try {
-                    transform = CRS.findMathTransform(coveragecrs, context.getObjectiveCRS(), true);
-                } catch (FactoryException ex) { 
-                    throw new PortrayalException(ex);
-                }
-
-                coeff = context.getUnitCoefficient(symbolUnit);
-            }
-
-
-            //TODO get the appropriate renderer using the J2DGraphicUtilities
-//            final Shape j2dShape;
-//            transformer.setMathTransform(transform);
-//            geom = transform(geom);
-//            j2dShape = new LiteShape(geom, null,true);
-           
-
-//            if(outline instanceof CachedLineSymbolizer){
-//                CachedLineSymbolizer line = (CachedLineSymbolizer) outline;
-//                final float margin = line.getMargin(null, coeff) /2f;
-//                final int x = (int) (j2dShape.getBounds2D().getMinX() - margin);
-//                final int y = (int) (j2dShape.getBounds2D().getMinY() - margin);
-//
-//                final float offset = line.getOffset(null, coeff);
-//                if(offset != 0){
-//                    g2.translate(offset, 0);
-//                    g2.setComposite(line.getJ2DComposite(null));
-//                    g2.setPaint(line.getJ2DPaint(null, x, y, coeff, hints));
-//                    g2.setStroke(line.getJ2DStroke(null,coeff));
-//                    g2.draw(j2dShape);
-//                    g2.translate(-offset, 0);
-//                }else{
-//                    g2.setComposite(line.getJ2DComposite(null));
-//                    g2.setPaint(line.getJ2DPaint(null, x, y, coeff, hints));
-//                    g2.setStroke(line.getJ2DStroke(null,coeff));
-//                    g2.draw(j2dShape);
-//                }
-//
-//
-//            }else if(outline instanceof CachedPolygonSymbolizer){
-//                CachedPolygonSymbolizer poly = (CachedPolygonSymbolizer) outline;
-//                final float margin = poly.getMargin(null, coeff) /2f;
-//                final int x = (int) (j2dShape.getBounds2D().getMinX() - margin);
-//                final int y = (int) (j2dShape.getBounds2D().getMinY() - margin);
-//
-//                g2.setComposite( poly.getJ2DFillComposite(null) );
-//                g2.setPaint( poly.getJ2DFillPaint(null, x, y, coeff, hints) );
-//                g2.fill(j2dShape);
-//                g2.setComposite( poly.getJ2DStrokeComposite(null) );
-//                g2.setPaint( poly.getJ2DStrokePaint(null, x, y, coeff, hints) );
-//                g2.setStroke( poly.getJ2DStroke(null,coeff) );
-//                g2.draw(j2dShape);
-//
-//            }
+            final ProjectedFeature outlineFeature = createFeature(context.getCanvas(), dataCoverage.getEnvelope2D());
+            GO2Utilities.portray(outlineFeature, outline, context);
         }
 
         context.switchToDisplayCRS();
@@ -828,6 +742,21 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
 
         g.setPaint(paint);
         g.fill(rectangle);
+    }
+
+    private ProjectedFeature createFeature(ReferencedCanvas2D canvas,final Envelope2D env){
+        final GeometryFactory fact = new GeometryFactory();
+        final Coordinate[] coordinates = new Coordinate[]{
+            new Coordinate(env.getMinX(), env.getMinY()),
+            new Coordinate(env.getMinX(), env.getMaxY()),
+            new Coordinate(env.getMaxX(), env.getMaxY()),
+            new Coordinate(env.getMaxX(), env.getMinY()),
+            new Coordinate(env.getMinX(), env.getMinY()),
+        };
+        final LinearRing ring = fact.createLinearRing(coordinates);
+        final Geometry geom = fact.createPolygon(ring, new LinearRing[0]);
+        final SimpleFeature feature = new AttributlessFeature(geom, env.getCoordinateReferenceSystem());
+        return new DefaultGraphicFeatureJ2D(canvas, null, feature);
     }
 
 }

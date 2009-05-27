@@ -95,4 +95,14 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
         return getDisplayShape().getBounds2D();
     }
 
+    @Override
+    public org.opengis.geometry.Geometry getObjectiveGeometryISO() throws TransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public org.opengis.geometry.Geometry getDisplayGeometryISO() throws TransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

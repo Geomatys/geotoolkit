@@ -19,8 +19,6 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Shape;
-import org.geotoolkit.display2d.style.renderer.LinearLabelDescriptor;
-
 
 /**
  * Immutable default linear label descriptor.

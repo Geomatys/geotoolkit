@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Font;
 import java.awt.Paint;
-import org.geotoolkit.display2d.style.renderer.PointLabelDescriptor;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

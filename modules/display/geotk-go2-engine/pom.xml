@@ -67,16 +67,14 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jtswrapper</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-render</artifactId>
             <version>${geotoolkit.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gtm-jts-wrapper</artifactId>
-            <version>2.6-SNAPSHOT</version>
-        </dependency>
-
     </dependencies>
         
     

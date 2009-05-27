@@ -50,8 +50,6 @@ import org.geotoolkit.display2d.style.CachedLinePlacement;
 import org.geotoolkit.display2d.style.CachedPointPlacement;
 import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.geotoolkit.display2d.style.GO2Utilities;
-import org.geotoolkit.display2d.style.renderer.DefaultLinearLabelDescriptor;
-import org.geotoolkit.display2d.style.renderer.DefaultPointLabelDescriptor;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display.shape.XRectangle2D;

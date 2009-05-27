@@ -16,10 +16,9 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import java.awt.Shape;
 
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -29,9 +28,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public interface ProjectedGeometry  {
 
-    Geometry getObjectiveGeometry() throws TransformException;
+    com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException;
 
-    Geometry getDisplayGeometry() throws TransformException;
+    com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException;
 
     Shape getObjectiveShape() throws TransformException;
 
@@ -40,5 +39,9 @@ public interface ProjectedGeometry  {
     Shape getObjectiveBounds() throws TransformException;
 
     Shape getDisplayBounds() throws TransformException;
+
+    Geometry getObjectiveGeometryISO() throws TransformException;
+
+    Geometry getDisplayGeometryISO() throws TransformException;
 
 }

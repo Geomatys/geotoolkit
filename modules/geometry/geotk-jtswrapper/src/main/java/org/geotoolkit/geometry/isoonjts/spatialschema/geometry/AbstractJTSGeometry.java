@@ -157,7 +157,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     @Override
     public final Geometry getMbRegion() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
-        return JTSUtils.jtsToGo1(jtsGeom.getEnvelope(), getCoordinateReferenceSystem());
+        return JTSUtils.toISO(jtsGeom.getEnvelope(), getCoordinateReferenceSystem());
     }
 
     /**
@@ -398,7 +398,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         // Do the actual work of transforming the vertices
         jtsGeom.apply(new MathTransformFilter(transform, oldCRS, newCRS));
         // Then convert back to a GO1 geometry
-        return JTSUtils.jtsToGo1(jtsGeom, getCoordinateReferenceSystem());
+        return JTSUtils.toISO(jtsGeom, getCoordinateReferenceSystem());
     }
 
     /**
@@ -436,7 +436,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public final Geometry getConvexHull() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsHull = jtsGeom.convexHull();
-        return JTSUtils.jtsToGo1(jtsHull, getCoordinateReferenceSystem());
+        return JTSUtils.toISO(jtsHull, getCoordinateReferenceSystem());
     }
 
     /**
@@ -446,7 +446,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     public final Geometry getBuffer(final double distance) {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsBuffer = jtsGeom.buffer(distance);
-        return JTSUtils.jtsToGo1(jtsBuffer, getCoordinateReferenceSystem());
+        return JTSUtils.toISO(jtsBuffer, getCoordinateReferenceSystem());
     }
 
     /**
@@ -520,7 +520,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
-        return JTSUtils.jtsToGo1(JTSUtils.difference(jtsGeom1, jtsGeom2),
+        return JTSUtils.toISO(JTSUtils.difference(jtsGeom1, jtsGeom2),
                 getCoordinateReferenceSystem());
     }
 
@@ -537,7 +537,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
-        return JTSUtils.jtsToGo1(jtsGeom1.intersection(jtsGeom2),
+        return JTSUtils.toISO(jtsGeom1.intersection(jtsGeom2),
                 getCoordinateReferenceSystem());
     }
 
@@ -554,7 +554,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
-        return JTSUtils.jtsToGo1(JTSUtils.symmetricDifference(jtsGeom1, jtsGeom2),
+        return JTSUtils.toISO(JTSUtils.symmetricDifference(jtsGeom1, jtsGeom2),
                 getCoordinateReferenceSystem());
     }
 
@@ -563,7 +563,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
-        return JTSUtils.jtsToGo1(JTSUtils.union(jtsGeom1, jtsGeom2),
+        return JTSUtils.toISO(JTSUtils.union(jtsGeom1, jtsGeom2),
                 getCoordinateReferenceSystem());
     }
 

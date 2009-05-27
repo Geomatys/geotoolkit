@@ -36,6 +36,8 @@ public class StatefullContextParams {
     public final AffineTransform objectiveToDisplay = new AffineTransform();
     public final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
     public final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
+    public CoordinateReferenceSystem objectiveCRS;
+    public CoordinateReferenceSystem displayCRS;
     public boolean decimate = false;
     public double decimation = 0;
 
