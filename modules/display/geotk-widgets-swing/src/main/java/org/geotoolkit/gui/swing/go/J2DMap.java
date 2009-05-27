@@ -24,10 +24,9 @@ import org.geotoolkit.display2d.canvas.J2DCanvasComponentAdapter;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
-import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.geotoolkit.gui.swing.go.CanvasHandler;
 import org.geotoolkit.gui.swing.map.map2d.AbstractMap2D;
 
 import org.opengis.display.canvas.CanvasEvent;

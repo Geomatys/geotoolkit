@@ -13,8 +13,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.style;
+package org.geotoolkit.display2d;
 
+import org.geotoolkit.display2d.style.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -46,7 +47,7 @@ import org.geotoolkit.util.collection.Cache;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GeometryJ2D;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
@@ -161,6 +162,18 @@ public class GO2Utilities {
         }
 
         return XRectangle2D.INFINITY;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // geometries to java2d shapes /////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public static Shape toJava2D(Geometry geom){
+        return new JTSGeometryJ2D(geom);
+    }
+
+    public static Shape toJava2D(org.opengis.geometry.Geometry geom){
+        throw new UnsupportedOperationException("conversion ISO to java2d is not ready yet");
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -341,12 +354,6 @@ public class GO2Utilities {
 //        } else {
             return (Geometry) feature.getDefaultGeometryProperty().getValue();
 //        }
-    }
-
-    public static Shape createShape(Geometry geom){
-        final GeometryJ2D tempShape = new GeometryJ2D(null);
-        tempShape.setGeometry(geom);
-        return tempShape;
     }
 
     public static Collection<String> getRequieredAttributsName(final Expression exp, final Collection<String> collection){

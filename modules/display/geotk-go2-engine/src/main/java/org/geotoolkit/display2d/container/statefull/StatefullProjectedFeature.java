@@ -22,9 +22,8 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
-import org.geotoolkit.display2d.primitive.GeometryJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.map.FeatureMapLayer;
 
@@ -47,12 +46,12 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     private com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS = null;
     private Geometry    objectiveGeometryISO = null;
-    private GeometryJ2D objectiveShape = null;
+    private Shape       objectiveShape = null;
     private Rectangle2D objectiveBounds = null;
 
     private com.vividsolutions.jts.geom.Geometry displayGeometryJTS = null;
     private Geometry    displayGeometryISO = null;
-    private GeometryJ2D displayShape = null;
+    private Shape       displayShape = null;
     private Rectangle   displayBounds = null;
 
 
@@ -119,8 +118,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     @Override
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null){
-            objectiveShape = new GeometryJ2D(null);
-            objectiveShape.setGeometry(getObjectiveGeometry());
+            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
         }
         return objectiveShape;
     }
@@ -128,8 +126,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     @Override
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null){
-            displayShape = new GeometryJ2D(null);
-            displayShape.setGeometry(getDisplayGeometry());
+            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
         }
         return displayShape;
     }

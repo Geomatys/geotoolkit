@@ -15,6 +15,7 @@
  */
 package org.geotoolkit.display2d.style;
 
+import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.LinePlacement;

@@ -31,13 +31,13 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author Johann Sorel (Puzzle-GIS)
  * @since 2.9
  */
-public final class GeomCollectionIterator extends GeometryIterator<GeometryCollection> {
+public final class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryCollection> {
 
     private int currentGeom;
     private PathIterator currentIterator;
     private boolean done = false;
 
-    public GeomCollectionIterator(GeometryCollection gc, AffineTransform trs) {
+    public JTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs) {
         super(gc,trs);
         reset();
     }
@@ -46,7 +46,7 @@ public final class GeomCollectionIterator extends GeometryIterator<GeometryColle
         currentGeom = 0;
         done = false;
         currentIterator = (geometry.isEmpty()) ?
-            new EmptyIterator() :
+            new JTSEmptyIterator() :
             getIterator(geometry.getGeometryN(0));
     }
 
@@ -57,19 +57,19 @@ public final class GeomCollectionIterator extends GeometryIterator<GeometryColle
      *
      * @return the specific iterator for the geometry passed.
      */
-    private GeometryIterator getIterator(Geometry candidate) {
-        GeometryIterator iterator = null;
+    private JTSGeometryIterator getIterator(Geometry candidate) {
+        JTSGeometryIterator iterator = null;
 
         if (candidate.isEmpty()) {
-            iterator = new EmptyIterator();
+            iterator = new JTSEmptyIterator();
         }else if (candidate instanceof Point) {
-            iterator = new PointIterator((Point)candidate, transform);
+            iterator = new JTSPointIterator((Point)candidate, transform);
         } else if (candidate instanceof Polygon) {
-            iterator = new PolygonIterator((Polygon)candidate, transform);
+            iterator = new JTSPolygonIterator((Polygon)candidate, transform);
         } else if (candidate instanceof LineString) {
-            iterator = new LineIterator((LineString)candidate, transform);
+            iterator = new JTSLineIterator((LineString)candidate, transform);
         } else if (candidate instanceof GeometryCollection) {
-            iterator = new GeomCollectionIterator((GeometryCollection)candidate,transform);
+            iterator = new JTSGeomCollectionIterator((GeometryCollection)candidate,transform);
         }
 
         return iterator;

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Shape;
 
@@ -35,8 +36,8 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
 
     private final Geometry objectiveGeometry;
     private Geometry displayGeometry = null;
-    private final GeometryJ2D objectiveShape = new GeometryJ2D(null);
-    private final GeometryJ2D displayShape = new GeometryJ2D(null);
+    private final JTSGeometryJ2D objectiveShape = new JTSGeometryJ2D(null);
+    private final JTSGeometryJ2D displayShape = new JTSGeometryJ2D(null);
     private boolean isObjectiveCalculated = false;
     private boolean isDisplayCalculated = false;
     

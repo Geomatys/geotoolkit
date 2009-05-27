@@ -30,7 +30,7 @@ import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;

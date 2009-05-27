@@ -28,7 +28,7 @@ import java.awt.geom.AffineTransform;
  * @author Johann Sorel (Puzzle-GIS)
  * @since 2.9
  */
-public final  class PolygonIterator extends GeometryIterator<Polygon> {
+public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
 
     /** The rings describing the polygon geometry */
     private final LineString[] rings;
@@ -51,7 +51,7 @@ public final  class PolygonIterator extends GeometryIterator<Polygon> {
      * @param p The polygon
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public PolygonIterator(Polygon p, AffineTransform trs) {
+    public JTSPolygonIterator(Polygon p, AffineTransform trs) {
         super(p,trs);
         int numInteriorRings = p.getNumInteriorRing();
         rings = new LineString[numInteriorRings + 1];

@@ -15,6 +15,7 @@
  */
 package org.geotoolkit.display2d.style;
 
+import org.geotoolkit.display2d.GO2Utilities;
 import java.util.List;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;

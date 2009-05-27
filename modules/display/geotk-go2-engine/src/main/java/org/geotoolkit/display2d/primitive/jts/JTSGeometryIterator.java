@@ -26,7 +26,7 @@ import java.awt.geom.PathIterator;
  * @author Johann Sorel (Puzzle-GIS)
  * @since 2.9
  */
-public abstract class GeometryIterator<T extends Geometry> implements PathIterator {
+public abstract class JTSGeometryIterator<T extends Geometry> implements PathIterator {
 
     private static final AffineTransform IDENTITY = new AffineTransform();
 
@@ -34,7 +34,7 @@ public abstract class GeometryIterator<T extends Geometry> implements PathIterat
     protected AffineTransform transform;
     protected final T geometry;
 
-    protected GeometryIterator(T geometry, AffineTransform trs){
+    protected JTSGeometryIterator(T geometry, AffineTransform trs){
         this.geometry = geometry;
         this.transform = (trs == null) ? IDENTITY : trs;
     }

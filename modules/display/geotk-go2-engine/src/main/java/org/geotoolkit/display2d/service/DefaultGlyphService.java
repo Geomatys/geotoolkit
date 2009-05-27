@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 
 import org.opengis.style.FeatureTypeStyle;

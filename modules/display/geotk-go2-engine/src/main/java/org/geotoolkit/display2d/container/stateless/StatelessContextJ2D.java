@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display.canvas.RenderingContext;

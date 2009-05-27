@@ -49,7 +49,7 @@ import org.geotoolkit.display2d.style.CachedLabelPlacement;
 import org.geotoolkit.display2d.style.CachedLinePlacement;
 import org.geotoolkit.display2d.style.CachedPointPlacement;
 import org.geotoolkit.display2d.style.CachedTextSymbolizer;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -223,7 +223,7 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
 
                     //we need the reprojected shape since the text symbol will need
                     //the path
-                    Shape j2dShape = GO2Utilities.createShape(geom);
+                    Shape j2dShape = GO2Utilities.toJava2D(geom);
 
                     final LabelDescriptor descriptor = new DefaultLinearLabelDescriptor(
                             label,

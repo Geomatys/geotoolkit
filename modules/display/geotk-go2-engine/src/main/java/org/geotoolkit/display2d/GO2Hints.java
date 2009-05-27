@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.canvas;
+package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
 import org.geotoolkit.display.canvas.HintKey;

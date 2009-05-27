@@ -40,12 +40,12 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -62,7 +62,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-import static org.geotoolkit.display2d.style.GO2Utilities.*;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 
 /**
  * Single object to represent a complete mapcontext.

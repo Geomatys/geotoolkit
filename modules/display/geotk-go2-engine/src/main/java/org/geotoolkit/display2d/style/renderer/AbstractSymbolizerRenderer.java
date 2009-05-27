@@ -28,7 +28,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.StyleConstants;

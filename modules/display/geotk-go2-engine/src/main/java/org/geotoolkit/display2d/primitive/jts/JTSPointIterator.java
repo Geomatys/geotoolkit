@@ -1,9 +1,9 @@
 /*
  *    GeoTools - The Open Source Java GIS Toolkit
  *    http://geotools.org
- * 
+ *
  *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -16,18 +16,27 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
+import java.awt.geom.AffineTransform;
 
 /**
- * An iterator for empty geometries
+ * Simple and efficient path iterator for JTS Point.
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @since 2.9
  */
-public class EmptyIterator extends GeometryIterator<Geometry> {
-
-    public EmptyIterator() {
-        super(null,null);
+public final class JTSPointIterator extends JTSGeometryIterator<Point> {
+        
+    private boolean done = false;
+    
+    /**
+     * Creates a new PointIterator object.
+     *
+     * @param point The point
+     * @param at The affine transform applied to coordinates during iteration
+     */
+    public JTSPointIterator(Point point,AffineTransform trs) {
+        super(point,trs);
     }
 
     /**
@@ -35,15 +44,7 @@ public class EmptyIterator extends GeometryIterator<Geometry> {
      */
     @Override
     public int getWindingRule() {
-        return WIND_NON_ZERO;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isDone() {
-        return true;
+        return WIND_EVEN_ODD;
     }
 
     /**
@@ -51,7 +52,20 @@ public class EmptyIterator extends GeometryIterator<Geometry> {
      */
     @Override
     public void next() {
-        throw new IllegalStateException();
+        done = true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isDone() {
+        if(done){
+            done = false;
+            return true;
+        }else{
+            return done;
+        }
     }
 
     /**
@@ -59,6 +73,10 @@ public class EmptyIterator extends GeometryIterator<Geometry> {
      */
     @Override
     public int currentSegment(double[] coords) {
-        return 0;
+        coords[0] = geometry.getX();
+        coords[1] = geometry.getY();
+        transform.transform(coords, 0, coords, 0, 1);
+        return SEG_MOVETO;
     }
+
 }

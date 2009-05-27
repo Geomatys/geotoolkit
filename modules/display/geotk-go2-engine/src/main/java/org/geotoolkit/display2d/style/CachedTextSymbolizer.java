@@ -15,6 +15,7 @@
  */
 package org.geotoolkit.display2d.style;
 
+import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;

@@ -53,7 +53,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.portrayal.PortrayalService;
 
-import static org.geotoolkit.display2d.style.GO2Utilities.*;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 
 /**
  * Default implementation of portrayal service.

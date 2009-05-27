@@ -27,7 +27,7 @@ import java.awt.geom.AffineTransform;
  * @author Johann Sorel (Puzzle-GIS)
  * @since 2.9
  */
-public final class LineIterator extends GeometryIterator<LineString> {
+public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
 
     private final CoordinateSequence coordinates;
 	private final int coordinateCount;
@@ -43,7 +43,7 @@ public final class LineIterator extends GeometryIterator<LineString> {
      * @param ls The line string the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public LineIterator(LineString ls, AffineTransform trs) {
+    public JTSLineIterator(LineString ls, AffineTransform trs) {
         super(ls,trs);
         coordinates = ls.getCoordinateSequence();
         coordinateCount = coordinates.size();

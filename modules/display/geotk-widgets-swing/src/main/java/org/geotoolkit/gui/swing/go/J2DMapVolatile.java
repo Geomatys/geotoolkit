@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;

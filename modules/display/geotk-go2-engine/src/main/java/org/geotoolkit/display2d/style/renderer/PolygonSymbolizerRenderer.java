@@ -30,13 +30,13 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GeometryJ2D;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display.shape.XRectangle2D;
 
@@ -91,7 +91,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
                     catch (TransformException ex) { throw new PortrayalException(ex); }
 
                     geom = geom.buffer(offset);
-                    shape = GO2Utilities.createShape(geom);
+                    shape = GO2Utilities.toJava2D(geom);
 
                 }else{
                     try { shape = projectedFeature.getDisplayShape();}
@@ -109,7 +109,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
                     catch (TransformException ex) { throw new PortrayalException(ex); }
 
                     geom = geom.buffer(offset);
-                    shape = GO2Utilities.createShape(geom);
+                    shape = GO2Utilities.toJava2D(geom);
 
                 }else{
                     try{ shape = projectedFeature.getObjectiveShape(); }
@@ -188,8 +188,8 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
                 }
 
                 geom = geom.buffer(offset);
-                j2dShape = new GeometryJ2D(null);
-                ((GeometryJ2D)j2dShape).setGeometry(geom);
+                j2dShape = new JTSGeometryJ2D(null);
+                ((JTSGeometryJ2D)j2dShape).setGeometry(geom);
 
             }else{
                 try { j2dShape = graphic.getDisplayShape();}
@@ -221,8 +221,8 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
                 }
 
                 geom = geom.buffer(offset);
-                j2dShape = new GeometryJ2D(null);
-                ((GeometryJ2D)j2dShape).setGeometry(geom);
+                j2dShape = new JTSGeometryJ2D(null);
+                ((JTSGeometryJ2D)j2dShape).setGeometry(geom);
 
             }else{
                 try{ j2dShape = graphic.getObjectiveShape(); }

@@ -73,7 +73,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.style.function.Categorize;

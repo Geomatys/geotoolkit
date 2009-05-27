@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.primitive;
+package org.geotoolkit.display2d.primitive.jts;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -32,12 +32,12 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import org.geotoolkit.display2d.primitive.jts.GeometryIterator;
-import org.geotoolkit.display2d.primitive.jts.EmptyIterator;
-import org.geotoolkit.display2d.primitive.jts.GeomCollectionIterator;
-import org.geotoolkit.display2d.primitive.jts.LineIterator;
-import org.geotoolkit.display2d.primitive.jts.PointIterator;
-import org.geotoolkit.display2d.primitive.jts.PolygonIterator;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryIterator;
+import org.geotoolkit.display2d.primitive.jts.JTSEmptyIterator;
+import org.geotoolkit.display2d.primitive.jts.JTSGeomCollectionIterator;
+import org.geotoolkit.display2d.primitive.jts.JTSLineIterator;
+import org.geotoolkit.display2d.primitive.jts.JTSPointIterator;
+import org.geotoolkit.display2d.primitive.jts.JTSPolygonIterator;
 
 
 /**
@@ -47,9 +47,9 @@ import org.geotoolkit.display2d.primitive.jts.PolygonIterator;
  * @author Johann Sorel (Puzzle-GIS)
  * @version 2.9
  */
-public class GeometryJ2D implements Shape, Cloneable {
+public class JTSGeometryJ2D implements Shape, Cloneable {
 
-    private GeometryIterator<? extends Geometry> iterator = null;
+    private JTSGeometryIterator<? extends Geometry> iterator = null;
 
     /** The wrapped JTS geometry */
     private Geometry geometry;
@@ -59,7 +59,7 @@ public class GeometryJ2D implements Shape, Cloneable {
      *
      * @param geom - the wrapped geometry
      */
-    public GeometryJ2D(Geometry geom) {
+    public JTSGeometryJ2D(Geometry geom) {
         this.geometry = geom;
     }
 
@@ -153,15 +153,15 @@ public class GeometryJ2D implements Shape, Cloneable {
 
         if(iterator == null){
             if (this.geometry.isEmpty()) {
-                iterator = new EmptyIterator();
+                iterator = new JTSEmptyIterator();
             }else if (this.geometry instanceof Point) {
-                iterator = new PointIterator((Point) geometry, at);
+                iterator = new JTSPointIterator((Point) geometry, at);
             } else if (this.geometry instanceof Polygon) {
-                iterator = new PolygonIterator((Polygon) geometry, at);
+                iterator = new JTSPolygonIterator((Polygon) geometry, at);
             } else if (this.geometry instanceof LineString) {
-                iterator = new LineIterator((LineString)geometry, at);
+                iterator = new JTSLineIterator((LineString)geometry, at);
             } else if (this.geometry instanceof GeometryCollection) {
-                iterator = new GeomCollectionIterator((GeometryCollection)geometry,at);
+                iterator = new JTSGeomCollectionIterator((GeometryCollection)geometry,at);
             }
         }else{
             iterator.setTransform(at);

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
@@ -29,7 +30,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -47,7 +48,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-import static org.geotoolkit.display2d.style.GO2Utilities.*;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 
 /**
  * GraphicJ2D for feature objects. This object is valid only for the time of a portraying
@@ -61,8 +62,8 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
 
     private final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
     private final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
-    private final GeometryJ2D objectiveShape = new GeometryJ2D(null);
-    private final GeometryJ2D displayShape = new GeometryJ2D(null);
+    private final JTSGeometryJ2D objectiveShape = new JTSGeometryJ2D(null);
+    private final JTSGeometryJ2D displayShape = new JTSGeometryJ2D(null);
 
     private com.vividsolutions.jts.geom.Geometry defaultGeom = null;
     private com.vividsolutions.jts.geom.Geometry objectiveGeometry = null;

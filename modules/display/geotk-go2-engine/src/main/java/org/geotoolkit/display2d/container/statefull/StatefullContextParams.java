@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.geom.AffineTransform;
-import org.geotoolkit.display2d.canvas.GO2Hints;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;

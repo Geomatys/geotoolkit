@@ -45,7 +45,7 @@ import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.display2d.style.GO2Utilities;
+import org.geotoolkit.display2d.GO2Utilities;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
