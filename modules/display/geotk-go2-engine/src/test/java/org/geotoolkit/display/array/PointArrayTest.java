@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.display.array;
 
-import org.geotoolkit.display2d.array.GenericArray;
-import org.geotoolkit.display2d.array.DefaultArray;
-import org.geotoolkit.display2d.array.PointArray;
-import org.geotoolkit.display2d.array.PointIterator;
+import org.geotoolkit.legacy.array.GenericArray;
+import org.geotoolkit.legacy.array.DefaultArray;
+import org.geotoolkit.legacy.array.PointArray;
+import org.geotoolkit.legacy.array.PointIterator;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Random;
@@ -28,9 +28,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.geotoolkit.display2d.geom.CompressionLevel;
+import org.geotoolkit.legacy.geom.CompressionLevel;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.display2d.array.DynamicArray;
+import org.geotoolkit.legacy.array.DynamicArray;
 
 
 /**
