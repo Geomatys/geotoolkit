@@ -53,7 +53,6 @@ public final class PropertyTreeTest {
      * @throws ParseException Should not happen.
      */
     @Test
-    @Ignore
     public void testTree() throws ParseException {
         final DefaultCitation citation = new DefaultCitation();
         final InternationalString title = new SimpleInternationalString("Undercurrent");
@@ -69,36 +68,39 @@ public final class PropertyTreeTest {
         author.setRole(Role.AUTHOR);
         citation.getCitedResponsibleParties().add(author);
         final DefaultResponsibleParty duplicated = new DefaultResponsibleParty();
-        duplicated.setIndividualName("Toyoda Testsuya");
+        duplicated.setIndividualName("A japanese author");
         citation.getCitedResponsibleParties().add(duplicated);
 
         final TreeModel tree = citation.asTree();
-        assertMultilinesEquals( // TODO: CHILD ORDER IS NOT DETERMINIST!
+        assertMultilinesEquals(
             "Citation\n" +
-            "├───Presentation Form\n" +
-            "│   ├───document hardcopy\n" +
-            "│   └───image hardcopy\n" +
+            "├───Title\n" +
+            "│   └───Undercurrent\n" +
             "├───Alternate Titles\n" +
             "│   ├───Alt A\n" +
             "│   └───Alt B\n" +
             "├───Cited Responsible Parties\n" +
-            "│   ├───Individual Name\n" +
-            "│   │   └───Testsuya Toyoda\n" +
             "│   ├───Role\n" +
             "│   │   └───author\n" +
+            "│   ├───Individual Name\n" +
+            "│   │   └───Testsuya Toyoda\n" +
             "│   └───Individual Name\n" +
-            "│       └───Toyoda Testsuya\n" +
-            "├───Title\n" +
-            "│   └───Undercurrent\n" +
-            "└───ISBN\n" +
-            "    └───9782505004509\n", Trees.toString(tree));
+            "│       └───A japanese author\n" +
+            "├───ISBN\n" +
+            "│   └───9782505004509\n" +
+            "└───Presentation Form\n" +
+            "    ├───document hardcopy\n" +
+            "    └───image hardcopy\n", Trees.toString(tree));
 
         final TreeNode root = (TreeNode) tree.getRoot();
         assertSame(citation, root.getUserObject());
         assertEquals("Citation", root.toString());
-
+        /*
+         * Tests the "Cited Responsible Parties" node.
+         */
         assertEquals(5, root.getChildCount());
-        TreeNode node = (TreeNode) root.getChildAt(2); // TODO: sensitive to child order.
+        TreeNode node = (TreeNode) root.getChildAt(2);
+        assertEquals("Cited Responsible Parties", node.toString());
         final Set<DefaultResponsibleParty> authors = new HashSet<DefaultResponsibleParty>();
         authors.add(author);
         authors.add(duplicated);
@@ -106,8 +108,10 @@ public final class PropertyTreeTest {
 
         final DefaultCitation newCitation = new DefaultCitation();
         newCitation.parse(tree);
-        System.out.println(Trees.toString(newCitation.asTree()));
         assertEquals(authors, newCitation.getCitedResponsibleParties());
-        assertEquals(citation, newCitation);
+
+        // Following test fails until we fix the parsing of multi-occurences of CodeList.
+//      System.out.println(Trees.toString(newCitation.asTree()));
+//      assertEquals(citation, newCitation);
     }
 }

@@ -20,10 +20,12 @@ package org.geotoolkit.metadata;
 import java.io.File;
 import java.util.Set;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -36,6 +38,7 @@ import java.net.MalformedURLException;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
+import org.opengis.annotation.Obligation;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.resources.Errors;
@@ -79,14 +82,52 @@ final class PropertyAccessor {
     private static final String SET = "set";
 
     /**
-     * Methods to exclude from {@link #getGetters}. They are method inherited from
-     * {@link java.lang.Object}. Some of them, especially {@link Object#hashCode()}
-     * {@link Object#toString()} and {@link Object#clone()}, may be declared explicitly
-     * in some interface with a formal contract. Note: only no-argument methods need to
-     * be declared in this list.
+     * Methods to exclude from {@link #getGetters}. They are method inherited from {@link Object}
+     * which may be declared explicitly in interfaces with a formal contract. Only no-argument
+     * methods having a non-void return value need to be declared in this list.
      */
     private static final String[] EXCLUDES = {
-        "clone", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait"
+        "clone", "getClass", "hashCode", "toString"
+    };
+
+    /**
+     * The comparator for sorting method order. This comparator put mandatory methods first,
+     * which is necessary for reducing the risk of ambiguity in {@link PropertyTree#parse}.
+     */
+    private static final Comparator<Method> COMPARATOR = new Comparator<Method>() {
+        @Override public int compare(final Method m1, final Method m2) {
+            final UML a1 = m1.getAnnotation(UML.class);
+            final UML a2 = m2.getAnnotation(UML.class);
+            if (a1 != null) {
+                if (a2 == null) return +1;       // Sort annotated elements first.
+                int c = order(a1) - order(a2);   // Mandatory elements must be first.
+                if (c == 0) {
+                    // Fallback on alphabetical order.
+                    c = a1.identifier().compareToIgnoreCase(a2.identifier());
+                }
+                return c;
+            } else if (a2 != null) {
+                return -1; // Sort annotated elements first.
+            }
+            // Fallback on alphabetical order.
+            return m1.getName().compareToIgnoreCase(m2.getName());
+        }
+
+        /**
+         * Returns a higher number for obligation which should be first.
+         */
+        private int order(final UML uml) {
+            final Obligation obligation = uml.obligation();
+            if (obligation != null) {
+                switch (obligation) {
+                    case MANDATORY:   return 1;
+                    case CONDITIONAL: return 2;
+                    case OPTIONAL:    return 3;
+                    case FORBIDDEN:   return 4;
+                }
+            }
+            return 5;
+        }
     };
 
     /**
@@ -322,6 +363,7 @@ final class PropertyAccessor {
                     }
                 }
                 getters = XArrays.resize(getters, count);
+                Arrays.sort(getters, COMPARATOR);
                 SHARED_GETTERS.put(type, getters);
             }
             return getters;

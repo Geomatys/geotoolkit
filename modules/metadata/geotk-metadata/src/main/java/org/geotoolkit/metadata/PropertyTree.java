@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Date;
 import java.text.DateFormat;
@@ -148,9 +149,22 @@ final class PropertyTree {
             final String name = child.toString();
             if (!done.add(name)) {
                 /*
-                 * If a child of the same name occurs one more time, assume that it is
-                 * starting a new metadata object.
+                 * If a child of the same name occurs one more time, assume that it is starting
+                 * a new metadata object. For example if "Individual Name" appears one more time
+                 * inside a "Responsible Party" metadata, then what we are building is actually
+                 * a collection of Responsible Parties instead than a single instance, and we
+                 * are starting a new sentence.
+                 *
+                 * Note that this is not confused with the case where a single "Responsible Party"
+                 * has many "Individual Name" (if it was allowed by ISO), since in such case every
+                 * names would be childs under the same "Individual Name" child.
+                 *
+                 * This work only if, for each "Responsible Party" instance, the first child in
+                 * the tree is a mandatory attribute (or some attribute garanteed to be in each
+                 * child). Otherwise this approach is actually ambiguous.
                  */
+                done.clear();  // Starts a new cycle.
+                done.add(name);
                 metadata = newInstance(metadata.getClass());
                 additional.add(metadata);
             }
@@ -191,7 +205,7 @@ final class PropertyTree {
                     if (value instanceof List) {
                         childs = new ArrayList<Object>(4);
                     } else {
-                        childs = new HashSet<Object>(4);
+                        childs = new LinkedHashSet<Object>(4);
                     }
                     childs.add(value = newInstance(type));
                     parse(child, value, ca, childs);
