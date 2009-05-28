@@ -106,6 +106,7 @@
   <modules>
     <module>geotk-referencing</module>
     <module>geotk-referencing3D</module>
+    <module>geotk-epsg</module>
   </modules>
 
 </project>

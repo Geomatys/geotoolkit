@@ -41,6 +41,65 @@ public final class StringUtilities {
     }
 
     /**
+     * Replaces every occurences of the given string in the given buffer.
+     *
+     * @param buffer The string in which to perform the replacements.
+     * @param target The string to replace.
+     * @param replacement The replacement for the target string.
+     */
+    public static void replace(final StringBuilder buffer, final String target, final String replacement) {
+        final int length = target.length();
+        int i = buffer.length();
+        while ((i = buffer.lastIndexOf(target, i)) >= 0) {
+            buffer.replace(i, i+length, replacement);
+            i -= length;
+        }
+    }
+
+    /**
+     * Removes every occurences of line feeds in the given buffer, together with the spaces
+     * around the line feeds. If the last character of a line and the first character of the
+     * next line are both {@linkplain Character#isLetterOrDigit(char) letter or digit}, then
+     * a space will be inserted between them. Otherwise they will be no space.
+     *
+     * @param buffer The string in which to perform the removal.
+     */
+    public static void removeLF(final StringBuilder buffer) {
+        int i = buffer.length();
+        while ((i = buffer.lastIndexOf("\n", i)) >= 0) {
+            final int length = buffer.length();
+            int nld = 0;
+            int upper = i;
+            while (++upper < length) {
+                final char c = buffer.charAt(upper);
+                if (!Character.isWhitespace(c)) {
+                    if (Character.isLetterOrDigit(c)) {
+                        nld++;
+                    }
+                    break;
+                }
+            }
+            while (i != 0) {
+                final char c = buffer.charAt(--i);
+                if (!Character.isWhitespace(c)) {
+                    if (Character.isLetterOrDigit(c)) {
+                        nld++;
+                    }
+                    i++;
+                    break;
+                }
+            }
+            if (nld == 2) {
+                upper--;
+            }
+            buffer.delete(i, upper);
+            if (nld == 2) {
+                buffer.setCharAt(i, ' ');
+            }
+        }
+    }
+
+    /**
      * Returns {@code true} if the two given strings are equal, ignoring case. This method assumes
      * an ASCII character set, which is okay for simple needs like checking for a SQL keyword. For
      * comparaison that are valide in a wider range of Unicode character set, use the Java {@link

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>referencing</artifactId>
+    <version>SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit</groupId>
+  <artifactId>geotk-epsg</artifactId>
+  <packaging>jar</packaging>
+  <name>Referencing 3D</name>
+
+  <description>
+    Provides the script files for creating a local EPSG database
+    when first needed.
+  </description>
+
+  <licenses>
+    <license>
+      <name>EPSG terms of use</name>
+      <url>http://www.epsg-registry.org/help/xml/Terms_Of_Use.html</url>
+      <distribution>manual</distribution>
+    </license>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     JAR packaging                                           -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>org.geotoolkit.internal.referencing.EpsgCreatorCommands</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>

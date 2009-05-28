@@ -1,0 +1,30 @@
+EPSG pack
+
+  Compact the EPSG data script file. This module is used only when the <<<geotk-epsg>>> module
+  needs to be updated for a new release of the EPSG database. The SQL scripts to modify are
+  located in the directory below, which is called "<<<geotk-epsg>>> resources directory" for
+  the remainder of this page:
+
+-----------------------------------------------------------------------------------------------------------------
+<Geotoolkit directory>/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/
+-----------------------------------------------------------------------------------------------------------------
+
+  Steps to follow:
+
+  [[1]] Copy the new EPSG scripts in the <<<geotk-epsg>>> resource directory. Every existing files
+        should be overwritten except <<<Indexes.sql>>>. Note that files are renamed with the
+        format-specific and version-specific parts of the filename removed. For example
+        <<<EPSG_v6_18.mdb_Data_MySQL.sql>>> is saved as <<<Data.sql>>>.
+
+  [[2]] Open the <<<Table.sql>>> file for edition. In the statement creating <<<epsg_datum>>> table,
+         change the type of <<<realization_epoch>>> column to <<<INTEGER>>>.
+
+  [[3]] Run the following command-lines from the directory containing the scripts:
+
+---------------------------------------------------------------------------------------
+java -jar <Geotoolkit JARs>/geotk-epsg-pack-SNAPSHOT.jar Data.sql Data-compact.sql
+rm Data.sql
+mv Data-compact.sql Data.sql
+---------------------------------------------------------------------------------------
+
+  [[4]] Upgrade the version number declared in the <<<ThreadedEpsgFactory.getDefaultURL()>>> method.

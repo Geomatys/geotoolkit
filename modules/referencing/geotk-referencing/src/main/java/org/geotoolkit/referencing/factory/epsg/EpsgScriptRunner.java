@@ -19,17 +19,13 @@ package org.geotoolkit.referencing.factory.epsg;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.jdbc.ScriptRunner;
@@ -46,6 +42,14 @@ import org.geotoolkit.internal.jdbc.ScriptRunner;
  * @module
  */
 final class EpsgScriptRunner extends ScriptRunner {
+    /**
+     * The embedded SQL scripts to execute for creating the EPSG database, in that order.
+     * The {@code ".sql"} suffix is omitted.
+     */
+    static final String[] SCRIPTS = {
+        "Tables", "Data", "FKeys", "Indexes"
+    };
+
     /**
      * The pattern for an instruction like:
      *
@@ -68,6 +72,21 @@ final class EpsgScriptRunner extends ScriptRunner {
     private final boolean supportsSchemas;
 
     /**
+     * {@code true} if we should split multirow insertions into multiple {@code INSERT}
+     * statements. Should be {@code true} only when reading the files modified by the
+     * {@code geotk-epsg-modified} module.
+     */
+    boolean splitMultirows;
+
+    /**
+     * {@code true} if the Pilcrow character (¶ - decimal code 182) should be replaced by
+     * Line Feed (LF - decimal code 10). This is a possible workaround when the database
+     * does not support the {@code REPLACE(column, CHAR(182), CHAR(10))} SQL statement,
+     * but accepts LF.
+     */
+    private final boolean replaceParagraphs;
+
+    /**
      * Non-null if there is SQL statements to skip. This is the case of
      * {@code UPDATE ... SET x = REPLACE(x, ...)} functions, since Derby
      * does not supports the {@code REPLACE} function.
@@ -82,10 +101,9 @@ final class EpsgScriptRunner extends ScriptRunner {
      */
     public EpsgScriptRunner(final Connection connection) throws SQLException {
         super(connection);
-        suffixes.add("Tables");
-        suffixes.add("Data");
-        suffixes.add("FKeys");
-        suffixes.add("Indexes");
+        for (final String script : SCRIPTS) {
+            suffixes.add(script);
+        }
         /*
          * Checks for supported data type.
          */
@@ -117,6 +135,7 @@ final class EpsgScriptRunner extends ScriptRunner {
         } else {
             skip = Pattern.compile(REPLACE_STATEMENT, Pattern.CASE_INSENSITIVE).matcher("");
         }
+        replaceParagraphs = false; // Never supported for now.
         /*
          * Some databases do not support the TEXT data type (for example JavaDB).
          * In such case (detected by the above loop), replace TEXT by VARCHAR with
@@ -181,8 +200,9 @@ final class EpsgScriptRunner extends ScriptRunner {
      *
      * @param schema The schema (usually {@code "epsg"}).
      * @throws SQLException If the schema can not be created.
+     * @throws IOException If an I/O operation was required and failed.
      */
-    public void setSchema(final String schema) throws SQLException {
+    public void setSchema(final String schema) throws SQLException, IOException {
         if (!supportsSchemas) {
             return;
         }
@@ -220,9 +240,10 @@ final class EpsgScriptRunner extends ScriptRunner {
      * Modifies the SQL statement before to execute it, or ommit unsupported statements.
      *
      * @throws SQLException If an error occured while executing the SQL statement.
+     * @throws IOException If an I/O operation was required and failed.
      */
     @Override
-    protected int execute(final StringBuilder sql) throws SQLException {
+    protected int execute(final StringBuilder sql) throws SQLException, IOException {
         if (!supportsCommit) {
             if (StringUtilities.equalsIgnoreCase("COMMIT", sql)) {
                 return 0;
@@ -233,75 +254,36 @@ final class EpsgScriptRunner extends ScriptRunner {
                 return 0;
             }
         }
+        if (replaceParagraphs) {
+            StringUtilities.replace(sql, "\u00B6", "\n");
+        }
+        if (splitMultirows && StringUtilities.startsWith(sql, "INSERT INTO", true)) {
+            /*
+             * The following code is very specific to the syntax of the scripts generated
+             * by the geotk-epsg-pack module. It is executed only when running the scripts
+             * embedded in the geotk-epsg module.
+             */
+            int position = sql.indexOf("\n");
+            if (position >= 0) {
+                int begin, count = 0;
+                // Fetch the "INSERT INTO" part, which is expected to be on its own line.
+                final StringBuilder buffer = new StringBuilder(sql.substring(0, position)).append(' ');
+                final int offset = buffer.length();
+                while ((position = sql.indexOf("\n", begin = ++position)) >= 0) {
+                    int end = position;
+                    if (end > begin) {
+                        if (sql.charAt(end-1) == ',') {
+                            end--;
+                        }
+                        count += super.execute(buffer.append(sql.substring(begin, end)));
+                        buffer.setLength(offset);
+                    }
+                }
+                // Executes the last statement.
+                count += super.execute(buffer.append(sql.substring(begin)));
+                return count;
+            }
+        }
         return super.execute(sql);
-    }
-
-    /**
-     * Runs the EPSG scripts from the command lines. This method expect a maximum of 4 arguments:
-     * <p>
-     * <ol>
-     *   <li>The directory which contains the EPSG scripts (mandatory).</li>
-     *   <li>The JDBC URL to the database. If omitted, a default URL to a JavaDB database
-     *       will be used. This default URL will point toward the Geotoolkit configuration
-     *       directory, which is platform-dependent ({@code ".geotoolkit" on Linux).</li>
-     *   <li>The user for the database connection (optional).</li>
-     *   <li>The password for the database connection. Mandatory if a user has been specified.</li>
-     * </ol>
-     *
-     * @param  args The command line arguments.
-     * @throws FactoryException If an error occured while running the scripts.
-     */
-    public static void main(String[] args) throws FactoryException {
-        String url;
-        if (args.length >= 2) {
-            url = args[1].trim();
-        } else {
-            url = ThreadedEpsgFactory.getDefaultURL();
-        }
-        final boolean isJavadb = url.startsWith("jdbc:derby:");
-        if (isJavadb) {
-            url += ";create=true";
-        }
-        Exception failure;
-        EpsgScriptRunner runner = null;
-        try {
-            final Connection connection;
-            switch (args.length) {
-                case 1: // fall through
-                case 2: connection = DriverManager.getConnection(url); break;
-                case 4: connection = DriverManager.getConnection(url, args[2], args[3]); break;
-                default: {
-                    final PrintStream out = System.out;
-                    out.println("Expected arguments: DIRECTORY [URL] [USER] [PASSWORD]");
-                    out.println("  where DIRECTORY is the path to SQL scripts");
-                    out.println("  and URL specifies the JDBC connection to the database.");
-                    return;
-                }
-            }
-            try {
-                runner = new EpsgScriptRunner(connection);
-                runner.setEncoding("ISO-8859-1");
-                runner.setSchema("epsg");
-                runner.run(new File(args[0]));
-                runner.close();
-                if (isJavadb) try {
-                    DriverManager.getConnection("jdbc:derby:;shutdown=true");
-                } catch (SQLException e) {
-                    // This is the expected exception.
-                }
-                return;
-            } finally {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            failure = e;
-        } catch (IOException e) {
-            failure = e;
-        }
-        String message = failure.getLocalizedMessage();
-        if (runner != null) {
-            message = message + '\n' + runner.getCurrentPosition();
-        }
-        throw new FactoryException(message, failure);
     }
 }

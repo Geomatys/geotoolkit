@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -320,6 +321,25 @@ public class ScriptRunner implements FilenameFilter {
     }
 
     /**
+     * Run the script from the given input stream. Lines are read and grouped up to the
+     * terminal {@value #END_OF_STATEMENT} character, then sent to the database.
+     *
+     * @param  in The stream to read. Will be read up to the end-of-stream but will not be closed.
+     * @return The number of rows added or modified as a result of the script execution.
+     * @throws IOException If an error occured while reading the input.
+     * @throws SQLException If an error occured while executing a SQL statement.
+     */
+    public int run(final InputStream in) throws IOException, SQLException {
+        final Reader reader;
+        if (encoding == null) {
+            reader = new InputStreamReader(in);
+        } else {
+            reader = new InputStreamReader(in, encoding);
+        }
+        return run(new LineNumberReader(reader));
+    }
+
+    /**
      * Run the script from the given reader. Lines are read and grouped up to the
      * terminal {@value #END_OF_STATEMENT} character, then sent to the database.
      *
@@ -462,8 +482,9 @@ scanLine:   for (; i<length; i++) {
      * @param  sql The SQL statement to execute.
      * @return The number of rows added or modified as a result of the statement execution.
      * @throws SQLException If an error occured while executing the SQL statement.
+     * @throws IOException If an I/O operation was required and failed.
      */
-    protected int execute(final StringBuilder sql) throws SQLException {
+    protected int execute(final StringBuilder sql) throws SQLException, IOException {
         if (statement == null) {
             return 0;
         }
@@ -480,10 +501,12 @@ scanLine:   for (; i<length; i++) {
      * @throws SQLException If an error occured while closing the statement.
      */
     public void close() throws SQLException {
-        switch (dialect) {
-            case POSTGRESQL: statement.executeUpdate("VACUUM FULL"); break;
+        if (statement != null) {
+            switch (dialect) {
+                case POSTGRESQL: statement.executeUpdate("VACUUM FULL"); break;
+            }
+            statement.close();
         }
-        statement.close();
     }
 
     /**

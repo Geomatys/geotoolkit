@@ -44,6 +44,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -136,7 +137,7 @@ final class EPSGPanel extends JPanel implements ActionListener {
         group.add(isManual);
 
         url = new JComboBox(new String[] {
-            "jdbc:derby:" + Installation.EPSG.directory(true).getPath().replace(File.separatorChar, '/'),
+            ThreadedEpsgFactory.getDefaultURL(),
             "jdbc:derby:" + System.getProperty("user.home", "").replace(File.separatorChar, '/') + "/Referencing",
             "jdbc:postgresql://localhost:5432/Referencing",
             "jdbc:odbc:EPSG"

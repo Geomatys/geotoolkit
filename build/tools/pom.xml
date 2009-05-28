@@ -67,6 +67,7 @@
 <!-- module>geotk-provided</module -->
     <module>geotk-test</module>
     <module>geotk-migrate</module>
+    <module>geotk-epsg-pack</module>
   </modules>
 
 </project>

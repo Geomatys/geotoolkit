@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import java.util.Map;
@@ -238,18 +239,52 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     }
 
     /**
-     * Returns the the default JDBC URL to use for the connection. This method returns
-     * a URL using the JavaDB driver, connecting to the database in the installation
-     * directory specified by the setup program in the
+     * Returns the the default JDBC URL to use for connection to the EPSG embedded database.
+     * This method returns a URL using the JavaDB driver, connecting to the database in the
+     * installation directory specified by the setup program in the
      * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module.
      * If this setup program has not been run, then a platform-dependant location relative
      * to the user home directory is returned.
+     * <p>
+     * If no database exists in the above-cited directory, then a new EPSG database will be
+     * created when first needed provided that the {@code geotk-epsg} module is reacheable
+     * on the classpath.
+     * <p>
+     * Note that the directory may change in any Geotoolkit version. More specifically, every
+     * upgrade of the embedded EPSG database may cause a change of the default directory.
      *
      * @return The default JDBC URL to use for the connection to the EPSG database.
+     *
+     * @since 3.00
      */
-    static String getDefaultURL() {
+    public static String getDefaultURL() {
         final File directory = Installation.EPSG.directory(true);
-        return "jdbc:derby:" + directory.getPath().replace(File.pathSeparatorChar, '/');
+        final StringBuilder buffer = new StringBuilder("jdbc:derby:").
+                append(directory.getPath().replace(File.pathSeparatorChar, '/')).append("/6.18");
+        if (ThreadedEpsgFactory.class.getResource("Data.sql") != null) {
+            // Allow the creation of the database only if the needed scripts are available.
+            buffer.append(";create=true");
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * Shutdowns the given database. This is specific to the Derby embedded database.
+     * For all other kind of connection, this method does nothing.
+     */
+    static void shutdown(String databaseUrl) {
+        if (databaseUrl.startsWith("jdbc:derby:")) {
+            final int param = databaseUrl.indexOf(';');
+            if (param >= 0) {
+                databaseUrl = databaseUrl.substring(0, param);
+            }
+            databaseUrl += ";shutdown=true";
+            try {
+                DriverManager.getConnection(databaseUrl).close();
+            } catch (SQLException e) {
+                // This is the expected exception.
+            }
+        }
     }
 
     /**
@@ -284,35 +319,43 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     /**
      * Returns the data source for the EPSG database. The default implementation performs
      * the following steps:
-     * <p>
-     * <ul>
-     *   <li>If a {@link DataSource} object was given explicitly to the constructor, it is returned.</li>
-     *   <li>Otherwise if hint value is associated to the {@link Hints#EPSG_DATA_SOURCE} key,
+     *
+     * <ol>
+     *   <li><p>If a {@link DataSource} object was given explicitly to the constructor, it is
+     *       returned.</p></li>
+     *
+     *   <li><p>Otherwise if hint value is associated to the {@link Hints#EPSG_DATA_SOURCE} key,
      *       then there is a choice:
-     *   <ul>
-     *     <li>If that value is an instance of {@link DataSource}, it is returned.</li>
-     *     <li>If that value is an instance of {@link Name}, then a
-     *         {@linkplain InitialContext#lookup(Name) JNDI lookup} is performed for that name.</li>
-     *     <li>If that value is an instance of {@link String}, then a
-     *         {@linkplain InitialContext#lookup(String) JNDI lookup} is performed for that name.</li>
-     *   </ul>
-     *   <li>Otherwise if at least one of the following files exist, then the first one is used for
-     *       etablishing a connection. See {@link #CONFIGURATION_FILE} for more informations.
+     *       <ul>
+     *         <li>If that value is an instance of {@link DataSource}, it is returned.</li>
+     *         <li>If that value is an instance of {@link Name}, then a
+     *             {@linkplain InitialContext#lookup(Name) JNDI lookup} is performed for that name.</li>
+     *         <li>If that value is an instance of {@link String}, then a
+     *             {@linkplain InitialContext#lookup(String) JNDI lookup} is performed for that name.</li>
+     *       </ul></p>
+     *   </li>
+     *
+     *   <li><p>Otherwise if at least one of the following files exist, then the first one is used
+     *       for etablishing a connection.
      *       <ul>
      *         <li>{@code "EPSG-DataSource.properties"} in the current directory</li>
      *         <li>{@code "EPSG-DataSource.properties"} in the user's home directory</li>
      *         <li>{@code "EPSG/DataSource.properties"} in the Geotoolkit application data directory</li>
      *       </ul>
+     *       See {@link #CONFIGURATION_FILE} for more informations.</p>
      *   </li>
-     *   <li>Otherwise the factory is assumed not available.</li>
-     * </ul>
+     *
+     *   <li><p>Otherwise the {@linkplain #getDefaultURL() default URL} to the embedded database
+     *       is used. If the database does not exist and the {@code geotk-epsg} JAR file is
+     *       reacheable on the classpath, then the EPSG database will be created when first
+     *       needed.</p></li>
+     * </ol>
      *
      * @return The data source. Should never be {@code null}.
-     * @throws SQLException if the connection to the database failed.
-     * @throws FactoryException if the operation failed for an other reason (for example an I/O
-     *         error while reading the configuration file, or a failure to lookup the JNDI name).
+     * @throws FactoryException if the operation failed (for example an I/O error while
+     *         reading the configuration file, or a failure to lookup the JNDI name).
      */
-    protected synchronized DataSource getDataSource() throws FactoryException, SQLException {
+    protected synchronized DataSource getDataSource() throws FactoryException {
         DataSource datasource = this.datasource;
         if (datasource == null) {
             schema = user = password = null;
@@ -377,14 +420,11 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *         or {@code null} otherwise.
      * @return A data source created from the properties, or {@code null} if this method
      *         can not create a data source.
-     * @throws SQLException if the connection to the database failed.
      * @throws FactoryException if the operation failed for an other reason.
      *
      * @since 3.00
      */
-    protected DataSource createDataSource(final Properties properties)
-            throws FactoryException, SQLException
-    {
+    protected DataSource createDataSource(final Properties properties) throws FactoryException {
         if (properties != null) {
             final String url = properties.getProperty("URL");
             if (url != null) {
