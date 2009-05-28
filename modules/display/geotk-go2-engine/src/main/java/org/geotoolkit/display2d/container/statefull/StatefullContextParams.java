@@ -51,7 +51,7 @@ public class StatefullContextParams {
     public void updateGeneralizationFactor(RenderingContext2D renderingContext, CoordinateReferenceSystem dataCRS){
         //check if needed generalization
         final Boolean generalize = (Boolean) renderingContext.getCanvas().getRenderingHint(GO2Hints.KEY_GENERALIZE);
-        if(generalize == null || generalize == true){
+        if(generalize == null || generalize.booleanValue() == true){
             decimate = true;
             try {
                 final MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), dataCRS);

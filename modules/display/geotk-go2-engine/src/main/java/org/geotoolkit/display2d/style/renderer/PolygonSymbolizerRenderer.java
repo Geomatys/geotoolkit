@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -31,7 +29,6 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
@@ -40,9 +37,11 @@ import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.display2d.GO2Hints;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.PolygonSymbolizer;
@@ -81,43 +80,20 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
             final float offset = symbol.getOffset(feature, coeff);
             final Shape shape;
 
-            if(NonSI.PIXEL.equals(symbolUnit)){
-                context.switchToDisplayCRS();
-
-                if(offset != 0){
-                    //recalculate geometry with the given offset,
-                    //for polygon this act like a buffer
-                    Geometry geom;
-                    try { geom = projectedFeature.getDisplayGeometry(); }
-                    catch (TransformException ex) { throw new PortrayalException(ex); }
-
-                    geom = geom.buffer(offset);
-                    shape = GO2Utilities.toJava2D(geom);
-
+            try {
+                if(NonSI.PIXEL.equals(symbolUnit)){
+                    context.switchToDisplayCRS();
+                    shape = (offset != 0) ? bufferDisplayGeometry(context, projectedFeature, offset)
+                                          : projectedFeature.getDisplayShape();
                 }else{
-                    try { shape = projectedFeature.getDisplayShape();}
-                    catch (TransformException ex) { throw new PortrayalException(ex); }
+                    context.switchToObjectiveCRS();
+                    shape = (offset != 0) ? bufferObjectiveGeometry(context, projectedFeature, symbolUnit, offset)
+                                          : projectedFeature.getObjectiveShape();
                 }
-
-            }else{
-                context.switchToObjectiveCRS();
-
-                if(offset != 0){
-                    //recalculate geometry with the given offset,
-                    //for polygon this act like a buffer
-                    Geometry geom;
-                    try{ geom = projectedFeature.getObjectiveGeometry(); }
-                    catch (TransformException ex) { throw new PortrayalException(ex); }
-
-                    geom = geom.buffer(offset);
-                    shape = GO2Utilities.toJava2D(geom);
-
-                }else{
-                    try{ shape = projectedFeature.getObjectiveShape(); }
-                    catch (TransformException ex) { throw new PortrayalException(ex); }
-                }
-
+            }catch (TransformException ex){
+                throw new PortrayalException(ex);
             }
+
 
             //we apply the displacement ---------------------------------------
             final float[] disps = symbol.getDisplacement(feature);
@@ -175,66 +151,29 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
         final Shape CRSShape;
         final Shape j2dShape;
 
-        if(NonSI.PIXEL.equals(symbolUnit)){
-            CRSShape = mask;
+        try{
+            if(NonSI.PIXEL.equals(symbolUnit)){
+                CRSShape = mask;
 
-            if(offset != 0){
-                //recalculate geometry with the given offset,
-                //for polygon this act like a buffer
-                Geometry geom;
-                try { geom = graphic.getDisplayGeometry(); }
-                catch (TransformException ex) {
-                    ex.printStackTrace();
-                    return false;
-                }
-
-                geom = geom.buffer(offset);
-                j2dShape = new JTSGeometryJ2D(null);
-                ((JTSGeometryJ2D)j2dShape).setGeometry(geom);
-
+                j2dShape = (offset != 0) ? bufferDisplayGeometry(context, graphic, offset)
+                                         : graphic.getDisplayShape();
             }else{
-                try { j2dShape = graphic.getDisplayShape();}
-                catch (TransformException ex) {
-                    ex.printStackTrace();
-                    return false;
-                }
-            }
-
-        }else{
-            try{
-                CRSShape = new TransformedShape();
-                ((TransformedShape)CRSShape).setTransform((AffineTransform)
-                        context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
-                ((TransformedShape)CRSShape).setOriginalShape(mask);
-            }catch(FactoryException ex){
-                ex.printStackTrace();
-                return false;
-            }
-
-            if(offset != 0){
-                //recalculate geometry with the given offset,
-                //for polygon this act like a buffer
-                Geometry geom;
-                try{ geom = graphic.getObjectiveGeometry(); }
-                catch (TransformException ex) {
+                try{
+                    CRSShape = new TransformedShape();
+                    ((TransformedShape)CRSShape).setTransform(context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
+                    ((TransformedShape)CRSShape).setOriginalShape(mask);
+                }catch(FactoryException ex){
                     ex.printStackTrace();
                     return false;
                 }
 
-                geom = geom.buffer(offset);
-                j2dShape = new JTSGeometryJ2D(null);
-                ((JTSGeometryJ2D)j2dShape).setGeometry(geom);
-
-            }else{
-                try{ j2dShape = graphic.getObjectiveShape(); }
-                catch (TransformException ex) {
-                    ex.printStackTrace();
-                    return false;
-                }
+                j2dShape = (offset != 0) ? bufferObjectiveGeometry(context, graphic, symbolUnit, offset)
+                                         : graphic.getObjectiveShape();
             }
-
+        }catch (TransformException ex) {
+            ex.printStackTrace();
+            return false;
         }
-
 
 
         //we apply the displacement --------------------------------------------
@@ -360,6 +299,54 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
         renderFill(shape, symbol.getSource().getFill(), g);
         renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
+    }
+
+
+    /**
+     * Recalculate objective geometry with the given offset,
+     * for polygon this act like a buffer
+     */
+    private static Shape bufferObjectiveGeometry(RenderingContext2D context, ProjectedFeature projectedFeature,
+            Unit symbolUnit, float offset) throws TransformException{
+        final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
+        final Shape shape;
+
+        //TODO use symbol unit to adjust offset
+
+        if(geomType == null || geomType.equals(GO2Hints.GEOMETRY_ISO)){
+            System.out.println("using ISO geom");
+            Geometry geom = projectedFeature.getObjectiveGeometryISO();
+            geom = geom.getBuffer(offset);
+            shape = GO2Utilities.toJava2D(geom);
+        }else{
+            com.vividsolutions.jts.geom.Geometry geom = projectedFeature.getObjectiveGeometry();
+            geom = geom.buffer(offset);
+            shape = GO2Utilities.toJava2D(geom);
+        }
+
+        return shape;
+    }
+
+    /**
+     * Recalculate display geometry with the given offset,
+     * for polygon this act like a buffer
+     */
+    private static  Shape bufferDisplayGeometry(RenderingContext2D context, ProjectedFeature projectedFeature,
+            float offset) throws TransformException{
+        final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
+        final Shape shape;
+
+        if(geomType == null || geomType.equals(GO2Hints.GEOMETRY_ISO)){
+            Geometry geom = projectedFeature.getDisplayGeometryISO();
+            geom = geom.getBuffer(offset);
+            shape = GO2Utilities.toJava2D(geom);
+        }else{
+            com.vividsolutions.jts.geom.Geometry geom = projectedFeature.getDisplayGeometry();
+            geom = geom.buffer(offset);
+            shape = GO2Utilities.toJava2D(geom);
+        }
+
+        return shape;
     }
 
 }

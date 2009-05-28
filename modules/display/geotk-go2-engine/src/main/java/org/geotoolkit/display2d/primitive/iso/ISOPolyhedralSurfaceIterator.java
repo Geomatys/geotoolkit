@@ -1,8 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
- *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -51,6 +51,9 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
     /** True when the iteration is terminated */
     private boolean done = false;
 
+    /** if the geometry is empty */
+    private boolean empty = false;
+
     /**
      * Creates a new PolygonIterator object.
      *
@@ -76,7 +79,8 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
         currentRing = 0;
         currentCoord = 0;
         coordinate = curves.get(0).getPrimitive().asLineString(0, 0).getControlPoints();
-        done = false;
+        empty = coordinate.isEmpty();
+        done = empty;
     }
 
     /**
@@ -84,6 +88,8 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
      */
     @Override
     public int currentSegment(double[] coords) {
+        if(empty) return 0;
+        
         // first make sure we're not at the last element, this prevents us from exceptions
         // in the case where coords.size() == 0
         if (currentCoord == this.coordinate.size()) {
@@ -108,7 +114,7 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
      */
     @Override
     public int getWindingRule() {
-        return WIND_EVEN_ODD;
+        return (empty) ? WIND_NON_ZERO : WIND_EVEN_ODD;
     }
 
     /**

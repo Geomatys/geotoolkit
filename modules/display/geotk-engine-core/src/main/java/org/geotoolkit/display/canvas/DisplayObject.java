@@ -25,6 +25,7 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.primitive.Graphic;   //for javadoc
@@ -64,11 +65,24 @@ public class DisplayObject {
     protected final VetoableChangeSupport vetoableListeners;
 
     /**
+     * A set of rendering hints.
+     */
+    protected final Hints hints;
+
+    /**
      * Creates a new instance of display object.
      */
     protected DisplayObject() {
+        this(null);
+    }
+
+    /**
+     * Creates a new instance of display object with a set of hints.
+     */
+    protected DisplayObject(Hints hints) {
         this.propertyListeners = new PropertyChangeSupport(this);
         this.vetoableListeners = new VetoableChangeSupport(this);
+        this.hints = new Hints(hints);
     }
 
     /**
@@ -100,8 +114,8 @@ public class DisplayObject {
      *
      * @see #getHint
      */
-    public Object getHint(final RenderingHints.Key key) {
-        return null;
+    public Object getRenderingHint(final RenderingHints.Key key) {
+        return hints.get(key);
     }
 
     /**
@@ -114,7 +128,8 @@ public class DisplayObject {
      *
      * @see #setHint
      */
-    public void setHint(RenderingHints.Key key, Object value) {
+    public void setRenderingHint(RenderingHints.Key key, Object value) {
+        hints.put(key, value);
     }
 
     /**

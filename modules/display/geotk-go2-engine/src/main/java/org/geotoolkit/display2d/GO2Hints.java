@@ -32,6 +32,12 @@ public class GO2Hints {
     public static final Key KEY_GENERALIZE_FACTOR      = new HintKey(3, Number.class);
 
     /**
+     * Configure the go2 engine to use JTS or ISO geometries.
+     * Default is ISO.
+     */
+    public static final Key KEY_GEOMETRY_BINDING       = new HintKey(4, String.class);
+
+    /**
      * Configure the go2 engine to render in order symbolizer then feature.
      * This hint usualy given much better rendered image but is more costly to
      * produce in stateless mode.
@@ -45,6 +51,8 @@ public class GO2Hints {
     public static final Boolean GENERALIZE_OFF = Boolean.FALSE;
     public static final Boolean SYMBOL_RENDERING_PRIME = Boolean.TRUE;
     public static final Boolean SYMBOL_RENDERING_SECOND = Boolean.FALSE;
+    public static final String GEOMETRY_ISO = "ISO";
+    public static final String GEOMETRY_JTS = "JTS";
 
     /**
      * A value of 1.3 looks like the best average generalisation.

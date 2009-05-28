@@ -315,7 +315,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final Envelope layerBounds                     = layer.getBounds();
+        final Envelope layerBounds                               = layer.getBounds();
 
         if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -352,7 +352,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+        if(bbox.contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds in wihin the bbox, no need for a spatial filter
             filter = Filter.INCLUDE;
         }else{

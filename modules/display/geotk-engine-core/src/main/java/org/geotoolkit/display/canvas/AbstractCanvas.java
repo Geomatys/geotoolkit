@@ -146,13 +146,6 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
     };
     
     /**
-     * A set of rendering hints.
-     *
-     * @see Hints#COORDINATE_OPERATION_FACTORY
-     */
-    protected final Hints hints;
-
-    /**
      * Renderer used by this canvas
      */
     private AbstractContainer container = null;
@@ -175,8 +168,8 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * @param hints   The initial set of hints, or {@code null} if none.
      */
     protected AbstractCanvas(final Hints hints) {
+        super(hints);
         this.canvasListeners = new EventListenerList();
-        this.hints = new Hints(hints);
     }
 
     /**
@@ -464,43 +457,4 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
     protected void graphicsDisplayChanged(ContainerEvent event) {
     }
     
-    //--------------------------Hints ------------------------------------------
-    /**
-     * Returns a rendering hint.
-     *
-     * @param  key The hint key (e.g. {@link #FINEST_RESOLUTION}).
-     * @return The hint value for the specified key, or {@code null} if none.
-     */
-    @Override
-    public synchronized Object getRenderingHint(final RenderingHints.Key key) {
-        return hints.get(key);
-    }
-
-    /**
-     * Adds a rendering hint. Hints provides optional information used by some rendering code.
-     *
-     * @param key   The hint key (e.g. {@link #FINEST_RESOLUTION}).
-     * @param value The hint value. A {@code null} value remove the hint.
-     *
-     * @see #FINEST_RESOLUTION
-     * @see #REQUIRED_RESOLUTION
-     * @see #PREFETCH
-     * @see Hints#COORDINATE_OPERATION_FACTORY
-     * @see RenderingHints#KEY_RENDERING
-     * @see RenderingHints#KEY_COLOR_RENDERING
-     * @see RenderingHints#KEY_INTERPOLATION
-     */
-    @Override
-    public synchronized void setRenderingHint(final RenderingHints.Key key, final Object value) {
-        if (value != null) {
-            if (!value.equals(hints.put(key, value))) {
-                clearCache(); // Invokes only if the new value is different than the previous one.
-            }
-        } else {
-            if (hints.remove(key) != null) {
-                clearCache();
-            }
-        }
-    }
-
 }
