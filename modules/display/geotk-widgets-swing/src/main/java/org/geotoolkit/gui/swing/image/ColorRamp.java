@@ -414,6 +414,14 @@ public class ColorRamp extends JComponent {
      * @return The component orientation.
      */
     public int getOrientation() {
+        return orientation();
+    }
+
+    /**
+     * Non-overridable method for consistency with the old values provided in
+     * calls to {@code firePropertyChange} (they always use the internal value).
+     */
+    private int orientation() {
         return (horizontal) ? SwingConstants.HORIZONTAL : SwingConstants.VERTICAL;
     }
 
@@ -423,11 +431,14 @@ public class ColorRamp extends JComponent {
      * @param orient {@link SwingConstants#HORIZONTAL} or {@link SwingConstants#VERTICAL}.
      */
     public void setOrientation(final int orient) {
+        final int old = orientation();
         switch (orient) {
             case SwingConstants.HORIZONTAL: horizontal=true;  break;
             case SwingConstants.VERTICAL:   horizontal=false; break;
             default: throw new IllegalArgumentException(String.valueOf(orient));
         }
+        firePropertyChange("orientation", old, orient);
+        repaint();
     }
 
     /**
@@ -446,7 +457,10 @@ public class ColorRamp extends JComponent {
      * @param visible {@code true} if graduation labels should be drawn.
      */
     public void setLabelVisibles(final boolean visible) {
+        final boolean old = labelVisibles;
         labelVisibles = visible;
+        firePropertyChange("labelVisibles", old, visible);
+        repaint();
     }
 
     /**
@@ -459,7 +473,7 @@ public class ColorRamp extends JComponent {
     @Override
     public void setForeground(final Color color) {
         super.setForeground(color);
-        autoForeground = (color==null);
+        autoForeground = (color == null);
     }
 
     /**
