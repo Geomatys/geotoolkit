@@ -259,7 +259,7 @@ final class PackOutput implements Closeable {
         p.put(EFFORT, String.valueOf(9));  // Maximum compression level.
         p.put(KEEP_FILE_ORDER,    FALSE);  // Reorder files for better compression.
         p.put(MODIFICATION_TIME,  LATEST); // Smear modification times to a single value.
-        p.put(DEFLATE_HINT,       FALSE);  // Ignore all JAR deflation requests,
+        p.put(DEFLATE_HINT,       TRUE);   // Ignore all JAR deflation requests.
         p.put(UNKNOWN_ATTRIBUTE,  ERROR);  // Throw an error if an attribute is unrecognized
         final JarFile jarFile = new JarFile(inputFile);
         final OutputStream out = new GZIPOutputStream(new FileOutputStream(outputFile));

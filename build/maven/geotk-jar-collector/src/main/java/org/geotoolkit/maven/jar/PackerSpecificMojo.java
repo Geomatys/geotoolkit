@@ -88,9 +88,10 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "jsr-275-1.0-beta-2.jar",
                     "geoapi-2.3-SNAPSHOT.jar",
                     "geoapi-pending-2.3-SNAPSHOT.jar",
+                    "geotk-epsg-" + VERSION + ".jar",
                     "geotk-utility-" + VERSION + ".jar",
                     "geotk-metadata-" + VERSION + ".jar",
-                    "geotk-referencing-" + VERSION + ".jar"
+                    "geotk-referencing-" + VERSION + ".jar" // Last in order to pickup its main class.
             });
             packer.addPack(referencing, coverage, new String[] {
                     "geotk-coverage-" + VERSION + ".jar",

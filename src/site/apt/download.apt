@@ -91,8 +91,9 @@ Downloading Geotoolkit Binaries
 || File                                  || Content                         || Prerequites                 ||
 *----------------------------------------+----------------------------------+-------------------------------+
 | <<<geotk-bundle-referencing.pack.gz>>> | \u2022 vecmath.jar               | \u2022 Java 6                 |
-|                                        | \u2022 geoapi.jar                |                               |
 |                                        | \u2022 jsr-275.jar               |                               |
+|                                        | \u2022 geoapi.jar                |                               |
+|                                        | \u2022 geotk-epsg.jar            |                               |
 |                                        | \u2022 geotk-utility.jar         |                               |
 |                                        | \u2022 geotk-metadata.jar        |                               |
 |                                        | \u2022 geotk-referencing.jar     |                               |
