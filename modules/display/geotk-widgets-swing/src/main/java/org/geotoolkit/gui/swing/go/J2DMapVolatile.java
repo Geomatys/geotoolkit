@@ -57,8 +57,8 @@ public class J2DMapVolatile extends AbstractMap2D implements GoMap2D{
         final ReferencedCanvas2D canvas = geoComponent.getCanvas();
         canvas.setContainer(new DefaultContextContainer2D(canvas, statefull));
         canvas.getController().setAutoRepaint(true);
-        canvas.setRenderingHint(GO2Hints.KEY_GENERALIZE, true);
-        canvas.setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, true);
+//        canvas.setRenderingHint(GO2Hints.KEY_GENERALIZE, true);
+//        canvas.setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, true);
 
         canvas.addCanvasListener(new CanvasListener() {
 

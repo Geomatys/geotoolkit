@@ -313,7 +313,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
         //TODO use symbol unit to adjust offset
 
-        if(geomType == null || geomType.equals(GO2Hints.GEOMETRY_ISO)){
+        if(geomType != null && geomType.equals(GO2Hints.GEOMETRY_ISO)){
             System.out.println("using ISO geom");
             Geometry geom = projectedFeature.getObjectiveGeometryISO();
             geom = geom.getBuffer(offset);
@@ -336,7 +336,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
         final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
         final Shape shape;
 
-        if(geomType == null || geomType.equals(GO2Hints.GEOMETRY_ISO)){
+        if(geomType != null && geomType.equals(GO2Hints.GEOMETRY_ISO)){
             Geometry geom = projectedFeature.getDisplayGeometryISO();
             geom = geom.getBuffer(offset);
             shape = GO2Utilities.toJava2D(geom);
