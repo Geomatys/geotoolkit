@@ -83,7 +83,7 @@ public final class ScriptTest {
     /**
      * Run {@code "ParameterizedTransform.txt"}. This script is different than the other ones,
      * in that it creates the math transform directly instead than infering them from a source
-     * and a target CRS. Concequently it is a more direct test of projection implementations
+     * and a target CRS. Consequently it is a more direct test of projection implementations
      * than the other scripts.
      *
      * @throws Exception If a test failed.

@@ -295,7 +295,7 @@ public class AffineTransform2D extends XAffineTransform
      * <p>
      * Most Geotoolkit implementations require that the objects being compared are inconditionnaly of
      * the same class in order to be considered equal. However many JDK implementations, including
-     * {@link AffineTransform}, do not have this requirement. Concequently the above condition
+     * {@link AffineTransform}, do not have this requirement. Consequently the above condition
      * (i.e. require the same class only if the given object is an {@code AffineTransform2D} or
      * a subclass) is necessary in order to preserve the <cite>symmetricity</cite> contract of
      * {@link Object#equals}.

@@ -238,7 +238,7 @@ public class LambertConformal extends UnitaryProjection {
 
     /**
      * Returns the parameter descriptors for this unitary projection. Note that the returned
-     * descriptor is about the unitary projection, not the full one. Concequently the current
+     * descriptor is about the unitary projection, not the full one. Consequently the current
      * implementation returns the descriptor of {@link LambertConformal2SP} in all cases,
      * because the 1SP case is implemented as 2SP with both standard parallels set to the
      * latitude of origin.

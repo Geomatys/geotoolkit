@@ -107,7 +107,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
 
     /**
      * Constant parameters. They depend only on the excentricity, not on the
-     * latitude of origin. Concequently they are not used in the spherical case.
+     * latitude of origin. Consequently they are not used in the spherical case.
      */
     final double qp, rq;
 

@@ -243,7 +243,7 @@ final class RegionCalculator {
             tilesAT.clear(); // Lets GC do its work.
             /*
              * Translates the tiles in such a way that the upper-left corner has the coordinates
-             * specified by (xLocation, yLocation). Adjusts the tile affine transform concequently.
+             * specified by (xLocation, yLocation). Adjusts the tile affine transform consequently.
              * After this block, tiles having the same subsampling will share the same immutable
              * affine transform instance.
              */

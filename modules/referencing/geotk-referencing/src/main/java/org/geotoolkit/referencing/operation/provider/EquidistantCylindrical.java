@@ -34,7 +34,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * The provider for "<cite>Equidistant Cylindrical</cite>" projection (EPSG:9842, 9823).
  * EPSG defines two codes for this projection, 9823 being the spherical case and 9842 the
  * ellipsoidal case. However the formulas are the same in both cases, with an additional
- * adjustement of Earth radius in the ellipsoidal case. Concequently they are implemented
+ * adjustement of Earth radius in the ellipsoidal case. Consequently they are implemented
  * in Geotoolkit by the same class.
  * <p>
  * The programmatic names and parameters are enumerated at

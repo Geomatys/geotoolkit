@@ -110,7 +110,7 @@ public final class TransfertRectIter implements WritableRectIter {
     public static WritableRectIter create(RenderedImage src, WritableRenderedImage dst, Rectangle bounds) {
         if (dst instanceof BufferedImage) {
             /*
-             * BufferedImage are always backed by a single raster. Concequently we are better to
+             * BufferedImage are always backed by a single raster. Consequently we are better to
              * delegate the work to create(RenderedImage, WritableRaster, Rectangle), which will
              * detects if the source uses the same raster than the destination.
              */

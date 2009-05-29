@@ -436,7 +436,7 @@ public class PolarStereographic extends Stereographic {
              *
              * This constant was used only as a divisor of chi in inverseTransform(...), but was
              * identical to the expression that multiplies chi just a few instructions further.
-             * Concequently, it vanishes completly.
+             * Consequently, it vanishes completly.
              */
         }
 

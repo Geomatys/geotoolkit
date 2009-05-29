@@ -184,7 +184,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
         } else sgnRow = +1;
         /*
          * Calculation of affine transform has 6 unknown terms.     P00──────P10
-         * Concequently its solution requierts 6 equations. We       │  .     │
+         * Consequently its solution requierts 6 equations. We       │  .     │
          * get them by using the 3 nearest points, each point        │        │
          * having 2 ordinates. Example: (. is the pt to eval)       P01────(ignored)
          */

@@ -461,7 +461,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
                     /*
                      * If we have really found the identifier we were looking for, then we should
                      * have (search == identifier) because the collection given in argument shall
-                     * always be derived from the select(String...) method (and concequently from
+                     * always be derived from the select(String...) method (and consequently from
                      * the same NamedIdentifier instances) in Geotoolkit implementation.
                      *
                      * However we relax the check in case this class get a wider usage than we

@@ -191,7 +191,7 @@ public class Mercator extends UnitaryProjection {
 
     /**
      * Returns the parameter descriptors for this unitary projection. Note that the returned
-     * descriptor is about the unitary projection, not the full one. Concequently the current
+     * descriptor is about the unitary projection, not the full one. Consequently the current
      * implementation returns the descriptor of {@link Mercator1SP} in all cases, because the
      * 2SP case is implemented as 1SP with a different scale factor.
      */

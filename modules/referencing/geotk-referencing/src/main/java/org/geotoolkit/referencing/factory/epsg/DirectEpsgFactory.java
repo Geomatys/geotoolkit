@@ -341,7 +341,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * in a previous call.
      * <p>
      * Note that this {@code DirectEpsgFactory} can not be disposed as long as this map is not
-     * empty, since {@link AuthorityCodes} caches some SQL statements and concequently require
+     * empty, since {@link AuthorityCodes} caches some SQL statements and consequently require
      * the {@linkplain #connection} to be open. This is why we use soft references rather than
      * hard ones, in order to know when no {@link AuthorityCodes} are still in use.
      * <p>

@@ -56,7 +56,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * are usually defined with (<var>southing</var>, <var>westing</var>) axis orientations. ESRI uses
  * those orientations by default. However in Geotoolkit, every projection must have (<var>easting</var>,
  * <var>northing</var>) orientations - axis reversal are handled by the concatenation of affine
- * transforms. Concequently in order to get the usual axis order, a Krovak projected CRS
+ * transforms. Consequently in order to get the usual axis order, a Krovak projected CRS
  * <strong>must</strong> defines axis order explicitly (as required by the OGC standard)
  * like in the example below:
  *

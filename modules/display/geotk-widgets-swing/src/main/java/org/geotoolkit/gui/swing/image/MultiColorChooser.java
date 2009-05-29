@@ -136,7 +136,7 @@ public class MultiColorChooser extends JPanel implements Dialog {
     /**
      * The table model for the colors table. This table have two columns; the first one is the row
      * number and the second one is the RGB code in hexadecimal. The type of the second color is
-     * {@link Color}, concequently the table needs the custom {@link CellRenderer} in order to
+     * {@link Color}, consequently the table needs the custom {@link CellRenderer} in order to
      * display the expected text in the cells.
      *
      * @author Martin Desruisseaux (Geomatys)
