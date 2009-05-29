@@ -39,32 +39,12 @@ import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
  */
 public class EpsgCreatorCommands extends CommandLine {
     /**
-     * The directory which contain the EPSG scripts. If omitted, the scripts embedded
-     * in the "geotk-epsg" JAR file will be used. If this JAR file is not reacheable
+     * The directory which contain the EPSG scripts. If omitted, the scripts embedded in
+     * the {@code geotk-epsg.jar} file will be used. If this JAR file is not reacheable
      * on the classpath, then the command fails.
      */
     @Option
     private File scripts;
-
-    /**
-     * The JDBC URL to the database. If omitted, a default URL to a JavaDB database
-     * will be used. This default URL will point toward the Geotoolkit configuration
-     * directory, which is platform-dependent (".geotoolkit" on Linux).
-     */
-    @Option
-    private String database;
-
-    /**
-     * The user for the database connection (optional).
-     */
-    @Option
-    private String user;
-
-    /**
-     * The password for the database connection. Ignored if no user has been specified.
-     */
-    @Option
-    private String password;
 
     /**
      * Creates a new instance of {@code EpsgCreatorCommands}.
@@ -87,10 +67,27 @@ public class EpsgCreatorCommands extends CommandLine {
     }
 
     /**
-     * Runs the EPSG scripts from the command lines.
+     * Runs the EPSG scripts from the command lines. This action expects up to three arguments:
+     * <p>
+     * <ul>
+     *   <li>The JDBC URL to the database. If omitted, a default URL to a JavaDB database
+     *       will be used. This default URL will point toward the Geotoolkit configuration
+     *       directory, which is platform-dependent ({@code ".geotoolkit"} on Linux).</li>
+     *   <li>The user for the database connection (optional).</li>
+     *   <li>The password for the database connection. Ignored if no user has been specified.</li>
+     * </ul>
      */
-    @Action(minimalArgumentCount=0, maximalArgumentCount=0)
+    @Action(minimalArgumentCount=0, maximalArgumentCount=3)
+    @SuppressWarnings("fallthrough")
     public void create() {
+        String database=null, user=null, password=null;
+        switch (arguments.length) {
+            default: // Should not happen actually...
+            case 3:  password = arguments[2]; // fallthrough
+            case 2:  user     = arguments[1]; // fallthrough
+            case 1:  database = arguments[0]; // fallthrough
+            case 0:  break;
+        }
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(database, user, password);
         installer.setScriptDirectory(scripts);

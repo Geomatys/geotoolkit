@@ -74,7 +74,7 @@ final class EpsgScriptRunner extends ScriptRunner {
     /**
      * {@code true} if we should split multirow insertions into multiple {@code INSERT}
      * statements. Should be {@code true} only when reading the files modified by the
-     * {@code geotk-epsg-modified} module.
+     * {@code geotk-epsg-pack} module.
      */
     boolean splitMultirows;
 

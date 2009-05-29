@@ -89,6 +89,7 @@ import org.geotoolkit.internal.io.Installation;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Jody Garnett (Refractions)
  * @version 3.00
  *
  * @since 2.1
@@ -161,9 +162,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     /**
      * The name of the schema in the database where to look for the tables, or {@code null} if none.
      * <p>
-     * This property is read from the {@value #CONFIGURATION_FILE} by {@link #getDataSource()}, and
-     * is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value, then
-     * overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
+     * This property is read from the {@value #CONFIGURATION_FILE} file by {@link #getDataSource()},
+     * and is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value,
+     * then overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
      *
      * @since 3.00
      */
@@ -173,9 +174,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * The user name to be given to {@link DataSource#getConnection(String,String)}, or {@code null}
      * if none. In the later case, {@link DataSource#getConnection()} will be used instead.
      * <p>
-     * This property is read from the {@value #CONFIGURATION_FILE} by {@link #getDataSource()}, and
-     * is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value, then
-     * overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
+     * This property is read from the {@value #CONFIGURATION_FILE} file by {@link #getDataSource()},
+     * and is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value,
+     * then overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
      *
      * @since 3.00
      */
@@ -185,9 +186,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * The password to be given to {@link DataSource#getConnection(String,String)}, or {@code null}
      * if none.
      * <p>
-     * This property is read from the {@value #CONFIGURATION_FILE} by {@link #getDataSource()}, and
-     * is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value, then
-     * overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
+     * This property is read from the {@value #CONFIGURATION_FILE} file by {@link #getDataSource()},
+     * and is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value,
+     * then overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
      *
      * @since 3.00
      */
@@ -274,7 +275,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * to the user home directory is returned.
      * <p>
      * If no database exists in the above-cited directory, then a new EPSG database will be
-     * created when first needed provided that the {@code geotk-epsg} module is reacheable
+     * created when first needed provided that the {@code geotk-epsg.jar} file is reacheable
      * on the classpath.
      * <p>
      * Note that the directory may change in any Geotoolkit version. More specifically, every
@@ -364,17 +365,16 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *   </li>
      *
      *   <li><p>Otherwise if at least one of the following files exist, then the first one is used
-     *       for etablishing a connection.
+     *       for etablishing a connection (See {@link #CONFIGURATION_FILE} for more informations).
      *       <ul>
      *         <li>{@code "EPSG-DataSource.properties"} in the current directory</li>
      *         <li>{@code "EPSG-DataSource.properties"} in the user's home directory</li>
      *         <li>{@code "EPSG/DataSource.properties"} in the Geotoolkit application data directory</li>
-     *       </ul>
-     *       See {@link #CONFIGURATION_FILE} for more informations.</p>
+     *       </ul></p>
      *   </li>
      *
      *   <li><p>Otherwise the {@linkplain #getDefaultURL() default URL} to the embedded database
-     *       is used. If the database does not exist and the {@code geotk-epsg} JAR file is
+     *       is used. If the database does not exist and the {@code geotk-epsg.jar} file is
      *       reacheable on the classpath, then the EPSG database will be created when first
      *       needed.</p></li>
      * </ol>
@@ -453,7 +453,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * <p>
      * If the default URL was used and no database exists at that URL, then a new database will
      * be created using the {@link EpsgInstaller} when first needed. This operation is possible
-     * only if the {@code geotk-epsg} JAR file is reacheable on the classpath, otherwise an
+     * only if the {@code geotk-epsg.jar} file is reacheable on the classpath, otherwise an
      * exception will be thrown the first time the factory will be used.</p>
      * <p>
      * Subclasses should override this method if they can create a data source from other

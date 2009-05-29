@@ -1,0 +1,31 @@
+EPSG database
+
+  Provides the SQL script files for creating a local EPSG database when first needed.
+  The database is maintained by the {{{http://www.epsg.org/}OGP Surveying & Positioning Committee}}
+  and reproduced in this module with identical content.
+
+  This module is used only for creating a local copy of the database. It is <<not>> needed for
+  using the EPSG database once created - the core referencing module alone is suffisient.
+  However having this module inconditionnaly in the classpath - in case the local database
+  needs to be created - doesn't hurt.
+
+  While the primary purpose of this module is to create the local database when first needed,
+  it can also be used for populating an external database, for example on a server running
+  {{{http://www.postgresql.org}PostgreSQL}}. This is done by running the following from the
+  command line:
+
+-------------------------------------------------------------------
+java -jar geotk-epsg create <URL to the database> <user> <password>
+-------------------------------------------------------------------
+
+  In order to get the referencing module to use that database, a <<<DataSource.properties>>>
+  file must be presents in the Geotoolkit configuration directory with the following content:
+
+-------------------------------------------------------------------
+#
+# Connection parameters to the EPSG database.
+#
+URL      = <URL to the database>
+user     = <user>
+password = <password>
+-------------------------------------------------------------------

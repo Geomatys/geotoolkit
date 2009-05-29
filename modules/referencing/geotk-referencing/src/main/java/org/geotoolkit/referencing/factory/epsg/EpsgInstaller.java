@@ -68,7 +68,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
 
     /**
      * The directory which contain the EPSG scripts. If {@code null}, then the scripts
-     * will be read from the {@code geotk-epsg} JAR. If this JAR is not reacheable,
+     * will be read from the {@code geotk-epsg.jar} file. If this JAR is not reacheable,
      * then an exception will be thrown.
      */
     private File scriptsDirectory;
@@ -91,8 +91,8 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     private String password;
 
     /**
-     * Creates a new installer. By default, the scripts will be read from the {@code geotk-epsg}
-     * JAR files and the database is created on the local machine using JavaDB.
+     * Creates a new installer. By default, the scripts will be read from the {@code geotk-epsg.jar}
+     * file and the database is created on the local machine using JavaDB.
      */
     public EpsgInstaller() {
     }
@@ -107,7 +107,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      *   <li>{@code EPSG_v6_18.mdb_Data_PostgreSQL.sql}</li>
      *   <li>{@code EPSG_v6_18.mdb_FKeys_PostgreSQL.sql}</li>
      *   <li>Optional but recommanded: {@code EPSG_v6_18.mdb_Indexes_PostgreSQL.sql} using
-     *       a copy of the file embedded in the {@code geotk-epsg} module.</li>
+     *       a copy of the script embedded in the {@code geotk-epsg.jar} file.</li>
      * </ul>
      * <p>
      * The suffix may be different (for example {@code "_MySQL.sql"} instead of
@@ -116,7 +116,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * the latest version are used.
      * <p>
      * If this method is never invoked or if the given directory is {@code null}, then the
-     * scripts will be read from the {@code geotk-epsg} JAR file. If that JAR is not reacheable,
+     * scripts will be read from the {@code geotk-epsg.jar} file. If that JAR is not reacheable,
      * then an exception will be thrown at {@link #call()} invocation time.
      *
      * @param directory The directory of the EPSG SQL scripts to execute, or {@code null}

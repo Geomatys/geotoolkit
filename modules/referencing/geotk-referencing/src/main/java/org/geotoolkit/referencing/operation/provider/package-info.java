@@ -109,6 +109,7 @@
  * interoperability with ESRI definitions of coordinate reference systems.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Rueben Schulz (UBC)
  * @version 3.00
  *
  * @see org.geotoolkit.referencing.operation.transform

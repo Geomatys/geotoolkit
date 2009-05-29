@@ -32,7 +32,7 @@ import org.geotoolkit.internal.jdbc.DefaultDataSource;
 /**
  * The data source for the embedded EPSG database. This data source should be instantiated
  * only if {@link ThreadedEpsgFactory#createDataSource(Properties)} has detected that the
- * {@code geotk-epsg} module is reacheable on the classpath.
+ * {@code geotk-epsg.jar} file is reacheable on the classpath.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

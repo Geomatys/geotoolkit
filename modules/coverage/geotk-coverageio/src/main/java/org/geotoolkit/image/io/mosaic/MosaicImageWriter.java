@@ -68,7 +68,7 @@ import org.geotoolkit.internal.rmi.RMI;
  * the {@link #setOutput(Object)} method. The pixel values to write can be specified either
  * as a {@link RenderedImage} (this is the {@linkplain #write standard API}), or as a single
  * {@link File} or a collection of source tiles given to the {@link #writeFromInput(Object,
- * ImageReadParam)} method. The later alternative is non-standard but often required since
+ * ImageWriteParam)} method. The later alternative is non-standard but often required since
  * the image to mosaic is typically bigger than the capacity of a single {@link RenderedImage}.
  *
  * {@section Caching of source tiles}

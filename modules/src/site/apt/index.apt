@@ -1,0 +1,48 @@
+Geotoolkit modules
+
+  The modules that are components of the Geotoolkit library. Some worthly modules are:
+
+   * {{{utility/index.html}Utilities}}
+
+      * {{{utility/geotk-setup/index.html}Setup}} -
+        Geotoolkit configuration
+
+      * {{{utility/geotk-utility/index.html}Utility core}} -
+        Collections and miscellaneous utilities
+
+   * {{{metadata/index.html}Metadata}}
+
+      * {{{metadata/geotk-metadata/index.html}Metadata core}} -
+        Metadata structures (ISO 19115) and their XML representation (ISO 19139)
+
+      * {{{metadata/geotk-metadata-fra/index.html}Metadata France}} -
+        French extension of metadata (AFNOR)
+
+   * {{{referencing/index.html}Referencing}}
+
+      * {{{referencing/geotk-referencing/index.html}Referencing core}} -
+        Coordinate Reference Systems (CRS) and operations
+
+      * {{{referencing/geotk-referencing3D/index.html}Referencing 3D}} -
+        Transformation between ellipsoidal and geoidal heights
+
+      * {{{referencing/geotk-epsg/index.html}EPSG database}} -
+        The database from {{{http://www.epsg.org/}OGP Surveying & Positioning Committee}}
+
+   * {{{coverage/index.html}Coverage}}
+
+      * {{{coverage/geotk-coverage/index.html}Coverage core}} -
+        Grid coverage services (rasters)
+
+      * {{{coverage/geotk-coverageio/index.html}Coverage I/O}} -
+        Grid coverage readers and writers
+
+   * {{{display/index.html}Display}}
+
+      * {{{display/geotk-widgets-swing/index.html}Swing widgets}} -
+        Miscellaneous widgets
+
+   * {{{analytics/index.html}Analytics}}
+
+      * {{{analytics/geotk-nature/index.html}Nature}} -
+        Tropical year length, Sea Water density, <etc.>

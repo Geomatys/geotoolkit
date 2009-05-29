@@ -55,6 +55,14 @@
  * for example. If such an ambiguity is found, an exception will be thrown.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Yann Cézard (IRD)
+ * @author Rueben Schulz (UBC)
+ * @author Matthias Basler
+ * @author Andrea Aime (TOPP)
+ * @author Jody Garnett (Refractions)
+ * @author Didier Richard (IGN)
+ * @author John Grange
+ *
  * @version 3.00
  *
  * @since 2.1

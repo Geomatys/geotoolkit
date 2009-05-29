@@ -24,10 +24,10 @@
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotk-epsg</artifactId>
   <packaging>jar</packaging>
-  <name>Referencing 3D</name>
+  <name>EPSG database</name>
 
   <description>
-    Provides the script files for creating a local EPSG database
+    Provides the SQL script files for creating a local EPSG database
     when first needed.
   </description>
 

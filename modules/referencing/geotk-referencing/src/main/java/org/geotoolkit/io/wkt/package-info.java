@@ -41,6 +41,8 @@
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
+ * @author Rémi Eve (IRD)
+ * @author Rueben Schulz (UBC)
  * @version 3.00
  *
  * @since 2.0
