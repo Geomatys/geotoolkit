@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
@@ -294,6 +295,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
 
     /**
      * Tests the {@code getAuthorityCodes()} method.
+     * This test is very slow - the most costly parts are identified in the source code.
      *
      * @throws FactoryException if an error occured while querying the factory.
      */
@@ -314,6 +316,8 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertFalse(geographicCRS.containsAll(crs));
         assertTrue (crs.containsAll(geographicCRS));
 
+        // BEGIN COSTLY TEST (1)
+        // ----------------------------------------------------------------------------
         final Set<String> projectedCRS = factory.getAuthorityCodes(ProjectedCRS.class);
         assertTrue (projectedCRS instanceof AuthorityCodes);
         assertFalse(projectedCRS.isEmpty());
@@ -322,6 +326,8 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertFalse(projectedCRS.containsAll(crs));
         assertTrue (crs.containsAll(projectedCRS));
         assertTrue(Collections.disjoint(geographicCRS, projectedCRS));
+        // ----------------------------------------------------------------------------
+        // END COSTLY TEST (1)
 
         final Set<String> datum = factory.getAuthorityCodes(Datum.class);
         assertTrue (datum instanceof AuthorityCodes);
@@ -336,13 +342,25 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertFalse(geodeticDatum.containsAll(datum));
         assertTrue (datum.containsAll(geodeticDatum));
 
-        // Ensures that the factory keept the set in its cache.
-        assertSame(crs,           factory.getAuthorityCodes(CoordinateReferenceSystem.class));
-        assertSame(geographicCRS, factory.getAuthorityCodes(            GeographicCRS.class));
-        assertSame(projectedCRS,  factory.getAuthorityCodes(             ProjectedCRS.class));
-        assertSame(datum,         factory.getAuthorityCodes(                    Datum.class));
-        assertSame(geodeticDatum, factory.getAuthorityCodes(            GeodeticDatum.class));
-        assertSame(geodeticDatum, factory.getAuthorityCodes(     DefaultGeodeticDatum.class));
+        if (!((ThreadedAuthorityFactory) factory).isActive()) {
+            ThreadedAuthorityFactory.LOGGER.warning(
+                "A test has been skipped because the backing store (DirectEpsgFactory) has been " +
+                "disposed after its timeout. The cache content is lost, causing \"assertSame\" to " +
+                "fail. Testing with \"assertEquals\" and a new backing store would be slow since " +
+                "it would imply a new scan of the database. If you are testing a database through " +
+                "a network, try to run the test when there is no network latency.");
+            // Note: the above check is not always suffisient for preventing test failure since
+            //       there is a window of vulnerability between that check and the execution of
+            //       factory.getAuthorityCodes(...) method.
+        } else {
+            // Ensures that the factory keept the set in its cache.
+            assertSame(crs,           factory.getAuthorityCodes(CoordinateReferenceSystem.class));
+            assertSame(geographicCRS, factory.getAuthorityCodes(            GeographicCRS.class));
+            assertSame(projectedCRS,  factory.getAuthorityCodes(             ProjectedCRS.class));
+            assertSame(datum,         factory.getAuthorityCodes(                    Datum.class));
+            assertSame(geodeticDatum, factory.getAuthorityCodes(            GeodeticDatum.class));
+            assertSame(geodeticDatum, factory.getAuthorityCodes(     DefaultGeodeticDatum.class));
+        }
 
         // Try a dummy type.
         @SuppressWarnings("unchecked")
@@ -360,6 +378,8 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertTrue (projections     instanceof AuthorityCodes);
         assertTrue (transformations instanceof AuthorityCodes);
 
+        // BEGIN COSTLY TEST (2)
+        // ----------------------------------------------------------------------------
         assertTrue (conversions    .size() < operations .size());
         assertTrue (projections    .size() < operations .size());
         assertTrue (transformations.size() < operations .size());
@@ -372,6 +392,8 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
 
         assertTrue (Collections.disjoint(conversions, transformations));
         assertFalse(Collections.disjoint(conversions, projections));
+        // ----------------------------------------------------------------------------
+        // END COSTLY TEST (2)
 
         assertFalse(operations     .isEmpty());
         assertFalse(conversions    .isEmpty());

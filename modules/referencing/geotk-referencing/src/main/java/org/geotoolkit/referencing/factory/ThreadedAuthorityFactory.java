@@ -51,23 +51,29 @@ import org.geotoolkit.internal.FactoryUtilities;
  */
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     /**
-     * A backing store used by {@link ThreadedAuthorityFactory}. Many instances of this class
-     * may be created for the same {@code ThreadedAuthorityFactory} if more than one thread
-     * are requesting a new object concurrently.
+     * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created
+     * everytime a backing factory is {@linkplain ThreadedAuthorityFactory#release released}.
+     * In a mono-thread application, there is typically only one instance at a given time.
+     * However if more than one than one thread are requesting new objects concurrently,
+     * than many instances may exist for the same {@code ThreadedAuthorityFactory}.
      */
     private static final class Store {
         /**
-         * The factory used as a backing store.
+         * The factory used as a backing store, which has just been released
+         * and made available for reuse.
          */
         final AbstractAuthorityFactory factory;
 
         /**
-         * The timestamp at the time this object has been created.
+         * The timestamp at the time this object has been created. Because instances of
+         * {@code Store} are created when backing stores are released, this is the time
+         * when we finished using that {@linkplain #factory}.
          */
         final long timestamp;
 
         /**
          * Creates a new instance wrapping the given factory.
+         * The factory must be already available for reuse.
          */
         Store(final AbstractAuthorityFactory factory) {
             this.factory = factory;

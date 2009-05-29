@@ -345,7 +345,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * the {@linkplain #connection} to be open. This is why we use soft references rather than
      * hard ones, in order to know when no {@link AuthorityCodes} are still in use.
      * <p>
-     * The {@link AuthorityCodes#finalize} methods takes care of closing the stamenents used by
+     * The {@link AuthorityCodes#finalize} methods takes care of closing the statements used by
      * the sets. The {@link AuthorityCodes} reference in this map is then cleared by the garbage
      * collector. The {@link #canDispose} method checks if there is any remaining live reference
      * in this map, and returns {@code false} if some are found (thus blocking the call to
@@ -2845,7 +2845,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     return super.getCodeCandidates(object);
                 }
             }
-            String sql = "SELECT " + select + " FROM " + from + " WHERE " + where + "='" + code + '\'';
+            String sql = "SELECT " + select + " FROM " + from + " WHERE " + where + '=' + code;
             sql = adaptSQL(sql);
             final Set<String> result = new LinkedHashSet<String>();
             try {
@@ -2954,9 +2954,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     /**
      * Closes the JDBC connection used by this factory.
      *
-     * @param shutdown {@code false} for normal disposal, or {@code true} if this method is invoked
-     *        during the process of a JVM shutdown. In the later case this method may shutdown the
-     *        embedded database, if there is one (for example JavaDB).
+     * @param shutdown {@code false} for normal disposal, or {@code true} if
+     *        this method is invoked during the process of a JVM shutdown.
      */
     @Override
     protected synchronized void dispose(final boolean shutdown) {
@@ -2977,6 +2976,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             connection.close();
             super.dispose(shutdown);
         } catch (SQLException exception) {
+            /*
+             * Do not log if we are in process of JVM shutdown,
+             * because the loggers are not available anymore.
+             */
             if (!shutdown) {
                 Logging.unexpectedException(LOGGER, DirectEpsgFactory.class, "dispose", exception);
             }

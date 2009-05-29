@@ -91,16 +91,21 @@ public class EpsgCreatorCommands extends CommandLine {
      */
     @Action(minimalArgumentCount=0, maximalArgumentCount=0)
     public void create() {
-        final EpsgInstaller installer = new EpsgInstaller(scripts, database);
-        installer.setUser(user, password);
+        final EpsgInstaller installer = new EpsgInstaller();
+        installer.setDatabase(database, user, password);
+        installer.setScriptDirectory(scripts);
+        final EpsgInstaller.Result result;
         try {
-            installer.create();
+            result = installer.call();
         } catch (FactoryException exception) {
             printException(exception);
             final Throwable cause = exception.getCause();
             exit((cause instanceof SQLException) ? SQL_EXCEPTION_EXIT_CODE :
                  (cause instanceof IOException)  ?  IO_EXCEPTION_EXIT_CODE :
                  INTERNAL_ERROR_EXIT_CODE);
+            return;
         }
+        out.print(result.numRows);
+        out.println(" rows inserted.");
     }
 }

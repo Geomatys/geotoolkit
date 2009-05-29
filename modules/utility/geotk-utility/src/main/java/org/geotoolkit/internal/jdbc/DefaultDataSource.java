@@ -37,7 +37,7 @@ public class DefaultDataSource implements DataSource {
     /**
      * The URL to use for connecting to the database.
      */
-    private final String url;
+    public final String url;
 
     /**
      * Creates a data source for the given URL.

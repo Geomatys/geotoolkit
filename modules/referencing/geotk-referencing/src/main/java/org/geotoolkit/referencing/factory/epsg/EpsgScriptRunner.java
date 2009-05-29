@@ -95,12 +95,15 @@ final class EpsgScriptRunner extends ScriptRunner {
 
     /**
      * Creates a new runner which will execute the statements using the given connection.
+     * The encoding default to {@code "ISO-8859-1"}, which is the encoding used for the
+     * files provided by EPSG.
      *
      * @param connection The connection to the database.
      * @throws SQLException If an error occured while executing a SQL statement.
      */
     public EpsgScriptRunner(final Connection connection) throws SQLException {
         super(connection);
+        setEncoding("ISO-8859-1");
         for (final String script : SCRIPTS) {
             suffixes.add(script);
         }
@@ -209,6 +212,10 @@ final class EpsgScriptRunner extends ScriptRunner {
         /*
          * Creates the schema on the database. We do that before to setup
          * the 'toSchema' map, while the map still null.
+         *
+         * Note that we don't quote the schema name, which is a somewhat arbitrary choice.
+         * If we choose to quote them in some future version, then we need to update
+         * EmbeddedDataSource.createIfEmpty(Connection).
          */
         execute(new StringBuilder("CREATE SCHEMA ").append(schema));
         /*

@@ -27,4 +27,6 @@ rm Data.sql
 mv Data-compact.sql Data.sql
 ---------------------------------------------------------------------------------------
 
-  [[4]] Upgrade the version number declared in the <<<ThreadedEpsgFactory.getDefaultURL()>>> method.
+  [[4]] Upgrade the <<<VERSION>>> value defined in the <<<ThreadedEpsgFactory>>> class.
+
+  [[5]] Clean and build (<<<mvn clean install>>>).

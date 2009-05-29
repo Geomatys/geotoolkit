@@ -44,6 +44,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Errors;
@@ -223,8 +224,8 @@ final class EPSGPanel extends JPanel implements ActionListener {
             password.setText(settings.getProperty("password"));
         } else {
             url     .setSelectedIndex(hasExplicitURL ? 1 : 0);
-            schema  .setText("epsg");
-            user    .setText("geotoolkit");
+            schema  .setText(EpsgInstaller.SCHEMA);
+            user    .setText(null);
             password.setText(null);
         }
     }

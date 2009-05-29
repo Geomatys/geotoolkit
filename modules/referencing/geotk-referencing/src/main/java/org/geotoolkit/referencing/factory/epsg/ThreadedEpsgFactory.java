@@ -98,6 +98,12 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {
     /**
+     * Version of the embedded database. This string must be updated when
+     * the SQL scripts in the {@code geotk-epsg} module are updated.
+     */
+    static final String VERSION = "6.18";
+
+    /**
      * The user configuration file, which is {@value}. This file is used if no {@link DataSource}
      * object were specified explicitly to the constructor, either directly or as a hint. In such
      * case, {@code ThreadedEpsgFactory} will look for the first of the following files:
@@ -153,18 +159,39 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     private DataSource datasource;
 
     /**
-     * Property read from the {@value #CONFIGURATION_FILE} file, or {@code null} if none.
-     * {@code schema} is the name of the schema in the database where to look for the tables.
-     * {@code user} and {@code password} are the values to be given to
-     * {@link DataSource#getConnection(String,String)}, while
+     * The name of the schema in the database where to look for the tables, or {@code null} if none.
      * <p>
-     * This property is defined automatically before {@link #createDataSource(Properties)}
-     * is invoked, and is used by {@link #createBackingStore(Hints)}. Subclasses can change
-     * this value in their {@code createDataSource} implementation.
+     * This property is read from the {@value #CONFIGURATION_FILE} by {@link #getDataSource()}, and
+     * is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value, then
+     * overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
      *
      * @since 3.00
      */
-    protected String schema, user, password;
+    protected String schema;
+
+    /**
+     * The user name to be given to {@link DataSource#getConnection(String,String)}, or {@code null}
+     * if none. In the later case, {@link DataSource#getConnection()} will be used instead.
+     * <p>
+     * This property is read from the {@value #CONFIGURATION_FILE} by {@link #getDataSource()}, and
+     * is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value, then
+     * overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
+     *
+     * @since 3.00
+     */
+    protected String user;
+
+    /**
+     * The password to be given to {@link DataSource#getConnection(String,String)}, or {@code null}
+     * if none.
+     * <p>
+     * This property is read from the {@value #CONFIGURATION_FILE} by {@link #getDataSource()}, and
+     * is used by {@link #createBackingStore(Hints)}. If a subclass wants to change this value, then
+     * overriding the {@link #createDataSource(Properties)} method is a convenient way to do so.
+     *
+     * @since 3.00
+     */
+    protected String password;
 
     /**
      * The map used for adapting the SQL statements to a particular dialect. This map is
@@ -259,8 +286,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      */
     public static String getDefaultURL() {
         final File directory = Installation.EPSG.directory(true);
-        final StringBuilder buffer = new StringBuilder("jdbc:derby:").
-                append(directory.getPath().replace(File.pathSeparatorChar, '/')).append("/6.18");
+        final StringBuilder buffer = new StringBuilder("jdbc:derby:")
+                .append(directory.getPath().replace(File.pathSeparatorChar, '/'))
+                .append('/').append(VERSION);
         if (ThreadedEpsgFactory.class.getResource("Data.sql") != null) {
             // Allow the creation of the database only if the needed scripts are available.
             buffer.append(";create=true");
@@ -351,6 +379,10 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *       needed.</p></li>
      * </ol>
      *
+     * The two last steps are actually encapsulated in a call to {@link #createDataSource(Properties)}.
+     * Subclasses can override that method if they want more control on that part (for example in
+     * order to perform different tasks depending the content of the properties file).
+     *
      * @return The data source. Should never be {@code null}.
      * @throws FactoryException if the operation failed (for example an I/O error while
      *         reading the configuration file, or a failure to lookup the JNDI name).
@@ -405,16 +437,28 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
 
     /**
      * Creates a default data source, optionnaly using the given configuration. This method is
-     * invoked by {@link #getDataSource()} when no explicit value was provided for {@link
-     * Hints#EPSG_DATA_SOURCE}. If a {@linkplain #CONFIGURATION_FILE configuration file} file
+     * invoked by {@link #getDataSource()} when no explicit value was provided for
+     * {@link Hints#EPSG_DATA_SOURCE}. If a {@linkplain #CONFIGURATION_FILE configuration file}
      * has been found, its content is given as the sole argument to this method. Otherwise the
      * {@code properties} argument is null.
      * <p>
-     * The default implementation returns a data source backed by the {@code "URL"} property
-     * (to be given to {@link java.sql.DriverManager#getConnection(String)}) if this property
-     * exists, or return {@code null} otherwise. Subclasses should override this method if
-     * they can create a data source from the other properties ({@code "serverName"},
-     * {@code "databaseName"}, <cite>etc.</cite>), or if they can provide a default data source.
+     * The default implementation performs the following steps:
+     * <ul>
+     *   <li>If the {@code properties} is non-null, then the value associated to the {@code "URL"}
+     *       key is taken. Otherwise the {@linkplain #getDefaultURL() default URL} to the embedded
+     *       database is used.</li>
+     *   <li>A new {@code DataSource} is created, which will use the above URL for fetching a
+     *       connection through {@link java.sql.DriverManager#getConnection(String)}.</li>
+     * </ul>
+     * <p>
+     * If the default URL was used and no database exists at that URL, then a new database will
+     * be created using the {@link EpsgInstaller} when first needed. This operation is possible
+     * only if the {@code geotk-epsg} JAR file is reacheable on the classpath, otherwise an
+     * exception will be thrown the first time the factory will be used.</p>
+     * <p>
+     * Subclasses should override this method if they can create a data source from other
+     * properties ({@code "serverName"}, {@code "databaseName"}, <cite>etc.</cite>), or if
+     * they can provide a default data source.
      *
      * @param  properties The properties loaded from the configuration file if it was found,
      *         or {@code null} otherwise.
@@ -430,6 +474,13 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
             if (url != null) {
                 return new DefaultDataSource(url);
             }
+        } else {
+            final String url = getDefaultURL();
+            if (url.endsWith(";create=true")) {
+                // Create a data source capable to create the database when first needed.
+                return EmbeddedDataSource.instance(url);
+            }
+            return new DefaultDataSource(url);
         }
         return null;
     }
@@ -443,7 +494,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *
      * {@preformat java
      *     protected AbstractAuthorityFactory createBackingStore(Hints hints) throws SQLException {
-     *         return new OracleDialectEpsgFactory(hints, getDataSource().getConnection());
+     *         return new OracleDialectEpsgFactory(hints, getDataSource().getConnection(user, password));
      *     }
      * }
      *
@@ -454,6 +505,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * @throws SQLException if the connection to the database failed.
      * @throws FactoryException if the operation failed for an other reason (for example a
      *         failure to {@linkplain #getDataSource() get the data source}).
+     *
+     * @see #user
+     * @see #password
      */
     protected AbstractAuthorityFactory createBackingStore(final Hints hints)
             throws FactoryException, SQLException
@@ -507,6 +561,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      */
     @Override
     protected synchronized AbstractAuthorityFactory createBackingStore() throws FactoryException {
+        final boolean isLoggable = LOGGER.isLoggable(Level.CONFIG);
         String product = null, url = null;
         final AbstractAuthorityFactory factory;
         final Hints sourceHints = EMPTY_HINTS.clone();
@@ -514,16 +569,18 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         sourceHints.putAll(factories.getImplementationHints());
         try {
             factory = createBackingStore(sourceHints);
-            if (factory instanceof DirectEpsgFactory) {
+            if (isLoggable && factory instanceof DirectEpsgFactory) {
                 DatabaseMetaData metadata = ((DirectEpsgFactory) factory).connection.getMetaData();
                 product = metadata.getDatabaseProductName();
                 url     = metadata.getURL();
             }
         } catch (SQLException exception) {
             final String message = Errors.format(Errors.Keys.CANT_CONNECT_DATABASE_$1, "EPSG");
-            if ("08001".equals(exception.getSQLState())) {
+            final String state = exception.getSQLState();
+            if ("08001".equals(state) || "XJ004".equals(state)) {
                 /*
-                 * No suitable driver. Throwing a NoSuchFactoryException is significant since
+                 * No suitable driver (08001) or database not found (XJ004).
+                 * Throwing a NoSuchFactoryException is significant since
                  * ThreadedAuthorityFactory will use a finer logging level in this case.
                  */
                 throw new NoSuchFactoryException(message, exception);
@@ -533,13 +590,15 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
              */
             throw new FactoryException(message, exception);
         }
-        if (product == null) {
-            product = '<' + Vocabulary.format(Vocabulary.Keys.UNKNOW) + '>';
+        if (isLoggable) {
+            if (product == null) {
+                product = '<' + Vocabulary.format(Vocabulary.Keys.UNKNOW) + '>';
+            }
+            if (url == null) {
+                url = product;
+            }
+            log(Loggings.format(Level.CONFIG, Loggings.Keys.CONNECTED_EPSG_DATABASE_$2, url, product));
         }
-        if (url == null) {
-            url = product;
-        }
-        log(Loggings.format(Level.CONFIG, Loggings.Keys.CONNECTED_EPSG_DATABASE_$2, url, product));
         if (factory instanceof DirectEpsgFactory) {
             ((DirectEpsgFactory) factory).buffered = this;
         }
@@ -573,11 +632,19 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
 
     /**
      * Releases resources immediately instead of waiting for the garbage collector.
+     * This method disposes all backing stores, which imply closing their connections.
+     *
+     * @param shutdown {@code false} for normal disposal, or {@code true} if this method is invoked
+     *        during the process of a JVM shutdown. In the later case this method may shutdown the
+     *        embedded database, if there is one (for example JavaDB).
      */
     @Override
     protected synchronized void dispose(final boolean shutdown) {
+        super.dispose(shutdown); // Close the connections first.
+        if (shutdown && (datasource instanceof DefaultDataSource)) {
+            shutdown(((DefaultDataSource) datasource).url);
+        }
         schema = user = password = null;
         datasource = null;
-        super.dispose(shutdown);
     }
 }

@@ -9,3 +9,4 @@ syntax: regexp
 \.DS_Store
 target$
 ^tmp$
+derby.log$
