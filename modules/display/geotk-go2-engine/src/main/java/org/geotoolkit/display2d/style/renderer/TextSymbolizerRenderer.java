@@ -44,7 +44,6 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.style.CachedHalo;
 import org.geotoolkit.display2d.style.CachedLabelPlacement;
 import org.geotoolkit.display2d.style.CachedLinePlacement;
@@ -56,6 +55,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -258,14 +258,14 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
 
     @Override
     public boolean hit(ProjectedFeature feature, CachedTextSymbolizer symbol, 
-            RenderingContext2D context, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
         //text symbolizer are not hittable
         return false;
     }
 
     @Override
     public boolean hit(GraphicCoverageJ2D graphic, CachedTextSymbolizer symbol, 
-            RenderingContext2D renderingContext, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 

@@ -33,12 +33,12 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
@@ -130,11 +130,11 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
 
     @Override
     public boolean hit(final ProjectedFeature graphic, final CachedLineSymbolizer symbol,
-            RenderingContext2D context, SearchArea search, VisitFilter filter) {
+            RenderingContext2D context, SearchAreaJ2D search, VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
-        final Geometry mask = search.displayGeometry;
+        final Geometry mask = search.getDisplayGeometryJTS();
 
         final SimpleFeature feature = graphic.getFeature();
 
@@ -185,7 +185,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
                 CRSShape = new TransformedShape();
                 ((TransformedShape)CRSShape).setTransform(
                         context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
-                ((TransformedShape)CRSShape).setOriginalShape(search.displayShape);
+                ((TransformedShape)CRSShape).setOriginalShape(search.getDisplayShape());
             } catch (TransformException ex) {
                 ex.printStackTrace();
                 return false;
@@ -277,7 +277,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
 
     @Override
     public boolean hit(GraphicCoverageJ2D graphic, CachedLineSymbolizer symbol, 
-            RenderingContext2D renderingContext, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 

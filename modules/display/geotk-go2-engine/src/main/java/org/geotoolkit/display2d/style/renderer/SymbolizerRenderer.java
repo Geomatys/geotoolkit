@@ -24,8 +24,8 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 
 import org.opengis.style.Symbolizer;
@@ -48,10 +48,10 @@ public interface SymbolizerRenderer<S extends Symbolizer, C extends CachedSymbol
             RenderingContext2D context) throws PortrayalException;
 
     boolean hit(ProjectedFeature graphic, C symbol,
-            RenderingContext2D context, SearchArea mask, VisitFilter filter);
+            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter);
 
     boolean hit(GraphicCoverageJ2D graphic, C symbol,
-            RenderingContext2D renderingContext, SearchArea mask, VisitFilter filter);
+            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter);
 
     Rectangle2D estimate(ProjectedFeature graphic, C symbol,
             RenderingContext2D context, Rectangle2D rect);

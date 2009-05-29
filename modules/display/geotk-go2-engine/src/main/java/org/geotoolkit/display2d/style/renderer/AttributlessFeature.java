@@ -18,13 +18,16 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.identity.FeatureIdImpl;
+
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;

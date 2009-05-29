@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.display2d;
 
-import org.geotoolkit.display2d.style.*;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -27,6 +29,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.Shape;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
@@ -53,12 +56,16 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.ListingPropertyVisitor;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;
@@ -80,6 +87,8 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class GO2Utilities {
+
+    private static final GeometryFactory JTS_FACTORY = new GeometryFactory();
 
     private static final Cache<Symbolizer,CachedSymbolizer> CACHE = new Cache<Symbolizer, CachedSymbolizer>(50,50,true);
 
@@ -136,7 +145,7 @@ public class GO2Utilities {
     }
 
     public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D context, final SearchArea mask, final VisitFilter filter){
+            final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter){
 
         SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
@@ -147,7 +156,7 @@ public class GO2Utilities {
     }
 
     public static boolean hit(final GraphicCoverageJ2D graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D renderingContext, final SearchArea mask, final VisitFilter filter) {
+            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter) {
         SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
             return renderer.hit(graphic, symbol, renderingContext, mask, filter);
@@ -168,7 +177,7 @@ public class GO2Utilities {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // geometries to java2d shapes /////////////////////////////////////////////
+    // geometries transformations //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
     public static Shape toJava2D(Geometry geom){
@@ -179,6 +188,22 @@ public class GO2Utilities {
         return new ISOGeometryJ2D(geom);
     }
 
+    public static Geometry toJTS(Shape candidate){
+        PathIterator ite = candidate.getPathIterator(null);
+        List<Coordinate> coords = new ArrayList<Coordinate>();
+
+        final float[] xy = new float[2];
+        while(!ite.isDone()){
+            ite.currentSegment(xy);
+            coords.add(new Coordinate(xy[0], xy[1]));
+            ite.next();
+        }
+        coords.add(coords.get(0));
+
+        final LinearRing ring = JTS_FACTORY.createLinearRing(coords.toArray(new Coordinate[0]));
+        return JTS_FACTORY.createPolygon(ring, new LinearRing[0]);
+    }
+   
     ////////////////////////////////////////////////////////////////////////////
     // renderers cache /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

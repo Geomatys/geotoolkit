@@ -40,13 +40,13 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -91,13 +91,6 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
-            final Geometry geom;
-            try {
-                geom = projectedFeature.getDisplayGeometry();
-            } catch (TransformException ex) {
-                throw new PortrayalException(ex);
-            }
-
             //we switch to  more appropriate context CRS for rendering ---------
             // a point symbolis always paint in display unit -------------------
             context.switchToDisplayCRS();
@@ -119,7 +112,6 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
                 }
             }
 
-
             //create the image--------------------------------------------------
             final BufferedImage img = symbol.getImage(feature,coeff,hints);
             final float[] disps = symbol.getDisplacement(feature);
@@ -127,6 +119,13 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
             disps[1] *= coeff ;
 
             final float[] anchor = symbol.getAnchor(feature);
+
+            final Geometry geom;
+            try {
+                geom = projectedFeature.getDisplayGeometry();
+            } catch (TransformException ex) {
+                throw new PortrayalException(ex);
+            }
 
             if(geom instanceof Point || geom instanceof MultiPoint){
 
@@ -165,11 +164,11 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
 
     @Override
     public boolean hit(final ProjectedFeature graphic, final CachedPointSymbolizer symbol,
-            final RenderingContext2D context, final SearchArea search, final VisitFilter filter) {
+            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
-        final Shape mask = search.displayShape;
+        final Shape mask = search.getDisplayShape();
 
         final SimpleFeature feature = graphic.getFeature();
 
@@ -177,15 +176,6 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
         if(!(symbol.isVisible(feature))) return false;
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-
-        final Geometry geom;
-        try {
-            geom = graphic.getDisplayGeometry();
-        } catch (TransformException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-
 
         //we switch to  more appropriate context CRS ---------------------------
         // a point symbolis always paint in display unit -----------------------
@@ -215,6 +205,14 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
         disps[1] *= coeff ;
 
         final float[] anchor = symbol.getAnchor(feature);
+
+        final Geometry geom;
+        try {
+            geom = graphic.getDisplayGeometry();
+        } catch (TransformException ex) {
+            ex.printStackTrace();
+            return false;
+        }
 
         if(geom instanceof Point || geom instanceof MultiPoint){
 
@@ -283,7 +281,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
 
     @Override
     public boolean hit(GraphicCoverageJ2D graphic, CachedPointSymbolizer symbol, 
-            RenderingContext2D renderingContext, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 

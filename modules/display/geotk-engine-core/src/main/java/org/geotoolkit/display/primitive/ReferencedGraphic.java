@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.display.primitive;
 
-
-import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
@@ -29,6 +27,7 @@ import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -342,18 +341,4 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      */
     public abstract List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics);
 
-    public static class SearchArea{
-        public final Geometry objectiveGeometry;
-        public final Geometry displayGeometry;
-        public final Shape objectiveShape;
-        public final Shape displayShape;
-
-        public SearchArea(Geometry objectiveGeometry, Geometry displayGeometry, Shape objectiveShape, Shape displayShape) {
-            this.objectiveGeometry = objectiveGeometry;
-            this.displayGeometry = displayGeometry;
-            this.objectiveShape = objectiveShape;
-            this.displayShape = displayShape;
-        }
-
-    }
 }

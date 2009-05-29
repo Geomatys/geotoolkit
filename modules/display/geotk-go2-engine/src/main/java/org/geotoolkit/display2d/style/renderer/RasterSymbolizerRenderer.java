@@ -62,7 +62,6 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -75,6 +74,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.style.function.Categorize;
@@ -220,18 +220,18 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
 
     @Override
     public boolean hit(ProjectedFeature feature, CachedRasterSymbolizer symbol, 
-            RenderingContext2D context, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
         //nothing to hit on a feature with raster symbolizer
         return false;
     }
 
     @Override
     public boolean hit(final GraphicCoverageJ2D graphic, final CachedRasterSymbolizer symbol,
-            final RenderingContext2D context, final SearchArea search, final VisitFilter filter) {
+            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
-        final Shape mask = search.displayShape;
+        final Shape mask = search.getDisplayShape();
         final Envelope env = graphic.getEnvelope();
 
         final DirectPosition2D pos1 = new DirectPosition2D(env.getMinimum(0), env.getMinimum(1));

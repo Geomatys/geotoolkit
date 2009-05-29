@@ -34,10 +34,13 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.GraphicBuilder;
@@ -154,13 +157,18 @@ public class StatelessCoverageLayerJ2D extends GraphicCoverageJ2D{
         }
 
         if(graphics == null) graphics = new ArrayList<Graphic>();
-        graphics = searchAt(layer,rules,renderingContext,mask,filter,graphics);
+        if(mask instanceof SearchAreaJ2D){
+            graphics = searchAt(layer,rules,renderingContext,(SearchAreaJ2D)mask,filter,graphics);
+        }else{
+            graphics = searchAt(layer,rules,renderingContext,new DefaultSearchAreaJ2D(mask),filter,graphics);
+        }
+        
 
         return graphics;
     }
 
     private List<Graphic> searchAt(final CoverageMapLayer layer, final List<CachedRule> rules,
-            final RenderingContext2D renderingContext, final SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter filter, List<Graphic> graphics) {
 
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
         if(builder != null){

@@ -29,11 +29,6 @@ import java.util.List;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
-import org.geotoolkit.display2d.style.renderer.LabelDescriptor;
-import org.geotoolkit.display2d.style.renderer.LabelRenderer;
-import org.geotoolkit.display2d.style.renderer.LinearLabelDescriptor;
-import org.geotoolkit.display2d.style.renderer.PointLabelDescriptor;
-
 
 /**
  * Default implementation of label renderer.
@@ -140,5 +135,4 @@ public class DefaultLabelRenderer implements LabelRenderer{
         g2.fill(shape);
     }
     
-
 }

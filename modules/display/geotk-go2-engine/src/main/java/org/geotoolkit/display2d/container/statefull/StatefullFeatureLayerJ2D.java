@@ -47,6 +47,7 @@ import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -307,7 +308,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
     @Override
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final List<CachedRule> rules,
-            final RenderingContext2D context, final SearchArea mask, VisitFilter visitFilter, List<Graphic> graphics) {
+            final RenderingContext2D context, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
         updateCache(context);
 
         final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();

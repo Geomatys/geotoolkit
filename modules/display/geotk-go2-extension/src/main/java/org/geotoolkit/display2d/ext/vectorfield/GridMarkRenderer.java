@@ -28,11 +28,11 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -95,13 +95,13 @@ public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolize
 
     @Override
     public boolean hit(ProjectedFeature graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D context, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
     @Override
     public boolean hit(GraphicCoverageJ2D graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D renderingContext, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 

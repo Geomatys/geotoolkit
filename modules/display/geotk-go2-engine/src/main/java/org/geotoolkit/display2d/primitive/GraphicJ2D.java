@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -47,14 +48,8 @@ public abstract class GraphicJ2D extends ReferencedGraphic2D {
      *         dimensions.
      */
     protected GraphicJ2D(final ReferencedCanvas2D canvas,final CoordinateReferenceSystem crs)
-            throws IllegalArgumentException
-    {
+            throws IllegalArgumentException{
         super(canvas,crs);
-    }
-
-    @Override
-    public ReferencedCanvas2D getCanvas() {
-        return (ReferencedCanvas2D) super.getCanvas();
     }
     
     /**
@@ -136,4 +131,5 @@ public abstract class GraphicJ2D extends ReferencedGraphic2D {
     public Object getUserObject(){
         return null;
     }
+    
 }

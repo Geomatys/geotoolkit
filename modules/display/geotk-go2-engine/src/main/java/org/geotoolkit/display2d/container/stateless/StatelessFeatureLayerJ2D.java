@@ -35,12 +35,15 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -296,7 +299,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
     }
 
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final List<CachedRule> rules,
-            final RenderingContext2D renderingContext, final SearchArea mask, VisitFilter visitFilter, List<Graphic> graphics) {
+            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
 
         final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();
         final FeatureType schema                                 = fs.getSchema();
@@ -444,7 +447,12 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         }
 
         if(graphics == null) graphics = new ArrayList<Graphic>();
-        return searchGraphicAt(layer, rules, c2d, mask, filter, graphics);
+
+        if(mask instanceof SearchAreaJ2D){
+            return searchGraphicAt(layer, rules, c2d, (SearchAreaJ2D)mask, filter, graphics);
+        }else{
+            return searchGraphicAt(layer, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
+        }
     }
 
     /**

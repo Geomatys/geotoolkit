@@ -31,7 +31,6 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -39,6 +38,7 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Hints;
 
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Geometry;
@@ -131,11 +131,11 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
     @Override
     public boolean hit(final ProjectedFeature graphic, final CachedPolygonSymbolizer symbol,
-            final RenderingContext2D context, final SearchArea search, final VisitFilter filter) {
+            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
-        final Shape mask = search.displayShape;
+        final Shape mask = search.getDisplayShape();
 
         final SimpleFeature feature = graphic.getFeature();
 
@@ -278,7 +278,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
     @Override
     public boolean hit(GraphicCoverageJ2D graphic, CachedPolygonSymbolizer symbol, 
-            RenderingContext2D renderingContext, SearchArea mask, VisitFilter filter) {
+            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 

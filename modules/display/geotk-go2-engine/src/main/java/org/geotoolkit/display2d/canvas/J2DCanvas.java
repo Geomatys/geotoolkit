@@ -17,37 +17,38 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import org.geotoolkit.display.canvas.*;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import com.vividsolutions.jts.geom.LinearRing;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-
 import java.util.logging.Logger;
+
+import org.geotoolkit.display.canvas.AbstractCanvas;
+import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
-import org.geotoolkit.display.primitive.ReferencedGraphic.SearchArea;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
-
 import org.geotoolkit.display2d.style.renderer.LabelRenderer;
+
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -215,9 +216,14 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             }
 
             final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);
-            final Geometry displayGeometry = toGeometry(displayShape);
-            final Geometry objectiveGeometry = toGeometry(objectiveShape);
-            final SearchArea searchMask = new SearchArea(objectiveGeometry, displayGeometry, objectiveShape, displayShape);
+            final com.vividsolutions.jts.geom.Geometry displayGeometryJTS = GO2Utilities.toJTS(displayShape);
+            final com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS = GO2Utilities.toJTS(objectiveShape);
+            final Geometry displayGeometryISO = JTSUtils.toISO(displayGeometryJTS, getDisplayCRS());
+            final Geometry objectiveGeometryISO = JTSUtils.toISO(objectiveGeometryJTS, getObjectiveCRS());
+            final SearchAreaJ2D searchMask = new DefaultSearchAreaJ2D(
+                    objectiveGeometryISO, displayGeometryISO,
+                    objectiveGeometryJTS, displayGeometryJTS,
+                    objectiveShape, displayShape);
 
             if(container instanceof AbstractContainer2D){
                 final AbstractContainer2D r2d = (AbstractContainer2D) container;
@@ -283,29 +289,11 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
         visitor.endVisit();
     }
 
-    private void search(SearchArea mask, RenderingContext context, Graphic graphic, VisitFilter filter, List<Graphic> lst){
+    private void search(SearchAreaJ2D mask, RenderingContext context, Graphic graphic, VisitFilter filter, List<Graphic> lst){
         if(graphic instanceof ReferencedGraphic){
             final ReferencedGraphic ref = (ReferencedGraphic) graphic;
             ref.getGraphicAt(context, mask, filter, lst);
         }
     }
 
-    private Geometry toGeometry(Shape mask){
-
-        PathIterator ite = mask.getPathIterator(null);
-        GeometryFactory GF = new GeometryFactory();
-        List<Coordinate> coords = new ArrayList<Coordinate>();
-
-        final float[] xy = new float[2];
-        while(!ite.isDone()){
-            ite.currentSegment(xy);
-            coords.add(new Coordinate(xy[0], xy[1]));
-            ite.next();
-        }
-        coords.add(coords.get(0));
-
-        final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[0]));
-        return GF.createPolygon(ring, new LinearRing[0]);
-    }
-    
 }
