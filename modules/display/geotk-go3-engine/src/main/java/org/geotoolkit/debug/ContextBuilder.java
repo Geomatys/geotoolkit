@@ -119,21 +119,21 @@ public class ContextBuilder {
         try {
             context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
 
-            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1797-83.jpg"));
-            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage");
-            context.layers().add(layer);
-
-            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1798-83.tif"));
-            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage2");
-            context.layers().add(layer);
-
-            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1799-83.tif"));
-            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage3");
-            context.layers().add(layer);
-
-            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1800-83.tif"));
-            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage4");
-            context.layers().add(layer);
+//            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1797-83.jpg"));
+//            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage");
+//            context.layers().add(layer);
+//
+//            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1798-83.tif"));
+//            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage2");
+//            context.layers().add(layer);
+//
+//            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1799-83.tif"));
+//            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage3");
+//            context.layers().add(layer);
+//
+//            reader = readWorldImage(new File("/home/sorel/GIS_DATA/JEU_VILLE/ortho/1998-0897-1800-83.tif"));
+//            layer = MapBuilder.createCoverageLayer(reader, SF.style(), "worldimage4");
+//            context.layers().add(layer);
 
             params = new HashMap<String,Object>();
             shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/ALTI_LIGNE_ISO.SHP");
@@ -148,31 +148,31 @@ public class ContextBuilder {
             layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
             context.layers().add(layer);
 
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = createRealBuildingStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("batiments", ""));
-            layer.setName("batiments");
-            layer.setVisible(true);
-            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("Z_MIN"), FF.literal(0)));
-            context.layers().add(layer);
+//            params = new HashMap<String,Object>();
+//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/BATIMENT_SURF.SHP");
+//            params.put( "url", shape.toURI().toURL() );
+//            store = DataStoreFinder.getDataStore(params);
+//            fs = store.getFeatureSource(store.getTypeNames()[0]);
+//            style = createRealBuildingStyle();
+//            layer = MapBuilder.createFeatureLayer(fs, style);
+//            layer.setDescription(SF.description("batiments", ""));
+//            layer.setName("batiments");
+//            layer.setVisible(true);
+//            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("Z_MIN"), FF.literal(0)));
+//            context.layers().add(layer);
 
-            params = new HashMap<String,Object>();
-            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_PYLONE.SHP");
-            params.put( "url", shape.toURI().toURL() );
-            store = DataStoreFinder.getDataStore(params);
-            fs = store.getFeatureSource(store.getTypeNames()[0]);
-            style = createLabeledPointStyle();
-            layer = MapBuilder.createFeatureLayer(fs, style);
-            layer.setDescription(SF.description("pylone", ""));
-            layer.setName("pylone");
-            layer.setVisible(true);
-            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
-            context.layers().add(layer);
+//            params = new HashMap<String,Object>();
+//            shape = new File("/home/sorel/GIS_DATA/JEU_VILLE/EQ_PYLONE.SHP");
+//            params.put( "url", shape.toURI().toURL() );
+//            store = DataStoreFinder.getDataStore(params);
+//            fs = store.getFeatureSource(store.getTypeNames()[0]);
+//            style = createLabeledPointStyle();
+//            layer = MapBuilder.createFeatureLayer(fs, style);
+//            layer.setDescription(SF.description("pylone", ""));
+//            layer.setName("pylone");
+//            layer.setVisible(true);
+//            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
+//            context.layers().add(layer);
 
             context.setCoordinateReferenceSystem(layer.getBounds().getCoordinateReferenceSystem());
             context.setAreaOfInterest(context.getBounds());

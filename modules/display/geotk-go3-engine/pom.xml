@@ -48,46 +48,76 @@
   <!-- =========================================================== -->
   <!--     Dependencies                                            -->
   <!-- =========================================================== -->
-    <dependencies>
-       <dependency>
-          <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-awt</artifactId>
-       </dependency>
-       <dependency>
-          <groupId>com.ardor3d</groupId>
-          <artifactId>ardor3d-collada</artifactId>
-          <version>0.5-SNAPSHOT</version>
-       </dependency>
-       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-render</artifactId>
-          <version>${geotoolkit.version}</version>
-       </dependency>
-       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-wms</artifactId>
-          <version>${geotoolkit.version}</version>
-       </dependency>
-       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-world-image</artifactId>
-          <version>${geotoolkit.version}</version>
-       </dependency>
-       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-widgets-swing-pending</artifactId>
-          <version>${geotoolkit.version}</version>
-       </dependency>
+  <properties>
+    <ardor.version>0.6-SNAPSHOT</ardor.version>
+  </properties>
 
-       <dependency>
-          <groupId>org.geotools</groupId>
-          <artifactId>gtm-shapefile</artifactId>
-          <version>${geomodified.version}</version>
-       </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.ardor3d</groupId>
+            <artifactId>ardor3d-awt</artifactId>
+            <version>${ardor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ardor3d</groupId>
+            <artifactId>ardor3d-collada</artifactId>
+            <version>${ardor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ardor3d</groupId>
+            <artifactId>ardor3d-effects</artifactId>
+            <version>${ardor.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-epsg</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-render</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-wms</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-world-image</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-widgets-swing-pending</artifactId>
+            <version>${geotoolkit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gtm-shapefile</artifactId>
+            <version>${geomodified.version}</version>
+        </dependency>
 
     </dependencies>
-        
-    
+
+
+    <repositories>
+        <repository>
+            <id>ardor3d</id>
+            <name>ardor3d repository</name>
+            <url>http://ardor3d.com:8081/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>ardor3d_thirdparty</id>
+            <name>ardor3d thirdparty repository</name>
+            <url>http://ardor3d.com:8081/nexus/content/repositories/thirdparty/</url>
+        </repository>
+    </repositories>
+
   <!-- =========================================================== -->
   <!--     build     -->
   <!-- =========================================================== -->

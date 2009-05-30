@@ -33,7 +33,7 @@ import org.opengis.display.canvas.Canvas;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class A3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
+public class ProgressiveA3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
 
     @Override
     public Collection<A3DGraphic> createGraphics(MapLayer layer, Canvas canvas) {

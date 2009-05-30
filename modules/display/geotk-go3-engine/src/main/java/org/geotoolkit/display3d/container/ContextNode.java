@@ -46,11 +46,12 @@ import org.opengis.geometry.Envelope;
  */
 public class ContextNode extends A3DGraphic{
 
-    private static final GraphicBuilder<A3DGraphic> DEFAULT_BUILDER = new A3DGraphicBuilder();
+    private static final GraphicBuilder<A3DGraphic> DEFAULT_BUILDER = new ProgressiveA3DGraphicBuilder();
+    private static final GraphicBuilder<A3DGraphic> FULL_LOAD_BUILDER = new FullLoadA3DGraphicBuilder();
 
     private final MapContext context;
 
-    public ContextNode(A3DCanvas canvas, MapContext context) {
+    public ContextNode(A3DCanvas canvas, MapContext context, boolean loadAll) {
         super(canvas);
         this.context = context;
 
@@ -66,7 +67,7 @@ public class ContextNode extends A3DGraphic{
             GraphicBuilder<? extends A3DGraphic> builder = layer.getGraphicBuilder(A3DGraphic.class);
 
             if(builder == null){
-                builder = DEFAULT_BUILDER;
+                builder = (loadAll) ? FULL_LOAD_BUILDER : DEFAULT_BUILDER;
             }
 
             for(A3DGraphic gra : builder.createGraphics(layer, canvas)){
@@ -77,7 +78,7 @@ public class ContextNode extends A3DGraphic{
 
     private Node buildPlan(final Envelope env){
         final Node plan = new Node("plan");
-        plan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
+//        plan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
         final float over = -10f;
         final float width = 1f;
@@ -86,8 +87,10 @@ public class ContextNode extends A3DGraphic{
         final float miny = (float) env.getMinimum(1);
         final float maxy = (float) env.getMaximum(1);
 
-        Box back = new Box("ceiling", new Vector3(minx, -env.getSpan(0)/20 -11, miny), new Vector3(maxx, -11, maxy));
+        final Box back = new Box("ceiling", new Vector3(minx, -env.getSpan(0)/20 -11, miny), new Vector3(maxx, -11, maxy));
         back.setDefaultColor(new ColorRGBA(1, 1, 1, 1f));
+        back.setModelBound(new BoundingBox());
+        back.updateModelBound();
 
         final int nbGrid = 10;
         float step = (float) (env.getSpan(0) / nbGrid);
@@ -101,15 +104,15 @@ public class ContextNode extends A3DGraphic{
             verts.put(minx).put(over).put(miny +step*i);
             verts.put(maxx).put(over).put(miny +step*i);
         }
-        Line line = new Line("Lines", verts, null, null, null);
+        final Line line = new Line("Lines", verts, null, null, null);
         line.getMeshData().setIndexMode(IndexMode.Lines);
         line.setLineWidth(width);
-        line.setDefaultColor(ColorRGBA.LIGHT_GRAY);
+        line.setDefaultColor(ColorRGBA.GRAY);
         line.setModelBound(new BoundingBox());
         line.updateModelBound();
 
-        plan.attachChild(line);
         plan.attachChild(back);
+//        plan.attachChild(line);
         return plan;
     }
 

@@ -38,6 +38,8 @@ import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.extension.Skybox;
 import com.ardor3d.scenegraph.hint.DataMode;
+import com.ardor3d.util.GameTaskQueue;
+import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.TextureManager;
 
 import java.io.IOException;
@@ -84,11 +86,13 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         // Lights --------------------------------------------------------------
         final DirectionalLight dLight = new DirectionalLight();
         dLight.setEnabled(true);
-        dLight.setDiffuse(new ColorRGBA(1, 1, 1, 1));
+        dLight.setAttenuate(false);
+        dLight.setDiffuse(new ColorRGBA(1, 1, 1, 0.5f));
         dLight.setDirection(new Vector3(-1, -1, -1));
         final DirectionalLight dLight2 = new DirectionalLight();
         dLight2.setEnabled(true);
-        dLight2.setDiffuse(new ColorRGBA(1, 1, 1, 1));
+        dLight2.setAttenuate(false);
+        dLight2.setDiffuse(new ColorRGBA(1, 1, 1, 0.5f));
         dLight2.setDirection(new Vector3(1, 1, 1));
 
         final LightState lightState = new LightState();
@@ -107,12 +111,9 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         // ---------------------------------------------------------------------
         final CullState cullFrontFace = new CullState();
         cullFrontFace.setEnabled(true);
-        cullFrontFace.setCullFace(CullState.Face.None);
+        cullFrontFace.setCullFace(CullState.Face.Back);
         root.setRenderState(cullFrontFace);
 //        root.setRenderState(buildFog());
-
-        //speed up a bit the performances
-        root.getSceneHints().setDataMode(DataMode.VBOInterleaved);
 
         // Skybox --------------------------------------------------------------
         root.attachChild(skybox);
@@ -135,14 +136,14 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         return context;
     }
 
-    public void setContext(MapContext context) {
+    public void setContext(MapContext context, boolean loadAll) {
         this.context = context;
 
         if(contextNode != null){
             contextNode.removeFromParent();
         }
 
-        contextNode = new ContextNode(canvas, context);
+        contextNode = new ContextNode(canvas, context, loadAll);
         try {
             Envelope env = context.getBounds();
             translateX = env.getMedian(0);
@@ -163,9 +164,16 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         return root;
     }
 
+    public Node getScene(){
+        return scene;
+    }
+
     @MainThread
     @Override
     public boolean renderUnto(final Renderer renderer) {
+        // Execute renderQueue item
+        GameTaskQueueManager.getManager().getQueue(GameTaskQueue.RENDER).execute();
+
         renderer.draw(root);
 //        Debugger.drawNormals(root, renderer);
         return true;

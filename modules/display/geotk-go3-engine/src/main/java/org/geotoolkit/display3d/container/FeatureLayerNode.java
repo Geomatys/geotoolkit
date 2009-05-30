@@ -28,6 +28,7 @@ import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.Spatial;
+import com.ardor3d.scenegraph.hint.DataMode;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.scenegraph.shape.Tube;
 import com.ardor3d.util.geom.BufferUtils;
@@ -77,10 +78,22 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     private final FeatureMapLayer layer;
 
     public FeatureLayerNode(A3DCanvas canvas, FeatureMapLayer layer) {
+        this(canvas,layer,false);
+    }
+
+    public FeatureLayerNode(A3DCanvas canvas, FeatureMapLayer layer, boolean loadAll) {
         super(canvas);
         this.layer = layer;
 
-        canvas.getController().addLocationSensitiveGraphic(this, 1);
+        if(loadAll){
+            loadArea(null);
+        }else{
+            canvas.getController().addLocationSensitiveGraphic(this, 1);
+        }
+
+        //speed up a bit the performances
+//        getSceneHints().setDataMode(DataMode.VBOInterleaved);
+        
     }
 
     private Mesh toNodeLine(LineString geom, float z ,ColorRGBA color){
@@ -170,8 +183,20 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     
     @Override
     public void update(ReadOnlyVector3 cameraPosition) {
+        final FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
 
-        List<String> exactList = new ArrayList<String>();
+        final DefaultBoundingBox bb = new DefaultBoundingBox(layer.getBounds());
+        bb.setRange(0, cameraPosition.getX()-searchExtent, cameraPosition.getX()+searchExtent);
+        bb.setRange(1, cameraPosition.getZ()-searchExtent, cameraPosition.getZ()+searchExtent);
+
+        final Filter f = FF.bbox(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),bb);
+//            Filter f = FF.dwithin(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),
+//                    FF.literal(new Coordinate(cameraPosition.getX(), cameraPosition.getZ())), searchExtent, "");
+
+    }
+
+    private void loadArea(Filter filter){
+        final List<String> exactList = new ArrayList<String>();
 
         GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
 
@@ -181,24 +206,19 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                     CRS.findMathTransform(source.getSchema().getCoordinateReferenceSystem(),
                     canvas.getController().getObjectiveCRS(),true));
 
+            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
+            if(filter != null){
+                collection = source.getFeatures(filter);
+            }else{
+                collection = source.getFeatures();
+            }
 
-            final DefaultBoundingBox bb = new DefaultBoundingBox(layer.getBounds());
-            bb.setRange(0, cameraPosition.getX()-searchExtent, cameraPosition.getX()+searchExtent);
-            bb.setRange(1, cameraPosition.getZ()-searchExtent, cameraPosition.getZ()+searchExtent);
-
-            final Filter f = FF.bbox(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),bb);
-//            Filter f = FF.dwithin(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),
-//                    FF.literal(new Coordinate(cameraPosition.getX(), cameraPosition.getZ())), searchExtent, "");
-
-            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(f);
             final FeatureIterator<SimpleFeature> ite = collection.features();
 
             final ColorRGBA isolineColor = new ColorRGBA(0,0.5f,0,1);
             final ReadOnlyColorRGBA pointColor = ColorRGBA.RED;
 
             final ElevationModel model = layer.getElevationModel();
-
-
 
             try{
                 while(ite.hasNext()){
@@ -301,7 +321,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                 loaded.remove(key);
             }
         }
-
     }
+
 
 }
