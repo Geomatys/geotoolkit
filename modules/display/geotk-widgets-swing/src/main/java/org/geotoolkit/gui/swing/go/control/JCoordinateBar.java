@@ -17,31 +17,35 @@
  */
 package org.geotoolkit.gui.swing.go.control;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JToolBar;
 
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.gui.swing.go.GoMap2D;
 import org.geotoolkit.gui.swing.go.J2DMapVolatile;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
- * @author johann sorel
+ * @author Johann Sorel (Puzzle-GIS)
  */
-public class JCoordinateBar extends javax.swing.JPanel {
+public class JCoordinateBar extends JToolBar {
 
     private static final ImageIcon ICON_XY = IconBundle.getInstance().getIcon("16_xy");
     private static final ImageIcon ICON_XY_DISABLE = IconBundle.getInstance().getIcon("16_xy_disable");
@@ -53,25 +57,79 @@ public class JCoordinateBar extends javax.swing.JPanel {
     private final myListener listener = new myListener();
     private GoMap2D map = null;
     private String error = MessageBundle.getString("map_control_coord_error");
-    
-    /** 
-     * Creates new form JMap2DMouseCoordPanel 
-     */
+
+    private final JCheckBox guiAxis = new JCheckBox();
+    private final JLabel guiCoord = new JLabel();
+    private final JCheckBox guiStatefull = new JCheckBox();
+    private final JCRSButton gui_crsButton = new JCRSButton();
+
     public JCoordinateBar() {
-        initComponents();
+        this(null);
+    }
+
+    public JCoordinateBar(GoMap2D candidate) {
+        setLayout(new GridBagLayout());
+
+        guiAxis.setSelected(true);
+        guiAxis.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(map != null){
+                    map.getCanvas().getController().setAxisProportions((!guiAxis.isSelected()) ? Double.NaN : 1);
+                }
+            }
+        });
+
+        guiStatefull.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(map != null && map instanceof J2DMapVolatile){
+                    ((J2DMapVolatile)map).setStatefull(guiStatefull.isSelected());
+                }
+            }
+        });
+
         gui_crsButton.setEnabled(false);
         guiAxis.setPressedIcon(ICON_XY);
         guiAxis.setSelectedIcon(ICON_XY);
         guiAxis.setRolloverSelectedIcon(ICON_XY);
         guiAxis.setIcon(ICON_XY_DISABLE);
         guiAxis.setRolloverIcon(ICON_XY_DISABLE);
+        guiAxis.setOpaque(false);
         guiStatefull.setPressedIcon(ICON_STATEFULL);
         guiStatefull.setSelectedIcon(ICON_STATEFULL);
         guiStatefull.setRolloverSelectedIcon(ICON_STATEFULL);
         guiStatefull.setIcon(ICON_STATEFULL_DISABLE);
         guiStatefull.setRolloverIcon(ICON_STATEFULL_DISABLE);
+        guiStatefull.setOpaque(false);
+
+        guiCoord.setOpaque(false);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.weightx = 0.0;
+
+        add(guiStatefull,constraints);
+        add(guiAxis,constraints);
+        add(guiCoord,constraints);
+
+        //a an empty component to fill space, like glue
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.weightx = 1.0;
+        JToolBar glue = new JToolBar();
+        glue.setFloatable(false);
+        add(glue,constraints);
+
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.EAST;
+        constraints.weightx = 0.0;
+        add(gui_crsButton,constraints);
+
+        setMap(candidate);
     }
-    
+
     public GoMap2D getMap() {
         return map;
     }
@@ -87,84 +145,16 @@ public class JCoordinateBar extends javax.swing.JPanel {
         
         if(this.map != null){
             this.map.getComponent().addMouseMotionListener(listener);
+            map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
+
+            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
+            gui_crsButton.setText(crs.getName().toString());
         }
         
         gui_crsButton.setEnabled(this.map != null);
     }
-        
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        gui_crsButton = new JCRSButton();
-        guiCoord = new JLabel();
-        guiAxis = new JCheckBox();
-        guiStatefull = new JCheckBox();
-
-        setOpaque(false);
-
-        guiAxis.setSelected(true);
-        guiAxis.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiAxisActionPerformed(evt);
-            }
-        });
-
-        guiStatefull.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiStatefullActionPerformed(evt);
-            }
-        });
-
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(guiStatefull)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiAxis)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCoord, GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(gui_crsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(gui_crsButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiStatefull, GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
-            .addComponent(guiAxis, GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
-            .addComponent(guiCoord, GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void guiStatefullActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiStatefullActionPerformed
-        if(map != null && map instanceof J2DMapVolatile){
-            ((J2DMapVolatile)map).setStatefull(guiStatefull.isSelected());
-        }
-    }//GEN-LAST:event_guiStatefullActionPerformed
-
-    private void guiAxisActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiAxisActionPerformed
-        if(map != null){
-            map.getCanvas().getController().setAxisProportions((!guiAxis.isSelected()) ? Double.NaN : 1);
-        }
-    }//GEN-LAST:event_guiAxisActionPerformed
-    
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    JCheckBox guiAxis;
-    JLabel guiCoord;
-    JCheckBox guiStatefull;
-    JCRSButton gui_crsButton;
-    // End of variables declaration//GEN-END:variables
-
-    
-    private class myListener extends MouseMotionAdapter{
+           
+    private class myListener extends MouseMotionAdapter implements PropertyChangeListener{
 
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -185,10 +175,26 @@ public class JCoordinateBar extends javax.swing.JPanel {
                 guiCoord.setText(error);
                 return;
             }
+
+            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             
-            guiCoord.setText("  X = "+ NUMBER_FORMAT.format(coord.getX()) +"  /  Y = "+ NUMBER_FORMAT.format(coord.getY()) );
+            StringBuilder sb = new StringBuilder("  ");
+            sb.append(crs.getCoordinateSystem().getAxis(0).getAbbreviation());
+            sb.append(" : ");
+            sb.append(NUMBER_FORMAT.format(coord.getX()));
+            sb.append("   ");
+            sb.append(crs.getCoordinateSystem().getAxis(1).getAbbreviation());
+            sb.append(" : ");
+            sb.append(NUMBER_FORMAT.format(coord.getY()));
+            guiCoord.setText(sb.toString());
         }
-        
+
+        @Override
+        public void propertyChange(PropertyChangeEvent arg0) {
+            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
+            gui_crsButton.setText(crs.getName().toString());
+        }
+
     }
     
 }

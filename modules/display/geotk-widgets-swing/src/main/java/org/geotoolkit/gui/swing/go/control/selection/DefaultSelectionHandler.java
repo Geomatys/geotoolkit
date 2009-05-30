@@ -17,12 +17,18 @@
  */
 package org.geotoolkit.gui.swing.go.control.selection;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Shape;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
@@ -31,6 +37,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -38,16 +46,31 @@ import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go.CanvasHandler;
 import org.geotoolkit.gui.swing.go.GoMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 
+import org.geotoolkit.referencing.CRS;
+import org.geotools.data.DefaultQuery;
+import org.geotools.data.Query;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.geometry.jts.JTS;
+import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Id;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Selection handler
@@ -56,11 +79,12 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class DefaultSelectionHandler implements CanvasHandler {
 
-    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     protected static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     
-    
-    private final MouseInputListener mouseInputListener;
+
+    private final EventListener mouseInputListener;
     private final DefaultSelectionDecoration selectionPane = new DefaultSelectionDecoration();
     private final GraphicVisitor visitor = new AbstractGraphicVisitor() {
 
@@ -78,8 +102,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
             for(final MapLayer layer : selection.keySet()){
                 Filter f = layer.getSelectionFilter();
-                f = FF.id(selection.get(layer));
-
+                f = combine(f, selection.get(layer));
                 layer.setSelectionFilter(f);
             }
 
@@ -108,10 +131,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
     private boolean withinArea;
     private boolean geographicArea;
     private GoMap2D map2D;
+    private int key = -1;
 
 
     public DefaultSelectionHandler() {
-        mouseInputListener = new MouseListen();
+        mouseInputListener = new EventListener();
     }
 
     public boolean isGeographicArea() {
@@ -145,21 +169,110 @@ public class DefaultSelectionHandler implements CanvasHandler {
     public void setMap(GoMap2D map2D) {
         this.map2D = map2D;
     }
-    
-    private void doSelection(List<Point> points) {
+
+    private Filter combine(Filter original, Set<? extends Identifier> ids){
+        final Filter f;
+
+        if(key == KeyEvent.VK_CONTROL){
+            //add selection
+            if(original instanceof Id){
+                Set<Identifier> in = new HashSet<Identifier>(ids);
+                in.addAll(((Id)original).getIdentifiers());
+                f = FF.id(in);
+            }else{
+                f = FF.id(ids);
+            }
+        } else if (key == KeyEvent.VK_SHIFT){
+            //remove the commun part selection
+            if(original instanceof Id){
+                Set<Identifier> in = new HashSet<Identifier>(((Id)original).getIdentifiers());
+                in.removeAll(ids);
+                f = FF.id(in);
+            }else{
+                f = FF.id(ids);
+            }
+        } else {
+            f = FF.id(ids);
+        }
+
+        return f;
+    }
+
+    private void doSelection(List<Point> points, int key) {
+        this.key = key;
 
         if (points.size() > 2) {
 
-            final GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-            path.moveTo(points.get(0).x, points.get(0).y);
+            if(geographicArea){
+                AbstractContainer2D container = map2D.getCanvas().getContainer();
 
+                if(container instanceof ContextContainer2D){
+                    final ContextContainer2D cc = (ContextContainer2D) container;
+                    final MapContext context = cc.getContext();
+                    
+                    //make a geographic selection
+                    final List<Coordinate> coords = new ArrayList<Coordinate>();
+                    for(Point p : points){
+                        coords.add(new Coordinate(p.x, p.y));
+                    }
+                    Point last = points.get(0);
+                    coords.add(new Coordinate(last.x,last.y));
 
-            for(int i=1;i<points.size();i++){
-                Point p = points.get(i);
-                path.lineTo(p.x, p.y);
+                    final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
+                    final Polygon poly = GEOMETRY_FACTORY.createPolygon(ring, new LinearRing[0]);
+
+                    final List<MapLayer> layers = new ArrayList<MapLayer>(context.layers());
+
+                    for(MapLayer layer : layers){
+                        if(layer instanceof FeatureMapLayer && layer.isSelectable() && layer.isVisible()){
+                            final Set<Identifier> ids = new HashSet<Identifier>();
+
+                            final FeatureMapLayer fl = (FeatureMapLayer) layer;
+                            final String geoStr = fl.getFeatureSource().getSchema().getGeometryDescriptor().getLocalName();
+                            final Expression geomField = FF.property(geoStr);
+
+                            CoordinateReferenceSystem dataCrs = fl.getFeatureSource().getSchema().getCoordinateReferenceSystem();
+
+                            try {
+                                final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map2D.getCanvas().getDisplayCRS(), dataCrs,true));
+                                
+                                final Expression geomData = FF.literal(dataPoly);
+                                final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
+
+                                final DefaultQuery query = new DefaultQuery();
+                                query.setFilter(f);
+                                query.setPropertyNames(new String[]{geoStr});
+
+                                FeatureCollection fc = fl.getFeatureSource().getFeatures(query);
+                                FeatureIterator fi = fc.features();
+                                while(fi.hasNext()){
+                                    Feature fea = fi.next();
+                                    ids.add(fea.getIdentifier());
+                                }
+                                fi.close();
+                            } catch (Exception ex) {
+                                Logger.getLogger(DefaultSelectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                            Filter selection = combine(layer.getSelectionFilter(), ids);
+                            fl.setSelectionFilter(selection);
+                        }
+                    }
+
+                }
+
+            }else{
+                //make a graphic selection
+                final GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+                path.moveTo(points.get(0).x, points.get(0).y);
+
+                for(int i=1;i<points.size();i++){
+                    Point p = points.get(i);
+                    path.lineTo(p.x, p.y);
+                }
+
+                map2D.getCanvas().getGraphicsIn(path, visitor, (withinArea) ? VisitFilter.WITHIN : VisitFilter.INTERSECTS);
             }
-
-            map2D.getCanvas().getGraphicsIn(path, visitor, (withinArea) ? VisitFilter.WITHIN : VisitFilter.INTERSECTS);
             map2D.getCanvas().getController().repaint();
         }
 
@@ -175,6 +288,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         map2D.addDecoration(selectionPane);
         map2D.getComponent().addMouseListener(mouseInputListener);
         map2D.getComponent().addMouseMotionListener(mouseInputListener);
+        map2D.getComponent().addKeyListener(mouseInputListener);
     }
 
     @Override
@@ -182,9 +296,12 @@ public class DefaultSelectionHandler implements CanvasHandler {
         map2D.removeDecoration(selectionPane);
         map2D.getComponent().removeMouseListener(mouseInputListener);
         map2D.getComponent().removeMouseMotionListener(mouseInputListener);
+        map2D.getComponent().removeKeyListener(mouseInputListener);
     }
 
-    private class MouseListen implements MouseInputListener {
+    private class EventListener implements MouseInputListener,KeyListener {
+
+        private int key;
 
         Point lastValid = null;
         final List<Point> points = new ArrayList<Point>();
@@ -199,7 +316,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
             points.add(new Point(point.x-1, point.y+1));
             points.add(new Point(point.x+1, point.y+1));
             points.add(new Point(point.x+1, point.y-1));
-            doSelection(points);
+            doSelection(points,key);
             points.clear();
         }
 
@@ -227,7 +344,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
             }else{
                 points.add(lastPoint);
             }
-            doSelection(points);
+            doSelection(points,key);
             selectionPane.setPoints(null);
             points.clear();
         }
@@ -235,6 +352,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         @Override
         public void mouseEntered(MouseEvent e) {
             map2D.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            map2D.getComponent().requestFocus();
         }
 
         @Override
@@ -263,6 +381,20 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
         @Override
         public void mouseMoved(MouseEvent e) {
+        }
+
+        @Override
+        public void keyTyped(KeyEvent arg0) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent arg0) {
+            key = arg0.getKeyCode();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent arg0) {
+            key = -1;
         }
     }
 

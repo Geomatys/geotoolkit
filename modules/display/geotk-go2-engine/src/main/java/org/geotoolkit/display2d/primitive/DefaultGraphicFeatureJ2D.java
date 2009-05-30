@@ -83,18 +83,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         super(canvas,feature.getType().getCoordinateReferenceSystem());
         this.layer = layer;
         initFeature(feature);
-
-        CoordinateReferenceSystem dataCRS = feature.getType().getCoordinateReferenceSystem();
-        CoordinateReferenceSystem objectiveCRS = canvas.getObjectiveCRS();
-        CoordinateReferenceSystem displayCRS = canvas.getDisplayCRS();
-
-        try {
-            dataToObjectiveTransformer.setMathTransform(CRS.findMathTransform(dataCRS, objectiveCRS));
-            dataToDisplayTransformer.setMathTransform(CRS.findMathTransform(dataCRS, displayCRS));
-        } catch (FactoryException ex) {
-            ex.printStackTrace();
-        }
-
     }
     
     public void initFeature(SimpleFeature feature){
@@ -104,12 +92,8 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         displayGeometry = null;
         objectiveGeometryISO = null;
         displayGeometryISO = null;
-
         isObjectiveCalculated = false;
         isDisplayCalculated = false;
-
-
-
     }
 
     @Override
@@ -132,6 +116,16 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
     public com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException{
         //TODO decimation
         if(objectiveGeometry == null){
+
+            CoordinateReferenceSystem dataCRS = feature.getType().getCoordinateReferenceSystem();
+            CoordinateReferenceSystem objectiveCRS = getCanvas().getObjectiveCRS();
+
+            try {
+                dataToObjectiveTransformer.setMathTransform(CRS.findMathTransform(dataCRS, objectiveCRS,true));
+            } catch (FactoryException ex) {
+                ex.printStackTrace();
+            }
+
             objectiveGeometry = dataToObjectiveTransformer.transform(defaultGeom);
         }
         return objectiveGeometry;
@@ -141,6 +135,16 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException{
         //TODO decimation
         if(displayGeometry == null){
+
+            CoordinateReferenceSystem dataCRS = feature.getType().getCoordinateReferenceSystem();
+            CoordinateReferenceSystem displayCRS = getCanvas().getDisplayCRS();
+
+            try {
+                dataToDisplayTransformer.setMathTransform(CRS.findMathTransform(dataCRS, displayCRS,true));
+            } catch (FactoryException ex) {
+                ex.printStackTrace();
+            }
+
             displayGeometry = dataToDisplayTransformer.transform(defaultGeom);
         }
         return displayGeometry;
