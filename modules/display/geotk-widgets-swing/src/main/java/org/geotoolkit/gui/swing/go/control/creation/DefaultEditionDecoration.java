@@ -694,7 +694,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
     }
 
     public void reprojectEditionLayer() {
-
+//TODO handle the case of reprojection while editing
 //        List<Geometry> geoms = getGeometries();
 //
 //        for (Geometry geo : geoms) {

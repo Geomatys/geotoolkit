@@ -28,12 +28,12 @@ import org.geotoolkit.gui.swing.go.GoMap2D;
  *
  * @author eclesia
  */
-public class DefaultEditionHandler2 implements CanvasHandler {
+public class DefaultEditionHandler implements CanvasHandler {
     
     private final DefaultEditionDecoration deco = new DefaultEditionDecoration();
     private GoMap2D map;
 
-    public DefaultEditionHandler2(GoMap2D map) {
+    public DefaultEditionHandler(GoMap2D map) {
         this.map = map;
     }
 

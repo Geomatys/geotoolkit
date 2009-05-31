@@ -26,7 +26,7 @@ import javax.swing.JToolBar;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go.GoMap2D;
-import org.geotoolkit.gui.swing.go.control.creation.DefaultEditionHandler2;
+import org.geotoolkit.gui.swing.go.control.creation.DefaultEditionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
 /**
@@ -41,7 +41,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
 
     private GoMap2D map = null;
 
-    private final DefaultEditionHandler2 handler = new DefaultEditionHandler2(map);
+    private final DefaultEditionHandler handler = new DefaultEditionHandler(map);
 
     private final ActionListener listener = new ActionListener() {
 
