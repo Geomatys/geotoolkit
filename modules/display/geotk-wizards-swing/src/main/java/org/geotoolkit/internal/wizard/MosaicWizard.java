@@ -95,12 +95,12 @@ public final class MosaicWizard extends AbstractWizard {
         super("Geotoolkit Pyramid Builder", new String[] {
             SELECT,
             LAYOUT,
-            COLORS,
+//          COLORS,
             CONFIRM
         }, new String[] {
             "Select source tiles",
             "Define pyramid tiling",
-            "Remove opaque border",
+//          "Remove opaque border",
             "Confirm"
         });
     }

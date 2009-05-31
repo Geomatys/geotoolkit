@@ -235,6 +235,11 @@ final class PropertyTree {
                         value = cn.toString();
                     }
                     // TODO: needs to build a collection with other elements.
+                    if (child.getChildCount() > 1) {
+                        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.metadata")
+                                .warning("The " + child.toString() + " node contains childs that " +
+                                "can not yet be parsed in current implementation.");
+                    }
                 }
                 if (value instanceof CharSequence) {
                     if (Number.class.isAssignableFrom(type)) {
