@@ -25,7 +25,6 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -37,6 +36,7 @@ import javax.swing.JPanel;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go.decoration.AbstractGeometryDecoration;
 import org.opengis.referencing.operation.TransformException;
 
@@ -56,19 +56,14 @@ public class LenghtDecoration extends AbstractGeometryDecoration{
     LenghtDecoration(){
         setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER)){
-            @Override
-            protected void paintComponent(Graphics g) {
-                g.setColor(new Color(1f,1f,1f,0.8f));
-                ((Graphics2D)g).fill(getBounds());
-                super.paintComponent(g);
-            }
-
-        };
-
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.setOpaque(false);
-        panel.add(guiLbl);
-        panel.add(guiUOM);
+        JPanel sub = new JPanel(new FlowLayout());
+        sub.setOpaque(false);
+        sub.add(guiLbl);
+        sub.add(guiUOM);
+        sub.setBorder(new RoundedBorder());
+        panel.add(sub);
 
         add(BorderLayout.NORTH,panel);
 

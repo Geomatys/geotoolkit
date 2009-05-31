@@ -30,9 +30,11 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import javax.swing.SwingConstants;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.gui.swing.go.GoMap2D;
@@ -59,7 +61,7 @@ public class JCoordinateBar extends JToolBar {
     private String error = MessageBundle.getString("map_control_coord_error");
 
     private final JCheckBox guiAxis = new JCheckBox();
-    private final JLabel guiCoord = new JLabel();
+    private final JTextField guiCoord = new JTextField();
     private final JCheckBox guiStatefull = new JCheckBox();
     private final JCRSButton gui_crsButton = new JCRSButton();
 
@@ -104,6 +106,9 @@ public class JCoordinateBar extends JToolBar {
         guiStatefull.setOpaque(false);
 
         guiCoord.setOpaque(false);
+        guiCoord.setBorder(null);
+        guiCoord.setEditable(false);
+        guiCoord.setHorizontalAlignment(SwingConstants.CENTER);
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -112,18 +117,19 @@ public class JCoordinateBar extends JToolBar {
 
         add(guiStatefull,constraints);
         add(guiAxis,constraints);
-        add(guiCoord,constraints);
 
         //a an empty component to fill space, like glue
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.WEST;
         constraints.weightx = 1.0;
-        JToolBar glue = new JToolBar();
-        glue.setFloatable(false);
+        JComponent glue = new JComponent() {};
+        glue.setOpaque(false);
         add(glue,constraints);
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.EAST;
+        constraints.weightx = 1.0;
+        add(guiCoord,constraints);
         constraints.weightx = 0.0;
         add(gui_crsButton,constraints);
 

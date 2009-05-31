@@ -237,57 +237,6 @@ abstract class AbstractEditionHandler implements EditionHandler {
 //        return GEOMETRY_FACTORY.createPolygon(lr1, null);
     }
 
-    protected Point createPoint(Coordinate coord) {
-        return GEOMETRY_FACTORY.createPoint(coord);
-    }
-
-    protected MultiPoint createMultiPoint(List<Geometry> geoms) {
-        List<Point> lst = new ArrayList<Point>();
-        for (Geometry go : geoms) {
-            if (go instanceof Point) {
-                lst.add((Point) go);
-            }
-        }
-        return GEOMETRY_FACTORY.createMultiPoint(lst.toArray(new Point[lst.size()]));
-    }
-
-    protected LineString createLine(List<Coordinate> coords) {
-        return GEOMETRY_FACTORY.createLineString(coords.toArray(EMPTY_COORDINATE_ARRAY));
-    }
-
-    protected LinearRing createLinearRing(List<Coordinate> coords) {
-        if (!(coords.get(0).equals2D(coords.get(coords.size() - 1)))) {
-            Coordinate coo = new Coordinate(coords.get(0));
-            coords.add(coo);
-        }
-
-        return GEOMETRY_FACTORY.createLinearRing(coords.toArray(EMPTY_COORDINATE_ARRAY));
-    }
-
-    protected Polygon createPolygon(List<Coordinate> coords) {
-        LinearRing ring = createLinearRing(coords);
-        return GEOMETRY_FACTORY.createPolygon(ring, null);
-    }
-
-    protected MultiPolygon createMultiPolygon(List<Geometry> geoms) {
-        List<Polygon> lst = new ArrayList<Polygon>();
-        for (Geometry go : geoms) {
-            if (go instanceof Polygon) {
-                lst.add((Polygon) go);
-            }
-        }
-        return GEOMETRY_FACTORY.createMultiPolygon(lst.toArray(new Polygon[lst.size()]));
-    }
-
-    protected MultiLineString createMultiLine(List<Geometry> geoms) {
-        List<LineString> lst = new ArrayList<LineString>();
-        for (Geometry go : geoms) {
-            if (go instanceof LineString) {
-                lst.add((LineString) go);
-            }
-        }
-        return GEOMETRY_FACTORY.createMultiLineString(lst.toArray(new LineString[lst.size()]));
-    }
 
     protected synchronized void editAddGeometry(Geometry[] geoms) {
 //

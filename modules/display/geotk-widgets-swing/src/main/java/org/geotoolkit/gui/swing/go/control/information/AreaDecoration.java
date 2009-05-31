@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go.decoration.AbstractGeometryDecoration;
 
 import org.opengis.referencing.operation.TransformException;
@@ -59,21 +60,16 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     AreaDecoration() {
         setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER)) {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                g.setColor(new Color(1f, 1f, 1f, 0.8f));
-                ((Graphics2D) g).fill(getBounds());
-                super.paintComponent(g);
-            }
-        };
-
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.setOpaque(false);
-        panel.add(guiLbl);
-        panel.add(guiUOM);
+        JPanel sub = new JPanel(new FlowLayout());
+        sub.setOpaque(false);
+        sub.add(guiLbl);
+        sub.add(guiUOM);
+        sub.setBorder(new RoundedBorder());
+        panel.add(sub);
 
-        add(BorderLayout.NORTH, panel);
+        add(BorderLayout.NORTH,panel);
 
         guiUOM.addItemListener(new ItemListener() {
 
