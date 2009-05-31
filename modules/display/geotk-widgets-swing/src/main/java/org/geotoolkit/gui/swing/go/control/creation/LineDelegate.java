@@ -21,13 +21,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.event.MouseEvent;
 
 /**
- * polygon creation gandler
+ * line creation handler
  * 
  * @author Johann Sorel
  */
-public class PolygonCreationHandler extends SpecialMouseListener {
+public class LineDelegate extends AbstractMouseDelegate {
 
-    public PolygonCreationHandler(DefaultEditionDecoration handler) {
+    public LineDelegate(DefaultEditionDecoration handler) {
         super(handler);
     }
 
@@ -54,14 +54,13 @@ public class PolygonCreationHandler extends SpecialMouseListener {
             updateCreationGeoms();
         } else if (button == MouseEvent.BUTTON3) {
             inCreation = false;
-            if (coords.size() > 2) {
-                Geometry geo = EditionHelper.createPolygon(coords);
+            if (coords.size() > 1) {
+                Geometry geo = EditionHelper.createLine(coords);
                 handler.editAddGeometry(new Geometry[]{geo});
                 geoms.clear();
             }
             coords.clear();
         }
-        
         handler.clearMemoryLayer();
         handler.setMemoryLayerGeometry(geoms);
     }

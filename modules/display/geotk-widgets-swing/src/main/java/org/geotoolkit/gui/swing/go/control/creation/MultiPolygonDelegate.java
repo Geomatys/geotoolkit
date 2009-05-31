@@ -21,13 +21,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.event.MouseEvent;
 
 /**
- * multipoint creation handler
+ * multipolygon creation handler
  * 
  * @author Johann Sorel
  */
-public class MultiPointCreationHandler extends SpecialMouseListener {
+public class MultiPolygonDelegate extends AbstractMouseDelegate {
 
-    public MultiPointCreationHandler(DefaultEditionDecoration handler) {
+    public MultiPolygonDelegate(DefaultEditionDecoration handler) {
         super(handler);
     }
 
@@ -50,18 +50,35 @@ public class MultiPointCreationHandler extends SpecialMouseListener {
         final int button = e.getButton();
 
         if (button == MouseEvent.BUTTON1) {
-            Geometry geo = EditionHelper.createPoint(handler.toCoord(e.getX(), e.getY()));
-            geoms.add(geo);
+            nbRightClick = 0;
+            coords.add(handler.toCoord(e.getX(), e.getY()));
             updateCreationGeoms();
-
         } else if (button == MouseEvent.BUTTON3) {
-            if (geoms.size() > 0) {
-                Geometry geo = EditionHelper.createMultiPoint(geoms);
-                handler.editAddGeometry(new Geometry[]{geo});
-                geoms.clear();
+            nbRightClick++;
+            if (nbRightClick == 1) {
+                inCreation = false;
+                if (coords.size() > 2) {
+                    if (geoms.size() > 0) {
+                        geoms.remove(geoms.size() - 1);
+                    }
+                    Geometry geo = EditionHelper.createPolygon(coords);
+                    geoms.add(geo);
+                } else if (coords.size() > 0) {
+                    if (geoms.size() > 0) {
+                        geoms.remove(geoms.size() - 1);
+                    }
+                }
+            } else {
+                if (geoms.size() > 0) {
+                    Geometry geo = EditionHelper.createMultiPolygon(geoms);
+                    handler.editAddGeometry(new Geometry[]{geo});
+                    nbRightClick = 0;
+                    geoms.clear();
+                }
             }
             coords.clear();
         }
+
         handler.clearMemoryLayer();
         handler.setMemoryLayerGeometry(geoms);
     }

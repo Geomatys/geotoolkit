@@ -76,6 +76,10 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         repaint();
     }
 
+    public List<Geometry> getGeometries(){
+        return new ArrayList<Geometry>(geometries);
+    }
+
     @Override
     public void refresh() {
     }

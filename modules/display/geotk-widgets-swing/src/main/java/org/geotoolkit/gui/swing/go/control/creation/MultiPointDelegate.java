@@ -21,13 +21,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.event.MouseEvent;
 
 /**
- * line creation handler
+ * multipoint creation handler
  * 
  * @author Johann Sorel
  */
-public class LineCreationHandler extends SpecialMouseListener {
+public class MultiPointDelegate extends AbstractMouseDelegate {
 
-    public LineCreationHandler(DefaultEditionDecoration handler) {
+    public MultiPointDelegate(DefaultEditionDecoration handler) {
         super(handler);
     }
 
@@ -50,12 +50,13 @@ public class LineCreationHandler extends SpecialMouseListener {
         final int button = e.getButton();
 
         if (button == MouseEvent.BUTTON1) {
-            coords.add(handler.toCoord(e.getX(), e.getY()));
+            Geometry geo = EditionHelper.createPoint(handler.toCoord(e.getX(), e.getY()));
+            geoms.add(geo);
             updateCreationGeoms();
+
         } else if (button == MouseEvent.BUTTON3) {
-            inCreation = false;
-            if (coords.size() > 1) {
-                Geometry geo = EditionHelper.createLine(coords);
+            if (geoms.size() > 0) {
+                Geometry geo = EditionHelper.createMultiPoint(geoms);
                 handler.editAddGeometry(new Geometry[]{geo});
                 geoms.clear();
             }

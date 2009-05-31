@@ -23,12 +23,15 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.event.MouseInputListener;
+import org.geotoolkit.gui.swing.go.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotools.feature.FeatureCollection;
@@ -44,7 +47,7 @@ import org.opengis.referencing.operation.MathTransform;
  * 
  * @author Johann Sorel
  */
-public abstract class SpecialMouseListener implements MouseInputListener {
+public abstract class AbstractMouseDelegate extends MouseNavigatonListener implements MouseInputListener,KeyListener {
 
     protected final DefaultEditionDecoration handler;
     protected final List<Coordinate> coords = new ArrayList<Coordinate>();
@@ -56,7 +59,8 @@ public abstract class SpecialMouseListener implements MouseInputListener {
     protected String editedFeatureID = null;
     protected Map<Geometry, Integer[]> editedNodes = new HashMap<Geometry, Integer[]>();
 
-    public SpecialMouseListener(DefaultEditionDecoration handler) {
+    public AbstractMouseDelegate(DefaultEditionDecoration handler) {
+        super(null);
         this.handler = handler;
     }
 
@@ -114,7 +118,6 @@ public abstract class SpecialMouseListener implements MouseInputListener {
                             geom = JTS.transform(geom, trs);
                             geoms.add((Geometry) geom.clone());
                             editedFeatureID = sf.getID();
-                            System.out.println(editedFeatureID);
                         }catch(Exception ex){
                             ex.printStackTrace();
                         }
@@ -191,27 +194,35 @@ public abstract class SpecialMouseListener implements MouseInputListener {
         inCreation = false;
     }
 
+    protected void removeGeometryEdit() {
+        if (!geoms.isEmpty() ) {
+            handler.removeSelectedGeometry(editedFeatureID);
+        }
+        hasEditionGeometry = false;
+        hasGeometryChanged = false;
+        editedFeatureID = null;
+        editedNodes.clear();
+        inCreation = false;
+    }
+
     public abstract void fireStateChange();
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        getMap().getComponent().requestFocus();
+        super.mouseEntered(e);
+    }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void keyPressed(KeyEvent arg0) {
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void keyReleased(KeyEvent arg0) {
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void keyTyped(KeyEvent arg0) {
+    }
 
-    @Override
-    public void mouseExited(MouseEvent e) {}
-
-    @Override
-    public void mouseDragged(MouseEvent e) {}
-
-    @Override
-    public void mouseMoved(MouseEvent e) {}
-    
 }

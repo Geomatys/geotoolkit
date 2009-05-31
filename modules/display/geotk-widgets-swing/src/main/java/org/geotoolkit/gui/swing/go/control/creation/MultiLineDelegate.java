@@ -21,13 +21,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.event.MouseEvent;
 
 /**
- * multipolygon creation handler
+ * multiline creation handler
  * 
  * @author Johann Sorel
  */
-public class MultiPolygonCreationHandler extends SpecialMouseListener {
+public class MultiLineDelegate extends AbstractMouseDelegate {
 
-    public MultiPolygonCreationHandler(DefaultEditionDecoration handler) {
+    public MultiLineDelegate(DefaultEditionDecoration handler) {
         super(handler);
     }
 
@@ -53,15 +53,16 @@ public class MultiPolygonCreationHandler extends SpecialMouseListener {
             nbRightClick = 0;
             coords.add(handler.toCoord(e.getX(), e.getY()));
             updateCreationGeoms();
+
         } else if (button == MouseEvent.BUTTON3) {
             nbRightClick++;
             if (nbRightClick == 1) {
                 inCreation = false;
-                if (coords.size() > 2) {
+                if (coords.size() > 1) {
                     if (geoms.size() > 0) {
                         geoms.remove(geoms.size() - 1);
                     }
-                    Geometry geo = EditionHelper.createPolygon(coords);
+                    Geometry geo = EditionHelper.createLine(coords);
                     geoms.add(geo);
                 } else if (coords.size() > 0) {
                     if (geoms.size() > 0) {
@@ -70,7 +71,7 @@ public class MultiPolygonCreationHandler extends SpecialMouseListener {
                 }
             } else {
                 if (geoms.size() > 0) {
-                    Geometry geo = EditionHelper.createMultiPolygon(geoms);
+                    Geometry geo = EditionHelper.createMultiLine(geoms);
                     handler.editAddGeometry(new Geometry[]{geo});
                     nbRightClick = 0;
                     geoms.clear();
@@ -78,7 +79,6 @@ public class MultiPolygonCreationHandler extends SpecialMouseListener {
             }
             coords.clear();
         }
-
         handler.clearMemoryLayer();
         handler.setMemoryLayerGeometry(geoms);
     }

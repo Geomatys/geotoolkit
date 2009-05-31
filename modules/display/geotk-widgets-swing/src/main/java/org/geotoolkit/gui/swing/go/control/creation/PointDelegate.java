@@ -18,16 +18,20 @@
 package org.geotoolkit.gui.swing.go.control.creation;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.awt.event.MouseEvent;
+import java.awt.geom.NoninvertibleTransformException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * multiline creation handler
+ * point creation handler
  * 
  * @author Johann Sorel
  */
-public class MultiLineCreationHandler extends SpecialMouseListener {
+public class PointDelegate extends AbstractMouseDelegate {
 
-    public MultiLineCreationHandler(DefaultEditionDecoration handler) {
+    public PointDelegate(DefaultEditionDecoration handler) {
         super(handler);
     }
 
@@ -47,39 +51,11 @@ public class MultiLineCreationHandler extends SpecialMouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        final int button = e.getButton();
-
-        if (button == MouseEvent.BUTTON1) {
-            nbRightClick = 0;
-            coords.add(handler.toCoord(e.getX(), e.getY()));
-            updateCreationGeoms();
-
-        } else if (button == MouseEvent.BUTTON3) {
-            nbRightClick++;
-            if (nbRightClick == 1) {
-                inCreation = false;
-                if (coords.size() > 1) {
-                    if (geoms.size() > 0) {
-                        geoms.remove(geoms.size() - 1);
-                    }
-                    Geometry geo = EditionHelper.createLine(coords);
-                    geoms.add(geo);
-                } else if (coords.size() > 0) {
-                    if (geoms.size() > 0) {
-                        geoms.remove(geoms.size() - 1);
-                    }
-                }
-            } else {
-                if (geoms.size() > 0) {
-                    Geometry geo = EditionHelper.createMultiLine(geoms);
-                    handler.editAddGeometry(new Geometry[]{geo});
-                    nbRightClick = 0;
-                    geoms.clear();
-                }
-            }
-            coords.clear();
-        }
+        Geometry geo = handler.toJTS(e.getX(), e.getY());
+        handler.editAddGeometry(new Geometry[]{geo});
         handler.clearMemoryLayer();
         handler.setMemoryLayerGeometry(geoms);
+                
     }
+    
 }

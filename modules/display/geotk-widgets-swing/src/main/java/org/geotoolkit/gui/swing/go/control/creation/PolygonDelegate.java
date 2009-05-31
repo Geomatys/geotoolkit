@@ -18,20 +18,16 @@
 package org.geotoolkit.gui.swing.go.control.creation;
 
 import com.vividsolutions.jts.geom.Geometry;
-
 import java.awt.event.MouseEvent;
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * point creation handler
+ * polygon creation gandler
  * 
  * @author Johann Sorel
  */
-public class PointCreationHandler extends SpecialMouseListener {
+public class PolygonDelegate extends AbstractMouseDelegate {
 
-    public PointCreationHandler(DefaultEditionDecoration handler) {
+    public PolygonDelegate(DefaultEditionDecoration handler) {
         super(handler);
     }
 
@@ -51,11 +47,22 @@ public class PointCreationHandler extends SpecialMouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Geometry geo = handler.toJTS(e.getX(), e.getY());
-        handler.editAddGeometry(new Geometry[]{geo});
+        final int button = e.getButton();
+
+        if (button == MouseEvent.BUTTON1) {
+            coords.add(handler.toCoord(e.getX(), e.getY()));
+            updateCreationGeoms();
+        } else if (button == MouseEvent.BUTTON3) {
+            inCreation = false;
+            if (coords.size() > 2) {
+                Geometry geo = EditionHelper.createPolygon(coords);
+                handler.editAddGeometry(new Geometry[]{geo});
+                geoms.clear();
+            }
+            coords.clear();
+        }
+        
         handler.clearMemoryLayer();
         handler.setMemoryLayerGeometry(geoms);
-                
     }
-    
 }

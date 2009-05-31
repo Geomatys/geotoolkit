@@ -51,7 +51,6 @@ public class DefaultEditionHandler2 implements CanvasHandler {
     @Override
     public void install(Component component) {
         deco.reset();
-        deco.getMouseListener().setMap(map);
         deco.getMouseListener().install(component);
         map.addDecoration(0,deco);
     }
