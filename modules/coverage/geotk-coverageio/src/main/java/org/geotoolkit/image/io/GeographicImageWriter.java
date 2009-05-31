@@ -56,7 +56,7 @@ public abstract class GeographicImageWriter extends ImageWriter {
     /**
      * The logger to use for events related to this image writer.
      */
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io");
+    static final Logger LOGGER = Logging.getLogger(GeographicImageWriter.class);
 
     /**
      * Index of the image in process of being written. This convenience index is reset to 0

@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
 
 
@@ -58,8 +58,8 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
     /**
      * Pool of existing instances.
      */
-    private static final CanonicalSet<AllAuthoritiesFactory> POOL =
-            CanonicalSet.newInstance(AllAuthoritiesFactory.class);
+    private static final WeakHashSet<AllAuthoritiesFactory> POOL =
+            WeakHashSet.newInstance(AllAuthoritiesFactory.class);
 
     /**
      * The authority names. Used in order to detect changes in the set of registered factories.

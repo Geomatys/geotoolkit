@@ -24,7 +24,7 @@ import java.util.RandomAccess;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.collection.CheckedCollection;
 
 
@@ -62,7 +62,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * A pool of indices used by the {@link Vector.View} inner class.
      */
-    private static final CanonicalSet<int[]> INDICES = CanonicalSet.newInstance(int[].class);
+    private static final WeakHashSet<int[]> INDICES = WeakHashSet.newInstance(int[].class);
 
     /**
      * Wraps the given object in a vector. The argument should be one of the following:

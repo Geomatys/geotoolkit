@@ -96,7 +96,7 @@ public abstract class GeographicImageReader extends ImageReader {
     /**
      * The logger to use for events related to this image reader.
      */
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io");
+    static final Logger LOGGER = Logging.getLogger(GeographicImageReader.class);
 
     /**
      * Metadata for each images, or {@code null} if not yet created.

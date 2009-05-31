@@ -23,7 +23,7 @@ import java.awt.image.IndexColorModel;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 
 
 /**
@@ -45,7 +45,7 @@ public final class ColorModels<T extends ColorModel> {
     /**
      * Pool of shared color models.
      */
-    private static final CanonicalSet<ColorModels> POOL = CanonicalSet.newInstance(ColorModels.class);
+    private static final WeakHashSet<ColorModels> POOL = WeakHashSet.newInstance(ColorModels.class);
 
     /**
      * The color model to share.

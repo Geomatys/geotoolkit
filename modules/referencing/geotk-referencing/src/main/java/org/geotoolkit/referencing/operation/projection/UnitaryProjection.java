@@ -47,7 +47,7 @@ import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -158,8 +158,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     /**
      * The pool of unitary projections created in this running JVM.
      */
-    private static final CanonicalSet<UnitaryProjection> POOL =
-            CanonicalSet.newInstance(UnitaryProjection.class);
+    private static final WeakHashSet<UnitaryProjection> POOL =
+            WeakHashSet.newInstance(UnitaryProjection.class);
 
     /**
      * The parameters used for creating this projection. They are used for formatting <cite>Well

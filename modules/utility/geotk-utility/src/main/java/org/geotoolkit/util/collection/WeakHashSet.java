@@ -39,11 +39,30 @@ import org.geotoolkit.lang.ThreadSafe;
  * finalized, and then reclaimed. When an entry has been discarded it is effectively removed from
  * the set, so this class behaves somewhat differently than other {@link java.util.Set} implementations.
  * <p>
- * If the elements stored in this set are arrays, then the hash codes and the comparaisons are
- * performed using the methods from {@link Arrays} that work on arrays.
- * <p>
- * If you would like to use {@code WeakHashSet} as inside a factory to prevent creating
- * duplicate immutable objects, please look at the {@link CanonicalSet} subclass.
+ * If the elements stored in this set are arrays like {@code int[]}, {@code float[]} or
+ * {@code Object[]}, then the hash code computations and the comparaisons are performed using
+ * the static {@code hashCode(a)} and {@code equals(a1, a2)} methods defined in the {@link Arrays}
+ * class.
+ *
+ * {@section Optimizing memory use in factory implementations}
+ * The {@code WeakHashSet} class has a {@link #get} method that is not part of the {@link java.util.Set}
+ * interface. This {@code get} method retrieves an entry from this set that is equal to the supplied
+ * object. The {@link #unique} method combines a {@code get} followed by a {@code add} operation if
+ * the specified object was not in the set. This is similar in spirit to the {@link String#intern}
+ * method. The following example shows a convenient way to use {@code WeakHashSet} as an internal
+ * pool of immutable objects.
+ *
+ * {@preformat java
+ *     private final WeakHashSet<Foo> pool = WeakHashSet.newInstance(Foo.class);
+ *
+ *     public Foo create(String definition) {
+ *         Foo created = new Foo(definition);
+ *         return pool.unique(created);
+ *     }
+ * }
+ *
+ * Thus, {@code WeakHashSet} can be used inside a factory to prevent creating duplicate
+ * immutable objects.
  *
  * @param <E> The type of elements in the set.
  *
@@ -129,13 +148,26 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     private int threshold;
 
     /**
-     * Constructs a {@code WeakHashSet}.
+     * Constructs a {@code WeakHashSet} for elements of the specified type.
+     *
+     * @param <E>  The type of elements in the set.
+     * @param type The type of elements in the set.
+     * @return An initially empty set for elements of the given type.
+     *
+     * @since 2.5
+     */
+    public static <E> WeakHashSet<E> newInstance(final Class<E> type) {
+        return new WeakHashSet<E>(type);
+    }
+
+    /**
+     * Constructs a {@code WeakHashSet} for elements of the specified type.
      *
      * @param type The type of the element to be included in this set.
      *
      * @since 2.5
      */
-    public WeakHashSet(final Class<E> type) {
+    protected WeakHashSet(final Class<E> type) {
         this.type = type;
         isArray = type.isArray() || type.equals(Object.class);
         newEntryTable(MIN_CAPACITY);
@@ -231,7 +263,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                 table[index] = e;
             }
         }
-        final Logger logger = Logging.getLogger("org.geotoolkit.util");
+        final Logger logger = Logging.getLogger(WeakHashSet.class);
         final Level   level = Level.FINEST;
         if (logger.isLoggable(level)) {
             final LogRecord record = new LogRecord(level,
@@ -276,14 +308,16 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     }
 
     /**
-     * Returns {@code true} if this set contains the specified element.
+     * Adds the specified element to this set if it is not already present.
+     * If this set already contains the specified element, the call leaves
+     * this set unchanged and returns {@code false}.
      *
-     * @param  obj Object to be checked for containment in this set.
-     * @return {@code true} if this set contains the specified element.
+     * @param  obj Element to be added to this set.
+     * @return {@code true} if this set did not already contain the specified element.
      */
     @Override
-    public synchronized boolean contains(final Object obj) {
-        return obj != null && intern(type.cast(obj), GET) != null;
+    public synchronized boolean add(final E obj) {
+        return intern(obj, ADD) == null;
     }
 
     /**
@@ -298,23 +332,85 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     }
 
     /**
-     * Adds the specified element to this set if it is not already present.
-     * If this set already contains the specified element, the call leaves
-     * this set unchanged and returns {@code false}.
+     * Returns an object equal to the specified object, if present. If
+     * this set doesn't contains any object equal to {@code object},
+     * then this method returns {@code null}.
      *
-     * @param  obj Element to be added to this set.
-     * @return {@code true} if this set did not already contain the specified element.
+     * @param <T> The type of the element to get.
+     * @param object The element to get.
+     * @return An element equal to the given one if already presents in the set,
+     *         or {@code null} otherwise.
+     *
+     * @see #unique(Object)
+     */
+    public synchronized <T extends E> T get(final T object) {
+        return intern(object, GET);
+    }
+
+    /**
+     * Returns {@code true} if this set contains the specified element.
+     *
+     * @param  obj Object to be checked for containment in this set.
+     * @return {@code true} if this set contains the specified element.
      */
     @Override
-    public synchronized boolean add(final E obj) {
-        return intern(obj, ADD) == null;
+    public synchronized boolean contains(final Object obj) {
+        return obj != null && intern(type.cast(obj), GET) != null;
+    }
+
+    /**
+     * Returns an object equal to {@code object} if such an object already exist in this
+     * {@code WeakHashSet}. Otherwise, adds {@code object} to this {@code WeakHashSet}.
+     * This method is equivalents to the following code:
+     *
+     * {@preformat java
+     *     if (object != null) {
+     *         Object current = get(object);
+     *         if (current != null) {
+     *             return current;
+     *         } else {
+     *             add(object);
+     *         }
+     *     }
+     *     return object;
+     * }
+     *
+     * @param <T> The type of the element to get.
+     * @param object The element to get or to add in the set if not already presents.
+     * @return An element equal to the given one if already presents in the set,
+     *         or the given {@code object} otherwise.
+     */
+    public synchronized <T extends E> T unique(final T object) {
+        return intern(object, INTERN);
+    }
+
+    /**
+     * Iteratively call {@link #unique(Object)} for an array of objects.
+     * This method is equivalents to the following code:
+     *
+     * {@preformat java
+     *     for (int i=0; i<objects.length; i++) {
+     *         objects[i] = unique(objects[i]);
+     *     }
+     * }
+     *
+     * @param objects
+     *          On input, the objects to add to this set if not already present. On output,
+     *          elements that are {@linkplain Object#equals equal}, but where every reference
+     *          to an instance already presents in this set has been replaced by a reference
+     *          to the existing instance.
+     */
+    public synchronized void uniques(final E[] objects) {
+        for (int i=0; i<objects.length; i++) {
+            objects[i] = intern(objects[i], INTERN);
+        }
     }
 
     // Arguments for the {@link #intern} method.
-    /** The "remove" operation.  */  static final int REMOVE = -1;
-    /** The "get"    operation.  */  static final int GET    =  0;
-    /** The "add"    operation.  */  static final int ADD    = +1;
-    /** The "intern" operation.  */  static final int INTERN = +2;
+    /** The "remove" operation.  */  private static final int REMOVE = -1;
+    /** The "get"    operation.  */  private static final int GET    =  0;
+    /** The "add"    operation.  */  private static final int ADD    = +1;
+    /** The "intern" operation.  */  private static final int INTERN = +2;
 
     /**
      * Returns an object equal to {@code obj} if such an object already exist in this
@@ -333,7 +429,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      *     return object;
      * }
      */
-    final <T extends E> T intern(final T obj, final int operation) {
+    private final <T extends E> T intern(final T obj, final int operation) {
         assert Thread.holdsLock(this);
         assert WeakCollectionCleaner.DEFAULT.isAlive();
         assert valid() : count;

@@ -25,23 +25,23 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests the {@link CanonicalSet}. A standard {@link HashSet} object is used for comparison purpose.
+ * Tests the {@link WeakHashSet}. A standard {@link HashSet} object is used for comparison purpose.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
  * @since 2.0
  */
-public final class CanonicalSetTest {
+public final class WeakHashSetTest {
     /**
-     * Tests the {@link CanonicalSet} using strong references.
-     * The tested {@link CanonicalSet} should behave like a standard {@link Set} object.
+     * Tests the {@link WeakHashSet} using strong references.
+     * The tested {@link WeakHashSet} should behave like a standard {@link Set} object.
      */
     @Test
     public void testStrongReferences() {
         final Random random = new Random();
         for (int pass=0; pass<20; pass++) {
-            final CanonicalSet<Integer> weakSet = CanonicalSet.newInstance(Integer.class);
+            final WeakHashSet<Integer> weakSet = WeakHashSet.newInstance(Integer.class);
             final HashSet<Integer> strongSet = new HashSet<Integer>();
             for (int i=0; i<1000; i++) {
                 final Integer value = random.nextInt(500);
@@ -73,7 +73,7 @@ public final class CanonicalSetTest {
     }
 
     /**
-     * Tests the {@link CanonicalSet} using weak references. In this test, we have to keep
+     * Tests the {@link WeakHashSet} using weak references. In this test, we have to keep
      * in mind than some elements in {@code weakSet} may disaspear at any time!
      *
      * @throws InterruptedException If the test has been interrupted.
@@ -82,7 +82,7 @@ public final class CanonicalSetTest {
     public void testWeakReferences() throws InterruptedException {
         final Random random = new Random();
         for (int pass=0; pass<2; pass++) {
-            final CanonicalSet<Integer> weakSet = CanonicalSet.newInstance(Integer.class);
+            final WeakHashSet<Integer> weakSet = WeakHashSet.newInstance(Integer.class);
             final HashSet<Integer> strongSet = new HashSet<Integer>();
             for (int i=0; i<500; i++) {
                 final Integer value = new Integer(random.nextInt(500)); // Really need new instances
@@ -93,14 +93,14 @@ public final class CanonicalSetTest {
                     final boolean   weakModified = weakSet  .add(value);
                     final boolean strongModified = strongSet.add(value);
                     if (weakModified) {
-                        // If the element was not in the CanonicalSet (i.e. if the garbage
+                        // If the element was not in the WeakHashSet (i.e. if the garbage
                         // collector has cleared it), then it must not been in HashSet neither
                         // (otherwise GC should not have cleared it).
                         assertTrue("add:", strongModified);
                     } else {
                         assertTrue(value != weakSet.get(value));
                         if (strongModified) {
-                            // If the element was already in the CanonicalSet but not in the
+                            // If the element was already in the WeakHashSet but not in the
                             // HashSet, this is because GC has not cleared it yet. Replace it
                             // by 'value', because if we don't it may be cleared later and the
                             // "contains" test below will fails.
@@ -137,7 +137,7 @@ public final class CanonicalSetTest {
      */
     @Test
     public void testArray() {
-        final CanonicalSet<int[]> weakSet = CanonicalSet.newInstance(int[].class);
+        final WeakHashSet<int[]> weakSet = WeakHashSet.newInstance(int[].class);
         final int[] array = new int[] {2, 5, 3};
         assertTrue (weakSet.add(array));
         assertFalse(weakSet.add(array));

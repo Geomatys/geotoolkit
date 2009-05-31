@@ -41,7 +41,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -88,7 +88,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     /**
      * A pool of modified objects created up to date.
      */
-    private final CanonicalSet<IdentifiedObject> pool = CanonicalSet.newInstance(IdentifiedObject.class);
+    private final WeakHashSet<IdentifiedObject> pool = WeakHashSet.newInstance(IdentifiedObject.class);
 
     /**
      * A set of low-level factories to be used if none were found in {@link #datumFactory},

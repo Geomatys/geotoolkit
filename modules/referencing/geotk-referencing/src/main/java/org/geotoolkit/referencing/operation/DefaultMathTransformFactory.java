@@ -60,7 +60,7 @@ import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 
@@ -126,7 +126,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * A pool of math transform. This pool is used in order to
      * returns instance of existing math transforms when possible.
      */
-    private final CanonicalSet<MathTransform> pool;
+    private final WeakHashSet<MathTransform> pool;
 
     /**
      * The service registry for finding {@link MathTransformProvider} implementations.
@@ -146,7 +146,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         registry   = new FactoryRegistry(MathTransformProvider.class);
         lastMethod = new ThreadLocal<OperationMethod>();
         parser     = new ThreadLocal<MathTransformParser>();
-        pool       = CanonicalSet.newInstance(MathTransform.class);
+        pool       = WeakHashSet.newInstance(MathTransform.class);
     }
 
     /**

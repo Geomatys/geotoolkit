@@ -47,7 +47,10 @@ package org.geotoolkit.util.collection;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated The {@link WeakHashSet} parent class is suffisient.
  */
+@Deprecated
 public class CanonicalSet<E> extends WeakHashSet<E> {
     /**
      * Constructs a {@code CanonicalSet} for elements of the specified type.
@@ -71,69 +74,5 @@ public class CanonicalSet<E> extends WeakHashSet<E> {
      */
     public static <E> CanonicalSet<E> newInstance(final Class<E> type) {
         return new CanonicalSet<E>(type);
-    }
-
-    /**
-     * Returns an object equal to the specified object, if present. If
-     * this set doesn't contains any object equal to {@code object},
-     * then this method returns {@code null}.
-     *
-     * @param <T> The type of the element to get.
-     * @param object The element to get.
-     * @return An element equal to the given one if already presents in the set,
-     *         or {@code null} otherwise.
-     *
-     * @see #unique(Object)
-     */
-    public synchronized <T extends E> T get(final T object) {
-        return intern(object, GET);
-    }
-
-    /**
-     * Returns an object equal to {@code object} if such an object already exist in this
-     * {@code CanonicalSet}. Otherwise, adds {@code object} to this {@code CanonicalSet}.
-     * This method is equivalents to the following code:
-     *
-     * {@preformat java
-     *     if (object != null) {
-     *         Object current = get(object);
-     *         if (current != null) {
-     *             return current;
-     *         } else {
-     *             add(object);
-     *         }
-     *     }
-     *     return object;
-     * }
-     *
-     * @param <T> The type of the element to get.
-     * @param object The element to get or to add in the set if not already presents.
-     * @return An element equal to the given one if already presents in the set,
-     *         or the given {@code object} otherwise.
-     */
-    public synchronized <T extends E> T unique(final T object) {
-        return intern(object, INTERN);
-    }
-
-    /**
-     * Iteratively call {@link #unique(Object)} for an array of objects.
-     * This method is equivalents to the following code:
-     *
-     * {@preformat java
-     *     for (int i=0; i<objects.length; i++) {
-     *         objects[i] = unique(objects[i]);
-     *     }
-     * }
-     *
-     * @param objects
-     *          On input, the objects to add to this set if not already present. On output,
-     *          elements that are {@linkplain Object#equals equal}, but where every reference
-     *          to an instance already presents in this set has been replaced by a reference
-     *          to the existing instance.
-     */
-    public synchronized void uniques(final E[] objects) {
-        for (int i=0; i<objects.length; i++) {
-            objects[i] = intern(objects[i], INTERN);
-        }
     }
 }

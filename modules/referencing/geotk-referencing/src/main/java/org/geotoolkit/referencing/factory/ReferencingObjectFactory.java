@@ -48,7 +48,7 @@ import org.geotoolkit.referencing.datum.*;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 
 
 /**
@@ -92,7 +92,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
      * This set is used in order to return a pre-existing object instead of creating a
      * new one.
      */
-    private final CanonicalSet<IdentifiedObject> pool;
+    private final WeakHashSet<IdentifiedObject> pool;
 
     /**
      * Constructs a default factory. This method is public in order to allows instantiations
@@ -128,7 +128,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
      * @since 2.5
      */
     public ReferencingObjectFactory(final Hints hints) {
-        pool = CanonicalSet.newInstance(IdentifiedObject.class);
+        pool = WeakHashSet.newInstance(IdentifiedObject.class);
         parser = new ThreadLocal<ReferencingParser>();
         if (hints != null && !hints.isEmpty()) {
             /*

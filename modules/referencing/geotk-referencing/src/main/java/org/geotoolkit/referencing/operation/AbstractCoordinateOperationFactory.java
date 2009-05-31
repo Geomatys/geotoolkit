@@ -39,7 +39,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
@@ -129,8 +129,8 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * A pool of coordinate operation. This pool is used in order
      * to returns instance of existing operations when possible.
      */
-    private final CanonicalSet<CoordinateOperation> pool =
-            CanonicalSet.newInstance(CoordinateOperation.class);
+    private final WeakHashSet<CoordinateOperation> pool =
+            WeakHashSet.newInstance(CoordinateOperation.class);
 
     /**
      * Tells if {@link FactoryGroup#hints} has been invoked. It must be invoked exactly once,

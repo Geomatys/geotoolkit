@@ -21,7 +21,7 @@
  * from the <cite>Java Collection Framework</cite> defined in the {@link java.util} package.
  * <ul>
  *   <li><p>
- *     {@link org.geotoolkit.util.collection.CanonicalSet} provides a way to ensure that
+ *     {@link org.geotoolkit.util.collection.WeakHashSet} provides a way to ensure that
  *     a factory returns unique instances for all values that are equal in the sense of
  *     {@link java.lang.Object#equals Object.equals(Object)}. The values that were created
  *     in previous factory operations are retained by {@linkplain java.lang.ref.WeakReference

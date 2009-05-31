@@ -34,7 +34,7 @@ import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
@@ -235,8 +235,8 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * {@link AffineTransform2D} instances, which make ineffective the pool provided
          * by those factories.
          */
-        private static final CanonicalSet<AffineTransform2D> POOL =
-                CanonicalSet.newInstance(AffineTransform2D.class);
+        private static final WeakHashSet<AffineTransform2D> POOL =
+                WeakHashSet.newInstance(AffineTransform2D.class);
 
         /**
          * The descriptor that represents this tuple as a whole. The parameter values may take

@@ -29,7 +29,7 @@ import javax.imageio.IIOException;
 import org.geotoolkit.io.DefaultFileFilter;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
@@ -135,7 +135,7 @@ public class PaletteFactory {
     /**
      * The set of palettes already created.
      */
-    private final CanonicalSet<Palette> palettes = CanonicalSet.newInstance(Palette.class);
+    private final WeakHashSet<Palette> palettes = WeakHashSet.newInstance(Palette.class);
 
     /**
      * The set of palettes protected from garbage collection. We protect a palette as long as it
