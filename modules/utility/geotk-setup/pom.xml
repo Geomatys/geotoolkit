@@ -67,7 +67,7 @@
               <mainClass>org.geotoolkit.internal.setup.Main</mainClass>
             </manifest>
             <manifestEntries>
-              <SplashScreen-Image>splash.png</SplashScreen-Image>
+              <SplashScreen-Image>splash.jpg</SplashScreen-Image>
             </manifestEntries>
           </archive>
         </configuration>

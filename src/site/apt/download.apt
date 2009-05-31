@@ -103,7 +103,8 @@ Downloading Geotoolkit Binaries
 |                                        | \u2022 geotk-coverageio.jar      |                               |
 *----------------------------------------+----------------------------------+-------------------------------+
 | <<<geotk-bundle.pack.gz>>>             | <All the coverage pack plus>     | \u2022 Java 6                 |
-|                                        | \u2022 geotk-display.jar         | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-setup.jar           | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-display.jar         |                               |
 |                                        | \u2022 geotk-widgets-swing.jar   |                               |
 *----------------------------------------+----------------------------------+-------------------------------+
 
