@@ -25,9 +25,9 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.design.JasperDesign;
+
 import org.geotoolkit.report.JRMappingUtils;
 import org.geotoolkit.util.collection.WeakHashSet;
 
@@ -39,7 +39,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
 public class JRMappedDataSource<C> implements JRDataSource{
 
     private final Map<String,JRMapper<?, ? super C>> map = new HashMap<String, JRMapper<?, ? super C>>();
-    private final Collection<Object> renderedValues = new WeakHashSet<Object>(Object.class);
+    private final Collection<Object> renderedValues = WeakHashSet.newInstance(Object.class);
     private Iterator<C> iterator = null;
     private C currentRecord = null;
 
