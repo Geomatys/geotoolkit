@@ -23,7 +23,7 @@
   <h3>Steps</h3>
   <ol>
     <li>Download the MS-Access EPSG database from <A HREF="http://www.epsg.org">http://www.epsg.org</A>
-        and copy the <code>EPSG_<var>version</var>.mdb</code> file anywhere on your file system.</li>
+    and copy the <code>EPSG_<var>version</var>.mdb</code> file anywhere on your file system.</li>
 
     <li>Open the <cite>ODBC data sources</cite> dialog box from the Windows's Control Panel.</li>
 
@@ -32,19 +32,21 @@
     <li>In the <cite>Data source</cite> field, enter <code>EPSG</code>.</li>
 
     <li>Click on the <cite>Select...</cite> button and select your
-        <code>EPSG_<var>version</var>.mdb</code> file.</li>
+    <code>EPSG_<var>version</var>.mdb</code> file.</li>
 
-    <li>Create an <code>EPSG-DataSource.properties</code> file in your home directory, or in
-        the directory which will be current when the application will be started, or create an
-        <code>EPSG/DataSource.properties</code> file in the Geotoolkit data directory (see
-        <code><a href="../ThreadedEpsgFactory.html#CONFIGURATION_FILE">CONFIGURATION_FILE</a></code>
-        for more information) with the following content (to be adapted to your actual configuration):
-        <blockquote><table border="1" cellpadding="6" bgcolor="lightgray"><tr><td>
+    <li>Run <a href="http://www.geotoolkit.org/modules/utility/geotk-setup/index.html">geotk-setup</a>.
+    Click on the "<cite>EPSG</cite>" tab. Click on the "<cite>Use a specific database</cite>" radio button.
+    In the URL combo box, select "<code>jdbc:odbc:EPSG</code>". Finally click on the "<cite>Apply</cite>" button.</li>
+  </ol>
+
+  <p>The last step should have created an <code>EPSG/DataSource.properties</code> file in the Geotoolkit data
+  directory (see <code><a href="../ThreadedEpsgFactory.html#CONFIGURATION_FILE">CONFIGURATION_FILE</a></code>
+  for more information) with the following content:</p>
+  <blockquote><table border="1" cellpadding="6" bgcolor="lightgray"><tr><td>
 <pre>#
 # Connection parameters to the EPSG database.
 #
 URL = jdbc:odbc:EPSG</pre></td></tr></table></blockquote>
-  </ol>
 
 
   <hr>
@@ -55,58 +57,39 @@ URL = jdbc:odbc:EPSG</pre></td></tr></table></blockquote>
   </ul>
   <h3>Steps</h3>
   <ol>
-    <li><p>Download the PostgreSQL EPSG database from <A HREF="http://www.epsg.org">http://www.epsg.org</A>
-    and unzip. The set of uncompressed files should contains at least 3 SQL files with <code>Tables</code>,
-    <code>Data</code> and <code>FKeys</code> in their name.</p></li>
-
-    <li><p><B>Optional:</B> The SQL scripts are provided in ISO-LATIN-1 encoding. If the UTF-8 encoding
-    is wanted instead, run the following line for all SQL files in order to convert them. Note that the
-    next steps in this documentation will assume that the SQL scripts and the local host are using UTF-8 encoding.</p>
-    <blockquote><pre>iconv -f ISO_8859-1 -t UTF-8 <var>input-file.sql</var> &gt; <var>output-file.sql</var></pre></blockquote>
-
     <li><p>Creates an initially empty PostgreSQL database. The following lines creates a "Geotoolkit"
-    role and a "Referencing" database on the local host using the UTF-8 encoding. If an other role
-    or database name is wanted, just replace them in the lines below.</p>
+    role and a "Referencing" database on the local host using the UTF-8 encoding. If an other role,
+    host or database name is wanted, just replace <code>Geotoolkit</code>, <code>localhost</code>
+    and <code>Referencing</code> respectively in the lines below.</p>
     <blockquote><pre>createuser --createdb Geotoolkit
 createdb --username=Geotoolkit --host=localhost --encoding=UTF-8 Referencing "CRS definitions"
 createlang plpgsql --dbname=Referencing --username=Geotoolkit</pre></blockquote></li>
 
-    <li><p><B>Optional:</B> Before to run the scripts below, users who wish more readable table names
-    can run <A HREF="ReplaceSchema.xml">this Ant script</A>. It will modifies the SQL scripts in place
-    (no backup are made) in order to replace the table names by the names used in the original Access
-    database. See the comments in <code>ReplaceSchema.xml</code> for more details. If this step is
-    executed, then an <code>epsg</code> schema must be created in the database before to continue.</p></li>
-
-    <li><p>Run the EPSG scripts in the following order (<var>V</var> is a version string). Note that
-    some non-fatal errors may raise, for example the <code>SET ... replace(...)</code> instructions
-    have an error (<code>CHAR</code> should be <code>CHR</code>). However the database will be
-    understandable by Geotoolkit despite this error.</p>
-    <blockquote><pre>psql -U Geotoolkit -h localhost -d Referencing -f EPSG_<var>V</var>_Tables.sql
-psql -U Geotoolkit -h localhost -d Referencing -f EPSG_<var>V</var>_Data.sql
-psql -U Geotoolkit -h localhost -d Referencing -f EPSG_<var>V</var>_FKeys.sql</pre></blockquote></li>
-
-    <li><p><b>Optional but recommanded:</b> Run <a href="CreateIndexes.sql">this SQL script</a>
-    in order to create indexes for the queries used by the Geotoolkit EPSG factories.</p>
+    <li><p>Run <a href="http://www.geotoolkit.org/modules/referencing/geotk-epsg/index.html">geotk-epsg</a>
+    as below:</p>
+    <blockquote><pre>java -jar geotk-epsg.jar create jdbc:postgresql://localhost/Referencing Geotoolkit --schema=epsg</pre></blockquote></li>
 
     <li><p>Cleanup:</p>
     <blockquote><pre>vacuumdb --full --analyze --username Geotoolkit --host localhost Referencing
 psql -c 'ALTER USER \"Geotoolkit\" WITH NOCREATEDB' Referencing</pre></blockquote></li>
 
-    <li><p>Create an <code>EPSG-DataSource.properties</code> file in your home directory, or in
-        the directory which will be current when the application will be started, or create an
-        <code>EPSG/DataSource.properties</code> file in the Geotoolkit data directory (see
-        <code><a href="../ThreadedEpsgFactory.html#CONFIGURATION_FILE">CONFIGURATION_FILE</a></code>
-        for more information) with the following content (to be adapted to your actual configuration):</p>
-        <blockquote><table border="1" cellpadding="6" bgcolor="lightgray"><tr><td>
+    <li><p>Run <a href="http://www.geotoolkit.org/modules/utility/geotk-setup/index.html">geotk-setup</a>.
+        Click on the "<cite>EPSG</cite>" tab. Click on the "<cite>Use a specific database</cite>"
+        radio button. In the URL field, type "<code>jdbc:postgresql://localhost/Referencing</code>".
+        In the user field, type "<code>Geotoolkit</code>". Finally click on the "<cite>Apply</cite>"
+        button.</p></li>
+  </ol>
+  <p>If the <code>geotk-setup</code> graphical application can not be executed, an alternative is
+  to store manually an <code>EPSG/DataSource.properties</code> file in the Geotoolkit data directory
+  (see <code><a href="../ThreadedEpsgFactory.html#CONFIGURATION_FILE">CONFIGURATION_FILE</a></code>
+  for more information) with the following content (to be adapted to your actual configuration):</p>
+  <blockquote><table border="1" cellpadding="6" bgcolor="lightgray"><tr><td>
 <pre>#
 # Connection parameters to the EPSG database.
 #
-URL      = jdbc:postgresql://localhost/EPSG
-user     = Geotoolkit
-password = Geotoolkit</pre></td></tr></table></blockquote>
+URL  = jdbc:postgresql://localhost/Referencing
+user = Geotoolkit</pre></td></tr></table></blockquote>
 
-        <p>Alternatively you can also register a JNDI datasource with the <code>"jdbc/EPSG"</code>
-        name.</p></li>
-  </ol>
+  <p>Alternatively you can also register a JNDI datasource with the <code>"jdbc/EPSG"</code> name.</p>
   </BODY>
 </HTML>

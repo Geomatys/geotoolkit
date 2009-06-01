@@ -115,7 +115,11 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
      * @todo Current implementation may leave the object in an unstable state if the marshalling
      *       failed with an exception. We need to find a better mechanism, maybe through
      *       {@link javax.xml.bind.ValidationEventHandler}.
+     *
+     * @deprecated This method is strictly for internal Geotoolkit implementation and will
+     *             be replaced by an other mechanism in a future version.
      */
+    @Deprecated
     protected final synchronized void xmlMarshalling(final boolean marshalling) {
         if (xmlMarshalling == null) {
             if (!marshalling) {

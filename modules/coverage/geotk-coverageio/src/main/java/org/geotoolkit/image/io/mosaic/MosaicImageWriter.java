@@ -364,9 +364,14 @@ public class MosaicImageWriter extends ImageWriter {
              * This estimation may not be accurate especially for image packing many pixels
              * per byte, but a value too high is probably better than a value too low.
              */
-            final SampleModel model = reader.getRawImageType(inputIndex).getSampleModel();
-            bytesPerPixel = Math.max(1, model.getNumBands() *
-                    DataBuffer.getDataTypeSize(model.getDataType()) / Byte.SIZE);
+            final SampleModel model;
+            final ImageTypeSpecifier type = reader.getRawImageType(inputIndex);
+            if (type != null && (model = type.getSampleModel()) != null) {
+                bytesPerPixel = Math.max(1, model.getNumBands() *
+                        DataBuffer.getDataTypeSize(model.getDataType()) / Byte.SIZE);
+            } else {
+                bytesPerPixel = 3; // Assuming RGB, since we don't have better information.
+            }
         }
         final int initialTileCount = tiles.size();
         /*
@@ -1058,7 +1063,7 @@ search: for (final Tile tile : tiles) {
             final ImageWriteParam parameters) throws IOException
     {
         BufferedImageOp op = null;
-        ImageReader reader = getImageReader(input);
+        final ImageReader reader = getImageReader(input);
         if (parameters instanceof MosaicImageWriteParam) {
             final MosaicImageWriteParam param = (MosaicImageWriteParam) parameters;
             if (TileWritingPolicy.NO_WRITE.equals(param.getTileWritingPolicy())) {

@@ -29,29 +29,32 @@ import java.util.concurrent.Callable;
 
 import org.opengis.referencing.FactoryException;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.resources.Descriptions;
 
 
 /**
  * Installs the EPSG database. By default this class performs the following operations:
  * <p>
- * <ul>
- *   <li>Gets a connection to the embedded database (JavaDB), creating it on the local
- *       machine if necessary. The location of that database is defined by the
- *       {@linkplain ThreadedEpsgFactory#getDefaultURL() default URL}.</li>
+ * <ol>
+ *   <li>Gets the {@linkplain ThreadedEpsgFactory#getDefaultURL() default URL} to the EPSG
+ *       database on the local machine. This database doesn't need to exist.</li>
+ *   <li>Gets a connection to that database, which is assumed empty.</li>
  *   <li>Executes the SQL scripts embedded in the
  *       <a href="http://www.geotoolkit.org/modules/referencing/geotk-referencing/index.html">geotk-epsg</a>
  *       module. Those scripts are derived from the ones distributed on the
  *       <a href="http://www.epsg.org">www.epsg.org</a> web site.</li>
- * </ul>
+ * </ol>
  * <p>
  * This default behavior can be changed by the setter methods defined in this class.
  * They allow to use a different set of scripts, or to execute them on a different
  * database (for example <a href="http://www.postgresql.org">PostgreSQL</a>).
  * <p>
  * The scripts are read and the database is created only when the {@link #call()} method
- * is invoked.
+ * is invoked. This method can be run in a background thread by an
+ * {@linkplain java.util.concurrent.ExecutorService executor service}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
@@ -59,12 +62,23 @@ import org.geotoolkit.resources.Loggings;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     /**
      * The schema where the installer will create the tables in the JavaDB database.
-     * The value is {@value}.
+     * The value is {@value}. When the {@code geotk-epsg.jar} file is reacheable on
+     * the classpath, the referencing module will look for this schema in order to
+     * decide if it needs to install the EPSG database or not.
+     *
+     * @see #setSchema(String)
      */
-    public static final String SCHEMA = "epsg";
+    public static final String DEFAULT_SCHEMA = "epsg";
+
+    /**
+     * The schema where to put the tables, or {@code null} if none.
+     * The default value is {@value #DEFAULT_SCHEMA}.
+     */
+    private String schema = DEFAULT_SCHEMA;
 
     /**
      * The directory which contain the EPSG scripts. If {@code null}, then the scripts
@@ -121,20 +135,32 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      *
      * @param directory The directory of the EPSG SQL scripts to execute, or {@code null}
      */
-    public void setScriptDirectory(final File directory) {
+    public synchronized void setScriptDirectory(final File directory) {
         scriptsDirectory = directory;
     }
 
     /**
-     * Sets the URL to the database, using the JDBC syntax. If this method is never invoked of
+     * Sets the URL to the database, using the JDBC syntax. If this method is never invoked or
      * if the given URL is {@code null}, then the {@linkplain ThreadedEpsgFactory#getDefaultURL()
-     * default URL} is used.
+     * default URL} is used. If this method is invoked with any URL different than the default one,
+     * then a {@linkplain ThreadedEpsgFactory#CONFIGURATION_FILE configuration file} will need to
+     * be provided explicitly after the database creation in order to get the referencing module
+     * to use that database.
+     * <p>
+     * If the given scripts are aimed to be executed verbatism, then the {@link #setSchema(String)}
+     * method should be invoked with a {@code null} argument in order to prevent this installer to
+     * move the tables in the {@value #DEFAULT_SCHEMA} schema.
+     * <p>
+     * If the given scripts were downloaded from
+     * <a href="http://www.epsg.org">www.epsg.org</a>, then consider adding the
+     * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
+     * file in the scripts directory, for performance raisons.
      * <p>
      * If a user and password were previously defined, they are left unchanged.
      *
      * @param url The URL to the database, or {@code null} for JavaDB on the local machine.
      */
-    public void setDatabase(final String url) {
+    public synchronized void setDatabase(final String url) {
         databaseUrl = url;
     }
 
@@ -146,10 +172,22 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @param user The user, or {@code null} if none.
      * @param password The password, or {@code null} if none.
      */
-    public void setDatabase(final String url, final String user, final String password) {
+    public synchronized void setDatabase(final String url, final String user, final String password) {
         this.databaseUrl = url;
         this.user        = user;
         this.password    = password;
+    }
+
+    /**
+     * Sets the schema where the installer will create the tables. The default value is
+     * {@value #DEFAULT_SCHEMA}. If a different schema is specified, then consider providing
+     * explicitly a {@linkplain ThreadedEpsgFactory#CONFIGURATION_FILE configuration file}
+     * after the database creation.
+     *
+     * @param schema The schema where to create the tables, or {@code null} if none.
+     */
+    public synchronized void setSchema(final String schema) {
+        this.schema = schema;
     }
 
     /**
@@ -159,13 +197,13 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @throws FactoryException If an error occured while running the scripts.
      */
     @Override
-    public Result call() throws FactoryException {
-        if (databaseUrl == null) {
-            databaseUrl = ThreadedEpsgFactory.getDefaultURL();
-        }
+    public synchronized Result call() throws FactoryException {
         Exception failure;
         EpsgScriptRunner runner = null;
         try {
+            if (databaseUrl == null) {
+                databaseUrl = ThreadedEpsgFactory.getDefaultURL(true);
+            }
             final Connection connection;
             if (user == null) {
                 connection = DriverManager.getConnection(databaseUrl);
@@ -207,9 +245,12 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @throws IOException If an error occured while reading the input.
      * @throws SQLException If an error occured while executing a SQL statement.
      */
-    final Result call(final EpsgScriptRunner runner) throws SQLException, IOException {
+    final synchronized Result call(final EpsgScriptRunner runner) throws SQLException, IOException {
+        final long start = System.currentTimeMillis();
         int numRows = 0;
-        runner.setSchema(SCHEMA);
+        if (schema != null) {
+            runner.setSchema(schema);
+        }
         if (scriptsDirectory != null) {
             numRows += runner.run(scriptsDirectory);
         } else {
@@ -238,7 +279,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             }
         }
         runner.close();
-        return new Result(numRows);
+        return new Result(numRows, System.currentTimeMillis() - start);
     }
 
     /**
@@ -257,19 +298,25 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
         public final int numRows;
 
         /**
+         * The ellapsed time, in milliseconds.
+         */
+        public final long ellapsedTime;
+
+        /**
          * Do not allow instantiation from outside this package.
          */
-        Result(final int numRows) {
+        Result(final int numRows, final long time) {
             this.numRows = numRows;
+            this.ellapsedTime = time;
         }
 
         /**
-         * Returns a string representation for debugging purpose.
+         * Returns a string representation of this result.
          * This representation may change in any future version.
          */
         @Override
         public String toString() {
-            return "Result[" + numRows + " rows]";
+            return Descriptions.format(Descriptions.Keys.INSERTED_ROWS_$2, numRows, ellapsedTime/1000.0);
         }
     }
 }

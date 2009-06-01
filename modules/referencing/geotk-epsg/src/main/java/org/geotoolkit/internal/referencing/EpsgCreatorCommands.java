@@ -47,6 +47,14 @@ public class EpsgCreatorCommands extends CommandLine {
     private File scripts;
 
     /**
+     * The schema where to put the tables, or {@code null} for the default value. The
+     * default value is {@code "epsg"} if no scripts are explicitly provided, or no
+     * schema if the {@code --scripts} argument has been provided.
+     */
+    @Option
+    private String schema;
+
+    /**
      * Creates a new instance of {@code EpsgCreatorCommands}.
      *
      * @param arguments The command-line arguments.
@@ -91,6 +99,9 @@ public class EpsgCreatorCommands extends CommandLine {
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(database, user, password);
         installer.setScriptDirectory(scripts);
+        if (schema != null || scripts != null) {
+            installer.setSchema(schema);
+        }
         final EpsgInstaller.Result result;
         try {
             result = installer.call();
@@ -102,7 +113,6 @@ public class EpsgCreatorCommands extends CommandLine {
                  INTERNAL_ERROR_EXIT_CODE);
             return;
         }
-        out.print(result.numRows);
-        out.println(" rows inserted.");
+        out.println(result);
     }
 }

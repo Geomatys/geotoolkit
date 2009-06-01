@@ -80,6 +80,11 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int ERROR_READING_SOME_FILES_$2 = 5;
 
         /**
+         * Inserted {0} rows in {1} seconds.
+         */
+        public static final int INSERTED_ROWS_$2 = 9;
+
+        /**
          * Count:       {0}
          * Minimum:     {1}
          * Maximum:     {2}
@@ -90,7 +95,7 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int STATISTICS_TO_STRING_$6 = 6;
 
         /**
-         * Use {0,choice,0#the embedded|1#an explicit} database.
+         * Use {0,choice,0#the embedded|1#a specific} database.
          */
         public static final int USE_EPSG_DATABASE_$1 = 8;
 

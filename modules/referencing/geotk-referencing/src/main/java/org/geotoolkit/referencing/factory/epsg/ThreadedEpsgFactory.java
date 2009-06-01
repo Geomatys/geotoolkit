@@ -267,7 +267,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     }
 
     /**
-     * Returns the the default JDBC URL to use for connection to the EPSG embedded database.
+     * Returns the default JDBC URL to use for connection to the EPSG embedded database.
      * This method returns a URL using the JavaDB driver, connecting to the database in the
      * installation directory specified by the setup program in the
      * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module.
@@ -275,8 +275,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * to the user home directory is returned.
      * <p>
      * If no database exists in the above-cited directory, then a new EPSG database will be
-     * created when first needed provided that the {@code geotk-epsg.jar} file is reacheable
-     * on the classpath.
+     * created by {@code ThreadedEpsgFactory} when first needed provided that the
+     * <a href="http://www.geotoolkit.org/modules/referencing/geotk-epsg">geotk-epsg</a>
+     * module is reacheable on the classpath.
      * <p>
      * Note that the directory may change in any Geotoolkit version. More specifically, every
      * upgrade of the embedded EPSG database may cause a change of the default directory.
@@ -286,11 +287,34 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * @since 3.00
      */
     public static String getDefaultURL() {
-        final File directory = Installation.EPSG.directory(true);
+        try {
+            return getDefaultURL(false);
+        } catch (IOException e) {
+            // Should never happen when the 'create' argument is 'false'.
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Returns the default JDBC URL to use for connection to the EPSG embedded database,
+     * creating it if needed.
+     *
+     * @param  create {@code true} if this method should create the database directory if
+     *         it does not already exist, or {@code false} otherwise.
+     * @return The default JDBC URL to use for the connection to the EPSG database.
+     * @throws IOException If the database directory can not be created.
+     */
+    static String getDefaultURL(final boolean create) throws IOException {
+        final File directory;
+        if (create) {
+            directory = Installation.EPSG.validDirectory(true);
+        } else {
+            directory = Installation.EPSG.directory(true);
+        }
         final StringBuilder buffer = new StringBuilder("jdbc:derby:")
                 .append(directory.getPath().replace(File.pathSeparatorChar, '/'))
                 .append('/').append(VERSION);
-        if (ThreadedEpsgFactory.class.getResource("Data.sql") != null) {
+        if (create) {
             // Allow the creation of the database only if the needed scripts are available.
             buffer.append(";create=true");
         }
@@ -475,8 +499,15 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 return new DefaultDataSource(url);
             }
         } else {
-            final String url = getDefaultURL();
-            if (url.endsWith(";create=true")) {
+            // Allow the creation of the database only if the needed scripts are available.
+            final boolean create = (ThreadedEpsgFactory.class.getResource("Data.sql") != null);
+            final String url;
+            try {
+                url = getDefaultURL(create);
+            } catch (IOException e) {
+                throw new FactoryException(e);
+            }
+            if (create) {
                 // Create a data source capable to create the database when first needed.
                 return EmbeddedDataSource.instance(url);
             }

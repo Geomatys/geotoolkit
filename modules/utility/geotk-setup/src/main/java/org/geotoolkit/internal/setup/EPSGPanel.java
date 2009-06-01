@@ -224,7 +224,7 @@ final class EPSGPanel extends JPanel implements ActionListener {
             password.setText(settings.getProperty("password"));
         } else {
             url     .setSelectedIndex(hasExplicitURL ? 1 : 0);
-            schema  .setText(EpsgInstaller.SCHEMA);
+            schema  .setText(EpsgInstaller.DEFAULT_SCHEMA);
             user    .setText(null);
             password.setText(null);
         }

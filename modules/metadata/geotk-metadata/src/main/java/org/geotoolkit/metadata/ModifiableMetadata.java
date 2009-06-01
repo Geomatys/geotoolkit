@@ -38,7 +38,8 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * provide {@code set*(...)} methods for each corresponding {@code get*()} method. An initially
  * modifiable metadata may become unmodifiable at a later stage (typically after its construction
  * is completed) by the call to the {@link #freeze} method.
- * <p>
+ *
+ * {@section Guidline for implementors}
  * Subclasses should follow the pattern below for every {@code get} and {@code set} methods,
  * with a special processing for {@linkplain Collection collections}:
  *

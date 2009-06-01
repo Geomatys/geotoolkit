@@ -115,7 +115,7 @@ final class EmbeddedDataSource extends DefaultDataSource {
          * In current implementation, EpsgScriptRunner.setSchema(String) does not quote
          * the schema name. So we need to change the case before to check for the schema.
          */
-        String schema = EpsgInstaller.SCHEMA;
+        String schema = EpsgInstaller.DEFAULT_SCHEMA;
         if (metadata.storesLowerCaseIdentifiers()) {
             schema = schema.toLowerCase(Locale.US);
         } else if (metadata.storesUpperCaseIdentifiers()) {
