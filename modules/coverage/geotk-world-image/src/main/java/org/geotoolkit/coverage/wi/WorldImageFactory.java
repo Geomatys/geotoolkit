@@ -163,10 +163,19 @@ public class WorldImageFactory {
      */
     private static File getTempFolder(String pathName,int tileSize) throws IOException{
 
+        //we must test both since the slash may change if we are in a jar on windows
+        int lastSlash = pathName.lastIndexOf('/');
+        int second = pathName.lastIndexOf('\\');
+        if(second > lastSlash) lastSlash = second;
+
+        if(lastSlash >= 0){
+            pathName = pathName.substring(lastSlash+1, pathName.length());
+        }
+        
         final int stop = pathName.lastIndexOf(".");
 
         final String name;
-        if(stop > 0){
+        if(stop >= 0){
             //remove the extension part
             name = pathName.substring(0, stop);
         }else{
