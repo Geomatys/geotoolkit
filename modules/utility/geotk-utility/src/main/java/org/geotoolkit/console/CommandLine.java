@@ -229,7 +229,7 @@ public abstract class CommandLine implements Runnable {
     private final String command;
 
     /**
-     * {@code true} if the {@link #run} method is invoked recursively from {@link CommandConsole}.
+     * {@code true} if the {@link #run} method is invoked recursively from {@link InteractiveConsole}.
      */
     transient boolean consoleRunning;
 

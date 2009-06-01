@@ -117,7 +117,7 @@ import org.geotoolkit.io.X364;
  * @since 2.1
  * @module
  */
-public class ReferencingConsole extends CommandConsole {
+public class ReferencingConsole extends InteractiveConsole {
     /**
      * The coordinate operation factory to use.
      */

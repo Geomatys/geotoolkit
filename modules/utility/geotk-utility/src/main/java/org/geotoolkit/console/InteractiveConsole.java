@@ -46,7 +46,7 @@ import static org.geotoolkit.io.X364.*;
  * @since 2.1
  * @module
  */
-public abstract class CommandConsole implements Runnable {
+public abstract class InteractiveConsole implements Runnable {
     /**
      * The command lines, or {@code null} if none. If non-null, the actions defined
      * in this object will be available for execution by the {@link #execute} method.
@@ -150,7 +150,7 @@ public abstract class CommandConsole implements Runnable {
      *
      * @since 3.00
      */
-    protected CommandConsole(final CommandLine commands) {
+    protected InteractiveConsole(final CommandLine commands) {
         this.commands = commands;
         console = System.console();
         if (console != null) {
@@ -188,7 +188,7 @@ public abstract class CommandConsole implements Runnable {
      *
      * @since 3.00
      */
-    protected CommandConsole(final LineNumberReader in) {
+    protected InteractiveConsole(final LineNumberReader in) {
         this(in, new PrintWriter(System.out, true));
     }
 
@@ -201,7 +201,7 @@ public abstract class CommandConsole implements Runnable {
      *
      * @since 3.00
      */
-    protected CommandConsole(final LineNumberReader in, final PrintWriter out) {
+    protected InteractiveConsole(final LineNumberReader in, final PrintWriter out) {
         commands = null;
         console  = null;
         this.in  = in;
