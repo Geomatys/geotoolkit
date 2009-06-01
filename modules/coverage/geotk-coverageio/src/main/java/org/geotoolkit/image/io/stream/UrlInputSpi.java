@@ -67,7 +67,7 @@ public class UrlInputSpi extends ImageInputStreamSpi {
      * @since 2.5
      */
     public UrlInputSpi(final Proxy proxy) {
-        super("Geotoolkit", "2.5", URL.class);
+        super("Geotoolkit", "3.00", URL.class);
         this.proxy = proxy;
     }
 
@@ -98,12 +98,17 @@ public class UrlInputSpi extends ImageInputStreamSpi {
             final boolean useCache, final File cacheDir) throws IOException
     {
         final URL url = (URL) input;
-        final URLConnection connection = url.openConnection(proxy);
+        final URLConnection connection = Proxy.NO_PROXY.equals(proxy) ? null : url.openConnection(proxy);
         int retry = RETRY;
         InputStream stream;
         while (true) {
+            /*
+             * If there is no proxy, then get the input stream with URL.openStream() instead
+             * than using the connection because URL.openConnection() is not supported for URL
+             * to an entry inside a JAR file, while URL.openStream() is.
+             */
             try {
-                stream = connection.getInputStream();
+                stream = (connection != null) ? connection.getInputStream() : url.openStream();
                 break;
             } catch (SocketException exception) {
                 if (--retry < 0) {
