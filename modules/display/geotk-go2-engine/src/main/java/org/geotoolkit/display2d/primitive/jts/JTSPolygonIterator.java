@@ -65,7 +65,11 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
         reset();
     }
 
-    private void reset(){
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void reset(){
         currentRing = 0;
         currentCoord = 0;
         coords = rings[0].getCoordinateSequence();

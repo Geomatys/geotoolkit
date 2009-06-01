@@ -121,8 +121,8 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     @Override
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null){
-            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryISO());
-//            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
+//            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryISO());
+            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
         }
         return objectiveShape;
     }
@@ -130,8 +130,8 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     @Override
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null){
-            displayShape = GO2Utilities.toJava2D(getDisplayGeometryISO());
-//            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
+//            displayShape = GO2Utilities.toJava2D(getDisplayGeometryISO());
+            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
         }
         return displayShape;
     }

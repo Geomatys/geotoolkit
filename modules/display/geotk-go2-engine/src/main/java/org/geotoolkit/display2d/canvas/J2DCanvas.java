@@ -46,6 +46,7 @@ import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.display2d.style.renderer.LabelRenderer;
 
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
@@ -144,7 +145,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             }
         }
 
-        context.initParameters(objToDisp, monitor, paintingDisplayShape, paintingObjectiveShape, canvasDisplayShape, canvasObjectShape);
+        context.initParameters(new AffineTransform2D(objToDisp), monitor, paintingDisplayShape, paintingObjectiveShape, canvasDisplayShape, canvasObjectShape);
         if(output != null) context.initGraphic(output);
         
         return context;

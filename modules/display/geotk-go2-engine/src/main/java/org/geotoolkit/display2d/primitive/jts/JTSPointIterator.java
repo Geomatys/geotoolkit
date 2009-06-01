@@ -80,4 +80,12 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
         return SEG_MOVETO;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void reset() {
+        done = false;
+    }
+
 }

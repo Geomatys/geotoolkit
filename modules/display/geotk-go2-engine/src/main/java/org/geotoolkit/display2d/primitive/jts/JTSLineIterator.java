@@ -51,7 +51,11 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
         isClosed = ls instanceof LinearRing;
     }
 
-    private void reset(){
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void reset(){
         done = false;
         currentCoord = 0;
     }

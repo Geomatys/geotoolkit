@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
@@ -39,6 +41,7 @@ import org.geotoolkit.display2d.style.renderer.LabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 
 import org.opengis.geometry.BoundingBox;
@@ -48,6 +51,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -131,7 +135,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     
     private CanvasMonitor monitor = null;
 
-    private AffineTransform objectiveToDisplay = null;
+    private AffineTransform2D objectiveToDisplay = null;
+    private AffineTransform2D displayToObjective = null;
 
     /**
      * The affine transform from {@link #objectiveCRS} to {@code deviceCRS}. Used by
@@ -183,12 +188,17 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.canvas = canvas;
     }
 
-    public void initParameters(final AffineTransform objToDisp, final CanvasMonitor monitor,
+    public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
             final Shape canvasDisplayShape, final Shape canvasObjectiveShape ){
         this.objectiveCRS       = canvas.getObjectiveCRS();
         this.displayCRS         = canvas.getDisplayCRS();
         this.objectiveToDisplay = objToDisp;
+        try {
+            this.displayToObjective = (AffineTransform2D) objToDisp.inverse();
+        } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(DefaultRenderingContext2D.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.monitor = monitor;
         
         this.labelRenderer = null;
@@ -358,7 +368,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public RenderingContext2D create(final Graphics2D g2d){
         final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
-        context.initParameters(objectiveToDevice, monitor,
+        context.initParameters(objectiveToDisplay, monitor,
                                paintingDisplayShape, paintingObjectiveShape,
                                canvasDisplayShape, canvasObjectiveShape);
         context.initGraphic(g2d);
@@ -537,8 +547,13 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     }
 
     @Override
-    public AffineTransform getObjectiveToDisplay() {
+    public AffineTransform2D getObjectiveToDisplay() {
         return objectiveToDisplay;
+    }
+
+    @Override
+    public AffineTransform2D getDisplayToObjective() {
+        return displayToObjective;
     }
 
 }

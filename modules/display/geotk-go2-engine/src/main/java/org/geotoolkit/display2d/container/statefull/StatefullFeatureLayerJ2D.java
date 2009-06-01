@@ -87,13 +87,16 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         dataCRS = layer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
     }
 
-    private void updateCache(RenderingContext2D context){
+    private synchronized void updateCache(RenderingContext2D context){
+
+        boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
         if(objectiveCRS != lastObjectiveCRS){
             params.objectiveToDisplay.setToIdentity();
             lastObjectiveCRS = objectiveCRS;
+            objectiveCleared = true;
 
             try {
                 params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS);
@@ -119,6 +122,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             } catch (FactoryException ex) {
                 ex.printStackTrace();
             }
+
+//            if(!objectiveCleared){
+                //no need to clear the display cache if the objective clear has already been called
+                for(StatefullProjectedFeature gra : cache.values()){
+                    gra.clearDisplayCache();
+                }
+//            }
 
         }
     }

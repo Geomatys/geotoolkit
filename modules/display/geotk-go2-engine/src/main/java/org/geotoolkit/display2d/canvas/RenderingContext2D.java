@@ -20,15 +20,15 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.style.renderer.LabelRenderer;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+
 import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.Envelope;
 
 
 /**
@@ -111,9 +111,14 @@ public interface RenderingContext2D extends RenderingContext{
     double getScale();
 
     /**
-     * @return affine transform from objective CRS to Display CRS.
+     * @return affine transform from objective CRS to display CRS.
      */
-    AffineTransform getObjectiveToDisplay();
+    AffineTransform2D getObjectiveToDisplay();
+
+    /**
+     * @return affine transform from display CRS to objective CRS.
+     */
+    AffineTransform2D getDisplayToObjective();
 
     // Informations about the currently painted area ---------------------------
 

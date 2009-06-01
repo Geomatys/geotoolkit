@@ -17,9 +17,11 @@
 package org.geotoolkit.coverage.wi;
 
 import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,6 +75,19 @@ public class WorldImageFactory {
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
     }
+
+    /**
+     * Create a mosaic reader which will create a cache of tiles at different
+     * resolutions. Tiles creation time depends on the available memory, the image
+     * size and it's format. The creation time can go from a few seconds to several
+     * minuts or even hours if you give him an image like the full resolution BlueMarble.
+     */
+    public CoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException{
+        final int tileSize = 512;
+        final File tileFolder = getTempFolder(input,tileSize);
+        return createMosaicReader(input, tileSize, tileFolder);
+    }
+
     
     /**
      * Create a mosaic reader which will create a cache of tiles at different
@@ -87,6 +102,21 @@ public class WorldImageFactory {
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         return new DefaultCoverageReader(reader,trs,crs);
     }
+
+    /**
+     * Create a mosaic reader which will create a cache of tiles at different
+     * resolutions.
+     *
+     * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
+     * @param tileFolder : cache directory where tiles will be stored
+     */
+    public CoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException{
+        final MathTransform trs = readTransform(input);
+        final CoordinateReferenceSystem crs = readCRS(input);
+        final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
+        return new DefaultCoverageReader(reader,trs,crs);
+    }
+
     
     /**
      * Create a simple reader.
@@ -98,7 +128,7 @@ public class WorldImageFactory {
     /**
      * Create a Mosaic reader.
      */
-    private static ImageReader buildMosaicReader(File input, int tileSize, File tileFolder) throws IOException{
+    private static ImageReader buildMosaicReader(Object input, int tileSize, File tileFolder) throws IOException{
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setTileSize(new Dimension(tileSize,tileSize));
         //let the builder build the best pyramid resolutions
@@ -116,16 +146,32 @@ public class WorldImageFactory {
      * file name, so tiles can be find again if the file name hasn't change.
      */
     private static File getTempFolder(File input,int tileSize) throws IOException{
-        
-        final int stop = input.getName().lastIndexOf(".");
-        
+        return getTempFolder(input.getName(), tileSize);
+    }
+
+    /**
+     * Get or create a temp folder to store the mosaic. the folder is based on the
+     * file name, so tiles can be find again if the file name hasn't change.
+     */
+    private static File getTempFolder(URL input,int tileSize) throws IOException{
+        return getTempFolder(input.getFile(), tileSize);
+    }
+
+    /**
+     * Get or create a temp folder to store the mosaic. the folder is based on the
+     * file name, so tiles can be find again if the file name hasn't change.
+     */
+    private static File getTempFolder(String pathName,int tileSize) throws IOException{
+
+        final int stop = pathName.lastIndexOf(".");
+
         final String name;
         if(stop > 0){
             //remove the extension part
-            name = input.getName().substring(0, stop);
+            name = pathName.substring(0, stop);
         }else{
             //no extension? use the full name
-            name = input.getName();
+            name = pathName;
         }
         final StringBuilder builder = new StringBuilder(TILE_CACHE_FOLDER.getAbsolutePath());
         builder.append(File.separator);
@@ -133,12 +179,13 @@ public class WorldImageFactory {
         builder.append("_");
         builder.append(tileSize);
         File cacheFolder = new File(builder.toString());
-        
+
         //create the tile folder if not created
         cacheFolder.mkdirs();
-        
+
         return cacheFolder;
     }
+
     
     /**
      * read the transform provided in the world image file.
@@ -169,6 +216,44 @@ public class WorldImageFactory {
         
         return transform;
     }
+
+    /**
+     * read the transform provided in the world image file.
+     *
+     */
+    private static MathTransform readTransform(URL input) throws IOException{
+        MathTransform transform = null;
+
+        final Set<String> possibleExtensions = WorldImageConstants.getWorldExtension(input.toString());
+
+        final int stop = input.toString().lastIndexOf(".");
+        final String worldFilePath;
+        if(stop > 0){
+            //remove the extension part
+            worldFilePath = input.toString().substring(0, stop);
+        }else{
+            //no extension? use the full name
+            worldFilePath = input.toString();
+        }
+
+        for(String ext : possibleExtensions){
+            URL candidate = new URL(worldFilePath + ext);
+            try{
+                AffineTransform trs = WorldFileReader.parse(candidate.openStream());
+
+                if(trs != null){
+                    transform = new AffineTransform2D(trs);
+                    break;
+                }
+
+            }catch(IOException io){
+                continue;
+            }
+        }
+
+        return transform;
+    }
+
     
     /**
      * Extract the src of the given file by using the .prj file.
@@ -196,6 +281,32 @@ public class WorldImageFactory {
             LOGGER.info("Unable to find crs, continu with WGS4 CRS");
         }
         
+        return crs;
+    }
+
+    /**
+     * Extract the src of the given file by using the .prj file.
+     * if the file could not be find or parsed, return WGS:84.
+     */
+    private static CoordinateReferenceSystem readCRS(URL source) throws IOException{
+        CoordinateReferenceSystem crs = null;
+
+        final String filePath = source.toString();
+        final int index = filePath.lastIndexOf(".");
+        final String prjFilePath = filePath.substring(0, index) + ".prj";
+
+        try {
+            crs = PrjFileReader.parse(new URL(prjFilePath).openStream());
+        } catch (Exception e) {
+            LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
+        }
+
+        if (crs == null) {
+            //we could not read the CRS, we assume it is WGS84
+            crs = DefaultGeographicCRS.WGS84;
+            LOGGER.info("Unable to find crs, continu with WGS4 CRS");
+        }
+
         return crs;
     }
     

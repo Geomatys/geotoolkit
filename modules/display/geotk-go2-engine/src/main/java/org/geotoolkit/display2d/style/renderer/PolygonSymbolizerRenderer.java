@@ -97,15 +97,12 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
             //we apply the displacement ---------------------------------------
             final float[] disps = symbol.getDisplacement(feature);
+            Point2D dispStep = null;
             if(disps[0] != 0 || disps[1] != 0){
-                try{
-                    final AffineTransform inverse = context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS());
-                    Point2D pt = new Point2D.Float(disps[0], -disps[1]);
-                    pt = inverse.deltaTransform(pt, pt);
-                    g2.translate(pt.getX(), pt.getY());
-                }catch(FactoryException ex){
-                    throw new PortrayalException(ex);
-                }
+                final AffineTransform inverse = context.getDisplayToObjective();
+                dispStep = new Point2D.Float(disps[0], -disps[1]);
+                dispStep = inverse.deltaTransform(dispStep, dispStep);
+                g2.translate(dispStep.getX(), dispStep.getY());
             }
 
             final float margin = symbol.getMargin(feature, coeff) /2f;
@@ -120,6 +117,12 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
             g2.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
             g2.setStroke( symbol.getJ2DStroke(feature,coeff) );
             g2.draw(shape);
+
+            //restore the displacement
+            if(dispStep != null){
+                g2.translate(-dispStep.getX(), -dispStep.getY());
+            }
+
         }
     }
 

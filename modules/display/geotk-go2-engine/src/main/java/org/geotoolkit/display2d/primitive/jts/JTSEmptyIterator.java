@@ -62,4 +62,11 @@ public class JTSEmptyIterator extends JTSGeometryIterator<Geometry> {
     public int currentSegment(double[] coords) {
         return 0;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void reset() {
+    }
 }

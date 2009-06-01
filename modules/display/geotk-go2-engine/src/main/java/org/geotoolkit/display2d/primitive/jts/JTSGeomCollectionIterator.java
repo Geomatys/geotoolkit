@@ -43,7 +43,8 @@ public final class JTSGeomCollectionIterator extends JTSGeometryIterator<Geometr
         reset();
     }
 
-    private void reset(){
+    @Override
+    public void reset(){
         currentGeom = 0;
         done = false;
         currentIterator = (geometry.isEmpty()) ?

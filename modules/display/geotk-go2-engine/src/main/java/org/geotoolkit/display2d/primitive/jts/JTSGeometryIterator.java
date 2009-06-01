@@ -53,6 +53,7 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
 
     public void setTransform(AffineTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;
+        reset();
     }
 
     public AffineTransform getTransform(){
@@ -62,5 +63,7 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
     public T getGeometry(){
         return geometry;
     }
+
+    public abstract void reset();
 
 }
