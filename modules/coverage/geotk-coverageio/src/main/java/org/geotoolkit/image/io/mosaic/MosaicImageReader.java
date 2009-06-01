@@ -383,7 +383,7 @@ public class MosaicImageReader extends ImageReader {
     }
 
     /**
-     * From the given set of tiles, select one tile to use as a prototype.
+     * From the given set of tiles, selects one tile to use as a prototype.
      * This method tries to select the tile which use the most specific reader.
      *
      * @return The most specific tile, or {@code null} if none.
@@ -820,6 +820,11 @@ public class MosaicImageReader extends ImageReader {
             final Iterator<ImageTypeSpecifier> toAdd = reader.getImageTypes(imageIndex);
             while (toAdd.hasNext()) {
                 final ImageTypeSpecifier type = toAdd.next();
+                if (type == null) {
+                    // The type should never be null for implementations compliant with ImageReader
+                    // contract. However experience shows that broken implementations are not uncommon.
+                    continue;
+                }
                 final Integer old = types.put(type, pass);
                 if (old == null && pass != 0) {
                     // Just added a type that did not exists in previous tiles, so remove it.
@@ -833,6 +838,14 @@ public class MosaicImageReader extends ImageReader {
                 }
             }
             pass++;
+        }
+        /*
+         * Checks for broken ImageReader implementation. Following should never happen,
+         * but unfortunatly experience show that this error is not uncommon.
+         */
+        if (rawTypes != null && rawTypes.remove(null)) {
+            log(Logging.getLogger(MosaicImageReader.class), "getRawImageType",
+                    new LogRecord(Level.WARNING, "Tile.getImageReader().getRawImageType() == null"));
         }
         return types.keySet();
     }
@@ -885,14 +898,19 @@ public class MosaicImageReader extends ImageReader {
     }
 
     /**
-     * Helper method for assertions only.
+     * Helper method for assertions only. This is used by {@link #getImageTypes(int)}.
+     * Since the given iterator is consumed, a new iterator over the same elements is
+     * returned by this method.
      */
     private static Iterator<ImageTypeSpecifier> containsAll(
             final Collection<ImageTypeSpecifier> expected, final Iterator<ImageTypeSpecifier> types)
     {
         final List<ImageTypeSpecifier> asList = new ArrayList<ImageTypeSpecifier>(expected.size());
         while (types.hasNext()) {
-            asList.add(types.next());
+            final ImageTypeSpecifier type = types.next();
+            if (type != null) { // See the comment above about broken ImageReader implementations.
+                asList.add(type);
+            }
         }
         return expected.containsAll(asList) ? asList.iterator() : null;
     }
@@ -1128,7 +1146,8 @@ public class MosaicImageReader extends ImageReader {
                             final Tile tile = getSpecificTile(tiles);
                             if (tile != null) {
                                 imageType = tile.getImageReader(this, true, true).getRawImageType(imageIndex);
-                                assert imageType.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
+                                assert imageType == null || // Should never be null with non-broken ImageReader.
+                                       imageType.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
                             }
                             break;
                         }
@@ -1352,15 +1371,21 @@ public class MosaicImageReader extends ImageReader {
             message.setLength(0);
             message.append(Vocabulary.format(Vocabulary.Keys.LOADING_$1, area)).
                     append(System.getProperty("line.separator", "\n")).append(table);
-            final LogRecord record = new LogRecord(level, message.toString());
-            record.setSourceClassName(MosaicImageReader.class.getName());
-            record.setSourceMethodName("read");
-            record.setLoggerName(logger.getName());
-            logger.log(record);
+            log(logger, "read", new LogRecord(level, message.toString()));
             table = null;
         } while (true);
         processImageComplete();
         return image;
+    }
+
+    /**
+     * Logs the given record to the given logger.
+     */
+    private static void log(final Logger logger, final String method, final LogRecord record) {
+        record.setSourceClassName(MosaicImageReader.class.getName());
+        record.setSourceMethodName(method);
+        record.setLoggerName(logger.getName());
+        logger.log(record);
     }
 
     /**
