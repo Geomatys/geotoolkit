@@ -76,8 +76,6 @@ public interface TickIterator {
      * it can't produces a label for the current tick.
      *
      * @return The label for the current tick.
-     *
-     * @see #getLocale
      */
     String currentLabel();
 

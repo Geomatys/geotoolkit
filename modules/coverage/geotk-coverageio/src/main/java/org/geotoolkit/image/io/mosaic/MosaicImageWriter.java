@@ -71,6 +71,7 @@ import org.geotoolkit.internal.rmi.RMI;
  * ImageWriteParam)} method. The later alternative is non-standard but often required since
  * the image to mosaic is typically bigger than the capacity of a single {@link RenderedImage}.
  *
+ * <!--
  * {@section Caching of source tiles}
  * This class may be slow when reading source images encoded in a compressed format like PNG,
  * because multiple passes over the same image may be necessary for writing different tiles
@@ -88,6 +89,7 @@ import org.geotoolkit.internal.rmi.RMI;
  * method, for example in order to add transparency to fully opaque images. Note that if an operation
  * is applied, then the source tiles will be cached in temporary RAW files as described in the above
  * section even if {@link #isCachingEnabled(ImageReader,int)} returns {@code false}.
+ * -->
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
@@ -883,7 +885,7 @@ search: for (final Tile tile : tiles) {
      *
      * @since 3.00
      */
-    protected boolean isCachingEnabled(final ImageReader input, final int inputIndex) throws IOException {
+    boolean isCachingEnabled(final ImageReader input, final int inputIndex) throws IOException {
         if (true) return false; // Disabled until more extensively tested.
         /*
          * Gets an estimation of the available memory. This will be used for computing the maximal

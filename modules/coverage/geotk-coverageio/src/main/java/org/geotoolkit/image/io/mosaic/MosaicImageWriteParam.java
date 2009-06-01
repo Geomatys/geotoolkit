@@ -135,7 +135,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    public BufferedImageOp getSourceTileFilter() {
+    BufferedImageOp getSourceTileFilter() {
         return sourceTileFilter;
     }
 
@@ -149,7 +149,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    public void setSourceTileFilter(final BufferedImageOp filter) {
+    void setSourceTileFilter(final BufferedImageOp filter) {
         sourceTileFilter = filter;
     }
 
@@ -164,7 +164,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    public void setOpaqueBorderFilter(final Color[] colors) {
+    void setOpaqueBorderFilter(final Color[] colors) {
         setSourceTileFilter(new BorderFilter(colors));
     }
 
