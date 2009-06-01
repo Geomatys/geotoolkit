@@ -564,7 +564,7 @@ public class ColorRamp extends JComponent {
              */
             double x = bounds.getCenterX();
             double y = bounds.getCenterY();
-            final double axisRange   = graduation.getRange();
+            final double axisRange   = graduation.getSpan();
             final double axisMinimum = graduation.getMinimum();
             final double visualLength, scale, offset;
             if (horizontal) {

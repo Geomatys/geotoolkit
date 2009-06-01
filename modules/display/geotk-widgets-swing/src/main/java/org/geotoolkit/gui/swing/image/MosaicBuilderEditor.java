@@ -260,7 +260,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
          * Creates the panel which will contains the plot of estimated performance.
          */
         plot = new MosaicPerformanceGraph();
-        plot.setMargin(new Insets(15, 45, 45, 15));
+        plot.setMargin(new Insets(15, 50, 45, 15));
         progressBar = new JProgressBar();
         progressBar.setEnabled(false);
         plot.setProgressBar(progressBar);
@@ -282,18 +282,18 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         setPreferredSize(new Dimension(800, 300));
         /*
          * Adds listeners to be notified when a property that may affect the MosaicBuilder
-         * changed. They will trig a repaint of the graph of estimated tiles loading cost.
+         * changed. They will trig a repaint of the graph of estimated tiles loading efficiency.
          * Defines also listeners for controlling the removal of rows in the subsampling table.
          */
         final class Listener implements TableModelListener, ChangeListener, ActionListener, ListSelectionListener {
             /** Invoked when a subsampling value in the table has been edited. */
             @Override public void tableChanged(final TableModelEvent event) {
-                plotCostEstimation(DELAY);
+                plotEfficiency(DELAY);
             }
 
             /** Invoked when a tile size (width or height) value changed. */
             @Override public void stateChanged(final ChangeEvent event) {
-                plotCostEstimation(DELAY);
+                plotEfficiency(DELAY);
             }
 
             /** Invoked when the "Remove" button is pressed. */
@@ -323,7 +323,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         this.sizeFields.addChangeListener(listener);
         removeButton.addActionListener(listener);
         subsamplingTable.getSelectionModel().addListSelectionListener(listener);
-        plotCostEstimation(0);
+        plotEfficiency(0);
     }
 
     /**
@@ -558,13 +558,13 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
     }
 
     /**
-     * Refreshes the plot of the estimated cost. This method is invoked automatically when the
-     * values of some fields changed. The default implementation starts the calculation in a
-     * background thread.
+     * Refreshes the plot of estimated efficiency. This method is invoked automatically when
+     * the values of some fields changed. The default implementation starts the calculation
+     * in a background thread.
      *
      * @param delay How long to wait (in milliseconds) before to perform the calculation.
      */
-    protected void plotCostEstimation(final long delay) {
+    protected void plotEfficiency(final long delay) {
         plot.plotLater(null, this, delay);
     }
 
@@ -645,7 +645,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
     /**
      * Notifies that the creation of a {@link TileManager} failed with the given exception. This
      * method is invoked instead than {@link #done(TileManager)} if an exception occured during
-     * the execution of {@link MosaicPerformanceGraph#plotCostEstimation(String, TileManager)}.
+     * the execution of {@link MosaicPerformanceGraph#plotEfficiency(String, TileManager)}.
      * <p>
      * The default implementation does nothing. Subclasses can override this method in order
      * to report the error in the way that best suite their application.

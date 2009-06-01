@@ -609,14 +609,6 @@ final class DateIterator implements TickIterator {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
      * Modifie les conventions à utiliser pour écrire les étiquettes de graduation.
      */
     public void setLocale(final Locale locale) {

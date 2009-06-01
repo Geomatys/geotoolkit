@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.text.NumberFormat;
 import javax.swing.SwingWorker;
 import javax.swing.JProgressBar;
 import java.beans.PropertyChangeEvent;
@@ -38,17 +39,18 @@ import org.geotoolkit.gui.swing.Plot2D;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicProfiler;
+import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * A plot of the estimated cost of loading tiles using a given mosaic. Given a {@link TileManager},
- * this method computes an estimation of the cost of loading tiles at different subsampling levels.
- * The details of the cost calculation is documented in the {@link MosaicProfiler} class.
+ * A plot of the estimated efficiency of loading tiles using a given mosaic. Given a {@link TileManager},
+ * this method computes an estimation of the efficiency of loading tiles at different subsampling levels.
+ * The details of the calculation is documented in the {@link MosaicProfiler} class.
  * <p>
- * The calculations are performed by the {@link #plotCostEstimation plotCostEstimation} method,
+ * The calculations are performed by the {@link #plotEfficiency plotEfficiency} method,
  * which may require a long execution time. Consequently this method should be invoked from a
  * background thread rather than the <cite>Swing</cite> thread. As a convenience, the
  * {@link #plotLater plotLater} method is provided for delegating the calculation to a
@@ -105,7 +107,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
 
     /**
      * Creates a profiler for the given mosaic. This method is invoked automatically
-     * by {@link #plotCostEstimation(String, TileManager)} when a new plot has been
+     * by {@link #plotEfficiency(String, TileManager)} when a new plot has been
      * requested. The default implementation creates a profiler with {@linkplain
      * MosaicProfiler#setSubsamplingChangeAllowed subsampling change allowed}.
      * Subclasses can overwrite this method for configuring the profiler in a different way.
@@ -172,22 +174,22 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
     }
 
     /**
-     * If {@code true}, any call to {@code plotCostEstimation} will clear the previous plot
+     * If {@code true}, any call to {@code plotEfficiency} will clear the previous plot
      * before to add the result of a new calculation. If {@code false}, then the result of
-     * {@code plotCostEstimation} will be a new series added to the existing ones.
+     * {@code plotEfficiency} will be a new series added to the existing ones.
      * <p>
      * The default value is {@code true}.
      *
-     * @return Whatever the result of {@code plotCostEstimation} will replace any previous plot.
+     * @return Whatever the result of {@code plotEfficiency} will replace any previous plot.
      */
     public boolean getClearBeforePlot() {
         return clearBeforePlot;
     }
 
     /**
-     * Sets whatever the result of {@code plotCostEstimation} should replace any previous plot.
+     * Sets whatever the result of {@code plotEfficiency} should replace any previous plot.
      *
-     * @param clear Whatever the result of {@code plotCostEstimation} should replace any previous plot.
+     * @param clear Whatever the result of {@code plotEfficiency} should replace any previous plot.
      */
     public void setClearBeforePlot(final boolean clear) {
         final boolean old = clearBeforePlot;
@@ -224,21 +226,21 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @param  tiles The mosaic for which to plot the estimated cost of loading images.
      * @throws IOException if an I/O operation was required and failed.
      */
-    public final void plotCostEstimation(final String name, final TileManager tiles) throws IOException {
+    public final void plotEfficiency(final String name, final TileManager tiles) throws IOException {
         /*
          * We do not allow the user to override this method (it is final) because it is hard to
          * make plotLater to invoke it, so the user could be confused to see his implementation
          * ignored despite what our javadoc said.  PlotLater needs to invoke the private method
          * below with an explicit Worker argument. We can't take the value of this.worker field
          * because it could have changed during the window of vulnerability between assignation
-         * of this.worker and execution of plotCostEstimation.  Furthermore we don't want to be
-         * confused if a worker and someone else invoke plotCostEstimation in same time.
+         * of this.worker and execution of plotEfficiency.  Furthermore we don't want to be
+         * confused if a worker and someone else invoke plotEfficiency in same time.
          */
-        plotCostEstimation(name, tiles, null);
+        plotEfficiency(name, tiles, null);
     }
 
     /**
-     * Implementation of {@code plotCostEstimation} callable from a worker. This method is
+     * Implementation of {@code plotEfficiency} callable from a worker. This method is
      * not public because we don't want to expose the worker in public API.
      *
      * @param  name The name to given to the plot, or {@code null} if none.
@@ -248,7 +250,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      *         been canceled before completion.
      * @throws IOException if an I/O operation was required and failed.
      */
-    private TileManager plotCostEstimation(final String name, final TileManager tiles, final Worker worker)
+    private TileManager plotEfficiency(final String name, final TileManager tiles, final Worker worker)
             throws IOException
     {
         final MosaicProfiler profiler  = createProfiler(tiles);
@@ -269,7 +271,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
             }
             profiler.setSeed(seed); // Use the same random values for each subsamplings.
             profiler.setMinSubsampling(i+ms);
-            final Statistics stats = profiler.costSampling(imagesPerSubsampling);
+            final Statistics stats = profiler.estimateEfficiency(imagesPerSubsampling);
             final double c = stats.mean();
             final double stdv = stats.standardDeviation(false);
             cost[i] = (float) c;
@@ -315,12 +317,16 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 if (ns == 0) {
                     final Vocabulary resources = Vocabulary.getResources(getLocale());
                     addXAxis(resources.getString(Vocabulary.Keys.SUBSAMPLING));
-                    addYAxis(resources.getString(Vocabulary.Keys.COST_ESTIMATION));
+                    addYAxis(resources.getString(Vocabulary.Keys.EFFICIENCY));
                 }
-                addSeries(properties, xs, ys);
+                final Series series = addSeries(properties, xs, ys);
                 properties.remove("Fill");
                 properties.put("Paint", color);
                 addSeries(properties, main.getX(), main.getY());
+                if (ns == 0) {
+                    final NumberGraduation grad = (NumberGraduation) getAxes(series)[1].getGraduation();
+                    grad.setFormat(NumberFormat.getPercentInstance(grad.getLocale()));
+                }
             }
         });
         return profiler.mosaic;
@@ -339,8 +345,8 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      *       instance is discarted and replaced by the new one.</p></li>
      *   <li><p>After the above delay, the {@link #getTileManager()} method is
      *       invoked in the background thread. The returned mosaic is given to
-     *       {@link MosaicPerformanceGraph#plotCostEstimation(String, TileManager)}.</p></li>
-     *   <li><p>After the {@code plotCostEstimation} method terminated, exactly one of the
+     *       {@link MosaicPerformanceGraph#plotEfficiency(String, TileManager)}.</p></li>
+     *   <li><p>After the {@code plotEfficiency} method terminated, exactly one of the
      *       following methods is invoked in the <cite>Swing</cite> thread:
      *       <ul>
      *         <li>{@link #done(TileManager)} on success.</li>
@@ -484,11 +490,11 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 delayed = this.delayed;
                 running = true;
             }
-            return plotCostEstimation(name, delayed.getTileManager(), this);
+            return plotEfficiency(name, delayed.getTileManager(), this);
         }
 
         /**
-         * Invoked by {@code plotCostEstimation} for setting the progress. Defined here because
+         * Invoked by {@code plotEfficiency} for setting the progress. Defined here because
          * {@code setProgress} has protected access.
          *
          * @param p The progress as a value in the [0 ... 100] range.
@@ -525,7 +531,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 worker = null;
                 if (!isCancelled()) {
                     /*
-                     * Note: get() below should not return null even if plotCostEstimation(...)
+                     * Note: get() below should not return null even if plotEfficiency(...)
                      * returned null, because the later call should occur only when the plot has
                      * been cancelled and we checked in the above line that this is not the case.
                      */
@@ -535,7 +541,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                         delayed.failed(e.getCause());
                     } catch (InterruptedException e) {
                         // Should never happen, since the task is completed.
-                        Logging.unexpectedException(MosaicPerformanceGraph.class, "plotCostEstimation", e);
+                        Logging.unexpectedException(MosaicPerformanceGraph.class, "plotEfficiency", e);
                     }
                     final JProgressBar progress = getProgressBar();
                     if (progress != null) {

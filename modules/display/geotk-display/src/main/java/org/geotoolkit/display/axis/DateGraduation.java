@@ -19,7 +19,6 @@ package org.geotoolkit.display.axis;
 
 import java.util.Date;
 import java.util.TimeZone;
-import java.text.Format;
 import java.text.DateFormat;
 import java.awt.RenderingHints;
 
@@ -257,7 +256,7 @@ public class DateGraduation extends AbstractGraduation {
      *
      * @see #setMinimum(double)
      * @see #getMaximum
-     * @see #getRange
+     * @see #getSpan
      */
     @Override
     public synchronized double getMinimum() {
@@ -270,7 +269,7 @@ public class DateGraduation extends AbstractGraduation {
      *
      * @see #setMaximum(double)
      * @see #getMinimum
-     * @see #getRange
+     * @see #getSpan
      */
     @Override
     public synchronized double getMaximum() {
@@ -282,7 +281,7 @@ public class DateGraduation extends AbstractGraduation {
      * <code>{@link #getMaximum} - {@link #getMinimum}</code>, but using integer arithmetic.
      */
     @Override
-    public synchronized double getRange() {
+    public synchronized double getSpan() {
         if (getUnit() == MILLISECOND) {
             return maximum - minimum;
         } else {
@@ -343,7 +342,7 @@ public class DateGraduation extends AbstractGraduation {
      * iterators may choose to show or hide hours, minutes and seconds.
      */
     @Override
-    public synchronized Format getFormat() {
+    public synchronized DateFormat getFormat() {
         final DateFormat format = DateFormat.getDateTimeInstance(
                 DateFormat.SHORT, DateFormat.SHORT, getLocale());
         format.setTimeZone(timezone);

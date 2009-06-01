@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.display.axis;
 
-import java.util.Locale;
-
 
 /**
  * Provides the mechanism for {@link Graduation} objects to return the values and labels of their
@@ -99,13 +97,4 @@ public interface TickIterator {
      * All other properties are left unchanged.
      */
     void rewind();
-
-    /**
-     * Returns the locale used for formatting tick labels.
-     *
-     * @return The locale used for formatting tick labels.
-     *
-     * @see #currentLabel
-     */
-    Locale getLocale();
 }

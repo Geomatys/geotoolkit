@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.display.axis;
 
-import java.util.Locale;
-import java.text.Format;
 import java.text.NumberFormat;
 import java.awt.RenderingHints;
 
@@ -53,6 +51,12 @@ public class NumberGraduation extends AbstractGraduation {
      * The maximal value for this graduation. Default to 10.
      */
     private double maximum = 10;
+
+    /**
+     * The format used for formatting labels. Will be created only
+     * when first needed, or when specified by the user.
+     */
+    private NumberFormat format;
 
     /**
      * Constructs a graduation with the supplied units.
@@ -143,7 +147,7 @@ public class NumberGraduation extends AbstractGraduation {
      *
      * @see #setMinimum(double)
      * @see #getMaximum
-     * @see #getRange
+     * @see #getSpan
      */
     @Override
     public synchronized double getMinimum() {
@@ -157,7 +161,7 @@ public class NumberGraduation extends AbstractGraduation {
      *
      * @see #setMaximum(double)
      * @see #getMinimum
-     * @see #getRange
+     * @see #getSpan
      */
     @Override
     public synchronized double getMaximum() {
@@ -169,7 +173,7 @@ public class NumberGraduation extends AbstractGraduation {
      * <code>{@linkplain #getMaximum} - {@linkplain #getMinimum}</code>.
      */
     @Override
-    public synchronized double getRange() {
+    public synchronized double getSpan() {
         return maximum - minimum;
     }
 
@@ -235,13 +239,48 @@ public class NumberGraduation extends AbstractGraduation {
     }
 
     /**
-     * Returns the format to use for formatting labels. The format really used by
-     * {@link TickIterator#currentLabel} may not be the same. For example, some
-     * iterators may adjust automatically the number of fraction digits.
+     * Returns the format used for formatting labels. The {@link TickIterator#currentLabel()}
+     * method will use a copy of this format configured in the same way except for the number
+     * of fraction digits, which will be calculated automatically.
+     * <p>
+     * This method returns a direct reference to the format used internally - not a clone.
+     * If the returned format is changed, then the changes will be reflected in the next
+     * tick iterations except for the properties that are automatically calculated. Note
+     * however that it is advisable to invoke {@link #setFormat(NumberFormat)} after a
+     * change in order to keep the {@linkplain #listenerList listener list} informed.
+     *
+     * @return The labels format.
      */
     @Override
-    public Format getFormat() {
-        return NumberFormat.getNumberInstance(getLocale());
+    public synchronized NumberFormat getFormat() {
+        if (format == null) {
+            format = NumberFormat.getNumberInstance(getLocale());
+        }
+        return format;
+    }
+
+    /**
+     * Sets the format used for formatting labels. This method stores the given format
+     * directly - it is not cloned.
+     *
+     * @param format The new format.
+     */
+    public void setFormat(final NumberFormat format) {
+        ensureNonNull("format", format);
+        final NumberFormat old;
+        synchronized (this) {
+            old = this.format;
+            this.format = format;
+        }
+        listenerList.firePropertyChange("format", (old != format) ? old : null, format);
+    }
+
+    /**
+     * Convenience hook for reseting the format when the local changed.
+     */
+    @Override
+    void clearFormat() {
+        format = null;
     }
 
     /**
@@ -269,7 +308,7 @@ public class NumberGraduation extends AbstractGraduation {
             minimum = (minimum + maximum) * 0.5 - 0.5;
             maximum = minimum + 1;
         }
-        final NumberIterator it = getTickIterator(reuse, getLocale());
+        final NumberIterator it = getTickIterator(reuse);
         it.init(minimum, maximum, visualAxisLength, visualTickSpacing);
         return it;
     }
@@ -278,13 +317,14 @@ public class NumberGraduation extends AbstractGraduation {
      * Constructs or reuses an iterator. This method is overridden by
      * {@link LogarithmicNumberGraduation}.
      */
-    NumberIterator getTickIterator(final TickIterator reuse, final Locale locale) {
+    NumberIterator getTickIterator(final TickIterator reuse) {
+        final NumberFormat format = getFormat();
         if (reuse!=null && reuse.getClass().equals(NumberIterator.class)) {
             final NumberIterator it = (NumberIterator) reuse;
-            it.setLocale(locale);
+            it.setFormat(format);
             return it;
         } else {
-            return new NumberIterator(locale);
+            return new NumberIterator(format);
         }
     }
 

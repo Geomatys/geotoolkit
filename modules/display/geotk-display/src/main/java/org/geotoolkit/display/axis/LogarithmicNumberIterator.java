@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.display.axis;
 
-import java.util.Locale;
+import java.text.NumberFormat;
 import org.geotoolkit.math.XMath;
 
 
@@ -41,11 +41,9 @@ final class LogarithmicNumberIterator extends NumberIterator {
     /**
      * Construit un itérateur par défaut. La méthode {@link #init}
      * <u>doit</u> être appelée avant que cet itérateur ne soit utilisable.
-     *
-     * @param locale Conventions à utiliser pour le formatage des nombres.
      */
-    protected LogarithmicNumberIterator(final Locale locale) {
-        super(locale);
+    protected LogarithmicNumberIterator(final NumberFormat format) {
+        super(format);
     }
 
     /**

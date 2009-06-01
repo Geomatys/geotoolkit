@@ -33,7 +33,6 @@ import java.awt.geom.IllegalPathStateException;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Locale;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.beans.PropertyChangeEvent;
@@ -721,7 +720,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         final double px, ox, exi, exj;
         synchronized (xAxis) {
             final Graduation mx = xAxis.getGraduation();
-            final double range = mx.getRange();
+            final double range = mx.getSpan();
             px  = xAxis.getX1();
             exi = (xAxis.getX2() - px) / range;
             exj = (xAxis.getY2() - xAxis.getY1()) / range;
@@ -730,7 +729,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         final double py, oy, eyi, eyj;
         synchronized (yAxis) {
             final Graduation my = yAxis.getGraduation();
-            final double range = my.getRange();
+            final double range = my.getSpan();
             py  = yAxis.getY1();
             eyi = (yAxis.getX2() - yAxis.getX1()) / range;
             eyj = (yAxis.getY2() - py) / range;
@@ -1197,7 +1196,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
                 final Graduation graduation = getGraduation();
                 final double     dx = getX2() - getX1();
                 final double     dy = getY2() - getY1();
-                final double  range = graduation.getRange();
+                final double  range = graduation.getSpan();
                 final double length = Math.hypot(dx, dy);
                 hints.put(Graduation.VISUAL_AXIS_LENGTH, length);
 
@@ -1209,14 +1208,6 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
                 this.iterator = graduation.getTickIterator(hints, iterator);
                 this.modCount = Axis2D.this.modCount;
             }
-        }
-
-        /**
-         * Returns the locale used for formatting tick labels.
-         */
-        @Override
-        public Locale getLocale() {
-            return iterator.getLocale();
         }
 
         /**

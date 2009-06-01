@@ -8,25 +8,17 @@
     Overview of <A HREF="http://www.geotoolkit.org">Geotoolkit</A>.
 
     <H2>Requirements</H2>
-    <P ALIGN="justify">Geotoolkit requires Java 6 standard edition. There is additional requirement for metadata
-    and referencing modules. But the coverage module requires the
+    <P ALIGN="justify">Geotoolkit requires Java 6 Standard Edition. There is no additional
+    requirement for metadata and referencing modules. But the coverage module requires the
     <A HREF="https://jai.dev.java.net/">Java Advanced Imaging</A> extension.</P>
-
-    <P ALIGN="justify">A port to Java 5 is planed. This port will have all JAXB annotations
-    removed and will loose the benefit of some Java 6 methods that may help performance
-    ({@link java.util.Arrays#copyOf(double[],int) Arrays.copyOf(...)},
-    {@link java.lang.Math#copySign(double,double) Math.copySign(...)}, <cite>etc.</cite>) or precision
-    ({@link java.awt.geom.Path2D}, {@link java.awt.geom.AffineTransform#quadrantRotate(int)},
-    <cite>etc.</cite>).</P>
 
     <H2>Javadoc annotations</H2>
     <UL><LI><H3>Versions</H3>
     <P ALIGN="justify">The {@code @since} javadoc tag gives the Geotoolkit version when the annotated
     element (class, method, <cite>etc.</cite>) was first introduced. If the declared version is the
-    one under development (for example if an element is annotated with {@code @since 3.0} and the
-    current library version is Geotoolkit 3.00-<b>SNAPSHOT</b>), then that element is <em>uncommited</em>
-    and may change in any future version - it will become stable only when the {@code -SNAPSHOT}
-    keyword is removed from the library version number, or when the version increase.</P>
+    one under development (for example if an element is annotated with {@code @since 3.10} and that
+    version has not yet been released), then that element is <em>uncommited</em> and may change in
+    any future version - it will become stable only when the library version number increase.</P>
 
     <P ALIGN="justify">Stable API (for example those annotated as {@code @since 2.4}) will not
     change lightly. If a stable API need to be removed, it is first annotated as {@code @deprecated}

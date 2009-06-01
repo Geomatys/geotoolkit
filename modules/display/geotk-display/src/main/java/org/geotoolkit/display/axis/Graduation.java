@@ -84,7 +84,7 @@ public interface Graduation {
      * @return The minimal value in {@link #getUnit} units.
      *
      * @see #getMaximum
-     * @see #getRange
+     * @see #getSpan
      */
     double getMinimum();
 
@@ -94,18 +94,18 @@ public interface Graduation {
      * @return The maximal value in {@link #getUnit} units.
      *
      * @see #getMinimum
-     * @see #getRange
+     * @see #getSpan
      */
     double getMaximum();
 
     /**
-     * Returns the graduation's range. This is equivalents to computing
+     * Returns the graduation span. This is equivalents to computing
      * <code>{@link #getMaximum} - {@link #getMinimum}</code>. However, some
      * implementation may optimize this computation in order to avoid rounding errors.
      *
      * @return The graduation range.
      */
-    double getRange();
+    double getSpan();
 
     /**
      * Returns the axis title. If {@code includeUnits} is {@code true}, then the returned string
@@ -132,9 +132,9 @@ public interface Graduation {
     Locale getLocale();
 
     /**
-     * Returns the format to use for formatting labels. The format really used by
-     * {@link TickIterator#currentLabel} may not be the same. For example, some
-     * iterators may adjust automatically the number of fraction digits.
+     * Returns the format used for formatting labels. Note that the format actually used by
+     * {@link TickIterator#currentLabel()} may be configured in a slightly different way.
+     * For example some iterators may adjust automatically the number of fraction digits.
      *
      * @return The labels format.
      */

@@ -154,9 +154,9 @@ public final class MosaicWizard extends AbstractWizard {
                 }
 
                 /** Invoked when the values in the form changed. */
-                @Override protected void plotCostEstimation(final long delay) {
+                @Override protected void plotEfficiency(final long delay) {
                     controller.setProblem("Calculation in progress...");
-                    super.plotCostEstimation(delay);
+                    super.plotEfficiency(delay);
                 }
 
                 /** Invoked on success. */

@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
  * More details on the algorithm used by this class are defined in the following methods:
  * <p>
  * <ul>
- *   <li>{@link #costSampling(int)}</li>
+ *   <li>{@link #estimateEfficiency(int)}</li>
  * </ul>
  *
  * The example below profiles a mosaic for different subsampling values.
@@ -51,8 +51,8 @@ import org.geotoolkit.resources.Errors;
  *     profiler.setMaxSubsampling(1);
  *     for (int i=1; i<20; i++) {
  *         profiler.setMinSubsampling(i);
- *         double cost = profiler.costSampling(100);
- *         System.out.println("Subsampling=" + i + ", theorical cost=" + cost);
+ *         double efficiency = profiler.estimateEfficiency(100);
+ *         System.out.println("Subsampling=" + i + ", estimated efficiency=" + efficiency);
  *     }
  * }
  *
@@ -385,14 +385,14 @@ public class MosaicProfiler {
     }
 
     /**
-     * Returns an empirical estimation of the cost of loading images using the mosaic. This
+     * Returns an empirical estimation of the efficiency of loading images using the mosaic. This
      * method creates the given amount of random rectangles in the area of the mosaic, then
      * estimates the theorical cost that loading those images would have. This is a only a
      * guess - the images are not really loaded.
      * <p>
-     * The smallest value that this method can return is 1, which means that <cite>optimal
-     * loading</cite> (defined below) would occur. Values greater than 1 are the average time
-     * of image loadings compared to the optimal case. For example a value of 2 means that the
+     * The highest value that this method can return is 1, which means that <cite>optimal
+     * loading</cite> (defined below) would occur. Values lower than 1 are the average time
+     * of image loadings compared to the optimal case. For example a value of 0.5 means that the
      * <cite>theorical image loading time</cite> (defined below) is on average two time greater
      * than it would be if it was possible to read all images optimally.
      *
@@ -408,11 +408,12 @@ public class MosaicProfiler {
      * because of croping or subsampling.
      *
      * @param  numSamples The number of rectangular region to simulate loading.
-     * @return The estimated average cost of loading images. Smaller values are better.
+     * @return The estimated efficiency of loading images, as a value between 0 and 1 inclusve.
+     *         Higher values are better.
      * @throws IOException If it was necessary to fetch an image dimension from its
      *         {@linkplain Tile#getImageReader reader} and this operation failed.
      */
-    public synchronized Statistics costSampling(int numSamples) throws IOException {
+    public synchronized Statistics estimateEfficiency(int numSamples) throws IOException {
         final int dsx = maxSubsampling.width  - minSubsampling.width  + 1;
         final int dsy = maxSubsampling.height - minSubsampling.height + 1;
         final int dw  = maxSize.width  - minSize.width  + 1;
@@ -436,7 +437,7 @@ public class MosaicProfiler {
                 cost += tile.countUnwantedPixelsFromAbsolute(sample, subsampling);
             }
             final long area = (long) width * (long) height / (subsampling.width * subsampling.height);
-            stats.add((double) cost / (double) area + 1);
+            stats.add(1 / ((double) cost / (double) area + 1));
         }
         return stats;
     }

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.display.axis;
 
-import java.util.Locale;
+import java.text.NumberFormat;
 import javax.measure.unit.Unit;
 
 
@@ -50,13 +50,14 @@ public class LogarithmicNumberGraduation extends NumberGraduation {
      * the default {@link NumberGraduation} implementation.
      */
     @Override
-    NumberIterator getTickIterator(final TickIterator reuse, final Locale locale) {
+    NumberIterator getTickIterator(final TickIterator reuse) {
+        final NumberFormat format = getFormat();
         if (reuse instanceof LogarithmicNumberIterator) {
             final NumberIterator it = (NumberIterator) reuse;
-            it.setLocale(locale);
+            it.setFormat(format);
             return it;
         } else {
-            return new LogarithmicNumberIterator(locale);
+            return new LogarithmicNumberIterator(format);
         }
     }
 }

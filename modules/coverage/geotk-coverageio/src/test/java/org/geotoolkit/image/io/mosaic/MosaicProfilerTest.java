@@ -52,18 +52,18 @@ public final class MosaicProfilerTest extends TestBase {
     /**
      * Run a single sample using the given profiler, and returns the estimated cost.
      *
-     * @param  profiler The profiler for which to run {@link MosaicProfiler#costSampling(int)}.
-     * @return The cost estimation.
+     * @param  profiler The profiler for which to run {@link MosaicProfiler#estimateEfficiency(int)}.
+     * @return The efficiency estimation.
      * @throws IOException Should not happen.
      */
     private static double single(final MosaicProfiler profiler) throws IOException {
-        final Statistics stats = profiler.costSampling(1);
+        final Statistics stats = profiler.estimateEfficiency(1);
         assertEquals(1, stats.count());
         return stats.mean();
     }
 
     /**
-     * Tests {@link MosaicProfiler#costSampling(int)} with some pre-defined regions
+     * Tests {@link MosaicProfiler#estimateEfficiency(int)} with some pre-defined regions
      * and subsampling values. Note that because we leave no room for random values,
      * the random seed should have no effect.
      * <p>
@@ -87,11 +87,11 @@ public final class MosaicProfilerTest extends TestBase {
 
         region.translate(TARGET_SIZE/4, 0);
         profiler.setQueryRegion(region);
-        assertEquals("Asked a translated images requerying 2 tiles.", 2, single(profiler), EPS);
+        assertEquals("Asked a translated images requerying 2 tiles.", 0.5, single(profiler), EPS);
 
         region.translate(0, TARGET_SIZE*3/4);
         profiler.setQueryRegion(region);
-        assertEquals("Asked a translated images requerying 4 tiles.", 4, single(profiler), EPS);
+        assertEquals("Asked a translated images requerying 4 tiles.", 0.25, single(profiler), EPS);
 
         /*
          * Tests images twice bigger, with a subsampling of 2. Because there is no such subsampling
@@ -103,15 +103,15 @@ public final class MosaicProfilerTest extends TestBase {
         region.x = region.y = TARGET_SIZE*4;
         region.width = region.height = TARGET_SIZE*2;
         profiler.setQueryRegion(region);
-        assertEquals("Asking for an exact tile should have no cost.", 4, single(profiler), EPS);
+        assertEquals("Asking for an exact tile should have no cost.", 0.25, single(profiler), EPS);
 
         region.translate(TARGET_SIZE, TARGET_SIZE);
         profiler.setQueryRegion(region);
-        assertEquals("Cost should stay the same.", 4, single(profiler), EPS);
+        assertEquals("Cost should stay the same.", 0.25, single(profiler), EPS);
 
         region.translate(TARGET_SIZE/4, TARGET_SIZE*3/4);
         profiler.setQueryRegion(region);
-        assertEquals("Asked an images requerying more tiles.", 9, single(profiler), EPS);
+        assertEquals("Asked an images requerying more tiles.", 1./9, single(profiler), EPS);
 
         /*
          * Tests images with a subsampling of 3. We should be back on a subsampling
@@ -127,17 +127,17 @@ public final class MosaicProfilerTest extends TestBase {
 
         region.translate(TARGET_SIZE, TARGET_SIZE);
         profiler.setQueryRegion(region);
-        assertEquals("Asked a translated images requerying 4 tiles.", 4, single(profiler), EPS);
+        assertEquals("Asked a translated images requerying 4 tiles.", 0.25, single(profiler), EPS);
     }
 
     /**
-     * Tests {@link MosaicProfiler#costSampling(int)} for a constant image size and
+     * Tests {@link MosaicProfiler#estimateEfficiency(int)} for a constant image size and
      * using increasing subsampling values.
      *
      * @throws IOException Should not happen.
      */
     @Test
-    public void testCostAtConstantSubsampling() throws IOException {
+    public void testEfficiencyAtConstantSubsampling() throws IOException {
         final MosaicProfiler profiler = new MosaicProfiler(manager);
         assertNotGreater(profiler.getMaxSize(), profiler.getMosaicSize());
 
@@ -150,14 +150,14 @@ public final class MosaicProfilerTest extends TestBase {
         final double[] better = new double[strict.length];
         for (int i=0; i<strict.length; i++) {
             profiler.setMinSubsampling(i + 1);
-            strict[i] = profiler.costSampling(50).mean();
+            strict[i] = profiler.estimateEfficiency(50).mean();
         }
         profiler.setSeed(897026254);
         profiler.setMaxSubsampling(1);
         profiler.setSubsamplingChangeAllowed(true);
         for (int i=0; i<better.length; i++) {
             profiler.setMinSubsampling(i + 1);
-            better[i] = profiler.costSampling(50).mean();
+            better[i] = profiler.estimateEfficiency(50).mean();
         }
         /*
          * Empirical values determined from previous run of this test. This test is performed only
@@ -173,65 +173,65 @@ public final class MosaicProfilerTest extends TestBase {
         if (false) {
             for (int i=0; i<strict.length; i++) {
                 System.out.println(String.format(java.util.Locale.US,
-                        "%7.2f, %6.2f,  // %6.2f  [%2d]",
-                        strict[i], better[i], strict[i] / better[i], i+1));
+                        "%6.3f, %6.3f,  // %6.2f  [%2d]",
+                        strict[i], better[i], better[i] / strict[i], i+1));
             }
         }
         final double[] expected = {
-               5.88,   5.88,  //   1.00  [ 1]
-              11.90,  11.90,  //   1.00  [ 2]
-               6.34,   6.34,  //   1.00  [ 3]
-              28.80,   4.04,  //   7.13  [ 4]
-               5.68,   5.68,  //   1.00  [ 5]
-              12.25,   4.59,  //   2.67  [ 6]
-              71.54,   4.06,  //  17.64  [ 7]
-              88.24,   3.57,  //  24.72  [ 8]
-               5.68,   5.68,  //   1.00  [ 9]
-              10.56,   5.19,  //   2.03  [10]
-             153.83,   4.42,  //  34.79  [11]
-              28.68,   4.00,  //   7.18  [12]
-             208.67,   3.83,  //  54.51  [13]
-             235.78,   3.28,  //  71.77  [14]
-               5.03,   5.03,  //   1.00  [15]
-             303.28,   4.59,  //  66.07  [16]
-             337.73,   4.45,  //  75.82  [17]
-              10.68,   4.37,  //   2.44  [18]
-             418.25,   3.88,  // 107.87  [19]
-              28.49,   3.91,  //   7.29  [20]
-              69.04,   3.80,  //  18.17  [21]
-             543.44,   3.93,  // 138.38  [22]
-             597.47,   3.66,  // 163.31  [23]
-              89.40,   3.69,  //  24.23  [24]
-              41.13,   3.32,  //  12.40  [25]
-             749.61,   3.17,  // 236.49  [26]
-              19.20,   2.82,  //   6.81  [27]
-             867.84,   2.85,  // 304.05  [28]
-             925.06,   3.00,  // 308.37  [29]
-              10.48,  10.48,  //   1.00  [30]
-            1046.09,  10.47,  //  99.96  [31]
-            1114.21,   9.96,  // 111.91  [32]
-             151.95,   9.30,  //  16.34  [33]
-            1252.61,  10.31,  // 121.45  [34]
-              68.85,   9.85,  //   6.99  [35]
-              28.15,   8.96,  //   3.14  [36]
-            1468.69,   8.81,  // 166.70  [37]
-            1552.36,   9.02,  // 172.05  [38]
-             205.52,   8.25,  //  24.92  [39]
-              87.32,   7.93,  //  11.02  [40]
-            1798.20,   9.09,  // 197.88  [41]
-             238.92,   8.88,  //  26.92  [42]
-            1964.54,   8.64,  // 227.50  [43]
-            2058.16,   8.30,  // 247.95  [44]
-               3.65,   3.65,  //   1.00  [45]
-            2228.89,   3.34,  // 666.51  [46]
-            2342.63,   3.10,  // 756.24  [47]
-             302.86,   3.04,  //  99.71  [48]
-            2552.26,   2.98,  // 856.59  [49]
-             130.91,   2.95   //  44.30  [50]
+            0.203,  0.203,  //   1.00  [ 1]
+            0.088,  0.088,  //   1.00  [ 2]
+            0.180,  0.180,  //   1.00  [ 3]
+            0.036,  0.270,  //   7.54  [ 4]
+            0.206,  0.206,  //   1.00  [ 5]
+            0.088,  0.240,  //   2.73  [ 6]
+            0.014,  0.267,  //  18.86  [ 7]
+            0.011,  0.291,  //  25.59  [ 8]
+            0.214,  0.214,  //   1.00  [ 9]
+            0.100,  0.219,  //   2.19  [10]
+            0.007,  0.249,  //  38.18  [11]
+            0.036,  0.269,  //   7.54  [12]
+            0.005,  0.279,  //  58.06  [13]
+            0.004,  0.321,  //  75.49  [14]
+            0.247,  0.247,  //   1.00  [15]
+            0.003,  0.261,  //  78.99  [16]
+            0.003,  0.258,  //  86.74  [17]
+            0.099,  0.255,  //   2.57  [18]
+            0.002,  0.291,  // 121.63  [19]
+            0.036,  0.281,  //   7.77  [20]
+            0.015,  0.286,  //  19.51  [21]
+            0.002,  0.263,  // 142.85  [22]
+            0.002,  0.294,  // 175.34  [23]
+            0.011,  0.282,  //  25.15  [24]
+            0.025,  0.313,  //  12.78  [25]
+            0.001,  0.333,  // 249.32  [26]
+            0.054,  0.368,  //   6.79  [27]
+            0.001,  0.367,  // 318.13  [28]
+            0.001,  0.354,  // 327.02  [29]
+            0.101,  0.101,  //   1.00  [30]
+            0.001,  0.102,  // 106.91  [31]
+            0.001,  0.107,  // 119.17  [32]
+            0.007,  0.111,  //  16.84  [33]
+            0.001,  0.102,  // 127.94  [34]
+            0.015,  0.106,  //   7.20  [35]
+            0.037,  0.115,  //   3.12  [36]
+            0.001,  0.118,  // 173.21  [37]
+            0.001,  0.117,  // 180.79  [38]
+            0.005,  0.126,  //  25.91  [39]
+            0.012,  0.132,  //  11.52  [40]
+            0.001,  0.113,  // 203.96  [41]
+            0.004,  0.119,  //  28.25  [42]
+            0.001,  0.122,  // 239.92  [43]
+            0.000,  0.126,  // 258.68  [44]
+            0.286,  0.286,  //   1.00  [45]
+            0.000,  0.321,  // 715.46  [46]
+            0.000,  0.352,  // 824.85  [47]
+            0.003,  0.356,  // 107.57  [48]
+            0.000,  0.358,  // 913.88  [49]
+            0.008,  0.354,  //  45.91  [50]
         };
         for (int i=0,j=0; j<expected.length; i++) {
-            assertEquals("strict", expected[j++], strict[i], 0.01);
-            assertEquals("better", expected[j++], better[i], 0.01);
+            assertEquals("strict", expected[j++], strict[i], 0.001);
+            assertEquals("better", expected[j++], better[i], 0.001);
         }
     }
 }

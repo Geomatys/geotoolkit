@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.display.axis;
 
-import java.util.Locale;
 import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import org.geotoolkit.math.XMath;
 
 
@@ -109,6 +109,11 @@ class NumberIterator implements TickIterator {
     private transient NumberFormat format;
 
     /**
+     * The original format. Used in order to determine if {@link #format} needs to be cloned.
+     */
+    private NumberFormat originalFormat;
+
+    /**
      * Indique si {@link #format} est valide. Le format peut devenir invalide si
      * {@link #init} a été appelée. Dans ce cas, il peut falloir changer le nombre
      * de chiffres après la virgule qu'il écrit.
@@ -116,18 +121,11 @@ class NumberIterator implements TickIterator {
     private transient boolean formatValid;
 
     /**
-     * Conventions à utiliser pour le formatage des nombres.
-     */
-    private Locale locale;
-
-    /**
      * Construit un itérateur par défaut. La méthode {@link #init}
      * <u>doit</u> être appelée avant que cet itérateur ne soit utilisable.
-     *
-     * @param locale Conventions à utiliser pour le formatage des nombres.
      */
-    protected NumberIterator(final Locale locale) {
-        this.locale = locale;
+    protected NumberIterator(final NumberFormat format) {
+        this.format = originalFormat = format;
     }
 
     /**
@@ -259,8 +257,8 @@ class NumberIterator implements TickIterator {
     @Override
     public String currentLabel() {
         if (!formatValid) {
-            if (format == null) {
-                format = NumberFormat.getNumberInstance(locale);
+            if (format == originalFormat) {
+                format = (NumberFormat) format.clone();
             }
             /*
              * Trouve le nombre de chiffres après la virgule nécessaires pour représenter les
@@ -270,6 +268,9 @@ class NumberIterator implements TickIterator {
              */
             int precision;
             double step = Math.abs(increment);
+            if (format instanceof DecimalFormat) {
+                step *= ((DecimalFormat) format).getMultiplier();
+            }
             for (precision=0; precision<6; precision++) {
                 final double check = Math.rint(step*1E+4) % 1E+4;
                 if (!(check > step*EPS)) { // 'step' may be NaN
@@ -317,21 +318,12 @@ class NumberIterator implements TickIterator {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Locale getLocale() {
-        return locale;
-    }
-
-    /**
      * Modifie les conventions à utiliser pour
      * écrire les étiquettes de graduation.
      */
-    public final void setLocale(final Locale locale) {
-        if (!locale.equals(this.locale)) {
-            this.locale = locale;
-            this.format = null;
+    public final void setFormat(final NumberFormat format) {
+        if (!format.equals(originalFormat)) {
+            this.format = originalFormat = format;
             formatValid = false;
         }
     }

@@ -30,6 +30,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.NullArgumentException;
 
 
 /**
@@ -194,12 +195,22 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
      * @param locale The new labels format.
      */
     public synchronized void setLocale(final Locale locale) {
+        ensureNonNull("locale", locale);
         final Locale old;
         synchronized (this) {
             old = this.locale;
             this.locale = locale;
+            if (!locale.equals(old)) {
+                clearFormat();
+            }
         }
         listenerList.firePropertyChange("locale", old, locale);
+    }
+
+    /**
+     * Convenience hook for reseting the format when the local changed.
+     */
+    void clearFormat() {
     }
 
     /**
@@ -254,6 +265,15 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
             }
         }
         return defaultValue;
+    }
+
+    /**
+     * Ensures that the given parameter is not null.
+     */
+    static void ensureNonNull(final String name, final Object value) throws NullPointerException {
+        if (value == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
     }
 
     /**
