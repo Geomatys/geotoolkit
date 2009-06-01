@@ -135,7 +135,8 @@ public enum Installation {
             if (directory != null) {
                 File file = new File(directory);
                 String name = ".geotoolkit";
-                switch (OS.current()) {
+                final OS system = OS.current();
+                switch (system) {
                     case WINDOWS: {
                         file = new File(file, "Application Data");
                         name = "Geotoolkit";
@@ -148,7 +149,7 @@ public enum Installation {
                     }
                     // For Linux and unknown OS, keep the directory selected above.
                 }
-                if (file.isDirectory() && file.canWrite()) {
+                if (file.isDirectory() && (!system.unix || file.canWrite())) {
                     return new File(file, name);
                 }
             }

@@ -31,22 +31,34 @@ public enum OS {
     /**
      * Unknown system.
      */
-    UNKNOWN,
+    UNKNOWN(false),
 
     /**
      * Windows.
      */
-    WINDOWS,
+    WINDOWS(false),
 
     /**
      * Mac OS.
      */
-    MAC_OS,
+    MAC_OS(true),
 
     /**
      * Linux.
      */
-    LINUX;
+    LINUX(true);
+
+    /**
+     * {@code true} if this OS is a kind of Unix.
+     */
+    public final boolean unix;
+
+    /**
+     * Creates a new enumeration.
+     */
+    private OS(final boolean unix) {
+        this.unix = unix;
+    }
 
     /**
      * Returns the operating system Geotoolkit is currently on.
