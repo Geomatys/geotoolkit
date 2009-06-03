@@ -30,7 +30,6 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,16 +46,15 @@ import javax.media.jai.registry.RIFRegistry;
 
 import org.geotools.filter.visitor.IsStaticExpressionVisitor;
 
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
@@ -65,10 +63,10 @@ import org.geotoolkit.display2d.style.ListingPropertyVisitor;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
-import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
@@ -134,7 +132,7 @@ public class GO2Utilities {
         }
     }
 
-    public static void portray(final GraphicCoverageJ2D graphic, CachedSymbolizer symbol,
+    public static void portray(final ProjectedCoverage graphic, CachedSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException {
 
         SymbolizerRenderer renderer = findRenderer(symbol);
@@ -155,7 +153,7 @@ public class GO2Utilities {
         return false;
     }
 
-    public static boolean hit(final GraphicCoverageJ2D graphic, final CachedSymbolizer symbol,
+    public static boolean hit(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter) {
         SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
@@ -165,19 +163,8 @@ public class GO2Utilities {
         return false;
     }
 
-    public static Rectangle2D estimate(final ProjectedFeature graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D context, Rectangle2D rect){
-
-        SymbolizerRenderer renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.estimate(graphic, symbol, context, rect);
-        }
-
-        return XRectangle2D.INFINITY;
-    }
-
     ////////////////////////////////////////////////////////////////////////////
-    // geometries transformations //////////////////////////////////////////////
+    // geometries operations ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
     public static Shape toJava2D(Geometry geom){
@@ -203,7 +190,32 @@ public class GO2Utilities {
         final LinearRing ring = JTS_FACTORY.createLinearRing(coords.toArray(new Coordinate[0]));
         return JTS_FACTORY.createPolygon(ring, new LinearRing[0]);
     }
-   
+
+    public static boolean testHit(VisitFilter filter, Geometry left, Geometry right){
+
+        switch(filter){
+            case INTERSECTS :
+                return left.intersects(right);
+            case WITHIN :
+                return left.contains(right);
+        }
+
+        return false;
+    }
+
+    public static boolean testHit(VisitFilter filter, org.opengis.geometry.Geometry left, org.opengis.geometry.Geometry right){
+
+        switch(filter){
+            case INTERSECTS :
+                return left.intersects(right);
+            case WITHIN :
+                return left.contains(right);
+        }
+
+        return false;
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////
     // renderers cache /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -376,12 +388,18 @@ public class GO2Utilities {
     }
 
     public static Geometry getGeometry(final Feature feature, final String geomName){
-        ///TODO use the correct geometrie, must wait for a better feature implementation
-//        if (geomName != null && !geomName.trim().isEmpty() && feature.getProperty(geomName) != null) {
-//            return (Geometry) feature.getProperty(geomName).getValue();
-//        } else {
+        if (geomName != null && !geomName.trim().isEmpty()) {
+            Property prop = feature.getProperty(geomName);
+            if(prop != null){
+                Object obj = prop.getValue();
+                if(obj == null || obj instanceof Geometry){
+                    return (Geometry)obj;
+                }
+            }
+            return null;
+        } else {
             return (Geometry) feature.getDefaultGeometryProperty().getValue();
-//        }
+        }
     }
 
     public static Collection<String> getRequieredAttributsName(final Expression exp, final Collection<String> collection){

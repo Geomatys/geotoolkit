@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,24 +16,26 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.map.FeatureMapLayer;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.identity.FeatureId;
+import java.io.IOException;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotools.coverage.io.CoverageReadParam;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
 /**
- * GraphicJ2D for feature objects.
+ *
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface ProjectedFeature {
+public interface ProjectedCoverage {
 
-    FeatureId getFeatureId();
+    CoverageMapLayer getCoverageLayer();
 
-    FeatureMapLayer getFeatureLayer();
+    GridCoverage2D getCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException;
 
-    SimpleFeature getFeature();
+    ProjectedGeometry getEnvelopeGeometry();
 
-    ProjectedGeometry getGeometry(String name);
+    GridCoverage2D getElevationCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException;
 
 }

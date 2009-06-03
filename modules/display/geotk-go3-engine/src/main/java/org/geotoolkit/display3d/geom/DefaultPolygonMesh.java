@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.display3d.geom;
 
+import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.renderer.IndexMode;
+import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.renderer.state.MaterialState;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.util.geom.BufferUtils;
@@ -119,6 +121,9 @@ public class DefaultPolygonMesh extends Mesh {
             }
         }
 
+
+        int start = index;
+
         //make the top face
         for(Coordinate c : vertexes){
             vertexBuffer.put((float)c.x).put(maxz).put((float)c.y);
@@ -126,6 +131,19 @@ public class DefaultPolygonMesh extends Mesh {
         }
         for(Integer i : indexes){
             indexBuffer.put(index+i);
+        }
+
+        //invert the triangles indexes
+        for(int i=start;i<=indexBuffer.limit()-3;){
+            int t1 = indexBuffer.get(i);
+            int t2 = indexBuffer.get(i+1);
+            int t3 = indexBuffer.get(i+2);
+
+            indexBuffer.put(i, t3);
+            indexBuffer.put(i+1, t2);
+            indexBuffer.put(i+2, t1);
+
+            i+=3;
         }
 
 
@@ -136,10 +154,17 @@ public class DefaultPolygonMesh extends Mesh {
         _meshData.setIndexModes(    new IndexMode[] {IndexMode.Quads, IndexMode.Triangles } );
 
         final MaterialState ms = new MaterialState();
-        ms.setDiffuse(ColorRGBA.RED);
+//        ms.setDiffuse(new ColorRGBA(0.5f, 0.7f, 0.5f, 0.8f)); //ColorRGBA.DARK_GRAY);
+        ms.setDiffuse(ColorRGBA.GRAY);
         this.setRenderState(ms);
 
-        setModelBound(new BoundingSphere());
+        final CullState cullFrontFace = new CullState();
+        cullFrontFace.setEnabled(true);
+        cullFrontFace.setCullFace(CullState.Face.Back);
+        this.setRenderState(cullFrontFace);
+
+
+        setModelBound(new BoundingBox());
         updateModelBound();
     }
 

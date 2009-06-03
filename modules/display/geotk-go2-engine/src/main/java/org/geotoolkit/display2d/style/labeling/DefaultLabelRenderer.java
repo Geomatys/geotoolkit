@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.style.renderer;
+package org.geotoolkit.display2d.style.labeling;
 
 import java.awt.BasicStroke;
 import java.awt.FontMetrics;

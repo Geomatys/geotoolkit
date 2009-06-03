@@ -17,6 +17,11 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -42,7 +47,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedHalo;
 import org.geotoolkit.display2d.style.CachedLabelPlacement;
@@ -52,13 +57,16 @@ import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.aggregate.MultiPrimitive;
+import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.TextSymbolizer;
@@ -94,13 +102,7 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
             final RenderingHints hints = g2.getRenderingHints();
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-            final Geometry geom;
-            try {
-                geom = projectedFeature.getDisplayGeometry();
-            } catch (TransformException ex) {
-                throw new PortrayalException(ex);
-            }
-
+            
             //we switch to  more appropriate context CRS for rendering ---------
             // a point symbol always paint in display unit
 
@@ -129,7 +131,6 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
             if(label.isEmpty()) return; //nothing to paint
             final CachedHalo halo = symbol.getHalo();
             final CachedLabelPlacement placement = symbol.getPlacement();
-            final LabelRenderer renderer = context.getLabelRenderer(true);
 
             //extract halo parameters
             final float haloWidth;
@@ -146,38 +147,99 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
             final Paint fontPaint = symbol.getFontPaint(feature, 0,0, coeff, hints);
             final Font j2dFont = symbol.getJ2dFont(feature, coeff);
 
-            if(geom instanceof Point || geom instanceof MultiPoint){
+            final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
 
-                final Coordinate[] coords = geom.getCoordinates();
-                final Coordinate coord = coords[0];
-                DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
 
-                final int x = (int) (pt2d.getOrdinate(0) );
-                final int y = (int) (pt2d.getOrdinate(1) );
+            //symbolizer doesnt match the featuretype, no geometry found with this name.
+            if(projectedGeometry == null) return;
 
-                final float anchorX;
-                final float anchorY;
-                final float dispX;
-                final float dispY;
-                final float rotation;
-                if(placement instanceof CachedPointPlacement){
-                    final CachedPointPlacement pp = (CachedPointPlacement) placement;
-                    anchorX = pp.getAnchorX(feature);
-                    anchorY = pp.getAnchorY(feature);
-                    dispX = pp.getDisplacementX(feature);
-                    dispY = pp.getDisplacementY(feature);
-                    rotation = pp.getRotation(feature);
-                }else if(placement instanceof CachedLinePlacement){
-                    //Using a line placement on points, strange but can happen
-                    //we replace by the default point placement parameters.
-                    anchorX = 0.5f;
-                    anchorY = 0.5f;
-                    dispX = 0f;
-                    dispY = 0f;
-                    rotation = 0f;
-                }else{
-                    throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
-                }
+            if(GO2Hints.GEOMETRY_ISO.equals(geomType)){
+                portrayISO(projectedGeometry, context, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
+            }else{
+                portrayJTS(projectedGeometry, context, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
+            }
+
+        }
+
+    }
+
+    private static void portrayISO(ProjectedGeometry projectedGeometry, RenderingContext2D context, ProjectedFeature projectedFeature,
+            CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
+            String label) throws PortrayalException{
+
+        final Feature feature = projectedFeature.getFeature();
+        final LabelRenderer renderer = context.getLabelRenderer(true);
+
+        final org.opengis.geometry.Geometry geom;
+        try {
+            geom = projectedGeometry.getDisplayGeometryISO();
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
+        }
+
+        exploreAndPortrayISO(geom, feature, renderer, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
+    }
+
+    private static void exploreAndPortrayISO(org.opengis.geometry.Geometry geom, Feature feature, LabelRenderer renderer, RenderingContext2D context,
+            CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
+            String label) throws PortrayalException{
+
+        if(geom instanceof org.opengis.geometry.primitive.Point){
+            final double[] coords = geom.getCentroid().getCoordinate();
+
+            final int x = (int)coords[0];
+            final int y = (int)coords[1];
+
+            final float anchorX;
+            final float anchorY;
+            final float dispX;
+            final float dispY;
+            final float rotation;
+            if(placement instanceof CachedPointPlacement){
+                final CachedPointPlacement pp = (CachedPointPlacement) placement;
+                anchorX = pp.getAnchorX(feature);
+                anchorY = pp.getAnchorY(feature);
+                dispX = pp.getDisplacementX(feature);
+                dispY = pp.getDisplacementY(feature);
+                rotation = pp.getRotation(feature);
+            }else if(placement instanceof CachedLinePlacement){
+                //Using a line placement on points, strange but can happen
+                //we replace by the default point placement parameters.
+                anchorX = 0.5f;
+                anchorY = 0.5f;
+                dispX = 0f;
+                dispY = 0f;
+                rotation = 0f;
+            }else{
+                throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
+            }
+
+            final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
+                label, j2dFont, fontPaint,
+                haloWidth, haloPaint,
+                x, y,
+                anchorX, anchorY,
+                dispX, dispY,
+                rotation, context.getDisplayCRS());
+            renderer.append(descriptor);
+        }else if(geom instanceof Curve
+                || geom instanceof org.opengis.geometry.coordinate.Polygon){
+
+
+            if(placement instanceof CachedPointPlacement){
+                final CachedPointPlacement pp = (CachedPointPlacement) placement;
+
+                final double[] coords = geom.getCentroid().getCoordinate();
+
+                final int x = (int) coords[0];
+                final int y = (int) coords[1];
+
+                float anchorX = pp.getAnchorX(feature);
+                float anchorY = pp.getAnchorY(feature);
+                float dispX = pp.getDisplacementX(feature);
+                float dispY = pp.getDisplacementY(feature);
+                float rotation = pp.getRotation(feature);
 
                 final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
                     label, j2dFont, fontPaint,
@@ -188,62 +250,154 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
                     rotation, context.getDisplayCRS());
                 renderer.append(descriptor);
 
-            }else if( geom instanceof LineString || geom instanceof MultiLineString
-                    || geom instanceof Polygon || geom instanceof MultiPolygon ){
+            }else if(placement instanceof CachedLinePlacement){
+                //Using a line placement on points, strange but can happen
+                //we replace by the default point placement parameters.
+                final CachedLinePlacement lp = (CachedLinePlacement) placement;
+
+                //we need the reprojected shape since the text symbol will need
+                //the path
+                Shape j2dShape = GO2Utilities.toJava2D(geom);
+
+                final LabelDescriptor descriptor = new DefaultLinearLabelDescriptor(
+                        label,
+                        j2dFont,
+                        fontPaint,
+                        haloWidth,
+                        haloPaint,
+                        lp.getGap(feature),
+                        lp.getInitialGap(feature),
+                        lp.getOffset(feature),
+                        lp.isRepeated(),
+                        lp.isAligned(),
+                        lp.isGeneralizeLine(),
+                        j2dShape);
+                renderer.append(descriptor);
+            }else{
+                throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
+            }
+
+        }else if(geom instanceof MultiPrimitive){
+            MultiPrimitive multi = (MultiPrimitive) geom;
+            for(org.opengis.geometry.Geometry sub : multi.getElements()){
+                exploreAndPortrayISO(sub, feature, renderer, context, placement,
+                        haloWidth, haloPaint, fontPaint, j2dFont, label);
+            }
+        }
+
+    }
+
+    private static void portrayJTS(ProjectedGeometry projectedGeometry, RenderingContext2D context, ProjectedFeature projectedFeature,
+            CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
+            String label) throws PortrayalException{
+
+        final Feature feature = projectedFeature.getFeature();
+        final LabelRenderer renderer = context.getLabelRenderer(true);
 
 
-                if(placement instanceof CachedPointPlacement){
-                    final CachedPointPlacement pp = (CachedPointPlacement) placement;
+        final Geometry geom;
+        try {
+            geom = projectedGeometry.getDisplayGeometry();
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
+        }
 
-                    final Coordinate[] coords = geom.getCentroid().getCoordinates();
-                    final Coordinate coord = coords[0];
-                    DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+        if(geom instanceof Point || geom instanceof MultiPoint){
 
-                    final int x = (int) (pt2d.getOrdinate(0) );
-                    final int y = (int) (pt2d.getOrdinate(1) );
+            final Coordinate[] coords = geom.getCoordinates();
+            final Coordinate coord = coords[0];
+            DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
 
-                    float anchorX = pp.getAnchorX(feature);
-                    float anchorY = pp.getAnchorY(feature);
-                    float dispX = pp.getDisplacementX(feature);
-                    float dispY = pp.getDisplacementY(feature);
-                    float rotation = pp.getRotation(feature);
+            final int x = (int) (pt2d.getOrdinate(0) );
+            final int y = (int) (pt2d.getOrdinate(1) );
 
-                    final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
-                        label, j2dFont, fontPaint,
-                        haloWidth, haloPaint,
-                        x, y,
-                        anchorX, anchorY,
-                        dispX, dispY,
-                        rotation, context.getDisplayCRS());
-                    renderer.append(descriptor);
+            final float anchorX;
+            final float anchorY;
+            final float dispX;
+            final float dispY;
+            final float rotation;
+            if(placement instanceof CachedPointPlacement){
+                final CachedPointPlacement pp = (CachedPointPlacement) placement;
+                anchorX = pp.getAnchorX(feature);
+                anchorY = pp.getAnchorY(feature);
+                dispX = pp.getDisplacementX(feature);
+                dispY = pp.getDisplacementY(feature);
+                rotation = pp.getRotation(feature);
+            }else if(placement instanceof CachedLinePlacement){
+                //Using a line placement on points, strange but can happen
+                //we replace by the default point placement parameters.
+                anchorX = 0.5f;
+                anchorY = 0.5f;
+                dispX = 0f;
+                dispY = 0f;
+                rotation = 0f;
+            }else{
+                throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
+            }
 
-                }else if(placement instanceof CachedLinePlacement){
-                    //Using a line placement on points, strange but can happen
-                    //we replace by the default point placement parameters.
-                    final CachedLinePlacement lp = (CachedLinePlacement) placement;
+            final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
+                label, j2dFont, fontPaint,
+                haloWidth, haloPaint,
+                x, y,
+                anchorX, anchorY,
+                dispX, dispY,
+                rotation, context.getDisplayCRS());
+            renderer.append(descriptor);
 
-                    //we need the reprojected shape since the text symbol will need
-                    //the path
-                    Shape j2dShape = GO2Utilities.toJava2D(geom);
+        }else if( geom instanceof LineString || geom instanceof MultiLineString
+                || geom instanceof Polygon || geom instanceof MultiPolygon ){
 
-                    final LabelDescriptor descriptor = new DefaultLinearLabelDescriptor(
-                            label,
-                            j2dFont,
-                            fontPaint,
-                            haloWidth,
-                            haloPaint,
-                            lp.getGap(feature),
-                            lp.getInitialGap(feature),
-                            lp.getOffset(feature),
-                            lp.isRepeated(),
-                            lp.isAligned(),
-                            lp.isGeneralizeLine(),
-                            j2dShape);
-                    renderer.append(descriptor);
-                }else{
-                    throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
-                }
 
+            if(placement instanceof CachedPointPlacement){
+                final CachedPointPlacement pp = (CachedPointPlacement) placement;
+
+                final Coordinate[] coords = geom.getCentroid().getCoordinates();
+                final Coordinate coord = coords[0];
+                DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+
+                final int x = (int) (pt2d.getOrdinate(0) );
+                final int y = (int) (pt2d.getOrdinate(1) );
+
+                float anchorX = pp.getAnchorX(feature);
+                float anchorY = pp.getAnchorY(feature);
+                float dispX = pp.getDisplacementX(feature);
+                float dispY = pp.getDisplacementY(feature);
+                float rotation = pp.getRotation(feature);
+
+                final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
+                    label, j2dFont, fontPaint,
+                    haloWidth, haloPaint,
+                    x, y,
+                    anchorX, anchorY,
+                    dispX, dispY,
+                    rotation, context.getDisplayCRS());
+                renderer.append(descriptor);
+
+            }else if(placement instanceof CachedLinePlacement){
+                //Using a line placement on points, strange but can happen
+                //we replace by the default point placement parameters.
+                final CachedLinePlacement lp = (CachedLinePlacement) placement;
+
+                //we need the reprojected shape since the text symbol will need
+                //the path
+                Shape j2dShape = GO2Utilities.toJava2D(geom);
+
+                final LabelDescriptor descriptor = new DefaultLinearLabelDescriptor(
+                        label,
+                        j2dFont,
+                        fontPaint,
+                        haloWidth,
+                        haloPaint,
+                        lp.getGap(feature),
+                        lp.getInitialGap(feature),
+                        lp.getOffset(feature),
+                        lp.isRepeated(),
+                        lp.isAligned(),
+                        lp.isGeneralizeLine(),
+                        j2dShape);
+                renderer.append(descriptor);
+            }else{
+                throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
             }
 
         }
@@ -251,7 +405,7 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
     }
 
     @Override
-    public void portray(final GraphicCoverageJ2D graphic, CachedTextSymbolizer symbol,
+    public void portray(final ProjectedCoverage graphic, CachedTextSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
         //nothing to portray
     }
@@ -264,16 +418,9 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
     }
 
     @Override
-    public boolean hit(GraphicCoverageJ2D graphic, CachedTextSymbolizer symbol, 
+    public boolean hit(ProjectedCoverage graphic, CachedTextSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    @Override
-    public Rectangle2D estimate(ProjectedFeature feature, CachedTextSymbolizer symbol,
-            RenderingContext2D context, Rectangle2D rect) {
-        //text symbolizer are not hittable
-        return XRectangle2D.INFINITY;
     }
 
     @Override

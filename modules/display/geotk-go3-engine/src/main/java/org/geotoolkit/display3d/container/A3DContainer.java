@@ -18,6 +18,7 @@
 package org.geotoolkit.display3d.container;
 
 import com.ardor3d.annotation.MainThread;
+import com.ardor3d.extension.model.collada.ColladaImporter;
 import com.ardor3d.framework.Scene;
 import com.ardor3d.image.Image;
 import com.ardor3d.image.Texture;
@@ -25,6 +26,7 @@ import com.ardor3d.image.util.AWTImageLoader;
 import com.ardor3d.intersection.PickResults;
 import com.ardor3d.light.DirectionalLight;
 import com.ardor3d.math.ColorRGBA;
+import com.ardor3d.math.Matrix3;
 import com.ardor3d.math.Ray3;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.math.type.ReadOnlyVector3;
@@ -35,14 +37,18 @@ import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
+import com.ardor3d.scenegraph.ComplexSpatialController;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.extension.Skybox;
 import com.ardor3d.scenegraph.hint.DataMode;
+import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.TextureManager;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,13 +92,13 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         // Lights --------------------------------------------------------------
         final DirectionalLight dLight = new DirectionalLight();
         dLight.setEnabled(true);
-        dLight.setAttenuate(false);
-        dLight.setDiffuse(new ColorRGBA(1, 1, 1, 0.5f));
+        dLight.setAttenuate(true);
+        dLight.setDiffuse(new ColorRGBA(1f, 1f, 1f, 0.5f));
         dLight.setDirection(new Vector3(-1, -1, -1));
         final DirectionalLight dLight2 = new DirectionalLight();
         dLight2.setEnabled(true);
-        dLight2.setAttenuate(false);
-        dLight2.setDiffuse(new ColorRGBA(1, 1, 1, 0.5f));
+        dLight2.setAttenuate(true);
+        dLight2.setDiffuse(new ColorRGBA(1f, 1f, 1f, 0.5f));
         dLight2.setDirection(new Vector3(1, 1, 1));
 
         final LightState lightState = new LightState();
@@ -109,16 +115,69 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         root.getSceneHints().setRenderBucketType(RenderBucketType.Opaque);
 
         // ---------------------------------------------------------------------
-        final CullState cullFrontFace = new CullState();
-        cullFrontFace.setEnabled(true);
-        cullFrontFace.setCullFace(CullState.Face.Back);
-        root.setRenderState(cullFrontFace);
+//        final CullState cullFrontFace = new CullState();
+//        cullFrontFace.setEnabled(true);
+//        cullFrontFace.setCullFace(CullState.Face.None);
+//        root.setRenderState(cullFrontFace);
 //        root.setRenderState(buildFog());
 
         // Skybox --------------------------------------------------------------
         root.attachChild(skybox);
         root.attachChild(scene);
+
+//        try {
+//            scene.attachChild(createDynamicNode());
+//        } catch (MalformedURLException ex) {
+//            ex.printStackTrace();
+//        }
+
     }
+
+
+
+    public Node createDynamicNode() throws MalformedURLException{
+        final Node group = new Node("planes");
+        group.setTranslation(0, 200, 0);
+
+        final Node plane1 = ColladaImporter.readColladaScene(A3DContainer.class.getResource("/models/mirage.dae"));
+        plane1.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
+        plane1.setScale(0.2,0.2,0.2);
+
+        group.attachChild(plane1);
+
+        group.addController(new ComplexSpatialController<Node>(){
+
+            double rayon = 3000;
+            double step = Math.PI;
+            double angle = 0;
+
+            @Override
+            public void update(double time, Node caller) {
+                angle += step*time/10f;
+                if(angle >= Math.PI*2){
+                    angle -= Math.PI*2;
+                }
+//                reactor.forceRespawn();
+                Matrix3 rt = new Matrix3().fromAngleNormalAxis(Math.PI-angle, new Vector3(0, 1, 0));
+                caller.setRotation(rt);
+                caller.setTranslation(Math.cos(angle)*rayon, 500, Math.sin(angle)*rayon);
+//                caller.updateWorldTransform(true);
+            }
+        });
+
+//        group.getSceneHints().setLightCombineMode(LightCombineMode.Off);
+
+        final CullState cullFrontFace = new CullState();
+        cullFrontFace.setEnabled(true);
+        cullFrontFace.setCullFace(CullState.Face.Back);
+        group.setRenderState(cullFrontFace);
+
+        return group;
+    }
+
+
+
+
 
     private double translateX = 0;
     private double translateY = 0;

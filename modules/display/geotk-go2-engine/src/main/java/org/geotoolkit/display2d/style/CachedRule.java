@@ -34,13 +34,18 @@ import org.opengis.style.Symbolizer;
  */
 public class CachedRule extends Cache<Rule>{
 
-    private final List<CachedSymbolizer> symbols = new ArrayList<CachedSymbolizer>();
+    private final CachedSymbolizer[] symbols;
 
     public CachedRule(Rule source){
         super(source);
+
+        List<CachedSymbolizer> cacheds = new ArrayList<CachedSymbolizer>();
+
         for(Symbolizer symbol : source.symbolizers()){
-            symbols.add(GO2Utilities.getCached(symbol));
+            cacheds.add(GO2Utilities.getCached(symbol));
         }
+
+        symbols = cacheds.toArray(new CachedSymbolizer[cacheds.size()]);
     }
 
     /**
@@ -53,7 +58,7 @@ public class CachedRule extends Cache<Rule>{
     /**
      * @return the live list of all cached Symbolizers.
      */
-    public List<CachedSymbolizer> symbolizers(){
+    public CachedSymbolizer[] symbolizers(){
         return symbols;
     }
 
@@ -70,9 +75,8 @@ public class CachedRule extends Cache<Rule>{
             filter.accept(visitor, requieredAttributs);
         }
         
-        for(int i=0,n=symbols.size();i<n;i++){
-            symbols.get(i).evaluate();
-            requieredAttributs.addAll(symbols.get(i).getRequieredAttributsName());
+        for(CachedSymbolizer cached : symbols){
+            requieredAttributs.addAll(cached.getRequieredAttributsName());
         }
 
         isNotEvaluated = false;
@@ -84,8 +88,8 @@ public class CachedRule extends Cache<Rule>{
     @Override
     public boolean isVisible(Feature feature) {
 
-        for(int i=0,n=symbols.size();i<n;i++){
-            if(symbols.get(i).isVisible(feature)) return true;
+        for(CachedSymbolizer cached : symbols){
+            if(cached.isVisible(feature)) return true;
         }
 
         return false;

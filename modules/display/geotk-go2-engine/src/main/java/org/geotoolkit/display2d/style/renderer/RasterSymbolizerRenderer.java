@@ -17,10 +17,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -31,7 +27,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
@@ -58,23 +53,19 @@ import javax.media.jai.RenderedOp;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
@@ -86,7 +77,6 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotools.resources.coverage.CoverageUtilities;
 import org.geotools.coverage.io.CoverageReadParam;
 
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.DirectPosition;
@@ -132,7 +122,7 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
     }
 
     @Override
-    public void portray(final GraphicCoverageJ2D graphic, CachedRasterSymbolizer symbol,
+    public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
 
 
@@ -141,7 +131,7 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
 
         double[] resolution = context.getResolution();
 
-        final CoordinateReferenceSystem gridCRS = graphic.getUserObject().getBounds().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem gridCRS = projectedCoverage.getCoverageLayer().getBounds().getCoordinateReferenceSystem();
 
         Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
         //bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
@@ -173,8 +163,8 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         GridCoverage2D dataCoverage;
         GridCoverage2D elevationCoverage;
         try {
-            dataCoverage = graphic.getGridCoverage(param);
-            elevationCoverage = graphic.getElevationCoverage(param);
+            dataCoverage = projectedCoverage.getCoverage(param);
+            elevationCoverage = projectedCoverage.getElevationCoverage(param);
         } catch (FactoryException ex) {
             throw new PortrayalException(ex);
         } catch (IOException ex) {
@@ -249,8 +239,9 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         //draw the border if there is one---------------------------------------
         CachedSymbolizer outline = symbol.getOutLine();
         if(outline != null){
-            final ProjectedFeature outlineFeature = createFeature(context.getCanvas(), dataCoverage.getEnvelope2D());
-            GO2Utilities.portray(outlineFeature, outline, context);
+            GO2Utilities.portray(projectedCoverage, outline, context);
+//            final ProjectedFeature outlineFeature = createFeature(context.getCanvas(), dataCoverage.getEnvelope2D());
+//            GO2Utilities.portray(outlineFeature, outline, context);
         }
 
         context.switchToDisplayCRS();
@@ -264,43 +255,19 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
     }
 
     @Override
-    public boolean hit(final GraphicCoverageJ2D graphic, final CachedRasterSymbolizer symbol,
+    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedRasterSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
-        final Envelope env = graphic.getEnvelope();
-
-        final DirectPosition2D pos1 = new DirectPosition2D(env.getMinimum(0), env.getMinimum(1));
-        final DirectPosition2D pos2 = new DirectPosition2D(env.getMinimum(0), env.getMaximum(1));
-        final DirectPosition2D pos3 = new DirectPosition2D(env.getMaximum(0), env.getMaximum(1));
-        final DirectPosition2D pos4 = new DirectPosition2D(env.getMaximum(0), env.getMinimum(1));
-
-        final MathTransform dataToDisp;
+        final Shape shape;
         try {
-            dataToDisp = context.getMathTransform(env.getCoordinateReferenceSystem(), context.getDisplayCRS());
-        } catch (FactoryException ex) {
-            ex.printStackTrace();
+            shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
+        } catch (TransformException ex) {
+            Logger.getLogger(RasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-
-        try{
-            dataToDisp.transform(pos1, pos1);
-            dataToDisp.transform(pos2, pos2);
-            dataToDisp.transform(pos3, pos3);
-            dataToDisp.transform(pos4, pos4);
-        }catch(TransformException ex){
-            ex.printStackTrace();
-            return false;
-        }
-
-        final GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-        shape.moveTo(pos1.x,pos1.y);
-        shape.lineTo(pos2.x,pos2.y);
-        shape.lineTo(pos3.x,pos3.y);
-        shape.lineTo(pos4.x,pos4.y);
-        shape.closePath();
 
         final Area area = new Area(mask);
 
@@ -316,16 +283,6 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
 
         return false;
     }
-
-    @Override
-    public Rectangle2D estimate(ProjectedFeature feature, CachedRasterSymbolizer symbol, RenderingContext2D context, Rectangle2D rect) {
-
-        return XRectangle2D.INFINITY;
-
-//        //nothing to hit on a feature with raster symbolizer
-//        return false;
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
@@ -781,21 +738,6 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
 
         g.setPaint(paint);
         g.fill(rectangle);
-    }
-
-    private ProjectedFeature createFeature(ReferencedCanvas2D canvas,final Envelope2D env){
-        final GeometryFactory fact = new GeometryFactory();
-        final Coordinate[] coordinates = new Coordinate[]{
-            new Coordinate(env.getMinX(), env.getMinY()),
-            new Coordinate(env.getMinX(), env.getMaxY()),
-            new Coordinate(env.getMaxX(), env.getMaxY()),
-            new Coordinate(env.getMaxX(), env.getMinY()),
-            new Coordinate(env.getMinX(), env.getMinY()),
-        };
-        final LinearRing ring = fact.createLinearRing(coordinates);
-        final Geometry geom = fact.createPolygon(ring, new LinearRing[0]);
-        final SimpleFeature feature = new AttributlessFeature(geom, env.getCoordinateReferenceSystem());
-        return new DefaultGraphicFeatureJ2D(canvas, null, feature);
     }
 
 }

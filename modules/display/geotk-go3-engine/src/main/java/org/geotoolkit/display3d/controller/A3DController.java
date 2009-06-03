@@ -132,7 +132,7 @@ public class A3DController implements Updater,CanvasController3D {
                     45.0,
                     (float) camera.getWidth()/ (float) camera.getHeight(),
                     1,
-                    10000);
+                    100000);
                 camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
             }
 

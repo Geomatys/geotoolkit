@@ -21,6 +21,8 @@ import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.IndexMode;
+import com.ardor3d.renderer.state.ClipState;
+import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
@@ -78,7 +80,7 @@ public class ContextNode extends A3DGraphic{
 
     private Node buildPlan(final Envelope env){
         final Node plan = new Node("plan");
-//        plan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
+        plan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
         final float over = -10f;
         final float width = 1f;
@@ -87,7 +89,7 @@ public class ContextNode extends A3DGraphic{
         final float miny = (float) env.getMinimum(1);
         final float maxy = (float) env.getMaximum(1);
 
-        final Box back = new Box("ceiling", new Vector3(minx, -env.getSpan(0)/20 -11, miny), new Vector3(maxx, -11, maxy));
+        final Box back = new Box("ceiling", new Vector3(minx, -env.getSpan(0)/20 -13, miny), new Vector3(maxx, -13, maxy));
         back.setDefaultColor(new ColorRGBA(1, 1, 1, 1f));
         back.setModelBound(new BoundingBox());
         back.updateModelBound();
@@ -111,8 +113,18 @@ public class ContextNode extends A3DGraphic{
         line.setModelBound(new BoundingBox());
         line.updateModelBound();
 
-        plan.attachChild(back);
-//        plan.attachChild(line);
+        final CullState cullFrontFace = new CullState();
+        cullFrontFace.setEnabled(true);
+        cullFrontFace.setCullFace(CullState.Face.Back);
+        line.setRenderState(cullFrontFace);
+
+//        final ClipState state = new ClipState();
+//        state.setEnabled(false);
+//        line.setRenderState(state);
+
+
+//        plan.attachChild(back);
+        plan.attachChild(line);
         return plan;
     }
 

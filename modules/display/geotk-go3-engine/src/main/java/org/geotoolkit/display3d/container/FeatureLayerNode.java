@@ -59,6 +59,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.collection.Cache;
 import org.opengis.feature.simple.SimpleFeature;
@@ -73,7 +74,7 @@ import org.opengis.filter.FilterFactory2;
 public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGraphic{
 
     private static final FilterFactory2 FF = new DefaultFilterFactory2();
-    private static final int searchExtent = 5000;
+    private static final int searchExtent = 2000;
 
     private final FeatureMapLayer layer;
 
@@ -88,7 +89,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         if(loadAll){
             loadArea(null);
         }else{
-            canvas.getController().addLocationSensitiveGraphic(this, 1);
+            canvas.getController().addLocationSensitiveGraphic(this, 10);
         }
 
         //speed up a bit the performances
@@ -193,12 +194,32 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 //            Filter f = FF.dwithin(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),
 //                    FF.literal(new Coordinate(cameraPosition.getX(), cameraPosition.getZ())), searchExtent, "");
 
+        loadArea(f);
+
     }
 
     private void loadArea(Filter filter){
         final List<String> exactList = new ArrayList<String>();
 
         GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
+
+        //HACK TO ENABLE 3D
+        Class geoClass = layer.getFeatureSource().getSchema().getGeometryDescriptor().getType().getBinding();
+
+        if(geoClass.equals(Point.class) || geoClass.equals(MultiPoint.class)){
+            System.out.println("3d point");
+            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
+        }else if(geoClass.equals(LineString.class) || geoClass.equals(MultiLineString.class)){
+            System.out.println("3d line");
+            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("ALTITUDE"), FF.literal(0)));
+        }else if(geoClass.equals(Polygon.class) || geoClass.equals(MultiPolygon.class)){
+            System.out.println("3d polygon");
+            layer.setElevationModel(MapBuilder.createElevationModel(null, FF.property("Z_MIN"), FF.literal(0)));
+        }else{
+            System.out.println("3d else ?");
+        }
+
+
 
         FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
         try {

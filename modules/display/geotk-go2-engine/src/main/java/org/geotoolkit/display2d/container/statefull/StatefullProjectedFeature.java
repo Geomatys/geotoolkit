@@ -17,22 +17,18 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
+import com.vividsolutions.jts.geom.Geometry;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
-
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.Geometry;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * GraphicJ2D for feature objects.
@@ -41,19 +37,11 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
+    private static final String DEFAULT_GEOM = "";
+
     private final StatefullContextParams params;
+    private final Map<String,StatefullProjectedGeometry> geometries = new HashMap<String,StatefullProjectedGeometry>();
     private SimpleFeature feature;
-    private com.vividsolutions.jts.geom.Geometry geom = null;
-
-    private com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS = null;
-    private Geometry    objectiveGeometryISO = null;
-    private Shape       objectiveShape = null;
-    private Rectangle2D objectiveBounds = null;
-
-    private com.vividsolutions.jts.geom.Geometry displayGeometryJTS = null;
-    private Geometry    displayGeometryISO = null;
-    private Shape       displayShape = null;
-    private Rectangle   displayBounds = null;
 
 
     public StatefullProjectedFeature(StatefullContextParams params){
@@ -73,99 +61,43 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     public synchronized void clearDataCache(){
-        clearObjectiveCache();
-        this.geom = null;
+        synchronized(geometries){
+            geometries.clear();
+        }
     }
 
     public synchronized void clearObjectiveCache(){
-        clearDisplayCache();
-        objectiveGeometryISO = null;
-        objectiveGeometryJTS = null;
-        objectiveShape = null;
-        objectiveBounds = null;
+        synchronized(geometries){
+            for(StatefullProjectedGeometry geom : geometries.values()){
+                geom.clearObjectiveCache();
+            }
+        }
     }
     
     public synchronized void clearDisplayCache(){
-        displayGeometryISO = null;
-        displayGeometryJTS = null;
-        displayShape = null;
-        displayBounds = null;
-    }
-
-    private com.vividsolutions.jts.geom.Geometry getGeometry(){
-        if(geom == null){
-            geom = GO2Utilities.getGeometry(feature, "");
-            if(params.decimate && params.decimation != 0){
-                geom = DouglasPeuckerSimplifier.simplify(geom, params.decimation);
+        synchronized(geometries){
+            for(StatefullProjectedGeometry geom : geometries.values()){
+                geom.clearDisplayCache();
             }
         }
-        return geom;
     }
 
     @Override
-    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException{
-        if(objectiveGeometryJTS == null){
-            objectiveGeometryJTS = params.dataToObjectiveTransformer.transform(getGeometry());
-        }
-        return objectiveGeometryJTS;
-    }
+    public ProjectedGeometry getGeometry(String name) {
+        synchronized(geometries){
+            if(name == null) name = DEFAULT_GEOM;
 
-    @Override
-    public com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException{
-        if(displayGeometryJTS == null){
-            displayGeometryJTS = params.dataToDisplayTransformer.transform(getGeometry());
+            ProjectedGeometry proj = geometries.get(name);
+            if(proj == null){
+                Geometry geom = GO2Utilities.getGeometry(feature, name);
+                if(geom != null){
+                    StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geom);
+                    geometries.put(name, projectedGeom);
+                    return projectedGeom;
+                }
+            }
+            return proj;
         }
-        return displayGeometryJTS;
-    }
-
-    @Override
-    public Shape getObjectiveShape() throws TransformException{
-        if(objectiveShape == null){
-//            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryISO());
-            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
-        }
-        return objectiveShape;
-    }
-
-    @Override
-    public Shape getDisplayShape() throws TransformException{
-        if(displayShape == null){
-//            displayShape = GO2Utilities.toJava2D(getDisplayGeometryISO());
-            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
-        }
-        return displayShape;
-    }
-
-    @Override
-    public Rectangle2D getObjectiveBounds() throws TransformException{
-        if(objectiveBounds == null){
-            objectiveBounds = getObjectiveShape().getBounds2D();
-        }
-        return objectiveBounds;
-    }
-
-    @Override
-    public Rectangle getDisplayBounds() throws TransformException{
-        if(displayBounds == null){
-            displayBounds = getDisplayShape().getBounds();
-        }
-        return displayBounds;
-    }
-
-    @Override
-    public Geometry getObjectiveGeometryISO() throws TransformException {
-        if(objectiveGeometryISO == null){
-            objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometry(), params.objectiveCRS);
-        }
-        return objectiveGeometryISO;
-    }
-
-    @Override
-    public Geometry getDisplayGeometryISO() throws TransformException {
-        if(displayGeometryISO == null){
-            displayGeometryISO = JTSUtils.toISO(getDisplayGeometry(), params.displayCRS);
-        }
-        return displayGeometryISO;
     }
 
     @Override
@@ -174,7 +106,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     @Override
-    public FeatureMapLayer getSource() {
+    public FeatureMapLayer getFeatureLayer() {
         return params.layer;
     }
 
@@ -189,7 +121,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     @Override
-    public void setVisible(boolean arg0) {
+    public void setVisible(boolean visible) {
     }
 
     @Override

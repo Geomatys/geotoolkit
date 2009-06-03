@@ -40,6 +40,8 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * An attributless feature used by the raster symbolizer when needing to provide 
+ * a feature with a geometry for it's border painting.
  *
  * @author Johann Sorel (Geomatys)
  */

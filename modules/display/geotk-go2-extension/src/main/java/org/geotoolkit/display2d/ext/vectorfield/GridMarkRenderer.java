@@ -32,6 +32,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -65,7 +66,7 @@ public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolize
     }
 
     @Override
-    public void portray(final GraphicCoverageJ2D graphic, CachedVectorFieldSymbolizer symbol,
+    public void portray(final ProjectedCoverage graphic, CachedVectorFieldSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException {
 
         final GeneralEnvelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
@@ -75,7 +76,7 @@ public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolize
 
         GridCoverage2D coverage;
         try {
-            coverage = graphic.getGridCoverage(param);
+            coverage = graphic.getCoverage(param);
         } catch (FactoryException ex) {
             throw new PortrayalException(ex);
         } catch (IOException ex) {
@@ -100,15 +101,9 @@ public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolize
     }
 
     @Override
-    public boolean hit(GraphicCoverageJ2D graphic, CachedVectorFieldSymbolizer symbol,
+    public boolean hit(ProjectedCoverage graphic, CachedVectorFieldSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    @Override
-    public Rectangle2D estimate(ProjectedFeature graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D context, Rectangle2D rect) {
-        return rect;
     }
 
     @Override

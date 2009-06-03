@@ -76,7 +76,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
     private final Map<String,StatefullProjectedFeature> cache = new HashMap<String, StatefullProjectedFeature>();
 
-    //compare values to update cahces if necessary
+    //compare values to update caches if necessary
     private final StatefullContextParams params;
     private final CoordinateReferenceSystem dataCRS;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
@@ -123,12 +123,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                 ex.printStackTrace();
             }
 
-//            if(!objectiveCleared){
+            if(!objectiveCleared){
                 //no need to clear the display cache if the objective clear has already been called
                 for(StatefullProjectedFeature gra : cache.values()){
                     gra.clearDisplayCache();
                 }
-//            }
+            }
 
         }
     }
@@ -248,8 +248,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                     final Filter rulefilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (rulefilter == null || rulefilter.evaluate(feature)) {
-                        final List<CachedSymbolizer> symbols = rule.symbolizers();
-                        for (final CachedSymbolizer symbol : symbols) {
+                        for (final CachedSymbolizer symbol : rule.symbolizers()) {
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
                                 renderer.portray(graphic, symbol, context);
@@ -297,8 +296,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         try{
             for (final CachedRule rule : rules) {
                 final Filter rulefilter = rule.getFilter();
-                final List<CachedSymbolizer> symbols = rule.symbolizers();
-                for (final CachedSymbolizer symbol : symbols) {
+                for (final CachedSymbolizer symbol : rule.symbolizers()) {
                     for(StatefullProjectedFeature feature : cycle){
                         //test if the rule is valid for this feature
                         if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
@@ -418,8 +416,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                        final List<CachedSymbolizer> symbols = rule.symbolizers();
-                        for (final CachedSymbolizer symbol : symbols) {
+                        for (final CachedSymbolizer symbol : rule.symbolizers()) {
                             if(GO2Utilities.hit(graphic, symbol, context, mask, visitFilter)){
                                 graphics.add( graphic );
                                 break;

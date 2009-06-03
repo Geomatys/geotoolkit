@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
@@ -27,16 +26,18 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
+
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 
@@ -112,7 +113,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return getFeature();
     }
     
-    @Override
     public com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException{
         //TODO decimation
         if(objectiveGeometry == null){
@@ -131,7 +131,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return objectiveGeometry;
     }
 
-    @Override
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException{
         //TODO decimation
         if(displayGeometry == null){
@@ -150,7 +149,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return displayGeometry;
     }
 
-    @Override
     public Shape getObjectiveShape() throws TransformException{
         if(!isObjectiveCalculated){
             objectiveShape.setGeometry( getObjectiveGeometry() );
@@ -159,7 +157,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return objectiveShape;
     }
 
-    @Override
     public Shape getDisplayShape() throws TransformException{
         if(!isDisplayCalculated){
             displayShape.setGeometry( getDisplayGeometry() );
@@ -170,7 +167,7 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
     }
 
     @Override
-    public FeatureMapLayer getSource() {
+    public FeatureMapLayer getFeatureLayer() {
         return layer;
     }
 
@@ -184,7 +181,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return graphics;
     }
 
-    @Override
     public Shape getObjectiveBounds() throws TransformException {
         return getObjectiveShape().getBounds2D();
     }
@@ -194,7 +190,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return feature.getIdentifier();
     }
 
-    @Override
     public org.opengis.geometry.Geometry getObjectiveGeometryISO() throws TransformException {
         if(objectiveGeometryISO == null){
             objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometry(), getCanvas().getObjectiveCRS());
@@ -202,7 +197,6 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         return objectiveGeometryISO;
     }
 
-    @Override
     public org.opengis.geometry.Geometry getDisplayGeometryISO() throws TransformException {
         if(displayGeometryISO == null){
             displayGeometryISO = JTSUtils.toISO(getDisplayGeometry(), getCanvas().getDisplayCRS());
@@ -239,6 +233,11 @@ public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFea
         }else{
             return feature;
         }
+    }
+
+    @Override
+    public ProjectedGeometry getGeometry(String name) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

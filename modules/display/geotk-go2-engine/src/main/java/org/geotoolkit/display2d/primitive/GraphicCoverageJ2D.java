@@ -17,12 +17,9 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.geotools.coverage.io.CoverageReadParam;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -31,9 +28,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.map.CoverageMapLayer;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * GraphicJ2D for feature objects.
@@ -55,12 +50,6 @@ public abstract class GraphicCoverageJ2D extends GraphicJ2D {
         //todo test if it hits the given area
         return graphics;
     }
-
-    public abstract GridCoverage2D getGridCoverage(CoverageReadParam param)
-            throws FactoryException,IOException,TransformException;
-
-    public abstract GridCoverage2D getElevationCoverage(CoverageReadParam param)
-            throws FactoryException,IOException,TransformException;
 
     /**
      * {@inheritDoc }

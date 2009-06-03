@@ -280,8 +280,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                        final List<CachedSymbolizer> symbols = rule.symbolizers();
-                        for (final CachedSymbolizer symbol : symbols) {
+                        for (final CachedSymbolizer symbol : rule.symbolizers()) {
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
                                 renderer.portray(projectedFeature, symbol, renderingContext);
@@ -406,8 +405,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                        final List<CachedSymbolizer> symbols = rule.symbolizers();
-                        for (final CachedSymbolizer symbol : symbols) {
+                        for (final CachedSymbolizer symbol : rule.symbolizers()) {
                             if(GO2Utilities.hit(graphic, symbol, renderingContext, mask, visitFilter)){
                                 if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
                                 break;

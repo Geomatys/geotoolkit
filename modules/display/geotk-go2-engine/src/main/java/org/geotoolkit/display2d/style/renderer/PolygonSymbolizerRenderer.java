@@ -29,16 +29,16 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Hints;
-
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Geometry;
@@ -73,6 +73,13 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
+
+            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+
+            //symbolizer doesnt match the featuretype, no geometry found with this name.
+            if(projectedGeometry == null) return;
+
+
             final Graphics2D g2 = context.getGraphics();
             final RenderingHints hints = g2.getRenderingHints();
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
@@ -83,12 +90,12 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
             try {
                 if(NonSI.PIXEL.equals(symbolUnit)){
                     context.switchToDisplayCRS();
-                    shape = (offset != 0) ? bufferDisplayGeometry(context, projectedFeature, offset)
-                                          : projectedFeature.getDisplayShape();
+                    shape = (offset != 0) ? bufferDisplayGeometry(context, projectedGeometry, offset)
+                                          : projectedGeometry.getDisplayShape();
                 }else{
                     context.switchToObjectiveCRS();
-                    shape = (offset != 0) ? bufferObjectiveGeometry(context, projectedFeature, symbolUnit, offset)
-                                          : projectedFeature.getObjectiveShape();
+                    shape = (offset != 0) ? bufferObjectiveGeometry(context, projectedGeometry, symbolUnit, offset)
+                                          : projectedGeometry.getObjectiveShape();
                 }
             }catch (TransformException ex){
                 throw new PortrayalException(ex);
@@ -127,24 +134,28 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
     }
 
     @Override
-    public void portray(final GraphicCoverageJ2D graphic, CachedPolygonSymbolizer symbol,
+    public void portray(final ProjectedCoverage graphic, CachedPolygonSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
         //nothing to portray
     }
 
     @Override
-    public boolean hit(final ProjectedFeature graphic, final CachedPolygonSymbolizer symbol,
+    public boolean hit(final ProjectedFeature projectedFeature, final CachedPolygonSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
 
-        final SimpleFeature feature = graphic.getFeature();
+        final SimpleFeature feature = projectedFeature.getFeature();
 
         //test if the symbol is visible on this feature
         if(!symbol.isVisible(feature)) return false;
 
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+
+        //symbolizer doesnt match the featuretype, no geometry found with this name.
+        if(projectedGeometry == null) return false;
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
         final float coeff = context.getUnitCoefficient(symbolUnit);
@@ -158,8 +169,8 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
             if(NonSI.PIXEL.equals(symbolUnit)){
                 CRSShape = mask;
 
-                j2dShape = (offset != 0) ? bufferDisplayGeometry(context, graphic, offset)
-                                         : graphic.getDisplayShape();
+                j2dShape = (offset != 0) ? bufferDisplayGeometry(context, projectedGeometry, offset)
+                                         : projectedGeometry.getDisplayShape();
             }else{
                 try{
                     CRSShape = new TransformedShape();
@@ -170,8 +181,8 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
                     return false;
                 }
 
-                j2dShape = (offset != 0) ? bufferObjectiveGeometry(context, graphic, symbolUnit, offset)
-                                         : graphic.getObjectiveShape();
+                j2dShape = (offset != 0) ? bufferObjectiveGeometry(context, projectedGeometry, symbolUnit, offset)
+                                         : projectedGeometry.getObjectiveShape();
             }
         }catch (TransformException ex) {
             ex.printStackTrace();
@@ -218,69 +229,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
     }
 
     @Override
-    public Rectangle2D estimate(ProjectedFeature feature, CachedPolygonSymbolizer symbol,
-            RenderingContext2D context, Rectangle2D rect) {
-
-        return XRectangle2D.INFINITY;
-
-//        //test if the symbol is visible on this feature
-//        if(!(symbol.isVisible(feature))){
-//            if(rect == null) rect = new Rectangle(-2, -2, 0, 0);
-//            return rect;
-//        }
-//
-//
-//        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-//        Geometry geom = getGeometry(feature, symbol.getSource().getGeometryPropertyName());
-//        geom = geom.getEnvelope();
-//
-//        final float coeff = context.getUnitCoefficient(symbolUnit);
-//
-//        //we switch to  more appropriate context CRS for rendering -------------
-//        if(NonSI.PIXEL.equals(symbolUnit)){
-//            transform = dataToDisp;
-//        }else{
-//            //different uom, unknowed, we must change rendering context crs
-//            transform = dataToObj;
-//            previousUnit = symbolUnit;
-//        }
-//        transformer.setMathTransform(transform);
-//        try {
-//            geom = transform(geom);
-//
-//            //recalculate geometry with the given offset,
-//            //for polygon this act like a buffer
-//            final float offset = symbol.getOffset(feature, coeff);
-//            if(offset != 0){
-//                geom = geom.buffer(offset);
-//            }
-//
-//            j2dShape.setGeometry(geom);
-//        } catch (PortrayalException ex) {
-//            LOGGER.log(Level.WARNING, "", ex);
-//            return rect;
-//        }
-//
-//        //we apply the displacement --------------------------------------------
-//        //TODO handle displacement
-////        final float[] disps = symbol.getDisplacement(feature);
-////        final Point2D displacedPoint = new Point2D.Float((float)mask.getX() - disps[0], (float)mask.getY() + disps[1] );
-//
-//
-//        if(rect == null){
-//            rect = j2dShape.getBounds2D();
-//        } else{
-//            rect.add(j2dShape.getBounds2D());
-//        }
-//
-//        final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
-//        rect.add( stroke.createStrokedShape(j2dShape).getBounds2D() );
-//
-//        return rect;
-    }
-
-    @Override
-    public boolean hit(GraphicCoverageJ2D graphic, CachedPolygonSymbolizer symbol, 
+    public boolean hit(ProjectedCoverage graphic, CachedPolygonSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
@@ -309,14 +258,14 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
      * Recalculate objective geometry with the given offset,
      * for polygon this act like a buffer
      */
-    private static Shape bufferObjectiveGeometry(RenderingContext2D context, ProjectedFeature projectedFeature,
+    private static Shape bufferObjectiveGeometry(RenderingContext2D context, ProjectedGeometry projectedFeature,
             Unit symbolUnit, float offset) throws TransformException{
         final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
         final Shape shape;
 
         //TODO use symbol unit to adjust offset
 
-        if(geomType != null && geomType.equals(GO2Hints.GEOMETRY_ISO)){
+        if(GO2Hints.GEOMETRY_ISO.equals(geomType)){
             System.out.println("using ISO geom");
             Geometry geom = projectedFeature.getObjectiveGeometryISO();
             geom = geom.getBuffer(offset);
@@ -334,12 +283,12 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
      * Recalculate display geometry with the given offset,
      * for polygon this act like a buffer
      */
-    private static  Shape bufferDisplayGeometry(RenderingContext2D context, ProjectedFeature projectedFeature,
+    private static  Shape bufferDisplayGeometry(RenderingContext2D context, ProjectedGeometry projectedFeature,
             float offset) throws TransformException{
         final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
         final Shape shape;
 
-        if(geomType != null && geomType.equals(GO2Hints.GEOMETRY_ISO)){
+        if(GO2Hints.GEOMETRY_ISO.equals(geomType)){
             Geometry geom = projectedFeature.getDisplayGeometryISO();
             geom = geom.getBuffer(offset);
             shape = GO2Utilities.toJava2D(geom);

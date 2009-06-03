@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.container.MultiThreadedRendering;
-import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessDynamicLayerJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -161,7 +160,7 @@ public class StatefullContextJ2D extends GraphicJ2D{
             layerGraphics.put(layer, g2d);
             return g2d;
         }else if (layer instanceof CoverageMapLayer){
-            final StatelessCoverageLayerJ2D g2d = new StatelessCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)layer);
+            final StatefullCoverageLayerJ2D g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)layer);
             g2d.setParent(this);
             g2d.setZOrderHint(index);
             layerGraphics.put(layer, g2d);

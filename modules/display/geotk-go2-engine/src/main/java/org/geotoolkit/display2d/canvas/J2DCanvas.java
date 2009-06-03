@@ -43,7 +43,7 @@ import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
-import org.geotoolkit.display2d.style.renderer.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -195,10 +195,6 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
         if(filter == null)       throw new NullPointerException("Filter can not be null");
 
         visitor.startVisit();
-
-
-
-
 
         final AbstractContainer container = getContainer();
 

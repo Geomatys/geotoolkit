@@ -54,6 +54,7 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.gui.swing.go3.control.JNavigationBar;
 import org.geotoolkit.gui.swing.maptree.JContextTree;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.referencing.CRS;
 
 
 /**
@@ -66,9 +67,12 @@ public class Go3Frame extends JFrame{
     private final JNavigationBar guiNavBar = new JNavigationBar();
 
     public Go3Frame() throws Exception {
+
         final MapContext context = ContextBuilder.buildRealCityContext();
+        System.out.println(context.getCoordinateReferenceSystem());
+        System.out.println(">>>>>>>>" + CRS.lookupIdentifier(context.getCoordinateReferenceSystem(), true));
         gui3DPane = new A3DCanvas(context.getCoordinateReferenceSystem(), null);
-        gui3DPane.getContainer2().setContext(context,true);
+        gui3DPane.getContainer2().setContext(context,false);
         guiTree.setContext(context);
         guiNavBar.setFloatable(false);
         guiNavBar.setMap(gui3DPane);
@@ -77,7 +81,7 @@ public class Go3Frame extends JFrame{
         final JPanel pan3D = new JPanel(new BorderLayout());
         pan3D.add(BorderLayout.NORTH,guiNavBar);
         pan3D.add(BorderLayout.CENTER,gui3DPane.getComponent());
-        splitTree.setLeftComponent(guiTree);
+//        splitTree.setLeftComponent(guiTree);
         splitTree.setRightComponent(pan3D);
 
         final JMenuBar bar = new JMenuBar();
@@ -97,7 +101,7 @@ public class Go3Frame extends JFrame{
 //        gui3DPane.getContainer2().getRoot()
 //        final ParticleSystem reactor = createReactor();
 //        reactor.setTranslation(0, 0, 0);
-        gui3DPane.getContainer2().getRoot().updateWorldTransform(true);
+//        gui3DPane.getContainer2().getRoot().updateWorldTransform(true);
 //        gui3DPane.getContainer2().getRoot().attachChild(reactor);
 
         gui3DPane.getContainer2().getScene().attachChild(createDynamicNode());
@@ -117,15 +121,15 @@ public class Go3Frame extends JFrame{
         final Node group = new Node("planes");
         group.setTranslation(0, 200, 0);
 
-        final Node plane1 = ColladaImporter.readColladaScene(new URL("file:///home/eclesia/Bureau/Mirage/models/Mirage.dae"));
+        final Node plane1 = ColladaImporter.readColladaScene(new URL("file:///home/sorel/Bureau/Mirage/models/Mirage.dae"));
         plane1.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
         plane1.setScale(0.2,0.2,0.2);
 
-        final Node plane2 = ColladaImporter.readColladaScene(new URL("file:///home/eclesia/Bureau/Mirage/models/Mirage.dae"));
+        final Node plane2 = ColladaImporter.readColladaScene(new URL("file:///home/sorel/Bureau/Mirage/models/Mirage.dae"));
         plane2.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
         plane2.setScale(0.2,0.2,0.2);
 
-        final Node plane3 = ColladaImporter.readColladaScene(new URL("file:///home/eclesia/Bureau/Mirage/models/Mirage.dae"));
+        final Node plane3 = ColladaImporter.readColladaScene(new URL("file:///home/sorel/Bureau/Mirage/models/Mirage.dae"));
         plane3.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
         plane3.setScale(0.2,0.2,0.2);
 
@@ -187,13 +191,13 @@ public class Go3Frame extends JFrame{
     }
 
     public ParticleSystem createReactor() throws MalformedURLException{
-        ParticleSystem particles = ParticleFactory.buildParticles("particles", 300);
+        ParticleSystem particles = ParticleFactory.buildParticles("particles", 5000);
         particles.setEmissionDirection(new Vector3(0, 0, -1));
         particles.setInitialVelocity(-0.20);
         particles.setStartSize(15);
         particles.setEndSize(8);
         particles.setMinimumLifeTime(3200);
-        particles.setMaximumLifeTime(10000);
+        particles.setMaximumLifeTime(5000);
         particles.setStartColor(new ColorRGBA(0.9f, 0.6f, 0.6f, 1.0f));
         particles.setEndColor(new ColorRGBA(0.2f, 0.2f, 0.2f, 0.3f));
         particles.setMaximumAngle(1*MathUtils.DEG_TO_RAD);
@@ -213,7 +217,7 @@ public class Go3Frame extends JFrame{
 
         final TextureState ts = new TextureState();
         ts.setTexture(TextureManager.load(
-                new URL("file:///home/eclesia/dev/ardor/trunk/ardor3d-examples/src/main/resources/com/ardor3d/example/media/images/flaresmall.jpg"),
+                new URL("file:///home/sorel/dev/ardor/trunk/ardor3d-examples/src/main/resources/com/ardor3d/example/media/images/flaresmall.jpg"),
                 Texture.MinificationFilter.Trilinear, Format.Guess,
                 true));
         ts.getTexture().setWrap(WrapMode.BorderClamp);

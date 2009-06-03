@@ -97,7 +97,7 @@
     <module>geotk-go2-engine</module>
     <module>geotk-go2-extension</module>
     <module>geotk-jasper-report</module>
-    <!--module>geotk-go3-engine</module-->
+    <module>geotk-go3-engine</module>
     <module>geotk-widgets-swing</module>
   </modules>
 

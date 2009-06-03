@@ -38,14 +38,14 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
 import org.opengis.feature.Feature;
@@ -85,6 +85,12 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
+
+            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+
+            //symbolizer doesnt match the featuretype, no geometry found with this name.
+            if(projectedGeometry == null) return;
+
             final Graphics2D g2 = context.getGraphics();
             final RenderingHints hints = g2.getRenderingHints();
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -122,7 +128,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
 
             final Geometry geom;
             try {
-                geom = projectedFeature.getDisplayGeometry();
+                geom = projectedGeometry.getDisplayGeometry();
             } catch (TransformException ex) {
                 throw new PortrayalException(ex);
             }
@@ -157,28 +163,30 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
     }
 
     @Override
-    public void portray(final GraphicCoverageJ2D graphic, CachedPointSymbolizer symbol,
+    public void portray(final ProjectedCoverage graphic, CachedPointSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
         //nothing to portray
     }
 
     @Override
-    public boolean hit(final ProjectedFeature graphic, final CachedPointSymbolizer symbol,
+    public boolean hit(final ProjectedFeature projectedFeature, final CachedPointSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
 
-        final SimpleFeature feature = graphic.getFeature();
+        final SimpleFeature feature = projectedFeature.getFeature();
 
         //test if the symbol is visible on this feature
         if(!(symbol.isVisible(feature))) return false;
 
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
 
-        //we switch to  more appropriate context CRS ---------------------------
-        // a point symbolis always paint in display unit -----------------------
+        //symbolizer doesnt match the featuretype, no geometry found with this name.
+        if(projectedGeometry == null) return false;
+
+        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
         //we adjust coefficient for rendering ----------------------------------
         float coeff = 1;
@@ -208,7 +216,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
 
         final Geometry geom;
         try {
-            geom = graphic.getDisplayGeometry();
+            geom = projectedGeometry.getDisplayGeometry();
         } catch (TransformException ex) {
             ex.printStackTrace();
             return false;
@@ -274,13 +282,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
     }
 
     @Override
-    public Rectangle2D estimate(ProjectedFeature feature, CachedPointSymbolizer symbol,
-            RenderingContext2D context, Rectangle2D rect) {
-        return XRectangle2D.INFINITY;
-    }
-
-    @Override
-    public boolean hit(GraphicCoverageJ2D graphic, CachedPointSymbolizer symbol, 
+    public boolean hit(ProjectedCoverage graphic, CachedPointSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }

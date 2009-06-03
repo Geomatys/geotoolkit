@@ -15,52 +15,56 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.style.renderer;
+package org.geotoolkit.display2d.style.labeling;
 
 import java.awt.Font;
 import java.awt.Paint;
-import java.awt.Shape;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Immutable default linear label descriptor.
+ * Default immutable implementation of Point label descriptor.
  * 
- * @author Johann Sorel (Geomatys)
+ * @author johann Sorel (Geomatys)
  */
-public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
+public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
 
     private final String text;
     private final Font textFont;
     private final Paint textPaint;
     private final float haloWidth;
     private final Paint haloPaint;
-    private final float gap;
-    private final float initial;
-    private final float offset;
-    private final boolean repeated;
-    private final boolean aligned;
-    private final boolean generalize;
-    private final Shape path;
+    private final float X;
+    private final float Y;
+    private final float dispX;
+    private final float dispY;
+    private final float anchorX;
+    private final float anchorY;
+    private final float rotation;
+    private final CoordinateReferenceSystem crs;
     
-    public DefaultLinearLabelDescriptor(String text, Font textFont, Paint textPaint,
+    public DefaultPointLabelDescriptor(String text, Font textFont, Paint textPaint,
             float haloWidth, Paint haloPaint, 
-            float gap, float initial, float offset,
-            boolean repeated, boolean aligned, boolean generalize,
-            Shape path){
+            float X, float Y, 
+            float anchorX, float anchorY, 
+            float dispX, float dispY,
+            float rotation,
+            CoordinateReferenceSystem crs){
         this.text = text;
         this.textFont = textFont;
         this.textPaint = textPaint;
         this.haloWidth = haloWidth;
         this.haloPaint = haloPaint;
-        this.gap = gap;
-        this.initial = initial;
-        this.offset = offset;
-        this.repeated = repeated;
-        this.aligned = aligned;
-        this.generalize = generalize;
-        this.path = path;
-        
+        this.X = X;
+        this.Y = Y;
+        this.dispX = dispX;
+        this.dispY = dispY;
+        this.anchorX = anchorX;
+        this.anchorY = anchorY;
+        this.rotation = rotation;
+        this.crs = crs;
     }
-        
+    
     /**
      * {@inheritDoc }
      */
@@ -100,61 +104,61 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
     public Paint getHaloPaint() {
         return haloPaint;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public float getX() {
+        return X;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public float getY() {
+        return Y;
+    }
     
     /**
      * {@inheritDoc }
      */
     @Override
-    public Shape getLineplacement() {
-        return path;
+    public float getAnchorX() {
+        return anchorX;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public float getGap() {
-        return gap;
+    public float getAnchorY() {
+        return anchorY;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public float getInitialGap() {
-        return initial;
+    public float getDisplacementX() {
+        return dispX;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public float getOffSet() {
-        return offset;
+    public float getDisplacementY() {
+        return dispY;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public boolean isRepeated() {
-        return repeated;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isAligned() {
-        return aligned;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isGeneralized() {
-        return generalize;
+    public float getRotation() {
+        return rotation;
     }
 
 }

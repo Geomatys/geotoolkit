@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
@@ -159,7 +160,7 @@ public class StatelessContextJ2D extends GraphicJ2D{
             layerGraphics.put(layer, g2d);
             return g2d;
         }else if (layer instanceof CoverageMapLayer){
-            final StatelessCoverageLayerJ2D g2d = new StatelessCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)layer);
+            final StatefullCoverageLayerJ2D g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)layer);
             g2d.setParent(this);
             g2d.setZOrderHint(index);
             layerGraphics.put(layer, g2d);
