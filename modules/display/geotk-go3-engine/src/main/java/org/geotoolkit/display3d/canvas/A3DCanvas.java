@@ -42,7 +42,6 @@ import com.ardor3d.input.logical.KeyPressedCondition;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.input.logical.TriggerAction;
 
-import javax.media.opengl.GLCanvas;
 import org.geotoolkit.display3d.controller.A3DController;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
