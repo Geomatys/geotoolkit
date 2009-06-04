@@ -86,7 +86,6 @@ import org.opengis.referencing.operation.TransformException;
  *
  * <p align="center"><img src="doc-files/borders.png"></p>
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/Polyline.java $
  * @version $Id: Polyline.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *
@@ -109,7 +108,7 @@ public class Polyline extends Geometry {
     /**
      * Projection to use for calculations that require a Cartesian coordinate system.
      * We prefer "Stereographic" rather than "Mercator", because it can work at poles.
-     * (Note that in Geotools implementation, the difference between "Oblique_Stereographic"
+     * (Note that in Geotoolkit implementation, the difference between "Oblique_Stereographic"
      * and "Polar_Stereographic" is just a matter of default value; the correct implementation
      * will be automatically selected according the latitude of origin).
      */

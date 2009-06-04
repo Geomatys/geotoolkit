@@ -76,7 +76,6 @@ import org.opengis.referencing.operation.TransformException;
  * Par convention, toutes les m�thodes statiques de cette classe peuvent agir
  * sur une cha�ne d'objets {@link LineString} plut�t que sur une seule instance.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/LineString.java $
  * @version $Id: LineString.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

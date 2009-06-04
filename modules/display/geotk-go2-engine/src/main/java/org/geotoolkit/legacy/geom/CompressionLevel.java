@@ -60,7 +60,6 @@ import com.vividsolutions.jts.geom.Coordinate;
  *   </li>
  * </ul>
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/CompressionLevel.java $
  * @version $Id: CompressionLevel.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *

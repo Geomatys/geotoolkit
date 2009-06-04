@@ -29,7 +29,6 @@ import org.geotoolkit.legacy.array.ArrayData;
  * This iterator is typically used for drawing a single {@link Polygon}, which
  * may be made of many {@link Polylines}.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/PolygonPathIterator.java $
  * @version $Id: PolygonPathIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

@@ -43,7 +43,6 @@ import org.geotoolkit.resources.Errors;
  * If this exception is thrown, the workaround is to {@linkplain Geometry#clone clone}
  * the geometry before to invokes one of the above methods.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/UnmodifiableGeometryException.java $
  * @version $Id: UnmodifiableGeometryException.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

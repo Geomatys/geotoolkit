@@ -21,6 +21,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.style.Rule;
@@ -71,8 +72,7 @@ public class CachedRule extends Cache<Rule>{
 
         Filter filter = styleElement.getFilter();
         if(filter != null){
-            ListingPropertyVisitor visitor = new ListingPropertyVisitor();
-            filter.accept(visitor, requieredAttributs);
+            filter.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
         }
         
         for(CachedSymbolizer cached : symbols){

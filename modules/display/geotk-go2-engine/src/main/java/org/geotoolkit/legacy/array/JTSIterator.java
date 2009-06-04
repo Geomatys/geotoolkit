@@ -24,7 +24,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * It�rateur balayant les donn�es d'un tableau {@link JTSArray}.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/JTSIterator.java $
  * @version $Id: JTSIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.style;
+package org.geotoolkit.filter.visitor;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -21,7 +21,6 @@ package org.geotoolkit.legacy.array;
 /**
  * It�rateur balayant les donn�es d'un tableau {@link CompressedArray}.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/CompressedIterator.java $
  * @version $Id: CompressedIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

@@ -44,7 +44,6 @@ import org.geotoolkit.resources.Errors;
  * Pour un point situ� � l'index <code>i</code>, les coordonn�es <var>x</var> et <var>y</var>
  * correspondantes se trouvent aux index <code>2*i</code> et <code>2*i+1</code> respectivement.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/PointArray.java $
  * @version $Id: PointArray.java 20168 2006-06-23 12:36:38Z desruisseaux $
  * @author Martin Desruisseaux
  *

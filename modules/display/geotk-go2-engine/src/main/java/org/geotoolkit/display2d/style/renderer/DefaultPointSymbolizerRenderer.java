@@ -61,23 +61,35 @@ import org.opengis.style.PointSymbolizer;
 /**
  * @author Johann Sorel (Geomatys)
  */
-public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSymbolizer, CachedPointSymbolizer>{
+public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSymbolizer, CachedPointSymbolizer>{
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<PointSymbolizer> getSymbolizerClass() {
         return PointSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<CachedPointSymbolizer> getCachedSymbolizerClass() {
         return CachedPointSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CachedPointSymbolizer createCachedSymbolizer(PointSymbolizer symbol) {
         return new CachedPointSymbolizer(symbol);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(ProjectedFeature projectedFeature, CachedPointSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
 
@@ -162,12 +174,18 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(final ProjectedCoverage graphic, CachedPointSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
         //nothing to portray
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(final ProjectedFeature projectedFeature, final CachedPointSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
@@ -281,17 +299,26 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSym
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(ProjectedCoverage graphic, CachedPointSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Rectangle2D glyphPreferredSize(CachedPointSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void glyph(Graphics2D target, Rectangle2D rectangle, CachedPointSymbolizer symbol) {
         target.setClip(rectangle);

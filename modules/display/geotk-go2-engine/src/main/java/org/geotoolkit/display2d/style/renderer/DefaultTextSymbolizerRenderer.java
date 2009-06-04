@@ -74,23 +74,35 @@ import org.opengis.style.TextSymbolizer;
 /**
  * @author Johann Sorel (Geomatys)
  */
-public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer, CachedTextSymbolizer>{
+public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer, CachedTextSymbolizer>{
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<TextSymbolizer> getSymbolizerClass() {
         return TextSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<CachedTextSymbolizer> getCachedSymbolizerClass() {
         return CachedTextSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CachedTextSymbolizer createCachedSymbolizer(TextSymbolizer symbol) {
         return new CachedTextSymbolizer(symbol);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(ProjectedFeature projectedFeature, CachedTextSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
         
@@ -404,12 +416,18 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(final ProjectedCoverage graphic, CachedTextSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
         //nothing to portray
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(ProjectedFeature feature, CachedTextSymbolizer symbol, 
             RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
@@ -417,17 +435,26 @@ public class TextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(ProjectedCoverage graphic, CachedTextSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Rectangle2D glyphPreferredSize(CachedTextSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedTextSymbolizer symbol) {
         g.setClip(rectangle);

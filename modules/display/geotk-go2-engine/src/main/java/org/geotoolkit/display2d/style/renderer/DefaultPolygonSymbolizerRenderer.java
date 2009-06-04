@@ -49,23 +49,35 @@ import org.opengis.style.PolygonSymbolizer;
 /**
  * @author Johann Sorel (Geomatys)
  */
-public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<PolygonSymbolizer, CachedPolygonSymbolizer>{
+public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<PolygonSymbolizer, CachedPolygonSymbolizer>{
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<PolygonSymbolizer> getSymbolizerClass() {
         return PolygonSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<CachedPolygonSymbolizer> getCachedSymbolizerClass() {
         return CachedPolygonSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CachedPolygonSymbolizer createCachedSymbolizer(PolygonSymbolizer symbol) {
         return new CachedPolygonSymbolizer(symbol);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(ProjectedFeature projectedFeature, CachedPolygonSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
 
@@ -79,66 +91,83 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
 
-
-            final Graphics2D g2 = context.getGraphics();
-            final RenderingHints hints = g2.getRenderingHints();
-            final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-            final float coeff = context.getUnitCoefficient(symbolUnit);
-            final float offset = symbol.getOffset(feature, coeff);
-            final Shape shape;
-
-            try {
-                if(NonSI.PIXEL.equals(symbolUnit)){
-                    context.switchToDisplayCRS();
-                    shape = (offset != 0) ? bufferDisplayGeometry(context, projectedGeometry, offset)
-                                          : projectedGeometry.getDisplayShape();
-                }else{
-                    context.switchToObjectiveCRS();
-                    shape = (offset != 0) ? bufferObjectiveGeometry(context, projectedGeometry, symbolUnit, offset)
-                                          : projectedGeometry.getObjectiveShape();
-                }
-            }catch (TransformException ex){
-                throw new PortrayalException(ex);
-            }
-
-
-            //we apply the displacement ---------------------------------------
-            final float[] disps = symbol.getDisplacement(feature);
-            Point2D dispStep = null;
-            if(disps[0] != 0 || disps[1] != 0){
-                final AffineTransform inverse = context.getDisplayToObjective();
-                dispStep = new Point2D.Float(disps[0], -disps[1]);
-                dispStep = inverse.deltaTransform(dispStep, dispStep);
-                g2.translate(dispStep.getX(), dispStep.getY());
-            }
-
-            final float margin = symbol.getMargin(feature, coeff) /2f;
-            final Rectangle2D bounds = shape.getBounds2D();
-            final int x = (int) (bounds.getMinX() - margin);
-            final int y = (int) (bounds.getMinY() - margin);
-
-            g2.setComposite( symbol.getJ2DFillComposite(feature) );
-            g2.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
-            g2.fill(shape);
-            g2.setComposite( symbol.getJ2DStrokeComposite(feature) );
-            g2.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
-            g2.setStroke( symbol.getJ2DStroke(feature,coeff) );
-            g2.draw(shape);
-
-            //restore the displacement
-            if(dispStep != null){
-                g2.translate(-dispStep.getX(), -dispStep.getY());
-            }
-
+            portray(context, symbol, projectedGeometry, feature);
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void portray(final ProjectedCoverage graphic, CachedPolygonSymbolizer symbol,
+    public void portray(final ProjectedCoverage projectedCoverage, CachedPolygonSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
-        //nothing to portray
+        //portray the border of the coverage
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+
+        //could not find the border geometry
+        if(projectedGeometry == null) return;
+
+        portray(context, symbol, projectedGeometry, null);
     }
 
+    private static void portray(RenderingContext2D context, CachedPolygonSymbolizer symbol,
+            ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
+
+        final Graphics2D g2 = context.getGraphics();
+        final RenderingHints hints = g2.getRenderingHints();
+        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
+        final float coeff = context.getUnitCoefficient(symbolUnit);
+        final float offset = symbol.getOffset(feature, coeff);
+        final Shape shape;
+
+        try {
+            if(NonSI.PIXEL.equals(symbolUnit)){
+                context.switchToDisplayCRS();
+                shape = (offset != 0) ? bufferDisplayGeometry(context, projectedGeometry, offset)
+                                      : projectedGeometry.getDisplayShape();
+            }else{
+                context.switchToObjectiveCRS();
+                shape = (offset != 0) ? bufferObjectiveGeometry(context, projectedGeometry, symbolUnit, offset)
+                                      : projectedGeometry.getObjectiveShape();
+            }
+        }catch (TransformException ex){
+            throw new PortrayalException(ex);
+        }
+
+
+        //we apply the displacement ---------------------------------------
+        final float[] disps = symbol.getDisplacement(feature);
+        Point2D dispStep = null;
+        if(disps[0] != 0 || disps[1] != 0){
+            final AffineTransform inverse = context.getDisplayToObjective();
+            dispStep = new Point2D.Float(disps[0], -disps[1]);
+            dispStep = inverse.deltaTransform(dispStep, dispStep);
+            g2.translate(dispStep.getX(), dispStep.getY());
+        }
+
+        final float margin = symbol.getMargin(feature, coeff) /2f;
+        final Rectangle2D bounds = shape.getBounds2D();
+        final int x = (int) (bounds.getMinX() - margin);
+        final int y = (int) (bounds.getMinY() - margin);
+
+        g2.setComposite( symbol.getJ2DFillComposite(feature) );
+        g2.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
+        g2.fill(shape);
+        g2.setComposite( symbol.getJ2DStrokeComposite(feature) );
+        g2.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
+        g2.setStroke( symbol.getJ2DStroke(feature,coeff) );
+        g2.draw(shape);
+
+        //restore the displacement
+        if(dispStep != null){
+            g2.translate(-dispStep.getX(), -dispStep.getY());
+        }
+
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(final ProjectedFeature projectedFeature, final CachedPolygonSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
@@ -228,17 +257,26 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(ProjectedCoverage graphic, CachedPolygonSymbolizer symbol,
             RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Rectangle2D glyphPreferredSize(CachedPolygonSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedPolygonSymbolizer symbol) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
@@ -252,7 +290,6 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Polygo
         renderFill(shape, symbol.getSource().getFill(), g);
         renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
     }
-
 
     /**
      * Recalculate objective geometry with the given offset,

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -97,30 +96,45 @@ import org.opengis.style.ShadedRelief;
 /**
  * @author Johann Sorel (Geomatys)
  */
-public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
+public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
 
-    private static final Logger LOGGER = Logger.getLogger(RasterSymbolizerRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName());
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<RasterSymbolizer> getSymbolizerClass() {
         return RasterSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<CachedRasterSymbolizer> getCachedSymbolizerClass() {
         return CachedRasterSymbolizer.class;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CachedRasterSymbolizer createCachedSymbolizer(RasterSymbolizer symbol) {
         return new CachedRasterSymbolizer(symbol);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(ProjectedFeature graphic, CachedRasterSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
         //nothing to portray
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
@@ -140,7 +154,7 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
             try {
                 bounds = CRS.transform(bounds, gridCRS);
             } catch (TransformException ex) {
-                Logger.getLogger(RasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());
@@ -247,6 +261,9 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         context.switchToDisplayCRS();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(ProjectedFeature feature, CachedRasterSymbolizer symbol, 
             RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
@@ -254,6 +271,9 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hit(final ProjectedCoverage projectedCoverage, final CachedRasterSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
@@ -265,7 +285,7 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         try {
             shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logger.getLogger(RasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
 
@@ -283,6 +303,46 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
 
         return false;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol) {
+
+        final float[] fractions = new float[3];
+        final Color[] colors = new Color[3];
+        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
+        final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
+
+        fractions[0] = 0.0f;
+        fractions[1] = 0.5f;
+        fractions[2] = 1f;
+
+        colors[0] = Color.RED;
+        colors[1] = Color.GREEN;
+        colors[2] = Color.BLUE;
+
+        final LinearGradientPaint paint = new LinearGradientPaint(
+            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
+            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
+            fractions,
+            colors,
+            cycleMethod
+        );
+
+        g.setPaint(paint);
+        g.fill(rectangle);
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
@@ -385,7 +445,6 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
             return JAI.create("bandSelect",pb);
         }
     }
-
 
     private static RenderedImage recolor(final RenderedImage image, Function function){
 
@@ -705,39 +764,6 @@ public class RasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbol
         pb.addSource(image);
         pb.add(lookup);
         return JAI.create("lookup", pb, null);
-    }
-
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol) {
-
-        final float[] fractions = new float[3];
-        final Color[] colors = new Color[3];
-        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
-        final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
-
-        fractions[0] = 0.0f;
-        fractions[1] = 0.5f;
-        fractions[2] = 1f;
-
-        colors[0] = Color.RED;
-        colors[1] = Color.GREEN;
-        colors[2] = Color.BLUE;
-
-        final LinearGradientPaint paint = new LinearGradientPaint(
-            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
-            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
-            fractions,
-            colors,
-            cycleMethod
-        );
-
-        g.setPaint(paint);
-        g.fill(rectangle);
     }
 
 }

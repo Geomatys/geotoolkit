@@ -36,9 +36,8 @@ import org.geotoolkit.resources.Errors;
  *             or something like that. Instead of storing (dx,dy) value for each point, we should
  *             store only the angle (theta) in a 0-255 range (resolution of 1.41�). It should
  *             work providing that each points are approximatively equidistant. The current
- *             {@link org.geotools.renderer.geom.Polyline#setResolution} method ensure exactly that.
+ *             {@link org.geotoolkit.renderer.geom.Polyline#setResolution} method ensure exactly that.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/CompressedArray.java $
  * @version $Id: CompressedArray.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

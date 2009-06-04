@@ -36,7 +36,6 @@ import org.geotoolkit.util.converter.Classes;
  * A geometry collection backed by one or many JTS
  * {@link com.vividsolutions.jts.geom.Geometry} objects.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/JTSGeometries.java $
  * @version $Id: JTSGeometries.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */
@@ -93,7 +92,7 @@ public class JTSGeometries extends org.geotoolkit.legacy.geom.GeometryCollection
      * Returns the coordinate system for the specified JTS geometry.
      *
      * @task TODO: We should construct the coordinate system from SRID using
-     *             {@link org.geotools.cs.CoordinateSystemAuthorityFactory}.
+     *             {@link org.geotoolkit.cs.CoordinateSystemAuthorityFactory}.
      */
     private CoordinateReferenceSystem getCoordinateReferenceSystem(final Geometry geometry) {
 //      final int id = geometry.getSRID();
@@ -225,8 +224,8 @@ public class JTSGeometries extends org.geotoolkit.legacy.geom.GeometryCollection
      * or {@link GeometryCollection}.
      *
      * @param  geometry The geometry to add.
-     * @return The geometry as a {@link org.geotools.renderer.geom.Geometry} wrapper. The style can
-     *         be set using <code>add(geometry).{@link org.geotools.renderer.geom.Geometry#setStyle
+     * @return The geometry as a {@link org.geotoolkit.renderer.geom.Geometry} wrapper. The style can
+     *         be set using <code>add(geometry).{@link org.geotoolkit.renderer.geom.Geometry#setStyle
      *         setStyle}(style)</code>.
      * @throws TransformException if the specified geometry can't
      *         be transformed in this collection's coordinate system.

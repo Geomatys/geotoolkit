@@ -74,7 +74,6 @@ import org.opengis.util.ProgressListener;
  *   <li>The loop is reexecuted from step 1 until no more polylines have been merged.</li>
  * </ol>
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/PolygonAssembler.java $
  * @version $Id: PolygonAssembler.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *

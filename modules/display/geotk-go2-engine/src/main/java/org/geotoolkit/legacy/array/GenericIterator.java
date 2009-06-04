@@ -25,7 +25,6 @@ import java.awt.geom.Point2D;
 /**
  * It�rateur balayant les donn�es d'un tableau {@link GenericArray}.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/GenericIterator.java $
  * @version $Id: GenericIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

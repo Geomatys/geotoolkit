@@ -26,7 +26,6 @@ import java.awt.geom.Point2D;
  * L'impl�mentation par d�faut de cette classe est imutable. Toutefois, certaines
  * classes d�riv�es (notamment {@link DynamicArray}) ne le seront pas forc�ment.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/SubArray.java $
  * @version $Id: SubArray.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

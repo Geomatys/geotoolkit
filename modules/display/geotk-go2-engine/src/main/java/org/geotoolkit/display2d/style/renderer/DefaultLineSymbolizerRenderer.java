@@ -47,7 +47,7 @@ import org.opengis.style.LineSymbolizer;
 /**
  * @author Johann Sorel (Geomatys)
  */
-public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbolizer, CachedLineSymbolizer>{
+public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbolizer, CachedLineSymbolizer>{
 
     /**
      * {@inheritDoc }
@@ -86,52 +86,9 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
 
-
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            final Graphics2D g2 = context.getGraphics();
-            final RenderingHints hints = g2.getRenderingHints();
-
-            final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-            final float coeff = context.getUnitCoefficient(symbolUnit);
-            final Shape j2dShape;
-
-            if(NonSI.PIXEL == symbolUnit){
-                context.switchToDisplayCRS();
-                try {
-                    j2dShape = projectedGeometry.getDisplayShape();
-                } catch (TransformException ex) {
-                    throw new PortrayalException(ex);
-                }
-            }else{
-                context.switchToObjectiveCRS();
-                try {
-                    j2dShape = projectedGeometry.getObjectiveShape();
-                } catch (TransformException ex) {
-                    throw new PortrayalException(ex);
-                }
-            }
-
-            final float margin = symbol.getMargin(feature, coeff) /2f;
-            final Rectangle2D bounds = j2dShape.getBounds2D();
-            final int x = (int) (bounds.getMinX() - margin);
-            final int y = (int) (bounds.getMinY() - margin);
-
-            final float offset = symbol.getOffset(feature, coeff);
-            if(offset != 0){
-                g2.translate(offset, 0);
-                g2.setComposite(symbol.getJ2DComposite(feature));
-                g2.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-                g2.setStroke(symbol.getJ2DStroke(feature,coeff));
-                g2.draw(j2dShape);
-                g2.translate(-offset, 0);
-            }else{
-                g2.setComposite(symbol.getJ2DComposite(feature));
-                g2.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-                g2.setStroke(symbol.getJ2DStroke(feature,coeff));
-                g2.draw(j2dShape);
-            }
-
+            portray(context, symbol, projectedGeometry, feature);
         }
 
     }
@@ -140,9 +97,63 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage graphic, CachedLineSymbolizer symbol,
+    public void portray(final ProjectedCoverage projectedCoverage, CachedLineSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
-        //nothing to portray
+        //portray the border of the coverage
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+
+        //could not find the border geometry
+        if(projectedGeometry == null) return;
+
+        portray(context, symbol, projectedGeometry, null);
+    }
+
+    private static void portray(RenderingContext2D context, CachedLineSymbolizer symbol,
+            ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
+
+        final Graphics2D g2 = context.getGraphics();
+        final RenderingHints hints = g2.getRenderingHints();
+
+        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
+        final float coeff = context.getUnitCoefficient(symbolUnit);
+        final Shape j2dShape;
+
+        if(NonSI.PIXEL == symbolUnit){
+            context.switchToDisplayCRS();
+            try {
+                j2dShape = projectedGeometry.getDisplayShape();
+            } catch (TransformException ex) {
+                throw new PortrayalException(ex);
+            }
+        }else{
+            context.switchToObjectiveCRS();
+            try {
+                j2dShape = projectedGeometry.getObjectiveShape();
+            } catch (TransformException ex) {
+                throw new PortrayalException(ex);
+            }
+        }
+
+        final float margin = symbol.getMargin(feature, coeff) /2f;
+        final Rectangle2D bounds = j2dShape.getBounds2D();
+        final int x = (int) (bounds.getMinX() - margin);
+        final int y = (int) (bounds.getMinY() - margin);
+
+        final float offset = symbol.getOffset(feature, coeff);
+        if(offset != 0){
+            g2.translate(offset, 0);
+            g2.setComposite(symbol.getJ2DComposite(feature));
+            g2.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
+            g2.setStroke(symbol.getJ2DStroke(feature,coeff));
+            g2.draw(j2dShape);
+            g2.translate(-offset, 0);
+        }else{
+            g2.setComposite(symbol.getJ2DComposite(feature));
+            g2.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
+            g2.setStroke(symbol.getJ2DStroke(feature,coeff));
+            g2.draw(j2dShape);
+        }
+
     }
 
     /**
@@ -251,7 +262,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbo
      */
     @Override
     public Rectangle2D glyphPreferredSize(CachedLineSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     /**

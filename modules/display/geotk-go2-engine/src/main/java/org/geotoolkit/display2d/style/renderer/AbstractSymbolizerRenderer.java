@@ -42,6 +42,8 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 /**
+ * Abstract symbolizer renderer, has a few utility static methods.
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends CachedSymbolizer<S>> implements SymbolizerRenderer<S, C>{
@@ -89,7 +91,14 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         TEXT = textLine;
     }
 
-    protected void renderGraphic(final Mark mark, final float size, final Graphics2D target){
+    /**
+     * Paint a mark.
+     *
+     * @param mark : mark to paint
+     * @param size : expected mark size
+     * @param target : Graphics2D
+     */
+    protected static void renderGraphic(final Mark mark, final float size, final Graphics2D target){
         final Expression wkn = mark.getWellKnownName();
 
         final Shape shape;
@@ -119,8 +128,16 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         }
 
     }
-    
-    protected void renderStroke(final Shape shape, final Stroke stroke, final Unit uom, final Graphics2D target){
+
+    /**
+     * Paint a stroked shape.
+     *
+     * @param shape : java2d shape
+     * @param stroke : sld stroke
+     * @param uom
+     * @param target : Graphics2D
+     */
+    protected static void renderStroke(final Shape shape, final Stroke stroke, final Unit uom, final Graphics2D target){
         final Expression expColor = stroke.getColor();
         final Expression expOpa = stroke.getOpacity();
         final Expression expCap = stroke.getLineCap();
@@ -200,7 +217,14 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         target.draw(shape);
     }
 
-    protected void renderFill(final Shape shape, final Fill fill, final Graphics2D target){
+    /**
+     * Paint a filled shape.
+     *
+     * @param shape : java2d shape
+     * @param fill : sld fill
+     * @param target : Graphics2D
+     */
+    protected static void renderFill(final Shape shape, final Fill fill, final Graphics2D target){
         final Expression expColor = fill.getColor();
         final Expression expOpa = fill.getOpacity();
 

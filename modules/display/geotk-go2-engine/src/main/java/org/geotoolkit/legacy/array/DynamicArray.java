@@ -23,7 +23,6 @@ import org.geotoolkit.legacy.geom.CompressionLevel;
 /**
  * Enveloppe un tableau <code>float[]</code> dans lequel des donn�es pourront �tre ajout�es.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/array/DynamicArray.java $
  * @version $Id: DynamicArray.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

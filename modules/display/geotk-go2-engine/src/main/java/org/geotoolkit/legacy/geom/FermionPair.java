@@ -30,7 +30,6 @@ package org.geotoolkit.legacy.geom;
  * avec le m�me spin, on ne doit pas avoir nulle part dans la liste deux pointeurs
  * <code>[i/j].path</code> identiques associ�s � la m�me valeur bool�enne <code>[i/j].mergeEnd</code>.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/FermionPair.java $
  * @version $Id: FermionPair.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

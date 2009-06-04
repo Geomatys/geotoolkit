@@ -44,8 +44,6 @@ import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
 
-import org.geotools.filter.visitor.IsStaticExpressionVisitor;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
@@ -59,10 +57,11 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.ListingPropertyVisitor;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;

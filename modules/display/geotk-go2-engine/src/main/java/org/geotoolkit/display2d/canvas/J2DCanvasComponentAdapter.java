@@ -34,9 +34,9 @@ import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
-import org.geotools.resources.GraphicsUtilities;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
+import org.geotoolkit.internal.GraphicsUtilities;
 
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -39,7 +39,6 @@ import org.opengis.util.ProgressListener;
  * @task TODO: This class is not yet used. It should be part of <code>PolygonAssembler</code>,
  *             work, but is not yet finished neither tested.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/PolygonInclusion.java $
  * @version $Id: PolygonInclusion.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

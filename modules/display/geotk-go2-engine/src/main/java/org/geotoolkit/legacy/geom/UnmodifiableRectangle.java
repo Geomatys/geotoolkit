@@ -26,7 +26,6 @@ import org.geotoolkit.display.shape.XRectangle2D;
 /**
  * Immutable version of a serializable, high-performance double-precision rectangle.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/UnmodifiableRectangle.java $
  * @version $Id: UnmodifiableRectangle.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */

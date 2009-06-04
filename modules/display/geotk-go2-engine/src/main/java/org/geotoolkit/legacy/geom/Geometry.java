@@ -70,7 +70,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
  * <code>Geometry</code>s can {@linkplain #compress compress} and share their internal data in
  * order to reduce memory footprint.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/Geometry.java $
  * @version $Id: Geometry.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */
@@ -83,7 +82,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
     /**
      * The logger for the renderer module.
      */
-    static final Logger LOGGER = Logger.getLogger("org.geotools.renderer.geom");
+    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.renderer.geom");
 
     /**
      * The default coordinate system for all geometries. This is the coordinate
@@ -91,7 +90,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      * default implementation uses a two-dimensional cartesian coordinate system
      * with {@linkplain AxisInfo#X x},{@linkplain AxisInfo#Y y} axis in
      * {@linkplain Unit#METRE metres}. This coordinate system is treated specially
-     * by the default {@linkplain org.geotools.ct.CoordinateTransformationFactory
+     * by the default {@linkplain org.geotoolkit.ct.CoordinateTransformationFactory
      * coordinate transformation factory} with loose transformation rules: if no
      * transformation path were found, then the transformation from this CS to any
      * CS with a compatible number of dimensions is assumed to be the identity transform.

@@ -42,7 +42,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
  * Geometry hierarchy.
  *
  * @author Andrea Aime
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/src/org/geotools/renderer/geom/Point.java $
  * @version $Id: Point.java 19519 2006-05-17 10:55:42Z desruisseaux $
  */
 public class Point extends Geometry {
