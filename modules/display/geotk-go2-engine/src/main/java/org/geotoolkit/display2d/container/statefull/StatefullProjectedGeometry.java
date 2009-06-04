@@ -18,9 +18,7 @@ package org.geotoolkit.display2d.container.statefull;
 
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
-import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -50,13 +48,11 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     private com.vividsolutions.jts.geom.Geometry    objectiveGeometryJTS = null;
     private Geometry                                objectiveGeometryISO = null;
     private Shape                                   objectiveShape = null;
-    private Rectangle2D                             objectiveBounds = null;
 
     //Geometry in display CRS
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
     private Shape                                   displayShape = null;
-    private Rectangle                               displayBounds = null;
 
     public StatefullProjectedGeometry(StatefullContextParams params, com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
@@ -74,14 +70,12 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         objectiveGeometryISO = null;
         objectiveGeometryJTS = null;
         objectiveShape = null;
-        objectiveBounds = null;
     }
     
     public synchronized void clearDisplayCache(){
         displayGeometryISO = null;
         displayGeometryJTS = null;
         displayShape = null;
-        displayBounds = null;
     }
 
     private com.vividsolutions.jts.geom.Geometry getGeometryJTS(){
@@ -94,6 +88,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return decimatedGeometryJTS;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException{
         if(objectiveGeometryJTS == null){
@@ -102,6 +99,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return objectiveGeometryJTS;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException{
         if(displayGeometryJTS == null){
@@ -110,6 +110,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return displayGeometryJTS;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null){
@@ -119,6 +122,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return objectiveShape;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null){
@@ -128,22 +134,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return displayShape;
     }
 
-    @Override
-    public Rectangle2D getObjectiveBounds() throws TransformException{
-        if(objectiveBounds == null){
-            objectiveBounds = getObjectiveShape().getBounds2D();
-        }
-        return objectiveBounds;
-    }
-
-    @Override
-    public Rectangle getDisplayBounds() throws TransformException{
-        if(displayBounds == null){
-            displayBounds = getDisplayShape().getBounds();
-        }
-        return displayBounds;
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Geometry getObjectiveGeometryISO() throws TransformException {
         if(objectiveGeometryISO == null){
@@ -152,6 +145,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return objectiveGeometryISO;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Geometry getDisplayGeometryISO() throws TransformException {
         if(displayGeometryISO == null){

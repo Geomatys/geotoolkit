@@ -22,17 +22,35 @@ import java.awt.Shape;
 import org.geotoolkit.display.primitive.SearchArea;
 
 /**
+ * Extended search area for java2d use.
+ * Convinient methods to obtain JTS and Java2D equivalent of the ISO search area.
  *
  * @author Johann Sorel (Geomatys)
  */
 public interface SearchAreaJ2D extends SearchArea {
 
+    /**
+     * Objective crs search area in JTS geometry.
+     * @return JTS Geometry
+     */
     com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS();
 
+    /**
+     * Display crs search area in JTS geometry.
+     * @return JTS Geometry
+     */
     com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS();
 
+    /**
+     * Objective crs search area in Java2D shape.
+     * @return Java2D shape.
+     */
     Shape getObjectiveShape();
 
+    /**
+     * Display crs search area in Java2D shape.
+     * @return Java2D shape.
+     */
     Shape getDisplayShape();
 
 }

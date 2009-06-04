@@ -32,7 +32,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 
 import org.opengis.display.primitive.Graphic;
 
@@ -41,7 +41,7 @@ import org.opengis.display.primitive.Graphic;
  *
  * @author Johann sorel (Geomatys)
  */
-public class GraphicNorthArrowJ2D extends GraphicJ2D{
+public class GraphicNorthArrowJ2D extends AbstractGraphicJ2D{
 
     private final NorthArrowTemplate template;
 

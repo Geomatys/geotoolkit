@@ -18,9 +18,11 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -126,6 +128,11 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     @Override
     public void dispose() {
+    }
+
+    @Override
+    public ReferencedCanvas2D getCanvas() {
+        return params.canvas;
     }
 
 }

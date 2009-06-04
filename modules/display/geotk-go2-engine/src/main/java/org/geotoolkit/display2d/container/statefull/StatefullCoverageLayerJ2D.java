@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
@@ -35,8 +34,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedCoverage;
+import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -52,7 +50,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class StatefullCoverageLayerJ2D extends GraphicCoverageJ2D{
+public class StatefullCoverageLayerJ2D extends AbstractGraphicJ2D{
 
     private static final Logger LOGGER = Logger.getLogger(StatefullCoverageLayerJ2D.class.getName());
 
@@ -76,7 +74,7 @@ public class StatefullCoverageLayerJ2D extends GraphicCoverageJ2D{
             LOGGER.log(Level.WARNING, "",ex);
         }
 
-        params = new StatefullContextParams(null);
+        params = new StatefullContextParams(canvas,null);
         this.projectedCoverage = new StatefullProjectedCoverage(params, layer);
     }
 

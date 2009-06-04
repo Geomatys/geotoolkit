@@ -17,24 +17,54 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.FeatureMapLayer;
 
+import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.identity.FeatureId;
 
 /**
- * GraphicJ2D for feature objects.
+ * Convinient representation of a feature for rendering.
+ * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface ProjectedFeature {
+public interface ProjectedFeature extends Graphic {
 
+    /**
+     * Get the id of the feature.
+     *
+     * @return FeatureId
+     */
     FeatureId getFeatureId();
 
+    /**
+     * Get the original FeatureMapLayer from where the feature is from.
+     *
+     * @return FeatureMapLayer
+     */
     FeatureMapLayer getFeatureLayer();
 
+    /**
+     * Get the feature itself.
+     *
+     * @return SimpleFeature
+     */
     SimpleFeature getFeature();
 
+    /**
+     * Get a Projected geometry for rendering purpose.
+     *
+     * @param name of the wanted geometry.
+     * @return ProjectedGeometry or null if the named geometry attribut doesn't exist
+     */
     ProjectedGeometry getGeometry(String name);
+
+    /**
+     * @return original canvas of this graphic
+     */
+    ReferencedCanvas2D getCanvas();
 
 }

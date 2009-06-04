@@ -83,7 +83,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     
     public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
-        params = new StatefullContextParams(layer);
+        params = new StatefullContextParams(canvas,layer);
         dataCRS = layer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
     }
 

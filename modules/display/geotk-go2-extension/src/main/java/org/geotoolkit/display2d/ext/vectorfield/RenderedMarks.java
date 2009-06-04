@@ -41,9 +41,9 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display.shape.TransformedShape;
+import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.util.XArrays;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -62,7 +62,7 @@ import org.opengis.referencing.operation.TransformException;
  * @version $Id$
  * @author Martin Desruisseaux
  */
-public abstract class RenderedMarks extends GraphicJ2D {
+public abstract class RenderedMarks extends AbstractGraphicJ2D {
     
     private static final Stroke DEFAULT_STROKE = new BasicStroke(1);
     

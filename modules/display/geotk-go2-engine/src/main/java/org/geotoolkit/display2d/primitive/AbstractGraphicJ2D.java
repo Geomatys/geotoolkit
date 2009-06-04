@@ -17,8 +17,12 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display.primitive.ReferencedGraphic2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 
 /**
  * Base class for Geotoolkit implementations of {@link org.opengis.go.display.primitive.Graphic}
@@ -27,7 +31,19 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface GraphicJ2D extends ReferencedGraphic2D {
+public abstract class AbstractGraphicJ2D extends AbstractReferencedGraphic2D implements GraphicJ2D {
+
+    /**
+     * Constructs a new graphic using the specified objective CRS.
+     *
+     * @param  crs The objective coordinate reference system.
+     * @throws IllegalArgumentException if {@code crs} is null or has an incompatible number of
+     *         dimensions.
+     */
+    protected AbstractGraphicJ2D(final ReferencedCanvas2D canvas,final CoordinateReferenceSystem crs)
+            throws IllegalArgumentException{
+        super(canvas,crs);
+    }
 
     /**
      * Called by the J2DCanvas to ask the graphic object to paint itself on the canvas
@@ -36,8 +52,12 @@ public interface GraphicJ2D extends ReferencedGraphic2D {
      * @param context : a rendering context 2d that provides a Graphics2D object
      * and all necessary parameters.
      */
+    @Override
     public abstract void paint(final RenderingContext2D context);
 
-    public Object getUserObject();
+    @Override
+    public Object getUserObject(){
+        return null;
+    }
     
 }

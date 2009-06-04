@@ -29,9 +29,9 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotools.coverage.io.CoverageReadParam;
 import org.geotools.coverage.io.CoverageReader;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -57,7 +57,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
     public abstract void visit(ProjectedFeature feature, Shape queryArea);
 
-    public abstract void visit(GraphicCoverageJ2D coverage, Shape queryArea);
+    public abstract void visit(ProjectedCoverage coverage, Shape queryArea);
 
     /**
      * {@inheritDoc }
@@ -83,8 +83,8 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         if(graphic instanceof ProjectedFeature){
             visit((ProjectedFeature)graphic, area);
-        }else if(graphic instanceof GraphicCoverageJ2D){
-            visit((GraphicCoverageJ2D)graphic, area);
+        }else if(graphic instanceof ProjectedCoverage){
+            visit((ProjectedCoverage)graphic, area);
         }
     }
 
@@ -106,9 +106,9 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      * first column is the value : Float
      * second column is the unit : Unit
      */
-    protected static Object[][] getCoverageValues(final GraphicCoverageJ2D gra, final Shape selectedArea){
+    protected static Object[][] getCoverageValues(final ProjectedCoverage gra, final Shape selectedArea){
 
-        final CoverageMapLayer layer = gra.getUserObject();
+        final CoverageMapLayer layer = gra.getCoverageLayer();
 
         //find center of the selected area
         final Rectangle2D bounds2D   = selectedArea.getBounds2D();

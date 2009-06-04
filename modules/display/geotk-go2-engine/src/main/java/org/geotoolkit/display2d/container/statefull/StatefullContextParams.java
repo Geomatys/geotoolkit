@@ -18,7 +18,9 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.geom.AffineTransform;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
@@ -33,6 +35,7 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class StatefullContextParams {
 
+    public final ReferencedCanvas2D canvas;
     public final FeatureMapLayer layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform();
     public final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
@@ -44,7 +47,8 @@ public class StatefullContextParams {
 
     public MathTransform dataToObjective = null;
 
-    public StatefullContextParams(FeatureMapLayer layer){
+    public StatefullContextParams(ReferencedCanvas2D canvas, FeatureMapLayer layer){
+        this.canvas = canvas;
         this.layer = layer;
     }
 

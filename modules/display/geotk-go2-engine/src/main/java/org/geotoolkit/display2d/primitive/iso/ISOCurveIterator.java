@@ -31,7 +31,7 @@ import org.opengis.geometry.primitive.Curve;
 public final class ISOCurveIterator extends ISOGeometryIterator<Curve> {
 
     private final PointArray coordinates;
-	private final int coordinateCount;
+    private final int coordinateCount;
     /** True if the line is a ring */
     private final boolean isClosed;
 

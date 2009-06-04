@@ -25,7 +25,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.DynamicMapLayer;
 
 import org.opengis.display.primitive.Graphic;
@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author johann sorel (Geomatys)
  */
-public class StatelessDynamicLayerJ2D extends GraphicJ2D{
+public class StatelessDynamicLayerJ2D extends AbstractGraphicJ2D{
     
     private final DynamicMapLayer layer;
     

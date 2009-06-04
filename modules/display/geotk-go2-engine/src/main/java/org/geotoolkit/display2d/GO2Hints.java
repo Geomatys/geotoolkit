@@ -27,8 +27,24 @@ import org.geotoolkit.display.canvas.HintKey;
  */
 public class GO2Hints {
 
+    /**
+     * Configure the multithreading support. This usually makes the canvas
+     * build several buffered images to render each layer separately.
+     * This raises memory concumption.
+     * WARNING, not implemented yet in the Go2 engine.
+     */
     public static final Key KEY_MULTI_THREAD           = new HintKey(1, Boolean.class);
+
+    /**
+     * Configure the generalization, false by default in stateless mode, true
+     * in statefull mode.
+     */
     public static final Key KEY_GENERALIZE             = new HintKey(2, Boolean.class);
+
+    /**
+     * Configure the generalize effect, in display unit (pixel most of the time).
+     * Values near 1 have the most efficient performance/quality ratio.
+     */
     public static final Key KEY_GENERALIZE_FACTOR      = new HintKey(3, Number.class);
 
     /**

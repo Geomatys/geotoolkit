@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display.primitive;
 
-import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,7 +26,6 @@ import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -55,19 +53,7 @@ import org.geotoolkit.resources.Errors;
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  */
-public abstract class ReferencedGraphic extends AbstractGraphic {
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas#getObjectiveCRS objective CRS} changed.
-     */
-    public static final String OBJECTIVE_CRS_PROPERTY = "objectiveCRS";
-    
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event}
-     * fired when the {@linkplain ReferencedCanvas#getEnvelope canvas envelope} or
-     * {@linkplain ReferencedGraphic#getEnvelope graphic envelope} changed.
-     */
-    public static final String ENVELOPE_PROPERTY = "envelope";
+public abstract class AbstractReferencedGraphic extends AbstractGraphic implements ReferencedGraphic {
     
     /**
      * An envelope that completly encloses the graphic. Note that there is no guarantee
@@ -98,7 +84,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      * @see #setTypicalCellDimension
      * @see #setZOrderHint
      */
-    protected ReferencedGraphic(final ReferencedCanvas canvas, final CoordinateReferenceSystem crs)
+    protected AbstractReferencedGraphic(final ReferencedCanvas canvas, final CoordinateReferenceSystem crs)
             throws IllegalArgumentException {
         super(canvas);
         if (crs == null) {
@@ -131,7 +117,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
                 setObjectiveCRS(newCRS);
             } catch (TransformException ex) {
                 ex.printStackTrace();
-                Logger.getLogger(ReferencedGraphic.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AbstractReferencedGraphic.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -238,7 +224,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
             final Canvas owner = getCanvas();
             if (owner instanceof ReferencedCanvas) {
                 return ((ReferencedCanvas) owner).getMathTransform(sourceCRS, targetCRS,
-                       ReferencedGraphic.class, sourceMethodName);
+                       AbstractReferencedGraphic.class, sourceMethodName);
             } else {
                 return AuthorityFactoryFinder.getCoordinateOperationFactory(null)
                        .createOperation(sourceCRS, targetCRS).getMathTransform();
@@ -259,6 +245,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      *
      * @see #setEnvelope
      */
+    @Override
     public Envelope getEnvelope() {
         synchronized (getTreeLock()) {
             return new GeneralEnvelope(envelope);
@@ -284,6 +271,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
         }
     }
 
+    @Override
     public boolean intersects(final Envelope candidateEnvelope){
 
         if(this.envelope.getCoordinateReferenceSystem().equals(candidateEnvelope.getCoordinateReferenceSystem())){
@@ -339,6 +327,7 @@ public abstract class ReferencedGraphic extends AbstractGraphic {
      * @param point : point in display crs
      * @return ReferencedGraphic, can be this object or a child object
      */
+    @Override
     public abstract List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics);
 
 }

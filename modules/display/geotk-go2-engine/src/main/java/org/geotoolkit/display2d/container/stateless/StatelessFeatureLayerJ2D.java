@@ -42,6 +42,7 @@ import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.Envelope2D;
@@ -81,7 +82,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  *
  * @author johann sorel (Geomatys)
  */
-public class StatelessFeatureLayerJ2D extends GraphicJ2D{
+public class StatelessFeatureLayerJ2D extends AbstractGraphicJ2D{
     
     protected final FeatureMapLayer layer;
     
@@ -254,7 +255,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
 
 
-        final StatefullContextParams params = new StatefullContextParams(layer);
+        final StatefullContextParams params = new StatefullContextParams(getCanvas(),layer);
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);
@@ -367,7 +368,7 @@ public class StatelessFeatureLayerJ2D extends GraphicJ2D{
         final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
 
 
-        final StatefullContextParams params = new StatefullContextParams(layer);
+        final StatefullContextParams params = new StatefullContextParams(getCanvas(),layer);
         final StatefullProjectedFeature graphic = new StatefullProjectedFeature(params);
         params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);

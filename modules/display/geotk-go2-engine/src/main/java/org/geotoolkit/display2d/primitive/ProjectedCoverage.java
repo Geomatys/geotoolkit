@@ -18,24 +18,65 @@ package org.geotoolkit.display2d.primitive;
 
 import java.io.IOException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.CoverageMapLayer;
+
 import org.geotools.coverage.io.CoverageReadParam;
+
+import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- *
+ * Convinient representation of a coverage for rendering.
+ * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface ProjectedCoverage {
+public interface ProjectedCoverage extends Graphic {
 
+    /**
+     * Get the original CoverageMapLayer from where the feature is from.
+     *
+     * @return CoverageMapLayer
+     */
     CoverageMapLayer getCoverageLayer();
 
+    /**
+     * Get a coverage reference.
+     *
+     * @param param : expected coverage parameters
+     * @return GridCoverage2D or null if the requested parameters are out of the coverage area.
+     *
+     * @throws FactoryException
+     * @throws IOException
+     * @throws TransformException
+     */
     GridCoverage2D getCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException;
 
+    /**
+     * Get the projecte geometry representation of the coverage border.
+     *
+     * @return ProjectedGeometry
+     */
     ProjectedGeometry getEnvelopeGeometry();
 
+    /**
+     * Get a coverage reference for the elevation model.
+     *
+     * @param param : expected coverage parameters
+     * @return GridCoverage2D or null if the requested parameters are out of the coverage area.
+     *
+     * @throws FactoryException
+     * @throws IOException
+     * @throws TransformException
+     */
     GridCoverage2D getElevationCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException;
+
+    /**
+     * @return original canvas of this graphic
+     */
+    ReferencedCanvas2D getCanvas();
 
 }

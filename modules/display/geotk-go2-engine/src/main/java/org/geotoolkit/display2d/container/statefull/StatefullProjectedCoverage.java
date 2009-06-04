@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -129,6 +130,33 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
         final LinearRing ring = fact.createLinearRing(coordinates);
         final Geometry geom = fact.createPolygon(ring, new LinearRing[0]);
         return geom;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isVisible() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setVisible(boolean visible) {
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public ReferencedCanvas2D getCanvas() {
+        return params.canvas;
     }
 
 }

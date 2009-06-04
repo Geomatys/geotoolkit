@@ -33,7 +33,7 @@ import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.DisplayObject;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.primitive.AbstractGraphic;
-import org.geotoolkit.display.primitive.ReferencedGraphic;
+import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
 
@@ -134,7 +134,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
         if(propertyName.equals(AbstractGraphic.VISIBLE_PROPERTY)){
             ContainerEvent event = new DefaultContainerEvent(this, graphic);
             fireGraphicChanged(event);
-        }else if(propertyName.equals(ReferencedGraphic.ENVELOPE_PROPERTY)){
+        }else if(propertyName.equals(AbstractReferencedGraphic.ENVELOPE_PROPERTY)){
             ContainerEvent event = new DefaultContainerEvent(this, graphic);
             fireGraphicChanged(event);
         }

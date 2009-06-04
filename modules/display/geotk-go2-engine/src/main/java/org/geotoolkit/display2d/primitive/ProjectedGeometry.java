@@ -32,20 +32,52 @@ import org.opengis.referencing.operation.TransformException;
  */
 public interface ProjectedGeometry  {
 
+    /**
+     * Get a JTS representation of the geometry in objective CRS.
+     *
+     * @return JTS Geometry
+     * @throws TransformException if geometry could not be reprojected.
+     */
     com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException;
 
+    /**
+     * Get a JTS representation of the geometry in display CRS.
+     *
+     * @return JTS Geometry
+     * @throws TransformException if geometry could not be reprojected.
+     */
     com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException;
 
+    /**
+     * Get a Java2D representation of the geometry in objective CRS.
+     *
+     * @return Java2D shape
+     * @throws TransformException if geometry could not be reprojected.
+     */
     Shape getObjectiveShape() throws TransformException;
 
+    /**
+     * Get a Java2D representation of the geometry in display CRS.
+     *
+     * @return Java2D shape
+     * @throws TransformException if geometry could not be reprojected.
+     */
     Shape getDisplayShape() throws TransformException;
 
-    Shape getObjectiveBounds() throws TransformException;
-
-    Shape getDisplayBounds() throws TransformException;
-
+    /**
+     * Get an ISO representation of the geometry in objective CRS.
+     *
+     * @return ISO Geometry
+     * @throws TransformException if geometry could not be reprojected.
+     */
     Geometry getObjectiveGeometryISO() throws TransformException;
 
+    /**
+     * Get a ISO representation of the geometry in display CRS.
+     *
+     * @return ISO Geometry
+     * @throws TransformException if geometry could not be reprojected.
+     */
     Geometry getDisplayGeometryISO() throws TransformException;
 
 }

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.primitive.ReferencedGraphic2D;
+import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.display.container.ContainerEvent;
@@ -46,8 +46,8 @@ public abstract class AbstractContainer2D extends AbstractContainer{
     private static final Comparator<Graphic> COMPARATOR = new Comparator<Graphic>() {
         @Override
         public int compare(final Graphic graphic1, final Graphic graphic2) {
-            if(graphic1 instanceof ReferencedGraphic2D && graphic2 instanceof ReferencedGraphic2D){
-                return Double.compare(((ReferencedGraphic2D)graphic1).getZOrderHint(), ((ReferencedGraphic2D)graphic2).getZOrderHint());
+            if(graphic1 instanceof AbstractReferencedGraphic2D && graphic2 instanceof AbstractReferencedGraphic2D){
+                return Double.compare(((AbstractReferencedGraphic2D)graphic1).getZOrderHint(), ((AbstractReferencedGraphic2D)graphic2).getZOrderHint());
             }else{
                 return 0;
             }
@@ -85,9 +85,9 @@ public abstract class AbstractContainer2D extends AbstractContainer{
         super.graphicPropertyChanged(graphic, event);
         final String propertyName = event.getPropertyName();
 
-        if (propertyName.equals(ReferencedGraphic2D.Z_ORDER_HINT_PROPERTY)) {
+        if (propertyName.equals(AbstractReferencedGraphic2D.Z_ORDER_HINT_PROPERTY)) {
             sortedGraphics = null; // Will force a new sorting according z-order.
-        }else if(propertyName.equals(ReferencedGraphic2D.DISPLAY_BOUNDS_PROPERTY)){
+        }else if(propertyName.equals(AbstractReferencedGraphic2D.DISPLAY_BOUNDS_PROPERTY)){
             ContainerEvent containerEvent = new DefaultContainerEvent(this, graphic);
             fireGraphicDisplayChanged(containerEvent);
         }

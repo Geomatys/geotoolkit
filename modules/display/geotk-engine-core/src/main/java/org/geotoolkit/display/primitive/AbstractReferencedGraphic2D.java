@@ -47,19 +47,8 @@ import org.geotoolkit.resources.Errors;
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  */
-public abstract class ReferencedGraphic2D extends ReferencedGraphic {
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas2D#getDisplayBounds display bounds} changed.
-     */
-    public static final String DISPLAY_BOUNDS_PROPERTY = "displayBounds";
-    
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractGraphic#getZOrderHint z order hint} changed.
-     */
-    public static final String Z_ORDER_HINT_PROPERTY = "zOrderHint";
-    
+public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGraphic implements ReferencedGraphic2D{
+       
     /**
      * The default {@linkplain #getZOrderHint z-order}.
      */
@@ -127,7 +116,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * @see #setTypicalCellDimension
      * @see #setZOrderHint
      */
-    protected ReferencedGraphic2D(final ReferencedCanvas2D canvas) {
+    protected AbstractReferencedGraphic2D(final ReferencedCanvas2D canvas) {
         this(canvas,DefaultEngineeringCRS.GENERIC_2D);
     }
 
@@ -143,7 +132,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * @see #setTypicalCellDimension
      * @see #setZOrderHint
      */
-    protected ReferencedGraphic2D(final ReferencedCanvas2D canvas, final CoordinateReferenceSystem crs)
+    protected AbstractReferencedGraphic2D(final ReferencedCanvas2D canvas, final CoordinateReferenceSystem crs)
             throws IllegalArgumentException
     {
         super(canvas,to2D(crs));
@@ -221,6 +210,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * <var>z</var> order will be painted on top of graphics with lowest <var>z</var> order.
      * The default value is {@link Double#POSITIVE_INFINITY}.
      */
+    @Override
     public double getZOrderHint() {
         synchronized (getTreeLock()) {
             return zOrder;
@@ -234,6 +224,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * This method fires a {@value org.geotools.display.canvas.DisplayObject#Z_ORDER_HINT_PROPERTY}
      * property change event.
      */
+    @Override
     public void setZOrderHint(final double zOrderHint) {
         if (Double.isNaN(zOrderHint)) {
             throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
@@ -263,6 +254,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * <p>
      * This method never returns {@code null}.
      */
+    @Override
     public final Shape getDisplayBounds() {
         return displayBounds;
     }
@@ -304,6 +296,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * GraphicPrimitive2D#paint rendering}. If this graphic now cover a wider area, then the
      * area to repaint must be specified with a call to {@link #refresh(Rectangle2D)} instead.
      */
+    @Override
     public void refresh() {
         synchronized (getTreeLock()) {
             if (displayBounds.equals(XRectangle2D.INFINITY)) {
@@ -323,6 +316,7 @@ public abstract class ReferencedGraphic2D extends ReferencedGraphic {
      * @param bounds The dirty region to refreshed, in the "real world" {@linkplain #getObjectiveCRS
      *        objective coordinate reference system}. A {@code null} value refresh everything.
      */
+    @Override
     public void refresh(final Rectangle2D bounds) {
         synchronized (getTreeLock()) {
             refresh(bounds!=null ? bounds : XRectangle2D.INFINITY, null);

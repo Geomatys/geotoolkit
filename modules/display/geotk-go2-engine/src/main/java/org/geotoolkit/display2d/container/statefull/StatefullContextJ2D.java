@@ -33,6 +33,7 @@ import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.container.stateless.StatelessDynamicLayerJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -51,7 +52,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class StatefullContextJ2D extends GraphicJ2D{
+public class StatefullContextJ2D extends AbstractGraphicJ2D{
 
     private static final Logger LOGGER = Logger.getLogger(StatefullContextJ2D.class.getName());
 

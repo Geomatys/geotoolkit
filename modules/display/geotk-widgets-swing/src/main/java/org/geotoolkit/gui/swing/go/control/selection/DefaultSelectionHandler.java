@@ -48,7 +48,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.primitive.GraphicCoverageJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go.CanvasHandler;
@@ -59,7 +59,6 @@ import org.geotoolkit.map.MapLayer;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotools.data.DefaultQuery;
-import org.geotools.data.Query;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
@@ -124,7 +123,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void visit(GraphicCoverageJ2D coverage, Shape queryArea) {
+        public void visit(ProjectedCoverage coverage, Shape queryArea) {
         }
     };
     private boolean squareArea;

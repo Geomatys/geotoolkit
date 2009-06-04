@@ -59,7 +59,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFeature {
+public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements ProjectedFeature {
 
     private final FeatureMapLayer layer;
 
