@@ -74,13 +74,6 @@
             <artifactId>ardor3d-effects</artifactId>
             <version>${ardor.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-epsg</artifactId>
-            <version>${geotoolkit.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-render</artifactId>
@@ -88,24 +81,8 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-wms</artifactId>
+            <artifactId>geotk-filter</artifactId>
             <version>${geotoolkit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-world-image</artifactId>
-            <version>${geotoolkit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-widgets-swing-pending</artifactId>
-            <version>${geotoolkit.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gtm-shapefile</artifactId>
-            <version>${geomodified.version}</version>
         </dependency>
 
     </dependencies>

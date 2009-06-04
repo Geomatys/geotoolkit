@@ -18,16 +18,10 @@
 package org.geotoolkit.gui.swing.go3.control.navigation;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.geotoolkit.display3d.canvas.A3DCanvas;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapContext;
-import org.opengis.geometry.Envelope;
 
 
 /**
@@ -35,10 +29,10 @@ import org.opengis.geometry.Envelope;
  */
 public class ZoomAllAction extends AbstractAction {
 
-    private static final ImageIcon ICON_ZOOM_ALL = IconBundle.getInstance().getIcon("16_zoom_all");
+//    private static final ImageIcon ICON_ZOOM_ALL = IconBundle.getInstance().getIcon("16_zoom_all");
 
     public ZoomAllAction() {
-        super("",ICON_ZOOM_ALL);
+        super("ZA");
     }
 
     private A3DCanvas map = null;
