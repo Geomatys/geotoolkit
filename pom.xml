@@ -537,6 +537,14 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>geotoolkit</id>
+      <name>Geotoolkit repository</name>
+      <url>http://maven.geotoolkit.org/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 
 
   <!-- ==================================================== -->

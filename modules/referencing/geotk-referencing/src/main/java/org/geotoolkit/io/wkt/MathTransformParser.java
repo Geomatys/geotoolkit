@@ -193,10 +193,7 @@ public class MathTransformParser extends Parser {
         }
         element.close();
         /*
-         * We now have all informations for constructing the math transform. If the factory is
-         * a Geotoolkit implementation, we will use a special method that returns the operation
-         * method used. Otherwise, we will use the ordinary method and will performs a slower
-         * search for the operation method later if the user ask for it.
+         * We now have all informations for constructing the math transform.
          */
         final MathTransform transform;
         try {
