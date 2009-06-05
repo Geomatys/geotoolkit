@@ -223,7 +223,7 @@ public class StatefullCoverageLayerJ2D extends AbstractGraphicJ2D{
         for (final CachedRule rule : rules) {
             for (final CachedSymbolizer symbol : rule.symbolizers()) {
                 if(GO2Utilities.hit(projectedCoverage, symbol, renderingContext, mask, filter)){
-                    graphics.add(this);
+                    graphics.add(projectedCoverage);
                     break;
                 }
             }
