@@ -51,7 +51,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.00
  */
 @SuppressWarnings("serial")
-public class MosaicImageViewer extends JPanel implements ChangeListener {
+public final class MosaicImageViewer extends JPanel implements ChangeListener {
     /**
      * Initial size for the canvas. Used only at construction time;
      * user can resize the window after it has been made visible.

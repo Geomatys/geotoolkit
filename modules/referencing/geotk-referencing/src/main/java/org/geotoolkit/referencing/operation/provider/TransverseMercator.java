@@ -164,7 +164,7 @@ public class TransverseMercator extends MapProjection {
 
 
     /**
-     * The provider for <cite>TransverseMercator Transverse (South Orientated)</cite> projection
+     * The provider for <cite>Mercator Transverse (South Orientated)</cite> projection
      * (EPSG:9808). The coordinate axes are called <cite>Westings</cite> and <cite>Southings</cite>
      * and increment to the West and South from the origin respectively.
      * <p>

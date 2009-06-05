@@ -50,7 +50,7 @@ import org.geotoolkit.internal.image.io.RawFile;
  * Copies a set of tiles to temporary RAW files.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -107,6 +107,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                 new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
         final ImageWriter writer = getTemporaryTileWriter();
         final File directory = RMI.getSharedTemporaryDirectory();
+        ImageTypeSpecifier sourceType = null;
         BufferedImage sourceImage = null;
         BufferedImage targetImage = null;
         Tile tile;
@@ -123,17 +124,19 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                  * image (which may be very big) reclaimed before to attempt to create a new
                  * one.
                  */
+                final ImageTypeSpecifier type = reader.getRawImageType(imageIndex);
                 if (reader.getWidth (imageIndex) == sourceImage.getWidth()  &&
                     reader.getHeight(imageIndex) == sourceImage.getHeight() &&
-                    ImageTypeSpecifier.createFromRenderedImage(sourceImage).equals(reader.getRawImageType(imageIndex)))
+                    (sourceType != null && sourceType.equals(type)))
                 {
                     param = reader.getDefaultReadParam();
                     param.setDestination(sourceImage);
                 } else {
                     sourceImage = null;
                     targetImage = null;
-                    System.gc();
+                    System.gc(); // Image may be huge - give GC an additional chance.
                 }
+                sourceType = type;
             }
             /*
              * Reads the image, applies an optional operation and remember the color/sample
@@ -141,7 +144,6 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
              * ImageTypeSpecifier will be the same for every tiles, so it is worth to share
              * the same instance given that some mosaic contains thousands of input tiles.
              */
-            System.gc(); // Image may be huge - give GC an additional chance.
             sourceImage = reader.read(imageIndex, param);
             Tile.dispose(reader);
             final BufferedImage image;
@@ -150,7 +152,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             } else {
                 image = sourceImage;
             }
-            final File file = File.createTempFile("IMW", "raw", directory);
+            final File file = File.createTempFile("IMW", ".raw", directory);
             file.deleteOnExit();
             ImageTypeSpecifier look = ImageTypeSpecifier.createFromRenderedImage(image);
             ImageTypeSpecifier type = types.get(look);
@@ -158,7 +160,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                 type = look;
                 types.put(type, type);
             }
-            final RawFile entry = new RawFile(file, type);
+            final RawFile entry = new RawFile(file, type, image.getWidth(), image.getHeight());
             if (temporaryFiles.put(tile, entry) != null) {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, tile));
             }

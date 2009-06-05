@@ -18,16 +18,22 @@
 package org.geotoolkit.internal.image.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.stream.ImageInputStream;
+import com.sun.media.imageio.stream.RawImageInputStream;
+
+import java.awt.Dimension;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.image.io.stream.FileImageInputStream;
 
 
 /**
  * An entry for a temporary RAW file associated with its color and sample model.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -46,17 +52,41 @@ public final class RawFile implements Serializable {
     /**
      * The color and sample model of the RAW image.
      */
-    public final ImageTypeSpecifier type;
+    private final ImageTypeSpecifier type;
+
+    /**
+     * The image width and height.
+     */
+    private final int width, height;
 
     /**
      * Creates a new entry for the given temporary file.
      *
-     * @param file The temporary file.
-     * @param type The color and sample model of the RAW image.
+     * @param file   The temporary file.
+     * @param type   The color and sample model of the RAW image.
+     * @param width  The image width, in pixels.
+     * @param height The image height, in pixels.
      */
-    public RawFile(final File file, final ImageTypeSpecifier type) {
-        this.file = file;
-        this.type = type;
+    public RawFile(final File file, final ImageTypeSpecifier type, final int width, final int height) {
+        this.file   = file;
+        this.type   = type;
+        this.width  = width;
+        this.height = height;
+    }
+
+    /**
+     * Returns the input stream to use for reading the RAW image represented by this object.
+     *
+     * @return The input stream.
+     * @throws IOException If an error occured while creating the input stream.
+     *
+     * @since 3.01
+     */
+    public ImageInputStream getImageInputStream() throws IOException {
+        ImageInputStream in;
+        in = new FileImageInputStream(file);
+        in = new RawImageInputStream(in, type, new long[1], new Dimension[] {new Dimension(width, height)});
+        return in;
     }
 
     /**
@@ -70,7 +100,8 @@ public final class RawFile implements Serializable {
         if (object instanceof RawFile) {
             final RawFile that = (RawFile) object;
             return Utilities.equals(this.file, that.file) &&
-                   Utilities.equals(this.type, that.type);
+                   Utilities.equals(this.type, that.type) &&
+                   this.width == width && this.height == height;
         }
         return false;
     }

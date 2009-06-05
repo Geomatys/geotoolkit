@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Vocabulary;
  * is to read efficiently only subsets of big tiled images.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  * @module
@@ -85,7 +85,8 @@ public class MosaicImageReader extends ImageReader {
     /**
      * The image reader created for each provider. Keys must be the union of
      * {@link TileManager#getImageReaderSpis} at every image index and must be computed right at
-     * {@link #setInput} invocation time.
+     * {@link #setInput} invocation time. Values will be initially {@code null} - a reader will
+     * be assigned only when first needed.
      */
     private final Map<ImageReaderSpi,ImageReader> readers;
 
@@ -380,6 +381,23 @@ public class MosaicImageReader extends ImageReader {
             type = type.getSuperclass();
         }
         return null;
+    }
+
+    /**
+     * Returns a reader configured for the given tile. This method is used <strong>only</strong>
+     * by the {@link #read(int, ImageReadParam)} method, because its sole purpose is to allow
+     * {@link MosaicImageWriter} to redirect the read operation to a cached file. All other
+     * operation must use the original tiles, because the cached files are in RAW format, which
+     * doesn't contain any information about metadata, <i>etc.</i>
+     * <p>
+     * This cache mechanism applies only to {@code MosaicImageWriter}. All other usage should
+     * ignore the existence of this method.
+     *
+     * @return An image reader with its {@linkplain ImageReader#getInput input} set.
+     * @throws IOException if the image reader can't be initialized.
+     */
+    ImageReader getTileReader(final Tile tile) throws IOException {
+        return tile.getImageReader(this, true, true);
     }
 
     /**
@@ -1310,7 +1328,7 @@ public class MosaicImageReader extends ImageReader {
                     table.nextLine();
                     continue;
                 }
-                final ImageReader reader = tile.getImageReader(this, true, true);
+                final ImageReader reader = getTileReader(tile);
                 final ImageReadParam tileParam = mosaicParam.getCachedTileParameters(reader);
                 tileParam.setDestinationType(null);
                 tileParam.setDestination(image); // Must be after setDestinationType and may be null.
@@ -1483,7 +1501,9 @@ public class MosaicImageReader extends ImageReader {
         }
         readerInputs.clear();
         for (final ImageReader reader : readers.values()) {
-            reader.dispose();
+            if (reader != null) {
+                reader.dispose();
+            }
         }
         readers.clear();
         super.dispose();

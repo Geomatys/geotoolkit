@@ -635,7 +635,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * on each invocation.
      * <p>
      * It is the user's responsability to close the {@linkplain ImageReader#getInput reader input}
-     * after usage.
+     * after usage and {@linkplain ImageReader#dispose() dispose} the reader.
      *
      * @return An image reader with its {@linkplain ImageReader#getInput input} set.
      * @throws IOException if the image reader can't be initialized.

@@ -1,0 +1,4 @@
+Blue Marble is a product of NASA’s Earth Observatory.
+The images at full resolution are available at
+
+http://earthobservatory.nasa.gov/Features/BlueMarble/

@@ -33,7 +33,7 @@ import org.geotoolkit.internal.image.SimpleBufferedImageOp;
  * The parameters for {@link MosaicImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  * @module
@@ -135,7 +135,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    BufferedImageOp getSourceTileFilter() {
+    public BufferedImageOp getSourceTileFilter() {
         return sourceTileFilter;
     }
 
@@ -149,7 +149,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    void setSourceTileFilter(final BufferedImageOp filter) {
+    public void setSourceTileFilter(final BufferedImageOp filter) {
         sourceTileFilter = filter;
     }
 
@@ -164,7 +164,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    void setOpaqueBorderFilter(final Color[] colors) {
+    public void setOpaqueBorderFilter(final Color[] colors) {
         setSourceTileFilter(new BorderFilter(colors));
     }
 

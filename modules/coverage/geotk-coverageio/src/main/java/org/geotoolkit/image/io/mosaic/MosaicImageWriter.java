@@ -71,7 +71,6 @@ import org.geotoolkit.internal.rmi.RMI;
  * ImageWriteParam)} method. The later alternative is non-standard but often required since
  * the image to mosaic is typically bigger than the capacity of a single {@link RenderedImage}.
  *
- * <!--
  * {@section Caching of source tiles}
  * This class may be slow when reading source images encoded in a compressed format like PNG,
  * because multiple passes over the same image may be necessary for writing different tiles
@@ -89,11 +88,10 @@ import org.geotoolkit.internal.rmi.RMI;
  * method, for example in order to add transparency to fully opaque images. Note that if an operation
  * is applied, then the source tiles will be cached in temporary RAW files as described in the above
  * section even if {@link #isCachingEnabled(ImageReader,int)} returns {@code false}.
- * -->
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  * @module
@@ -203,7 +201,7 @@ public class MosaicImageWriter extends ImageWriter {
 
     /**
      * Writes the specified image as a set of tiles. The default implementation copies the image in
-     * a temporary file, then invokes {@link #writeFromInput}. This somewhat inefficient approach
+     * a temporary file, then invokes {@link #writeFromInput}. This very inefficient approach
      * may be changed in a future version.
      *
      * @param  metadata The stream metadata.
@@ -330,6 +328,9 @@ public class MosaicImageWriter extends ImageWriter {
     /**
      * Reads the image from the given reader and writes it as a set of tiles.
      * It is the caller responsability to dispose the reader when writing is done.
+     *
+     * @param reader The image reader configured for reading the image to mosaic. This reader
+     *        should have been created by {@link #getImageReader(Object, int, ImageWriteParam)}.
      */
     private boolean writeFromReader(final ImageReader reader, final int inputIndex,
             final ImageWriteParam writeParam) throws IOException
@@ -885,8 +886,7 @@ search: for (final Tile tile : tiles) {
      *
      * @since 3.00
      */
-    boolean isCachingEnabled(final ImageReader input, final int inputIndex) throws IOException {
-        if (true) return false; // Disabled until more extensively tested.
+    protected boolean isCachingEnabled(final ImageReader input, final int inputIndex) throws IOException {
         /*
          * Gets an estimation of the available memory. This will be used for computing the maximal
          * size of input images. The calculation will need to take in account the number of bits per
@@ -1073,6 +1073,9 @@ search: for (final Tile tile : tiles) {
             }
             op = param.getSourceTileFilter();
         }
+        /*
+         * If we are allowed to cache an uncompressed copies of the tiles, do that now.
+         */
         if (op != null || isCachingEnabled(reader, inputIndex)) {
             final Collection<Tile> tiles = new ArrayList<Tile>();
             if (reader instanceof MosaicImageReader) {
@@ -1086,6 +1089,76 @@ search: for (final Tile tile : tiles) {
             temporaryFiles.putAll(RMI.execute(new TileCopier(tiles, op)));
         }
         return reader;
+    }
+
+    /**
+     * A mosaic image reader using the temporary files created by {@link #getImageReader}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.01
+     *
+     * @since 3.01
+     * @module
+     */
+    private static class CachingReader extends MosaicImageReader {
+        /**
+         * The temporary files created for each input tile.
+         * This map will not be modified by this class.
+         */
+        private final Map<Tile,RawFile> temporaryFiles;
+
+        /**
+         * The raw image reader.
+         */
+        private ImageReader reader;
+
+        /**
+         * Constructs an image reader using the given cached files. The given map is retained
+         * by direct reference - it must not be cloned, because its content will actually be
+         * determined a little bit later (but before the read operation begin).
+         */
+        public CachingReader(final Map<Tile,RawFile> temporaryFiles) {
+            this.temporaryFiles = temporaryFiles;
+        }
+
+        /**
+         * Returns the reader to use for reading the given tile,
+         * which will use the cached file if possible.
+         */
+        @Override
+        ImageReader getTileReader(final Tile tile) throws IOException {
+            final RawFile raw = temporaryFiles.get(tile);
+            if (raw == null) {
+                return super.getTileReader(tile);
+            }
+            if (reader == null) {
+                final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("raw");
+                if (!it.hasNext()) {
+                    throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+                }
+                reader = it.next();
+            }
+            Tile.close(reader.getInput());
+            reader.setInput(raw.getImageInputStream());
+            return reader;
+        }
+
+        /**
+         * Disposes this reader.
+         */
+        @Override
+        public void dispose() {
+            if (reader != null) {
+                try {
+                    Tile.close(reader.getInput());
+                } catch (IOException e) {
+                    Logging.unexpectedException(Tile.class, "close", e);
+                }
+                reader.dispose();
+                reader = null;
+            }
+            super.dispose();
+        }
     }
 
     /**
@@ -1108,7 +1181,9 @@ search: for (final Tile tile : tiles) {
          */
         for (final Class<?> type : MosaicImageReader.Spi.INPUT_TYPES) {
             if (type.isInstance(input)) {
-                final ImageReader reader = new MosaicImageReader();
+                // Creates an instance of CachingReader inconditionnaly, even if the
+                // map of temporary files is empty, because it may be filled later.
+                final ImageReader reader = new CachingReader(temporaryFiles);
                 reader.setInput(input);
                 if (filter(reader)) {
                     return reader;

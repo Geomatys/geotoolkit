@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.lang.reflect.Method;
 import javax.imageio.ImageReader;
@@ -47,6 +46,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 
 
@@ -68,7 +68,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @see org.geotoolkit.gui.swing.image.MosaicBuilderEditor
  *
@@ -287,22 +287,9 @@ public class MosaicBuilder {
      * @param format The image format name for tiles.
      * @throws IllegalArgumentException if no provider was found for the given name.
      */
-    public void setTileReaderSpi(String format) throws IllegalArgumentException {
+    public void setTileReaderSpi(final String format) throws IllegalArgumentException {
         // No need to synchronize.
-        ImageReaderSpi spi = null;
-        if (format != null) {
-            format = format.trim();
-            final IIORegistry registry = IIORegistry.getDefaultInstance();
-            final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true);
-            do {
-                if (!it.hasNext()) {
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.UNKNOW_IMAGE_FORMAT_$1, format));
-                }
-                spi = it.next();
-            } while (!XArrays.contains(spi.getFormatNames(), format));
-        }
-        setTileReaderSpi(spi);
+        setTileReaderSpi(Formats.getReaderByFormatName(format));
     }
 
     /**
@@ -1083,6 +1070,23 @@ public class MosaicBuilder {
 
     /**
      * The mosaic image writer to be used by {@link MosaicBuilder#createTileManager(Object)}.
+     * Compared to the parent {@code MosaicImageWriter} class, this writer adds the following
+     * capabilities:
+     * <p>
+     * <ul>
+     *   <li>Sets the following properties with values inferred from the given reader:
+     *     <ul>
+     *       <li>{@link MosaicBuilder#setUntiledImageBounds(Rectangle)}</li>
+     *       <li>{@link MosaicBuilder#setTileReaderSpi(ImageReaderSpi)}</li>
+     *     </ul></li>
+     *   <li>Remember the output {@link TileManager} produced by the builder.</li>
+     * </ul>
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.01
+     *
+     * @since 2.5
+     * @module
      */
     private final class Writer extends MosaicImageWriter {
         /**
@@ -1097,7 +1101,8 @@ public class MosaicBuilder {
         private final int inputIndex;
 
         /**
-         * The input tile managers, or {@code null} if none.
+         * The input tile managers, or {@code null} if none. This is inferred from the
+         * {@link ImageReader} given by the user - this is not computed by this class.
          */
         TileManager[] inputTiles;
 
@@ -1116,15 +1121,29 @@ public class MosaicBuilder {
         }
 
         /**
-         * Creates the tiles for the specified untiled images.
+         * Invoked after {@link MosaicImageWriter} has created a reader and set the input.
+         * This implementation set the following properties with values inferred from the
+         * given reader:
+         * <p>
+         * <ul>
+         *   <li>{@link MosaicBuilder#setUntiledImageBounds(Rectangle)}</li>
+         *   <li>{@link MosaicBuilder#setTileReaderSpi(ImageReaderSpi)}</li>
+         * </ul>
          */
         @Override
         protected boolean filter(ImageReader reader) throws IOException {
             final Rectangle bounds = new Rectangle();
             bounds.width  = reader.getWidth (inputIndex);
             bounds.height = reader.getHeight(inputIndex);
+            /*
+             * At this point, 'bounds' is the value that we want to give to
+             * setUntiledImageBounds(Rectangle). But we will not do that now;
+             * we will wait for making sure that the image can be read.
+             *
+             * If the reader given to this method is actually a MosaicImageReader,
+             * then it will be replaced by the reader of the underlying tiles.
+             */
             TileManager input = null;
-            // Sets only after successful reading of image size.
             if (reader instanceof MosaicImageReader) {
                 final MosaicImageReader mosaic = (MosaicImageReader) reader;
                 inputTiles = mosaic.getInput(); // Should not be null as of filter(...) contract.
@@ -1133,6 +1152,11 @@ public class MosaicBuilder {
                 }
                 reader = mosaic.getTileReader();
             }
+            /*
+             * Now set the MosaicBuilder properties:
+             *    - The SPI of tile to create
+             *    - The bounds of the mosaic as a whole.
+             */
             if (reader != null) { // May be null as a result of above line.
                 final ImageReaderSpi spi = reader.getOriginatingProvider();
                 if (spi != null && getTileReaderSpi() == null) {
@@ -1150,12 +1174,13 @@ public class MosaicBuilder {
                 }
                 throw exception;
             }
-            return true;
+            return super.filter(reader);
         }
 
         /**
          * Invoked when a tile is about to be written. Delegates to a method that users can
-         * override.
+         * override. This is only a hook for user-overriding - the default implementations
+         * of those methods does nothing.
          */
         @Override
         protected void onTileWrite(Tile tile, ImageWriteParam parameters) throws IOException {
