@@ -61,6 +61,15 @@ public class GO2Hints {
      */
     public static final Key KEY_SYMBOL_RENDERING_ORDER = new HintKey(5, Boolean.class);
 
+    /**
+     * Configure the label renderer used.
+     * The default label renderer is LABELING_NO_ALGORITM.
+     * If you need an advanced label placement algorithm to be used then
+     * set this hint to LABELING_INTELLIGENT
+     */
+    public static final Key KEY_LABELING = new HintKey(6, String.class);
+
+
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
     public static final Boolean GENERALIZE_ON = Boolean.TRUE;
@@ -69,6 +78,8 @@ public class GO2Hints {
     public static final Boolean SYMBOL_RENDERING_SECOND = Boolean.FALSE;
     public static final String GEOMETRY_ISO = "ISO";
     public static final String GEOMETRY_JTS = "JTS";
+    public static final String LABELING_INTELLIGENT = "LABELING_INTELLIGENT";
+    public static final String LABELING_NO_ALGORITM = "LABELING_STREAM";
 
     /**
      * A value of 1.3 looks like the best average generalisation.

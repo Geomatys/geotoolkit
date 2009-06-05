@@ -36,7 +36,7 @@ public interface LabelRenderer {
     /**
      * Add a new label to render.
      */
-    void append(LabelDescriptor label);
+    void append(LabelLayer layer);
     
     /**
      * Portray all labels in the rendering context.

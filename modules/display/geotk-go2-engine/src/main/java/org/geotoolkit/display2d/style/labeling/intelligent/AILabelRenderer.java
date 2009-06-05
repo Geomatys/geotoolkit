@@ -15,9 +15,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.style.labeling;
+package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -29,18 +30,23 @@ import java.util.List;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
+import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.LabelLayer;
+import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 
 /**
  * Default implementation of label renderer.
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultLabelRenderer implements LabelRenderer{
+public class AILabelRenderer implements LabelRenderer{
 
     private final RenderingContext2D context;
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
     
-    public DefaultLabelRenderer(RenderingContext2D context) {
+    public AILabelRenderer(RenderingContext2D context) {
         if(context == null) throw new NullPointerException("Rendering context can not be null");
         this.context = context;
     }
@@ -116,6 +122,12 @@ public class DefaultLabelRenderer implements LabelRenderer{
         g2.setPaint(label.getTextPaint());
         g2.setFont(label.getTextFont());
         g2.drawString(label.getText(), refX, refY);
+
+
+        /////////////////////////////
+        g2.setStroke(new BasicStroke(1));
+        g2.setColor(Color.BLACK);
+        g2.draw(shape.getBounds2D());
         
     }
     

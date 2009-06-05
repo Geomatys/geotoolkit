@@ -36,8 +36,10 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.intelligent.AILabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -372,6 +374,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                                paintingDisplayShape, paintingObjectiveShape,
                                canvasDisplayShape, canvasObjectiveShape);
         context.initGraphic(g2d);
+        g2d.setRenderingHints(this.graphics.getRenderingHints());
+        context.labelRenderer = getLabelRenderer(true);
         return context;
     }
 
@@ -381,7 +385,12 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public LabelRenderer getLabelRenderer(final boolean create) {
         if(labelRenderer == null && create){
-            labelRenderer = new DefaultLabelRenderer(this);
+            Object lr = (String)canvas.getRenderingHint(GO2Hints.KEY_LABELING);
+            if(GO2Hints.LABELING_INTELLIGENT.equals(lr)){
+                labelRenderer = new AILabelRenderer(this);
+            }else{
+                labelRenderer = new DefaultLabelRenderer(this);
+            }
         }
         return labelRenderer;
     }

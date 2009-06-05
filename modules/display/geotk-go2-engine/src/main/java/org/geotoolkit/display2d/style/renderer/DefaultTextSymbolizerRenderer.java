@@ -62,6 +62,8 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
+import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
+import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -190,12 +192,16 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
             throw new PortrayalException(ex);
         }
 
-        exploreAndPortrayISO(geom, feature, renderer, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
+        final LabelLayer labelLayer = new DefaultLabelLayer(false, true);
+
+        exploreAndPortrayISO(geom, feature, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label, labelLayer);
+
+        renderer.append(labelLayer);
     }
 
-    private static void exploreAndPortrayISO(org.opengis.geometry.Geometry geom, Feature feature, LabelRenderer renderer, RenderingContext2D context,
+    private static void exploreAndPortrayISO(org.opengis.geometry.Geometry geom, Feature feature, RenderingContext2D context,
             CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
-            String label) throws PortrayalException{
+            String label, LabelLayer layer) throws PortrayalException{
 
         if(geom instanceof org.opengis.geometry.primitive.Point){
             final double[] coords = geom.getCentroid().getCoordinate();
@@ -234,7 +240,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                 anchorX, anchorY,
                 dispX, dispY,
                 rotation, context.getDisplayCRS());
-            renderer.append(descriptor);
+            layer.labels().add(descriptor);
         }else if(geom instanceof Curve
                 || geom instanceof org.opengis.geometry.coordinate.Polygon){
 
@@ -260,7 +266,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                     anchorX, anchorY,
                     dispX, dispY,
                     rotation, context.getDisplayCRS());
-                renderer.append(descriptor);
+                layer.labels().add(descriptor);
 
             }else if(placement instanceof CachedLinePlacement){
                 //Using a line placement on points, strange but can happen
@@ -284,7 +290,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                         lp.isAligned(),
                         lp.isGeneralizeLine(),
                         j2dShape);
-                renderer.append(descriptor);
+                layer.labels().add(descriptor);
             }else{
                 throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
             }
@@ -292,8 +298,8 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
         }else if(geom instanceof MultiPrimitive){
             MultiPrimitive multi = (MultiPrimitive) geom;
             for(org.opengis.geometry.Geometry sub : multi.getElements()){
-                exploreAndPortrayISO(sub, feature, renderer, context, placement,
-                        haloWidth, haloPaint, fontPaint, j2dFont, label);
+                exploreAndPortrayISO(sub, feature, context, placement,
+                        haloWidth, haloPaint, fontPaint, j2dFont, label,layer);
             }
         }
 
@@ -305,6 +311,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
 
         final Feature feature = projectedFeature.getFeature();
         final LabelRenderer renderer = context.getLabelRenderer(true);
+        final LabelLayer labelLayer = new DefaultLabelLayer(false, true);
 
 
         final Geometry geom;
@@ -354,7 +361,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                 anchorX, anchorY,
                 dispX, dispY,
                 rotation, context.getDisplayCRS());
-            renderer.append(descriptor);
+            labelLayer.labels().add(descriptor);
 
         }else if( geom instanceof LineString || geom instanceof MultiLineString
                 || geom instanceof Polygon || geom instanceof MultiPolygon ){
@@ -383,7 +390,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                     anchorX, anchorY,
                     dispX, dispY,
                     rotation, context.getDisplayCRS());
-                renderer.append(descriptor);
+                labelLayer.labels().add(descriptor);
 
             }else if(placement instanceof CachedLinePlacement){
                 //Using a line placement on points, strange but can happen
@@ -407,13 +414,14 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                         lp.isAligned(),
                         lp.isGeneralizeLine(),
                         j2dShape);
-                renderer.append(descriptor);
+                labelLayer.labels().add(descriptor);
             }else{
                 throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
             }
 
         }
 
+        renderer.append(labelLayer);
     }
 
     /**

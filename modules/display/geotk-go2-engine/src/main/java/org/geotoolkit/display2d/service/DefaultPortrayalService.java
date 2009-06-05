@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints.Key;
 import java.awt.Shape;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
@@ -153,31 +154,7 @@ public class DefaultPortrayalService implements PortrayalService{
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage) 
             throws PortrayalException{
-
-        final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension);
-        final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
-        canvas.setContainer(renderer);
-        
-
-        try {
-            renderer.setContext(context);
-            canvas.getController().setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
-        }
-
-        //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
-        try {
-            canvas.getController().setVisibleArea(contextEnv);
-        } catch (NoninvertibleTransformException ex) {
-            throw new PortrayalException(ex);
-        }
-        canvas.getController().repaint();
-        BufferedImage buffer = canvas.getSnapShot();
-        canvas.dispose();
-
-        return buffer;
+        return portray(context,contextEnv,canvasDimension,strechImage,0,null,null);
     }
 
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
@@ -203,11 +180,14 @@ public class DefaultPortrayalService implements PortrayalService{
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
         canvas.setBackground(background);
-        canvas.setMonitor(monitor);
+
+        if(monitor != null){
+            canvas.setMonitor(monitor);
+        }
 
         if(hints != null){
             for(Object key : hints.keySet()){
-                canvas.setRenderingHint((HintKey)key, hints.get(key));
+                canvas.setRenderingHint((Key)key, hints.get(key));
             }
         }
 

@@ -17,30 +17,18 @@
  */
 package org.geotoolkit.display2d.container;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.awt.image.renderable.RenderableImage;
-import java.io.IOException;
-import java.net.URL;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.container.stateless.StatelessDynamicLayerJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 
@@ -172,18 +160,9 @@ public class MultiThreadedRendering{
         return buffer;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    public void render() {
-
+    public void render(){
         final List<MapLayer> layers = context.layers();
-        
-        final Rectangle rect = renderingContext.getCanvasDisplayBounds();
-        final int width = rect.width;
-        final int height = rect.height;
-        
-        //first pass to start threads for dynamic layers
+
         for (final MapLayer layer : layers) {
 
             //we ignore invisible layers
@@ -191,151 +170,31 @@ public class MultiThreadedRendering{
                 continue;
             }
 
-            if (layer instanceof DynamicMapLayer) {
-                final StatelessDynamicLayerJ2D gra = (StatelessDynamicLayerJ2D) layerGraphics.get(layer);
-                final int zOrder = layers.indexOf(layer);
+            final int zOrder = layers.indexOf(layer);
+
+            synchronized(buffers){
                 buffers.put(zOrder, null);
-
-                //start a separate thread that handle the distant serveur
-                new Thread() {
-
-                    @Override
-                    public void run() {
-                        BufferedImage img = null;
-                        Object obj = null;
-                        try {
-                            obj = gra.query(renderingContext);
-                        } catch (PortrayalException ex) {
-                            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-                            Logger.getLogger(MultiThreadedRendering.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                            
-                        if(obj instanceof BufferedImage){
-                            img = (BufferedImage) obj;
-                        }else if(obj instanceof Image){
-                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-                            final Graphics2D g2 = buffer.createGraphics();
-                            g2.drawImage((Image)obj, 0,0,null);
-                            g2.dispose();
-                            img = buffer;
-                        }else if(obj instanceof RenderedImage){
-                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-                            final Graphics2D g2 = buffer.createGraphics();
-                            g2.drawRenderedImage( (RenderedImage)obj, new AffineTransform());
-                            g2.dispose();
-                            img = buffer;
-                        }else if(obj instanceof RenderableImage){
-                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-                            final Graphics2D g2 = buffer.createGraphics();
-                            g2.drawRenderableImage( (RenderableImage)obj, new AffineTransform());
-                            g2.dispose();
-                            img = buffer;
-                        }else if(obj instanceof URL){
-                            BufferedImage buffer = null;
-                            try {
-                                buffer = ImageIO.read((URL) obj);
-                            } catch (IOException ex) {
-                                Logger.getLogger(MultiThreadedRendering.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            img = buffer;
-                        }else{
-                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-                            //TODO DRAW a message to show that we couldn't paint this layer
-                            img = buffer;
-                        }
-                            
-                        synchronized(buffers){
-                            buffers.put(zOrder, img);
-                        }
-
-                        //we wake the dispatch thread that may be waiting for it
-                        wake();
-                    }
-                }.start();
-            }
-        }
-
-        //flag used to know if the previous layer is done
-        boolean previousIsNotReady = false;
-        RenderingContext2D validContext = null;
-
-        for (final MapLayer layer : layers) {
-
-            //we ignore invisible layers
-            if (!layer.isVisible()) {
-                continue;                
             }
 
-            if (layer instanceof DynamicMapLayer) {
-                // A dynamic layer
-                final int zOrder = layers.indexOf(layer);
+            new Thread() {
+                @Override
+                public void run() {
+                    final BufferedImage img = buildBuffer();
+                    final RenderingContext2D tc = renderingContext.create(img.createGraphics());
+                    final GraphicJ2D gra = layerGraphics.get(layer);
 
-                //see if the distant layer has finished rendering
-                final Image layerImage = buffers.get(new Integer(zOrder));
-                if (layerImage != null) {
-                    //the distant layer has finished rendering
-                    //we can directly paint the result image
+                    gra.paint(tc);
 
-                    if (previousIsNotReady) {
-                        //if the previous laye was distant and not ready we have to create a temp buffer.
-                        final BufferedImage buffer = buildBuffer();
-                        //append the buffer in the buffers set
-                        buffers.put(layers.indexOf(layer), buffer);
-
-                        if(validContext != null && validContext != renderingContext){
-                            //the context is not the main rendering context, we dispose it
-//                            validContext.gdisposeGraphics();
-//                            validContext.setGraphics(null, null);
-                        }
-
-                        //create a new rendering context using the bufferedimage
-                        validContext = renderingContext.create(buffer.createGraphics());
-                    } else {
-                        //we use the last valid rendering context or the default one.
-                        if (validContext == null) {
-                            validContext = renderingContext;
-                        }
+                    synchronized(buffers){
+                        buffers.put(zOrder, img);
                     }
 
-                    validContext.switchToDisplayCRS();
-                    validContext.getGraphics().drawImage(layerImage, 0, 0, null);
-
-                    previousIsNotReady = false;
-                } else {
-                    //Distant layer is not ready, we will have to wait
-                    previousIsNotReady = true;
+                    //we wake the dispatch thread that may be waiting for it
+                    wake();
                 }
-
-            } else {
-                // A normal feature layer
-                final GraphicJ2D gra = layerGraphics.get(layer);
-
-                if (previousIsNotReady) {
-                    //if the previous laye was distant and not ready we have to create a temp buffer.
-                    final BufferedImage buffer = buildBuffer();
-                    //append the buffer in the buffers set
-                    buffers.put(layers.indexOf(layer), buffer);
-
-                    if(validContext != null && validContext != renderingContext){
-                        //the context is not the main rendering context, we dispose it
-//                        validContext.disposeGraphics();
-//                        validContext.setGraphics(null, null);
-                    }
-
-                    //create a new rendering context using the bufferedimage
-                    validContext = renderingContext.create(buffer.createGraphics());
-                } else {
-                    //we use the last valid rendering context or the default one.
-                    if (validContext == null) {
-                        validContext = renderingContext;
-                    }
-                }
-
-                gra.paint(validContext);
-                previousIsNotReady = false;
-            }
-
+            }.start();
         }
+        
 
         //we now wait for every rendering to finish
         synchronized(this){
@@ -345,5 +204,180 @@ public class MultiThreadedRendering{
         }
 
     }
+
+
+//    /**
+//     * {@inheritDoc }
+//     */
+//    public void render() {
+//
+//        final List<MapLayer> layers = context.layers();
+//
+//        final Rectangle rect = renderingContext.getCanvasDisplayBounds();
+//        final int width = rect.width;
+//        final int height = rect.height;
+//
+//        //first pass to start threads for dynamic layers
+//        for (final MapLayer layer : layers) {
+//
+//            //we ignore invisible layers
+//            if (!layer.isVisible()) {
+//                continue;
+//            }
+//
+//            if (layer instanceof DynamicMapLayer) {
+//                final StatelessDynamicLayerJ2D gra = (StatelessDynamicLayerJ2D) layerGraphics.get(layer);
+//                final int zOrder = layers.indexOf(layer);
+//                buffers.put(zOrder, null);
+//
+//                //start a separate thread that handle the distant serveur
+//                new Thread() {
+//
+//                    @Override
+//                    public void run() {
+//                        BufferedImage img = null;
+//                        Object obj = null;
+//                        try {
+//                            obj = gra.query(renderingContext);
+//                        } catch (PortrayalException ex) {
+//                            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+//                            Logger.getLogger(MultiThreadedRendering.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+//
+//                        if(obj instanceof BufferedImage){
+//                            img = (BufferedImage) obj;
+//                        }else if(obj instanceof Image){
+//                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+//                            final Graphics2D g2 = buffer.createGraphics();
+//                            g2.drawImage((Image)obj, 0,0,null);
+//                            g2.dispose();
+//                            img = buffer;
+//                        }else if(obj instanceof RenderedImage){
+//                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+//                            final Graphics2D g2 = buffer.createGraphics();
+//                            g2.drawRenderedImage( (RenderedImage)obj, new AffineTransform());
+//                            g2.dispose();
+//                            img = buffer;
+//                        }else if(obj instanceof RenderableImage){
+//                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+//                            final Graphics2D g2 = buffer.createGraphics();
+//                            g2.drawRenderableImage( (RenderableImage)obj, new AffineTransform());
+//                            g2.dispose();
+//                            img = buffer;
+//                        }else if(obj instanceof URL){
+//                            BufferedImage buffer = null;
+//                            try {
+//                                buffer = ImageIO.read((URL) obj);
+//                            } catch (IOException ex) {
+//                                Logger.getLogger(MultiThreadedRendering.class.getName()).log(Level.SEVERE, null, ex);
+//                            }
+//                            img = buffer;
+//                        }else{
+//                            final BufferedImage buffer = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+//                            //TODO DRAW a message to show that we couldn't paint this layer
+//                            img = buffer;
+//                        }
+//
+//                        synchronized(buffers){
+//                            buffers.put(zOrder, img);
+//                        }
+//
+//                        //we wake the dispatch thread that may be waiting for it
+//                        wake();
+//                    }
+//                }.start();
+//            }
+//        }
+//
+//        //flag used to know if the previous layer is done
+//        boolean previousIsNotReady = false;
+//        RenderingContext2D validContext = null;
+//
+//        for (final MapLayer layer : layers) {
+//
+//            //we ignore invisible layers
+//            if (!layer.isVisible()) {
+//                continue;
+//            }
+//
+//            if (layer instanceof DynamicMapLayer) {
+//                // A dynamic layer
+//                final int zOrder = layers.indexOf(layer);
+//
+//                //see if the distant layer has finished rendering
+//                final Image layerImage = buffers.get(new Integer(zOrder));
+//                if (layerImage != null) {
+//                    //the distant layer has finished rendering
+//                    //we can directly paint the result image
+//
+//                    if (previousIsNotReady) {
+//                        //if the previous laye was distant and not ready we have to create a temp buffer.
+//                        final BufferedImage buffer = buildBuffer();
+//                        //append the buffer in the buffers set
+//                        buffers.put(layers.indexOf(layer), buffer);
+//
+//                        if(validContext != null && validContext != renderingContext){
+//                            //the context is not the main rendering context, we dispose it
+////                            validContext.gdisposeGraphics();
+////                            validContext.setGraphics(null, null);
+//                        }
+//
+//                        //create a new rendering context using the bufferedimage
+//                        validContext = renderingContext.create(buffer.createGraphics());
+//                    } else {
+//                        //we use the last valid rendering context or the default one.
+//                        if (validContext == null) {
+//                            validContext = renderingContext;
+//                        }
+//                    }
+//
+//                    validContext.switchToDisplayCRS();
+//                    validContext.getGraphics().drawImage(layerImage, 0, 0, null);
+//
+//                    previousIsNotReady = false;
+//                } else {
+//                    //Distant layer is not ready, we will have to wait
+//                    previousIsNotReady = true;
+//                }
+//
+//            } else {
+//                // A normal feature layer
+//                final GraphicJ2D gra = layerGraphics.get(layer);
+//
+//                if (previousIsNotReady) {
+//                    //if the previous laye was distant and not ready we have to create a temp buffer.
+//                    final BufferedImage buffer = buildBuffer();
+//                    //append the buffer in the buffers set
+//                    buffers.put(layers.indexOf(layer), buffer);
+//
+//                    if(validContext != null && validContext != renderingContext){
+//                        //the context is not the main rendering context, we dispose it
+////                        validContext.disposeGraphics();
+////                        validContext.setGraphics(null, null);
+//                    }
+//
+//                    //create a new rendering context using the bufferedimage
+//                    validContext = renderingContext.create(buffer.createGraphics());
+//                } else {
+//                    //we use the last valid rendering context or the default one.
+//                    if (validContext == null) {
+//                        validContext = renderingContext;
+//                    }
+//                }
+//
+//                gra.paint(validContext);
+//                previousIsNotReady = false;
+//            }
+//
+//        }
+//
+//        //we now wait for every rendering to finish
+//        synchronized(this){
+//            while (!pack()) {
+//                block();
+//            }
+//        }
+//
+//    }
 
 }
