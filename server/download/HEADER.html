@@ -7,45 +7,67 @@
   <body>
     <h1>Geotoolkit.org downloads</h1>
 
-    <p align="justify">This directories contains binary, javadoc and source code of
-    <a href="http://www.geotoolkit.org/">Geotoolkit.org</a> for each release. This download area
-    is an alternative to the <a href="http://maven.geotoolkit.org/">Maven repository</a>. Maven
-    gives fine-grain control, allowing users to fetch binaries and source codes on a module-by-module
-    basis. At the contrary this download area bundles many or all modules in a single file, as a
-    convenience for those who don't wish to use Maven. Those two alternatives are documented on the
-    <a href="http://www.geotoolkit.org/download.html">Downloading Geotoolkit binaries</a> page.</p>
+    <p align="justify">This directories contains binary, javadoc and source code archive bundles of
+    <a href="http://www.geotoolkit.org/">Geotoolkit.org</a> for each release.</p>
 
-    <table align="center" border="1" bgcolor="lightskyblue">
+    <p>As documented in the
+    <a href="http://www.geotoolkit.org/download.html">Downloading Geotoolkit binaries</a> page, this
+    download area provides a manual alternative to the automated downloading provided by the
+    <a href="http://maven.geotoolkit.org/">Maven repository</a>. Maven provides fine-grain control,
+    allowing users to fetch binary and source code modules on a module-by-module basis. Here, this
+    download area provides various bundles, grouping many or all modules into a single file, as a
+    convenience for those who do not wish to use Maven.</p>
+
+    <p>The bundles are expandable into a single JAR file using the <code>unpack200</code> tool.</p>
+
+    <table border="1" >
       <tr bgcolor="royalblue">
         <th><font color="white">File</font></th>
         <th><font color="white">Content</font></th>
         <th><font color="white">Alternative</font></th>
-      </tr><tr>
-        <td><code>&nbsp;<b>geotk-javadoc.zip</b>&nbsp;</code></td>
-        <td>&nbsp;Aggregated javadoc of all public Geotoolkit.org classes in every modules.&nbsp;</td>
-        <td>&nbsp;<a href="http://javadoc.geotoolkit.org">Online javadoc</a>&nbsp;</td>
-      </tr><tr>
-        <td><code>&nbsp;<b>geotk-sources.zip</b>&nbsp;</code></td>
-        <td>&nbsp;Sources of all Geotoolkit.org modules.&nbsp;</td>
-        <td>&nbsp;<a href="http://maven.geotoolkit.org/org/geotoolkit/">Maven repository</a>
-        (<code>*-sources.jar</code>)&nbsp;</td>
-      </tr><tr>
-        <td><code>&nbsp;<b>geotk-bundle.pack.gz</b>&nbsp;</code></td>
-        <td>&nbsp;Binaries of most (but not all) Geotoolkit.org modules as a single JAR file.&nbsp;</td>
-        <td>&nbsp;<a href="http://maven.geotoolkit.org/org/geotoolkit/">Maven repository</a>
-        (<code>*.jar</code>)&nbsp;</td>
-      </tr><tr>
-        <td><code>&nbsp;<b>geotk-bundle-coverage.pack.gz</b></code>,<br>
-        <code>&nbsp;<b>geotk-bundle-referencing.pack.gz</b>&nbsp;</code></td>
-        <td>&nbsp;Subsets of <code>geotk-bundle.pack.gz</code><br>
-        &nbsp;as documented in "<cite>Downloading Geotoolkit binaries</cite>".&nbsp;</td>
-        <td>&nbsp;<a href="http://maven.geotoolkit.org/org/geotoolkit/">Maven repository</a>
-        (<code>*.jar</code>)&nbsp;</td>
-      </tr><tr>
-        <td><code>&nbsp;<b>changes/</b>&nbsp;</code></td>
-        <td>&nbsp;Changes since previous versions.&nbsp;</td>
-        <td>&nbsp;Mercurial diff&nbsp;</td>
+      </tr>
+      <tr>
+        <td nowrap><code><b>geotk-bundle.pack.gz</b></code></td>
+        <td>Most (but not all) Geotoolkit.org modules.</td>
+        <td><a href="http://maven.geotoolkit.org/org/geotoolkit/">Maven repository</a>
+          (<code>*.jar</code>)</td>
+      </tr>
+      <tr>
+        <td nowrap><code><b>geotk-bundle-coverage.pack.gz</b></code></td>
+        <td>Subset of <code>geotk-bundle.pack.gz</code> for work with Grid coverages.</td>
+        <td><a href="http://maven.geotoolkit.org/org/geotoolkit/geotk-coverage">Maven repository</a>
+          (<code>*.jar</code>)</td>
+      </tr>
+      <tr>
+        <td nowrap><code><b>geotk-bundle-referencing.pack.gz</b></code></td>
+        <td>Subset of <code>geotk-bundle.pack.gz</code> for geo-referencing work.</td>
+        <td><a href="http://maven.geotoolkit.org/org/geotoolkit/geotk-referencing">Maven repository</a>
+          (<code>*.jar</code>)</td>
+      </tr>
+      <tr>
+        <td colspan="3'" align="center" bgcolor="lightskyblue">
+          <i>For more information on the bundles, see the
+          <a href="http://www.geotoolkit.org/download.html">Downloading Geotoolkit binaries</a>
+          page.</i>
+        </td>
+      </tr>
+      <tr>
+        <td nowrap><code><b>geotk-javadoc.zip</b></code></td>
+        <td>Aggregated javadoc of all public Geotoolkit.org classes in every module.</td>
+        <td><a href="http://javadoc.geotoolkit.org">Online javadoc</a></td>
+      </tr>
+      <tr>
+        <td nowrap><code><b>geotk-sources.zip</b></code></td>
+        <td>The source code for all Geotoolkit.org modules.</td>
+        <td><a href="http://maven.geotoolkit.org/org/geotoolkit/">Maven repository</a>
+          (<code>*-sources.jar</code>)</td>
+      </tr>
+      <tr>
+        <td nowrap><code><b>changes/</b></code></td>
+        <td>Changes since previous versions.</td>
+        <td>Mercurial diff</td>
       </tr>
     </table>
+    <br>
   </body>
 </html>
