@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>coverage</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>coverage</artifactId>
-  <packaging>pom</packaging>
-  <name>Coverage</name>
+  <artifactId>geotk-coverageio</artifactId>
+  <packaging>jar</packaging>
+  <name>Coverage I/O base classes</name>
 
   <description>
-    Projects group for pending coverage services.
+    Base classes for image and coverage I/O operations. Contains some codecs for ASCII grids.
   </description>
 
 
@@ -43,59 +43,59 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
     <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <timezone>+1</timezone>
+      <name>Simone Giannecchini</name>
+      <id>simboss</id>
+      <email>simone.giannecchini@geo-solutions.it</email>
+      <organization>GeoSolutions</organization>
       <roles>
-        <role>Developer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- =========================================================== -->
-  <!--     Dependencies to be inherited by all modules.            -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-pending</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-utility</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-metadata</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>conformance</artifactId>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverageio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <!--dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_codec</artifactId>
+      <scope>test</scope>
+    </dependency-->
   </dependencies>
-
-
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>geotk-coverageio</module>
-    <module>geotk-coverageio-netcdf</module>
-    <module>geotk-wms</module>
-    <module>geotk-world-image</module>
-  </modules>
 
 </project>

@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>coverage</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>coverage</artifactId>
-  <packaging>pom</packaging>
-  <name>Coverage</name>
+  <artifactId>geotk-coverageio-netcdf</artifactId>
+  <packaging>jar</packaging>
+  <name>Coverage I/O NetCDF</name>
 
   <description>
-    Projects group for pending coverage services.
+    Coverage I/O for NetCDF format.
   </description>
 
 
@@ -43,59 +43,54 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
     <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <name>Andrea Antonello</name>
+      <id>antonello</id>
+      <organization>Hydrologis</organization>
+      <organizationUrl>http://www.hydrologis.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Developer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
+  <contributors>
+    <contributor>
+      <name>Antoine Hnawia</name>
+      <organization>Institut de Recherche pour le Développement</organization>
+      <organizationUrl>http://www.ird.fr/</organizationUrl>
+      <timezone>+11</timezone>
+      <roles>
+        <role>Java developper</role>
+      </roles>
+    </contributor>
+  </contributors>
+
 
   <!-- =========================================================== -->
-  <!--     Dependencies to be inherited by all modules.            -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-pending</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-utility</artifactId>
+      <artifactId>geotk-coverageio</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-metadata</artifactId>
+      <groupId>edu.ucar</groupId>
+      <artifactId>netcdf</artifactId>
+      <!-- The version number is specified in the parent POM. -->
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-referencing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>conformance</artifactId>
-      <scope>test</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <!-- The version number is specified in the parent POM. -->
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
-
-
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>geotk-coverageio</module>
-    <module>geotk-coverageio-netcdf</module>
-    <module>geotk-wms</module>
-    <module>geotk-world-image</module>
-  </modules>
 
 </project>
