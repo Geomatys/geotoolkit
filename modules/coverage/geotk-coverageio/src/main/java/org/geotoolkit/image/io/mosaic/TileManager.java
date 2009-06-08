@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -412,9 +414,6 @@ public abstract class TileManager implements Serializable {
      * Returns the root directory of all tiles, or {@code null} if unknown. This method searchs
      * for a common {@linkplain File#getParentFile() parent directory} of every tiles.
      *
-     * @todo This method is not yet public because the current implementation doesn't recognize
-     *       the {@link String} patterns used by {@link GridTileManager}.
-     *
      * @return The root directory, or {@code null} if unknown.
      * @throws IOException If an I/O error occured.
      *
@@ -424,16 +423,37 @@ public abstract class TileManager implements Serializable {
         File root = null;
         for (final Tile tile : getInternalTiles()) {
             Object input = tile.getInput();
-            if (input instanceof File) {
-                final File parent = ((File) input).getParentFile();
-                if (parent == null) {
-                    return new File(".");
+            File parent;
+            if (input instanceof String) {
+                /*
+                 * If the string begin with "file:", assume that this is a URL. This is required
+                 * for GridTileManager, which use patterns as Strings. We extract the parent
+                 * directory right there because the filename part may be a pattern without
+                 * meaning.
+                 */
+                final String path = (String) input;
+                if (!path.regionMatches(true, 0, "file:", 0, 5)) {
+                    continue;
                 }
-                if (root == null) {
-                    root = parent;
-                } else {
-                    root = IOUtilities.commonParent(root, parent);
+                final URL url;
+                try {
+                    url = new URL(path);
+                } catch (MalformedURLException e) {
+                    continue;
                 }
+                parent = new File(url.getPath()).getParentFile();
+            } else if (input instanceof File) {
+                parent = ((File) input).getParentFile();
+            } else {
+                continue; // Unknown type - look at the next tile.
+            }
+            if (parent == null) {
+                return new File(".");
+            }
+            if (root == null) {
+                root = parent;
+            } else {
+                root = IOUtilities.commonParent(root, parent);
             }
         }
         return root;

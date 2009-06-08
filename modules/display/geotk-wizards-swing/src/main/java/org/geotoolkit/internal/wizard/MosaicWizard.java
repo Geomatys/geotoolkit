@@ -45,7 +45,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * Guides the user through the steps of creating a set of {@linkplain Tile tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -95,12 +95,12 @@ public final class MosaicWizard extends AbstractWizard {
         super("Geotoolkit Pyramid Builder", new String[] {
             SELECT,
             LAYOUT,
-//          COLORS,
+            COLORS,
             CONFIRM
         }, new String[] {
             "Select source tiles",
             "Define pyramid tiling",
-//          "Remove opaque border",
+            "Remove opaque border",
             "Confirm"
         });
     }

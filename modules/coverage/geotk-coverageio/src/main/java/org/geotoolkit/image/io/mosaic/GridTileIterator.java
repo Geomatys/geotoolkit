@@ -91,9 +91,9 @@ final class GridTileIterator implements Iterator<Tile> {
     }
 
     /**
-     * Returns {@code true} if there is more tiles to returns.
+     * Returns {@code true} if there is more tiles to return.
      *
-     * @return {@code true} if there is at least one more tile to returns.
+     * @return {@code true} if there is at least one more tile to return.
      */
     @Override
     public boolean hasNext() {

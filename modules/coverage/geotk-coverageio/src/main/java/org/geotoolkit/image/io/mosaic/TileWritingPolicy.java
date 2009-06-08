@@ -69,6 +69,12 @@ public enum TileWritingPolicy {
     final boolean includeEmpty;
 
     /**
+     * The default value. This value is documented in
+     * {@link MosaicImageWriteParam#getTileWritingPolicy()}.
+     */
+    static final TileWritingPolicy DEFAULT = OVERWRITE;
+
+    /**
      * Creates a new enum.
      *
      * @param overwrite    {@code true} if tiles should be overwritten.

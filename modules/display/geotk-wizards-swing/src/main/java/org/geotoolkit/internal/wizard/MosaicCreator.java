@@ -30,6 +30,7 @@ import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
+import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 
 
@@ -59,10 +60,14 @@ final class MosaicCreator extends DeferredWizardResult {
         try {
             final TileManager[] inputs  = ((MosaicChooser)       settings.get(MosaicWizard.SELECT)).getSelectedTiles();
             final MosaicBuilder builder = ((MosaicBuilderEditor) settings.get(MosaicWizard.LAYOUT)).getMosaicBuilder();
-//          final Color[]       colors  = ((MultiColorChooser)   settings.get(MosaicWizard.COLORS)).getSelectedColors();
-            // TODO: needs an API for giving the colors to the MosaicBuilder.
+            final Color[]       colors  = ((MultiColorChooser)   settings.get(MosaicWizard.COLORS)).getSelectedColors();
             Logging.getLogger(MosaicBuilder.class).setLevel(Level.FINE);
-            tiles = builder.createTileManager(inputs, TileWritingPolicy.WRITE_NEWS_NONEMPTY);
+            final MosaicImageWriteParam param = new MosaicImageWriteParam();
+            param.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_NONEMPTY);
+            if (colors.length != 0) {
+                param.setOpaqueBorderFilter(colors);
+            }
+            tiles = builder.writeFromInput(inputs, param);
         } catch (Throwable exception) {
             progress.failed(exception.getLocalizedMessage(), false);
             return;

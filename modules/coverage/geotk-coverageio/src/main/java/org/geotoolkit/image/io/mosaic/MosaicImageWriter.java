@@ -344,7 +344,7 @@ public class MosaicImageWriter extends ImageWriter {
             policy = param.getTileWritingPolicy();
         } else {
             outputIndex = 0;
-            policy = TileWritingPolicy.OVERWRITE;
+            policy = TileWritingPolicy.DEFAULT;
         }
         processImageStarted(outputIndex);
         /*

@@ -43,7 +43,7 @@ import javax.media.jai.PlanarImage;
  * for execution on a remote server.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -94,6 +94,7 @@ public abstract class SimpleBufferedImageOp implements BufferedImageOp, Serializ
                     throw new IllegalArgumentException();
                 }
             }
+            ImageUtilities.fill(dest, 0);
             final Graphics2D gr = dest.createGraphics();
             gr.drawRenderedImage(result, new AffineTransform());
             gr.dispose();

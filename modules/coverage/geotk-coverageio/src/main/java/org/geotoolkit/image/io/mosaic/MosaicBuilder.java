@@ -1203,7 +1203,9 @@ public class MosaicBuilder {
      * @throws IOException if an error occured while reading the untiled image.
      */
     public synchronized TileManager createTileManager(final Object input) throws IOException {
-        return createTileManager(input, TileWritingPolicy.NO_WRITE);
+        final MosaicImageWriteParam param = new MosaicImageWriteParam();
+        param.setTileWritingPolicy(TileWritingPolicy.NO_WRITE);
+        return writeFromInput(input, 0, param, true); // Do not invoke the user-overrideable method.
     }
 
     /**
@@ -1221,12 +1223,15 @@ public class MosaicBuilder {
      * @throws IOException if an error occured while reading the untiled image or (only if
      *         {@code writeTiles} is {@code true}) while writting the tiles to disk.
      *
-     * @since 3.00
+     * @deprecated Replaced by {@link #writeFromInput(Object, int, MosaicImageWriteParam)}.
      */
+    @Deprecated
     public synchronized TileManager createTileManager(final Object input,
             final TileWritingPolicy policy) throws IOException
     {
-        return createTileManager(input, 0, policy, true);
+        final MosaicImageWriteParam param = new MosaicImageWriteParam();
+        param.setTileWritingPolicy(policy);
+        return writeFromInput(input, param);
     }
 
     /**
@@ -1248,29 +1253,86 @@ public class MosaicBuilder {
      * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
      * @throws IOException if an error occured while reading the untiled image or (only if
      *         {@code writeTiles} is {@code true}) while writting the tiles to disk.
+     *
+     * @deprecated Replaced by {@link #writeFromInput(Object, int, MosaicImageWriteParam)}.
      */
+    @Deprecated
     public synchronized TileManager createTileManager(final Object input, final int inputIndex,
             final TileWritingPolicy policy) throws IOException
     {
-        return createTileManager(input, inputIndex, policy, false);
+        final MosaicImageWriteParam param = new MosaicImageWriteParam();
+        param.setTileWritingPolicy(policy);
+        return writeFromInput(input, inputIndex, param);
     }
 
     /**
-     * Implements the public {@code createTileManager} method.
+     * Creates the tile manager and writes the tiles on disk. This is equivalent to
+     * <code>{@linkplain #writeFromInput(Object,int,MosaicImageWriteParam) writeFromInput}(input,
+     * <b>0</b>, policy)</code> except that this method ensures that the input contains only one
+     * image. If more than one image is found, then an exception is throw. This is often desireable
+     * when the input is a collection of {@link Tile}s, since having more than one "image" (where
+     * "image" in this context means different instances of {@code TileManager}) means that we
+     * failed to create a single mosaic from a set of source tiles.
+     *
+     * @param  input The image input, typically as a {@link File} or an other {@link TileManager}.
+     * @param  param The parameter to be given to {@link MosaicImageWriter}, or {@code null}
+     *         for the default parameters.
+     * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
+     * @throws IOException if an error occured while reading the untiled image or while writting
+     *         the tiles to disk.
+     *
+     * @since 3.01
+     */
+    public synchronized TileManager writeFromInput(final Object input,
+            final MosaicImageWriteParam param) throws IOException
+    {
+        return writeFromInput(input, 0, param, true);
+    }
+
+    /**
+     * Creates the tile manager and writes the tiles on disk. The {@linkplain #getUntiledImageBounds
+     * untiled image bounds} and {@linkplain #getTileReaderSpi tile reader SPI} are inferred
+     * from the input, unless they were explicitly specified. The input may be a {@link File}
+     * if the mosaic should be created from a single input image, or may be a collection of
+     * {@link Tile}s or a {@link TileManager} if the new mosaic should be created from an
+     * existing one.
+     *
+     * @param  input The image input, typically as a {@link File} or an other {@link TileManager}.
+     * @param  inputIndex Index of image to read, typically 0.
+     * @param  param The parameter to be given to {@link MosaicImageWriter}, or {@code null}
+     *         for the default parameters.
+     * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
+     * @throws IOException if an error occured while reading the untiled image or while writting
+     *         the tiles to disk.
+     *
+     * @since 3.01
+     */
+    public synchronized TileManager writeFromInput(final Object input, final int inputIndex,
+            final MosaicImageWriteParam param) throws IOException
+    {
+        return writeFromInput(input, inputIndex, param, false);
+    }
+
+    /**
+     * Implements the public {@code writeFromInput} methods.
      *
      * @param onlyOneImage If {@code true}, then the operation fails if the input contains more than
      *        one image. This is often necessary if the input is a collection of {@link TileManager}s,
      *        since more than 1 image means that the manager failed to create a single mosaic from
      *        a set of source images.
      */
-    private TileManager createTileManager(final Object input, final int inputIndex,
-            final TileWritingPolicy policy, final boolean onlyOneImage) throws IOException
+    private TileManager writeFromInput(final Object input, final int inputIndex,
+            final MosaicImageWriteParam param, final boolean onlyOneImage) throws IOException
     {
         formatter.ensurePrefixSet(input);
+        final TileWritingPolicy policy;
+        if (param != null) {
+            policy = param.getTileWritingPolicy();
+        } else {
+            policy = TileWritingPolicy.DEFAULT;
+        }
         final Writer writer = new Writer(inputIndex, policy);
         writer.setLogLevel(getLogLevel());
-        final MosaicImageWriteParam param = writer.getDefaultWriteParam();
-        param.setTileWritingPolicy(policy);
         try {
             if (!writer.writeFromInput(input, inputIndex, param, onlyOneImage)) {
                 return null;

@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.image.RenderedImage;
 import java.awt.image.ComponentColorModel;
 
@@ -42,7 +44,9 @@ import static org.junit.Assert.*;
 
 /**
  * Tests reading and writing of a mosaic. This tests is the only one performing
- * real read/write operations.
+ * real read/write operations. The input tiles are opaque RGB images. The output
+ * should be opaque as well, except in the case of {@link #testTransparency()}
+ * which should have added an alpha channel.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.01
@@ -137,6 +141,8 @@ public final class MosaicReadWriteTest {
             final String name = tile.getInputName();
             assertEquals(name, S, image.getWidth());
             assertEquals(name, S, image.getHeight());
+            assertEquals(3, image.getSampleModel().getNumBands());
+            assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
             assertEquals(name, TILE_CHECKSUMS[i++], Commons.checksum(image));
         }
     }
@@ -171,6 +177,8 @@ public final class MosaicReadWriteTest {
                 image = reader.read(0, param);
                 assertEquals(S, image.getWidth());
                 assertEquals(S, image.getHeight());
+                assertEquals(3, image.getSampleModel().getNumBands());
+                assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
                 assertEquals(TILE_CHECKSUMS[i++], Commons.checksum(image));
             }
         }
@@ -197,32 +205,34 @@ public final class MosaicReadWriteTest {
     }
 
     /**
-     * Returns the builder to use for creating the target mosaic. We do not create tiles at
-     * the finest subsampling in order to reduce the amount of data to write (and thus make
-     * the test slightly faster). We create 3 levels with tiles of 30x30 pixels, except the
-     * last level which will create an image of 20 pixels height.
+     * Returns the builder to use for creating the target mosaic. The subsampling levels to create
+     * must be supplied in argument. Some tests do not create tiles at the finest subsampling in
+     * order to reduce the amount of data to write (and thus make the test slightly faster). The
+     * levels {@code 3, 6, 9} create 3 levels with tiles of 30x30 pixels, except the last level
+     * which will create an image of 20 pixels height.
      */
-    private MosaicBuilder builder() throws IOException {
+    private MosaicBuilder builder(final int... subsamplings) throws IOException {
         targetDirectory = new File(RMI.getSharedTemporaryDirectory(), "mosaic-test");
         assertTrue(targetDirectory.mkdir());
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setUntiledImageBounds(new Rectangle(4*S, 2*S));
         builder.setTileDirectory(targetDirectory);
         builder.setTileSize(new Dimension(30, 30));
-        builder.setSubsamplings(3, 6, 9);
+        builder.setSubsamplings(subsamplings);
         builder.setTileReaderSpi("png");
         return builder;
     }
 
     /**
-     * Tests writing the mosaic.
+     * Tests writing the mosaic. After the test, the created tiles will be
+     * read and their pixel values compared against the expected checksum.
      *
      * @throws IOException If an I/O error occured.
      */
     @Test
     public void testWriteMosaic() throws IOException {
         final MosaicImageWriter writer = new MosaicImageWriter();
-        writer.setOutput(builder().createTileManager());
+        writer.setOutput(builder(3, 6, 9).createTileManager());
         writer.writeFromInput(sourceMosaic, null);
         writer.dispose();
         /*
@@ -248,8 +258,80 @@ public final class MosaicReadWriteTest {
             reader.setInput(in);
             final RenderedImage image = reader.read(0);
             in.close();
+            assertEquals(3, image.getSampleModel().getNumBands());
+            assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
             assertEquals(filename, checksums[i++], Commons.checksum(image));
         }
         reader.dispose();
+    }
+
+    /**
+     * Tests again writing a mosaic, but this time with an operation applied.
+     * This operation add an alpha channel to the tiles.
+     *
+     * @throws IOException If an I/O error occured.
+     */
+    @Test
+    public void testTransparency() throws IOException {
+        final TileManager targetMosaic = builder(1, 6).createTileManager();
+        /*
+         * The colors found in the 4 corners of every tiles. We will try to make those
+         * colors transparent. This is an unrealist test since those pixels are mostly
+         * ocean colors. A real work would be to replace a uniform black or white, but
+         * we are only interrested in checking that the calculation is really done.
+         */
+        final Color[] cornerColors = {
+            new Color(  0,   0,   0),
+            new Color(  1,   5,  20),
+            new Color(  2,   5,  20),
+            new Color(  2,   5,  21),
+            new Color(  2,   7,  24),
+            new Color(  2,   7,  25),
+            new Color(  5,  16,  42),
+            new Color(  6,  17,  44),
+            new Color(  6,  18,  45),
+            new Color(  6,  18,  47),
+            new Color(  6,  19,  47),
+            new Color(  8,  22,  54),
+            new Color(  9,  27,  64),
+            new Color( 14,  40,  85),
+            new Color( 17,  47,  95),
+            new Color( 17,  47,  96),
+            new Color( 19,  50, 102),
+            new Color( 22,  59, 113),
+            new Color(255, 255, 255),
+        };
+        final MosaicImageWriter writer = new MosaicImageWriter();
+        final MosaicImageWriteParam param = writer.getDefaultWriteParam();
+        param.setOpaqueBorderFilter(cornerColors);
+        writer.setOutput(targetMosaic);
+        writer.writeFromInput(sourceMosaic, param);
+        writer.dispose();
+        /*
+         * Verifies that every tiles has an alpha channel.
+         */
+        for (final Tile tile : targetMosaic.getTiles()) {
+            final ImageReader reader = tile.getImageReader();
+            final RenderedImage image = reader.read(0);
+            Tile.dispose(reader);
+            assertEquals(4, image.getSampleModel().getNumBands());
+            assertEquals(Transparency.TRANSLUCENT, image.getColorModel().getTransparency());
+        }
+        /*
+         * Now read the target mosaic as one single image.
+         */
+        final MosaicImageReader reader = new MosaicImageReader();
+        reader.setInput(targetMosaic);
+        final RenderedImage image = reader.read(0);
+        reader.dispose();
+        assertEquals(4, image.getSampleModel().getNumBands());
+        assertEquals(Transparency.TRANSLUCENT, image.getColorModel().getTransparency());
+        /*
+         * Do not test the checksum, since its value may vary with the ImageWorker
+         * implementation. If a visual test is wanted, enable the block below.
+         */
+        if (false) {
+            ImageIO.write(image, "png", new File("testTransparency.png"));
+        }
     }
 }

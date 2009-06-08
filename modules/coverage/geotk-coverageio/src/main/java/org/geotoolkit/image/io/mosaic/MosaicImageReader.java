@@ -384,14 +384,19 @@ public class MosaicImageReader extends ImageReader {
     }
 
     /**
-     * Returns a reader configured for the given tile. This method is used <strong>only</strong>
-     * by the {@link #read(int, ImageReadParam)} method, because its sole purpose is to allow
-     * {@link MosaicImageWriter} to redirect the read operation to a cached file. All other
-     * operation must use the original tiles, because the cached files are in RAW format, which
-     * doesn't contain any information about metadata, <i>etc.</i>
+     * Returns a reader configured for the given tile. Normally this method just redirect to
+     * {@link Tile#getImageReader(MosaicImageReader, boolean, boolean)}. The sole purpose of
+     * this method is to allow {@link MosaicImageWriter} to redirect the read operation to a
+     * cached file in the RAW format.
      * <p>
-     * This cache mechanism applies only to {@code MosaicImageWriter}. All other usage should
-     * ignore the existence of this method.
+     * Because the RAW format contains no metadata, this method should not be used by any
+     * method returning a {@link IIOMetadata} object. This method is used only by the
+     * following methods:
+     * <p>
+     * <ul>
+     *   <li>{@link #read(int, ImageReadParam)}</li>
+     *   <li>Methods that return a {@link ImageTypeSpecifier}</li>
+     * </ul>
      *
      * @return An image reader with its {@linkplain ImageReader#getInput input} set.
      * @throws IOException if the image reader can't be initialized.
@@ -619,7 +624,7 @@ public class MosaicImageReader extends ImageReader {
             if (!(input instanceof File)) {
                 return false;
             }
-            final ImageReader reader = tile.getImageReader(this, true, true);
+            final ImageReader reader = getTileReader(tile);
             if (!reader.isRandomAccessEasy(tile.getImageIndex())) {
                 return false;
             }
@@ -639,7 +644,7 @@ public class MosaicImageReader extends ImageReader {
         if (!useDefaultImplementation("getAspectRatio", INTEGER_ARGUMENTS)) {
             float ratio = Float.NaN;
             for (final Tile tile : getTileManager(imageIndex).getTiles()) {
-                final ImageReader reader = tile.getImageReader(this, true, true);
+                final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
                 final float candidate = reader.getAspectRatio(tile.getImageIndex());
                 if (candidate == ratio || Float.isNaN(candidate)) {
                     // Same ratio or unspecified ratio.
@@ -752,7 +757,7 @@ public class MosaicImageReader extends ImageReader {
                 final Collection<Tile> tiles = getTileManager(imageIndex).getTiles();
                 final Tile tile = getSpecificTile(tiles);
                 if (tile != null) {
-                    type = tile.getImageReader(this, true, true).getRawImageType(imageIndex);
+                    type = getTileReader(tile).getRawImageType(imageIndex);
                     assert type.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
                 } else {
                     type = super.getRawImageType(imageIndex);
@@ -830,7 +835,7 @@ public class MosaicImageReader extends ImageReader {
         int pass = 0;
         final Map<ImageTypeSpecifier,Integer> types = new LinkedHashMap<ImageTypeSpecifier,Integer>();
         for (final Tile tile : tiles) {
-            final ImageReader reader = tile.getImageReader(this, true, true);
+            final ImageReader reader = getTileReader(tile);
             final int imageIndex = tile.getImageIndex();
             if (rawTypes != null) {
                 rawTypes.add(reader.getRawImageType(imageIndex));
@@ -902,7 +907,7 @@ public class MosaicImageReader extends ImageReader {
                     final Collection<ImageTypeSpecifier> t = Collections.emptySet();
                     return t.iterator();
                 }
-                types = tile.getImageReader(this, true, true).getImageTypes(imageIndex);
+                types = getTileReader(tile).getImageTypes(imageIndex);
                 assert (types = containsAll(getImageTypes(tiles, null), types)) != null : incompatibleImageType(tile);
                 break;
             }
@@ -1163,7 +1168,7 @@ public class MosaicImageReader extends ImageReader {
                         case SUPPORTED_BY_ONE: {
                             final Tile tile = getSpecificTile(tiles);
                             if (tile != null) {
-                                imageType = tile.getImageReader(this, true, true).getRawImageType(imageIndex);
+                                imageType = getTileReader(tile).getRawImageType(imageIndex);
                                 assert imageType == null || // Should never be null with non-broken ImageReader.
                                        imageType.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
                             }
