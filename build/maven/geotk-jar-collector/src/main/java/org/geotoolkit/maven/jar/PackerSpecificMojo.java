@@ -100,9 +100,11 @@ public class PackerSpecificMojo extends AbstractMojo {
             packer.addPack(coverage, all, new String[] {
                     "jlfgr-1.0.jar",
                     "swingx-0.9.7.jar",
+                    "wizard-0.998.1.jar",
                     "geotk-setup-" + VERSION + ".jar",
                     "geotk-display-" + VERSION + ".jar",
-                    "geotk-widgets-swing-" + VERSION + ".jar"
+                    "geotk-widgets-swing-" + VERSION + ".jar",
+                    "geotk-wizards-swing-" + VERSION + ".jar"
             });
             try {
                 packer.createJars();

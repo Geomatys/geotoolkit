@@ -61,7 +61,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.geotoolkit.internal.wizard.MosaicWizard</mainClass>
+              <mainClass>org.geotoolkit.internal.wizard.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -74,6 +74,11 @@
   <!--     Dependencies                                            -->
   <!-- =========================================================== -->
   <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-setup</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-widgets-swing</artifactId>

@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.internal.setup;
 
-import javax.swing.JFrame;
 import org.geotoolkit.console.CommandLine;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.SwingUtilities;
 
 
@@ -27,7 +25,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * The installer starting point.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -48,13 +46,7 @@ public final class Main extends CommandLine {
     @Override
     protected void unknownAction(final String action) {
         SwingUtilities.setLookAndFeel(Main.class, "run");
-        final Vocabulary resources = Vocabulary.getResources(locale);
-        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit"));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new ControlPanel(resources));
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        ControlPanel.show(locale);
     }
 
     /**

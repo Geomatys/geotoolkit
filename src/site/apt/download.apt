@@ -91,7 +91,7 @@ Downloading Geotoolkit Binaries
 || File                                  || Content                         || Prerequites                 ||
 *----------------------------------------+----------------------------------+-------------------------------+
 | <<<geotk-bundle-referencing.pack.gz>>> | \u2022 vecmath.jar               | \u2022 Java 6                 |
-|                                        | \u2022 jsr-275.jar               |                               |
+|                                        | \u2022 jsr-275.jar               | \u2022 JavaDB (<optional>)    |
 |                                        | \u2022 geoapi.jar                |                               |
 |                                        | \u2022 geotk-epsg.jar            |                               |
 |                                        | \u2022 geotk-utility.jar         |                               |
@@ -100,12 +100,16 @@ Downloading Geotoolkit Binaries
 *----------------------------------------+----------------------------------+-------------------------------+
 | <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus>  | \u2022 Java 6                 |
 |                                        | \u2022 geotk-coverage.jar        | \u2022 Java Advanced Imaging  |
-|                                        | \u2022 geotk-coverageio.jar      |                               |
+|                                        | \u2022 geotk-coverageio.jar      | \u2022 Image I/O extensions   |
 *----------------------------------------+----------------------------------+-------------------------------+
 | <<<geotk-bundle.pack.gz>>>             | <All the coverage pack plus>     | \u2022 Java 6                 |
-|                                        | \u2022 geotk-setup.jar           | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 jlfgr.jar                 | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 swingx.jar                | \u2022 Image I/O extensions   |
+|                                        | \u2022 wizard.jar                | \u2022 JavaDB (<optional>)    |
+|                                        | \u2022 geotk-setup.jar           |                               |
 |                                        | \u2022 geotk-display.jar         |                               |
 |                                        | \u2022 geotk-widgets-swing.jar   |                               |
+|                                        | \u2022 geotk-wizards-swing.jar   |                               |
 *----------------------------------------+----------------------------------+-------------------------------+
 
   Those files can be unpacked using the <<<unpack200>>> executable provided in the Java

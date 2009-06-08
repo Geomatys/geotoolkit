@@ -21,6 +21,8 @@ import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -28,13 +30,13 @@ import org.geotoolkit.resources.Vocabulary;
  * The main control panel.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
-final class ControlPanel extends JPanel implements ActionListener {
+public final class ControlPanel extends JPanel implements ActionListener {
     /**
      * Creates the panel.
      */
@@ -59,9 +61,26 @@ final class ControlPanel extends JPanel implements ActionListener {
 
     /**
      * Invoked when the user press the "close" button.
+     * This method is public as an implementation side effect
+     * and should not be invoked directly.
      */
     @Override
     public void actionPerformed(ActionEvent event) {
         System.exit(0);
+    }
+
+    /**
+     * Displays the control panel.
+     *
+     * @param locale The locale.
+     */
+    public static void show(final Locale locale) {
+        final Vocabulary resources = Vocabulary.getResources(locale);
+        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit"));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new ControlPanel(resources));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }
