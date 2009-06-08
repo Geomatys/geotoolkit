@@ -40,12 +40,13 @@ public final class ProgressWindowTest extends WidgetTestCase {
     }
 
     /**
-     * Test the progress listener with a progress ranging from 0 to 100%.
+     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * The progress listener is tested with a progress ranging from 0 to 100%.
      *
      * @throws InterruptedException Should never happen.
      */
     @Test
-    public void testProgress() throws InterruptedException {
+    public void display() throws InterruptedException {
         if (displayEnabled) try {
             final ProgressListener progress = new ProgressWindow(null);
             progress.started();
