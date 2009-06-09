@@ -92,7 +92,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-coverageio</module>
+    <module>geotk-coverageio-pending</module>
     <module>geotk-coverageio-netcdf</module>
     <module>geotk-wms</module>
     <module>geotk-world-image</module>
