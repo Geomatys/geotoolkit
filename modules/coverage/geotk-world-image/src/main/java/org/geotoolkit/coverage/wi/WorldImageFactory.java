@@ -29,8 +29,8 @@ import javax.imageio.ImageReader;
 
 import org.geotoolkit.coverage.PrjFileReader;
 import org.geotoolkit.coverage.WorldFileReader;
-import org.geotools.coverage.io.CoverageReader;
-import org.geotools.coverage.io.DefaultCoverageReader;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.DefaultCoverageReader;
 
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;

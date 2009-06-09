@@ -166,6 +166,17 @@
         <artifactId>commons-logging</artifactId>
         <version>1.1.1</version>
       </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId> <!-- Logging system used by NetCDF. -->
+        <version>1.4.0</version>
+      </dependency>
+      <!-- Raster formats -->
+      <dependency>
+        <groupId>edu.ucar</groupId>
+        <artifactId>netcdf</artifactId>
+        <version>2.2.20</version>
+      </dependency>
       <!-- Server -->
       <dependency>
         <groupId>postgresql</groupId>
@@ -254,11 +265,6 @@
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gtm-coverage</artifactId>
-        <version>${geomodified.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gtm-coverageio</artifactId>
         <version>${geomodified.version}</version>
       </dependency>
       <dependency>

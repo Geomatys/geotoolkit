@@ -21,7 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-import org.geotools.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;

@@ -51,6 +51,7 @@ import javax.media.jai.RenderedOp;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -61,6 +62,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -72,9 +74,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
-
-import org.geotools.resources.coverage.CoverageUtilities;
-import org.geotools.coverage.io.CoverageReadParam;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;

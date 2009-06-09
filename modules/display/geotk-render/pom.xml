@@ -95,11 +95,12 @@
       <artifactId>geotk-style</artifactId>
       <version>${geotoolkit.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-coverageio</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-coverageio</artifactId>
+      <version>${geotoolkit.version}</version>
     </dependency>
+    
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gtm-cql</artifactId>

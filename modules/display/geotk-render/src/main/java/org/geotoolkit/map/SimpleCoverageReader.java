@@ -19,8 +19,8 @@ package org.geotoolkit.map;
 
 import java.io.IOException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.io.CoverageReadParam;
-import org.geotools.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;

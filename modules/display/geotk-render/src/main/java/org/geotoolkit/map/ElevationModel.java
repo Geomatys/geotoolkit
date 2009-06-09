@@ -20,7 +20,7 @@ package org.geotoolkit.map;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
-import org.geotools.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 
