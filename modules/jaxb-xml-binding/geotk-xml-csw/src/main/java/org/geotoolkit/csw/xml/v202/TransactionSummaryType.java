@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -113,4 +114,46 @@ public class TransactionSummaryType {
     public String getRequestId() {
         return requestId;
     }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionSummaryType) {
+            final TransactionSummaryType that = (TransactionSummaryType) object;
+            return Utilities.equals(this.requestId,      that.requestId)     &&
+                   Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
+                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.totalInserted;
+        hash = 29 * hash + this.totalUpdated;
+        hash = 29 * hash + this.totalDeleted;
+        hash = 29 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[TransactionResponseType]\n");
+
+        if (requestId != null) {
+            s.append("requestId: ").append(requestId).append('\n');
+        }
+        s.append("totalDeleted").append(totalDeleted).append('\n');
+        s.append("totalInserted").append(totalInserted).append('\n');
+        s.append("totalUpdated").append(totalUpdated).append('\n');
+        return s.toString();
+    }
+
 }

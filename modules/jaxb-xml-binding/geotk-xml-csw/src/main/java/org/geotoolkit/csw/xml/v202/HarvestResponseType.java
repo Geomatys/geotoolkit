@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -90,5 +91,42 @@ public class HarvestResponseType {
      */
     public TransactionResponseType getTransactionResponse() {
         return transactionResponse;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof HarvestResponseType) {
+            final HarvestResponseType that = (HarvestResponseType) object;
+            return Utilities.equals(this.acknowledgement,      that.acknowledgement)   &&
+                   Utilities.equals(this.transactionResponse,  that.transactionResponse);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.acknowledgement != null ? this.acknowledgement.hashCode() : 0);
+        hash = 37 * hash + (this.transactionResponse != null ? this.transactionResponse.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[HarvestResponse]\n");
+
+        if (acknowledgement != null) {
+            s.append("acknowledgement: ").append(acknowledgement).append('\n');
+        }
+        if (transactionResponse != null) {
+            s.append("transactionResponse: ").append(transactionResponse).append('\n');
+        }
+        return s.toString();
     }
 }

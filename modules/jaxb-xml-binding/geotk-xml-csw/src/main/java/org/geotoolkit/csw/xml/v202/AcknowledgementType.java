@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -114,5 +115,47 @@ public class AcknowledgementType {
      */
     public XMLGregorianCalendar getTimeStamp() {
         return timeStamp;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AcknowledgementType) {
+            final AcknowledgementType that = (AcknowledgementType) object;
+            return Utilities.equals(this.echoedRequest, that.echoedRequest) &&
+                   Utilities.equals(this.requestId,     that.requestId)     &&
+                   Utilities.equals(this.timeStamp,     that.timeStamp);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.echoedRequest != null ? this.echoedRequest.hashCode() : 0);
+        hash = 97 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
+        hash = 97 * hash + (this.timeStamp != null ? this.timeStamp.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[AcknowledgementType]\n");
+
+        if (echoedRequest != null) {
+            s.append("echoedRequest: ").append(echoedRequest).append('\n');
+        }
+        if (requestId != null) {
+            s.append("requestId: ").append(requestId).append('\n');
+        }
+        if (timeStamp != null) {
+            s.append("timeStamp: ").append(timeStamp).append('\n');
+        }
+        return s.toString();
     }
 }
