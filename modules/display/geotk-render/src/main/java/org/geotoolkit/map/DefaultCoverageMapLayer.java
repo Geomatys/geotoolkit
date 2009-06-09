@@ -18,7 +18,7 @@
 package org.geotoolkit.map;
 
 
-import org.geotools.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;

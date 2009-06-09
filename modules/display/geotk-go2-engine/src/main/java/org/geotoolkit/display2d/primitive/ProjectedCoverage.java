@@ -22,7 +22,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.CoverageMapLayer;
 
-import org.geotools.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.CoverageReadParam;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.FactoryException;
