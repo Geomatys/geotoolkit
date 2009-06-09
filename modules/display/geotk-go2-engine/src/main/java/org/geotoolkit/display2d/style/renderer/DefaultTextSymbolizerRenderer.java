@@ -194,12 +194,12 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
 
         final LabelLayer labelLayer = new DefaultLabelLayer(false, true);
 
-        exploreAndPortrayISO(geom, feature, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label, labelLayer);
+        exploreAndPortrayISO(projectedGeometry,geom, feature, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label, labelLayer);
 
         renderer.append(labelLayer);
     }
 
-    private static void exploreAndPortrayISO(org.opengis.geometry.Geometry geom, Feature feature, RenderingContext2D context,
+    private static void exploreAndPortrayISO(ProjectedGeometry projectedGeometry, org.opengis.geometry.Geometry geom, Feature feature, RenderingContext2D context,
             CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
             String label, LabelLayer layer) throws PortrayalException{
 
@@ -236,10 +236,10 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
             final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
                 label, j2dFont, fontPaint,
                 haloWidth, haloPaint,
-                x, y,
                 anchorX, anchorY,
                 dispX, dispY,
-                rotation, context.getDisplayCRS());
+                rotation, context.getDisplayCRS(),
+                projectedGeometry);
             layer.labels().add(descriptor);
         }else if(geom instanceof Curve
                 || geom instanceof org.opengis.geometry.coordinate.Polygon){
@@ -262,10 +262,10 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                 final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
                     label, j2dFont, fontPaint,
                     haloWidth, haloPaint,
-                    x, y,
                     anchorX, anchorY,
                     dispX, dispY,
-                    rotation, context.getDisplayCRS());
+                    rotation, context.getDisplayCRS(),
+                    projectedGeometry);
                 layer.labels().add(descriptor);
 
             }else if(placement instanceof CachedLinePlacement){
@@ -289,7 +289,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                         lp.isRepeated(),
                         lp.isAligned(),
                         lp.isGeneralizeLine(),
-                        j2dShape);
+                        projectedGeometry);
                 layer.labels().add(descriptor);
             }else{
                 throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
@@ -298,7 +298,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
         }else if(geom instanceof MultiPrimitive){
             MultiPrimitive multi = (MultiPrimitive) geom;
             for(org.opengis.geometry.Geometry sub : multi.getElements()){
-                exploreAndPortrayISO(sub, feature, context, placement,
+                exploreAndPortrayISO(projectedGeometry,sub, feature, context, placement,
                         haloWidth, haloPaint, fontPaint, j2dFont, label,layer);
             }
         }
@@ -357,10 +357,10 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
             final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
                 label, j2dFont, fontPaint,
                 haloWidth, haloPaint,
-                x, y,
                 anchorX, anchorY,
                 dispX, dispY,
-                rotation, context.getDisplayCRS());
+                rotation, context.getDisplayCRS(),
+                projectedGeometry);
             labelLayer.labels().add(descriptor);
 
         }else if( geom instanceof LineString || geom instanceof MultiLineString
@@ -386,10 +386,10 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                 final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
                     label, j2dFont, fontPaint,
                     haloWidth, haloPaint,
-                    x, y,
                     anchorX, anchorY,
                     dispX, dispY,
-                    rotation, context.getDisplayCRS());
+                    rotation, context.getDisplayCRS(),
+                    projectedGeometry);
                 labelLayer.labels().add(descriptor);
 
             }else if(placement instanceof CachedLinePlacement){
@@ -413,7 +413,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                         lp.isRepeated(),
                         lp.isAligned(),
                         lp.isGeneralizeLine(),
-                        j2dShape);
+                        projectedGeometry);
                 labelLayer.labels().add(descriptor);
             }else{
                 throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");

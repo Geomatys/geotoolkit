@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style.labeling;
 
 import java.awt.Font;
 import java.awt.Paint;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 
 /**
  * A labelDescriptor contains all informations relative to a String to paint
@@ -52,5 +53,7 @@ public interface LabelDescriptor {
      * @return Paint for the halo, can not be null
      */
     Paint getHaloPaint();
-    
+
+    ProjectedGeometry getGeometry();
+
 }

@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.style.labeling;
 
 import java.awt.Font;
 import java.awt.Paint;
-import java.awt.Shape;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 
 /**
  * Immutable default linear label descriptor.
@@ -39,13 +39,13 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
     private final boolean repeated;
     private final boolean aligned;
     private final boolean generalize;
-    private final Shape path;
+    private final ProjectedGeometry geom;
     
     public DefaultLinearLabelDescriptor(String text, Font textFont, Paint textPaint,
             float haloWidth, Paint haloPaint, 
             float gap, float initial, float offset,
             boolean repeated, boolean aligned, boolean generalize,
-            Shape path){
+            ProjectedGeometry geom){
         this.text = text;
         this.textFont = textFont;
         this.textPaint = textPaint;
@@ -57,8 +57,7 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
         this.repeated = repeated;
         this.aligned = aligned;
         this.generalize = generalize;
-        this.path = path;
-        
+        this.geom = geom;
     }
         
     /**
@@ -105,14 +104,6 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
      * {@inheritDoc }
      */
     @Override
-    public Shape getLineplacement() {
-        return path;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public float getGap() {
         return gap;
     }
@@ -155,6 +146,14 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
     @Override
     public boolean isGeneralized() {
         return generalize;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ProjectedGeometry getGeometry() {
+        return geom;
     }
 
 }

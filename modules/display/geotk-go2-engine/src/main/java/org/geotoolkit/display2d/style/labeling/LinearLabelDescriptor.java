@@ -66,11 +66,5 @@ public interface LinearLabelDescriptor extends LabelDescriptor{
      * @return boolean
      */
     boolean isGeneralized();
-    
-    /**
-     * @return Shape, the shape along which the label must be painted.
-     * can not be null
-     */
-    Shape getLineplacement();
-    
+        
 }

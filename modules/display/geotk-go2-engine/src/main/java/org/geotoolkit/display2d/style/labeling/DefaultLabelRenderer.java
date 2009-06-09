@@ -17,18 +17,13 @@
  */
 package org.geotoolkit.display2d.style.labeling;
 
-import java.awt.BasicStroke;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.j2d.TextStroke;
 
 /**
  * Default implementation of label renderer.
@@ -36,6 +31,9 @@ import org.geotoolkit.display2d.style.j2d.TextStroke;
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultLabelRenderer implements LabelRenderer{
+
+    private static final DefaultPointLabelCandidateRenderer POINT_RENDERER = new DefaultPointLabelCandidateRenderer();
+    private static final DefaultLinearLabelCandidateRenderer LINEAR_RENDERER = new DefaultLinearLabelCandidateRenderer();
 
     private final RenderingContext2D context;
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
@@ -71,70 +69,17 @@ public class DefaultLabelRenderer implements LabelRenderer{
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         for(final LabelLayer layer : layers){
-            for(final LabelDescriptor label : layer.labels()){
+
+            for(LabelDescriptor label : layer.labels()){
                 if(label instanceof PointLabelDescriptor){
-                    portray(g2, (PointLabelDescriptor)label);
+                    Shape shp = POINT_RENDERER.generateOptimalCandidat((PointLabelDescriptor) label);
+                    POINT_RENDERER.render(context, shp,(PointLabelDescriptor) label);
                 }else if(label instanceof LinearLabelDescriptor){
-                    portray(g2, (LinearLabelDescriptor)label);
+                    Shape shp = LINEAR_RENDERER.generateOptimalCandidat((LinearLabelDescriptor) label);
+                    LINEAR_RENDERER.render(context, shp,(LinearLabelDescriptor) label);
                 }
             }
         }
     }
-    
-    private void portray(Graphics2D g2, PointLabelDescriptor label){
-        context.switchToDisplayCRS();
         
-        final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
-        final int textHeight = metric.getHeight();
-        final int textWidth = metric.stringWidth(label.getText());
-        float refX = label.getX();
-        float refY = label.getY();
-        
-        //adjust displacement---------------------------------------------------
-        //displacement is oriented above and to the right
-        refX = refX + label.getDisplacementX();
-        refY = refY - label.getDisplacementY();
-        
-        //rotation--------------------------------------------------------------
-        final float rotate = (float) Math.toRadians(label.getRotation());
-        g2.rotate(rotate, refX, refY);
-        
-        //adjust anchor---------------------------------------------------------
-        refX = refX - (label.getAnchorX()*textWidth);
-        //text is draw above reference point so use +
-        refY = refY + (label.getAnchorY()*textHeight);
-        
-        //paint halo------------------------------------------------------------
-        final FontRenderContext fontContext = g2.getFontRenderContext();
-        final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
-        final Shape shape = glyph.getOutline(refX,refY);
-        g2.setPaint(label.getHaloPaint());
-        g2.setStroke(new BasicStroke(label.getHaloWidth()*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-        g2.draw(shape);
-                
-        //paint text------------------------------------------------------------
-        g2.setPaint(label.getTextPaint());
-        g2.setFont(label.getTextFont());
-        g2.drawString(label.getText(), refX, refY);
-        
-    }
-    
-    private void portray(Graphics2D g2, LinearLabelDescriptor label){
-        context.switchToDisplayCRS();
-        
-        final TextStroke stroke = new TextStroke(label.getText(), label.getTextFont(), label.isRepeated(),
-                label.getOffSet(), label.getInitialGap(), label.getGap());
-        final Shape shape = stroke.createStrokedShape(label.getLineplacement());
-        
-        //paint halo
-        g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
-        g2.setPaint(label.getHaloPaint());
-        g2.draw(shape);
-        
-        //paint text
-        g2.setStroke(new BasicStroke(0));
-        g2.setPaint(label.getTextPaint());
-        g2.fill(shape);
-    }
-    
 }

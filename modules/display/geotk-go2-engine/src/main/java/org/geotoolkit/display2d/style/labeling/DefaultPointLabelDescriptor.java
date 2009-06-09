@@ -20,6 +20,7 @@ package org.geotoolkit.display2d.style.labeling;
 import java.awt.Font;
 import java.awt.Paint;
 
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -34,35 +35,33 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
     private final Paint textPaint;
     private final float haloWidth;
     private final Paint haloPaint;
-    private final float X;
-    private final float Y;
     private final float dispX;
     private final float dispY;
     private final float anchorX;
     private final float anchorY;
     private final float rotation;
     private final CoordinateReferenceSystem crs;
+    private final ProjectedGeometry geom;
     
     public DefaultPointLabelDescriptor(String text, Font textFont, Paint textPaint,
             float haloWidth, Paint haloPaint, 
-            float X, float Y, 
             float anchorX, float anchorY, 
             float dispX, float dispY,
             float rotation,
-            CoordinateReferenceSystem crs){
+            CoordinateReferenceSystem crs,
+            ProjectedGeometry geom){
         this.text = text;
         this.textFont = textFont;
         this.textPaint = textPaint;
         this.haloWidth = haloWidth;
         this.haloPaint = haloPaint;
-        this.X = X;
-        this.Y = Y;
         this.dispX = dispX;
         this.dispY = dispY;
         this.anchorX = anchorX;
         this.anchorY = anchorY;
         this.rotation = rotation;
         this.crs = crs;
+        this.geom = geom;
     }
     
     /**
@@ -104,22 +103,6 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
     public Paint getHaloPaint() {
         return haloPaint;
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public float getX() {
-        return X;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public float getY() {
-        return Y;
-    }
     
     /**
      * {@inheritDoc }
@@ -159,6 +142,14 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
     @Override
     public float getRotation() {
         return rotation;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ProjectedGeometry getGeometry() {
+        return geom;
     }
 
 }
