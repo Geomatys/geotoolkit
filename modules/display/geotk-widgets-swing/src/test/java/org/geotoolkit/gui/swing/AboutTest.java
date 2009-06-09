@@ -17,32 +17,29 @@
  */
 package org.geotoolkit.gui.swing;
 
-import org.junit.*;
-
 
 /**
  * Tests the {@link About} dialog.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
-public final class AboutTest extends WidgetTestCase {
+public final class AboutTest extends WidgetTestCase<About> {
     /**
      * Constructs the test case.
      */
     public AboutTest() {
         super(About.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
-        final About test = new About();
-        component = test;
-        show();
+    @Override
+    protected About create() {
+        return new About();
     }
 }

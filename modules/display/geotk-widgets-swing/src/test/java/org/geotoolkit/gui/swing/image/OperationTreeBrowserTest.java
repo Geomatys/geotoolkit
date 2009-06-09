@@ -25,30 +25,29 @@ import javax.media.jai.operator.MultiplyConstDescriptor;
 
 import org.geotoolkit.gui.swing.WidgetTestCase;
 
-import org.junit.*;
-
 
 /**
  * Tests the {@link OperationTreeBrowser}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
- * @since 2.0
+ * @since 2.3
  */
-public final class OperationTreeBrowserTest extends WidgetTestCase {
+public final class OperationTreeBrowserTest extends WidgetTestCase<OperationTreeBrowser> {
     /**
      * Constructs the test case.
      */
     public OperationTreeBrowserTest() {
         super(OperationTreeBrowser.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
+    @Override
+    protected OperationTreeBrowser create() {
         RenderedImage image;
         final Float size = new Float(200);
         final Byte value = new Byte((byte)10);
@@ -56,7 +55,6 @@ public final class OperationTreeBrowserTest extends WidgetTestCase {
         image = MultiplyConstDescriptor.create(image, new double[] {2}, null);
         image = GradientMagnitudeDescriptor.create(image, null, null, null);
         image = AddConstDescriptor.create(image, new double[] {35}, null);
-        component = new OperationTreeBrowser(image);
-        show();
+        return new OperationTreeBrowser(image);
     }
 }

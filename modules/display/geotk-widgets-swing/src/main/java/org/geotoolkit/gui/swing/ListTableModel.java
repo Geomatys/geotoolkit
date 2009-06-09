@@ -245,7 +245,9 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
     }
 
     /**
-     * Removes a range of rows (or elements).
+     * Removes a range of rows (or elements). Note that the upper value is inclusive,
+     * which is different than the <cite>Java Collection</cite> usage but consistent
+     * with the <cite>Swing</cite> usage.
      *
      * @param  lower Index of the first row to remove, inclusive.
      * @param  upper Index of the last row to remove, <strong>inclusive</strong>.
@@ -284,12 +286,12 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
             while (i != 0) {
                 int previous = indices[--i];
                 if (previous != lower - 1) {
-                    remove(lower, upper);
+                    remove(lower, upper); // Reminder: upper is inclusive
                     upper = previous;
                 }
                 lower = previous;
             }
-            remove(lower, upper);
+            remove(lower, upper); // Reminder: upper is inclusive
         }
     }
 

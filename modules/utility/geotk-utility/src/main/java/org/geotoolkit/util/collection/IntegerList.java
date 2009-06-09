@@ -397,7 +397,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
     @Override
     protected void removeRange(int lower, int upper) {
         final int size = this.size;
-        if (lower < 0 || upper >= size || lower > upper) {
+        if (lower < 0 || upper > size || lower > upper) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
         }
         int lo = lower * bitCount;

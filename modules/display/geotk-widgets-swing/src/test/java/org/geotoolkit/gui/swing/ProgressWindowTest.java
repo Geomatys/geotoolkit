@@ -27,17 +27,15 @@ import org.junit.*;
  * Tests {@link ProgressWindow}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
-public final class ProgressWindowTest extends WidgetTestCase {
+public final class ProgressWindowTest {
     /**
-     * Constructs the test case.
+     * Set to {@code true} if windows should be visible.
      */
-    public ProgressWindowTest() {
-        super(ProgressWindow.class);
-    }
+    protected boolean displayEnabled;
 
     /**
      * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.

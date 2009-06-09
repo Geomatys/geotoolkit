@@ -18,32 +18,30 @@
 package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.swing.WidgetTestCase;
-import org.junit.*;
 
 
 /**
  * Tests the {@link MosaicChooser}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.01
  *
- * @since 2.0
+ * @since 3.00
  */
-public final class MosaicChooserTest extends WidgetTestCase {
+public final class MosaicChooserTest extends WidgetTestCase<MosaicChooser> {
     /**
      * Constructs the test case.
      */
     public MosaicChooserTest() {
         super(MosaicChooser.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
-        final MosaicChooser test = new MosaicChooser();
-        component = test;
-        show();
+    @Override
+    protected MosaicChooser create() {
+        return new MosaicChooser();
     }
 }

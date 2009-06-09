@@ -23,35 +23,33 @@ import static java.awt.Color.*;
 import org.geotoolkit.gui.swing.WidgetTestCase;
 import org.geotoolkit.internal.image.ColorUtilities;
 
-import org.junit.*;
-
 
 /**
  * Tests the {@link ColorRamp}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
-public final class ColorRampTest extends WidgetTestCase {
+public final class ColorRampTest extends WidgetTestCase<ColorRamp> {
     /**
      * Constructs the test case.
      */
     public ColorRampTest() {
         super(ColorRamp.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
+    @Override
+    protected ColorRamp create() {
         final ColorRamp test = new ColorRamp();
         final int[] ARGB = new int[256];
         ColorUtilities.expand(new Color[] {RED, ORANGE, YELLOW, CYAN}, ARGB, 0, ARGB.length);
         test.setColors(ColorUtilities.getIndexColorModel(ARGB));
-        component = test;
-        show();
+        return test;
     }
 }

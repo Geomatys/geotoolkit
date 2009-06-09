@@ -18,33 +18,34 @@
 package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.swing.WidgetTestCase;
-import org.junit.*;
+import org.geotoolkit.test.Depend;
 
 
 /**
  * Tests the {@link GradientKernelEditor}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
- * @since 2.0
+ * @since 2.3
  */
-public final class GradientKernelEditorTest extends WidgetTestCase {
+@Depend(KernelEditorTest.class)
+public final class GradientKernelEditorTest extends WidgetTestCase<GradientKernelEditor> {
     /**
      * Constructs the test case.
      */
     public GradientKernelEditorTest() {
         super(GradientKernelEditor.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
+    @Override
+    protected GradientKernelEditor create() {
         final GradientKernelEditor test = new GradientKernelEditor();
         test.addDefaultKernels();
-        component = test;
-        show();
+        return test;
     }
 }

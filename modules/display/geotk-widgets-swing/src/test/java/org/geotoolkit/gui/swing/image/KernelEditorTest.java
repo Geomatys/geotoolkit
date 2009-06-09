@@ -18,33 +18,32 @@
 package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.swing.WidgetTestCase;
-import org.junit.*;
 
 
 /**
  * Tests the {@link KernelEditor}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
- * @since 2.0
+ * @since 2.3
  */
-public final class KernelEditorTest extends WidgetTestCase {
+public final class KernelEditorTest extends WidgetTestCase<KernelEditor> {
     /**
      * Constructs the test case.
      */
     public KernelEditorTest() {
         super(KernelEditor.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
+    @Override
+    protected KernelEditor create() {
         final KernelEditor test = new KernelEditor();
         test.addDefaultKernels();
-        component = test;
-        show();
+        return test;
     }
 }

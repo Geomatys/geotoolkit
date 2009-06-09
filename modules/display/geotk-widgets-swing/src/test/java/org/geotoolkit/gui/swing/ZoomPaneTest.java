@@ -23,31 +23,30 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import static java.awt.Color.*;
 
-import org.junit.*;
-
 
 /**
  * Tests the {@link ZoomPane}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
-public final class ZoomPaneTest extends WidgetTestCase {
+public final class ZoomPaneTest extends WidgetTestCase<ZoomPane> {
     /**
      * Constructs the test case.
      */
     public ZoomPaneTest() {
         super(ZoomPane.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
+    @Override
     @SuppressWarnings("serial")
-    public void display() {
+    protected ZoomPane create() {
         final Rectangle rect = new Rectangle(100,200,100,93);
         final Polygon   poly = new Polygon(new int[] {125,175,150}, new int[] {225,225,268}, 3);
         final ZoomPane  pane = new ZoomPane(
@@ -69,7 +68,6 @@ public final class ZoomPaneTest extends WidgetTestCase {
             }
         };
         pane.setPaintingWhileAdjusting(true);
-        component = pane;
-        show("ZoomPane");
+        return pane;
     }
 }

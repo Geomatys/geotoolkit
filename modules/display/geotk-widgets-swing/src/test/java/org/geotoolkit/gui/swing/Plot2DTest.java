@@ -18,32 +18,33 @@
 package org.geotoolkit.gui.swing;
 
 import java.util.Random;
+import java.awt.Component;
 import org.geotoolkit.test.Depend;
-import org.junit.*;
 
 
 /**
  * Tests the {@link Plot2D}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
 @Depend(ZoomPaneTest.class)
-public final class Plot2DTest extends WidgetTestCase {
+public final class Plot2DTest extends WidgetTestCase<Plot2D> {
     /**
      * Constructs the test case.
      */
     public Plot2DTest() {
         super(Plot2D.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
+    @Override
+    protected Component create() {
         final Random random = new Random();
         Plot2D test = new Plot2D(true, false);
         test.addXAxis("Some x values");
@@ -61,7 +62,6 @@ public final class Plot2DTest extends WidgetTestCase {
             }
             test.addSeries("Random values", null, x, y);
         }
-        component = test.createScrollPane();
-        show("Plot2D");
+        return test.createScrollPane();
     }
 }

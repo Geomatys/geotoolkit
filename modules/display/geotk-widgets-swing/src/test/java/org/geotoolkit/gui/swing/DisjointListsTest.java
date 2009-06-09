@@ -18,33 +18,32 @@
 package org.geotoolkit.gui.swing;
 
 import java.util.Locale;
-import org.junit.*;
 
 
 /**
  * Tests the {@link DisjointLists}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
-public final class DisjointListsTest extends WidgetTestCase {
+public final class DisjointListsTest extends WidgetTestCase<DisjointLists> {
     /**
      * Constructs the test case.
      */
     public DisjointListsTest() {
         super(DisjointLists.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
+    @Override
+    protected DisjointLists create() {
         final DisjointLists test = new DisjointLists();
         test.addElements(Locale.getAvailableLocales());
-        component = test;
-        show();
+        return test;
     }
 }

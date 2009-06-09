@@ -15,25 +15,25 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.referencing;
+package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.swing.WidgetTestCase;
 
 
 /**
- * Tests the {@link CoordinateChooser}.
+ * Tests the {@link MultiColorChooserTest}.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.01
  *
- * @since 2.3
+ * @since 3.01
  */
-public final class CoordinateChooserTest extends WidgetTestCase<CoordinateChooser> {
+public class MultiColorChooserTest extends WidgetTestCase<MultiColorChooser> {
     /**
      * Constructs the test case.
      */
-    public CoordinateChooserTest() {
-        super(CoordinateChooser.class);
+    public MultiColorChooserTest() {
+        super(MultiColorChooser.class);
         displayEnabled = false;
     }
 
@@ -41,7 +41,7 @@ public final class CoordinateChooserTest extends WidgetTestCase<CoordinateChoose
      * Creates the widget.
      */
     @Override
-    protected CoordinateChooser create() {
-        return new CoordinateChooser();
+    protected MultiColorChooser create() {
+        return new MultiColorChooser();
     }
 }

@@ -35,12 +35,14 @@ import static org.junit.Assert.*;
  * is set to {@code true}. Otherwise the test suite merely checks that no exception are thrown
  * during widget construction.
  *
+ * @param <T> The type of the widget to be tested.
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.3
  */
-public abstract class WidgetTestCase {
+public abstract class WidgetTestCase<T extends Component> {
     /**
      * Set to {@code true} if windows should be visible.
      */
@@ -61,14 +63,28 @@ public abstract class WidgetTestCase {
      *
      * @param testing The class being tested.
      */
-    protected WidgetTestCase(final Class<?> testing) {
+    protected WidgetTestCase(final Class<T> testing) {
         assertTrue(testing.desiredAssertionStatus());
     }
 
     /**
-     * Shows the {@linkplain #component} in a frame if {@link #displayEnabled} is {@code true}.
+     * Creates the widget. The widget is usually of type {@code T}, except if the
+     * widget has been put in a scroll pane.
+     *
+     * @return The created widget.
+     * @throws Exception If an exception occured while creating the widget.
      */
-    protected void show() {
+    protected abstract Component create() throws Exception;
+
+    /**
+     * {@linkplain #create() Creates} the widget and stores the reference in {@linkplain #component}.
+     * If {@link #displayEnabled} is {@code true}, then the widget is displayed in a frame.
+     *
+     * @throws Exception If an exception occured while creating the widget.
+     */
+    @Test
+    public final void display() throws Exception {
+        component = create();
         show(Classes.getShortClassName(component));
     }
 
@@ -77,7 +93,7 @@ public abstract class WidgetTestCase {
      *
      * @param title The window title.
      */
-    protected synchronized void show(final String title) {
+    protected synchronized final void show(final String title) {
         if (displayEnabled) try {
             if (lock == null) {
                 lock = new CountDownLatch(1);

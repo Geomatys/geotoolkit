@@ -18,32 +18,30 @@
 package org.geotoolkit.gui.swing;
 
 import org.geotoolkit.measure.AngleFormat;
-import org.junit.*;
 
 
 /**
  * Tests the {@link FormatChooser}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  */
-public final class FormatChooserTest extends WidgetTestCase {
+public final class FormatChooserTest extends WidgetTestCase<FormatChooser> {
     /**
      * Constructs the test case.
      */
     public FormatChooserTest() {
         super(FormatChooser.class);
+        displayEnabled = false;
     }
 
     /**
-     * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.
+     * Creates the widget.
      */
-    @Test
-    public void display() {
-        final FormatChooser test = new FormatChooser(new AngleFormat());
-        component = test;
-        show();
+    @Override
+    protected FormatChooser create() {
+        return new FormatChooser(new AngleFormat());
     }
 }
