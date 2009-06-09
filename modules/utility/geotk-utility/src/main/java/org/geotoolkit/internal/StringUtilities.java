@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.internal;
 
+import java.util.Arrays;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -316,5 +318,78 @@ public final class StringUtilities {
             } while (c != '\n');
         }
         return startAt;
+    }
+
+    /**
+     * Splits a multi-lines string. Each element in the returned array will be a single line.
+     * If the given text is already a single line, then this method returns a singleton which
+     * contain the given text
+     *
+     * @param  text The text to split.
+     * @return The lines in the text, or {@code null} if the given text was null.
+     */
+    public static String[] splitLines(final String text) {
+        if (text == null) {
+            return null;
+        }
+        /*
+         * This method is implemented on top of String.indexOf(int,int), which is the
+         * fatest method available while taking care of the complexity of code points.
+         */
+        int lf = text.indexOf('\n');
+        int cr = text.indexOf('\r');
+        if (lf < 0 && cr < 0) {
+            return new String[] {
+                text
+            };
+        }
+        int count = 0;
+        String[] splitted = new String[8];
+        int last = 0;
+        boolean hasMore;
+        do {
+            int skip = 1;
+            final int splitAt;
+            if (cr < 0) {
+                // There is no "\r" character in the whole text, only "\n".
+                splitAt = lf;
+                hasMore = (lf = text.indexOf('\n', lf+1)) >= 0;
+            } else if (lf < 0) {
+                // There is no "\n" character in the whole text, only "\r".
+                splitAt = cr;
+                hasMore = (cr = text.indexOf('\r', cr+1)) >= 0;
+            } else if (lf < cr) {
+                // There is both "\n" and "\r" characters with "\n" first.
+                splitAt = lf;
+                hasMore = true;
+                lf = text.indexOf('\n', lf+1);
+            } else {
+                // There is both "\r" and "\n" characters with "\r" first.
+                // We need special care for the "\r\n" sequence.
+                splitAt = cr;
+                if (lf == ++cr) {
+                    cr = text.indexOf('\r', cr+1);
+                    lf = text.indexOf('\n', lf+1);
+                    hasMore = (cr >= 0 || lf >= 0);
+                    skip = 2;
+                } else {
+                    cr = text.indexOf('\r', cr+1);
+                    hasMore = true; // Because there is lf.
+                }
+            }
+            if (count >= splitted.length) {
+                splitted = Arrays.copyOf(splitted, count*2);
+            }
+            splitted[count++] = text.substring(last, splitAt);
+            last = splitAt + skip;
+        } while (hasMore);
+        /*
+         * Add the remaining string and we are done.
+         */
+        if (count >= splitted.length) {
+            splitted = Arrays.copyOf(splitted, count+1);
+        }
+        splitted[count++] = text.substring(last);
+        return XArrays.resize(splitted, count);
     }
 }

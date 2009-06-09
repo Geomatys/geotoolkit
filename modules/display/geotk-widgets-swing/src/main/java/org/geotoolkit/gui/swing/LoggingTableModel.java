@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.gui.swing;
 
-import java.util.Map;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -34,8 +32,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -43,8 +41,8 @@ import org.geotoolkit.resources.Vocabulary;
  * This model is used by {@link LoggingPanel} for displaying logging messages in
  * a {@link javax.swing.JTable}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -52,7 +50,8 @@ import org.geotoolkit.resources.Vocabulary;
 final class LoggingTableModel extends Handler implements TableModel {
     /**
      * Resource keys for default column names. <STRONG>NOTE: Order is significant.</STRONG>
-     * If the order is changed, then the constants in {@link LoggingPanel} must be updated.
+     * If the order is changed, then the constants in {@link #getValueAt(int,int)} and
+     * {@link LoggingPanel} must be updated.
      */
     private static final int[] COLUMN_NAMES = new int[] {
         Vocabulary.Keys.LOGGER,
@@ -64,17 +63,107 @@ final class LoggingTableModel extends Handler implements TableModel {
     };
 
     /**
-     * Resource keys for column names. This is usuall the same array than {@code COLUMN_NAMES}.
-     * However, method {@link #setColumnVisible} may add or remove column in this list.
+     * Holds a log record. If the message is multi-lines, then a {@code Record} instance
+     * will be repeated for each line with a reference to the same {@link LogRecord} but
+     * a different line of the message.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.01
+     *
+     * @since 3.01
+     * @module
      */
-    private int[] columnNames = COLUMN_NAMES;
+    private static final class Record {
+        /**
+         * Special value for {@link #time} meaning that this entry is for additional
+         * lines after the first one.
+         */
+        private static final String ADDITIONAL_LINES = "ADDITIONAL_LINES";
+
+        /**
+         * The log record.
+         */
+        final LogRecord log;
+
+        /**
+         * The message. If there is log message has more than one line, then this
+         * will contains only one line of that message.
+         */
+        private String line;
+
+        /**
+         * The time. Will be created when first needed. The {@value #ADDITIONAL_LINES}
+         * string is used as a special value meaning that nothing should be formatted.
+         */
+        private String time;
+
+        /**
+         * Creates a new record for the given log.
+         */
+        private Record(final LogRecord log, final String line) {
+            this.log  = log;
+            this.line = line;
+        }
+
+        /**
+         * Creates the records for the given log and its message.
+         */
+        static Record[] create(final LogRecord log, final String message) {
+            final String[] lines = StringUtilities.splitLines(message);
+            final Record[] records = new Record[lines.length];
+            for (int i=0; i<lines.length; i++) {
+                records[i] = new Record(log, lines[i]);
+            }
+            for (int i=1; i<lines.length; i++) {
+                records[i].time = ADDITIONAL_LINES;
+            }
+            return records;
+        }
+
+        /**
+         * Returns the value at the given column.
+         *
+         * @param  owner The model which is invoking this method.
+         * @param  columnIndex The column for which to get the value.
+         * @return The value at the given column.
+         */
+        public Object getValueAt(final LoggingTableModel owner, final int columnIndex) {
+            if (time == ADDITIONAL_LINES) { // Intentional identity comparisons, not String.equals
+                switch (columnIndex) {
+                    // The Level as Integer will be handled specially by
+                    // LoggingPanel.Highlighter.isHighlighted(...).
+                    case 4:  return Integer.valueOf(log.getLevel().intValue());
+                    case 5:  return line;
+                    default: return null;
+                }
+            }
+            /*
+             * General case (the logging message holds on a single line,
+             * or we are asking for the first line of a multi-lines log).
+             */
+            switch (columnIndex) {
+                default: throw new AssertionError(columnIndex);
+                case 0:  return log.getLoggerName();
+                case 1:  return getShortClassName(log.getSourceClassName());
+                case 2:  return log.getSourceMethodName();
+                case 4:  return log.getLevel();
+                case 5:  return line;
+                case 3: {
+                    if (time == null) {
+                        time = owner.dateFormat.format(new Date(log.getMillis()));
+                    }
+                    return time;
+                }
+            }
+        }
+    }
 
     /**
-     * The last {@link LogRecord}s stored. This array will grows as needed up to
+     * The last {@link Record}s stored. This array will grows as needed up to
      * {@link #capacity}. Once the maximal capacity is reached, early records
      * are discarted.
      */
-    private LogRecord[] records = new LogRecord[16];
+    private Record[] records = new Record[16];
 
     /**
      * The maximum amount of records that can be stored in this logging panel.
@@ -85,21 +174,11 @@ final class LoggingTableModel extends Handler implements TableModel {
 
     /**
      * The total number of logging messages published by this panel. This number may be
-     * greater than the amount of {@link LogRecord} actually memorized, since early records
+     * greater than the amount of {@link Record} actually memorized, since early records
      * may have been discarted. The slot in {@code records} where to write the next
-     * message can be computed by <code>recordCount % capacity</code>.
+     * message is defined by {@code recordCount % capacity}.
      */
     private int recordCount;
-
-    /**
-     * String representations of latest required records. This is a cache for faster rendering.
-     */
-    @SuppressWarnings("serial")
-    private final Map<LogRecord,String[]> cache = new LinkedHashMap<LogRecord,String[]>() {
-        @Override protected boolean removeEldestEntry(Map.Entry<LogRecord,String[]> eldest) {
-            return size() >= Math.min(capacity, 80);
-        }
-    };
 
     /**
      * The list of registered listeners.
@@ -115,7 +194,7 @@ final class LoggingTableModel extends Handler implements TableModel {
      * Constructs the handler.
      */
     public LoggingTableModel() {
-        setLevel(Level.CONFIG);
+        setLevel(Level.ALL);
         setFormatter(new SimpleFormatter());
     }
 
@@ -139,80 +218,39 @@ final class LoggingTableModel extends Handler implements TableModel {
     }
 
     /**
-     * Returns {@code true} if the given column is visible.
-     *
-     * @param index One of {@link LoggingPanel} constants, which maps to entries in
-     *        {@link #COLUMN_NAMES}. For example {@code 0} for the logger, {@code 1}
-     *        for the class, etc.
-     */
-    final boolean isColumnVisible(int index) {
-        final int key = COLUMN_NAMES[index];
-        for (int i=0; i<columnNames.length; i++) {
-            if (columnNames[i] == key) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Show or hide the given column.
-     *
-     * @param index One of {@link LoggingPanel} constants, which maps to entries in
-     *        {@link #COLUMN_NAMES}. For example {@code 0} for the logger, {@code 1}
-     *        for the class, etc.
-     * @param visible The visible state for the specified column.
-     */
-    final void setColumnVisible(final int index, final boolean visible) {
-        final int key = COLUMN_NAMES[index];
-        int[] names = new int[COLUMN_NAMES.length];
-        int count = 0;
-        for (int i=0; i<COLUMN_NAMES.length; i++) {
-            final int toTest = COLUMN_NAMES[i];
-            if (toTest == key) {
-                if (visible) {
-                    names[count++] = toTest;
-                }
-                continue;
-            }
-            for (int j=0; j<columnNames.length; j++) {
-                if (columnNames[j] == toTest) {
-                    names[count++] = toTest;
-                    break;
-                }
-            }
-        }
-        columnNames = names = XArrays.resize(names, count);
-        cache.clear();
-        fireTableChanged(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
-        assert isColumnVisible(index) == visible : visible;
-    }
-
-    /**
      * Publishes a {@link LogRecord}. If the maximal capacity has been reached,
-     * the oldiest record will be discarted.
+     * then the oldiest record will be discarted.
      */
     @Override
     public synchronized void publish(final LogRecord record) {
         if (!isLoggable(record)) {
             return;
         }
-        final int nextSlot = recordCount % capacity;
-        if (nextSlot >= records.length) {
-            records = Arrays.copyOf(records, Math.min(records.length*2, capacity));
+        /*
+         * Wraps the LogRecord in exactly one Record instances (typicaly case), or more
+         * Record instances if the LogRecord message span more than one line.
+         */
+        final int firstSlot = recordCount % capacity;
+        final Record[] toAdd = Record.create(record, getFormatter().formatMessage(record));
+        for (final Record item : toAdd) {
+            final int nextSlot = recordCount % capacity;
+            if (nextSlot >= records.length) {
+                records = Arrays.copyOf(records, Math.min(records.length*2, capacity));
+            }
+            records[nextSlot] = item;
+            recordCount++;
         }
-        records[nextSlot] = record;
+        /*
+         * Notify all listeners that one (or more) records have been added.
+         */
         final TableModelEvent event;
-        if (++recordCount <= capacity) {
-            event = new TableModelEvent(this, nextSlot, nextSlot,
+        if (recordCount <= capacity) {
+            event = new TableModelEvent(this, firstSlot, firstSlot + toAdd.length,
                     TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
         } else {
             event = new TableModelEvent(this, 0, capacity-1,
                     TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
         }
-        //
-        // Notify all listeners that a record has been added.
-        //
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
                 fireTableChanged(event);
@@ -221,12 +259,15 @@ final class LoggingTableModel extends Handler implements TableModel {
     }
 
     /**
-     * Returns the log record for the specified row.
+     * Returns the record for the specified row.
      *
      * @param row The row in the table. This is the visible row,
      *            not the record number from the first record.
      */
-    public synchronized LogRecord getLogRecord(int row) {
+    private Record getLogRecord(int row) {
+        // Above check is performed with an assertion instead than an API contract check
+        // because this method is invoked indirectly only from the table inside LoggingPanel.
+        // This is pretty far from a public access (while not inacessible).
         assert row < getRowCount();
         if (recordCount > capacity) {
             row += (recordCount % capacity);
@@ -240,7 +281,7 @@ final class LoggingTableModel extends Handler implements TableModel {
      */
     @Override
     public int getColumnCount() {
-        return columnNames.length;
+        return COLUMN_NAMES.length;
     }
 
     /**
@@ -256,7 +297,10 @@ final class LoggingTableModel extends Handler implements TableModel {
      */
     @Override
     public Class<?> getColumnClass(final int columnIndex) {
-        return String.class;
+        switch (columnIndex) {
+            case 4:  return Level .class;
+            default: return String.class;
+        }
     }
 
     /**
@@ -264,7 +308,7 @@ final class LoggingTableModel extends Handler implements TableModel {
      */
     @Override
     public String getColumnName(final int columnIndex) {
-        return Vocabulary.format(columnNames[columnIndex]);
+        return Vocabulary.format(COLUMN_NAMES[columnIndex]);
     }
 
     /**
@@ -272,27 +316,7 @@ final class LoggingTableModel extends Handler implements TableModel {
      */
     @Override
     public synchronized Object getValueAt(final int rowIndex, final int columnIndex) {
-        final LogRecord record = getLogRecord(rowIndex);
-        String[] row = cache.get(record);
-        if (row == null) {
-            row = new String[getColumnCount()];
-            for (int i=0; i<row.length; i++) {
-                final String value;
-                switch (columnNames[i]) {
-                    case Vocabulary.Keys.LOGGER:      value = record.getLoggerName();                          break;
-                    case Vocabulary.Keys.CLASS:       value = getShortClassName(record.getSourceClassName());  break;
-                    case Vocabulary.Keys.METHOD:      value = record.getSourceMethodName();                    break;
-                    case Vocabulary.Keys.TIME_OF_DAY: value = dateFormat.format(new Date(record.getMillis())); break;
-                    case Vocabulary.Keys.LEVEL:       value = record.getLevel().getLocalizedName();            break;
-                    case Vocabulary.Keys.MESSAGE:     value = getFormatter().formatMessage(record);            break;
-                    default:                          throw new AssertionError(i);
-                }
-                row[i] = value;
-            }
-            cache.put(record, row);
-            assert cache.size() <= capacity;
-        }
-        return row[columnIndex];
+        return getLogRecord(rowIndex).getValueAt(this, columnIndex);
     }
 
     /**
@@ -346,8 +370,8 @@ final class LoggingTableModel extends Handler implements TableModel {
     private void fireTableChanged(final TableModelEvent event) {
         final Object[] listeners = listenerList.getListenerList();
         for (int i=listeners.length-2; i>=0; i-=2) {
-            if (listeners[i]==TableModelListener.class) {
-                ((TableModelListener)listeners[i+1]).tableChanged(event);
+            if (listeners[i] == TableModelListener.class) {
+                ((TableModelListener) listeners[i+1]).tableChanged(event);
             }
         }
     }

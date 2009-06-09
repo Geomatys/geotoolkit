@@ -51,4 +51,23 @@ public final class StringUtilitiesTest {
         StringUtilities.removeLF(buffer);
         assertEquals("One,Two,Three Four Five Six", buffer.toString());
     }
+
+    /**
+     * Tests the {@link StringUtilities#splitLines} method.
+     */
+    @Test
+    public void testSplitLines() {
+        final String[] splitted = StringUtilities.splitLines("\nOne\r\nTwo\rThree\rFour\nFive\n\rSix\n");
+        assertArrayEquals(new String[] {
+            "",
+            "One",
+            "Two",
+            "Three",
+            "Four",
+            "Five",
+            "",
+            "Six",
+            ""
+        }, splitted);
+    }
 }

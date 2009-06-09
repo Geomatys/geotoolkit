@@ -83,7 +83,7 @@ public abstract class WidgetTestCase<T extends Component> {
      * @throws Exception If an exception occured while creating the widget.
      */
     @Test
-    public final void display() throws Exception {
+    public void display() throws Exception {
         component = create();
         show(Classes.getShortClassName(component));
     }

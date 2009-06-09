@@ -19,36 +19,33 @@ package org.geotoolkit.gui.swing;
 
 import javax.swing.JTable;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JDialog;
 import javax.swing.JScrollPane;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ChangeEvent;
+import javax.swing.ScrollPaneConstants;
 
+import java.awt.Font;
 import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.table.TableColumnExt;
+import org.jdesktop.swingx.renderer.StringValue;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
@@ -64,11 +61,17 @@ import org.geotoolkit.internal.SwingUtilities;
  *     new LoggingPanel("org.geotoolkit").show(null);
  * }
  *
- * This panel is initially set to listen to messages of level {@link Level#CONFIG} or higher.
- * This level can be changed with a call to <code>{@linkplain #getHandler}.setLevel(aLevel)</code>.
+ * This panel initially listens to all messages ({@link Level#ALL}). However the messages will
+ * still be filtered according the {@linkplain Logger#getLevel() logger level}. If all levels
+ * are really aimed to be reported, then a call to {@code Logger.setLevel(Level.ALL)} may be
+ * needed.
+ * <p>
+ * Note that a different level can be set specifically to this {@code LoggingPanel} with a call
+ * to <code>{@linkplain #getHandler}.setLevel(aLevel)</code>. However this is only for restricting
+ * the logger messages to a higher level than the logger level.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -90,18 +93,21 @@ public class LoggingPanel extends JPanel {
         /*
          * NOTE: Orinal values MUST match index in the LoggingTableModel.COLUMN_NAMES array.
          */
-        /** The column displaying the logger name.        */  LOGGER,
-        /** The column displaying the originating class.  */  CLASS,
-        /** The column displaying the originating method. */  METHOD,
-        /** The column displaying the log record time.    */  TIME_OF_DAY,
-        /** The column displaying the log record level.   */  LEVEL,
-        /** The column displaying the message.            */  MESSAGE;
-    }
+        /** The column displaying the logger name.        */  LOGGER    (160),
+        /** The column displaying the originating class.  */  CLASS     (120),
+        /** The column displaying the originating method. */  METHOD     (80),
+        /** The column displaying the log record time.    */  TIME_OF_DAY(80),
+        /** The column displaying the log record level.   */  LEVEL      (80),
+        /** The column displaying the message.            */  MESSAGE   (300);
 
-    /**
-     * The background color for the columns prior to the logging message.
-     */
-    private static final Color INFO_BACKGROUND = new Color(240, 240, 240);
+        /** The preferred width. */
+        final int width;
+
+        /** Creates a new column with the given preferred width. */
+        private Column(final int width) {
+            this.width = width;
+        }
+    }
 
     /**
      * The model for this component.
@@ -111,34 +117,26 @@ public class LoggingPanel extends JPanel {
     /**
      * The table for displaying logging messages.
      */
-    private final JTable table = new JTable(model);
+    private final JXTable table = new JXTable(model);
 
     /**
-     * The levels for colors enumerated in {@code levelColors}. This array <strong>must</strong>
-     * be in increasing order. Logging messages of level {@code levelValues[i]} or higher will
-     * be displayed with foreground color {@code levelColors[i*2]} and background color
-     * {@code levelColors[i*2+1]}.
-     *
-     * @see Level#intValue
-     * @see #getForeground(LogRecord)
-     * @see #getBackground(LogRecord)
-     */
-    private int[] levelValues = new int[0];
-
-    /**
-     * Pairs of foreground and background colors to use for displaying logging messages. Logging
-     * messages of level {@code levelValues[i]} or higher will be displayed with foreground color
-     * {@code levelColors[i*2]} and background color {@code levelColors[i*2+1]}.
+     * Foreground and background colors to use for displaying logging messages.
      *
      * @see #getForeground(LogRecord)
      * @see #getBackground(LogRecord)
      */
-    private final List<Color> levelColors = new ArrayList<Color>();
+    private Highlighter[] levelColors = new Highlighter[0];
 
     /**
      * The logger specified at construction time, or {@code null} if none.
      */
     private Logger logger;
+
+    /**
+     * The font to use for messages. We use by default a monospaced font
+     * because some messages are formatted for the console (e.g. as a table).
+     */
+    private Font messageFont = Font.decode("Monospaced");
 
     /**
      * Constructs a new logging panel. This panel is not registered to any logger.
@@ -151,25 +149,32 @@ public class LoggingPanel extends JPanel {
     public LoggingPanel() {
         super(new BorderLayout());
         table.setShowGrid(false);
+        table.setRolloverEnabled(false);
+        table.setColumnControlVisible(true);
         table.setCellSelectionEnabled(false);
-        table.setGridColor(Color.LIGHT_GRAY);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        table.setDefaultRenderer(Object.class, new CellRenderer());
-        if (true) {
-            int width = 300;
-            final TableColumnModel columns = table.getColumnModel();
-            for (int i=model.getColumnCount(); --i>=0;) {
-                columns.getColumn(i).setPreferredWidth(width);
-                width = 80;
-            }
+        table.setIntercellSpacing(new Dimension()); // Set to no space.
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        final TableColumnModel columns = table.getColumnModel();
+        for (final Column c : Column.values()) {
+            final TableColumn column = columns.getColumn(c.ordinal());
+            column.setPreferredWidth(c.width);
+            column.setIdentifier(c);
         }
+        table.setDefaultRenderer(Level.class, new DefaultTableRenderer(new StringValue() {
+            @Override public String getString(final Object value) {
+                return (value instanceof Level) ? ((Level) value).getLocalizedName() : null;
+            }
+        }));
         final JScrollPane scroll = new JScrollPane(table);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         new AutoScroll(scroll.getVerticalScrollBar().getModel());
         add(scroll, BorderLayout.CENTER);
 
-        setLevelColor(Level.ALL,     Color.GRAY,       null);
-        setLevelColor(Level.CONFIG,  null,             null);
-        setLevelColor(Level.WARNING, Color.RED,        null);
+        setBackground(Color.WHITE);
+        setForeground(Color.BLACK);
+        setLevelColor(Level.ALL,     Color.GRAY,  null);
+        setLevelColor(Level.CONFIG,  null,        null);
+        setLevelColor(Level.WARNING, null,        Color.YELLOW);
         setLevelColor(Level.SEVERE,  Color.WHITE, Color.RED);
     }
 
@@ -214,7 +219,7 @@ public class LoggingPanel extends JPanel {
      * @return {@code true} if the given column is visible.
      */
     public boolean isColumnVisible(final Column column) {
-        return model.isColumnVisible(column.ordinal());
+        return ((TableColumnExt) table.getColumn(column)).isVisible();
     }
 
     /**
@@ -224,7 +229,7 @@ public class LoggingPanel extends JPanel {
      * @param visible The visible state for the specified column.
      */
     public void setColumnVisible(final Column column, final boolean visible) {
-        model.setColumnVisible(column.ordinal(), visible);
+        ((TableColumnExt) table.getColumn(column)).setVisible(visible);
     }
 
     /**
@@ -248,6 +253,33 @@ public class LoggingPanel extends JPanel {
     }
 
     /**
+     * Returns the font to use for displaying the messages (last table column).
+     * The default is a monospaced font because some message are formatted for
+     * the console (for example they may use the drawing unicode characters).
+     *
+     * @return The font to use for displaying messages.
+     *
+     * @since 3.01
+     */
+    public Font getMessageFont() {
+        return messageFont;
+    }
+
+    /**
+     * Sets the font to use for displaying the messages.
+     *
+     * @param font The new font for displaying messages.
+     *
+     * @since 3.01
+     */
+    public void setMessageFont(final Font font) {
+        final Font old = messageFont;
+        messageFont = font;
+        firePropertyChange("messageFont", old, font);
+        repaint();
+    }
+
+    /**
      * Returns the foreground color for the specified log record. This method is invoked at
      * rendering time for every cell in the table's "message" column. The default implementation
      * returns a color based on the record's level, using colors set with {@link #setLevelColor
@@ -255,9 +287,13 @@ public class LoggingPanel extends JPanel {
      *
      * @param  record The record to get the foreground color.
      * @return The foreground color for the specified record, or {@code null} for the default color.
+     *
+     * @deprecated This method is no longer invoked at rendering time. If only the color
+     *             information is wanted, use {@link #getForeground(Level)} instead.
      */
+    @Deprecated
     public Color getForeground(final LogRecord record) {
-        return getColor(record, 0);
+        return getForeground(record.getLevel());
     }
 
     /**
@@ -269,27 +305,61 @@ public class LoggingPanel extends JPanel {
      * @param  record The record to get the background color.
      * @return The background color for the specified record,
      *         or {@code null} for the default color.
+     *
+     * @deprecated This method is no longer invoked at rendering time. If only the color
+     *             information is wanted, use {@link #getBackground(Level)} instead.
      */
+    @Deprecated
     public Color getBackground(final LogRecord record) {
-        return getColor(record, 1);
+        return getBackground(record.getLevel());
     }
 
     /**
-     * Returns the foreground or background color for the specified record.
+     * Returns the foreground color for the given level.
      *
-     * @param  record The record to get the color.
-     * @param  offset 0 for the foreground color, or 1 for the background color.
-     * @return The color for the specified record, or {@code null} for the default color.
+     * @param  level The level for which to get the foreground color.
+     * @return The foreground color for the given level, or {@code null} for the default color.
+     *
+     * @since 3.01
      */
-    private Color getColor(final LogRecord record, final int offset) {
-        int i = Arrays.binarySearch(levelValues, record.getLevel().intValue());
+    public Color getForeground(final Level level) {
+        final ColorHighlighter hlr = getHighlighter(level);
+        return (hlr != null) ? hlr.getForeground() : null;
+    }
+
+    /**
+     * Returns the background color for the specified log record. This method returns a color based
+     * on the record level, using colors set with {@link #setLevelColor setLevelColor(...)}.
+     *
+     * @param  level The level for which to get the background color.
+     * @return The background color for the given level, or {@code null} for the default color.
+     *
+     * @since 3.01
+     */
+    public Color getBackground(final Level level) {
+        final ColorHighlighter hlr = getHighlighter(level);
+        return (hlr != null) ? hlr.getBackground() : null;
+    }
+
+    /**
+     * Returns the highlighter for the given level.
+     *
+     * @param  level The level for which to get the highlighter.
+     * @return The highlighter for the given level, or {@code null} if none.
+     */
+    private ColorHighlighter getHighlighter(final Level level) {
+        int i = Arrays.binarySearch(levelColors, level, COMPARATOR);
         if (i < 0) {
+            /*
+             * No exact match for the given level.
+             * Looks for the level below the requested one.
+             */
             i = ~i - 1; // "~" is the tild symbol, not minus.
             if (i < 0) {
                 return null;
             }
         }
-        return levelColors.get(i*2 + offset);
+        return levelColors[i];
     }
 
     /**
@@ -302,22 +372,27 @@ public class LoggingPanel extends JPanel {
      * @param background  The background color, or {@code null} for the default color.
      */
     public void setLevelColor(final Level level, final Color foreground, final Color background) {
-        final int value = level.intValue();
-        int i = Arrays.binarySearch(levelValues, value);
+        final Highlighter hlr;
+        Highlighter[] levelColors = this.levelColors;
+        int i = Arrays.binarySearch(levelColors, level, COMPARATOR);
         if (i >= 0) {
-            i *= 2;
-            levelColors.set(i+0, foreground);
-            levelColors.set(i+1, background);
+            hlr = levelColors[i];
         } else {
             i = ~i;
-            levelValues = XArrays.insert(levelValues, i, 1);
-            levelValues[i] = value;
-            i *= 2;
-            levelColors.add(i+0, foreground);
-            levelColors.add(i+1, background);
+            hlr = new Highlighter(level.intValue());
+            this.levelColors = levelColors = XArrays.insert(levelColors, i, 1);
+            levelColors[i] = hlr;
+            if (i != 0) {
+                levelColors[i-1].upper = hlr.lower;
+            }
+            if (++i < levelColors.length) {
+                hlr.upper = levelColors[i].lower;
+            }
+            assert XArrays.isSorted(levelColors, COMPARATOR, true);
+            table.setHighlighters(levelColors);
         }
-        assert XArrays.isSorted(levelValues, true);
-        assert levelValues.length*2 == levelColors.size();
+        hlr.setBackground(background);
+        hlr.setForeground(foreground);
     }
 
     /**
@@ -350,17 +425,18 @@ public class LoggingPanel extends JPanel {
      * Different kinds of frame can be constructed according the {@code owner} class:
      * <p>
      * <ul>
-     *   <li>If {@code owner} or one of its parent is a {@link JDesktopPane},
-     *       then {@code panel} is added into a {@link JInternalFrame}.</li>
-     *   <li>If {@code owner} or one of its parent is a {@link Frame} or a {@link Dialog},
-     *       then {@code panel} is added into a {@link JDialog}.</li>
-     *   <li>Otherwise, {@code panel} is added into a {@link JFrame}.</li>
+     *   <li>If {@code owner} or one of its parent is a {@link javax.swing.JDesktopPane},
+     *       then {@code panel} is added into a {@link javax.swing.JInternalFrame}.</li>
+     *   <li>If {@code owner} or one of its parent is a {@link java.awt.Frame} or a
+     *       {@link java.awt.Dialog}, then {@code panel} is added into a
+     *       {@link javax.swing.JDialog}.</li>
+     *   <li>Otherwise, {@code panel} is added into a {@link javax.swing.JFrame}.</li>
      * </ul>
      *
      * @param  owner The owner, or {@code null} to show
      *         this logging panel in a top-level window.
-     * @return The frame. May be a {@link JInternalFrame},
-     *         a {@link JDialog} or a {@link JFrame}.
+     * @return The frame. May be a {@link javax.swing.JInternalFrame},
+     *         a {@link javax.swing.JDialog} or a {@link javax.swing.JFrame}.
      */
     public Component show(final Component owner) {
         final String title = Vocabulary.format(Vocabulary.Keys.EVENT_LOGGER);
@@ -395,119 +471,101 @@ public class LoggingPanel extends JPanel {
     }
 
     /**
-     * Display cell contents. This class is used for changing
-     * the cell's color according the log record level.
+     * Compares two levels for order. The level can be encapsulated in either
+     * {@link Level} or {@link Highlighter} object.
      */
-    @SuppressWarnings("serial")
-    private final class CellRenderer extends DefaultTableCellRenderer implements TableColumnModelListener {
+    private static final Comparator<Object> COMPARATOR = new Comparator<Object>() {
+        @Override public int compare(final Object o1, final Object o2) {
+            // Do not return (n1 - n2) - it doesn't work because of overflow.
+            final int n1 = level(o1);
+            final int n2 = level(o2);
+            if (n1 > n2) return +1;
+            if (n1 < n2) return -1;
+            return 0;
+        }
+    };
+
+    /**
+     * Returns the numeric value of the given level. The level can be encapsulated in either
+     * {@link Level} or {@link Highlighter} object.
+     */
+    static int level(final Object o) {
+        if (o instanceof Level) {
+            return ((Level) o).intValue();
+        }
+        return ((Highlighter) o).lower;
+    }
+
+    /**
+     * Used for changing the cell's color according the log record level.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.01
+     *
+     * @since 3.01
+     * @module
+     */
+    private final class Highlighter extends ColorHighlighter implements HighlightPredicate {
         /**
-         * Default color for the foreground.
+         * Uses this highlighter only for log level in the given range.
+         * The lower value is inclusive while the upper value is exclusive.
          */
-        private Color foreground;
+        final int lower;
 
         /**
-         * Default color for the background.
+         * The upper level value, exclusive. Must be updated by the caller
+         * when other highlighter are added or removed.
          */
-        private Color background;
+        int upper;
 
         /**
-         * The index of messages column.
+         * Creates a default highlighter.
          */
-        private int messageColumn;
-
-        /**
-         * The last row for which the side has been computed.
-         */
-        private int lastRow;
-
-        /**
-         * Construct a new cell renderer.
-         */
-        public CellRenderer() {
-            foreground = super.getForeground();
-            background = super.getBackground();
-            table.getColumnModel().addColumnModelListener(this);
+        Highlighter(final int level) {
+            lower = level;
+            upper = Integer.MAX_VALUE;
+            setHighlightPredicate(this);
         }
 
         /**
-         * Sets the foreground color.
+         * Returns {@code true} if this highlighter should be applied to the current row.
          */
         @Override
-        public void setForeground(final Color foreground) {
-            super.setForeground(this.foreground=foreground);
-        }
-
-        /**
-         * Sets the background colior
-         */
-        @Override
-        public void setBackground(final Color background) {
-            super.setBackground(this.background=background);
-        }
-
-        /**
-         * Returns the component to use for painting the cell.
-         */
-        @Override
-        public Component getTableCellRendererComponent(final JTable  table,
-                                                       final Object  value,
-                                                       final boolean isSelected,
-                                                       final boolean hasFocus,
-                                                       final int     rowIndex,
-                                                       final int     columnIndex)
-        {
-            Color foreground = this.foreground;
-            Color background = this.background;
-            final boolean isMessage = (columnIndex == messageColumn);
-            if (!isMessage) {
-                background = INFO_BACKGROUND;
-            }
-            if (rowIndex >= 0) {
-                final TableModel candidate = table.getModel();
-                if (candidate instanceof LoggingTableModel) {
-                    final LoggingTableModel model = (LoggingTableModel) candidate;
-                    final LogRecord record = model.getLogRecord(rowIndex);
-                    Color color;
-                    color=LoggingPanel.this.getForeground(record); if (color!=null) foreground=color;
-                    color=LoggingPanel.this.getBackground(record); if (color!=null) background=color;
+        public boolean isHighlighted(final Component renderer, final ComponentAdapter adapter) {
+            final Object value = adapter.getValue(Column.LEVEL.ordinal());
+            final int level;
+            if (value instanceof Level) {
+                // The normal case.
+                level = ((Level) value).intValue();
+            } else if (value instanceof Integer) {
+                // This is a special case generated by LoggingTableModel.Record.getValueAt(...)
+                // when the log message span more than one line, and we are asking for any line
+                // other than the first one.
+                if (adapter.viewToModel(adapter.column) != Column.MESSAGE.ordinal()) {
+                    return false;
                 }
+                level = ((Integer) value).intValue();
+            } else {
+                return false;
             }
-            super.setBackground(background);
-            super.setForeground(foreground);
-            final Component component = super.getTableCellRendererComponent(table, value,
-                                             isSelected, hasFocus, rowIndex, columnIndex);
-            /*
-             * If a new record is being painted and this new record is wider
-             * than previous ones, then make the message column width larger.
-             */
-            if (isMessage) {
-                if (rowIndex > lastRow) {
-                    final int width = component.getPreferredSize().width + 15;
-                    final TableColumn column = table.getColumnModel().getColumn(columnIndex);
-                    if (width > column.getPreferredWidth()) {
-                        column.setPreferredWidth(width);
-                    }
-                    if (rowIndex == lastRow+1) {
-                        lastRow = rowIndex;
-                    }
-                }
-            }
-            return component;
+            return level >= lower && level < upper;
         }
 
         /**
-         * Invoked when the message column may have moved. This method update the
-         * {@link #messageColumn} field, so that the message column will continue
-         * to be paint with special colors.
+         * Applies the color, with a special processing for the message column.
          */
-        private final void update() {
-            messageColumn = table.convertColumnIndexToView(model.getColumnCount()-1);
+        @Override
+        protected Component doHighlight(final Component renderer, final ComponentAdapter adapter) {
+            if (adapter.viewToModel(adapter.column) == Column.MESSAGE.ordinal()) {
+                renderer.setBackground(null);
+                if (getBackground() == null) {
+                    renderer.setForeground(getForeground());
+                }
+                renderer.setFont(messageFont);
+                return renderer;
+            }
+            renderer.setFont(null);
+            return super.doHighlight(renderer, adapter);
         }
-
-        @Override public void columnAdded        (TableColumnModelEvent e) {update();}
-        @Override public void columnMarginChanged          (ChangeEvent e) {update();}
-        @Override public void columnMoved        (TableColumnModelEvent e) {update();}
-        @Override public void columnRemoved      (TableColumnModelEvent e) {update();}
-        @Override public void columnSelectionChanged(ListSelectionEvent e) {update();}
     }
 }
