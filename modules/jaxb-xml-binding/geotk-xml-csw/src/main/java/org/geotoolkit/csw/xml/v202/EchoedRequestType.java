@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -71,5 +72,37 @@ public class EchoedRequestType {
      */
     public Object getAny() {
         return any;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof EchoedRequestType) {
+            final EchoedRequestType that = (EchoedRequestType) object;
+            return Utilities.equals(this.any, that.any);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.any != null ? this.any.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[EchoedRequestType]\n");
+
+        if (any != null) {
+            s.append("any: ").append(any).append('\n');
+        }
+        return s.toString();
     }
 }

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,5 +81,45 @@ public class InsertResultType {
      */
     public String getHandleRef() {
         return handleRef;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InsertResultType) {
+            final InsertResultType that = (InsertResultType) object;
+            return Utilities.equals(this.briefRecord, that.briefRecord) &&
+                   Utilities.equals(this.handleRef,   that.handleRef);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 11 * hash + (this.briefRecord != null ? this.briefRecord.hashCode() : 0);
+        hash = 11 * hash + (this.handleRef != null ? this.handleRef.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[InsertResultType]\n");
+
+        if (briefRecord != null) {
+            s.append(briefRecord.size()).append(" briefRecord: ").append('\n');
+            for (BriefRecordType ins : briefRecord) {
+                s.append(ins).append('\n');
+            }
+        }
+        if (handleRef != null) {
+            s.append("handleRef: ").append(handleRef).append('\n');
+        }
+        return s.toString();
     }
 }
