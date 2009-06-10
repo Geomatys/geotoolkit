@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
@@ -95,6 +96,21 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     }
 
     /**
+     * Used for sharing unique instance of the given object. We shares image type specifier
+     * and tile dimensions because we typically have only one of those for a whole mosaic.
+     * Since we can have thousands of tiles, sharing those instances is worth for both memory
+     * usage and serialization.
+     */
+    private static <T> T share(final Map<T,T> shared, final T candidate) {
+        final T existing = shared.get(candidate);
+        if (existing != null) {
+            return existing;
+        }
+        shared.put(candidate, candidate);
+        return candidate;
+    }
+
+    /**
      * Uncompress and copies the given source tiles.
      *
      * @return The map of temporary files created by this method.
@@ -103,8 +119,9 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     @Override
     public Map<Tile,RawFile> call() throws IOException {
         final ObjectStream<Tile> tiles = inputs();
-        final Map<ImageTypeSpecifier,ImageTypeSpecifier> types =
+        final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes =
                 new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
+        final Map<Dimension,Dimension> sharedSizes = new HashMap<Dimension,Dimension>();
         final ImageWriter writer = getTemporaryTileWriter();
         final File directory = RMI.getSharedTemporaryDirectory();
         ImageTypeSpecifier sourceType = null;
@@ -154,13 +171,9 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             }
             final File file = File.createTempFile("IMW", ".raw", directory);
             file.deleteOnExit();
-            ImageTypeSpecifier look = ImageTypeSpecifier.createFromRenderedImage(image);
-            ImageTypeSpecifier type = types.get(look);
-            if (type == null) {
-                type = look;
-                types.put(type, type);
-            }
-            final RawFile entry = new RawFile(file, type, image.getWidth(), image.getHeight());
+            final RawFile entry = new RawFile(file,
+                    share(sharedTypes, ImageTypeSpecifier.createFromRenderedImage(image)),
+                    share(sharedSizes, new Dimension(image.getWidth(), image.getHeight())));
             if (temporaryFiles.put(tile, entry) != null) {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, tile));
             }

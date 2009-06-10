@@ -18,11 +18,12 @@
 package org.geotoolkit.image.jai;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
-import java.awt.image.DataBuffer;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -30,7 +31,6 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.UntiledOpImage;
 
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.image.ImageUtilities;
 
@@ -66,7 +66,7 @@ import static javax.media.jai.ImageLayout.SAMPLE_MODEL_MASK;
  * operation is repeated for the 4 image corners.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -80,9 +80,9 @@ public class SilhouetteMask extends UntiledOpImage {
 
     /**
      * The background values in the source image. The array length must matches
-     * the number of bands, otherwise this operation will never work.
+     * the number of bands, otherwise this operation can not work.
      */
-    private final double[] background;
+    private final double[][] background;
 
     /**
      * Constructs a new silhouette mask for the given image. While this constructor is public,
@@ -95,10 +95,14 @@ public class SilhouetteMask extends UntiledOpImage {
      * @param background    The background values in the source image.
      */
     public SilhouetteMask(final RenderedImage source, final ImageLayout layout,
-            final Map<?,?> configuration, final double[] background)
+            final Map<?,?> configuration, double[]... background)
     {
         super(source, configuration, layout(source, layout));
-        this.background = Arrays.copyOf(background, source.getSampleModel().getNumBands());
+        final int numBands = source.getSampleModel().getNumBands();
+        this.background = background = background.clone();
+        for (int i=0; i<background.length; i++) {
+            background[i] = Arrays.copyOf(background[i], numBands);
+        }
     }
 
     /**
@@ -161,24 +165,11 @@ public class SilhouetteMask extends UntiledOpImage {
         final int[] ones = new int[dest.getNumBands()];
         Arrays.fill(ones, -1);
         final int transferType = source.getTransferType();
-        final Object background, buffer;
-        switch (transferType) {
-            case DataBuffer.TYPE_DOUBLE: {
-                background = this.background;
-                buffer = new double[this.background.length];
-                break;
-            }
-            case DataBuffer.TYPE_FLOAT: {
-                background = XArrays.copyAsFloats(this.background);
-                buffer = new float[this.background.length];
-                break;
-            }
-            default: {
-                background = XArrays.copyAsInts(this.background);
-                buffer = new int[this.background.length];
-                break;
-            }
+        final Set<SampleValues> background = new HashSet<SampleValues>();
+        for (final double[] samples : this.background) {
+            background.add(SampleValues.getInstance(transferType, samples));
         }
+        final SampleValues buffer = SampleValues.getInstance(transferType, source.getSampleModel().getNumBands());
         assert ImageUtilities.getBounds(source).contains(destRect) : destRect;
         /*
          * For each background value found in the source image, sets the destination pixel to -1.
@@ -198,43 +189,16 @@ public class SilhouetteMask extends UntiledOpImage {
              * the background value. Next pixel on a row will be scanned only as long as
              * background values are found.
              */
-            while (--h >= 0 && isBackground(source, x, y, background, buffer, transferType)) {
+            while (--h >= 0 && background.contains(buffer.getPixel(source, x, y))) {
                 if (y >= ymin && y < ymax) {
                     w = destRect.width;
                     do if (x >= xmin && x < xmax) {
                         dest.setPixel(x, y, ones);
                         if (--w == 0) break;
-                    } while (isBackground(source, x += dx, y, background, buffer, transferType));
+                    } while (background.contains(buffer.getPixel(source, x += dx, y)));
                 }
                 y += dy;
                 x = x0;
-            }
-        }
-    }
-
-    /**
-     * Returns {@code true} if a pixel in the given raster has the background value.
-     *
-     * @param source        The raster in which to test for a pixel value.
-     * @param x             The x coordinate of the pixel to test.
-     * @param y             The y coordinate of the pixel to test.
-     * @param background    The background value.
-     * @param buffer        A temporary buffer to be recycled.
-     * @param transferType  The type of the background array and the buffer.
-     * @return {@code true} if the pixel has the background value.
-     */
-    private static boolean isBackground(final Raster source, final int x, final int y,
-            final Object background, final Object buffer, final int transferType)
-    {
-        switch (transferType) {
-            case DataBuffer.TYPE_DOUBLE: {
-                return Arrays.equals((double[]) background, source.getPixel(x, y, (double[]) buffer));
-            }
-            case DataBuffer.TYPE_FLOAT: {
-                return Arrays.equals((float[]) background, source.getPixel(x, y, (float[]) buffer));
-            }
-            default: {
-                return Arrays.equals((int[]) background, source.getPixel(x, y, (int[]) buffer));
             }
         }
     }

@@ -55,23 +55,25 @@ public final class RawFile implements Serializable {
     private final ImageTypeSpecifier type;
 
     /**
-     * The image width and height.
+     * The image width and height. We store the size as a {@link Dimension} object
+     * instead of {@code int} fields because the we will typically share a large
+     * amount of references to the same dimension in various {@code RawSize} instances.
      */
-    private final int width, height;
+    private final Dimension size;
 
     /**
-     * Creates a new entry for the given temporary file.
+     * Creates a new entry for the given temporary file. This constructor stores direct
+     * references to the given arguments; they are not cloned. Consequently they should
+     * not be changed after construction.
      *
      * @param file   The temporary file.
      * @param type   The color and sample model of the RAW image.
-     * @param width  The image width, in pixels.
-     * @param height The image height, in pixels.
+     * @param size   The image width and height, in pixels.
      */
-    public RawFile(final File file, final ImageTypeSpecifier type, final int width, final int height) {
-        this.file   = file;
-        this.type   = type;
-        this.width  = width;
-        this.height = height;
+    public RawFile(final File file, final ImageTypeSpecifier type, final Dimension size) {
+        this.file = file;
+        this.type = type;
+        this.size = size;
     }
 
     /**
@@ -85,7 +87,7 @@ public final class RawFile implements Serializable {
     public ImageInputStream getImageInputStream() throws IOException {
         ImageInputStream in;
         in = new FileImageInputStream(file);
-        in = new RawImageInputStream(in, type, new long[1], new Dimension[] {new Dimension(width, height)});
+        in = new RawImageInputStream(in, type, new long[1], new Dimension[] {size});
         return in;
     }
 
@@ -101,7 +103,7 @@ public final class RawFile implements Serializable {
             final RawFile that = (RawFile) object;
             return Utilities.equals(this.file, that.file) &&
                    Utilities.equals(this.type, that.type) &&
-                   this.width == width && this.height == height;
+                   Utilities.equals(this.size, that.size);
         }
         return false;
     }

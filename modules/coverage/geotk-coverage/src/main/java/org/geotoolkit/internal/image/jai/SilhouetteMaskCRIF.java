@@ -54,7 +54,7 @@ public final class SilhouetteMaskCRIF extends CRIFImpl {
     public RenderedImage create(final ParameterBlock param, final RenderingHints hints) {
         final RenderedImage image = (RenderedImage) param.getSource(0);
         final ImageLayout  layout = (ImageLayout) hints.get(JAI.KEY_IMAGE_LAYOUT);
-        final double[] background = (double[]) param.getObjectParameter(0);
+        final double[][] background = (double[][]) param.getObjectParameter(0);
         return new SilhouetteMask(image, layout, hints, background);
     }
 }

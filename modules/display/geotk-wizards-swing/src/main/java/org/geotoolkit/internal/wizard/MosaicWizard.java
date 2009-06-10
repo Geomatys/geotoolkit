@@ -190,6 +190,10 @@ public final class MosaicWizard extends AbstractWizard {
             //     Panel 4:  Confirm
             // -------------------------------------------------------------------
             final LoggingPanel logging = new LoggingPanel("org.geotoolkit.image.io.mosaic");
+            logging.setColumnVisible(LoggingPanel.Column.LOGGER, false);
+            logging.setColumnVisible(LoggingPanel.Column.CLASS,  false);
+            logging.setColumnVisible(LoggingPanel.Column.METHOD, false);
+            logging.setColumnVisible(LoggingPanel.Column.LEVEL,  false);
             logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
             final JXLabel label = new JXLabel("The wizard has now enough informations for " +
                     "creating the mosaic. Press \"Finish\" to confirm.");

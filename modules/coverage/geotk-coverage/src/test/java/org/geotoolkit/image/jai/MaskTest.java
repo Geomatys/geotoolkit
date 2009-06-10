@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Tests {@link Mask}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  */
@@ -83,7 +83,7 @@ public final class MaskTest extends ImageTestCase {
     public void testOnIndexed() {
         loadSampleImage(SampleImage.INDEXED);
         ParameterBlockJAI parameters = new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME);
-        parameters.setParameter("background", new double[] {255});
+        parameters.setParameter("background", new double[][] {{255}});
         RenderedImage mask = JAI.create(SilhouetteMask.OPERATION_NAME, parameters.addSource(image));
 
         final double[] newValues = new double[] {0};

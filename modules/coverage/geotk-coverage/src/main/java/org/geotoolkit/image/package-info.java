@@ -22,7 +22,7 @@
  * {@link java.awt.image.RenderedImage} handling.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.3
  * @module

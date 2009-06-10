@@ -51,8 +51,8 @@ public final class SilhouetteMaskDescriptor extends OperationDescriptorImpl {
                                              "background of the source image."}},
               new String[]   {RenderedRegistryMode.MODE_NAME}, 1,
               new String[]   {"background"},     // Argument names
-              new Class<?>[] {double[].class},   // Argument classes
-              new Object[]   {new double[1]},    // Default values for parameters
+              new Class<?>[] {double[][].class}, // Argument classes
+              new Object[]   {new double[1][1]}, // Default values for parameters
               null                               // Valid range for parameters
         );
     }

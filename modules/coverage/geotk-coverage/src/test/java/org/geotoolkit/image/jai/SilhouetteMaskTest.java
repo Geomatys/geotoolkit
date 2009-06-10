@@ -75,7 +75,7 @@ public final class SilhouetteMaskTest extends ImageTestCase {
     public void testOnIndexed() {
         loadSampleImage(SampleImage.INDEXED);
         final ParameterBlockJAI parameters = new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME);
-        parameters.setParameter("background", new double[] {255});
+        parameters.setParameter("background", new double[][] {{255}});
         applyUnary(parameters, 3206331653L);
         view("testOnIndexed");
     }

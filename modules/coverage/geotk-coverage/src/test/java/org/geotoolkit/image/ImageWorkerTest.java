@@ -35,7 +35,7 @@ import static java.awt.image.DataBuffer.*;
  * Tests {@link ImageWorker}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  */
@@ -163,13 +163,13 @@ public final class ImageWorkerTest extends ImageTestCase {
         view("mask(binarize,0)");
 
         worker.setImage(original);
-        worker.maskBackground(new double[] {255}, new double[] {0});
+        worker.maskBackground(new double[][] {{255}}, new double[] {0});
         assertNotSame(original, image = worker.image);
         assertChecksumEquals(3577749049L);
         view("maskBackground(255,0)");
 
         worker.setImage(original);
-        worker.maskBackground(new double[] {255}, null);
+        worker.maskBackground(new double[][] {{255}}, null);
         assertNotSame(original, image = worker.image);
         assertChecksumEquals(1873283205L);
         view("maskBackground(255,null)");
@@ -261,13 +261,13 @@ public final class ImageWorkerTest extends ImageTestCase {
         view("mask(binarize,orange)");
 
         worker.setImage(original);
-        worker.maskBackground(new double[] {0,0,0}, new double[] {64,128,255});
+        worker.maskBackground(new double[][] {{0,0,0}}, new double[] {64,128,255});
         assertNotSame(original, image = worker.image);
         assertChecksumEquals(346825169L);
         view("maskBackground(black,blue)");
 
         worker.setImage(original);
-        worker.maskBackground(new double[] {0,0,0}, null);
+        worker.maskBackground(new double[][] {{0,0,0}}, null);
         assertNotSame(original, image = worker.image);
         assertChecksumEquals(1508270032L);
         view("maskBackground(black,transparent)");

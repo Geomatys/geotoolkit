@@ -171,7 +171,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      *
      * @since 3.00
      */
-    public void setOpaqueBorderFilter(final Color[] colors) {
+    public void setOpaqueBorderFilter(final Color... colors) {
         setSourceTileFilter(new BorderFilter(colors));
     }
 
@@ -212,9 +212,10 @@ public class MosaicImageWriteParam extends ImageWriteParam {
             final ImageWorker worker = new ImageWorker(src);
             worker.setColorSpaceType(PaletteInterpretation.RGB);
             worker.setColorModelType(ComponentColorModel.class);
-            final double[] RGB = new double[worker.getNumBands()];
-            for (int i=0; i<colors.length; i++) {
+            final double[][] RGBs = new double[colors.length][worker.getNumBands()];
+            for (int i=0; i<RGBs.length; i++) {
                 final Color color = colors[i];
+                final double[] RGB = RGBs[i];
                 switch (RGB.length) {
                     default: // Fall through in every cases.
                     case 4: RGB[3] = color.getAlpha();
@@ -223,8 +224,8 @@ public class MosaicImageWriteParam extends ImageWriteParam {
                     case 1: RGB[0] = color.getRed();
                     case 0: break;
                 }
-                worker.maskBackground(RGB, null);
             }
+            worker.maskBackground(RGBs, null);
             return worker.getRenderedImage();
         }
     }

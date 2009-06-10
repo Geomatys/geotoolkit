@@ -68,7 +68,7 @@ import static java.awt.image.DataBuffer.TYPE_BYTE;
  * @author Martin Desruisseaux (Geomatys)
  * @author Simone Giannecchini (Geosolutions)
  * @author Bryce Nordgren
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.3
  * @module
@@ -872,10 +872,11 @@ public class ImageWorker extends ImageInspector {
      * @see SilhouetteMask
      */
     @SuppressWarnings("fallthrough")
-    public void maskBackground(final double[] background, double[] newValues) {
+    public void maskBackground(final double[][] background, double[] newValues) {
         ensureNonNull("background", background);
-        if (Arrays.equals(background, newValues)) {
-            return;
+        switch (background.length) {
+            case 0: return;
+            case 1: if (Arrays.equals(background[0], newValues)) return;
         }
         RenderedImage mask = JAI.create(SilhouetteMask.OPERATION_NAME,
                 new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME)
@@ -893,8 +894,11 @@ public class ImageWorker extends ImageInspector {
                 switch (icm.getTransparency()) {
                     case Transparency.OPAQUE: {
                         if (background.length != 0) {
-                            transparent = (int) background[0];
-                            break;
+                            final double[] samples = background[0];
+                            if (samples.length != 0) {
+                                transparent = (int) samples[0];
+                                break;
+                            }
                         }
                         // Fall through; the end effect will be to use 0.
                     }

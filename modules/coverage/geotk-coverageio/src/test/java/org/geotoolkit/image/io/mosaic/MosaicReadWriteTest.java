@@ -275,35 +275,18 @@ public final class MosaicReadWriteTest {
     public void testTransparency() throws IOException {
         final TileManager targetMosaic = builder(1, 6).createTileManager();
         /*
-         * The colors found in the 4 corners of every tiles. We will try to make those
-         * colors transparent. This is an unrealist test since those pixels are mostly
-         * ocean colors. A real work would be to replace a uniform black or white, but
-         * we are only interrested in checking that the calculation is really done.
+         * The colors to replace by transparent pixels. There is a few occurences of this color
+         * on the last row of the source image. This artifact provides a convenient opportunity
+         * for testing this operation. Note only a few black strips on the last row will be made
+         * transparent - some will not be changed if they do not appear on a corner of a source
+         * tile.
          */
-        final Color[] cornerColors = {
-            new Color(  0,   0,   0),
-            new Color(  1,   5,  20),
-            new Color(  2,   5,  20),
-            new Color(  2,   5,  21),
-            new Color(  2,   7,  24),
-            new Color(  2,   7,  25),
-            new Color(  5,  16,  42),
-            new Color(  6,  17,  44),
-            new Color(  6,  18,  45),
-            new Color(  6,  18,  47),
-            new Color(  6,  19,  47),
-            new Color(  8,  22,  54),
-            new Color(  9,  27,  64),
-            new Color( 14,  40,  85),
-            new Color( 17,  47,  95),
-            new Color( 17,  47,  96),
-            new Color( 19,  50, 102),
-            new Color( 22,  59, 113),
-            new Color(255, 255, 255),
+        final Color[] opaqueColors = {
+            Color.BLACK,
         };
         final MosaicImageWriter writer = new MosaicImageWriter();
         final MosaicImageWriteParam param = writer.getDefaultWriteParam();
-        param.setOpaqueBorderFilter(cornerColors);
+        param.setOpaqueBorderFilter(opaqueColors);
         writer.setOutput(targetMosaic);
         writer.writeFromInput(sourceMosaic, param);
         writer.dispose();
@@ -326,9 +309,9 @@ public final class MosaicReadWriteTest {
         reader.dispose();
         assertEquals(4, image.getSampleModel().getNumBands());
         assertEquals(Transparency.TRANSLUCENT, image.getColorModel().getTransparency());
+        assertEquals(3333171052L, Commons.checksum(image));
         /*
-         * Do not test the checksum, since its value may vary with the ImageWorker
-         * implementation. If a visual test is wanted, enable the block below.
+         * If a visual test is wanted, enable the block below.
          */
         if (false) {
             ImageIO.write(image, "png", new File("testTransparency.png"));
