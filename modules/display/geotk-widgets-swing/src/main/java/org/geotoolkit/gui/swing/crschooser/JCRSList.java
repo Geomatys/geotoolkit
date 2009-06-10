@@ -32,8 +32,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
+import org.geotoolkit.referencing.CRS;
 import org.geotools.resources.SwingUtilities;
 import org.jdesktop.swingx.JXList;
 import org.opengis.referencing.AuthorityFactory;
@@ -56,10 +55,14 @@ public class JCRSList extends JComponent{
     private CoordinateReferenceSystem selectedCRS = null;
     
     public JCRSList(){
-        String authority = "EPSG";
-        this.factory = FallbackAuthorityFactory.create(CRSAuthorityFactory.class,
-             filter(AuthorityFactoryFinder.getCRSAuthorityFactories(null), authority));
-        
+
+        //obtain the factory only for epsg codes
+//        String authority = "EPSG";
+//        this.factory = FallbackAuthorityFactory.create(CRSAuthorityFactory.class,
+//             filter(AuthorityFactoryFinder.getCRSAuthorityFactories(null), authority));
+
+        this.factory = CRS.getAuthorityFactory(Boolean.FALSE);
+
         try{
             this.codeList = new CodeList(factory, CoordinateReferenceSystem.class);
             liste.setModel(codeList);
@@ -77,7 +80,7 @@ public class JCRSList extends JComponent{
             public void valueChanged(ListSelectionEvent e) {
                 int index = e.getFirstIndex();
                 
-                if(index>0){
+                if(index>=0){
                     try{
                         selectedCRS = (CoordinateReferenceSystem) getSelectedItem();
                     }catch(FactoryException ex){
