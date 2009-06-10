@@ -142,11 +142,16 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             float[] values = null;
             
             return values;
-        }else if(css.getContent().size() >= 1 && css.getContent().get(0).getClass().equals(String.class)){
-            //it's a basic String, handle it as a literal
-            return filterFactory.literal(css.getContent().get(0).toString());
-        }else if(css.getContent().size() >= 1 && css.getContent().get(0) instanceof JAXBElement<?>){
-            return visitExpression( (JAXBElement<?>)css.getContent().get(0) );
+        }else if(css.getContent().size() >= 1){
+            for(Object obj : css.getContent()){
+                if(obj instanceof String){
+//                    System.out.println("laaaaa " + obj);
+//                    return filterFactory.literal(obj);
+                }else if(obj instanceof JAXBElement){
+                    System.out.println("iciiii");
+                    return visitExpression( (JAXBElement<?>)obj );
+                }
+            }
         }
         
         return null;
@@ -180,8 +185,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         for(Serializable ser :sers){
 
             if(ser instanceof String){
-                result = filterFactory.literal((String)ser);
-                break;
+//                result = filterFactory.literal((String)ser);
+//                break;
             }else if(ser instanceof JAXBElement<?>){
                 JAXBElement<?> jax = (JAXBElement<?>) ser;
                 result = visitExpression(jax);

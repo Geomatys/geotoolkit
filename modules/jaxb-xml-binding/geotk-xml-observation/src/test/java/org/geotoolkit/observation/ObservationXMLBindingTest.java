@@ -80,6 +80,7 @@ public class ObservationXMLBindingTest {
         PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessEntry procedure = new ProcessEntry("urn:sensor:007");
         TimePeriodType samplingTime = new TimePeriodType("2007-01-01", "2008-09-09");
+        samplingTime.setId("t1");
         ObservationEntry obs = new ObservationEntry("urn:Observation-007", "observation definition", sp, observedProperty, procedure, null, samplingTime);
 
         StringWriter sw = new StringWriter();
@@ -99,7 +100,7 @@ public class ObservationXMLBindingTest {
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
                            "    <om:definition>observation definition</om:definition>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
-                           "        <gml:TimePeriod>" + '\n' +
+                           "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
                            "            <gml:beginPosition>2007-01-01</gml:beginPosition>" + '\n' +
                            "            <gml:endPosition>2008-09-09</gml:endPosition>" + '\n' +
                            "        </gml:TimePeriod>" + '\n' +

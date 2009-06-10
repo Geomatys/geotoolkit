@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import javax.measure.unit.NonSI;
+import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -371,15 +372,15 @@ public class SEforSLD100Test extends TestCase{
         //Read test
         Object obj = unMarshall(FILE_SE_SYMBOL_LINE);
         assertNotNull(obj);
-        
+
         JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer>) obj;
         LineSymbolizer lineSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(lineSymbol);
-        
+
         assertEquals(lineSymbol.getGeometryPropertyName(), valueGeom);
         assertEquals(NonSI.PIXEL, lineSymbol.getUnitOfMeasure());
         assertNotNull(lineSymbol.getStroke());
-        
+
         assertEquals(lineSymbol.getStroke().getWidth().evaluate(null, Float.class), 13f);
         assertEquals(lineSymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f);
         assertEquals(lineSymbol.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
@@ -483,8 +484,13 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(obj);
         
         JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer>) obj;
+
+        System.out.println("start >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         RasterSymbolizer rasterSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(rasterSymbol);
+
+        System.out.println(rasterSymbol);
+        System.out.println("end >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         
         assertEquals(rasterSymbol.getGeometryPropertyName(), valueGeom);
         assertEquals(NonSI.PIXEL, rasterSymbol.getUnitOfMeasure());
