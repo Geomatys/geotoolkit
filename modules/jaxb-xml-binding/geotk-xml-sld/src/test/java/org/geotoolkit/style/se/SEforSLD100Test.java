@@ -484,14 +484,9 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(obj);
         
         JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer>) obj;
-
-        System.out.println("start >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         RasterSymbolizer rasterSymbol = TRANSFORMER_GT.visit(jax.getValue());
         assertNotNull(rasterSymbol);
 
-        System.out.println(rasterSymbol);
-        System.out.println("end >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        
         assertEquals(rasterSymbol.getGeometryPropertyName(), valueGeom);
         assertEquals(NonSI.PIXEL, rasterSymbol.getUnitOfMeasure());
         

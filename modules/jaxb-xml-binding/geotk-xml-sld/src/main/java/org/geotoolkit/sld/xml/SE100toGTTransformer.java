@@ -148,7 +148,6 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 //                    System.out.println("laaaaa " + obj);
 //                    return filterFactory.literal(obj);
                 }else if(obj instanceof JAXBElement){
-                    System.out.println("iciiii");
                     return visitExpression( (JAXBElement<?>)obj );
                 }
             }
