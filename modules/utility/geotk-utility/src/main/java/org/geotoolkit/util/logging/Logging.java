@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -50,8 +51,8 @@ import org.geotoolkit.util.converter.Classes;
  *     Logging.GEOTOOLKIT.setLoggerFactory("org.geotoolkit.util.logging.CommonsLoggerFactory");
  * }
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.4
  * @module
@@ -658,11 +659,13 @@ search:     while (configs.hasMoreElements()) try {
          * less relevant name than our attempt to use the logger name as the package name.
          */
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(error));
-        final String message = error.getLocalizedMessage();
+        String message = error.getLocalizedMessage();
         if (message != null) {
             buffer.append(": ").append(message);
         }
-        final LogRecord record = new LogRecord(level, buffer.toString());
+        message = buffer.toString();
+        message = Exceptions.formatChainedMessages(message, error);
+        final LogRecord record = new LogRecord(level, message);
         if (classe != null) {
             record.setSourceClassName(classe);
         }

@@ -74,7 +74,7 @@ public final class Exceptions {
      *
      * @since 3.01
      */
-    public static String formatMessages(String header, Throwable cause) {
+    public static String formatChainedMessages(String header, Throwable cause) {
         Set<String> done = null;
         String lineSeparator = null;
         StringBuilder buffer = null;
@@ -87,6 +87,18 @@ public final class Exceptions {
                     lineSeparator = System.getProperty("line.separator", "\n");
                     if (header != null && (header = header.trim()).length() != 0) {
                         buffer.append(header);
+                        done.add(header);
+                        /*
+                         * The folowing is for avoiding to repeat the same message in the
+                         * common case where the header contains the exception class name
+                         * followed by the message, as in:
+                         *
+                         * FooException: InnerException: the inner message.
+                         */
+                        int s=0;
+                        while ((s=header.indexOf(':', s)) >= 0) {
+                            done.add(header.substring(++s).trim());
+                        }
                     }
                 }
                 if (done.add(message)) {

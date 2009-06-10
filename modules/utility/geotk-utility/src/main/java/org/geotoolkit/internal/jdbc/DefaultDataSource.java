@@ -17,23 +17,44 @@
  */
 package org.geotoolkit.internal.jdbc;
 
+import java.util.Set;
+import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.DatabaseMetaData;
 import javax.sql.DataSource;
+
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
  * A data source which get the connection from a {@link DriverManager}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
  */
 public class DefaultDataSource implements DataSource {
+    /**
+     * The logger where to report the JDBC driver version. Note that the logger
+     * name intentionnaly hides the {@code "internal"} part of the package name.
+     */
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.jdbc");
+
+    /**
+     * The driver names of the connection returned by {@code DefaultDataSource}.
+     * This is used for logging purpose only.
+     */
+    private static final Set<String> DRIVERS = new HashSet<String>();
+
     /**
      * The URL to use for connecting to the database.
      */
@@ -49,13 +70,36 @@ public class DefaultDataSource implements DataSource {
     }
 
     /**
+     * Logs the driver version if this is the first time we get a connection for that driver.
+     */
+    private static Connection log(final Connection connection) throws SQLException {
+        if (LOGGER.isLoggable(Level.CONFIG)) {
+            final DatabaseMetaData metadata = connection.getMetaData();
+            final String name = metadata.getDriverName();
+            final boolean log;
+            synchronized (DRIVERS) {
+                log = DRIVERS.add(name);
+            }
+            if (log) {
+                final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.JDBC_DRIVER_VERSION_$3,
+                        name, metadata.getDriverMajorVersion(), metadata.getDriverMinorVersion());
+                record.setLoggerName(LOGGER.getName());
+                record.setSourceClassName(DefaultDataSource.class.getName());
+                record.setSourceMethodName("getConnection");
+                LOGGER.log(record);
+            }
+        }
+        return connection;
+    }
+
+    /**
      * Delegates to {@link DriverManager}.
      *
      * @throws SQLException If the connection can not be etablished.
      */
     @Override
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url);
+        return log(DriverManager.getConnection(url));
     }
 
     /**
@@ -65,7 +109,7 @@ public class DefaultDataSource implements DataSource {
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+        return log(DriverManager.getConnection(url, username, password));
     }
 
     /**

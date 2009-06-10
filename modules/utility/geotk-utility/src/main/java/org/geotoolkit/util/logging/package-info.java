@@ -37,8 +37,8 @@
  * {@link java.util.logging.Logger#getLogger(String)}. This is necessary in
  * order to give Geotoolkit a chance to redirect log events to an other logging framework.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.4
  * @module

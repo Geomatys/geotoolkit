@@ -998,7 +998,7 @@ public final class Errors extends IndexedResourceBundle {
 
         /**
          * Authority "{0}" is unknown or doesn't match the supplied hints. Maybe it is defined in an
-         * unreachable JAR file?
+         * unreachable JAR file, or one of its dependencies (for example a JDBC driver) is missing?
          */
         public static final int UNKNOW_AUTHORITY_$1 = 186;
 
