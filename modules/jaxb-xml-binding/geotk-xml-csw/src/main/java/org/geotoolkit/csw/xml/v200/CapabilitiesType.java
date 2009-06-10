@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 
 
@@ -53,7 +54,7 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesType")
-public class CapabilitiesType extends CapabilitiesBaseType {
+public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCapabilities {
 
 
 }
