@@ -15,21 +15,21 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.style.labeling;
+package org.geotoolkit.display2d.style.labeling.intelligent;
 
-import java.util.List;
-import org.geotoolkit.display2d.style.labeling.intelligent.Candidate;
+import java.awt.Shape;
+import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface LabelCandidateRenderer<T extends LabelDescriptor> {
+public interface Candidate {
 
-    Candidate generateOptimalCandidat(T descriptor);
+    LabelDescriptor getDescriptor();
 
-    List<Candidate> generateCandidats(T descriptor);
+    Shape getShape();
 
-    void render(Candidate candidate, T descriptor);
+    boolean intersect(Candidate c);
 
 }

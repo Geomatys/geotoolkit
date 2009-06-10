@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import org.geotoolkit.display2d.style.labeling.DefaultPointLabelCandidateRendere
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
-import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 
 /**
@@ -39,8 +37,8 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
  */
 public class AILabelRenderer implements LabelRenderer{
 
-    private static final DefaultPointLabelCandidateRenderer POINT_RENDERER = new DefaultPointLabelCandidateRenderer();
-    private static final DefaultLinearLabelCandidateRenderer LINEAR_RENDERER = new DefaultLinearLabelCandidateRenderer();
+    private final DefaultPointLabelCandidateRenderer POINT_RENDERER;
+    private final DefaultLinearLabelCandidateRenderer LINEAR_RENDERER;
 
 
     private final RenderingContext2D context;
@@ -49,6 +47,9 @@ public class AILabelRenderer implements LabelRenderer{
     public AILabelRenderer(RenderingContext2D context) {
         if(context == null) throw new NullPointerException("Rendering context can not be null");
         this.context = context;
+
+        LINEAR_RENDERER = new DefaultLinearLabelCandidateRenderer(context);
+        POINT_RENDERER = new DefaultPointLabelCandidateRenderer(context);
     }
     
     /**
@@ -76,16 +77,22 @@ public class AILabelRenderer implements LabelRenderer{
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        List<Candidate> candidates = new ArrayList<Candidate>();
+
         for(final LabelLayer layer : layers){
 
             for(LabelDescriptor label : layer.labels()){
                 if(label instanceof PointLabelDescriptor){
-                    Shape shp = POINT_RENDERER.generateOptimalCandidat((PointLabelDescriptor) label);
-                    POINT_RENDERER.render(context, shp,(PointLabelDescriptor) label);
-                }else if(label instanceof LinearLabelDescriptor){
-                    Shape shp = LINEAR_RENDERER.generateOptimalCandidat((LinearLabelDescriptor) label);
-                    LINEAR_RENDERER.render(context, shp,(LinearLabelDescriptor) label);
+                    candidates.addAll(POINT_RENDERER.generateCandidats((PointLabelDescriptor) label));
+
+                    Candidate shp = POINT_RENDERER.generateOptimalCandidat((PointLabelDescriptor)label);
+                    POINT_RENDERER.render(shp,(PointLabelDescriptor)label);
                 }
+
+//                else if(label instanceof LinearLabelDescriptor){
+//                    Shape shp = LINEAR_RENDERER.generateOptimalCandidat((LinearLabelDescriptor) label);
+//                    LINEAR_RENDERER.render(context, shp,(LinearLabelDescriptor) label);
+//                }
             }
         }
         

@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.style.labeling;
+package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -26,20 +26,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
-import org.geotoolkit.display2d.style.labeling.intelligent.Candidate;
-import org.geotoolkit.display2d.style.labeling.intelligent.LinearCandidate;
+import org.geotoolkit.display2d.style.labeling.LabelCandidateRenderer;
+import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultLinearLabelCandidateRenderer implements LabelCandidateRenderer<LinearLabelDescriptor>{
+public class AILinearLabelCandidateRenderer implements LabelCandidateRenderer<LinearLabelDescriptor>{
 
     private final RenderingContext2D context;
     private final Graphics2D g2;
 
-    public DefaultLinearLabelCandidateRenderer(RenderingContext2D context) {
+    public AILinearLabelCandidateRenderer(RenderingContext2D context) {
         this.context = context;
         g2 = context.getGraphics();
     }
@@ -49,7 +49,7 @@ public class DefaultLinearLabelCandidateRenderer implements LabelCandidateRender
         try {
             return new LinearCandidate(descriptor,descriptor.getGeometry().getDisplayShape());
         } catch (TransformException ex) {
-            Logger.getLogger(DefaultLinearLabelCandidateRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AILinearLabelCandidateRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;

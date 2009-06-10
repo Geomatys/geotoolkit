@@ -15,9 +15,10 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.style.labeling;
+package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -32,20 +33,20 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
-import org.geotoolkit.display2d.style.labeling.intelligent.Candidate;
-import org.geotoolkit.display2d.style.labeling.intelligent.PointCandidate;
+import org.geotoolkit.display2d.style.labeling.LabelCandidateRenderer;
+import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultPointLabelCandidateRenderer implements LabelCandidateRenderer<PointLabelDescriptor>{
+public class AIPointLabelCandidateRenderer implements LabelCandidateRenderer<PointLabelDescriptor>{
 
     private final RenderingContext2D context;
     private final Graphics2D g2;
 
-    public DefaultPointLabelCandidateRenderer(RenderingContext2D context) {
+    public AIPointLabelCandidateRenderer(RenderingContext2D context) {
         this.context = context;
         g2 = context.getGraphics();
     }
@@ -58,7 +59,7 @@ public class DefaultPointLabelCandidateRenderer implements LabelCandidateRendere
         try {
             shape = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logger.getLogger(DefaultPointLabelCandidateRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AIPointLabelCandidateRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         if(shape == null) return null;
@@ -78,6 +79,9 @@ public class DefaultPointLabelCandidateRenderer implements LabelCandidateRendere
         //text is draw above reference point so use +
         refY = refY + (label.getAnchorY()*textHeight);
 
+        refY = refY - (textHeight);
+
+
         return new PointCandidate(label, shape, new Point2D.Double(refX, refY), textHeight, textWidth);
     }
 
@@ -90,26 +94,38 @@ public class DefaultPointLabelCandidateRenderer implements LabelCandidateRendere
     public void render(Candidate candidate, PointLabelDescriptor label) {
         context.switchToDisplayCRS();
 
+        PointCandidate pc = (PointCandidate) candidate;
+
+        g2.setStroke(new BasicStroke(1));
+        g2.setColor(Color.BLACK);
+        g2.rotate(Math.toRadians(pc.getAlpha()), pc.getPoint().getX(), pc.getPoint().getY());
+        g2.drawRect((int)pc.getPoint().getX(), (int)pc.getPoint().getY(), (int)pc.getWidth(), (int)pc.getHeight());
+        g2.rotate(-Math.toRadians(pc.getAlpha()), pc.getPoint().getX(), pc.getPoint().getY());
+
         final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
         final int textHeight = metric.getHeight();
         final int textWidth = metric.stringWidth(label.getText());
         final Rectangle2D rect = candidate.getShape().getBounds2D();
         float refX = (float) rect.getCenterX();
         float refY = (float) rect.getCenterY();
-
+//
         //adjust displacement---------------------------------------------------
         //displacement is oriented above and to the right
         refX = refX + label.getDisplacementX();
         refY = refY - label.getDisplacementY();
 
-        //rotation--------------------------------------------------------------
-        final float rotate = (float) Math.toRadians(label.getRotation());
-        g2.rotate(rotate, refX, refY);
-
         //adjust anchor---------------------------------------------------------
         refX = refX - (label.getAnchorX()*textWidth);
         //text is draw above reference point so use +
         refY = refY + (label.getAnchorY()*textHeight);
+
+//        refY = refY - (textHeight-metric.getDescent());
+
+        //rotation--------------------------------------------------------------
+        final float rotate = (float) Math.toRadians(label.getRotation());
+        g2.rotate(rotate, refX, refY);
+
+        
 
         //paint halo------------------------------------------------------------
         final float haloWidth = label.getHaloWidth();
