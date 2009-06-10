@@ -29,9 +29,7 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
- *             Deletes one or more catalogue items that satisfy some set of 
- *             conditions.
+ *  Deletes one or more catalogue items that satisfy some set of conditions.
  *          
  * 
  * <p>Java class for DeleteType complex type.

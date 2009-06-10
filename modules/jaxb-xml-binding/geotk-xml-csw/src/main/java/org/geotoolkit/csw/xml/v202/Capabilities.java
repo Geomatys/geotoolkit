@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.ogc.xml.v110modified.FilterCapabilities;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
@@ -31,8 +32,8 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * This type extends ows:CapabilitiesBaseType defined in OGC-05-008 
- *          to include information about supported OGC filter components. A 
- *          profile may extend this type to describe additional capabilities.
+ * to include information about supported OGC filter components.
+ * A profile may extend this type to describe additional capabilities.
  * 
  * <p>Java class for CapabilitiesType complex type.
  * 
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "filterCapabilities"
 })
 @XmlRootElement(name="Capabilities")
-public class Capabilities extends CapabilitiesBaseType {
+public class Capabilities extends CapabilitiesBaseType implements AbstractCapabilities {
 
     @XmlElement(name = "Filter_Capabilities", namespace = "http://www.opengis.net/ogc", required = true)
     private FilterCapabilities filterCapabilities;

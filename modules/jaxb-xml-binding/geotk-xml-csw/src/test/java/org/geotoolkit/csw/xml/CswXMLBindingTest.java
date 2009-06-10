@@ -65,9 +65,9 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 // Geotools dependencies
 import org.geotoolkit.metadata.iso.DefaultMetaData;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.xml.MarshallerPool;
 
 //Junit dependencies
-import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 

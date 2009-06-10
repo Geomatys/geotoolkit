@@ -25,14 +25,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
- *             The response for a transaction request that was successfully
- *             completed. If the transaction failed for any reason, a service 
- *             exception report indicating a TransactionFailure is returned
- *             instead.
+ * The response for a transaction request that was successfully completed.
+ * If the transaction failed for any reason, a service exception report
+ * indicating a TransactionFailure is returned instead.
  *          
  * 
  * <p>Java class for TransactionResponseType complex type.
@@ -110,5 +109,50 @@ public class TransactionResponseType {
      */
     public String getVersion() {
         return version;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionResponseType) {
+            final TransactionResponseType that = (TransactionResponseType) object;
+            return Utilities.equals(this.insertResult,       that.insertResult)       &&
+                   Utilities.equals(this.transactionSummary, that.transactionSummary) &&
+                   Utilities.equals(this.version,            that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + (this.transactionSummary != null ? this.transactionSummary.hashCode() : 0);
+        hash = 37 * hash + (this.insertResult != null ? this.insertResult.hashCode() : 0);
+        hash = 37 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[TransactionResponseType]\n");
+
+        if (insertResult != null) {
+            s.append(insertResult.size()).append(" insertResult: ").append('\n');
+            for (InsertResultType ins : insertResult) {
+                s.append(ins).append('\n');
+            }
+        }
+        if (transactionSummary != null) {
+            s.append("transactionSummary: ").append(transactionSummary).append('\n');
+        }
+        if (version != null) {
+            s.append("version:").append(version).append('n');
+        }
+        return s.toString();
     }
 }
