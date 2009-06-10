@@ -169,12 +169,11 @@ public abstract class InteractiveConsole implements Runnable {
         if (commands != null) {
             locale = commands.locale;
             colors = Boolean.TRUE.equals(commands.colors);
-            lineSeparator = commands.lineSeparator;
         } else {
             locale = Locale.CANADA;
             colors = X364.isSupported();
-            lineSeparator = System.getProperty("line.separator", "\n");
         }
+        lineSeparator   = System.getProperty("line.separator", "\n");
         numberFormat    = NumberFormat.getNumberInstance(locale);
         numberSeparator = getNumberSeparator(numberFormat);
         ensureNonNull();

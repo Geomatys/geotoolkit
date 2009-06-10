@@ -42,8 +42,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.io.wkt.Colors;
 import org.geotoolkit.io.X364;
 
 
@@ -156,7 +158,16 @@ public class ReferencingConsole extends InteractiveConsole {
      */
     ReferencingConsole(final ReferencingCommands commands) {
         super(commands);
-        parser = commands.getWktFormat();
+        final WKTFormat format = new WKTFormat();
+        final String authority = commands.authority;
+        if (authority != null) {
+            format.setAuthority(Citations.fromName(authority));
+        }
+        if (Boolean.TRUE.equals(commands.colors)) {
+            format.setColors(Colors.DEFAULT);
+        }
+        format.setIndentation(commands.indent);
+        parser = format;
         initialize();
     }
 

@@ -17,119 +17,32 @@
  */
 package org.geotoolkit.internal.wizard;
 
-import java.awt.Component;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-
-import org.jdesktop.swingx.JXLabel;
-import org.netbeans.api.wizard.WizardDisplayer;
-
-import org.geotoolkit.image.jai.Registry;
-import org.geotoolkit.internal.SwingUtilities;
-import org.geotoolkit.internal.setup.ControlPanel;
+import org.geotoolkit.console.ReferencingCommands;
 
 
 /**
- * The main panel, which propose to setup or start a wizard.
+ * The entry point invoked from the command line. This is intended to be a
+ * lightweight branching point. A very different set of classes is going to
+ * be loaded depending if a command lone argument has been provided or not.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.01
  *
  * @since 3.01
  * @module
- *
- * @todo Needs localization.
  */
-@SuppressWarnings("serial")
-public final class Main extends JFrame implements ActionListener {
+public final class Main {
     /**
-     * The button names, which will also be identifier for the action to launch.
-     */
-    private static final String SETUP = "SETUP", MOSAIC = "MOSAIC";
-
-    /**
-     * Creates a new instance of the main panel and display it immediately.
-     */
-    private Main() {
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setTitle("Geotoolkit.org wizards");
-        setLayout(new GridBagLayout());
-        final GridBagConstraints c = new GridBagConstraints();
-        c.gridy=0;
-        addButton(MOSAIC, "Mosaic generator",
-                "Read a potentially big image (which may be splitted in many tiles " +
-                "at the same resolution) and write a set of smaller tiles of given " +
-                "size and using different subsamplings.", c);
-        c.gridy++;
-        addButton(SETUP,  "Geotoolkit Setup",
-                "Select directories and install the NADCON and EPSG data. " +
-                "This setup is optional. If executed, the setting will be " +
-                "remembered for all subsequent Geotoolkit.org usage.", c);
-        setSize(700, 200);
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    /**
-     * Add a button to this frame.
+     * Invoked from the command line for displaying the main menu, or
+     * running the command line if at least one argument is provided.
      *
-     * @param name  The button name, to be used as an identifier for the action to start.
-     * @param title The text to display in the button.
-     * @param c The constraint. The <var>gridy</var> field should be set to the appropriate value.
-     *        Other fields may be overwritten.
-     */
-    private void addButton(final String name, final String title, final String description,
-            final GridBagConstraints c)
-    {
-        final JButton button = new JButton(title);
-        button.setName(name);
-        button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(100, 20));
-        c.fill = GridBagConstraints.BOTH;
-        c.insets.top = c.insets.bottom = 15;
-        c.insets.left = c.insets.right = 30;
-        c.weightx = c.weighty = 0;
-        c.gridx=0;
-        add(button, c);
-
-        final JXLabel label = new JXLabel(description);
-        label.setLineWrap(true);
-        c.weightx = c.weighty = 1;
-        c.insets.left = 0;
-        c.gridx++;
-        add(label, c);
-    }
-
-    /**
-     * Invoked when a button has been pressed.
-     *
-     * @param event The button which has been pressed.
-     */
-    @Override
-    public void actionPerformed(final ActionEvent event) {
-        final String action = ((Component) event.getSource()).getName();
-        dispose();
-        if (SETUP.equals(action)) {
-            ControlPanel.show(getLocale());
-        } else if (MOSAIC.equals(action)) {
-            final MosaicWizard wizard = new MosaicWizard();
-            WizardDisplayer.showWizard(wizard.createWizard());
-            System.exit(0);
-        }
-    }
-
-    /**
-     * Invoked from the command line for displaying this frame.
-     *
-     * @param args The command line arguments (ignored).
+     * @param args The command line arguments.
      */
     public static void main(final String[] args) {
-        SwingUtilities.setLookAndFeel(Main.class, "run");
-        Registry.setDefaultCodecPreferences();
-        new Main();
+        if (args.length == 0) {
+            Menu.run();
+        } else {
+            ReferencingCommands.main(args);
+        }
     }
 }
