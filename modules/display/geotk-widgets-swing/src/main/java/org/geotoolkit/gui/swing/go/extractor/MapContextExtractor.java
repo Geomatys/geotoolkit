@@ -111,9 +111,9 @@ public class MapContextExtractor extends AbstractGraphicVisitor {
 
         for(final Property prop : feature.getProperties()){
             if( Geometry.class.isAssignableFrom( prop.getType().getBinding() )){
-                builder.append("<b>").append(prop.getName().toString()).append(" : </b>").append(prop.getType().getBinding().getSimpleName()).append("<br>");
+                builder.append("<b>").append(prop.getName()).append(" : </b>").append(prop.getType().getBinding().getSimpleName()).append("<br>");
             }else{
-                builder.append("<b>").append(prop.getName().toString()).append(" : </b>").append(prop.getValue().toString()).append("<br>");
+                builder.append("<b>").append(prop.getName()).append(" : </b>").append(prop.getValue()).append("<br>");
             }
         }
 

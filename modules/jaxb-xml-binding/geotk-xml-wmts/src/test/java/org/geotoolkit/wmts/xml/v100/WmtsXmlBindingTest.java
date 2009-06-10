@@ -72,7 +72,7 @@ public class WmtsXmlBindingTest {
                      "  <ows:Identifier>16d</ows:Identifier>" + '\n' +
                      "  <ScaleDenominator>55218.001386</ScaleDenominator>" + '\n' +
                      "  <TopLeftPoint>" + '\n' +
-                     "      <gml:Point>" + '\n' +
+                     "      <gml:Point gml:id=\"p1\">" + '\n' +
                      "          <gml:pos>-90.080000 29.982000</gml:pos>" + '\n' +
                      "      </gml:Point>" + '\n' +
                      "  </TopLeftPoint>" + '\n' +
@@ -85,7 +85,7 @@ public class WmtsXmlBindingTest {
         StringReader sr = new StringReader(xml);
         TileMatrix result = (TileMatrix) unmarshaller.unmarshal(sr);
 
-        PointType pt = new PointType(null, new DirectPositionType(-90.080000, 29.982000));
+        PointType pt = new PointType("p1", new DirectPositionType(-90.080000, 29.982000));
         TileMatrix expResult = new TileMatrix(new CodeType("16d"),
                                               55218.001386,
                                               new TopLeftPoint(pt),
@@ -106,7 +106,7 @@ public class WmtsXmlBindingTest {
     @Test
     public void marshallingTest() throws Exception {
 
-        PointType pt = new PointType(null, new DirectPositionType(-90.080000, 29.982000));
+        PointType pt = new PointType("p1", new DirectPositionType(-90.080000, 29.982000));
         TileMatrix matrix = new TileMatrix(new CodeType("16d"),
                                               55218.001386,
                                               new TopLeftPoint(pt),
@@ -136,7 +136,7 @@ public class WmtsXmlBindingTest {
                      "    <ows:Identifier>16d</ows:Identifier>" + '\n' +
                      "    <ScaleDenominator>55218.001386</ScaleDenominator>" + '\n' +
                      "    <TopLeftPoint>" + '\n' +
-                     "        <gml:Point>" + '\n' +
+                     "        <gml:Point gml:id=\"p1\">" + '\n' +
                      "            <gml:pos>-90.08 29.982</gml:pos>" + '\n' +
                      "        </gml:Point>" + '\n' +
                      "    </TopLeftPoint>" + '\n' +

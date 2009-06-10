@@ -226,7 +226,9 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
             if(!collection.isEmpty()){
                 final FeatureIterator<SimpleFeature> ite = collection.features();
-                feature = ite.next();
+                if(ite.hasNext()){
+                    feature = ite.next();
+                }
                 ite.close();
             }
             return feature;

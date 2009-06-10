@@ -159,19 +159,37 @@ public class DefaultFilterFactory2 implements FilterFactory2{
             Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
         }
 
+        //TODO : Datastore from geotools sucks, they dont even provide the authority name sometimes !!!
+        // we are forced add the two next tests
+
         if(crs == null && !srs.startsWith("EPSG:")){
             //we presume all epsg given are using the epsg authority
             //this is a necessity since the last geotools modules aren't correctly providing the authority
-            srs = "EPSG:"+srs;
+            String test = "EPSG:"+srs;
 
             try {
-                crs = CRS.decode(srs);
+                crs = CRS.decode(test);
+            } catch (NoSuchAuthorityCodeException ex) {
+                Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
+            } catch (FactoryException ex) {
+                Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
+            }
+        }
+
+        if(crs == null && !srs.startsWith("CRS:")){
+            //we presume all epsg given are using the epsg authority
+            //this is a necessity since the last geotools modules aren't correctly providing the authority
+            String test = "CRS:"+srs;
+
+            try {
+                crs = CRS.decode(test);
             } catch (NoSuchAuthorityCodeException ex) {
                 Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
             } catch (FactoryException ex) {
                 Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
             }
         }
+
 
         if(crs == null){
             throw new IllegalArgumentException("Invalid srs : " +srs);
