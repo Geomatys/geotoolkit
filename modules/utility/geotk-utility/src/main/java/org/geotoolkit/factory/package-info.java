@@ -104,9 +104,9 @@
  * only) selects an implementation accordingly. Note that the hints, if provided, don't need to apply
  * directly to the requested factory. They may apply indirectly through factory dependencies.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module

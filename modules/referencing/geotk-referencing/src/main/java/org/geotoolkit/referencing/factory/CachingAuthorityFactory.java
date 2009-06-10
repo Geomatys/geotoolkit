@@ -46,10 +46,11 @@ import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Buffered;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.Cache;
 
@@ -69,7 +70,7 @@ import org.geotoolkit.util.collection.Cache;
  * (and recreated on the fly if needed) otherwise.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -311,8 +312,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 }
             }
         }
-        final LogRecord record = Loggings.format(level,
-                Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_$1, title);
+        final LogRecord record = new LogRecord(level, Exceptions.formatMessages(Loggings.getResources(null).
+                getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_$1, title), exception));
         record.setSourceClassName(getClass().getName());
         record.setSourceMethodName("isAvailable");
         record.setThrown(exception);

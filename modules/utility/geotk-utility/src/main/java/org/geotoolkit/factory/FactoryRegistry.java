@@ -61,10 +61,10 @@ import org.geotoolkit.internal.FactoryUtilities;
  * for synchronisation. This is usually done in an utility class wrapping this
  * service registry (e.g. {@link org.geotoolkit.factory.FactoryFinder}).
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Richard Gould
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.01
  *
  * @see Factory
  * @see Hints
@@ -485,6 +485,7 @@ public class FactoryRegistry extends ServiceRegistry {
          * Geotoolkit implementation, some hints computation are deferred until a connection to
          * the database is etablished (which 'isAvailable' does in order to test the connection).
          */
+        boolean isAvailable = true;
         if (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
             final Class<? extends Factory> type = factory.getClass();
@@ -492,9 +493,7 @@ public class FactoryRegistry extends ServiceRegistry {
                 throw new RecursiveSearchException(type);
             }
             try {
-                if (!factory.isAvailable()) {
-                    return false;
-                }
+                isAvailable = factory.isAvailable();
             } finally {
                 if (!testingAvailability.remove(type)) {
                     throw new AssertionError(type); // Should never happen.
@@ -542,7 +541,13 @@ public class FactoryRegistry extends ServiceRegistry {
         /*
          * Checks for optional user conditions supplied in FactoryRegistry subclasses.
          */
-        return isAcceptable(candidate, category, hints);
+        if (!isAcceptable(candidate, category, hints)) {
+            return false;
+        }
+        if (!isAvailable) {
+            unavailable((Factory) candidate);
+        }
+        return isAvailable;
     }
 
     /**
@@ -571,6 +576,22 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     protected <T> boolean isAcceptable(final T provider, final Class<T> category, final Hints hints) {
         return true;
+    }
+
+    /**
+     * Invoked when a factory meets every conditions (including the user-provided
+     * {@linkplain Hints hints}), except that it declares itelf as unavailable.
+     * <p>
+     * The default implementation does nothing. Subclasses can override this method
+     * if they want to track the reasons why a factory is unavailable.
+     *
+     * @param factory The factory which declares itself as unavailable.
+     *
+     * @see Factory#isAvailable()
+     *
+     * @since 3.01
+     */
+    void unavailable(final Factory factory) {
     }
 
     /**

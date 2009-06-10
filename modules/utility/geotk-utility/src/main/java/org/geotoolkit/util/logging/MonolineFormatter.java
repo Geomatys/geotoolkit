@@ -653,7 +653,7 @@ loop:   for (int i=0; ; i++) {
     }
 
     /**
-     * Sets the level of the given handler. This method try to find a balance between user's
+     * Sets the level of the given handler. This method tries to find a balance between user's
      * setting and desired level using heuristic rules that may change in any future version.
      */
     private static void setLevel(final Handler handler, final Level level) {

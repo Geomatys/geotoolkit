@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -67,6 +67,11 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
      * Used by {@link #safeCreate} as a guard against infinite recursivity.
      */
     private final Set<Class<?>> underConstruction = new HashSet<Class<?>>();
+
+    /**
+     * The factories which have been declared unavailable.
+     */
+    private final Set<Class<? extends Factory>> unavailables = new HashSet<Class<? extends Factory>>();
 
     /**
      * Constructs a new registry for the specified category.
@@ -147,6 +152,20 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     public <T> T getServiceProvider(final Class<T> category, final Filter filter,
             Hints hints, final Hints.Key key) throws FactoryRegistryException
     {
+        try {
+            return getOrCreateServiceProvider(category, filter, hints, key);
+        } finally {
+            unavailables.clear();
+        }
+    }
+
+    /**
+     * Implementation of {@link #getServiceProvider}, in a separated method for making easier
+     * to encompass in a {@code try ... finally} block.
+     */
+    private <T> T getOrCreateServiceProvider(final Class<T> category, final Filter filter,
+            Hints hints, final Hints.Key key) throws FactoryRegistryException
+    {
         final FactoryNotFoundException notFound;
         try {
             return super.getServiceProvider(category, filter, hints, key);
@@ -189,6 +208,10 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                 for (int i=0; i<types.length; i++) {
                     final Class<?> type = types[i];
                     if (type!=null && category.isAssignableFrom(type)) {
+                        if (unavailables.contains(type)) {
+                            // We already tried this factory before and failed.
+                            continue;
+                        }
                         final int modifiers = type.getModifiers();
                         if (!Modifier.isAbstract(modifiers)) {
                             final T candidate = createSafe(category, type, hints);
@@ -215,6 +238,10 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
         for (final Iterator<T> it=getUnfilteredProviders(category); it.hasNext();) {
             final T factory = it.next();
             final Class<?> implementation = factory.getClass();
+            if (unavailables.contains(implementation)) {
+                // We already tried this factory before and failed.
+                continue;
+            }
             if (!isAssignableTo(implementation, types, wantSameClass)) {
                 continue;
             }
@@ -267,6 +294,22 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             }
         }
         return false;
+    }
+
+    /**
+     * Invoked when a factory meets every conditions (including the user-provided
+     * {@linkplain Hints hints}), except that it declares itelf as unavailable.
+     * This method is used for remembering that it is not worth to try creating
+     * that factory again.
+     *
+     * @param factory The factory which declares itself as unavailable.
+     *
+     * @since 3.01
+     */
+    @Override
+    final void unavailable(final Factory factory) {
+        unavailables.add(factory.getClass());
+        super.unavailable(factory);
     }
 
     /**

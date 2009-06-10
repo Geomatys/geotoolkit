@@ -23,10 +23,13 @@ import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
+import java.sql.SQLException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
+import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.io.ExpandedTabWriter;
@@ -35,8 +38,8 @@ import org.geotoolkit.io.ExpandedTabWriter;
 /**
  * Utilities methods for dealing with exceptions.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -52,6 +55,60 @@ public final class Exceptions {
      * Do not allow instantiation of this class.
      */
     private Exceptions() {
+    }
+
+    /**
+     * Returns a string which contain the given message on the first line, followed by the
+     * {@linkplain Throwable#getLocalizedMessage() localized message} of the given exception
+     * on the next line. If the exception has a {@linkplain Throwable#getCause() causes}, then
+     * the localized message of the cause is formatted on the next line and the process is
+     * repeated for the whole cause chain.
+     * <p>
+     * {@link SQLException} is handled especially in order to process the
+     * {@linkplain SQLException#getNextException() next exception} instead than the cause.
+     *
+     * @param  header The message to insert on the first line, or {@code null} if none.
+     * @param  cause  The exception, or {@code null} if none.
+     * @return The formatted message, or {@code null} if both the header was {@code null}
+     *         and no exception provide a message.
+     *
+     * @since 3.01
+     */
+    public static String formatMessages(String header, Throwable cause) {
+        Set<String> done = null;
+        String lineSeparator = null;
+        StringBuilder buffer = null;
+        while (cause != null) {
+            String message = cause.getLocalizedMessage();
+            if (message != null && (message = message.trim()).length() != 0) {
+                if (buffer == null) {
+                    done = new HashSet<String>();
+                    buffer = new StringBuilder();
+                    lineSeparator = System.getProperty("line.separator", "\n");
+                    if (header != null && (header = header.trim()).length() != 0) {
+                        buffer.append(header);
+                    }
+                }
+                if (done.add(message)) {
+                    if (buffer.length() != 0) {
+                        buffer.append(lineSeparator);
+                    }
+                    buffer.append(message);
+                }
+            }
+            if (cause instanceof SQLException) {
+                final SQLException next = ((SQLException) cause).getNextException();
+                if (next != null) {
+                    cause = next;
+                    continue;
+                }
+            }
+            cause = cause.getCause();
+        }
+        if (buffer != null) {
+            header = buffer.toString();
+        }
+        return header;
     }
 
     /**
