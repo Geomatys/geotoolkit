@@ -21,6 +21,8 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.nio.charset.Charset;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,12 +38,14 @@ import org.geotoolkit.io.LineWrapWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 
 
@@ -87,7 +91,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  * @module
@@ -724,15 +728,16 @@ public abstract class CommandLine implements Runnable {
      */
     @Action(maximalArgumentCount=0)
     protected void version() {
-        final String faint, normal;
+        final String bold, faint, normal;
         if (colors) {
+            bold   = X364.BOLD.sequence();
             faint  = X364.FAINT.sequence();
             normal = X364.NORMAL.sequence();
         } else {
-            faint = normal = "";
+            bold = faint = normal = "";
         }
         final PrintWriter out = this.out;
-        out.print("Geotoolkit ");
+        out.print("Geotoolkit.org ");
         out.println(Version.GEOTOOLKIT);
         out.print(vocabulary(Vocabulary.Keys.JAVA_VERSION_$1, System.getProperty("java.version")));
         out.print(faint);
@@ -748,28 +753,70 @@ public abstract class CommandLine implements Runnable {
         }));
         out.print(')');
         out.println(normal);
-        out.print("Java Advanced Imaging");
-        Object jai;
-        try {
-            jai = String.valueOf(Class.forName("javax.media.jai.JAI")
-                    .getMethod("getBuildVersion").invoke(null, (Object[]) null));
-        } catch (Exception e) {
-            jai = e;
-        }
-        if (jai instanceof Throwable) {
-            out.print(": ");
-            out.print(Vocabulary.getResources(locale).getString(Vocabulary.Keys.NOT_INSTALLED));
-            out.print(faint);
-            out.print(" (");
-            out.print(Classes.getShortClassName(jai));
-            out.print(')');
-            out.println(normal);
-        } else {
-            out.print(faint);
-            out.print(" (");
-            out.print(jai);
-            out.print(')');
-            out.println(normal);
+        /*
+         * Test for the presence of extensions for which the class may not be on the classpath:
+         * JavaDB, JAI, Image I/O extensions for JAI.
+         */
+        out.println();
+        out.print(bold);
+        out.print("Extensions:");
+        out.println(normal);
+        out.flush(); // For allowing user to see what we have done so far while he is waiting.
+        final Vocabulary resources = Vocabulary.getResources(locale);
+        for (int i=0; i<3; i++) {
+            String header = null;
+            Object result = null; // String on success, Throwable on error.
+            try {
+                switch (i) {
+                    default: {
+                        throw new AssertionError(i);
+                    }
+                    case 0: {
+                        header = "Embedded Database";
+                        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+                        final Driver d = DriverManager.getDriver("jdbc:derby:");
+                        result = Loggings.getResources(locale).getString(
+                                Loggings.Keys.JDBC_DRIVER_VERSION_$3, "Derby",
+                                d.getMajorVersion(), d.getMinorVersion());
+                        break;
+                    }
+                    case 1: {
+                        header = "Java Advanced Imaging";
+                        result = String.valueOf(Class.forName("javax.media.jai.JAI")
+                                .getMethod("getBuildVersion").invoke(null, (Object[]) null));
+                        break;
+                    }
+                    case 2: {
+                        header = "Image I/O extensions";
+                        final Package p = Package.getPackage("com.sun.media.jai.operator");
+                        if (p != null) {
+                            result = resources.getString(Vocabulary.Keys.VERSION_$1,
+                                    p.getImplementationVersion());
+                        }
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                result = e;
+            }
+            out.print(header);
+            out.print(':');
+            out.print(Utilities.spaces(22 - header.length()));
+            if (result instanceof String) {
+                out.print(faint);
+                out.print((String) result);
+                out.println(normal);
+            } else {
+                out.print(resources.getString(Vocabulary.Keys.NOT_INSTALLED));
+                if (result != null) {
+                    out.print(faint);
+                    out.print(" (");
+                    out.print(Classes.getShortClassName(result));
+                    out.print(')');
+                    out.print(normal);
+                }
+                out.println();
+            }
         }
     }
 

@@ -203,9 +203,9 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int INITIALIZING_TRANSFORMATION_$2 = 28;
 
         /**
-         * Loaded "{0}" JDBC driver version {1}.{2}.
+         * {0} JDBC driver version {1}.{2}.
          */
-        public static final int LOADED_JDBC_DRIVER_$3 = 29;
+        public static final int JDBC_DRIVER_VERSION_$3 = 29;
 
         /**
          * Loading datum aliases from "{0}".
