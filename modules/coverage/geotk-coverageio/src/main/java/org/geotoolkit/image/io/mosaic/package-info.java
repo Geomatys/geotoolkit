@@ -213,7 +213,7 @@
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  * @module

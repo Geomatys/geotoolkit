@@ -20,7 +20,7 @@
  * Miscellaneous widgets.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.1
  * @module

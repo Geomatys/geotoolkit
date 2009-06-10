@@ -5,27 +5,28 @@
     <TITLE>API Overview</TITLE>
   </HEAD>
   <BODY>
-    Overview of <A HREF="http://www.geotoolkit.org">Geotoolkit</A>.
+    Overview of <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> (abridged <cite>Geotk</cite>).
 
     <H2>Requirements</H2>
-    <P ALIGN="justify">Geotoolkit requires Java 6 Standard Edition. There is no additional
+    <P ALIGN="justify">Geotk requires Java 6 Standard Edition. There is no additional
     requirement for metadata and referencing modules. But the coverage module requires the
     <A HREF="https://jai.dev.java.net/">Java Advanced Imaging</A> extension.</P>
 
     <H2>Javadoc annotations</H2>
     <UL><LI><H3>Versions</H3>
-    <P ALIGN="justify">The {@code @since} javadoc tag gives the Geotoolkit version when the annotated
-    element (class, method, <cite>etc.</cite>) was first introduced. If the declared version is the
-    one under development (for example if an element is annotated with {@code @since 3.10} and that
-    version has not yet been released), then that element is <em>uncommited</em> and may change in
-    any future version - it will become stable only when the library version number increase.</P>
+    <P ALIGN="justify">The {@code @version} javadoc tag gives the last Geotk version when
+    the code of this class got a significant change. For example if a class is annotated
+    with {@code @version 3.00}, then this class got no significant change since the release
+    of Geotoolkit.org 3.00 in June 2009.</P>
+
+    <P ALIGN="justify">The {@code @since} javadoc tag gives the Geotk version when the annotated
+    element (class, method, <i>etc.</i>) was first introduced. If the declared version is the same
+    than the class {@code @version}, then that element is under development and <em>uncommited</em>:
+    it may change in any future snapshot and it will become stable only after the next release.</P>
 
     <P ALIGN="justify">Stable API (for example those annotated as {@code @since 2.4}) will not
     change lightly. If a stable API need to be removed, it is first annotated as {@code @deprecated}
-    and will be removed only in a future release.</P>
-
-    <P ALIGN="justify">The {@code @version} javadoc tag gives the last Geotoolkit version number
-    when the annotated element got significant changes.</P></LI>
+    and will be removed only in a future release.</P></LI>
 
     <LI><H3><A NAME="Authors">Authors</A></H3>
     <P ALIGN="justify">The code were contributed by authors from different organisations. The
@@ -66,7 +67,7 @@
 
       <TR><TD NOWRAP VALIGN="top"><B>USGS</B>&nbsp;</TD>
       <TD><A HREF="http://www.usgs.gov/">U.S. Geological Survey</A>. Actually not a direct contributor
-      to Geotoolkit, but their C/C++ code in the <A HREF="http://trac.osgeo.org/proj/">Proj4</A> project
+      to Geotk, but their C/C++ code in the <A HREF="http://trac.osgeo.org/proj/">Proj4</A> project
       were used as a basis for the map projections.</TD></TR>
     </TABLE></BLOCKQUOTE></LI></UL>
 
@@ -89,7 +90,7 @@
     of the above.</P></LI>
 
     <LI><H3>Logging</H3>
-    <P ALIGN="justify">Geotoolkit uses the {@linkplain java.util.logging Java logging} by default, but
+    <P ALIGN="justify">Geotk uses the {@linkplain java.util.logging Java logging} by default, but
     can redirect its logging to Log4J or Apache's common-loggins. See {@link org.geotoolkit.util.logging}
     for details.</P></LI>
     </UL>

@@ -23,7 +23,7 @@
  * <a href="https://wizard.dev.java.net/nonav/javadoc/index.html">wizard.dev.java.net</a>.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
