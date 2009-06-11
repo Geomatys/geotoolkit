@@ -189,7 +189,10 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         if(!dataCoverage.getCoordinateReferenceSystem2D().equals(context.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
             try{
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, context.getObjectiveCRS());
+                //we resample the native view of the coverage only, the style will be applied later.
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
+                        dataCoverage.view(ViewType.NATIVE),
+                        context.getObjectiveCRS());
             }catch(Exception ex){
                 System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
             }
