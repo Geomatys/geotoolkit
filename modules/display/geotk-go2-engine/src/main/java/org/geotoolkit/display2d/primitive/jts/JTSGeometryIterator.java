@@ -31,7 +31,7 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
 
     private static final AffineTransform IDENTITY = new AffineTransform();
 
-	protected double[] dcoords = new double[2];
+    protected double[] dcoords = new double[2];
     protected AffineTransform transform;
     protected final T geometry;
 
@@ -40,7 +40,7 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
         this.transform = (trs == null) ? IDENTITY : trs;
     }
 
-	/**
+    /**
      * {@inheritDoc }
      */
     @Override

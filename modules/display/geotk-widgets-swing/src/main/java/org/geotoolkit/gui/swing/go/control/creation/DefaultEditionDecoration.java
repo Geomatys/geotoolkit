@@ -365,7 +365,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
     protected void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
 
-        final Geometry objectiveGeom = projectedGeom.getDisplayGeometry();
+        final Geometry objectiveGeom = projectedGeom.getDisplayGeometryJTS();
 
         if(objectiveGeom instanceof Point){
             paintPoint(g2, (Point)objectiveGeom);

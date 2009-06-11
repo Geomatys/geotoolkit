@@ -95,7 +95,7 @@ public class LenghtDecoration extends AbstractGeometryDecoration{
 
         context.switchToDisplayCRS();
 
-        final Geometry objectiveGeom = projectedGeom.getObjectiveGeometry();
+        final Geometry objectiveGeom = projectedGeom.getObjectiveGeometryJTS();
 
         if(objectiveGeom instanceof Point){
             //draw a single cross

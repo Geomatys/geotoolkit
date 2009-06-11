@@ -38,7 +38,7 @@ public interface ProjectedGeometry  {
      * @return JTS Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException;
+    com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException;
 
     /**
      * Get a JTS representation of the geometry in display CRS.
@@ -46,7 +46,7 @@ public interface ProjectedGeometry  {
      * @return JTS Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException;
+    com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException;
 
     /**
      * Get a Java2D representation of the geometry in objective CRS.
@@ -70,7 +70,7 @@ public interface ProjectedGeometry  {
      * @return ISO Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    Geometry getObjectiveGeometryISO() throws TransformException;
+    Geometry getObjectiveGeometry() throws TransformException;
 
     /**
      * Get a ISO representation of the geometry in display CRS.
@@ -78,6 +78,6 @@ public interface ProjectedGeometry  {
      * @return ISO Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    Geometry getDisplayGeometryISO() throws TransformException;
+    Geometry getDisplayGeometry() throws TransformException;
 
 }

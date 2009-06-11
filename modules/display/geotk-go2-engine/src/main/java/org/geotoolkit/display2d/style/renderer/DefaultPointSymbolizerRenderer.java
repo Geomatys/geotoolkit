@@ -17,15 +17,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -41,7 +32,6 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -52,6 +42,11 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.aggregate.MultiPrimitive;
+import org.opengis.geometry.coordinate.Polygon;
+import org.opengis.geometry.primitive.Curve;
+import org.opengis.geometry.primitive.Point;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.GraphicalSymbol;
@@ -145,26 +140,18 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
                 throw new PortrayalException(ex);
             }
 
-            if(geom instanceof Point || geom instanceof MultiPoint){
-
+            if(geom instanceof Point){
                 //TODO use generalisation on multipoints
+                DirectPosition pt2d = geom.getCentroid();
 
-                final Coordinate[] coords = geom.getCoordinates();
-                for(int i=0, n = coords.length; i<n ; i++){
-                    final Coordinate coord = coords[i];
-                    DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+                final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
+                final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
+                g2.drawImage(img, x, y, null);
+                
+            }else if( geom instanceof Curve || geom instanceof MultiPrimitive
+                    || geom instanceof Polygon ){
 
-                    final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
-                    final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
-                    g2.drawImage(img, x, y, null);
-                }
-
-            }else if( geom instanceof LineString || geom instanceof MultiLineString
-                    || geom instanceof Polygon || geom instanceof MultiPolygon ){
-
-                final Point center = geom.getCentroid();
-                final Coordinate coord = center.getCoordinate();
-                DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+                final DirectPosition pt2d = geom.getCentroid();
 
                 final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
                 final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
@@ -240,41 +227,33 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             return false;
         }
 
-        if(geom instanceof Point || geom instanceof MultiPoint){
-
+        if(geom instanceof Point){
             //TODO use generalisation on multipoints
 
-            final Coordinate[] coords = geom.getCoordinates();
-            for(int i=0, n = coords.length; i<n ; i++){
-                final Coordinate coord = coords[i];
-                DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+            DirectPosition pt2d = geom.getCentroid();
 
-                final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
-                final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
+            final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
+            final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
 
-                switch(filter){
-                    case INTERSECTS :
-                        if(mask.intersects(x,y,img.getWidth(),img.getHeight())){
-                            //TODO should make a better test for the alpha pixel values in image
-                            return true;
-                        }
-                        break;
-                    case WITHIN :
-                        if(mask.contains(x,y,img.getWidth(),img.getHeight())){
-                            //TODO should make a better test for the alpha pixel values in image
-                            return true;
-                        }
-                        break;
-                }
-
+            switch(filter){
+                case INTERSECTS :
+                    if(mask.intersects(x,y,img.getWidth(),img.getHeight())){
+                        //TODO should make a better test for the alpha pixel values in image
+                        return true;
+                    }
+                    break;
+                case WITHIN :
+                    if(mask.contains(x,y,img.getWidth(),img.getHeight())){
+                        //TODO should make a better test for the alpha pixel values in image
+                        return true;
+                    }
+                    break;
             }
 
-        }else if( geom instanceof LineString || geom instanceof MultiLineString
-                || geom instanceof Polygon || geom instanceof MultiPolygon ){
+        }else if( geom instanceof Curve || geom instanceof MultiPrimitive
+                || geom instanceof Polygon ){
 
-            final Point center = geom.getCentroid();
-            final Coordinate coord = center.getCoordinate();
-            DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
+            DirectPosition pt2d = geom.getCentroid();
 
             final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
             final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);

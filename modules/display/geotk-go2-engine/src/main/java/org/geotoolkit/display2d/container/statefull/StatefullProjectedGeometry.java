@@ -38,11 +38,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     //Geometry in data CRS
     private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
-    private Geometry                                dataGeometryISO = null;
 
     //Geometry in data CRS decimated
     private com.vividsolutions.jts.geom.Geometry    decimatedGeometryJTS = null;
-    private Geometry                                decimatedGeometryISO = null;
 
     //Geometry in objective CRS
     private com.vividsolutions.jts.geom.Geometry    objectiveGeometryJTS = null;
@@ -62,7 +60,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     public synchronized void clearDataCache(){
         clearObjectiveCache();
         this.decimatedGeometryJTS = null;
-        this.decimatedGeometryISO = null;
     }
 
     public synchronized void clearObjectiveCache(){
@@ -88,22 +85,14 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return decimatedGeometryJTS;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException{
+    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException{
         if(objectiveGeometryJTS == null){
             objectiveGeometryJTS = params.dataToObjectiveTransformer.transform(getGeometryJTS());
         }
         return objectiveGeometryJTS;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public com.vividsolutions.jts.geom.Geometry getDisplayGeometry() throws TransformException{
+    public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
         if(displayGeometryJTS == null){
             displayGeometryJTS = params.dataToDisplayTransformer.transform(getGeometryJTS());
         }
@@ -116,8 +105,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     @Override
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null){
-//            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryISO());
-            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometry());
+            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryJTS());
         }
         return objectiveShape;
     }
@@ -128,8 +116,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     @Override
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null){
-//            displayShape = GO2Utilities.toJava2D(getDisplayGeometryISO());
-            displayShape = GO2Utilities.toJava2D(getDisplayGeometry());
+            displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS());
         }
         return displayShape;
     }
@@ -138,9 +125,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      * {@inheritDoc }
      */
     @Override
-    public Geometry getObjectiveGeometryISO() throws TransformException {
+    public Geometry getObjectiveGeometry() throws TransformException {
         if(objectiveGeometryISO == null){
-            objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometry(), params.objectiveCRS);
+            objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometryJTS(), params.objectiveCRS);
         }
         return objectiveGeometryISO;
     }
@@ -149,9 +136,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      * {@inheritDoc }
      */
     @Override
-    public Geometry getDisplayGeometryISO() throws TransformException {
+    public Geometry getDisplayGeometry() throws TransformException {
         if(displayGeometryISO == null){
-            displayGeometryISO = JTSUtils.toISO(getDisplayGeometry(), params.displayCRS);
+            displayGeometryISO = JTSUtils.toISO(getDisplayGeometryJTS(), params.displayCRS);
         }
         return displayGeometryISO;
     }

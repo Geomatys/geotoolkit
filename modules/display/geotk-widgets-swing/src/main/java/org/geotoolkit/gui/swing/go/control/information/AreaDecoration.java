@@ -27,7 +27,6 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -98,7 +97,7 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     protected void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
 
-        final Geometry objectiveGeom = projectedGeom.getObjectiveGeometry();
+        final Geometry objectiveGeom = projectedGeom.getObjectiveGeometryJTS();
 
         if(objectiveGeom instanceof Point){
             //draw a single cross

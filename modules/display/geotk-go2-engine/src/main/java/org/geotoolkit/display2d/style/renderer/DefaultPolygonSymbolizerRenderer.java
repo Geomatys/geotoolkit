@@ -34,7 +34,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -297,22 +296,14 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      */
     private static Shape bufferObjectiveGeometry(RenderingContext2D context, ProjectedGeometry projectedFeature,
             Unit symbolUnit, float offset) throws TransformException{
-        final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
         final Shape shape;
 
         //TODO use symbol unit to adjust offset
-
-        if(GO2Hints.GEOMETRY_ISO.equals(geomType)){
-            System.out.println("using ISO geom");
-            Geometry geom = projectedFeature.getObjectiveGeometryISO();
-            geom = geom.getBuffer(offset);
-            shape = GO2Utilities.toJava2D(geom);
-        }else{
-            com.vividsolutions.jts.geom.Geometry geom = projectedFeature.getObjectiveGeometry();
-            geom = geom.buffer(offset);
-            shape = GO2Utilities.toJava2D(geom);
-        }
-
+        System.out.println("using ISO geom");
+        Geometry geom = projectedFeature.getObjectiveGeometry();
+        geom = geom.getBuffer(offset);
+        shape = GO2Utilities.toJava2D(geom);
+        
         return shape;
     }
 
@@ -322,18 +313,11 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      */
     private static  Shape bufferDisplayGeometry(RenderingContext2D context, ProjectedGeometry projectedFeature,
             float offset) throws TransformException{
-        final String geomType = (String) context.getCanvas().getRenderingHint(GO2Hints.KEY_GEOMETRY_BINDING);
         final Shape shape;
 
-        if(GO2Hints.GEOMETRY_ISO.equals(geomType)){
-            Geometry geom = projectedFeature.getDisplayGeometryISO();
-            geom = geom.getBuffer(offset);
-            shape = GO2Utilities.toJava2D(geom);
-        }else{
-            com.vividsolutions.jts.geom.Geometry geom = projectedFeature.getDisplayGeometry();
-            geom = geom.buffer(offset);
-            shape = GO2Utilities.toJava2D(geom);
-        }
+        Geometry geom = projectedFeature.getDisplayGeometry();
+        geom = geom.getBuffer(offset);
+        shape = GO2Utilities.toJava2D(geom);
 
         return shape;
     }

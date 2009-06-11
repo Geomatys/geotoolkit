@@ -54,13 +54,11 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
         isDisplayCalculated = false;
     }
 
-    @Override
-    public Geometry getObjectiveGeometry() throws TransformException{
+    public Geometry getObjectiveGeometryJTS() throws TransformException{
         return objectiveGeometry;
     }
 
-    @Override
-    public Geometry getDisplayGeometry() throws TransformException{
+    public Geometry getDisplayGeometryJTS() throws TransformException{
         //TODO decimation
         if(displayGeometry == null){
             displayGeometry = objToDisplayTransformer.transform(objectiveGeometry);
@@ -71,7 +69,7 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
     @Override
     public Shape getObjectiveShape() throws TransformException{
         if(!isObjectiveCalculated){
-            objectiveShape.setGeometry( getObjectiveGeometry() );
+            objectiveShape.setGeometry( getObjectiveGeometryJTS() );
             isObjectiveCalculated = true;
         }
         return objectiveShape;
@@ -80,7 +78,7 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
     @Override
     public Shape getDisplayShape() throws TransformException{
         if(!isDisplayCalculated){
-            displayShape.setGeometry( getDisplayGeometry() );
+            displayShape.setGeometry( getDisplayGeometryJTS() );
             isDisplayCalculated = true;
         }
 
@@ -88,12 +86,12 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
     }
 
     @Override
-    public org.opengis.geometry.Geometry getObjectiveGeometryISO() throws TransformException {
+    public org.opengis.geometry.Geometry getObjectiveGeometry() throws TransformException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public org.opengis.geometry.Geometry getDisplayGeometryISO() throws TransformException {
+    public org.opengis.geometry.Geometry getDisplayGeometry() throws TransformException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

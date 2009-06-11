@@ -193,7 +193,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
             final Geometry j2dShape;
 
             try {
-                j2dShape = projectedGeometry.getDisplayGeometryISO();
+                j2dShape = projectedGeometry.getDisplayGeometry();
             } catch (TransformException ex) {
                 ex.printStackTrace();
                 return false;

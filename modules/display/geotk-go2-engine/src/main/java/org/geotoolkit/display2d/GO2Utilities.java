@@ -62,6 +62,7 @@ import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;
@@ -171,7 +172,12 @@ public class GO2Utilities {
     }
 
     public static Shape toJava2D(org.opengis.geometry.Geometry geom){
-        return new ISOGeometryJ2D(geom);
+        if(geom instanceof JTSGeometry){
+            JTSGeometry geo = (JTSGeometry) geom;
+            return toJava2D(geo.getJTSGeometry());
+        }else{
+            return new ISOGeometryJ2D(geom);
+        }
     }
 
     public static Geometry toJTS(Shape candidate){

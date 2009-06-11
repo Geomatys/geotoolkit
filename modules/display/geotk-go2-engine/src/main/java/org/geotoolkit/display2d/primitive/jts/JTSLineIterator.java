@@ -31,7 +31,7 @@ import java.awt.geom.AffineTransform;
 public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
 
     private final CoordinateSequence coordinates;
-	private final int coordinateCount;
+    private final int coordinateCount;
     /** True if the line is a ring */
     private final boolean isClosed;
 
@@ -99,7 +99,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      * {@inheritDoc }
      */
     @Override
-	public int currentSegment(double[] coords) {
+    public int currentSegment(double[] coords) {
         if (currentCoord == 0) {
             coords[0] = (double) coordinates.getX(0);
             coords[1] = (double) coordinates.getY(0);
@@ -113,6 +113,6 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
             transform.transform(coords, 0, coords, 0, 1);            
             return SEG_LINETO;
         }
-	}
+    }
 	
 }
