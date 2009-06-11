@@ -44,12 +44,12 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
      * {@inheritDoc }
      */
     @Override
-	public int currentSegment(float[] coords) {
-		int result = currentSegment(dcoords);
-		coords[0] = (float) dcoords[0];
-		coords[1] = (float) dcoords[1];
-		return result;
-	}
+    public int currentSegment(float[] coords) {
+        int result = currentSegment(dcoords);
+        coords[0] = (float) dcoords[0];
+        coords[1] = (float) dcoords[1];
+        return result;
+    }
 
     public void setTransform(AffineTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;

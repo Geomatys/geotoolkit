@@ -86,9 +86,8 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      */
     @Override
     public void next() {
-		if (
-            ((currentCoord == (coordinateCount - 1)) && !isClosed)
-                || ((currentCoord == coordinateCount) && isClosed)) {
+        if (((currentCoord == (coordinateCount - 1)) && !isClosed)
+            || ((currentCoord == coordinateCount) && isClosed)) {
             done = true;
         } else {
             currentCoord++;

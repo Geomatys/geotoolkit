@@ -33,14 +33,6 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryIterator;
-import org.geotoolkit.display2d.primitive.jts.JTSEmptyIterator;
-import org.geotoolkit.display2d.primitive.jts.JTSGeomCollectionIterator;
-import org.geotoolkit.display2d.primitive.jts.JTSLineIterator;
-import org.geotoolkit.display2d.primitive.jts.JTSPointIterator;
-import org.geotoolkit.display2d.primitive.jts.JTSPolygonIterator;
-
-
 /**
  * A thin wrapper that adapts a JTS geometry to the Shape interface so that the geometry can be used
  * by java2d without coordinate cloning.
