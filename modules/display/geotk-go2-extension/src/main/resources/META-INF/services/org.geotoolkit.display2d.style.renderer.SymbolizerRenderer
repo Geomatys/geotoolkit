@@ -1,1 +1,2 @@
 org.geotoolkit.display2d.ext.vectorfield.GridMarkRenderer
+org.geotoolkit.display2d.ext.dimrange.DimRangeRenderer
