@@ -20,6 +20,8 @@ package org.geotoolkit.image.jai;
 import java.util.Arrays;
 import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
+
 import org.geotoolkit.util.XArrays;
 
 
@@ -64,6 +66,12 @@ abstract class SampleValues {
     }
 
     /**
+     * Returns a new instance of the same type than this {@code SampleValues} object.
+     * This new instance is initialized to zero sample values.
+     */
+    public abstract SampleValues instance();
+
+    /**
      * Gets the pixel from the given raster and stores the values in this object.
      *
      * @param  source The raster from which to get the pixel value.
@@ -72,6 +80,15 @@ abstract class SampleValues {
      * @return Always {@code this}.
      */
     public abstract SampleValues getPixel(final Raster source, final int x, final int y);
+
+    /**
+     * Sets the pixel of the given raster to the values in this object.
+     *
+     * @param  dest The raster in which to set the pixel value.
+     * @param  x The <var>x</var> pixel ordinate.
+     * @param  y The <var>y</var> pixel ordinate.
+     */
+    public abstract void setPixel(final WritableRaster dest, final int x, final int y);
 
     /**
      * Implementation backed by {@code double} values.
@@ -87,13 +104,23 @@ abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Double(final double[] samples) {
-            this.samples = samples;
+            this.samples = samples.clone();
+        }
+
+        /** {@inheritDoc} */
+        @Override public SampleValues instance() {
+            return new Double(samples.length);
         }
 
         /** {@inheritDoc} */
         @Override public SampleValues getPixel(final Raster source, final int x, final int y) {
             source.getPixel(x, y, samples);
             return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override public void setPixel(final WritableRaster dest, final int x, final int y) {
+            dest.setPixel(x, y, samples);
         }
 
         /** {@inheritDoc} */
@@ -130,9 +157,19 @@ abstract class SampleValues {
         }
 
         /** {@inheritDoc} */
+        @Override public SampleValues instance() {
+            return new Float(samples.length);
+        }
+
+        /** {@inheritDoc} */
         @Override public SampleValues getPixel(final Raster source, final int x, final int y) {
             source.getPixel(x, y, samples);
             return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override public void setPixel(final WritableRaster dest, final int x, final int y) {
+            dest.setPixel(x, y, samples);
         }
 
         /** {@inheritDoc} */
@@ -169,9 +206,19 @@ abstract class SampleValues {
         }
 
         /** {@inheritDoc} */
+        @Override public SampleValues instance() {
+            return new Integer(samples.length);
+        }
+
+        /** {@inheritDoc} */
         @Override public SampleValues getPixel(final Raster source, final int x, final int y) {
             source.getPixel(x, y, samples);
             return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override public void setPixel(final WritableRaster dest, final int x, final int y) {
+            dest.setPixel(x, y, samples);
         }
 
         /** {@inheritDoc} */

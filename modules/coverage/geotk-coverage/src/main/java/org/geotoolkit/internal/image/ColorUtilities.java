@@ -38,9 +38,9 @@ import org.geotoolkit.lang.Static;
  *
  * It may change in incompatible way in any future version.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @module
@@ -79,6 +79,29 @@ public final class ColorUtilities {
                ((r & 0xFF) << 16) |
                ((g & 0xFF) <<  8) |
                ((b & 0xFF) <<  0);
+    }
+
+    /**
+     * Returns the color components in an array of {@code double} values.
+     * This is mostly for usage with JAI operators which require sample values
+     * as {@code double} no matter the actual image data type.
+     *
+     * @param  color    The color for which to extract the component values.
+     * @param  numBands The length of the array to be returned.
+     *         If greater than 4, then the extra values will be initialized to 0.
+     * @return The color components in an array of the given length.
+     */
+    @SuppressWarnings("fallthrough")
+    public static double[] toDoubleValues(final Color color, final int numBands) {
+        final double[] values = new double[numBands];
+        switch (numBands) {
+            default: values[3] = color.getAlpha();
+            case 3:  values[2] = color.getBlue();
+            case 2:  values[1] = color.getGreen();
+            case 1:  values[0] = color.getRed();
+            case 0:  break;
+        }
+        return values;
     }
 
     /**

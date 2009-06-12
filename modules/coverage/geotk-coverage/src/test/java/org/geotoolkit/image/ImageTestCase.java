@@ -26,7 +26,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -77,6 +79,8 @@ public abstract class ImageTestCase {
 
     /**
      * Loads the given sample image. The result is stored in the {@link #image} field.
+     * Note that the returned image may be a cached instance, so it should not be modified.
+     * For an image that can be modified, use {@link #copyImage()}.
      *
      * @param  s The enum for the sample image to load.
      */
@@ -86,6 +90,17 @@ public abstract class ImageTestCase {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    /**
+     * Returns a copy of the current image.
+     *
+     * @return A copy of the current image.
+     */
+    protected final synchronized BufferedImage copyImage() {
+        assertNotNull("No image currently defined.", image);
+        final ColorModel cm = image.getColorModel();
+        return new BufferedImage(cm, image.copyData(null), cm.isAlphaPremultiplied(), null);
     }
 
     /**
@@ -178,7 +193,7 @@ public abstract class ImageTestCase {
             });
             panel.add(save, BorderLayout.SOUTH);
             frame.add(panel);
-            frame.pack();
+            frame.setSize(image.getWidth() + 100, image.getHeight() + 150);
             frame.setLocationByPlatform(true);
             frame.setVisible(true);
         }

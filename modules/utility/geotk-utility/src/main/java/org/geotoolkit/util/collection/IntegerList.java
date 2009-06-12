@@ -20,6 +20,7 @@ package org.geotoolkit.util.collection;
 import java.util.Arrays;
 import java.util.AbstractList;
 import java.util.RandomAccess;
+import java.util.NoSuchElementException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectOutputStream;
@@ -250,6 +251,8 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      *
      * @param value The value to add.
      * @throws IllegalArgumentException if the given value is out of bounds.
+     *
+     * @see #removeLast
      */
     public void addInteger(final int value) throws IllegalArgumentException {
         if (value < 0 || value > mask) {
@@ -383,6 +386,21 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
         final Integer old = get(index);
         removeRange(index, index+1);
         return old;
+    }
+
+    /**
+     * Retrieves and remove the last element of this list.
+     *
+     * @return The tail of this list.
+     * @throws NoSuchElementException if this list is empty.
+     *
+     * @since 3.01
+     */
+    public int removeLast() throws NoSuchElementException {
+        if (size != 0) {
+            return getUnchecked(--size);
+        }
+        throw new NoSuchElementException();
     }
 
     /**
