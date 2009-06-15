@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelCandidateRenderer;
-import org.geotoolkit.display2d.style.labeling.DefaultPointLabelCandidateRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
@@ -37,8 +35,8 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
  */
 public class AILabelRenderer implements LabelRenderer{
 
-    private final DefaultPointLabelCandidateRenderer POINT_RENDERER;
-    private final DefaultLinearLabelCandidateRenderer LINEAR_RENDERER;
+    private final AIPointLabelCandidateRenderer POINT_RENDERER;
+    private final AILinearLabelCandidateRenderer LINEAR_RENDERER;
 
 
     private final RenderingContext2D context;
@@ -48,8 +46,8 @@ public class AILabelRenderer implements LabelRenderer{
         if(context == null) throw new NullPointerException("Rendering context can not be null");
         this.context = context;
 
-        LINEAR_RENDERER = new DefaultLinearLabelCandidateRenderer(context);
-        POINT_RENDERER = new DefaultPointLabelCandidateRenderer(context);
+        LINEAR_RENDERER = new AILinearLabelCandidateRenderer(context);
+        POINT_RENDERER = new AIPointLabelCandidateRenderer(context);
     }
     
     /**

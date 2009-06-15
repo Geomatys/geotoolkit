@@ -15,10 +15,10 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.style.labeling;
+package org.geotoolkit.display2d.style.labeling.intelligent;
 
+import org.geotoolkit.display2d.style.labeling.*;
 import java.util.List;
-import org.geotoolkit.display2d.style.labeling.intelligent.Candidate;
 
 /**
  *

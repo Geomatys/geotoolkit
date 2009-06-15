@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
-import org.geotoolkit.display2d.style.labeling.LabelCandidateRenderer;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 import org.opengis.referencing.operation.TransformException;
 

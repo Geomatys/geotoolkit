@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
-import org.geotoolkit.display2d.style.labeling.LabelCandidateRenderer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.opengis.referencing.operation.TransformException;
 
