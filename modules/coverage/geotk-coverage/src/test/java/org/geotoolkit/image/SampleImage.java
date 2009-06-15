@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * Enumeration of sample data that can be loaded by {@link ImageTestCase#loadSampleImage}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  */
@@ -47,7 +47,13 @@ public enum SampleImage {
     /**
      * Sea Surface Temperature (SST) using indexed color model.
      */
-    INDEXED("QL95209.png", 1873283205L);
+    INDEXED("QL95209.png", 1873283205L),
+
+    /**
+     * The boundary of a shape. Used for testing <cite>scanline flood fill</cite>.
+     * There is no accurate CRS associated to this image.
+     */
+    CONTOUR("Contour.png", 1089548139L);
 
     /**
      * The filename to load.

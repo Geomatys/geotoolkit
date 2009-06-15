@@ -111,6 +111,7 @@ public abstract class FloodFill extends OpImage {
     /**
      * Colors an area of connected pixels with the same set of color.
      * The fill is performed in place in the given image.
+     * The operation is performed immediately; it is not deferred like usual JAI operations.
      *
      * @param image     The image in which to colors an area.
      * @param oldColors The colors to replace (usually only 1 color, but more are allowed).
@@ -133,6 +134,7 @@ public abstract class FloodFill extends OpImage {
     /**
      * Colors an area of connected pixels with the same set of color.
      * The fill is performed in place in the given image.
+     * The operation is performed immediately; it is not deferred like usual JAI operations.
      *
      * @param image     The image in which to colors an area.
      * @param oldValues The colors to replace (usually only 1 color, but more are allowed).
@@ -173,7 +175,7 @@ public abstract class FloodFill extends OpImage {
         if (bounds.isEmpty()) {
             return;
         }
-        final IntegerList stack = new IntegerList(16, Math.max(width, height));
+        final IntegerList stack = new IntegerList(8, Math.max(width, height)-1);
         for (final Point point : points) {
             int x = point.x - xmin;
             int y = point.y - ymin;
@@ -247,12 +249,11 @@ public abstract class FloodFill extends OpImage {
         /*
          * Prepares a stack of coordinates to be processed in successive passes of
          * the loop below. Note that the coordinates in this stack are relative to
-         * the tile, not to the image as a whole. They are packed as below:
-         *
-         *     offset = (y - ymin) * width + (x - xmin)
+         * the tile upper left corner, i.e. (xmin,ymin) must be substracted.  This
+         * is for allowing IntegerList to do its job (pack the data).
          */
-        final IntegerList stack = new IntegerList(128, width*height);
-        if (stack != null) do {
+        final IntegerList stack = new IntegerList(128, Math.max(width, height)-1);
+        do {
             /*
              * Scans the current line toward the left. After this loop,
              * (x,y) will be the location of the leftmost pixel to replace.
@@ -300,8 +301,8 @@ public abstract class FloodFill extends OpImage {
                         if ((omitCheck = !omitCheck) == true) {
                             if (border == raster) {
                                 // Found a point which need further examination in this tile.
-                                final int offset = (checkAt - ymin) * width + (x - xmin);
-                                stack.addInteger(offset);
+                                stack.addInteger(x       - xmin);
+                                stack.addInteger(checkAt - ymin);
                             } else if (imageBounds.contains(x, checkAt)) {
                                 // Found a point which need further examination in an other tile.
                                 synchronized (globalStack) {
@@ -355,9 +356,8 @@ public abstract class FloodFill extends OpImage {
             if (stack.isEmpty()) {
                 break;
             }
-            final int offset = stack.removeLast();
-            x = offset % width + xmin;
-            y = offset / width + ymin;
+            y = stack.removeLast() + ymin;
+            x = stack.removeLast() + xmin;
         } while (true);
     }
 }
