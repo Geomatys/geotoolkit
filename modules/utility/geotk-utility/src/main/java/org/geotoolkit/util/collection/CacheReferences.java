@@ -59,6 +59,11 @@ final class CacheReferences extends Thread {
      * The singleton instance.
      */
     static final CacheReferences INSTANCE = new CacheReferences();
+    static {
+        // Call to Thread.start() must be outside the constructor
+        // (Reference: Goetz et al.: "Java Concurrency in Practice").
+        INSTANCE.start();
+    }
 
     /**
      * The queue where to add put worker that just added new elements to their cache.
@@ -74,7 +79,6 @@ final class CacheReferences extends Thread {
         super("CacheReferences");
         setPriority(MAX_PRIORITY - 1);
         setDaemon(true);
-        start();
     }
 
     /**

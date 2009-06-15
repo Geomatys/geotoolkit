@@ -72,6 +72,11 @@ public class CoverageReferences {
      * has been garbage-collected.
      */
     private static final Disposer DISPOSER = new Disposer();
+    static {
+        // Call to Thread.start() must be outside the constructor
+        // (Reference: Goetz et al.: "Java Concurrency in Practice").
+        DISPOSER.start();
+    }
 
     /**
      * The default, system-wide weak references for {@linkplain Coverage coverages}.
@@ -264,9 +269,8 @@ public class CoverageReferences {
         /**
          * Constructs a cleaner thread.
          */
-        public Disposer() {
+        Disposer() {
             super("CoverageReferences");
-            start();
         }
 
         /**

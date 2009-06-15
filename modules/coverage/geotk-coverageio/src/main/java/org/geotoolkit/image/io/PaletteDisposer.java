@@ -43,6 +43,11 @@ final class PaletteDisposer extends ReferenceQueueConsumer<ColorModel> {
          * Starts the disposer thread when the {@link Reference} are about to be created.
          */
         private static final PaletteDisposer DISPOSER = new PaletteDisposer();
+        static {
+            // Call to Thread.start() must be outside the constructor
+            // (Reference: Goetz et al.: "Java Concurrency in Practice").
+            DISPOSER.start();
+        }
 
         /**
          * The palette that created the color model.
@@ -68,7 +73,6 @@ final class PaletteDisposer extends ReferenceQueueConsumer<ColorModel> {
     private PaletteDisposer() {
         super("PaletteDisposer");
         setDaemon(true);
-        start();
     }
 
     /**

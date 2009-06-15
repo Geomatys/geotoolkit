@@ -49,6 +49,8 @@ final class StoreDisposer extends Thread {
      */
     static final StoreDisposer INSTANCE = new StoreDisposer();
     static {
+        // Call to Thread.start() must be outside the constructor
+        // (Reference: Goetz et al.: "Java Concurrency in Practice").
         INSTANCE.start();
     }
 

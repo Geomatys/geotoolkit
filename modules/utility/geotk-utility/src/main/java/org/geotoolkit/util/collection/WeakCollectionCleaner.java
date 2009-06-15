@@ -50,6 +50,11 @@ final class WeakCollectionCleaner extends ReferenceQueueConsumer<Object> {
      * The default thread.
      */
     static final WeakCollectionCleaner DEFAULT = new WeakCollectionCleaner();
+    static {
+        // Call to Thread.start() must be outside the constructor
+        // (Reference: Goetz et al.: "Java Concurrency in Practice").
+        DEFAULT.start();
+    }
 
     /**
      * Constructs and starts a new thread as a daemon. This thread will be sleeping
@@ -58,7 +63,6 @@ final class WeakCollectionCleaner extends ReferenceQueueConsumer<Object> {
      */
     private WeakCollectionCleaner() {
         super("WeakCollectionCleaner");
-        start();
     }
 
     /**
