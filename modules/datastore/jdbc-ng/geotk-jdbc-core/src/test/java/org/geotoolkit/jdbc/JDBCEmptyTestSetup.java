@@ -18,6 +18,7 @@ package org.geotoolkit.jdbc;
 
 import java.sql.SQLException;
 
+
 /**
  * Test setup for executing tests on tables with no data. 
  * 
@@ -30,6 +31,7 @@ public abstract class JDBCEmptyTestSetup extends JDBCDelegatingTestSetup {
         super(delegate);
     }
 
+    @Override
     protected final void setUpData() throws Exception {
         //kill all the data
         try {

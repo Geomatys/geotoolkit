@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCFeatureStore;
 import java.io.IOException;
 
 import org.geotools.data.DefaultTransaction;

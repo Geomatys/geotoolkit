@@ -18,8 +18,6 @@ package org.geotoolkit.jdbc;
 
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 
 /**
  * Extension of JDBCTestSetup which is used by {@link JDBCDataStoreAPITest}.
@@ -33,6 +31,7 @@ public abstract class JDBCDataStoreAPITestSetup extends JDBCDelegatingTestSetup 
         super( delegate );
     }
     
+    @Override
     protected final void setUpData() throws Exception {
         //kill all the data
         try {

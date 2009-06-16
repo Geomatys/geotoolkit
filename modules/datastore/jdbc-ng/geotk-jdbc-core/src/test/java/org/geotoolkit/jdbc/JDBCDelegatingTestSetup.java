@@ -16,11 +16,10 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCDataStoreFactory;
-import org.geotoolkit.jdbc.JDBCDataStore;
 import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
+
 
 public class JDBCDelegatingTestSetup extends JDBCTestSetup {
 
@@ -30,6 +29,7 @@ public class JDBCDelegatingTestSetup extends JDBCTestSetup {
         this.delegate = delegate;
     }
 
+    @Override
     public void setUp() throws Exception {
         // make sure we don't forget to run eventual extra stuff
         delegate.setUp();
@@ -41,10 +41,12 @@ public class JDBCDelegatingTestSetup extends JDBCTestSetup {
         delegate.tearDown();
     }
     
+    @Override
     protected final void initializeDatabase() throws Exception {
         delegate.initializeDatabase();
     }
 
+    @Override
     protected void initializeDataSource(BasicDataSource ds, Properties db) {
         delegate.initializeDataSource(ds, db);
     }

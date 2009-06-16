@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.SQLDialect;
-import org.geotoolkit.jdbc.JDBCDataStoreFactory;
-import org.geotoolkit.jdbc.JDBCDataStore;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +74,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * Override to check if a database connection can be obtained, if not
      * tests are ignored.
      */
+    @Override
     public void run(TestResult result) {
         JDBCTestSetup setup = createTestSetup();
         
@@ -106,6 +104,7 @@ public abstract class JDBCTestSupport extends TestCase {
         }
     }
     
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -138,6 +137,7 @@ public abstract class JDBCTestSupport extends TestCase {
 
     protected abstract JDBCTestSetup createTestSetup();
 
+    @Override
     protected void tearDown() throws Exception {
         setup.tearDown();
         dataStore.dispose();

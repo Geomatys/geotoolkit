@@ -44,6 +44,7 @@
   </developers>
 
   <modules>
+    <module>geotk-jdbc-lib</module>
     <module>geotk-jdbc-core</module>
     <!--module>jdbc-h2</module>
     <module>jdbc-mysql</module>

@@ -21,9 +21,9 @@ import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Point;
+
 
 /**
  * Tests that geometry types can be properly created and retrieved back from the

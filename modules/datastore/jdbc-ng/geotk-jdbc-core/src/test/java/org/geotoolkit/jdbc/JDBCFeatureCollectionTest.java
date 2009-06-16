@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCFeatureStore;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -37,6 +36,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
     FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

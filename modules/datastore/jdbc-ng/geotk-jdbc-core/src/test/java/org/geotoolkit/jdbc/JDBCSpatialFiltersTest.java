@@ -47,6 +47,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     
     TestData td;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -70,6 +71,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         dataStore.setDatabaseSchema(null);
     }
 
+    @Override
     protected abstract JDBCDataStoreAPITestSetup createTestSetup();
 
     public void testBboxFilter() throws Exception {

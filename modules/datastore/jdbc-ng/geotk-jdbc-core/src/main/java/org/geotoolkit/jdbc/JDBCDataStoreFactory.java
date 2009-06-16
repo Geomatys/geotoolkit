@@ -27,7 +27,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.geotools.data.AbstractDataStoreFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.Parameter;
-import org.geotools.data.jdbc.datasource.DBCPDataSource;
+import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.type.FeatureTypeFactoryImpl;
 import org.geotoolkit.util.SimpleInternationalString;

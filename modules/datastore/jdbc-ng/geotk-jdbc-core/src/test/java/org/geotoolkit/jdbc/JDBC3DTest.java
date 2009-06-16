@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCDataStore;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -80,6 +78,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
     protected SingleCRS horizontal;
 
+    @Override
     protected abstract JDBC3DTestSetup createTestSetup();
 
     @Override

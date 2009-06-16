@@ -17,12 +17,12 @@
 package org.geotoolkit.jdbc;
 
 import org.geotools.data.DataUtilities;
-import org.geotools.data.FeatureReader;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+
 
 /**
  * Checks the datastore can operate against geometryless tables
@@ -40,6 +40,7 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     protected static final String ZIPCODE = "zipcode";
     protected static final String CODE = "code";
 
+    @Override
     protected abstract JDBCGeometrylessTestSetup createTestSetup();
     
     @Override

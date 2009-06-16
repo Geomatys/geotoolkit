@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCFeatureStore;
 import java.util.Collections;
 
 import org.geotools.data.DefaultQuery;
@@ -34,10 +33,12 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 
+
 public abstract class JDBCFeatureLockingTest extends JDBCTestSupport {
 
     JDBCFeatureStore store;
     
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
     

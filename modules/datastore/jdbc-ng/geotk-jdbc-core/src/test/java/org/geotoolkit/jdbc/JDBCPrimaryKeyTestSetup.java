@@ -18,7 +18,6 @@ package org.geotoolkit.jdbc;
 
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
 
 public abstract class JDBCPrimaryKeyTestSetup extends JDBCDelegatingTestSetup {
 
@@ -26,6 +25,7 @@ public abstract class JDBCPrimaryKeyTestSetup extends JDBCDelegatingTestSetup {
         super( delegate );
     }
     
+    @Override
     protected final void setUpData() throws Exception {
         //kill all the data
         try {

@@ -95,6 +95,17 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      *Build a new Property is like operator
      */
+    public PropertyIsLikeType(String expr, String pattern, String wildcard, String singleChar, String escape) {
+        this.escapeChar   = escape;
+        this.propertyName =  new PropertyNameType(expr);
+        this.singleChar   = singleChar;
+        this.wildCard     = wildcard;
+        this.literal      = new LiteralType(pattern);
+    }
+
+    /**
+     *Build a new Property is like operator
+     */
     public PropertyIsLikeType(Expression expr, String pattern, String wildcard, String singleChar, String escape, Boolean matchCase) {
         this.escapeChar   = escape;
         if (expr instanceof PropertyNameType)

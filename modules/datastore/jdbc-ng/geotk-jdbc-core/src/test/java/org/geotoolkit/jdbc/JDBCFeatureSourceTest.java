@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCFeatureStore;
 import java.util.Iterator;
 
 import org.geotools.data.DefaultQuery;
@@ -24,11 +23,8 @@ import org.geotools.data.Query;
 import org.geotools.data.QueryCapabilities;
 import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.LiteCoordinateSequenceFactory;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -45,6 +41,7 @@ import org.opengis.filter.spatial.BBOX;
 public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     ContentFeatureSource featureSource;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
