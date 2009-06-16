@@ -19,7 +19,7 @@ package org.geotoolkit.data.postgis;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.geotools.data.jdbc.FilterToSQL;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotools.filter.FilterCapabilities;
 import org.geotoolkit.jdbc.SQLDialect;
 import org.opengis.filter.expression.Literal;

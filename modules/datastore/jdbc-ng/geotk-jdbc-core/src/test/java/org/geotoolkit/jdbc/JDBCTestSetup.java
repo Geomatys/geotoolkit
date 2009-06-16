@@ -29,8 +29,8 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.geotools.data.jdbc.datasource.DBCPDataSource;
-import org.geotools.data.jdbc.datasource.ManageableDataSource;
+import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
+import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
 
 
 /**
@@ -50,7 +50,7 @@ import org.geotools.data.jdbc.datasource.ManageableDataSource;
  */
 public abstract class JDBCTestSetup {
     static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger(
-            "org.geotools.data.jdbc");
+            "org.geotoolkit.data.jdbc");
     private DataSource dataSource = null;
 
     public DataSource getDataSource() throws IOException {

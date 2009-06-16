@@ -59,9 +59,9 @@
       <version>${geomodified.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-jdbc</artifactId>
-      <version>${geomodified.version}</version>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jdbc-lib</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>

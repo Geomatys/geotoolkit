@@ -19,7 +19,7 @@ package org.geotoolkit.jdbc;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.geotools.data.jdbc.FilterToSQL;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.opengis.filter.expression.Literal;
 
 import com.vividsolutions.jts.geom.Geometry;

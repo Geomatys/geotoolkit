@@ -19,7 +19,7 @@ package org.geotoolkit.data.postgis;
 import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
 
-import org.geotools.data.jdbc.FilterToSQL;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotools.filter.FilterCapabilities;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.geotools.data.jdbc.FilterToSQL;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.jdbc.BasicSQLDialect;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.referencing.CRS;
