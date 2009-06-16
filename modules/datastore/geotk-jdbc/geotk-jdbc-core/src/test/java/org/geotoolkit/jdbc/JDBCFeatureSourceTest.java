@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.geotools.data.DefaultQuery;
 import org.geotools.data.Query;
 import org.geotools.data.QueryCapabilities;
-import org.geotools.data.store.ContentFeatureSource;
+import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;

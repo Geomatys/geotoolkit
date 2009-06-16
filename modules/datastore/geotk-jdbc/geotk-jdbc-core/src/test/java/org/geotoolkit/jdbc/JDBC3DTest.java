@@ -25,7 +25,7 @@ import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
-import org.geotools.data.store.ContentFeatureSource;
+import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotools.feature.FeatureCollection;

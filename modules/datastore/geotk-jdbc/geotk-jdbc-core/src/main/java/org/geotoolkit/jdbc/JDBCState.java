@@ -19,8 +19,8 @@ package org.geotoolkit.jdbc;
 import java.sql.Connection;
 import java.util.logging.Logger;
 
-import org.geotools.data.store.ContentEntry;
-import org.geotools.data.store.ContentState;
+import org.geotoolkit.data.store.ContentEntry;
+import org.geotoolkit.data.store.ContentState;
 
 
 /**

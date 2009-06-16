@@ -94,6 +94,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-datastore-core</module>
     <module>geotk-jdbc</module>
   </modules>
 
