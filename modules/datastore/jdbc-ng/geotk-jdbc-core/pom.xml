@@ -50,11 +50,6 @@
   <dependencies>
     <dependency>
       <groupId>org.geotools</groupId>
-      <artifactId>gtm-main</artifactId>
-      <version>${geomodified.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
       <artifactId>gtm-data</artifactId>
       <version>${geomodified.version}</version>
     </dependency>
