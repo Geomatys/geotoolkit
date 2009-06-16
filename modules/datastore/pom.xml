@@ -94,7 +94,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>jdbc-ng</module>
+    <module>geotk-jdbc</module>
   </modules>
 
 </project>

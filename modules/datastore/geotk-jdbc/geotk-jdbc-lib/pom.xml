@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>jdbc-ng</artifactId>
+    <artifactId>geotk-jdbc</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
