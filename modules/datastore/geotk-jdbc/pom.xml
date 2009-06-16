@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-jdbc</artifactId>
   <packaging>pom</packaging>
-  <name>Next Generation JDBC DataStores</name>
+  <name>JDBC DataStores</name>
 
 
   <!-- =========================================================== -->
