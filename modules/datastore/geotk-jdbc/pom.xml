@@ -22,7 +22,7 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>jdbc-ng</artifactId>
+  <artifactId>geotk-jdbc</artifactId>
   <packaging>pom</packaging>
   <name>Next Generation JDBC DataStores</name>
 
@@ -46,10 +46,6 @@
   <modules>
     <module>geotk-jdbc-lib</module>
     <module>geotk-jdbc-core</module>
-    <!--module>jdbc-h2</module>
-    <module>jdbc-mysql</module>
-    <module>jdbc-oracle</module-->
     <module>geotk-jdbc-postgis</module>
-    <!--module>jdbc-db2</module-->
   </modules>
 </project>
