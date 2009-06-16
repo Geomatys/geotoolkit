@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotoolkit</artifactId>
+    <artifactId>modules</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>modules</artifactId>
+  <artifactId>datastore</artifactId>
   <packaging>pom</packaging>
-  <name>Modules</name>
+  <name>Datastore</name>
 
   <description>
-    The modules that are components of the Geotoolkit pending library.
+    Projects group for pending datastores services.
   </description>
 
 
@@ -36,20 +36,21 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Administrator</role>
+        <role>Developer</role>
       </roles>
     </developer>
     <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
+      <name>Cédric Briançon</name>
+      <id>cedricbr</id>
+      <email>cedric.briancon@geomatys.fr</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
@@ -65,67 +66,35 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>net.java.dev.jsr-275</groupId>
-      <artifactId>jsr-275</artifactId>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.project</groupId>
-      <artifactId>geotk-test</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-utility-pending</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-metadata</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>conformance</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
 
   <!-- =========================================================== -->
-  <!--     Build Configuration                                     -->
-  <!--         copies all JARs in a single directory.              -->
-  <!-- =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-jar-collector</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>collect</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!--
-        Deploys the test JAR files in addition to the regular one.
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-
-  <!-- =========================================================== -->
-  <!--     Modules for the build in approximate dependency order   -->
+  <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>utility</module>
-    <module>referencing</module>
-    <module>geometry</module>
-    <module>feature</module>
-    <module>display</module>
-    <module>jaxb-xml-binding</module>
-    <module>coverage</module>
-    <module>datastore</module>
+    <module>jdbc-ng</module>
   </modules>
-
 
 </project>
