@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -68,11 +70,23 @@ public class DCP extends AbstractDCP {
     public DCP(HTTP http){
         this.http = http;
     }
+
     /**
      * Gets the value of the http property.
      */
     public HTTP getHTTP() {
         return http;
+    }
+
+    /**
+     *
+     */
+    public List<String> getProtocolNames() {
+        List<String> response = new ArrayList<String>();
+        if (http != null) {
+            response = http.getProtocolNames();
+        }
+        return response;
     }
 
     /**

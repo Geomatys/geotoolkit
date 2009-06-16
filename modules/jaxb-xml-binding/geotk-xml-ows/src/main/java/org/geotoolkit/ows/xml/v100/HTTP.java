@@ -84,6 +84,20 @@ public class HTTP extends AbstractHTTP {
         }
         return getOrPost;
     }
+
+    /**
+     * Gets the value of the getOrPost property.
+     */
+    public List<String> getProtocolNames() {
+        if (getOrPost == null) {
+            getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+        }
+        List<String> protocols = new ArrayList<String>();
+        for (JAXBElement<RequestMethodType> jb : getOrPost) {
+            protocols.add(jb.getName().getLocalPart());
+        }
+        return protocols;
+    }
     
     /**
      * Gets the value of the getOrPost property.
