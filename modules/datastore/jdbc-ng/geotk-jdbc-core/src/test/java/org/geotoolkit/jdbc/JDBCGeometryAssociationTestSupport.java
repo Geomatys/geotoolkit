@@ -34,6 +34,7 @@ import org.geotoolkit.factory.HintsPending;
 
 
 public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport {
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

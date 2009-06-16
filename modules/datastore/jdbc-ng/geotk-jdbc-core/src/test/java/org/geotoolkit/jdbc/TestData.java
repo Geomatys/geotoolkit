@@ -36,7 +36,10 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 
+import org.junit.Ignore;
 
+
+@Ignore
 public class TestData {
     
     public String ROAD = "road";

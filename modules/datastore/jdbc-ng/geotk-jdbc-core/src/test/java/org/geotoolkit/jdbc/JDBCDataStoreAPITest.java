@@ -70,6 +70,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     private static final int LOCK_DURATION = 3600 * 1000; // one hour
     TestData td;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -98,6 +99,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         super.tearDown();
     }
 
+    @Override
     protected abstract JDBCDataStoreAPITestSetup createTestSetup();
 
     public void testGetFeatureTypes() {

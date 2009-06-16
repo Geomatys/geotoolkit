@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.JDBCFeatureStore;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,6 +48,7 @@ import com.vividsolutions.jts.geom.Point;
 public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
     JDBCFeatureStore featureStore;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

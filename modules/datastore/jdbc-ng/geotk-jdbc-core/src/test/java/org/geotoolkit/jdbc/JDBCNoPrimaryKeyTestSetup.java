@@ -18,6 +18,7 @@ package org.geotoolkit.jdbc;
 
 import java.sql.SQLException;
 
+
 public abstract class JDBCNoPrimaryKeyTestSetup extends JDBCDelegatingTestSetup {
 
     protected JDBCNoPrimaryKeyTestSetup(JDBCTestSetup delegate) {

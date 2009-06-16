@@ -29,6 +29,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 
 
 public abstract class JDBCForeignKeyTest extends JDBCTestSupport {
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

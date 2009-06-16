@@ -28,6 +28,7 @@ public abstract class JDBCGeometrylessTestSetup extends JDBCDelegatingTestSetup 
         super(delegate);
     }
     
+    @Override
     protected final void setUpData() throws Exception {
         //kill all the data
         try {
@@ -66,7 +67,4 @@ public abstract class JDBCGeometrylessTestSetup extends JDBCDelegatingTestSetup 
      * Drops the "zipcode" table that has been created during the test
      */
     protected abstract void dropZipCodeTable() throws Exception;
-
-    
-
 }
