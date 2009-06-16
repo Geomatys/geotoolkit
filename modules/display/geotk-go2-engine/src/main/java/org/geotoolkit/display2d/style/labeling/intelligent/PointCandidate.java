@@ -17,9 +17,8 @@
 
 package org.geotoolkit.display2d.style.labeling.intelligent;
 
-import java.awt.Shape;
-import java.awt.geom.Point2D;
-import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 
 /**
@@ -29,48 +28,53 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 public class PointCandidate implements Candidate {
 
     private final PointLabelDescriptor desc;
-    private final Shape shape;
-    private final Point2D point;
-    private final float height;
-    private final float width;
 
-    public PointCandidate(PointLabelDescriptor desc, Shape shape, Point2D point,float height, float width) {
+    public final int width;
+    public final int upper;
+    public final int lower;
+    public float x;
+    public float y;
+
+    public float correctionX = 0;
+    public float correctionY = 0;
+
+
+    public PointCandidate(PointLabelDescriptor desc, int width, int upper, int lower, float x, float y) {
         this.desc = desc;
-        this.shape = shape;
-        this.point = point;
-        this.height = height;
         this.width = width;
-    }
-
-    public float getAlpha() {
-        return desc.getRotation();
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public Point2D getPoint() {
-        return point;
-    }
-
-    public float getWidth() {
-        return width;
+        this.upper = upper;
+        this.lower = lower;
+        this.x = x;
+        this.y = y;
     }
 
     @Override
-    public LabelDescriptor getDescriptor() {
+    public PointLabelDescriptor getDescriptor() {
         return desc;
     }
 
-    @Override
-    public Shape getShape() {
-        return shape;
+    public float getCorrectedX(){
+        return x + correctionX;
     }
-    
-    @Override
-    public boolean intersect(Candidate c) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+    public float getCorrectedY(){
+        return y + correctionY;
+    }
+
+    public Area getBounds(){
+        Rectangle2D rect = new Rectangle2D.Double(
+                (int)getCorrectedX(),
+                (int)getCorrectedY()-upper,
+                width,
+                upper+lower);
+        return new Area(rect);
+    }
+
+    public boolean intersects(PointCandidate other){
+
+        
+
+        return true;
     }
 
 }

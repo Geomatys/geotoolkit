@@ -36,18 +36,12 @@ public class LinearCandidate implements Candidate {
     }
 
     @Override
-    public LabelDescriptor getDescriptor() {
+    public LinearLabelDescriptor getDescriptor() {
         return desc;
     }
 
-    @Override
     public Shape getShape() {
         return shape;
     }
     
-    @Override
-    public boolean intersect(Candidate c) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

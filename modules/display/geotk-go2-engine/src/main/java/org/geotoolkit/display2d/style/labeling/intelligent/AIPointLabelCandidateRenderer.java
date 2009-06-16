@@ -24,16 +24,13 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
+
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -51,7 +48,7 @@ public class AIPointLabelCandidateRenderer implements LabelCandidateRenderer<Poi
     }
 
     @Override
-    public Candidate generateOptimalCandidat(PointLabelDescriptor label) {
+    public Candidate generateCandidat(PointLabelDescriptor label) {
 
         Shape shape = null;
 
@@ -65,7 +62,8 @@ public class AIPointLabelCandidateRenderer implements LabelCandidateRenderer<Poi
 
 
         final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
-        final int textHeight = metric.getHeight();
+        final int textUpper = metric.getAscent();
+        final int textLower = metric.getDescent();
         final int textWidth = metric.stringWidth(label.getText());
         final Rectangle2D rect = shape.getBounds2D();
 
@@ -76,62 +74,55 @@ public class AIPointLabelCandidateRenderer implements LabelCandidateRenderer<Poi
 
         refX = refX - (label.getAnchorX()*textWidth);
         //text is draw above reference point so use +
-        refY = refY + (label.getAnchorY()*textHeight);
+        refY = refY + (label.getAnchorY()*(textUpper));
 
-        refY = refY - (textHeight);
-
-
-        return new PointCandidate(label, shape, new Point2D.Double(refX, refY), textHeight, textWidth);
+        return new PointCandidate(label,
+                textWidth,
+                textUpper,
+                textLower,
+                refX,refY
+                );
     }
 
     @Override
-    public List<Candidate> generateCandidats(PointLabelDescriptor descriptor) {
-        return Collections.singletonList(generateOptimalCandidat(descriptor));
-    }
+    public void render(Candidate candidate) {
+        if(!(candidate instanceof PointCandidate)) return;
 
-    @Override
-    public void render(Candidate candidate, PointLabelDescriptor label) {
+        final PointCandidate pointCandidate = (PointCandidate) candidate;
+        final PointLabelDescriptor label = pointCandidate.getDescriptor();
+        final double rotation = Math.toRadians(label.getRotation());
+
         context.switchToDisplayCRS();
 
-        PointCandidate pc = (PointCandidate) candidate;
-
+        ////////////////////////////BBOX FOR TEST///////////////////////////////
         g2.setStroke(new BasicStroke(1));
         g2.setColor(Color.BLACK);
-        g2.rotate(Math.toRadians(pc.getAlpha()), pc.getPoint().getX(), pc.getPoint().getY());
-        g2.drawRect((int)pc.getPoint().getX(), (int)pc.getPoint().getY(), (int)pc.getWidth(), (int)pc.getHeight());
-        g2.rotate(-Math.toRadians(pc.getAlpha()), pc.getPoint().getX(), pc.getPoint().getY());
+        g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        g2.drawRect((int)pointCandidate.getCorrectedX(),
+                (int)pointCandidate.getCorrectedY()-pointCandidate.upper,
+                pointCandidate.width,
+                pointCandidate.upper+pointCandidate.lower);
+        g2.rotate(-rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        ////////////////////////////////////////////////////////////////////////
 
-        final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
-        final int textHeight = metric.getHeight();
-        final int textWidth = metric.stringWidth(label.getText());
-        final Rectangle2D rect = candidate.getShape().getBounds2D();
-        float refX = (float) rect.getCenterX();
-        float refY = (float) rect.getCenterY();
-//
-        //adjust displacement---------------------------------------------------
-        //displacement is oriented above and to the right
-        refX = refX + label.getDisplacementX();
-        refY = refY - label.getDisplacementY();
 
-        //adjust anchor---------------------------------------------------------
-        refX = refX - (label.getAnchorX()*textWidth);
-        //text is draw above reference point so use +
-        refY = refY + (label.getAnchorY()*textHeight);
-
-//        refY = refY - (textHeight-metric.getDescent());
+        //TODO draw a nice line if correction is important----------------------
+        g2.setColor(Color.RED);
+        g2.setStroke(new BasicStroke(1));
+        g2.drawLine((int)pointCandidate.x,
+                (int)pointCandidate.y,
+                (int)pointCandidate.getCorrectedX(),
+                (int)pointCandidate.getCorrectedY());
 
         //rotation--------------------------------------------------------------
-        final float rotate = (float) Math.toRadians(label.getRotation());
-        g2.rotate(rotate, refX, refY);
-
+        g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
         
-
         //paint halo------------------------------------------------------------
         final float haloWidth = label.getHaloWidth();
         if(haloWidth > 0){
             final FontRenderContext fontContext = g2.getFontRenderContext();
             final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
-            final Shape shape = glyph.getOutline(refX,refY);
+            final Shape shape = glyph.getOutline(pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
             g2.setPaint(label.getHaloPaint());
             g2.setStroke(new BasicStroke(haloWidth*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             g2.draw(shape);
@@ -140,7 +131,7 @@ public class AIPointLabelCandidateRenderer implements LabelCandidateRenderer<Poi
         //paint text------------------------------------------------------------
         g2.setPaint(label.getTextPaint());
         g2.setFont(label.getTextFont());
-        g2.drawString(label.getText(), refX, refY);
+        g2.drawString(label.getText(), pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
     }
 
 }

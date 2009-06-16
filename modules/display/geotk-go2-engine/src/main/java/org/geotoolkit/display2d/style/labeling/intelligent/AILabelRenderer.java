@@ -19,6 +19,8 @@ package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 
 /**
@@ -77,23 +80,65 @@ public class AILabelRenderer implements LabelRenderer{
 
         List<Candidate> candidates = new ArrayList<Candidate>();
 
+        //generate all the candidates
         for(final LabelLayer layer : layers){
-
             for(LabelDescriptor label : layer.labels()){
                 if(label instanceof PointLabelDescriptor){
-                    candidates.addAll(POINT_RENDERER.generateCandidats((PointLabelDescriptor) label));
-
-                    Candidate shp = POINT_RENDERER.generateOptimalCandidat((PointLabelDescriptor)label);
-                    POINT_RENDERER.render(shp,(PointLabelDescriptor)label);
+                    candidates.add(POINT_RENDERER.generateCandidat((PointLabelDescriptor) label));
+                }else if(label instanceof LinearLabelDescriptor){
+                    candidates.add(LINEAR_RENDERER.generateCandidat((LinearLabelDescriptor) label));
                 }
+            }
+        }
 
-//                else if(label instanceof LinearLabelDescriptor){
-//                    Shape shp = LINEAR_RENDERER.generateOptimalCandidat((LinearLabelDescriptor) label);
-//                    LINEAR_RENDERER.render(context, shp,(LinearLabelDescriptor) label);
-//                }
+        //displace or remove the candidates
+        candidates = optimize(candidates);
+
+        //paint the remaining candidates
+        for(Candidate candidate : candidates){
+            if(candidate instanceof PointCandidate){
+                POINT_RENDERER.render(candidate);
+            }else if(candidate instanceof LinearCandidate){
+                LINEAR_RENDERER.render(candidate);
             }
         }
         
     }
-    
+
+    private static List<Candidate> optimize(List<Candidate> candidates){
+        //TODO : make an algorithm to displace the labels in the most efficient way
+
+        final List<Candidate> cleaned = new ArrayList<Candidate>();
+
+
+        loop:
+        for(int i= candidates.size()-1; i>=0; i--){
+            Candidate candidate = candidates.get(i);
+
+            if(candidate instanceof PointCandidate){
+                //check if the candidate intersect another candidate
+                Area shape = ((PointCandidate)candidate).getBounds();
+
+                for(Candidate other : cleaned){
+                    if(other == candidate) continue;
+                    if(other instanceof LinearCandidate) continue;
+
+                    Area otherShape = ((PointCandidate)other).getBounds();
+                    if(otherShape.intersects(shape.getBounds2D())){
+                        continue loop;
+                    }
+
+                }
+
+                cleaned.add(candidate);
+            }else{
+                cleaned.add(candidate);
+            }
+
+        }
+
+        return cleaned;
+    }
+
+
 }

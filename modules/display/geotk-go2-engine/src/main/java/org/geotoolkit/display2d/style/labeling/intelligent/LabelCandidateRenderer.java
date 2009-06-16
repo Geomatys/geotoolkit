@@ -17,8 +17,8 @@
 
 package org.geotoolkit.display2d.style.labeling.intelligent;
 
-import org.geotoolkit.display2d.style.labeling.*;
-import java.util.List;
+import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
+
 
 /**
  *
@@ -26,10 +26,8 @@ import java.util.List;
  */
 public interface LabelCandidateRenderer<T extends LabelDescriptor> {
 
-    Candidate generateOptimalCandidat(T descriptor);
+    Candidate generateCandidat(T descriptor);
 
-    List<Candidate> generateCandidats(T descriptor);
-
-    void render(Candidate candidate, T descriptor);
+    void render(Candidate candidate);
 
 }

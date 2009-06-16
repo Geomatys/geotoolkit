@@ -17,7 +17,6 @@
 
 package org.geotoolkit.display2d.style.labeling.intelligent;
 
-import java.awt.Shape;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 
 /**
@@ -27,9 +26,5 @@ import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 public interface Candidate {
 
     LabelDescriptor getDescriptor();
-
-    Shape getShape();
-
-    boolean intersect(Candidate c);
 
 }

@@ -20,8 +20,6 @@ package org.geotoolkit.display2d.style.labeling.intelligent;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -44,7 +42,7 @@ public class AILinearLabelCandidateRenderer implements LabelCandidateRenderer<Li
     }
 
     @Override
-    public Candidate generateOptimalCandidat(LinearLabelDescriptor descriptor) {
+    public Candidate generateCandidat(LinearLabelDescriptor descriptor) {
         try {
             return new LinearCandidate(descriptor,descriptor.getGeometry().getDisplayShape());
         } catch (TransformException ex) {
@@ -55,17 +53,17 @@ public class AILinearLabelCandidateRenderer implements LabelCandidateRenderer<Li
     }
 
     @Override
-    public List<Candidate> generateCandidats(LinearLabelDescriptor descriptor) {
-        return Collections.singletonList(generateOptimalCandidat(descriptor));
-    }
+    public void render(Candidate candidate) {
+        if(!(candidate instanceof LinearCandidate)) return;
 
-    @Override
-    public void render(Candidate candidate, LinearLabelDescriptor label) {
+        LinearCandidate linearCandidate = (LinearCandidate) candidate;
+        LinearLabelDescriptor label = linearCandidate.getDescriptor();
+
         context.switchToDisplayCRS();
 
         final TextStroke stroke = new TextStroke(label.getText(), label.getTextFont(), label.isRepeated(),
                 label.getOffSet(), label.getInitialGap(), label.getGap());
-        final Shape shape = stroke.createStrokedShape(candidate.getShape());
+        final Shape shape = stroke.createStrokedShape(linearCandidate.getShape());
 
         //paint halo
         g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
