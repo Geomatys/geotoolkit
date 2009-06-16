@@ -371,7 +371,7 @@ public class MosaicImageReader extends ImageReader {
      */
     final ImageReader getTileReader() {
         final Set<ImageReader> readers = getTileReaders();
-        Class<?> type = Classes.specializedClass(readers);
+        Class<?> type = Classes.findSpecializedClass(readers);
         while (type!=null && ImageReader.class.isAssignableFrom(type)) {
             for (final ImageReader candidate : readers) {
                 if (type.equals(candidate.getClass())) {
@@ -414,7 +414,7 @@ public class MosaicImageReader extends ImageReader {
     private Tile getSpecificTile(final Collection<Tile> tiles) {
         Tile fallback = null;
         final Set<ImageReader> readers = getTileReaders();
-        Class<?> type = Classes.specializedClass(readers);
+        Class<?> type = Classes.findSpecializedClass(readers);
         while (type!=null && ImageReader.class.isAssignableFrom(type)) {
             for (final ImageReader reader : readers) {
                 if (type.equals(reader.getClass())) {

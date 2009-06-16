@@ -178,7 +178,7 @@ public class ConverterRegistry {
          */
         final Class<?> source = converter.getSourceClass();
         final Class<?> target = converter.getTargetClass();
-        final Class<?> stopAt = Classes.commonClass(source, target);
+        final Class<?> stopAt = Classes.findCommonClass(source, target);
         synchronized (converters) {
             for (Class<?> i=target; i!=null && !i.equals(stopAt); i=i.getSuperclass()) {
                 @SuppressWarnings("unchecked")

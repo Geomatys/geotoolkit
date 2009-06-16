@@ -1466,7 +1466,7 @@ search: for (int j=0; j<targets.size(); j++) {
             }
             if (!shift && sourceGeodetic == targetGeodetic) {
                 shift = !equalsIgnoreMetadata(sourceDatum, targetDatum);
-                assert Classes.sameInterfaces(sourceDatum.getClass(),
+                assert Classes.implementSameInterfaces(sourceDatum.getClass(),
                                               targetDatum.getClass(), Datum.class);
             }
         }

@@ -53,39 +53,39 @@ public final class ClassesTest {
     }
 
     /**
-     * Tests {@link Classes#mostSpecificClass} and {@link Classes#commonClass}.
+     * Tests {@link Classes#findSpecializedClass} and {@link Classes#findCommonClass}.
      */
     @Test
-    public void testCommonParent() {
+    public void testFindCommonParent() {
         final Set<Object> types = new HashSet<Object>();
 
         assertTrue(types.add(new NotSerializableException()));
-        assertEquals(NotSerializableException.class, Classes.commonClass     (types));
-        assertEquals(NotSerializableException.class, Classes.specializedClass(types));
+        assertEquals(NotSerializableException.class, Classes.findCommonClass     (types));
+        assertEquals(NotSerializableException.class, Classes.findSpecializedClass(types));
 
         assertTrue(types.add(new InvalidObjectException(null)));
-        assertEquals(ObjectStreamException.class, Classes.commonClass     (types));
-        assertEquals(ObjectStreamException.class, Classes.specializedClass(types));
+        assertEquals(ObjectStreamException.class, Classes.findCommonClass     (types));
+        assertEquals(ObjectStreamException.class, Classes.findSpecializedClass(types));
 
         assertTrue(types.add(new FileNotFoundException()));
-        assertEquals(IOException.class, Classes.commonClass     (types));
-        assertEquals(IOException.class, Classes.specializedClass(types));
+        assertEquals(IOException.class, Classes.findCommonClass     (types));
+        assertEquals(IOException.class, Classes.findSpecializedClass(types));
 
         assertTrue(types.add(new IOException()));
-        assertEquals(IOException.class, Classes.commonClass     (types));
-        assertEquals(IOException.class, Classes.specializedClass(types));
+        assertEquals(IOException.class, Classes.findCommonClass     (types));
+        assertEquals(IOException.class, Classes.findSpecializedClass(types));
 
         assertTrue(types.add(new Exception()));
-        assertEquals(  Exception.class, Classes.commonClass     (types));
-        assertEquals(IOException.class, Classes.specializedClass(types));
+        assertEquals(  Exception.class, Classes.findCommonClass     (types));
+        assertEquals(IOException.class, Classes.findSpecializedClass(types));
     }
 
     /**
-     * Tests {@link Classes#commonInterfaces}.
+     * Tests {@link Classes#findCommonInterfaces}.
      */
     @Test
-    public void testCommonInterfaces() {
-        final Set<Class<?>> interfaces = Classes.commonInterfaces(ArrayList.class, HashSet.class);
+    public void testFindCommonInterfaces() {
+        final Set<Class<?>> interfaces = Classes.findCommonInterfaces(ArrayList.class, HashSet.class);
         assertFalse(interfaces.contains(Set         .class));
         assertFalse(interfaces.contains(List        .class));
         assertTrue (interfaces.contains(Collection  .class));
@@ -96,15 +96,15 @@ public final class ClassesTest {
     }
 
     /**
-     * Tests {@link Classes#sameInterfaces}.
+     * Tests {@link Classes#implementSameInterfaces}.
      */
     @Test
     @SuppressWarnings("unchecked") // We break consistency on purpose for one test.
-    public void testSameInterfaces() {
-        assertTrue (Classes.sameInterfaces(StringBuilder.class, String.class, CharSequence.class));
-        assertTrue (Classes.sameInterfaces(StringBuilder.class, String.class, Serializable.class));
-        assertFalse(Classes.sameInterfaces((Class)  File.class, String.class, CharSequence.class));
-        assertTrue (Classes.sameInterfaces(         File.class, String.class, Serializable.class));
+    public void testImplementSameInterfaces() {
+        assertTrue (Classes.implementSameInterfaces(StringBuilder.class, String.class, CharSequence.class));
+        assertTrue (Classes.implementSameInterfaces(StringBuilder.class, String.class, Serializable.class));
+        assertFalse(Classes.implementSameInterfaces((Class)  File.class, String.class, CharSequence.class));
+        assertTrue (Classes.implementSameInterfaces(         File.class, String.class, Serializable.class));
     }
 
     /**

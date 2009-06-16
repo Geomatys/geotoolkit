@@ -245,7 +245,7 @@ public final class Classes {
 
     /**
      * Returns the most specific class implemented by the objects in the given collection.
-     * If there is more than one specialized class, returns their {@linkplain #commonClass
+     * If there is more than one specialized class, returns their {@linkplain #findCommonClass
      * most specific common super class}.
      * <p>
      * This method searches for classes only, not interfaces.
@@ -253,8 +253,10 @@ public final class Classes {
      * @param  objects A collection of objects. May contains duplicated values and null values.
      * @return The most specialized class, or {@code null} if the given collection does not contain
      *         at least one non-null element.
+     *
+     * @since 3.01 (derived from 2.5)
      */
-    public static Class<?> specializedClass(final Collection<?> objects) {
+    public static Class<?> findSpecializedClass(final Collection<?> objects) {
         final Set<Class<?>> types = getClasses(objects);
         types.remove(null);
         /*
@@ -275,6 +277,19 @@ public final class Classes {
     }
 
     /**
+     * @deprecated Renamed {@link #findSpecializedClass(Collection)}.
+     *
+     * @param  objects A collection of objects.
+     * @return The most specialized class.
+     *
+     * @since 3.00
+     */
+    @Deprecated
+    public static Class<?> specializedClass(final Collection<?> objects) {
+        return findSpecializedClass(objects);
+    }
+
+    /**
      * Returns the most specific class which is a common parent of all the specified classes.
      * This method is not public in order to make sure that it contains only classes, not
      * interfaces, since our implementation is not designed for multi-inheritances.
@@ -289,7 +304,7 @@ public final class Classes {
         }
         Class<?> type = it.next();
         while (it.hasNext()) {
-            type = commonClass(type, it.next());
+            type = findCommonClass(type, it.next());
         }
         return type;
     }
@@ -305,11 +320,26 @@ public final class Classes {
      * @param  objects A collection of objects. May contains duplicated values and null values.
      * @return The most specific class common to all supplied objects, or {@code null} if the
      *         given collection does not contain at least one non-null element.
+     *
+     * @since 3.01 (derived from 2.5)
      */
-    public static Class<?> commonClass(final Collection<?> objects) {
+    public static Class<?> findCommonClass(final Collection<?> objects) {
         final Set<Class<?>> types = getClasses(objects);
         types.remove(null);
         return common(types);
+    }
+
+    /**
+     * @deprecated Renamed {@link #findCommonClass(Collection)}.
+     *
+     * @param  objects A collection of objects.
+     * @return The most specific class common to all supplied objects.
+     *
+     * @since 3.00
+     */
+    @Deprecated
+    public static Class<?> commonClass(final Collection<?> objects) {
+        return findCommonClass(objects);
     }
 
     /**
@@ -324,9 +354,9 @@ public final class Classes {
      * @return The most specific class common to the supplied classes, or {@code null}
      *         if both {@code c1} and {@code c2} are null.
      *
-     * @since 3.00
+     * @since 3.01 (derived from 3.00)
      */
-    public static Class<?> commonClass(Class<?> c1, Class<?> c2) {
+    public static Class<?> findCommonClass(Class<?> c1, Class<?> c2) {
         if (c1 == null) return c2;
         if (c2 == null) return c1;
         do {
@@ -343,6 +373,20 @@ public final class Classes {
     }
 
     /**
+     * @deprecated Renamed {@link #findCommonClass(Class, Class)}.
+     *
+     * @param  c1 The first class.
+     * @param  c2 The second class.
+     * @return The most specific class common to the supplied classes.
+     *
+     * @since 3.00
+     */
+    @Deprecated
+    public static Class<?> commonClass(Class<?> c1, Class<?> c2) {
+        return findCommonClass(c1, c2);
+    }
+
+    /**
      * Returns the interfaces which are implemented by the two given classes. The returned set
      * does not include the parent interfaces. For example if the two given objects implement the
      * {@link Collection} interface, then the returned set will contains the {@code Collection}
@@ -355,7 +399,7 @@ public final class Classes {
      *
      * @since 3.01
      */
-    public static Set<Class<?>> commonInterfaces(final Class<?> c1, final Class<?> c2) {
+    public static Set<Class<?>> findCommonInterfaces(final Class<?> c1, final Class<?> c2) {
         final Set<Class<?>> interfaces = getAllInterfaces(c1);
         final Set<Class<?>> buffer     = getAllInterfaces(c2); // To be recycled.
         interfaces.retainAll(buffer);
@@ -378,7 +422,7 @@ public final class Classes {
      * CS implementations has the same geometry with the following code:
      *
      * {@preformat java
-     *     if (sameInterfaces(cs1, cs2, CoordinateSystem.class))
+     *     if (implementSameInterfaces(cs1, cs2, CoordinateSystem.class))
      * }
      *
      * @param <T>     A common parent for both objects.
@@ -387,10 +431,13 @@ public final class Classes {
      * @param base    The parent of all interfaces to check.
      * @return        {@code true} if both objects implement the same set of interfaces,
      *                considering only sub-interfaces of {@code base}.
+     *
+     * @since 3.01 (derived from 2.5)
      */
-    public static <T> boolean sameInterfaces(final Class<? extends T> object1,
-                                             final Class<? extends T> object2,
-                                             final Class<T> base)
+    public static <T> boolean implementSameInterfaces(
+            final Class<? extends T> object1,
+            final Class<? extends T> object2,
+            final Class<T> base)
     {
         if (object1 == object2) {
             return true;
@@ -429,6 +476,23 @@ compare:for (int i=0; i<c1.length; i++) {
             }
         }
         return n == 0; // If n>0, at least one interface was not found in 'c1'.
+    }
+
+    /**
+     * @deprecated Renamed {@link #implementSameInterfaces(Class, Class, Class)}.
+     *
+     * @param <T>     A common parent for both objects.
+     * @param object1 The first object to check for interfaces.
+     * @param object2 The second object to check for interfaces.
+     * @param base    The parent of all interfaces to check.
+     * @return        {@code true} if both objects implement the same set of interfaces.
+     */
+    @Deprecated
+    public static <T> boolean sameInterfaces(final Class<? extends T> object1,
+                                             final Class<? extends T> object2,
+                                             final Class<T> base)
+    {
+        return implementSameInterfaces(object1, object2, base);
     }
 
     /**

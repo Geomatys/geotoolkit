@@ -273,7 +273,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
             if (!orderedAxis[i].equals(cs.getAxis(i))) {
                 final Class<? extends CoordinateSystem> type = Classes.getClass(cs);
                 final CoordinateSystem modified = createCS(type, getProperties(cs), orderedAxis);
-                assert Classes.sameInterfaces(type, modified.getClass(), CoordinateSystem.class);
+                assert Classes.implementSameInterfaces(type, modified.getClass(), CoordinateSystem.class);
                 return pool.unique(modified);
             }
         }

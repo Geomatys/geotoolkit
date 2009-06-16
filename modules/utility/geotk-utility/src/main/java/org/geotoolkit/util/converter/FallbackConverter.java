@@ -105,7 +105,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
     private static <T> Class<? extends T> commonClass(final Class<?> source,
             final Class<? extends T> target1, final Class<? extends T> target2)
     {
-        Class<?> type = Classes.commonClass(target1, target2);
+        Class<?> type = Classes.findCommonClass(target1, target2);
         if (type.equals(Object.class)) {
             /*
              * If there is no common parent class other than Object, looks for a common interface.
@@ -114,7 +114,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
              * Object (in the sense "are assignable to"), so Object can be considered as a common
              * root for both classes and interfaces.
              */
-            final Set<Class<?>> interfaces = Classes.commonInterfaces(target1, target2);
+            final Set<Class<?>> interfaces = Classes.findCommonInterfaces(target1, target2);
             interfaces.removeAll(Classes.getAllInterfaces(source));
             final Iterator<Class<?>> it = interfaces.iterator();
             if (it.hasNext()) {

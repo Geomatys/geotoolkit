@@ -354,7 +354,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                                           final CoordinateSystem targetCS)
             throws IllegalArgumentException, ConversionException
     {
-        if (!Classes.sameInterfaces(sourceCS.getClass(), targetCS.getClass(), CoordinateSystem.class)) {
+        if (!Classes.implementSameInterfaces(sourceCS.getClass(), targetCS.getClass(), CoordinateSystem.class)) {
             throw new IllegalArgumentException(Errors.format(
                       Errors.Keys.INCOMPATIBLE_COORDINATE_SYSTEM_TYPE));
         }

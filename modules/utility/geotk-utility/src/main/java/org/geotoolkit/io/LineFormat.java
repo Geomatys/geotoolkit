@@ -226,7 +226,7 @@ public class LineFormat extends Format {
             if (type == null) {
                 type = candidate;
             } else if (candidate != null && (filter == null || filter.accepts(candidate))) {
-                type = Classes.commonClass(type, candidate);
+                type = Classes.findCommonClass(type, candidate);
             }
         }
         return type;
