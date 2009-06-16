@@ -123,26 +123,30 @@ public class SystemConverterTest {
     }
 
     /**
-     * Tests the {@link ConverterRegistry#getCommonTarget} method.
+     * Tests the {@link ConverterRegistry#findCommonTarget} method.
      */
     @Test
-    public void testGetCommonTarget() {
+    public void testFindCommonTarget() {
         final ConverterRegistry system = ConverterRegistry.system();
-        assertEquals(Double.class, system.getCommonTarget(Number.class, Long.class, Double.class));
+        assertEquals(Double.class, system.findCommonTarget(Number.class, Long.class, Double.class));
+        assertEquals(Short .class, system.findCommonTarget(Number.class, Byte.class, Short .class));
         /*
          * Given two possibility which could be interchanged (Long and Date),
          * should select the one which appear first in the argument list.
          */
-        assertEquals(Long.class, system.getCommonTarget(Comparable.class, Long  .class, Date.class));
-        assertEquals(Date.class, system.getCommonTarget(Comparable.class, Date  .class, Long.class));
-        assertEquals(Long.class, system.getCommonTarget(Comparable.class, Number.class, Date.class));
+        assertEquals(Long.class, system.findCommonTarget(Comparable.class, Long  .class, Date.class));
+        assertEquals(Date.class, system.findCommonTarget(Comparable.class, Date  .class, Long.class));
+        assertEquals(Long.class, system.findCommonTarget(Comparable.class, Number.class, Date.class));
+        // Actually the last test below match current implementation, but this behavior is not
+        // necessarly the most appropriate one. We could also return conservatively Double.class
+        // since Number can be anything.
         /*
          * Following tests use the fact that URL does not implement Comparable,
          * while File and URI does.
          */
-        assertEquals(File.class, system.getCommonTarget(Comparable.class, File.class, URL .class));
-        assertEquals(URI .class, system.getCommonTarget(Comparable.class, URI .class, URL .class));
-        assertEquals(File.class, system.getCommonTarget(Comparable.class, File.class, URI .class));
-        assertEquals(URI .class, system.getCommonTarget(Comparable.class, URI .class, File.class));
+        assertEquals(File.class, system.findCommonTarget(Comparable.class, File.class, URL .class));
+        assertEquals(URI .class, system.findCommonTarget(Comparable.class, URI .class, URL .class));
+        assertEquals(File.class, system.findCommonTarget(Comparable.class, File.class, URI .class));
+        assertEquals(URI .class, system.findCommonTarget(Comparable.class, URI .class, File.class));
     }
 }

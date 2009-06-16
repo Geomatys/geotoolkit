@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
@@ -323,7 +322,7 @@ public class ConverterRegistry {
      * order of {@code sources} arguments:
      *
      * {@preformat java
-     *     Class<? extends Comparable> target = registry.getCommonTarget(Comparable.class, File.class, URL.class);
+     *     Class<? extends Comparable> target = registry.findCommonTarget(Comparable.class, File.class, URL.class);
      * }
      *
      * {@section Example 2: comparing <code>Date</code> with <code>Long</code>}
@@ -333,7 +332,7 @@ public class ConverterRegistry {
      * first {@code sources} argument assignable to the common target: {@code Long}.
      *
      * {@preformat java
-     *     Class<? extends Comparable> target = registry.getCommonTarget(Comparable.class, Long.class, Date.class);
+     *     Class<? extends Comparable> target = registry.findCommonTarget(Comparable.class, Long.class, Date.class);
      * }
      *
      * @param <T>     The type represented by the {@code base} argument.
@@ -341,50 +340,12 @@ public class ConverterRegistry {
      * @param sources The source for which a common target is desired.
      * @return        A target assignable to the given {@code base} and convertible from all sources,
      *                or {@code null} if no suitable target has been found.
+     *
+     * @since 3.01
      */
-    public <T> Class<? extends T> getCommonTarget(final Class<T> base, Class<?>... sources) {
+    public <T> Class<? extends T> findCommonTarget(final Class<T> base, final Class<?>... sources) {
         if (sources.length == 0) {
             return base;
-        }
-        final Class<?>[] userSpecified = sources; // Will be used for preserving argument order.
-        /*
-         * Special case for Number: replace every subclasses of Number by their widest type.
-         * For example if the sources array contain Integer.class and Long.class, substitutes
-         * the Integer.class by Long.class. We take this opportunity for removing duplicated
-         * classes (if any).
-         */
-        try {
-            final Set<Class<?>> copy = new LinkedHashSet<Class<?>>(Utilities.hashMapCapacity(sources.length));
-            Class<? extends Number> widest = null;
-            for (final Class<?> type : sources) {
-                if (Number.class.isAssignableFrom(type)) {
-                    widest = Classes.widestClass(widest, type.asSubclass(Number.class));
-                } else {
-                    copy.add(type);
-                }
-            }
-            copy.add(widest);
-            copy.remove(null);
-            sources = copy.toArray(new Class<?>[copy.size()]);
-        } catch (IllegalArgumentException e) {
-            /*
-             * At least one subclass of Number is not a known type. Conservatively cancel all the
-             * substitution we were performing in the previous block and use the user-provided
-             * array verbatism.
-             */
-            Logging.recoverableException(ConverterRegistry.class, "getCommonTarget", e);
-        }
-        /*
-         * The above block may have reduced the amount of sources to a single element.
-         * Checks if this element is suitable. This is especially useful if the element
-         * is an implementation of Number, since the block below will expand the set of
-         * target classes to a large amount of candidate (Float, Long, Integer, etc.).
-         */
-        if (sources.length == 1) {
-            final Class<?> candidate = sources[0];
-            if (base.isAssignableFrom(candidate)) {
-                return candidate.asSubclass(base);
-            }
         }
         /*
          * For each source, get the parent classes of that source that are assignable to the given
@@ -420,7 +381,7 @@ public class ConverterRegistry {
             }
         }
         /*
-         * Now computes the intersection of every source sets. If more than one class can
+         * Now computes the intersection of every target sets. If more than one class can
          * fit, returns the one which would involve the smallest number of conversions.
          * If many class have the same score, select the one which appear first in the
          * argument list.
@@ -429,31 +390,59 @@ public class ConverterRegistry {
         for (int i=1; i<targets.length; i++) {
             common.retainAll(targets[i]);
         }
-        Class<? extends T> best = null;  // The best type we have found.
-        int countAssignables = 0;        // Number of source assignable from the best type.
-        int positionFirst = -1;          // Position of the first source assignable from the type.
+        Class<?> best        = null;  // The best target type we have found so far.
+        int countAssignables = -1;    // Number of source assignable from the best target type.
+        int positionFirst    = -1;    // Position of the first source assignable from the target.
         for (final Class<?> candidate : common) {
             int p=0, c=0;
-            for (int i=userSpecified.length; --i>=0;) {
-                final Class<?> source = userSpecified[i];
+            for (int i=sources.length; --i>=0;) {
+                final Class<?> source = sources[i];
                 if (source.isAssignableFrom(candidate)) {
                     p = i; // Position of the first assignable source.
-                    c++;   // Number of source assignable from the type.
+                    c++;   // Number of source assignable from the target.
                 }
             }
+            /*
+             * If the current candidate is less successful than the best target,
+             * looks for the next candidate.
+             */
             if (c < countAssignables) {
                 continue;
             }
+            /*
+             * If the current candidate is as successful than the best target, then there
+             * is a choice:
+             *
+             * 1) If both the candidate and the best target are instance of Number, "merges"
+             *    them by retaining the widest type. For example if the sources array contains
+             *    Integer.class and Long.class, selects Long.class.
+             *
+             * 2) Otherwise retains the candidate if and only it is assignable to a source
+             *    which appear before (in argument order) the previously best target.
+             */
             if (c == countAssignables) {
+                if (Number.class.isAssignableFrom(candidate) && Number.class.isAssignableFrom(best)) {
+                    @SuppressWarnings("unchecked") final Class<? extends Number> n1 = (Class) candidate;
+                    @SuppressWarnings("unchecked") final Class<? extends Number> n2 = (Class) best;
+                    try {
+                        best = Classes.widestClass(n1, n2);
+                        positionFirst = p;
+                        continue;
+                    } catch (IllegalArgumentException e) {
+                        // At least one subclass of Number is not a known type.
+                        // Performs the same processing as if it was not a Number.
+                        Logging.recoverableException(ConverterRegistry.class, "getCommonTarget", e);
+                    }
+                }
                 if (p >= positionFirst) {
                     continue;
                 }
             }
             positionFirst = p;
             countAssignables = c;
-            best = candidate.asSubclass(base);
+            best = candidate;
         }
-        return best;
+        return (best != null) ? best.asSubclass(base) : null;
     }
 
     /**
