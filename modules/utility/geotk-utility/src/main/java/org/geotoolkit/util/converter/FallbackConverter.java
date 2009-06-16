@@ -17,9 +17,12 @@
  */
 package org.geotoolkit.util.converter;
 
+import java.util.Set;
+import java.util.Iterator;
 import java.io.Serializable;
-import org.geotoolkit.gui.swing.tree.Trees;
 import javax.swing.tree.MutableTreeNode;
+
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 
 
@@ -31,12 +34,17 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * converter first because we expect that if the user wanted the specific subclass, he would have
  * asked explicitly for it. Trying the generic converter first is both closer to what the user
  * asked and less likely to throw many exceptions before we found a successful conversion.
+ * <p>
+ * Instances are created by the {@link #create(ObjectConverter, ObjectConverter)} method. It
+ * is invoked (indirectly, through the {@code createUnsafe} variant) when a new converter is
+ * {@linkplain ConverterRegistry#register(ObjectConverter) registered} for the same source
+ * and target class than an existing converter.
  *
  * @param <S>  The base type of source objects.
  * @param <T>  The base type of converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -75,8 +83,8 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
     private FallbackConverter(final ObjectConverter<S, ? extends T> primary,
                               final ObjectConverter<S, ? extends T> fallback)
     {
-        super(primary.getSourceClass(), Classes.commonClass(
-              primary.getTargetClass(), fallback.getTargetClass()));
+        super(primary.getSourceClass(), FallbackConverter.<T>commonClass(
+              primary.getSourceClass(), primary.getTargetClass(), fallback.getTargetClass()));
         if (swap(primary, fallback)) {
             this.primary  = fallback;
             this.fallback = primary;
@@ -84,9 +92,49 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
             this.primary  = primary;
             this.fallback = fallback;
         }
-        assert sourceClass.equals(fallback.getSourceClass());
-        assert targetClass.isAssignableFrom(primary .getTargetClass()) &&
-               targetClass.isAssignableFrom(fallback.getTargetClass());
+        assert sourceClass.equals          (primary .getSourceClass()) : primary;
+        assert sourceClass.equals          (fallback.getSourceClass()) : fallback;
+        assert targetClass.isAssignableFrom(primary .getTargetClass()) : primary;
+        assert targetClass.isAssignableFrom(fallback.getTargetClass()) : fallback;
+    }
+
+    /**
+     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
+     * call in constructors").
+     */
+    private static <T> Class<? extends T> commonClass(final Class<?> source,
+            final Class<? extends T> target1, final Class<? extends T> target2)
+    {
+        Class<?> type = Classes.commonClass(target1, target2);
+        if (type.equals(Object.class)) {
+            /*
+             * If there is no common parent class other than Object, looks for a common interface.
+             * We perform this special processing for Object.class because this class is handled
+             * in a special way by the Java language anyway: all interfaces are specialization of
+             * Object (in the sense "are assignable to"), so Object can be considered as a common
+             * root for both classes and interfaces.
+             */
+            final Set<Class<?>> interfaces = Classes.commonInterfaces(target1, target2);
+            interfaces.removeAll(Classes.getAllInterfaces(source));
+            final Iterator<Class<?>> it = interfaces.iterator();
+            if (it.hasNext()) {
+                /*
+                 * Arbitrarily retains the first interfaces. At this point there is hopefully
+                 * only one occurence anyway. If there is more than one interface, they appear
+                 * in declaration order so the first one is assumed the "main" interface.
+                 */
+                type = it.next();
+            }
+        }
+        /*
+         * We perform an unchecked cast because in theory T is the common super
+         * class. However we don't know it at run time (because generic types are
+         * implemented by erasure), which is why we are doing all this stuff. If
+         * there is no logical error in our algorithm, the cast should be correct.
+         */
+        @SuppressWarnings("unchecked")
+        final Class<? extends T> unsafe = (Class) type;
+        return unsafe;
     }
 
     /**

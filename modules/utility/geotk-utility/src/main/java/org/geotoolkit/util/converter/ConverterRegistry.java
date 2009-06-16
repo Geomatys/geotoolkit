@@ -18,10 +18,14 @@
 package org.geotoolkit.util.converter;
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 
@@ -36,7 +40,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * should be created.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -57,32 +61,42 @@ public class ConverterRegistry {
         ConverterRegistry s = system;
         if (s == null) {
             s = new ConverterRegistry();
-            s.register(StringConverter.Number .INSTANCE); // Better to make it first.
-            s.register(StringConverter.Double .INSTANCE);
-            s.register(StringConverter.Float  .INSTANCE);
-            s.register(StringConverter.Long   .INSTANCE);
-            s.register(StringConverter.Integer.INSTANCE);
-            s.register(StringConverter.Short  .INSTANCE);
-            s.register(StringConverter.Byte   .INSTANCE);
-            s.register(StringConverter.Boolean.INSTANCE);
-            s.register(StringConverter.Color  .INSTANCE);
-            s.register(StringConverter.Locale .INSTANCE);
-            s.register(StringConverter.Charset.INSTANCE);
-            s.register(StringConverter.File   .INSTANCE);
-            s.register(StringConverter.URI    .INSTANCE);
-            s.register(StringConverter.URL    .INSTANCE);
-            s.register(NumberConverter.String .INSTANCE);
-            s.register(NumberConverter.Double .INSTANCE);
-            s.register(NumberConverter.Float  .INSTANCE);
-            s.register(NumberConverter.Long   .INSTANCE);
-            s.register(NumberConverter.Integer.INSTANCE);
-            s.register(NumberConverter.Short  .INSTANCE);
-            s.register(NumberConverter.Byte   .INSTANCE);
-            s.register(NumberConverter.Boolean.INSTANCE);
-            s.register(NumberConverter.Color  .INSTANCE);
-            s.register(DateConverter.Timestamp.INSTANCE);
-            s.register(DateConverter  .Long   .INSTANCE);
-            s.register(LongConverter  .Date   .INSTANCE);
+            s.register(StringConverter.Number    .INSTANCE); // Preferred choice for StringConverter.
+            s.register(StringConverter.Double    .INSTANCE);
+            s.register(StringConverter.Float     .INSTANCE);
+            s.register(StringConverter.Long      .INSTANCE);
+            s.register(StringConverter.Integer   .INSTANCE);
+            s.register(StringConverter.Short     .INSTANCE);
+            s.register(StringConverter.Byte      .INSTANCE);
+            s.register(StringConverter.Boolean   .INSTANCE);
+            s.register(StringConverter.Color     .INSTANCE);
+            s.register(StringConverter.Locale    .INSTANCE);
+            s.register(StringConverter.Charset   .INSTANCE);
+            s.register(StringConverter.File      .INSTANCE); // Most specific first (File, URL, URI).
+            s.register(StringConverter.URL       .INSTANCE);
+            s.register(StringConverter.URI       .INSTANCE);
+            s.register(NumberConverter.Comparable.INSTANCE);
+            s.register(NumberConverter.Double    .INSTANCE);
+            s.register(NumberConverter.Float     .INSTANCE);
+            s.register(NumberConverter.Long      .INSTANCE);
+            s.register(NumberConverter.Integer   .INSTANCE);
+            s.register(NumberConverter.Short     .INSTANCE);
+            s.register(NumberConverter.Byte      .INSTANCE);
+            s.register(NumberConverter.Boolean   .INSTANCE);
+            s.register(NumberConverter.Color     .INSTANCE);
+            s.register(NumberConverter.String    .INSTANCE); // Last choice for NumberConverter.
+            s.register(DateConverter  .Timestamp .INSTANCE);
+            s.register(DateConverter  .Long      .INSTANCE);
+            s.register(LongConverter  .Date      .INSTANCE);
+            s.register(FileConverter  .URI       .INSTANCE); // The preferred target for File.
+            s.register(FileConverter  .URL       .INSTANCE);
+            s.register(FileConverter  .String    .INSTANCE);
+            s.register(URLConverter   .URI       .INSTANCE); // The preferred target for URL.
+            s.register(URLConverter   .File      .INSTANCE);
+            s.register(URLConverter   .String    .INSTANCE);
+            s.register(URIConverter   .URL       .INSTANCE); // The preferred target for URI.
+            s.register(URIConverter   .File      .INSTANCE);
+            s.register(URIConverter   .String    .INSTANCE);
             system = s; // Only on success.
         }
         return s;
@@ -99,7 +113,7 @@ public class ConverterRegistry {
      * Creates an initially empty set of object converters.
      */
     public ConverterRegistry() {
-        converters = new HashMap<ClassPair<?,?>, ObjectConverter<?,?>>();
+        converters = new LinkedHashMap<ClassPair<?,?>, ObjectConverter<?,?>>();
     }
 
     /**
@@ -109,16 +123,45 @@ public class ConverterRegistry {
      * {@code Double}.
      * <p>
      * This method registers the converter for its {@linkplain ObjectConverter#getTargetClass
-     * target class}, some of its parent classes and some interfaces. For example a converter
-     * producing {@link Double} can be used for clients that just ask for a {@link Number} or
-     * a {@link Comparable}.
+     * target class}, some parents of the target class (see below) and every interfaces except
+     * {@link Cloneable} which are implemented by the target class and not by the source class.
+     * For example a converter producing {@link Double} can be used for clients that just ask
+     * for a {@link Number}.
+     *
+     * {@section Which super-classes of the target class are registered}
+     * Consider a converter from class {@code S} to class {@code T} where the two classes
+     * area related in a hierarchy as below:
+     *
+     * {@preformat text
+     *   C1
+     *   └───C2
+     *       ├───C3
+     *       │   └───S
+     *       └───C4
+     *           └───T
+     * }
+     *
+     * Invoking this method will register the given converter for all the following cases:
+     * <p>
+     * <ul>
+     *   <li>{@code S} to {@code T}</li>
+     *   <li>{@code S} to {@code C4}</li>
+     * </ul>
+     * <p>
+     * No converter to {@code C2} or {@code C1} will be registered, because an identity converter
+     * would be suffisient for those cases.
+     *
+     * {@section Which sub-classes of the source class are registered}
+     * Sub-classes of the source class will be registered on a case-by-case basis when the
+     * {@link #converter(Class, Class)} is invoked, because we can not know the set of all
+     * sub-classes in advance (and would not necessarly want to register all of them anyway).
      *
      * @param converter The converter to register.
      */
     public void register(final ObjectConverter<?,?> converter) {
         /*
          * If the given converter is a FallbackConverter (maybe obtained from an other
-         * ConvergerRegistry), unwraps it and registers its component individually.
+         * ConverterRegistry), unwraps it and registers its component individually.
          */
         if (converter instanceof FallbackConverter) {
             final FallbackConverter<?,?> fc = (FallbackConverter<?,?>) converter;
@@ -148,6 +191,13 @@ public class ConverterRegistry {
              * have been registered. Now registers interfaces.
              */
             for (final Class<?> i : target.getInterfaces()) {
+                if (i.isAssignableFrom(source)) {
+                    /*
+                     * Target interface is already implemented by the source, so
+                     * there is no reason to convert the source to that interface.
+                     */
+                    continue;
+                }
                 if (Cloneable.class.isAssignableFrom(i)) {
                     /*
                      * Exclude this special case. If we were accepting it, we would basically
@@ -159,7 +209,7 @@ public class ConverterRegistry {
                      */
                     continue;
                 }
-                if (Comparable.class.isAssignableFrom(i)) {
+                if (Comparable.class.isAssignableFrom(i) && source.equals(Number.class)) {
                     /*
                      * Exclude this special case. java.lang.Number does not implement Comparable,
                      * but its subclasses do. Accepting this case would lead FactoryRegistry to
@@ -235,8 +285,11 @@ public class ConverterRegistry {
                 return key.cast(converter);
             }
             /*
-             * At this point, no converter were found explicitly for the given key. Searches
-             * a converter accepting some subclass, and if we find any cache the result.
+             * At this point, no converter were found explicitly for the given key. Searches a
+             * converter accepting some super-class of S, and if we find any cache the result.
+             * This is the complement of the search performed in the register(ObjectConverter)
+             * method, which looked for the parents of the target class. Here we look for the
+             * childs of the source class.
              */
             ClassPair<? super S,T> candidate = key;
             while ((candidate = candidate.parentSource()) != null) {
@@ -247,7 +300,160 @@ public class ConverterRegistry {
                 }
             }
         }
+        /*
+         * No explicit converter were found. Checks for the trivial case where an identity
+         * converter would fit. We perform this operation last in order to give a chance to
+         * register an explicit converter if we need to.
+         */
+        if (target.isAssignableFrom(source)) {
+            return key.cast(new IdentityConverter<S>(source));
+        }
         throw new NonconvertibleObjectException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, key));
+    }
+
+    /**
+     * Returns a target class which is both assignable to the given base and convertible from all
+     * the given sources. This method is used mostly for converting two objects of different type
+     * to some class implementing the {@link Comparable} interface, in order to compare objects
+     * that are normally not comparable each other.
+     *
+     * {@section Example 1: comparing <code>File</code> with <code>URL</code>}
+     * {@link java.io.File} implements the {@code Comparable} interface, while {@link java.net.URL}
+     * does not. Consequently the code below will return inconditionnaly {@code File} no matter the
+     * order of {@code sources} arguments:
+     *
+     * {@preformat java
+     *     Class<? extends Comparable> target = registry.getCommonTarget(Comparable.class, File.class, URL.class);
+     * }
+     *
+     * {@section Example 2: comparing <code>Date</code> with <code>Long</code>}
+     * Both {@link Long} and {@link java.util.Date} implement {@code Comparable}, and both types
+     * are convertible to the other type. There is no obvious rule for selecting a type instead
+     * than the other. In order to keep this method determinist, the code below will prefer the
+     * first {@code sources} argument assignable to the common target: {@code Long}.
+     *
+     * {@preformat java
+     *     Class<? extends Comparable> target = registry.getCommonTarget(Comparable.class, Long.class, Date.class);
+     * }
+     *
+     * @param <T>     The type represented by the {@code base} argument.
+     * @param base    The base type of the desired target.
+     * @param sources The source for which a common target is desired.
+     * @return        A target assignable to the given {@code base} and convertible from all sources,
+     *                or {@code null} if no suitable target has been found.
+     */
+    public <T> Class<? extends T> getCommonTarget(final Class<T> base, Class<?>... sources) {
+        if (sources.length == 0) {
+            return base;
+        }
+        final Class<?>[] userSpecified = sources; // Will be used for preserving argument order.
+        /*
+         * Special case for Number: replace every subclasses of Number by their widest type.
+         * For example if the sources array contain Integer.class and Long.class, substitutes
+         * the Integer.class by Long.class. We take this opportunity for removing duplicated
+         * classes (if any).
+         */
+        try {
+            final Set<Class<?>> copy = new LinkedHashSet<Class<?>>(Utilities.hashMapCapacity(sources.length));
+            Class<? extends Number> widest = null;
+            for (final Class<?> type : sources) {
+                if (Number.class.isAssignableFrom(type)) {
+                    widest = Classes.widestClass(widest, type.asSubclass(Number.class));
+                } else {
+                    copy.add(type);
+                }
+            }
+            copy.add(widest);
+            copy.remove(null);
+            sources = copy.toArray(new Class<?>[copy.size()]);
+        } catch (IllegalArgumentException e) {
+            /*
+             * At least one subclass of Number is not a known type. Conservatively cancel all the
+             * substitution we were performing in the previous block and use the user-provided
+             * array verbatism.
+             */
+            Logging.recoverableException(ConverterRegistry.class, "getCommonTarget", e);
+        }
+        /*
+         * The above block may have reduced the amount of sources to a single element.
+         * Checks if this element is suitable. This is especially useful if the element
+         * is an implementation of Number, since the block below will expand the set of
+         * target classes to a large amount of candidate (Float, Long, Integer, etc.).
+         */
+        if (sources.length == 1) {
+            final Class<?> candidate = sources[0];
+            if (base.isAssignableFrom(candidate)) {
+                return candidate.asSubclass(base);
+            }
+        }
+        /*
+         * For each source, get the parent classes of that source that are assignable to the given
+         * base. The goal is to take in account (later) an eventual parent which is common to every
+         * sources, if there is any. We ignore interfaces on intend.
+         */
+        @SuppressWarnings("unchecked") // Generic array creation.
+        final Set<Class<?>>[] targets = new Set[sources.length];
+        for (int i=0; i<sources.length; i++) {
+            Class<?> source = sources[i];
+            final Set<Class<?>> types = new LinkedHashSet<Class<?>>();
+            while (source != null && base.isAssignableFrom(source)) {
+                types.add(source);
+                source = source.getSuperclass();
+            }
+            targets[i] = types;
+        }
+        /*
+         * Adds every targets which can be produces by at least one registered converter.
+         */
+        synchronized (converters) {
+            for (final ObjectConverter<?,?> converter : converters.values()) {
+                final Class<?> target = converter.getTargetClass();
+                if (base.isAssignableFrom(target)) {
+                    final Class<?> source = converter.getSourceClass();
+                    for (int i=0; i<sources.length; i++) {
+                        final Class<?> candidate = sources[i];
+                        if (source.isAssignableFrom(candidate)) {
+                            targets[i].add(target);
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         * Now computes the intersection of every source sets. If more than one class can
+         * fit, returns the one which would involve the smallest number of conversions.
+         * If many class have the same score, select the one which appear first in the
+         * argument list.
+         */
+        final Set<Class<?>> common = targets[0];
+        for (int i=1; i<targets.length; i++) {
+            common.retainAll(targets[i]);
+        }
+        Class<? extends T> best = null;  // The best type we have found.
+        int countAssignables = 0;        // Number of source assignable from the best type.
+        int positionFirst = -1;          // Position of the first source assignable from the type.
+        for (final Class<?> candidate : common) {
+            int p=0, c=0;
+            for (int i=userSpecified.length; --i>=0;) {
+                final Class<?> source = userSpecified[i];
+                if (source.isAssignableFrom(candidate)) {
+                    p = i; // Position of the first assignable source.
+                    c++;   // Number of source assignable from the type.
+                }
+            }
+            if (c < countAssignables) {
+                continue;
+            }
+            if (c == countAssignables) {
+                if (p >= positionFirst) {
+                    continue;
+                }
+            }
+            positionFirst = p;
+            countAssignables = c;
+            best = candidate.asSubclass(base);
+        }
+        return best;
     }
 
     /**

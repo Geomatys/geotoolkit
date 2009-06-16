@@ -27,14 +27,18 @@ import static org.geotoolkit.test.Commons.*;
 
 
 /**
- * Tests the {@link ConverterRegistry} implementation.
+ * Tests the {@link ConverterRegistry} implementation. Every tests in this class except
+ * {@link #testSystem()} uses their own instance of {@link ConverterRegistry}, so they
+ * are not affected by whatever new converter may be added or removed from the system-wide
+ * registry.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  */
-@Depend({TreesTest.class, StringConverterTest.class, NumberConverterTest.class, FallbackConverterTest.class})
+@Depend({TreesTest.class, StringConverterTest.class, NumberConverterTest.class, URIConverterTest.class,
+        URLConverterTest.class, FileConverterTest.class, FallbackConverterTest.class})
 public final class ConverterRegistryTest {
     /**
      * The registry being tested.
@@ -50,7 +54,7 @@ public final class ConverterRegistryTest {
      * Ensures that the current {@linkplain #converter} is registered.
      */
     private void assertRegistered() {
-        assertRegistered(converter.getTargetClass());
+        assertRegisteredTarget(converter.getTargetClass());
     }
 
     /**
@@ -58,7 +62,7 @@ public final class ConverterRegistryTest {
      *
      * @param target The target to ensure that the {@linkplain #converter} is registered for.
      */
-    private void assertRegistered(final Class<?> target) {
+    private void assertRegisteredTarget(final Class<?> target) {
         final Class<?> source = converter.getSourceClass();
         final ObjectConverter<?,?> actual;
         try {
@@ -67,6 +71,7 @@ public final class ConverterRegistryTest {
             fail(e.toString());
             return;
         }
+        assertFalse(actual instanceof IdentityConverter);
         assertSame(converter, actual);
     }
 
@@ -75,7 +80,7 @@ public final class ConverterRegistryTest {
      *
      * @param target The target to ensure that the {@linkplain #converter} is not registered for.
      */
-    private void assertUnregistered(final Class<?> target) {
+    private void assertUnregisteredTarget(final Class<?> target) {
         final Class<?> source = converter.getSourceClass();
         final ObjectConverter<?,?> actual;
         try {
@@ -85,6 +90,27 @@ public final class ConverterRegistryTest {
             return;
         }
         fail("Unexpected converter: " + actual);
+    }
+
+    /**
+     * Ensures that the current {@linkplain #converter} returns the {@linkplain IdentityConverter
+     * identity converter} for the given target.
+     *
+     * @param target The target for which an identity converter should be obtained.
+     */
+    private void assertIdentityForTarget(final Class<?> target) {
+        final Class<?> source = converter.getSourceClass();
+        final ObjectConverter<?,?> actual;
+        try {
+            actual = registry.converter(source, target);
+        } catch (NonconvertibleObjectException e) {
+            fail(e.toString());
+            return;
+        }
+        assertTrue(actual instanceof IdentityConverter);
+        assertSame(source, actual.getSourceClass());
+        assertSame(source, actual.getTargetClass());
+        assertTrue(target.isAssignableFrom(source));
     }
 
     /**
@@ -112,26 +138,26 @@ public final class ConverterRegistryTest {
         registry = new ConverterRegistry();
         converter = StringConverter.Short.INSTANCE;
         registry.register(converter);
-        assertRegistered  (Short       .class);
-        assertRegistered  (Number      .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
+        assertRegisteredTarget  (Short       .class);
+        assertRegisteredTarget  (Number      .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertIdentityForTarget (Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
         /*
          * Adds String ⇨ Long
          * Expected side-effect: creation of FallbackConverter[String ⇨ Number]
          */
         converter = StringConverter.Long.INSTANCE;
-        assertUnregistered(Long.class);
+        assertUnregisteredTarget(Long.class);
         registry.register(converter);
-        assertRegistered  (Long        .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
+        assertRegisteredTarget  (Long        .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertIdentityForTarget (Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
         converter = StringConverter.Short.INSTANCE;
-        assertRegistered(Short.class);
+        assertRegisteredTarget(Short.class);
         assertFallback(Number.class,
                 "String ⇨ Number\n" +
                 "├───String ⇨ Short\n" +
@@ -142,56 +168,56 @@ public final class ConverterRegistryTest {
          */
         final ObjectConverter<?,?> fallback = converter;
         converter = StringConverter.Boolean.INSTANCE;
-        assertUnregistered(Boolean.class);
+        assertUnregisteredTarget(Boolean.class);
         registry.register(converter);
-        assertRegistered  (Boolean     .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
+        assertRegisteredTarget  (Boolean     .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertIdentityForTarget (Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
         converter = StringConverter.Short.INSTANCE;
-        assertRegistered(Short.class);
+        assertRegisteredTarget(Short.class);
         converter = StringConverter.Long.INSTANCE;
-        assertRegistered(Long.class);
+        assertRegisteredTarget(Long.class);
         converter = fallback;
-        assertRegistered(Number.class);
+        assertRegisteredTarget(Number.class);
         /*
          * Adds String ⇨ Number
          * Expected side-effect: replacement of the FallbackConverter
          */
         converter = StringConverter.Number.INSTANCE;
         registry.register(converter);
-        assertRegistered  (Number      .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
+        assertRegisteredTarget  (Number      .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertIdentityForTarget (Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
         converter = StringConverter.Short.INSTANCE;
-        assertRegistered(Short.class);
+        assertRegisteredTarget(Short.class);
         converter = StringConverter.Long.INSTANCE;
-        assertRegistered(Long.class);
+        assertRegisteredTarget(Long.class);
         converter = StringConverter.Boolean.INSTANCE;
-        assertRegistered(Boolean.class);
+        assertRegisteredTarget(Boolean.class);
         /*
          * Adds String ⇨ Float
          * Expected side-effect: none
          */
         converter = StringConverter.Float.INSTANCE;
-        assertUnregistered(Float.class);
+        assertUnregisteredTarget(Float.class);
         registry.register(converter);
-        assertRegistered  (Float       .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
+        assertRegisteredTarget  (Float       .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertIdentityForTarget (Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
         converter = StringConverter.Short.INSTANCE;
-        assertRegistered(Short.class);
+        assertRegisteredTarget(Short.class);
         converter = StringConverter.Long.INSTANCE;
-        assertRegistered(Long.class);
+        assertRegisteredTarget(Long.class);
         converter = StringConverter.Boolean.INSTANCE;
-        assertRegistered(Boolean.class);
+        assertRegisteredTarget(Boolean.class);
         converter = StringConverter.Number.INSTANCE;
-        assertRegistered(Number.class);
+        assertRegisteredTarget(Number.class);
     }
 
     /**
@@ -202,55 +228,59 @@ public final class ConverterRegistryTest {
         registry = new ConverterRegistry();
         converter = NumberConverter.String.INSTANCE;
         registry.register(converter);
-        assertRegistered  (String      .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
-        assertRegistered  (CharSequence.class);
+        assertRegisteredTarget  (String      .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertUnregisteredTarget(Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
+        assertRegisteredTarget  (CharSequence.class);
         /*
          * Adds Number ⇨ Boolean
          * Expected side-effect: none
          */
         converter = NumberConverter.Boolean.INSTANCE;
-        assertUnregistered(Boolean.class);
+        assertUnregisteredTarget(Boolean.class);
         registry.register(converter);
-        assertRegistered  (Boolean     .class);
-        assertUnregistered(Object      .class);
-        assertUnregistered(Cloneable   .class);
-        assertUnregistered(Comparable  .class);
-        assertUnregistered(Serializable.class);
+        assertRegisteredTarget  (Boolean     .class);
+        assertIdentityForTarget (Object      .class);
+        assertUnregisteredTarget(Cloneable   .class);
+        assertUnregisteredTarget(Comparable  .class);
+        assertIdentityForTarget (Serializable.class);
+        // Previous registration should stay unchanged.
         converter = NumberConverter.String.INSTANCE;
-        assertRegistered(String.class);
-        assertRegistered(CharSequence.class);
+        assertRegisteredTarget(String.class);
+        assertRegisteredTarget(CharSequence.class);
         /*
          * Adds String ⇨ Number
          * Expected side-effect: none
          */
         converter = StringConverter.Number.INSTANCE;
         registry.register(converter);
-        assertRegistered(Number.class);
+        assertRegisteredTarget(Number.class);
+        // Previous registration should stay unchanged.
         converter = NumberConverter.String.INSTANCE;
-        assertRegistered(String.class);
-        assertRegistered(CharSequence.class);
+        assertRegisteredTarget(String.class);
+        assertRegisteredTarget(CharSequence.class);
         /*
          * Adds Number ⇨ Float
          * Expected side-effect: none
          */
         converter = NumberConverter.Float.INSTANCE;
         registry.register(converter);
-        assertRegistered(Float.class);
+        assertRegisteredTarget(Float.class);
+        // Previous registration should stay unchanged.
         converter = NumberConverter.Boolean.INSTANCE;
-        assertRegistered(Boolean.class);
+        assertRegisteredTarget(Boolean.class);
     }
 
     /**
-     * Inspects the system registry.
+     * Inspects the system registry. This is the only test depending on
+     * {@link ConverterRegistry#system()}, which is tested in a read-only way.
      */
     @Test
     public void testSystem() {
-        registry = ConverterRegistry.system();
-        converter = NumberConverter.String .INSTANCE; assertRegistered(); assertRegistered(CharSequence.class);
+        registry  = ConverterRegistry.system();
+        converter = NumberConverter.String .INSTANCE; assertRegistered(); assertRegisteredTarget(CharSequence.class);
         converter = NumberConverter.Double .INSTANCE; assertRegistered();
         converter = NumberConverter.Float  .INSTANCE; assertRegistered();
         converter = NumberConverter.Long   .INSTANCE; assertRegistered();
@@ -266,7 +296,7 @@ public final class ConverterRegistryTest {
         converter = StringConverter.Long   .INSTANCE; assertRegistered();
         converter = StringConverter.Float  .INSTANCE; assertRegistered();
         converter = StringConverter.Double .INSTANCE; assertRegistered();
-        converter = DateConverter  .Long   .INSTANCE; assertRegistered(); assertRegistered(Number.class);
+        converter = DateConverter  .Long   .INSTANCE; assertRegistered(); assertRegisteredTarget(Number.class);
         converter = LongConverter  .Date   .INSTANCE; assertRegistered();
     }
 }

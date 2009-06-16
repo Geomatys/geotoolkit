@@ -26,7 +26,7 @@ import java.io.ObjectStreamException;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.4
  * @module
@@ -51,6 +51,40 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
     @Override
     public boolean isOrderPreserving() {
         return false;
+    }
+
+    /**
+     * Converter from numbers to comparables. This special case exists because {@link Number}
+     * does not implement {@link java.lang.Comparable} directly, but all known subclasses do.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.01
+     *
+     * @since 3.01
+     */
+    static final class Comparable extends NumberConverter<java.lang.Comparable> {
+        private static final long serialVersionUID = 3716134638218072176L;
+        public static final Comparable INSTANCE = new Comparable();
+        private Comparable() {
+        }
+
+        @Override
+        public Class<java.lang.Comparable> getTargetClass() {
+            return java.lang.Comparable.class;
+        }
+
+        @Override
+        public java.lang.Comparable convert(final Number source) throws NonconvertibleObjectException {
+            if (source == null || source instanceof java.lang.Comparable) {
+                return (java.lang.Comparable) source;
+            }
+            return new java.lang.Double(source.doubleValue());
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
     }
 
     /**
@@ -297,7 +331,8 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
     }
 
     /**
-     * Converter from numbers to colors.
+     * Converter from numbers to colors. Colors with an alpha of 0 (which would normally
+     * be fully transparent pixel) are interpreted as color without alpha component.
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)

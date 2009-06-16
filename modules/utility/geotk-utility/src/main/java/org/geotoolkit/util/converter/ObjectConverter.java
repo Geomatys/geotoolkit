@@ -22,21 +22,24 @@ package org.geotoolkit.util.converter;
  * Performs conversions between instances of different classes.
  * <p>
  * <b>Implementation note:</b> The current design relies on parameterized types erasure.
- * For example a unique converter instance may be casted to any of the following:
+ * For example a unique converter instance:
  * <p>
  * <ul>
- *   <li>{@code ObjectConverter<Date,Long>} (the defining converter)</li>
+ *   <li>{@code ObjectConverter<Date,Long>}</li>
+ * </ul>
+ * <p>
+ * may be casted to any of the following:
+ * <p>
+ * <ul>
  *   <li>{@code ObjectConverter<Date,Number>}</li>
  *   <li>{@code ObjectConverter<Timestamp,Long>}</li>
  *   <li>{@code ObjectConverter<Timestamp,Number>}</li>
  * </ul>
  * <p>
- * The parameter bounds of {@linkplain #getSourceClass source} and {@link #getTargetClass target}
- * classes are choosen consistently with the way in which a converter may be casted.
- * <p>
- * A side-effect of the above is that the converter interface can not safely provides a
- * {@code T inverseConvert(S)} method. An other converter needs to be obtained for inverse
- * conversions.
+ * The {@link #getSourceClass(} and {@link #getTargetClass()} methods are defined in a
+ * way consistent with the above-cited casts. However a side-effect is that the converter
+ * interface can not safely provides a {@code T inverseConvert(S)} method. An other converter
+ * instance needs to be obtained for inverse conversions.
  *
  * @param <S> The base type of source objects.
  * @param <T> The base type of converted objects.
@@ -64,7 +67,7 @@ public interface ObjectConverter<S,T> {
     Class<? extends T> getTargetClass();
 
     /**
-     * Returns {@code true} if this converter can convert only a subset {@code S} values. For
+     * Returns {@code true} if this converter can convert only a subset of source values. For
      * example a converter from {@link String} to {@link Number} can not convert every strings,
      * but only strings containing a well-formatted number.
      * <p>
@@ -72,7 +75,7 @@ public interface ObjectConverter<S,T> {
      * fail. However it still possible for the conversion to fail because of external reasons,
      * for example failure to access a database.
      *
-     * @return {@code true} if this converter accepts only a subset of {@code S} values.
+     * @return {@code true} if this converter accepts only a subset of source values.
      *
      * @since 3.00
      */

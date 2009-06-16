@@ -28,7 +28,7 @@ package org.geotoolkit.util.converter;
  * @param <T> The base type of converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -43,6 +43,8 @@ public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {
     /**
      * Returns {@code false} by default, assuming that this converter does not have any
      * restriction. Subclasses may override.
+     *
+     * @return {@code true} if this converter accepts only a subset of source values.
      */
     @Override
     public boolean hasRestrictions() {
@@ -52,6 +54,8 @@ public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {
     /**
      * Returns {@code true} by default, assuming this converter preserves order.
      * Subclasses may override.
+     *
+     * @return {@code true} if this converter preserve order.
      */
     @Override
     public boolean isOrderPreserving() {
@@ -67,5 +71,14 @@ public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {
     @Override
     public boolean isOrderReversing() {
         return false;
+    }
+
+    /**
+     * Returns a string representation of this converter for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return Classes.getShortClassName(this) + '[' + getSourceClass().getSimpleName() +
+                "\u00A0\u21E8\u00A0" + getTargetClass().getSimpleName() + ']';
     }
 }

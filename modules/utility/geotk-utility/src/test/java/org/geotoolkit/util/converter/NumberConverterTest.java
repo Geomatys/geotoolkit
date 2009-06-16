@@ -29,7 +29,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.4
  */
@@ -74,6 +74,20 @@ public final class NumberConverterTest {
         assertEquals("no alpha",  new Color(0,0,255,255), c.convert(0x000000FF));
         assertEquals("255 alpha", new Color(0,0,255,255), c.convert(0xFF0000FF));
         assertEquals("1 alpha",   new Color(0,0,255,1),   c.convert(0x010000FF));
+        assertSame(c, serialize(c));
+    }
+
+    /**
+     * Tests conversions to comparable objects. Should returns the object unchanged
+     * since all {@link Number} subclasses are comparable.
+     *
+     * @throws NonconvertibleObjectException Should never happen.
+     */
+    @Test
+    public void testComparable() throws NonconvertibleObjectException {
+        final ObjectConverter<Number,Comparable> c = NumberConverter.Comparable.INSTANCE;
+        assertEquals(2,   c.convert(2  ));
+        assertEquals(2.5, c.convert(2.5));
         assertSame(c, serialize(c));
     }
 }

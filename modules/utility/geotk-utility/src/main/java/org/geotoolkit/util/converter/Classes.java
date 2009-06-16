@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.util.converter;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.lang.reflect.Type;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -39,7 +39,7 @@ import org.geotoolkit.resources.Errors;
  * wrappers.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  * @module
@@ -214,26 +214,55 @@ public final class Classes {
     }
 
     /**
+     * Returns the set of every interfaces implemented by the given class or interface. This is
+     * similar to {@link Class#getInterfaces()} except that this method searchs recursively in
+     * the super-interfaces. For example if the given type is {@link java.util.ArrayList}, then
+     * the returned set will contains {@link java.util.List} (which is implemented directly)
+     * together with its parent interfaces {@link Collection} and {@link Iterable}.
+     *
+     * @param  type The class or interface for which to get all implemented interfaces.
+     * @return All implemented interfaces (not including the given {@code type} if it was an
+     *         interface), or an empty set if none. Callers can freely modify the returned set.
+     *
+     * @since 3.01
+     */
+    public static Set<Class<?>> getAllInterfaces(final Class<?> type) {
+        final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+        getAllInterfaces(type, interfaces);
+        return interfaces;
+    }
+
+    /**
+     * Adds to the given collection every interfaces implemented by the given class or interface.
+     */
+    private static void getAllInterfaces(final Class<?> type, final Set<Class<?>> interfaces) {
+        for (final Class<?> i : type.getInterfaces()) {
+            if (interfaces.add(i)) {
+                getAllInterfaces(i, interfaces);
+            }
+        }
+    }
+
+    /**
      * Returns the most specific class implemented by the objects in the given collection.
      * If there is more than one specialized class, returns their {@linkplain #commonClass
      * most specific common super class}.
      * <p>
      * This method searches for classes only, not interfaces.
      *
-     * @param  <T> The base type of elements in the given collection.
      * @param  objects A collection of objects. May contains duplicated values and null values.
      * @return The most specialized class, or {@code null} if the given collection does not contain
      *         at least one non-null element.
      */
-    public static <T> Class<? extends T> specializedClass(final Collection<? extends T> objects) {
-        final Set<Class<? extends T>> types = getClasses(objects);
+    public static Class<?> specializedClass(final Collection<?> objects) {
+        final Set<Class<?>> types = getClasses(objects);
         types.remove(null);
         /*
          * Removes every classes in the types collection which are assignable from an other
          * class from the same collection. As a result, the collection should contains only
          * leaf classes.
          */
-        for (final Iterator<Class<? extends T>> it=types.iterator(); it.hasNext();) {
+        for (final Iterator<Class<?>> it=types.iterator(); it.hasNext();) {
             final Class<?> candidate = it.next();
             for (final Class<?> type : types) {
                 if (candidate != type && candidate.isAssignableFrom(type)) {
@@ -247,19 +276,18 @@ public final class Classes {
 
     /**
      * Returns the most specific class which is a common parent of all the specified classes.
-     * This method is not public in other to make sure that it contains only classes, not
+     * This method is not public in order to make sure that it contains only classes, not
      * interfaces, since our implementation is not designed for multi-inheritances.
      *
-     * @param  <T> The base type of elements in the given collection.
      * @param  types The collection where to search for a common parent.
      * @return The common parent, or {@code null} if the given collection is empty.
      */
-    private static <T> Class<? extends T> common(final Set<Class<? extends T>> types) {
-        final Iterator<Class<? extends T>> it = types.iterator();
+    private static Class<?> common(final Set<Class<?>> types) {
+        final Iterator<Class<?>> it = types.iterator();
         if (!it.hasNext()) {
             return null;
         }
-        Class<? extends T> type = it.next();
+        Class<?> type = it.next();
         while (it.hasNext()) {
             type = commonClass(type, it.next());
         }
@@ -267,29 +295,30 @@ public final class Classes {
     }
 
     /**
-     * Returns the most specific class which is a common parent of
-     * all specified objects. If no element in the given collection is
-     * {@linkplain Class#isAssignableFrom assignable from} all other elements, then
-     * this method searches for a common {@linkplain Class#getSuperclass super class}.
+     * Returns the most specific class which {@linkplain Class#isAssignableFrom is assignable from}
+     * the type of all given objects. If no element in the given collection has a type assignable
+     * from the type of all other elements, then this method searches for a common
+     * {@linkplain Class#getSuperclass super class}.
      * <p>
      * This method searches for classes only, not interfaces.
      *
-     * @param  <T> The base type of elements in the given collection.
      * @param  objects A collection of objects. May contains duplicated values and null values.
      * @return The most specific class common to all supplied objects, or {@code null} if the
      *         given collection does not contain at least one non-null element.
      */
-    public static <T> Class<? extends T> commonClass(final Collection<? extends T> objects) {
-        final Set<Class<? extends T>> types = getClasses(objects);
+    public static Class<?> commonClass(final Collection<?> objects) {
+        final Set<Class<?>> types = getClasses(objects);
         types.remove(null);
         return common(types);
     }
 
     /**
-     * Returns the most specific class which is a common parent of the given classes.
+     * Returns the most specific class which {@linkplain Class#isAssignableFrom is assignable from}
+     * the given classes or a parent of those classes. This method returns either {@code c1},
+     * {@code c2} or a common parent of {@code c1} and {@code c2}.
+     * <p>
      * This method considers classes only, not the interfaces.
      *
-     * @param  <T> The base type of both classes.
      * @param  c1 The first class, or {@code null}.
      * @param  c2 The second class, or {@code null}.
      * @return The most specific class common to the supplied classes, or {@code null}
@@ -297,8 +326,7 @@ public final class Classes {
      *
      * @since 3.00
      */
-    @SuppressWarnings("unchecked")
-    public static <T> Class<? extends T> commonClass(Class<? extends T> c1, Class<? extends T> c2) {
+    public static Class<?> commonClass(Class<?> c1, Class<?> c2) {
         if (c1 == null) return c2;
         if (c2 == null) return c1;
         do {
@@ -308,16 +336,38 @@ public final class Classes {
             if (c2.isAssignableFrom(c1)) {
                 return c2;
             }
-            /*
-             * We perform an unchecked cast because in theory T is the common super
-             * class. However we don't know it at run time (because generic types are
-             * implemented by erasure), which is why we are doing all this stuff. If
-             * there is no logical error in our algorithm, the cast should be correct.
-             */
-            c1 = (Class) c1.getSuperclass();
-            c2 = (Class) c2.getSuperclass();
+            c1 = c1.getSuperclass();
+            c2 = c2.getSuperclass();
         } while (c1 != null && c2 != null);
-        return (Class) Object.class;
+        return Object.class;
+    }
+
+    /**
+     * Returns the interfaces which are implemented by the two given classes. The returned set
+     * does not include the parent interfaces. For example if the two given objects implement the
+     * {@link Collection} interface, then the returned set will contains the {@code Collection}
+     * type but not the {@link Iterable} type, since it is implied by the collection type.
+     *
+     * @param  c1 The first class.
+     * @param  c2 The second class.
+     * @return The interfaces common to both classes, or an empty set if none.
+     *         Callers can freely modify the returned set.
+     *
+     * @since 3.01
+     */
+    public static Set<Class<?>> commonInterfaces(final Class<?> c1, final Class<?> c2) {
+        final Set<Class<?>> interfaces = getAllInterfaces(c1);
+        final Set<Class<?>> buffer     = getAllInterfaces(c2); // To be recycled.
+        interfaces.retainAll(buffer);
+        for (Iterator<Class<?>> it=interfaces.iterator(); it.hasNext();) {
+            final Class<?> candidate = it.next();
+            buffer.clear();
+            getAllInterfaces(candidate, buffer);
+            if (interfaces.removeAll(buffer)) {
+                it = interfaces.iterator();
+            }
+        }
+        return interfaces;
     }
 
     /**
@@ -425,7 +475,7 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Changes a primitive class to its wrapper (e.g. {@code int} to {@link Integer}).
+     * Changes a primitive class to its wrapper (for example {@code int} to {@link Integer}).
      * If the specified class is not a primitive type, then it is returned unchanged.
      *
      * @param  type The primitive type (may be {@code null}).
@@ -437,7 +487,7 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Changes a wrapper class to its primitive (e.g. {@link Integer} to {@code int}).
+     * Changes a wrapper class to its primitive (for example {@link Integer} to {@code int}).
      * If the specified class is not a wrapper type, then it is returned unchanged.
      *
      * @param  type The wrapper type (may be {@code null}).
@@ -453,9 +503,9 @@ compare:for (int i=0; i<c1.length; i++) {
      * of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float} or
      * {@link Double} types. At most one of the arguments can be null.
      *
-     * @param  n1 The first number.
-     * @param  n2 The second number.
-     * @return The widest type of the given numbers.
+     * @param  n1 The first number, or {@code null}.
+     * @param  n2 The second number, or {@code null}.
+     * @return The widest type of the given numbers, or {@code null} if not {@code n1} and {@code n2} are null.
      * @throws IllegalArgumentException If a number is not of a known type.
      */
     public static Class<? extends Number> widestClass(final Number n1, final Number n2)
@@ -470,9 +520,9 @@ compare:for (int i=0; i<c1.length; i++) {
      * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
      * {@link Float} or {@link Double} types. At most one of the arguments can be null.
      *
-     * @param  c1 The first number type.
-     * @param  c2 The second number type.
-     * @return The widest of the given types.
+     * @param  c1 The first number type, or {@code null}.
+     * @param  c2 The second number type, or {@code null}.
+     * @return The widest of the given types, or {@code null} if not {@code c1} and {@code c2} are null.
      * @throws IllegalArgumentException If one of the given type is unknown.
      */
     public static Class<? extends Number> widestClass(final Class<? extends Number> c1,
@@ -639,7 +689,7 @@ compare:for (int i=0; i<c1.length; i++) {
     public static <N extends Number> N cast(final Number n, final Class<N> c)
             throws IllegalArgumentException
     {
-        if (n==null || n.getClass().equals(c)) {
+        if (n == null || n.getClass().equals(c)) {
             return (N) n;
         }
         if (Byte   .class.equals(c)) return (N) Byte   .valueOf(n.  byteValue());

@@ -19,7 +19,11 @@ package org.geotoolkit.util.converter;
 
 import java.io.*;
 import java.util.Set;
+import java.util.List;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.RandomAccess;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,11 +33,25 @@ import static org.junit.Assert.*;
  * Tests the {@link Classes} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.5
  */
 public final class ClassesTest {
+    /**
+     * Tests {@link Classes#getAllInterfaces}.
+     */
+    @Test
+    public void testGetAllInterfaces() {
+        final Set<Class<?>> interfaces = Classes.getAllInterfaces(ArrayList.class);
+        assertTrue(interfaces.contains(List        .class));
+        assertTrue(interfaces.contains(Collection  .class));
+        assertTrue(interfaces.contains(Iterable    .class));
+        assertTrue(interfaces.contains(RandomAccess.class));
+        assertTrue(interfaces.contains(Serializable.class));
+        assertTrue(interfaces.contains(Cloneable   .class));
+    }
+
     /**
      * Tests {@link Classes#mostSpecificClass} and {@link Classes#commonClass}.
      */
@@ -60,6 +78,21 @@ public final class ClassesTest {
         assertTrue(types.add(new Exception()));
         assertEquals(  Exception.class, Classes.commonClass     (types));
         assertEquals(IOException.class, Classes.specializedClass(types));
+    }
+
+    /**
+     * Tests {@link Classes#commonInterfaces}.
+     */
+    @Test
+    public void testCommonInterfaces() {
+        final Set<Class<?>> interfaces = Classes.commonInterfaces(ArrayList.class, HashSet.class);
+        assertFalse(interfaces.contains(Set         .class));
+        assertFalse(interfaces.contains(List        .class));
+        assertTrue (interfaces.contains(Collection  .class));
+        assertFalse(interfaces.contains(Iterable    .class));
+        assertFalse(interfaces.contains(RandomAccess.class));
+        assertTrue (interfaces.contains(Serializable.class));
+        assertTrue (interfaces.contains(Cloneable   .class));
     }
 
     /**

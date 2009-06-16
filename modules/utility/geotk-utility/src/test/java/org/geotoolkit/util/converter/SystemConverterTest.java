@@ -17,6 +17,11 @@
  */
 package org.geotoolkit.util.converter;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.net.URISyntaxException;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.sql.Timestamp;
 import org.geotoolkit.test.Depend;
@@ -29,7 +34,7 @@ import static org.junit.Assert.*;
  * Tests a few conversions using the system converter.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  */
@@ -82,5 +87,62 @@ public class SystemConverterTest {
     public void testDateToTimestamp() throws NonconvertibleObjectException {
         final ConverterRegistry system = ConverterRegistry.system();
         assertEquals(new Timestamp(2000), system.converter(Date.class, Timestamp.class).convert(new Date(2000)));
+    }
+
+    /**
+     * Tests the convertion of number and string objects to {@link Comparable} objects.
+     * Actually this is a test of {@link IdentityConverter}.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     */
+    @Test
+    public void testPrimitiveToComparable() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        assertEquals("12", system.converter(String .class, Comparable.class).convert("12"));
+        assertEquals(12,   system.converter(Integer.class, Comparable.class).convert(12));
+        assertEquals(12.5, system.converter(Double .class, Comparable.class).convert(12.5));
+        assertEquals(12,   system.converter(Number .class, Comparable.class).convert(12));
+        assertEquals(12.5, system.converter(Number .class, Comparable.class).convert(12.5));
+    }
+
+    /**
+     * Tests the convertion of miscellaneous objects to {@link Comparable} objects.
+     * {@link URL} is not comparable and consequently implies a conversion to an other object.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     * @throws URISyntaxException Should not happen.
+     * @throws MalformedURLException Should not happen.
+     */
+    @Test
+    public void testFileToComparable() throws NonconvertibleObjectException, URISyntaxException, MalformedURLException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        final URI uri = new URI("file:/home/user/index.html");
+        assertSame  (uri, system.converter(URI.class,  Comparable.class).convert(uri));
+        assertEquals(uri, system.converter(URI.class,  Comparable.class).convert(new URI("file:/home/user/index.html")));
+        assertEquals(uri, system.converter(URL.class,  Comparable.class).convert(new URL("file:/home/user/index.html")));
+    }
+
+    /**
+     * Tests the {@link ConverterRegistry#getCommonTarget} method.
+     */
+    @Test
+    public void testGetCommonTarget() {
+        final ConverterRegistry system = ConverterRegistry.system();
+        assertEquals(Double.class, system.getCommonTarget(Number.class, Long.class, Double.class));
+        /*
+         * Given two possibility which could be interchanged (Long and Date),
+         * should select the one which appear first in the argument list.
+         */
+        assertEquals(Long.class, system.getCommonTarget(Comparable.class, Long  .class, Date.class));
+        assertEquals(Date.class, system.getCommonTarget(Comparable.class, Date  .class, Long.class));
+        assertEquals(Long.class, system.getCommonTarget(Comparable.class, Number.class, Date.class));
+        /*
+         * Following tests use the fact that URL does not implement Comparable,
+         * while File and URI does.
+         */
+        assertEquals(File.class, system.getCommonTarget(Comparable.class, File.class, URL .class));
+        assertEquals(URI .class, system.getCommonTarget(Comparable.class, URI .class, URL .class));
+        assertEquals(File.class, system.getCommonTarget(Comparable.class, File.class, URI .class));
+        assertEquals(URI .class, system.getCommonTarget(Comparable.class, URI .class, File.class));
     }
 }
