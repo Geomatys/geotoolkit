@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -15,28 +15,32 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.naming;
+package org.geotoolkit.referencing.crs;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 
-import org.opengis.test.util.NameTest;
+import org.opengis.test.referencing.CRSTest;
 
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link DefaultNameFactory} instance registered in {@link FactoryFinder}.
+ * the {@link ThreadedEpsgFactory} instance registered in {@link FactoryFinder}.
  *
- * @author Martin Desruisseaux (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @version 3.01
  *
- * @since 3.00
+ * @since 3.01
+ * @module
  */
-public class GeoapiTest extends NameTest {
+public class GeoapiTest extends CRSTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(FactoryFinder.getNameFactory(new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class)));
+        super(AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG",
+                new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class)));
     }
 }
