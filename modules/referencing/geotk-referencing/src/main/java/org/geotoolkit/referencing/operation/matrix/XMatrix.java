@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.matrix;
 
 import javax.vecmath.SingularMatrixException;
 import org.opengis.referencing.operation.Matrix;
+import org.geotoolkit.util.Cloneable;
 
 
 /**
@@ -36,7 +37,7 @@ import org.opengis.referencing.operation.Matrix;
  * @since 2.2
  * @module
  */
-public interface XMatrix extends Matrix {
+public interface XMatrix extends Matrix, Cloneable {
     /**
      * Sets all the values in this matrix to zero.
      */
@@ -112,4 +113,10 @@ public interface XMatrix extends Matrix {
      * @since 2.5
      */
     boolean equals(Matrix matrix, double tolerance);
+
+    /**
+     * Returns a clone of this matrix.
+     */
+    @Override
+    XMatrix clone();
 }

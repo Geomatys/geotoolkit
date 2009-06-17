@@ -23,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 import javax.measure.unit.Unit;
 import javax.measure.converter.ConversionException;
 
-import org.opengis.util.Cloneable;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -42,6 +41,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;

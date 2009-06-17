@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectOutputStream;
 
-import org.opengis.util.Cloneable;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
 

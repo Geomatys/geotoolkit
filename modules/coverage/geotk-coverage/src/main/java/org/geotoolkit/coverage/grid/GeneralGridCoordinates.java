@@ -24,6 +24,7 @@ import org.opengis.coverage.grid.Grid;
 import org.opengis.coverage.grid.GridPoint;
 import org.opengis.coverage.grid.GridCoordinates;
 
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -39,7 +40,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
-public class GeneralGridCoordinates implements GridCoordinates, Serializable {
+public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Serializable {
     /**
      * For cross-version compatibility.
      */

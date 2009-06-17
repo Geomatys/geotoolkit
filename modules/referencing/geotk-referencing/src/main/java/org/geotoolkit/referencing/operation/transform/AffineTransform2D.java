@@ -21,7 +21,6 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 
-import org.opengis.util.Cloneable;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -40,6 +39,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Cloneable;
 
 
 /**

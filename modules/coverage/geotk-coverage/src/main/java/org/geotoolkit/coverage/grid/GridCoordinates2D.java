@@ -21,6 +21,8 @@ import java.awt.Point;
 import org.opengis.coverage.grid.Grid;
 import org.opengis.coverage.grid.GridPoint;
 import org.opengis.coverage.grid.GridCoordinates;
+
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
 
@@ -37,7 +39,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.5
  * @module
  */
-public class GridCoordinates2D extends Point implements GridCoordinates {
+public class GridCoordinates2D extends Point implements GridCoordinates, Cloneable {
     /**
      * For cross-version compatibility.
      */

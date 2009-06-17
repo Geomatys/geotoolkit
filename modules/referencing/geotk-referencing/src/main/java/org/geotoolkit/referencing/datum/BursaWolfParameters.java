@@ -27,7 +27,6 @@ import static java.lang.Double.doubleToLongBits;
 
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.util.Cloneable;
 
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -35,6 +34,7 @@ import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Cloneable;
 
 
 /**

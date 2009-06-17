@@ -20,7 +20,8 @@ package org.geotoolkit.util.collection;
 import java.util.Map;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import org.opengis.util.Cloneable;
+
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;

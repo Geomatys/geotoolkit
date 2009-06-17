@@ -22,7 +22,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import javax.vecmath.MismatchedSizeException;
 
-import org.opengis.util.Cloneable;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 
 import static java.lang.Double.*;

@@ -35,6 +35,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
@@ -56,7 +57,7 @@ import org.geotoolkit.util.converter.Classes;
  * @module
  */
 public abstract class AbstractParameter extends FormattableObject
-           implements GeneralParameterValue, Serializable
+           implements GeneralParameterValue, Serializable, Cloneable
 {
     /**
      * Serial number for interoperability with different versions.

@@ -33,7 +33,7 @@ import org.geotoolkit.util.converter.Classes;
  * {@link #hashCode} methods.
  * <p>
  * This class do not holds any state. The decision to implement {@link java.io.Serializable}
- * or {@link org.opengis.util.Cloneable} interfaces is left to implementors.
+ * or {@link org.geotoolkit.util.Cloneable} interfaces is left to implementors.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

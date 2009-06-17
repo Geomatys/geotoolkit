@@ -18,8 +18,8 @@
 package org.geotoolkit.coverage.grid;
 
 import java.awt.Rectangle;
-import org.opengis.util.Cloneable;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.geotoolkit.util.Cloneable;
 
 
 /**

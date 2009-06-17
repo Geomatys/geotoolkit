@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.matrix;
 import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Cloneable;
 
 
 /**
@@ -44,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.3
  * @module
  */
-public class AffineMatrix3 extends AffineTransform implements Matrix {
+public class AffineMatrix3 extends AffineTransform implements Matrix, Cloneable {
     /**
      * Serial number for interoperability with different versions.
      */

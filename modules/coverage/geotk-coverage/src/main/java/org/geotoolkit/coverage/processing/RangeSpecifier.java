@@ -22,9 +22,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import javax.measure.unit.Unit;
 
-import org.opengis.util.Cloneable;
 import org.opengis.referencing.operation.MathTransform1D;
 
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;

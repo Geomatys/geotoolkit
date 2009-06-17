@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.math;
 
+import org.geotoolkit.util.Cloneable;
+
 
 /**
  * A fraction made of a numerator and a denominator. This is not the purpose of this class

@@ -28,11 +28,11 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import org.opengis.util.Cloneable;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Descriptions;
 

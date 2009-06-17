@@ -18,10 +18,12 @@
 package org.geotoolkit.geometry;
 
 import java.io.Serializable;
-import org.opengis.util.Cloneable;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
+
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
 

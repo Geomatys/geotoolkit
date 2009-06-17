@@ -21,12 +21,12 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 
-import org.opengis.util.Cloneable;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
 

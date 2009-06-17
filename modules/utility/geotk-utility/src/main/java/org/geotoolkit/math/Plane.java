@@ -21,7 +21,7 @@ import java.io.Serializable;
 import javax.vecmath.MismatchedSizeException;
 import javax.vecmath.Point3d;
 
-import org.opengis.util.Cloneable;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 
 

@@ -30,9 +30,9 @@ import java.util.AbstractSet;
 import java.util.NoSuchElementException;
 import java.util.ConcurrentModificationException;
 
-import org.opengis.util.Cloneable;
 
 import org.geotoolkit.util.Range;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;

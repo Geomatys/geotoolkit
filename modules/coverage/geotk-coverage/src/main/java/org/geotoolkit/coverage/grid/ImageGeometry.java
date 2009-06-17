@@ -22,10 +22,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 
-import org.opengis.util.Cloneable;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;

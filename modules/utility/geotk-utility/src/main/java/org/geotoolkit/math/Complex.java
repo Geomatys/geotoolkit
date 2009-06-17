@@ -18,7 +18,7 @@
 package org.geotoolkit.math;
 
 import java.io.Serializable;
-import org.opengis.util.Cloneable;
+import org.geotoolkit.util.Cloneable;
 
 
 /**
