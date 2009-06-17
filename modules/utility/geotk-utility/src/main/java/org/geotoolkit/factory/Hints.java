@@ -64,9 +64,9 @@ import org.geotoolkit.resources.Errors;
  *
  * Hints may be ignored if they do not apply to the object to be instantiated.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.01
  *
  * @see Factory
  * @see FactoryRegistry
@@ -468,14 +468,90 @@ public class Hints extends RenderingHints {
 
     ////////////////////////////////////////////////////////////////////////
     ////////                                                        ////////
-    ////////                  Filter and Style                      ////////
+    ////////                        Geometry                        ////////
     ////////                                                        ////////
     ////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The {@link org.opengis.geometry.PositionFactory} instance to use.
+     *
+     * @see FactoryFinder#getPositionFactory
+     *
+     * @category Geometry
+     *
+     * @since 3.01
+     */
+    public static final ClassKey POSITION_FACTORY = new ClassKey("org.opengis.geometry.PositionFactory");
+
+    /**
+     * The {@link org.opengis.geometry.primitive.PrimitiveFactory} instance to use.
+     *
+     * @see FactoryFinder#getPrimitiveFactory
+     *
+     * @category Geometry
+     *
+     * @since 3.01
+     */
+    public static final ClassKey PRIMITIVE_FACTORY = new ClassKey("org.opengis.geometry.primitive.PrimitiveFactory");
+
+    /**
+     * The {@link org.opengis.geometry.coordinate.GeometryFactory} instance to use.
+     *
+     * @see FactoryFinder#getGeometryFactory
+     *
+     * @category Geometry
+     *
+     * @since 3.01
+     */
+    public static final ClassKey GEOMETRY_FACTORY = new ClassKey("org.opengis.geometry.coordinate.GeometryFactory");
+
+    /**
+     * The {@link org.opengis.geometry.complex.ComplexFactory} instance to use.
+     *
+     * @see FactoryFinder#getComplexFactory
+     *
+     * @category Geometry
+     *
+     * @since 3.01
+     */
+    public static final ClassKey COMPLEX_FACTORY = new ClassKey("org.opengis.geometry.complex.ComplexFactory");
+
+    /**
+     * The {@link org.opengis.geometry.aggregate.AggregateFactory} instance to use.
+     *
+     * @see FactoryFinder#getAggregateFactory
+     *
+     * @category Geometry
+     *
+     * @since 3.01
+     */
+    public static final ClassKey AGGREGATE_FACTORY = new ClassKey("org.opengis.geometry.aggregate.AggregateFactory");
+
+
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////                                                        ////////
+    ////////               Feature, Filter and Style                ////////
+    ////////                                                        ////////
+    ////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The {@link org.opengis.feature.FeatureFactory} instance to use.
+     *
+     * @see FactoryFinder#getFeatureFactory
+     *
+     * @category Feature
+     *
+     * @since 3.01
+     */
+    public static final ClassKey FEATURE_FACTORY = new ClassKey("org.opengis.feature.FeatureFactory");
 
     /**
      * The {@link org.opengis.filter.FilterFactory} instance to use.
      *
      * @see FactoryFinder#getFilterFactory
+     *
+     * @category Feature
      *
      * @since 3.00
      */
@@ -485,6 +561,8 @@ public class Hints extends RenderingHints {
      * The {@link org.opengis.style.StyleFactory} instance to use.
      *
      * @see FactoryFinder#getStyleFactory
+     *
+     * @category Feature
      *
      * @since 3.00
      */

@@ -28,6 +28,7 @@ import java.io.Writer;
 import org.opengis.util.NameFactory;
 import org.opengis.style.StyleFactory;
 import org.opengis.filter.FilterFactory;
+import org.opengis.feature.FeatureFactory;
 import org.opengis.referencing.Factory;
 import org.opengis.referencing.cs.CSFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
@@ -39,11 +40,17 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.metadata.citation.CitationFactory;
+import org.opengis.geometry.PositionFactory;
+import org.opengis.geometry.primitive.PrimitiveFactory;
+import org.opengis.geometry.coordinate.GeometryFactory;
+import org.opengis.geometry.complex.ComplexFactory;
+import org.opengis.geometry.aggregate.AggregateFactory;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.LazySet;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -51,13 +58,31 @@ import org.geotoolkit.internal.LazySet;
  * implementations. This class provide access to the following services:
  * <p>
  * <ul>
- *   <li>{@link CitationFactory} (metadata)</li>
- *   <li>{@link CoordinateOperationFactory} (referencing)</li>
- *   <li>{@link CRSFactory} (referencing)</li>
- *   <li>{@link CSFactory} (referencing)</li>
- *   <li>{@link DatumFactory} (referencing)</li>
- *   <li>{@link MathTransformFactory} (referencing)</li>
- *   <li>{@link NameFactory} (utilities)</li>
+ *   <li><b>Utilities</b></li><ul>
+ *     <li>{@link NameFactory}</li>
+ *   </ul>
+ *   <li><b>Metadata</b></li><ul>
+ *     <li>{@link CitationFactory} (metadata)</li>
+ *   </ul>
+ *   <li><b>Referencing</b></li><ul>
+ *     <li>{@link CoordinateOperationFactory}</li>
+ *     <li>{@link CRSFactory}</li>
+ *     <li>{@link CSFactory}</li>
+ *     <li>{@link DatumFactory}</li>
+ *     <li>{@link MathTransformFactory}</li>
+ *   </ul>
+ *   <li><b>Geometry</b></li><ul>
+ *     <li>{@link PositionFactory}</li>
+ *     <li>{@link PrimitiveFactory}</li>
+ *     <li>{@link GeometryFactory}</li>
+ *     <li>{@link ComplexFactory}</li>
+ *     <li>{@link AggregateFactory}</li>
+ *   </ul>
+ *   <li><b>Feature</b></li><ul>
+ *     <li>{@link FeatureFactory}</li>
+ *     <li>{@link FilterFactory}</li>
+ *     <li>{@link StyleFactory}</li>
+ *   </ul>
  * </ul>
  * <p>
  * This class is thread-safe but may have a high contention. Applications (or computational units in
@@ -71,14 +96,15 @@ import org.geotoolkit.internal.LazySet;
  * it shall manage its own instance of {@link FactoryRegistry}. This {@code FactoryFinder} class
  * itself is just a convenience wrapper around a {@code FactoryRegistry} instance.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.1
  * @level basic
  * @module
  */
 @Static
+@ThreadSafe
 public class FactoryFinder {
     /**
      * The service registry for this manager.
@@ -128,6 +154,12 @@ public class FactoryFinder {
                     CRSFactory.class,
                     MathTransformFactory.class,
                     CoordinateOperationFactory.class,
+                    PositionFactory.class,
+                    PrimitiveFactory.class,
+                    GeometryFactory.class,
+                    ComplexFactory.class,
+                    AggregateFactory.class,
+                    FeatureFactory.class,
                     FilterFactory.class,
                     StyleFactory.class,
 
@@ -410,6 +442,186 @@ public class FactoryFinder {
     }
 
     /**
+     * Returns the first implementation of {@link PositionFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first position factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link PositionFactory} interface.
+     *
+     * @since 3.01
+     * @category Geometry
+     *
+     * @see Hints#POSITION_FACTORY
+     */
+    public static PositionFactory getPositionFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(PositionFactory.class, hints, Hints.POSITION_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link PositionFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available position factory implementations.
+     *
+     * @since 3.01
+     * @category Geometry
+     */
+    public static Set<PositionFactory> getPositionFactories(final Hints hints) {
+        return getFactories(PositionFactory.class, hints);
+    }
+
+    /**
+     * Returns the first implementation of {@link PrimitiveFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first primitive factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link PrimitiveFactory} interface.
+     *
+     * @since 3.01
+     * @category Geometry
+     *
+     * @see Hints#PRIMITIVE_FACTORY
+     */
+    public static PrimitiveFactory getPrimitiveFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(PrimitiveFactory.class, hints, Hints.PRIMITIVE_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link PrimitiveFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available primitive factory implementations.
+     *
+     * @since 3.01
+     * @category Geometry
+     */
+    public static Set<PrimitiveFactory> getPrimitiveFactories(final Hints hints) {
+        return getFactories(PrimitiveFactory.class, hints);
+    }
+
+    /**
+     * Returns the first implementation of {@link GeometryFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first geometry factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link GeometryFactory} interface.
+     *
+     * @since 3.01
+     * @category Geometry
+     *
+     * @see Hints#GEOMETRY_FACTORY
+     */
+    public static GeometryFactory getGeometryFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(GeometryFactory.class, hints, Hints.GEOMETRY_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link GeometryFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available geometry factory implementations.
+     *
+     * @since 3.01
+     * @category Geometry
+     */
+    public static Set<GeometryFactory> getGeometryFactories(final Hints hints) {
+        return getFactories(GeometryFactory.class, hints);
+    }
+
+    /**
+     * Returns the first implementation of {@link ComplexFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first complex factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link ComplexFactory} interface.
+     *
+     * @since 3.01
+     * @category Geometry
+     *
+     * @see Hints#COMPLEX_FACTORY
+     */
+    public static ComplexFactory getComplexFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(ComplexFactory.class, hints, Hints.COMPLEX_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link ComplexFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available complex factory implementations.
+     *
+     * @since 3.01
+     * @category Geometry
+     */
+    public static Set<ComplexFactory> getComplexFactories(final Hints hints) {
+        return getFactories(ComplexFactory.class, hints);
+    }
+
+    /**
+     * Returns the first implementation of {@link AggregateFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first aggregate factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link ComplexFactory} interface.
+     *
+     * @since 3.01
+     * @category Geometry
+     *
+     * @see Hints#AGGREGATE_FACTORY
+     */
+    public static AggregateFactory getAggregateFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(AggregateFactory.class, hints, Hints.AGGREGATE_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link AggregateFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available complex factory implementations.
+     *
+     * @since 3.01
+     * @category Geometry
+     */
+    public static Set<AggregateFactory> getAggregateFactories(final Hints hints) {
+        return getFactories(AggregateFactory.class, hints);
+    }
+
+    /**
+     * Returns the first implementation of {@link FeatureFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first feature factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link FeatureFactory} interface.
+     *
+     * @since 3.01
+     * @category Feature
+     *
+     * @see Hints#FEATURE_FACTORY
+     */
+    public static FeatureFactory getFeatureFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(FeatureFactory.class, hints, Hints.FEATURE_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link FeatureFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available feature factory implementations.
+     *
+     * @since 3.01
+     * @category Feature
+     */
+    public static Set<FeatureFactory> getFeatureFactories(final Hints hints) {
+        return getFactories(FeatureFactory.class, hints);
+    }
+
+    /**
      * Returns the first implementation of {@link FilterFactory} matching the specified hints.
      *
      * @param  hints An optional map of hints, or {@code null} for the default ones.
@@ -418,6 +630,7 @@ public class FactoryFinder {
      *         {@link FilterFactory} interface.
      *
      * @since 3.00
+     * @category Feature
      *
      * @see Hints#FILTER_FACTORY
      */
@@ -432,6 +645,7 @@ public class FactoryFinder {
      * @return Set of available filter factory implementations.
      *
      * @since 3.00
+     * @category Feature
      */
     public static Set<FilterFactory> getFilterFactories(final Hints hints) {
         return getFactories(FilterFactory.class, hints);
@@ -446,6 +660,7 @@ public class FactoryFinder {
      *         {@link StyleFactory} interface.
      *
      * @since 3.00
+     * @category Feature
      *
      * @see Hints#STYLE_FACTORY
      */
@@ -460,6 +675,7 @@ public class FactoryFinder {
      * @return Set of available style factory implementations.
      *
      * @since 3.00
+     * @category Feature
      */
     public static Set<StyleFactory> getStyleFactories(final Hints hints) {
         return getFactories(StyleFactory.class, hints);

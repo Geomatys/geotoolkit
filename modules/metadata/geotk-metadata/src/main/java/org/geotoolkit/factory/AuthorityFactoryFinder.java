@@ -31,6 +31,7 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -40,10 +41,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * factory} implementations. This class provide access to the following services:
  * <p>
  * <ul>
- *   <li>{@link CoordinateOperationAuthorityFactory} (referencing)</li>
- *   <li>{@link CRSAuthorityFactory} (referencing)</li>
- *   <li>{@link CSAuthorityFactory} (referencing)</li>
- *   <li>{@link DatumAuthorityFactory} (referencing)</li>
+ *   <li><b>Referencing</b></li><ul>
+ *     <li>{@link CoordinateOperationAuthorityFactory}</li>
+ *     <li>{@link CRSAuthorityFactory}</li>
+ *     <li>{@link CSAuthorityFactory}</li>
+ *     <li>{@link DatumAuthorityFactory}</li>
+ *   </ul>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
@@ -54,6 +57,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @module
  */
 @Static
+@ThreadSafe
 public final class AuthorityFactoryFinder extends FactoryFinder {
     /**
      * The authority names. Will be created only when first needed.
