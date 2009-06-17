@@ -36,6 +36,14 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
     @XmlElement(name = "MultiLingualCapabilities")
     private InspireCapabilitiesType multiLingualCapabilities;
 
+    public MultiLingualCapabilities() {
+
+    }
+
+    public MultiLingualCapabilities(InspireCapabilitiesType multiLingualCapabilities) {
+        this.multiLingualCapabilities = multiLingualCapabilities;
+    }
+
     /**
      * @return the multiLingualCapabilities
      */
