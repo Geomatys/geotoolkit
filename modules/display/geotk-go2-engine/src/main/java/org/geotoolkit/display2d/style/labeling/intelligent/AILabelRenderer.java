@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,9 +18,9 @@ package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -81,14 +80,26 @@ public class AILabelRenderer implements LabelRenderer{
         List<Candidate> candidates = new ArrayList<Candidate>();
 
         //generate all the candidates
+        //priority is in the order of the layers provided.
+        int priority = layers.size();
         for(final LabelLayer layer : layers){
             for(LabelDescriptor label : layer.labels()){
+                Candidate c = null;
+
                 if(label instanceof PointLabelDescriptor){
-                    candidates.add(POINT_RENDERER.generateCandidat((PointLabelDescriptor) label));
+                    c = POINT_RENDERER.generateCandidat((PointLabelDescriptor) label);
                 }else if(label instanceof LinearLabelDescriptor){
-                    candidates.add(LINEAR_RENDERER.generateCandidat((LinearLabelDescriptor) label));
+                    c = LINEAR_RENDERER.generateCandidat((LinearLabelDescriptor) label);
+                }else{
+                    c = null;
+                }
+
+                if(c != null){
+                    c.setPriority(priority);
+                    candidates.add(c);
                 }
             }
+            priority--;
         }
 
         //displace or remove the candidates
@@ -105,36 +116,53 @@ public class AILabelRenderer implements LabelRenderer{
         
     }
 
+    private static List<Candidate> SortByXY(List<Candidate> candidates){
+
+        Collections.sort(candidates, new Comparator<Candidate>() {
+            @Override
+            public int compare(Candidate c1, Candidate c2) {
+                int diff = c2.getPriority() - c1.getPriority();
+
+                if(diff == 0){
+                    if(c1 instanceof LinearCandidate){
+                        return -1;
+                    }else if(c2 instanceof LinearCandidate){
+                        return 1;
+                    }else{
+                        PointCandidate pc1 = (PointCandidate) c1;
+                        PointCandidate pc2 = (PointCandidate) c2;
+
+                        return (int) ((pc2.x + pc2.y) - (pc1.x + pc1.y) +0.5);
+                    }
+                }else{
+                    return diff;
+                }
+            }
+        });
+
+        return candidates;
+    }
+
     private static List<Candidate> optimize(List<Candidate> candidates){
         //TODO : make an algorithm to displace the labels in the most efficient way
 
-        final List<Candidate> cleaned = new ArrayList<Candidate>();
+        candidates = SortByXY(candidates);
 
+        final List<Candidate> cleaned = new ArrayList<Candidate>();
 
         loop:
         for(int i= candidates.size()-1; i>=0; i--){
             Candidate candidate = candidates.get(i);
 
-            if(candidate instanceof PointCandidate){
-                //check if the candidate intersect another candidate
-                Area shape = ((PointCandidate)candidate).getBounds();
+            for(Candidate other : cleaned){
+                if(other == candidate) continue;
 
-                for(Candidate other : cleaned){
-                    if(other == candidate) continue;
-                    if(other instanceof LinearCandidate) continue;
-
-                    Area otherShape = ((PointCandidate)other).getBounds();
-                    if(otherShape.intersects(shape.getBounds2D())){
-                        continue loop;
-                    }
-
+                if(AIUtilities.intersects(candidate,other)){
+                    continue loop;
                 }
-
-                cleaned.add(candidate);
-            }else{
-                cleaned.add(candidate);
             }
 
+            cleaned.add(candidate);
         }
 
         return cleaned;

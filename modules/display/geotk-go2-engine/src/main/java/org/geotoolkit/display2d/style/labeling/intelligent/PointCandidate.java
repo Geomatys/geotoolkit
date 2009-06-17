@@ -17,7 +17,6 @@
 
 package org.geotoolkit.display2d.style.labeling.intelligent;
 
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 
@@ -25,9 +24,7 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PointCandidate implements Candidate {
-
-    private final PointLabelDescriptor desc;
+public class PointCandidate extends Candidate<PointLabelDescriptor> {
 
     public final int width;
     public final int upper;
@@ -40,17 +37,12 @@ public class PointCandidate implements Candidate {
 
 
     public PointCandidate(PointLabelDescriptor desc, int width, int upper, int lower, float x, float y) {
-        this.desc = desc;
+        super(desc);
         this.width = width;
         this.upper = upper;
         this.lower = lower;
         this.x = x;
         this.y = y;
-    }
-
-    @Override
-    public PointLabelDescriptor getDescriptor() {
-        return desc;
     }
 
     public float getCorrectedX(){
@@ -61,20 +53,12 @@ public class PointCandidate implements Candidate {
         return y + correctionY;
     }
 
-    public Area getBounds(){
-        Rectangle2D rect = new Rectangle2D.Double(
+    public Rectangle2D getBounds(){
+        return new Rectangle2D.Double(
                 (int)getCorrectedX(),
                 (int)getCorrectedY()-upper,
                 width,
                 upper+lower);
-        return new Area(rect);
-    }
-
-    public boolean intersects(PointCandidate other){
-
-        
-
-        return true;
     }
 
 }

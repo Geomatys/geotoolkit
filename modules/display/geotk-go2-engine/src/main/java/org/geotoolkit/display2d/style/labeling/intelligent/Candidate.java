@@ -23,8 +23,25 @@ import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Candidate {
+public abstract class Candidate<T extends LabelDescriptor> {
 
-    LabelDescriptor getDescriptor();
+    private final T desc;
+    private int priority = 0;
 
+    public Candidate(T desc) {
+        this.desc = desc;
+    }
+
+    public T getDescriptor(){
+        return desc;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    
 }

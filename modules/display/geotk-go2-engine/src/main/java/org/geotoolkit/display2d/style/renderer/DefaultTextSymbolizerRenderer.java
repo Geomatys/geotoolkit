@@ -94,7 +94,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
      */
     @Override
     public void portray(ProjectedFeature projectedFeature, CachedTextSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
-        
+
         final Feature feature = projectedFeature.getFeature();
 
         //test if the symbol is visible on this feature
@@ -222,8 +222,8 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                 projectedGeometry);
             layer.labels().add(descriptor);
         }else if(geom instanceof Curve
-                || geom instanceof org.opengis.geometry.coordinate.Polygon){
-
+                || geom instanceof org.opengis.geometry.coordinate.Polygon
+                || geom instanceof org.opengis.geometry.coordinate.PolyhedralSurface){
 
             if(placement instanceof CachedPointPlacement){
                 final CachedPointPlacement pp = (CachedPointPlacement) placement;

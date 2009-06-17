@@ -18,26 +18,19 @@
 package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.Shape;
-import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LinearCandidate implements Candidate {
+public class LinearCandidate extends Candidate<LinearLabelDescriptor> {
 
-    private final LinearLabelDescriptor desc;
     private final Shape shape;
 
     public LinearCandidate(LinearLabelDescriptor desc, Shape shape) {
-        this.desc = desc;
+        super(desc);
         this.shape = shape;
-    }
-
-    @Override
-    public LinearLabelDescriptor getDescriptor() {
-        return desc;
     }
 
     public Shape getShape() {
