@@ -99,7 +99,7 @@
  * </table></td></tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module

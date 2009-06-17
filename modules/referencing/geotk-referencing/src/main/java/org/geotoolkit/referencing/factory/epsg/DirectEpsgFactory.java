@@ -977,7 +977,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 NameSpace cached = scopes.get(scope);
                 if (cached == null) {
                     cached = nameFactory.createNameSpace(
-                             nameFactory.createLocalName(null, scope), ":", ":");
+                             nameFactory.createLocalName(null, scope),
+                             Collections.singletonMap("separator", ":"));
                     scopes.put(scope, cached);
                 }
                 generic = nameFactory.createLocalName(cached, local);

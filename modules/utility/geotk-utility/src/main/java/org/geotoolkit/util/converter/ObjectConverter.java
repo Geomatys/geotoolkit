@@ -36,7 +36,7 @@ package org.geotoolkit.util.converter;
  *   <li>{@code ObjectConverter<Timestamp,Number>}</li>
  * </ul>
  * <p>
- * The {@link #getSourceClass(} and {@link #getTargetClass()} methods are defined in a
+ * The {@link #getSourceClass()} and {@link #getTargetClass()} methods are defined in a
  * way consistent with the above-cited casts. However a side-effect is that the converter
  * interface can not safely provides a {@code T inverseConvert(S)} method. An other converter
  * instance needs to be obtained for inverse conversions.

@@ -355,7 +355,8 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              */
             final NameFactory factory = getNameFactory();
             final NameSpace scope = factory.createNameSpace(factory.createLocalName(null,
-                    new ImagingParameterDescription(op, "Vendor", null)), ".", ".");
+                    new ImagingParameterDescription(op, "Vendor", null)),
+                    Collections.singletonMap("separator", "."));
             final GenericName alias = factory.createLocalName(scope,
                     new ImagingParameterDescription(op, "LocalName", "Vendor"));
             properties.put(ALIAS_KEY,   alias);

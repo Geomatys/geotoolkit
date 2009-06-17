@@ -45,7 +45,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * A factory for {@link AbstractName} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @see org.geotoolkit.factory.FactoryFinder#getNameFactory
  *
@@ -74,8 +74,73 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     }
 
     /**
+     * Returns the value for the given key in the given properties map, or {@code null} if none.
+     */
+    private static String getString(final Map<String,?> properties, final String key) {
+        if (properties != null) {
+            final Object value = properties.get(key);
+            if (value != null) {
+                return value.toString();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Creates a namespace having the given name. Despite the "create" name, this method tries
      * to returns an existing instance when possible.
+     *
+     * @param name
+     *          The name of the namespace to be returned. This argument can be created using
+     *          <code>{@linkplain #createGenericName createGenericName}(null, parsedNames)</code>.
+     * @param properties
+     *          An optional map of properties to be assigned to the namespace. Recognized entries
+     *          are:
+     * <table border='1'>
+     *   <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+     *     <th nowrap>Property name</th>
+     *     <th nowrap>Purpose</th>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code "separator"}&nbsp;</td>
+     *     <td nowrap>&nbsp;The separator to insert between {@linkplain GenericName#getParsedNames
+     *     parsed names} in that namespace. For HTTP namespace, it is {@code "."}. For URN namespace,
+     *     it is typically {@code ":"}.</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code "separator.head"}&nbsp;</td>
+     *     <td nowrap>&nbsp;The separator to insert between the namespace and the
+     *     {@linkplain GenericName#head head}. For HTTP namespace, it is {@code "://"}.
+     *     For URN namespace, it is typically {@code ":"}. If this entry is omitted, then
+     *     the default is the same value than the {@code "separator"} entry.</td>
+     *   </tr>
+     * </table>
+     *
+     * @return A namespace having the given name and separator.
+     *
+     * @since 3.01
+     */
+    @Override
+    public NameSpace createNameSpace(final GenericName name, final Map<String,?> properties) {
+        ensureNonNull("name", name);
+        String separator = getString(properties, "separator");
+        if (separator == null) {
+            separator = DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
+        }
+        String headSeparator = getString(properties, "separator.head");
+        if (headSeparator == null) {
+            headSeparator = separator;
+        }
+        final boolean isEmpty = (separator.length() == 0);
+        if (isEmpty || headSeparator.length() == 0) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$1, isEmpty ? "separator" : "separator.head"));
+        }
+        return DefaultNameSpace.forName(name, headSeparator, separator);
+    }
+
+    /**
+     * @deprecated Replaced by {@link #createNameSpace(GenericName, Map)}.
      *
      * @param name
      *          The name of the namespace to be returned. This argument can be created using
@@ -93,18 +158,16 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @since 3.00
      */
     @Override
+    @Deprecated
     public NameSpace createNameSpace(final GenericName name,
             final String headSeparator, final String separator)
     {
-        ensureNonNull("name",          name);
         ensureNonNull("separator",     separator);
         ensureNonNull("headSeparator", headSeparator);
-        final boolean isEmpty = (separator.length() == 0);
-        if (isEmpty || headSeparator.length() == 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$1, isEmpty ? "separator" : "headSeparator"));
-        }
-        return DefaultNameSpace.forName(name, headSeparator, separator);
+        final Map<String,String> properties = new HashMap<String,String>(4);
+        properties.put("separator", separator);
+        properties.put("separator.head", headSeparator);
+        return createNameSpace(name, properties);
     }
 
     /**
@@ -118,7 +181,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @since 3.00
      */
     public NameSpace createNameSpace(final GenericName name) {
-        return createNameSpace(name, DEFAULT_SEPARATOR_STRING, DEFAULT_SEPARATOR_STRING);
+        return createNameSpace(name, null);
     }
 
     /**
