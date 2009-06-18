@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d.style.labeling.intelligent;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,7 +117,26 @@ public class AILabelRenderer implements LabelRenderer{
         
     }
 
-    private static List<Candidate> SortByXY(List<Candidate> candidates){
+    private List<Candidate> clipOutofBounds(List<Candidate> candidates){
+        final Rectangle bounds = context.getCanvasDisplayBounds();
+        final List<Candidate> correctCandidates = new ArrayList<Candidate>();
+
+        for(Candidate candidate : candidates){
+            if(candidate instanceof PointCandidate){
+                PointCandidate pc = (PointCandidate) candidate;
+                if(bounds.contains(pc.getBounds())){
+                    correctCandidates.add(candidate);
+                }
+            }else{
+                correctCandidates.add(candidate);
+            }
+        }
+
+
+        return correctCandidates;
+    }
+
+    private List<Candidate> sortByXY(List<Candidate> candidates){
 
         Collections.sort(candidates, new Comparator<Candidate>() {
             @Override
@@ -143,10 +163,11 @@ public class AILabelRenderer implements LabelRenderer{
         return candidates;
     }
 
-    private static List<Candidate> optimize(List<Candidate> candidates){
+    private List<Candidate> optimize(List<Candidate> candidates){
         //TODO : make an algorithm to displace the labels in the most efficient way
 
-        candidates = SortByXY(candidates);
+        candidates = clipOutofBounds(candidates);
+        candidates = sortByXY(candidates);
 
         final List<Candidate> cleaned = new ArrayList<Candidate>();
 

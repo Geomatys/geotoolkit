@@ -95,14 +95,14 @@ public class AIPointLabelCandidateRenderer implements LabelCandidateRenderer<Poi
         context.switchToDisplayCRS();
 
         ////////////////////////////BBOX FOR TEST///////////////////////////////
-        g2.setStroke(new BasicStroke(1));
-        g2.setColor(Color.BLACK);
-        g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
-        g2.drawRect((int)pointCandidate.getCorrectedX(),
-                (int)pointCandidate.getCorrectedY()-pointCandidate.upper,
-                pointCandidate.width,
-                pointCandidate.upper+pointCandidate.lower);
-        g2.rotate(-rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+//        g2.setStroke(new BasicStroke(1));
+//        g2.setColor(Color.BLACK);
+//        g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+//        g2.drawRect((int)pointCandidate.getCorrectedX(),
+//                (int)pointCandidate.getCorrectedY()-pointCandidate.upper,
+//                pointCandidate.width,
+//                pointCandidate.upper+pointCandidate.lower);
+//        g2.rotate(-rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
         ////////////////////////////////////////////////////////////////////////
 
 

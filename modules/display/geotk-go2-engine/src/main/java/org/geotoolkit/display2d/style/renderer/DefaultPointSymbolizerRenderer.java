@@ -45,6 +45,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.Polygon;
+import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.referencing.FactoryException;
@@ -149,7 +150,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
                 g2.drawImage(img, x, y, null);
                 
             }else if( geom instanceof Curve || geom instanceof MultiPrimitive
-                    || geom instanceof Polygon ){
+                    || geom instanceof Polygon || geom instanceof PolyhedralSurface ){
 
                 final DirectPosition pt2d = geom.getCentroid();
 
