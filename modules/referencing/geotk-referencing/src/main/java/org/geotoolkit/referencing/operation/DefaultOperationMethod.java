@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Collections;
 
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.Operation;
+import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
@@ -52,9 +52,9 @@ import org.geotoolkit.io.wkt.Formatter;
  * use none. Each coordinate operation using the method assigns values to these parameters.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
- * @see DefaultOperation
+ * @see DefaultSingleOperation
  *
  * @since 2.0
  * @module
@@ -289,7 +289,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      *
      * @return The GeoAPI interface implemented by this operation.
      */
-    Class<? extends Operation> getOperationType() {
+    Class<? extends SingleOperation> getOperationType() {
         return Projection.class;
     }
 

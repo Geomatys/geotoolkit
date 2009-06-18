@@ -22,7 +22,7 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 
-import org.opengis.referencing.operation.Operation;
+import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.PassThroughOperation;
@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
  * coordinate operation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -52,7 +52,7 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
     /**
      * The operation to apply on the subset of a coordinate tuple.
      */
-    protected final Operation operation;
+    protected final SingleOperation operation;
 
     /**
      * Constructs a single operation from a set of properties. The properties given in argument
@@ -70,7 +70,7 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
     public DefaultPassThroughOperation(final Map<String,?>            properties,
                                        final CoordinateReferenceSystem sourceCRS,
                                        final CoordinateReferenceSystem targetCRS,
-                                       final Operation                 operation,
+                                       final SingleOperation           operation,
                                        final int           firstAffectedOrdinate,
                                        final int            numTrailingOrdinates)
     {
@@ -99,10 +99,10 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
     public DefaultPassThroughOperation(final Map<String,?>            properties,
                                        final CoordinateReferenceSystem sourceCRS,
                                        final CoordinateReferenceSystem targetCRS,
-                                       final Operation                 operation,
+                                       final SingleOperation           operation,
                                        final MathTransform             transform)
     {
-        super(properties, sourceCRS, targetCRS, transform);
+        super(properties, sourceCRS, targetCRS, transform, new DefaultOperationMethod(transform));
         this.operation = operation;
         ensureNonNull("operation", operation);
         ensureValidDimension(operation.getSourceCRS(), transform.getSourceDimensions());
@@ -124,7 +124,7 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
      * @return The operation.
      */
     @Override
-    public Operation getOperation() {
+    public SingleOperation getOperation() {
         return operation;
     }
 

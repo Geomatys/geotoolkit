@@ -32,10 +32,10 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.operation.Operation;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.referencing.operation.SingleOperation;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
@@ -56,7 +56,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * files, the factory will read all of them.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @level advanced
@@ -122,20 +122,20 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
 
     /**
      * Returns the operation type. It may be
-     * <code>{@linkplain org.opengis.referencing.operation.Operation}.class</code>,
+     * <code>{@linkplain org.opengis.referencing.operation.SingleOperation}.class</code>,
      * <code>{@linkplain org.opengis.referencing.operation.Conversion}.class</code>,
      * <code>{@linkplain org.opengis.referencing.operation.Projection}.class</code>,
      * <cite>etc</cite>.
      * <p>
-     * The default implementation returns {@code Operation.class}.
+     * The default implementation returns {@code SingleOperation.class}.
      * Subclass should overrides this methods and returns the appropriate
      * OpenGIS interface type (<strong>not</strong> the implementation type).
      *
      * @return The GeoAPI interface implemented by this operation.
      */
     @Override
-    public Class<? extends Operation> getOperationType() {
-        return Operation.class;
+    public Class<? extends SingleOperation> getOperationType() {
+        return SingleOperation.class;
     }
 
     /**
@@ -278,7 +278,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      */
     @Override
     public String formatWKT(final Formatter formatter) {
-        final Class<? extends Operation> type = getOperationType();
+        final Class<? extends SingleOperation> type = getOperationType();
         if (Projection.class.isAssignableFrom(type)) {
             return super.formatWKT(formatter);
         }

@@ -65,7 +65,7 @@ import org.geotoolkit.internal.referencing.Semaphores;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @module
@@ -491,7 +491,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject
         if (object instanceof      PlanarProjection) return      PlanarProjection.class;
         if (object instanceof            Projection) return            Projection.class;
         if (object instanceof            Conversion) return            Conversion.class;
-        if (object instanceof             Operation) return             Operation.class;
+        if (object instanceof       SingleOperation) return       SingleOperation.class;
         return CoordinateOperation.class;
     }
 
@@ -514,7 +514,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject
         if (super.equals(object, compareMetadata)) {
             final AbstractCoordinateOperation that = (AbstractCoordinateOperation) object;
             if (equals(this.sourceCRS, that.sourceCRS, compareMetadata)) {
-                // See comment in DefaultOperation.equals(...) about why we compare MathTransform.
+                // See comment in DefaultSingleOperation.equals(...) about why we compare MathTransform.
                 if (compareMetadata) {
                     if (!Utilities.equals(transform,                   that.transform)        ||
                         !Utilities.equals(domainOfValidity,            that.domainOfValidity) ||

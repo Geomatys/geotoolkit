@@ -312,7 +312,7 @@ final class ReferencingAction {
      */
     public void list(final String[] arguments) {
         final String list = arguments[0];
-        final Class<? extends Operation> type;
+        final Class<? extends SingleOperation> type;
         if (list.equalsIgnoreCase("authorities")) {
             listAuthorities();
             return;
@@ -320,7 +320,7 @@ final class ReferencingAction {
             listCodes();
             return;
         } else if (list.equalsIgnoreCase("operations")) {
-            type = Operation.class;
+            type = SingleOperation.class;
         } else if (list.equalsIgnoreCase("conversions")) {
             type = Conversion.class;
         } else if (list.equalsIgnoreCase("projections")) {

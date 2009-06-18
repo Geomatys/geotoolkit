@@ -23,7 +23,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.referencing.operation.Operation;
+import org.opengis.referencing.operation.SingleOperation;
 
 
 /**
@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.Operation;
  *        example it may be implemented by proxies during WKT formatting.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -56,7 +56,7 @@ public interface Parameterized {
 
     /**
      * Returns a copy of the parameter values for this math transform, or {@code null} if unknow.
-     * This method is similar to {@link Operation#getParameterValues}, except that typical
+     * This method is similar to {@link SingleOperation#getParameterValues}, except that typical
      * {@link MathTransform} implementations return parameters in standard units (usually
      * {@linkplain SI#METRE metres} or {@linkplain NonSI#DEGREE_ANGLE decimal degrees}).
      *
@@ -64,7 +64,7 @@ public interface Parameterized {
      *         Since this method returns a copy of the parameter values, any change to
      *         a value will have no effect on this math transform.
      *
-     * @see Operation#getParameterValues
+     * @see SingleOperation#getParameterValues
      */
     ParameterValueGroup getParameterValues();
 }

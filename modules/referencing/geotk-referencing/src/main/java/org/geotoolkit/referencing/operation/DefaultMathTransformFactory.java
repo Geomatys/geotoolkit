@@ -38,7 +38,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.NoSuchIdentifierException;
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.Operation;
+import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -94,7 +94,7 @@ import org.geotoolkit.util.XArrays;
  * and target coordinate systems.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @module
@@ -196,7 +196,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * must be known to the {@link #getDefaultParameters} method in this factory.
      * The set of available methods is implementation dependent.
      *
-     * @param  type <code>{@linkplain Operation}.class</code> for fetching all operation methods,
+     * @param  type <code>{@linkplain SingleOperation}.class</code> for fetching all operation methods,
      *         or <code>{@linkplain Projection}.class</code> for fetching only map projection
      *         methods.
      * @return All {@linkplain MathTransform math transform} methods available in this factory.
@@ -205,7 +205,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * @see #createParameterizedTransform
      */
     @Override
-    public Set<OperationMethod> getAvailableMethods(final Class<? extends Operation> type) {
+    public Set<OperationMethod> getAvailableMethods(final Class<? extends SingleOperation> type) {
         return new OperationMethodSet(getAvailableMethods(), type);
     }
 

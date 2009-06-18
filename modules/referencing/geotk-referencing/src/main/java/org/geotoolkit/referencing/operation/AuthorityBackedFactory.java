@@ -61,8 +61,8 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * authority factory doesn't know about the specified CRS, then the default (standalone)
  * process from the super-class is used as a fallback.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 2.2
  * @module
@@ -417,8 +417,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         assert !transform.equals(operation.getMathTransform()) : transform;
         final Class<? extends CoordinateOperation> type = AbstractCoordinateOperation.getType(operation);
         OperationMethod method = null;
-        if (operation instanceof Operation) {
-            method = ((Operation) operation).getMethod();
+        if (operation instanceof SingleOperation) {
+            method = ((SingleOperation) operation).getMethod();
             if (method != null) {
                 final int sourceDimensions = transform.getSourceDimensions();
                 final int targetDimensions = transform.getTargetDimensions();

@@ -68,7 +68,7 @@ import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLine
  * override those methods in order to extend the factory capability to some more CRS.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @module
@@ -1406,15 +1406,15 @@ search: for (int j=0; j<targets.size(); j++) {
                  * pass. Actually, the code below would give an acceptable result even if this check
                  * was not performed, except for creation of intermediate objects.
                  */
-                if (!(step instanceof Operation)) {
+                if (!(step instanceof SingleOperation)) {
                     final MathTransform stepMT = step.getMathTransform();
-                    step = DefaultOperation.create(AbstractIdentifiedObject.getProperties(step),
+                    step = DefaultSingleOperation.create(AbstractIdentifiedObject.getProperties(step),
                             step.getSourceCRS(), step.getTargetCRS(), stepMT,
                             new DefaultOperationMethod(stepMT), step.getClass());
                 }
                 mt = getMathTransformFactory().createPassThroughTransform(lower, mt, dimensions-upper);
                 step = new DefaultPassThroughOperation(properties, sourceStepCRS, targetStepCRS,
-                                                       (Operation) step, mt);
+                        (SingleOperation) step, mt);
             }
             operation     = (operation==null) ? step : concatenate(operation, step);
             sourceStepCRS = targetStepCRS;

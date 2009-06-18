@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Iterator;
 import java.util.AbstractSet;
 import java.util.NoSuchElementException;
-import org.opengis.referencing.operation.Operation;
+import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationMethod;
 
 
@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.OperationMethod;
  * by {@link javax.imageio.spi.ServiceRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -44,7 +44,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
     /**
      * The operation type we are looking for.
      */
-    private final Class<? extends Operation> type;
+    private final Class<? extends SingleOperation> type;
 
     /**
      * The size of this set, or -1 if not yet computed.
@@ -55,7 +55,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
      * Constructs a set wrapping the given array.
      */
     public OperationMethodSet(final MathTransformProvider[] providers,
-                              final Class<? extends Operation> type)
+                              final Class<? extends SingleOperation> type)
     {
         this.providers = providers;
         this.type = type;
@@ -105,7 +105,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
         /**
          * The operation type we are looking for.
          */
-        private final Class<? extends Operation> type;
+        private final Class<? extends SingleOperation> type;
 
         /**
          * Index of the next element to be returned.
@@ -115,7 +115,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
         /**
          * Creates a new iterator.
          */
-        Iter(final MathTransformProvider[] providers, final Class<? extends Operation> type) {
+        Iter(final MathTransformProvider[] providers, final Class<? extends SingleOperation> type) {
             this.providers = providers;
             this.type = type;
             skip();
@@ -126,7 +126,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
          */
         private void skip() {
             if (type != null) {
-                Class<? extends Operation> t;
+                Class<? extends SingleOperation> t;
                 while (cursor < providers.length) {
                     t = providers[cursor].getOperationType();
                     if (t == null || type.isAssignableFrom(t)) {

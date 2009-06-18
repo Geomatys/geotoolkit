@@ -61,7 +61,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  */
@@ -368,10 +368,10 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertTrue("Dummy type", factory.getAuthorityCodes(wrong).isEmpty());
 
         // Tests projections, which are handle in a special way.
-        final Set<String> operations      = factory.getAuthorityCodes(Operation     .class);
-        final Set<String> conversions     = factory.getAuthorityCodes(Conversion    .class);
-        final Set<String> projections     = factory.getAuthorityCodes(Projection    .class);
-        final Set<String> transformations = factory.getAuthorityCodes(Transformation.class);
+        final Set<String> operations      = factory.getAuthorityCodes(SingleOperation.class);
+        final Set<String> conversions     = factory.getAuthorityCodes(Conversion     .class);
+        final Set<String> projections     = factory.getAuthorityCodes(Projection     .class);
+        final Set<String> transformations = factory.getAuthorityCodes(Transformation .class);
 
         assertTrue (operations      instanceof AuthorityCodes);
         assertTrue (conversions     instanceof AuthorityCodes);

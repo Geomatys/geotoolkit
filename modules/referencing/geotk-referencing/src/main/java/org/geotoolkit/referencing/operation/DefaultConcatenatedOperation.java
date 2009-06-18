@@ -81,7 +81,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * @param operations The sequence of operations.
      */
     public DefaultConcatenatedOperation(final String name,
-                                        final CoordinateOperation[] operations)
+                                        final CoordinateOperation... operations)
     {
         this(Collections.singletonMap(NAME_KEY, name), operations);
     }
@@ -97,7 +97,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * @param operations The sequence of operations.
      */
     public DefaultConcatenatedOperation(final Map<String,?> properties,
-                                        final CoordinateOperation[] operations)
+                                        final CoordinateOperation... operations)
     {
         this(properties, new ArrayList<SingleOperation>(operations!=null ? operations.length : 4),
              operations);

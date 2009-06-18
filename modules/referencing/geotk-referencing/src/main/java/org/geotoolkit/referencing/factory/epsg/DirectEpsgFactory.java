@@ -70,7 +70,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.DefaultOperation;
+import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
@@ -109,7 +109,7 @@ import org.geotoolkit.util.Version;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @module
@@ -2620,7 +2620,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * At this stage, the parameters are ready for use. Creates the math transform
                      * and wraps it in the final operation (a Conversion or a Transformation).
                      */
-                    final Class<? extends Operation> expected;
+                    final Class<? extends SingleOperation> expected;
                     if (isTransformation) {
                         expected = Transformation.class;
                     } else if (isConversion) {
@@ -2632,7 +2632,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final MathTransform mt = factories.getMathTransformFactory().createBaseToDerived(
                             sourceCRS, parameters, targetCRS.getCoordinateSystem());
                     // TODO: use GeoAPI factory method once available.
-                    operation = DefaultOperation.create(properties, sourceCRS, targetCRS, mt, method, expected);
+                    operation = DefaultSingleOperation.create(properties, sourceCRS, targetCRS, mt, method, expected);
                 }
                 returnValue = ensureSingleton(operation, returnValue, code);
                 if (result == null) {

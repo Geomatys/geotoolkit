@@ -35,7 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Note that some conversions have no parameters.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @see DefaultTransformation
  *
@@ -92,7 +92,7 @@ public class DefaultConversion extends DefaultOperation implements Conversion {
 
     /**
      * Invoked by the super-class constructor for checking argument validity. At the opposite of
-     * {@link DefaultOperation}, a conversion accepts null {@code transform}, {@code sourceCRS}
+     * {@link DefaultSingleOperation}, a conversion accepts null {@code transform}, {@code sourceCRS}
      * and {@code targetCRS} providing that all of them are null together. If only one or two of
      * them is {@code null}, we will rely on the default validation which will throw an exception.
      */
@@ -123,7 +123,7 @@ public class DefaultConversion extends DefaultOperation implements Conversion {
      *                   <code>{@linkplain ConicProjection}.class</code>, or {@code null}.
      * @return The conversion of the given type if possible.
      *
-     * @see DefaultOperation#create
+     * @see DefaultSingleOperation#create
      *
      * @since 2.4
      */
@@ -136,7 +136,7 @@ public class DefaultConversion extends DefaultOperation implements Conversion {
         Class<? extends CoordinateOperation> type = getType(definition);
         final OperationMethod method = definition.getMethod();
         if (method instanceof MathTransformProvider) {
-            final Class<? extends Operation> candidate = ((MathTransformProvider) method).getOperationType();
+            final Class<? extends SingleOperation> candidate = ((MathTransformProvider) method).getOperationType();
             if (candidate != null) {
                 if (type.isAssignableFrom(candidate)) {
                     type = candidate;

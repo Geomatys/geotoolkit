@@ -470,8 +470,8 @@ public final class FormattingTest extends ProjectionTestCase {
         /*
          * In an older version, the WKT was not properly formatted because the axis swapping
          * inside the inner GEOCS element was causing confusion in ConcatenatedTransform and
-         * DefaultOperation. This bug could be reproduced by parsing a WKT, formatting it and
-         * reparsing it again.
+         * DefaultSingleOperation. This bug could be reproduced by parsing a WKT, formatting
+         * it and reparsing it again.
          *
          * Set the following condition to "true" if debugging is needed.
          */

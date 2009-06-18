@@ -46,7 +46,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.Boolean.FALSE;
-import static org.opengis.referencing.operation.Operation.*;
+import static org.opengis.referencing.operation.SingleOperation.*;
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
 import static org.geotoolkit.util.Utilities.hashMapCapacity;
 

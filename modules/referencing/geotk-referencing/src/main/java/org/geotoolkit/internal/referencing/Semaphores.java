@@ -42,8 +42,8 @@ public final class Semaphores {
     public static final int COMPARING = 1;
 
     /**
-     * A flag to indicate that {@link org.geotoolkit.referencing.operation.DefaultOperation} is
-     * querying {@link org.geotoolkit.referencing.operation.transform.ConcatenatedTransform} in
+     * A flag to indicate that {@link org.geotoolkit.referencing.operation.DefaultSingleOperation}
+     * is querying {@link org.geotoolkit.referencing.operation.transform.ConcatenatedTransform} in
      * the intend to format WKT (normally a {@code "PROJCS"} element).
      */
     public static final int PROJCS = 2;

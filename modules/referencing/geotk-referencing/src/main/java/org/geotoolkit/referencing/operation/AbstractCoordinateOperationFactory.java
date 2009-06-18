@@ -66,7 +66,7 @@ import static org.geotoolkit.resources.Vocabulary.formatInternational;
  * more "intelligent" job is left to subclasses.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @level advanced
@@ -314,7 +314,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         final MathTransformFactory mtFactory = getMathTransformFactory();
         final MathTransform transform = mtFactory.createAffineTransform(matrix);
         final Map<String,?> properties = getProperties(name);
-        final Class<? extends Operation> type =
+        final Class<? extends SingleOperation> type =
                 properties.containsKey(COORDINATE_OPERATION_ACCURACY_KEY) ?
                         Transformation.class : Conversion.class;
         return createFromMathTransform(properties, sourceCRS, targetCRS, transform,
@@ -345,7 +345,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         final MathTransform transform = mtFactory.createParameterizedTransform(parameters);
         final OperationMethod  method = mtFactory.getLastMethodUsed();
         return createFromMathTransform(properties, sourceCRS, targetCRS, transform,
-                                       method, Operation.class);
+                                       method, SingleOperation.class);
     }
 
     /**
@@ -364,8 +364,10 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
             final CoordinateReferenceSystem targetCRS,
             final MathTransform             transform) throws FactoryException
     {
-        return createFromMathTransform(singletonMap(NAME_KEY, name),
-                sourceCRS, targetCRS, transform, null, CoordinateOperation.class);
+        final Map<String,?> properties = singletonMap(NAME_KEY, name);
+        return createFromMathTransform(properties, sourceCRS, targetCRS, transform,
+                new DefaultOperationMethod(properties, sourceCRS.getCoordinateSystem().getDimension(),
+                targetCRS.getCoordinateSystem().getDimension(), null), CoordinateOperation.class);
     }
 
     /**
@@ -398,8 +400,8 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
                 Utilities.equals(operation.getTargetCRS(),     targetCRS) &&
                 Utilities.equals(operation.getMathTransform(), transform))
             {
-                if (operation instanceof Operation) {
-                    if (Utilities.equals(((Operation) operation).getMethod(), method)) {
+                if (operation instanceof SingleOperation) {
+                    if (Utilities.equals(((SingleOperation) operation).getMethod(), method)) {
                         return operation;
                     }
                 } else {
@@ -407,7 +409,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
                 }
             }
         }
-        operation = DefaultOperation.create(properties, sourceCRS, targetCRS, transform, method, type);
+        operation = DefaultSingleOperation.create(properties, sourceCRS, targetCRS, transform, method, type);
         operation = pool.unique(operation);
         return operation;
     }
@@ -488,7 +490,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         CoordinateOperation step = null;
         if (step1.getName() == AXIS_CHANGES && mt1.getSourceDimensions() == mt1.getTargetDimensions()) step = step2;
         if (step2.getName() == AXIS_CHANGES && mt2.getSourceDimensions() == mt2.getTargetDimensions()) step = step1;
-        if (step instanceof Operation) {
+        if (step instanceof SingleOperation) {
             /*
              * Applies only on operation in order to avoid merging with PassThroughOperation.
              * Also applies only if the transform to hide has identical source and target
@@ -497,7 +499,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
             final MathTransformFactory mtFactory = getMathTransformFactory();
             return createFromMathTransform(AbstractIdentifiedObject.getProperties(step),
                    sourceCRS, targetCRS, mtFactory.createConcatenatedTransform(mt1, mt2),
-                   ((Operation) step).getMethod(), CoordinateOperation.class);
+                   ((SingleOperation) step).getMethod(), CoordinateOperation.class);
         }
         return createConcatenatedOperation(getTemporaryName(sourceCRS, targetCRS),
                 new CoordinateOperation[] {step1, step2});
@@ -574,8 +576,8 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         }
         final MathTransform transform = operation.getMathTransform().inverse();
         final Class<? extends CoordinateOperation> type = AbstractCoordinateOperation.getType(operation);
-        final OperationMethod method = (operation instanceof Operation) ?
-                                       ((Operation) operation).getMethod() : null;
+        final OperationMethod method = (operation instanceof SingleOperation) ?
+                                       ((SingleOperation) operation).getMethod() : null;
         return createFromMathTransform(properties, targetCRS, sourceCRS, transform, method, type);
     }
 

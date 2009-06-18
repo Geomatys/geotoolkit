@@ -33,10 +33,10 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.geotoolkit.referencing.operation.DefaultOperation;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefaultProjection;  // For javadoc
 import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.Semaphores;
@@ -220,7 +220,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
         checkDimensions(base, baseToDerived, derivedCS);
         final OperationMethod method = new DefaultOperationMethod(baseToDerived);
         DefaultOperationMethod.checkDimensions(method, baseToDerived);
-        this.conversionFromBase = (Conversion) DefaultOperation.create(
+        this.conversionFromBase = (Conversion) DefaultSingleOperation.create(
             /* properties */ new UnprefixedMap(properties, "conversion."),
             /* sourceCRS  */ base,
             /* targetCRS  */ this,

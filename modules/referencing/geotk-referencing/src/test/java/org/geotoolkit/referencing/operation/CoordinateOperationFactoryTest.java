@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.operation.Operation;
+import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.Transformation;
@@ -67,7 +67,7 @@ import static org.junit.Assert.*;
  * execution of other tests.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  */
@@ -169,7 +169,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         assertEquals(targetCRS, operation.getTargetCRS());
         assertTrue  (operation instanceof Projection);
 
-        final ParameterValueGroup param = ((Operation) operation).getParameterValues();
+        final ParameterValueGroup param = ((SingleOperation) operation).getParameterValues();
         assertEquals("semi_major",     6370997.0, param.parameter("semi_major"        ).doubleValue(), 1E-5);
         assertEquals("semi_minor",     6370997.0, param.parameter("semi_minor"        ).doubleValue(), 1E-5);
         assertEquals("latitude_of_origin",  50.0, param.parameter("latitude_of_origin").doubleValue(), 1E-8);
