@@ -161,7 +161,7 @@ public final class Transform3DTest {
                 name("WGS 84 / UTM Zone 12/ 2D"), geographic_2d_crs,
                 new DefiningConversion("Transverse_Mercator", parameters), utm_cartesian_2d_cs);
         final CompoundCRS compound_3d = crsFactory.createCompoundCRS(
-                name("3D Compound WGS 84 / UTM Zone 12"), new CoordinateReferenceSystem[] { proj_2d, height_crs });
+                name("3D Compound WGS 84 / UTM Zone 12"), proj_2d, height_crs);
         final double[] out1 = checkTransformation(opFactory.createOperation(compound_3d, output_crs));
 
         // ----------------------------------------------------------

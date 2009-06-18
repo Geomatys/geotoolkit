@@ -58,7 +58,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
  * in the {@link ObjectFactory} interface.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @level advanced
@@ -750,13 +750,42 @@ public class ReferencingObjectFactory extends ReferencingFactory
 
     /**
      * Creates a compound coordinate reference system from an ordered
+     * list of {@code SingleCRS} objects.
+     *
+     * @param  properties Name and other properties to give to the new object.
+     * @param  components ordered array of {@code SingleCRS} components.
+     * @throws FactoryException if the object creation failed.
+     *
+     * @since 3.01
+     */
+    @Override
+    public CompoundCRS createCompoundCRS(final Map<String,?> properties,
+            final SingleCRS... components) throws FactoryException
+    {
+        CompoundCRS crs;
+        try {
+            crs = new DefaultCompoundCRS(properties, components);
+        } catch (IllegalArgumentException exception) {
+            throw new FactoryException(exception);
+        }
+        crs = pool.unique(crs);
+        return crs;
+    }
+
+    /**
+     * Creates a compound coordinate reference system from an ordered
      * list of {@code CoordinateReferenceSystem} objects.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  elements ordered array of {@code CoordinateReferenceSystem} objects.
      * @throws FactoryException if the object creation failed.
+     *
+     * @deprecated According ISO, the components must be restricted to {@link SingleCRS} instances.
+     *  Geotoolkit relax this restriction by allowing nested {@code CompoundCRS}, but since this is
+     *  now specific to Geotoolkit user can use directly the {@link DefaultCompoundCRS} constructor.
      */
     @Override
+    @Deprecated
     public CompoundCRS createCompoundCRS(final Map<String,?> properties,
             final CoordinateReferenceSystem[] elements) throws FactoryException
     {

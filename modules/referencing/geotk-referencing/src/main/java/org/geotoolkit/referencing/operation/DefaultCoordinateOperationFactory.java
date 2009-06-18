@@ -1311,17 +1311,17 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * need reordering (for matching the order of target CRS) if any ordinates reordering and
          * source ordinates drops are required.
          */
-        final CoordinateReferenceSystem[] ordered = new CoordinateReferenceSystem[targets.size()];
-        final CoordinateOperation[]       steps   = new CoordinateOperation      [targets.size()];
-        final boolean[]                   done    = new boolean                  [sources.size()];
-        final int[]                       indices = new int[getDimension(sourceCRS)];
+        final SingleCRS[]           ordered = new SingleCRS          [targets.size()];
+        final CoordinateOperation[] steps   = new CoordinateOperation[targets.size()];
+        final boolean[]             done    = new boolean            [sources.size()];
+        final int[]                 indices = new int[getDimension(sourceCRS)];
         int count=0, dimensions=0;
 search: for (int j=0; j<targets.size(); j++) {
             int lower, upper=0;
             final CoordinateReferenceSystem target = targets.get(j);
             OperationNotFoundException cause = null;
             for (int i=0; i<sources.size(); i++) {
-                final CoordinateReferenceSystem source = sources.get(i);
+                final SingleCRS source = sources.get(i);
                 lower  = upper;
                 upper += getDimension(source);
                 if (done[i]) continue;
@@ -1383,8 +1383,8 @@ search: for (int j=0; j<targets.size(); j++) {
         for (int i=0; i<targets.size(); i++) {
             CoordinateOperation step = steps[i];
             final Map<String,?> properties = AbstractIdentifiedObject.getProperties(step);
-            final CoordinateReferenceSystem source = ordered[i];
-            final CoordinateReferenceSystem target = targets.get(i);
+            final SingleCRS source = ordered[i];
+            final SingleCRS target = targets.get(i);
             final CoordinateReferenceSystem targetStepCRS;
             ordered[i] = target; // Used for the construction of targetStepCRS.
             MathTransform mt = step.getMathTransform();
@@ -1396,7 +1396,7 @@ search: for (int j=0; j<targets.size(); j++) {
                 targetStepCRS = ordered[0];
             } else {
                 targetStepCRS = factories.getCRSFactory().createCompoundCRS(
-                                    getTemporaryName(target), ordered);
+                        getTemporaryName(target), ordered);
             }
             lower  = upper;
             upper += getDimension(source);
