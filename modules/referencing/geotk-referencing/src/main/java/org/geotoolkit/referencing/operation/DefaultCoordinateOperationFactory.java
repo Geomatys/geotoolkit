@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Collections;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
@@ -41,7 +42,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
@@ -199,16 +199,20 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * inverse projection, before they get simplified by DefaultConcatenatedOperation, etc.).
          */
         if (sourceCRS instanceof CompoundCRS) {
-            final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
-            final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
-            if (containsIgnoreMetadata(sources, targets)) {
-                final CompoundCRS source = (CompoundCRS) sourceCRS;
-                if (targetCRS instanceof CompoundCRS) {
-                    final CompoundCRS target = (CompoundCRS) targetCRS;
+            final CompoundCRS source = (CompoundCRS) sourceCRS;
+            final List<SingleCRS> sources = source.getComponents();
+            List<SingleCRS> targets;
+            if (targetCRS instanceof CompoundCRS) {
+                final CompoundCRS target = (CompoundCRS) targetCRS;
+                targets = target.getComponents();
+                if (containsIgnoreMetadata(sources, targets)) {
                     return createOperationStep(source, target);
                 }
-                if (targetCRS instanceof SingleCRS) {
-                    final SingleCRS target = (SingleCRS) targetCRS;
+            }
+            if (targetCRS instanceof SingleCRS) {
+                final SingleCRS target = (SingleCRS) targetCRS;
+                targets = Collections.singletonList(target);
+                if (containsIgnoreMetadata(sources, targets)) {
                     return createOperationStep(source, target);
                 }
             }
@@ -1176,7 +1180,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final SingleCRS   targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
+        final List<SingleCRS> sources = sourceCRS.getComponents();
         if (sources.size() == 1) {
             return createOperation(sources.get(0), targetCRS);
         }
@@ -1214,7 +1218,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final CompoundCRS targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
+        final List<SingleCRS> targets = targetCRS.getComponents();
         if (targets.size() == 1) {
             return createOperation(sourceCRS, targets.get(0));
         }
@@ -1243,8 +1247,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final CompoundCRS targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
-        final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
+        final List<SingleCRS> sources = sourceCRS.getComponents();
+        final List<SingleCRS> targets = targetCRS.getComponents();
         if (targets.size() == 1) {
             return createOperation(sourceCRS, targets.get(0));
         }

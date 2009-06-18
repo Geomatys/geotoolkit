@@ -35,6 +35,7 @@ import org.opengis.geometry.DirectPosition;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
@@ -52,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * in any future release.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -132,11 +133,19 @@ public final class CRSUtilities {
 
     /**
      * Returns the components of the specified CRS, or {@code null} if none.
+     * This method preserves the nested CRS hierarchy if there is one.
+     *
+     * @param  crs The coordinate reference system for which to get the componennts.
+     * @return The components, or {@code null} if the given CRS is not a {@link CompoundCRS}.
      */
-    private static List<CoordinateReferenceSystem> getComponents(CoordinateReferenceSystem crs) {
+    private static List<? extends CoordinateReferenceSystem> getComponents(CoordinateReferenceSystem crs) {
         if (crs instanceof CompoundCRS) {
-            final List<CoordinateReferenceSystem> components;
-            components = ((CompoundCRS) crs).getCoordinateReferenceSystems();
+            final List<? extends CoordinateReferenceSystem> components;
+            if (crs instanceof DefaultCompoundCRS) {
+                components = ((DefaultCompoundCRS) crs).getCoordinateReferenceSystems();
+            } else {
+                components = ((CompoundCRS) crs).getComponents();
+            }
             if (!components.isEmpty()) {
                 return components;
             }
@@ -162,7 +171,7 @@ public final class CRSUtilities {
         if (type.isAssignableFrom(crs.getClass())) {
             return 0;
         }
-        final List<CoordinateReferenceSystem> c = getComponents(crs);
+        final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
         if (c != null) {
             int offset = 0;
             for (final CoordinateReferenceSystem ci : c) {
@@ -194,11 +203,11 @@ public final class CRSUtilities {
                     Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower<0 ? lower : upper));
         }
         while (lower!=0 || upper!=dimension) {
-            final List<CoordinateReferenceSystem> c = getComponents(crs);
+            final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
             if (c == null) {
                 return null;
             }
-            for (final Iterator<CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
+            for (final Iterator<? extends CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
                 crs = it.next();
                 dimension = crs.getCoordinateSystem().getDimension();
                 if (lower < dimension) {
@@ -229,7 +238,7 @@ public final class CRSUtilities {
     {
         if (crs != null) {
             while (crs.getCoordinateSystem().getDimension() != 2) {
-                final List<CoordinateReferenceSystem> c = getComponents(crs);
+                final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
                 if (c == null) {
                     throw new TransformException(Errors.format(
                             Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_$1, crs.getName()));
@@ -311,7 +320,7 @@ public final class CRSUtilities {
      */
     public static Ellipsoid getHeadGeoEllipsoid(CoordinateReferenceSystem crs) {
         while (!(crs instanceof GeographicCRS)) {
-            final List<CoordinateReferenceSystem> c = getComponents(crs);
+            final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
             if (c == null) {
                 return null;
             }

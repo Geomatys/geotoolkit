@@ -41,7 +41,7 @@
  *
  * @author Martin Desruisseaux (IRD)
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  * @module

@@ -90,7 +90,7 @@ import org.geotoolkit.util.NullArgumentException;
  *
  * @author Daniele Franzoni
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.0
  * @module
@@ -340,7 +340,7 @@ public class GeodeticCalculator {
                     DefaultEllipsoidalCS.GEODETIC_2D);
         }
         if (crs instanceof CompoundCRS) {
-            for (final CoordinateReferenceSystem component : ((CompoundCRS) crs).getCoordinateReferenceSystems()) {
+            for (final CoordinateReferenceSystem component : ((CompoundCRS) crs).getComponents()) {
                 final GeographicCRS candidate = getGeographicCRS(component);
                 if (candidate != null) {
                     return candidate;

@@ -77,7 +77,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -575,70 +575,76 @@ public final class CRS {
      */
     public static SingleCRS getHorizontalCRS(final CoordinateReferenceSystem crs) {
         if (crs instanceof SingleCRS) {
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            final int dimension = cs.getDimension();
-            if (dimension == 2) {
-                /*
-                 * For two-dimensional CRS, returns the CRS directly if it is either a
-                 * GeographicCRS, or any kind of derived CRS having a GeographicCRS as
-                 * its base.
-                 */
-                CoordinateReferenceSystem base = crs;
-                while (base instanceof GeneralDerivedCRS) {
-                    base = ((GeneralDerivedCRS) base).getBaseCRS();
-                }
-                // No need to test for ProjectedCRS, since the code above unwrap it.
-                if (base instanceof GeographicCRS) {
-                    return (SingleCRS) crs; // Really returns 'crs', not 'base'.
-                }
-            } else if (dimension >= 3 && crs instanceof GeographicCRS) {
-                /*
-                 * For three-dimensional Geographic CRS, extracts the axis having a direction
-                 * like "North", "North-East", "East", etc. If we find exactly two of them,
-                 * we can build a new GeographicCRS using them.
-                 */
-                CoordinateSystemAxis axis0 = null, axis1 = null;
-                int count = 0;
-                for (int i=0; i<dimension; i++) {
-                    final CoordinateSystemAxis axis = cs.getAxis(i);
-search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getDirection())) {
-                        switch (count++) {
-                            case 0: axis0 = axis; break;
-                            case 1: axis1 = axis; break;
-                            default: break search;
-                        }
-                    }
-                }
-                if (count == 2) {
-                    final GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
-                    Map<String,?> properties = CRSUtilities.changeDimensionInName(cs, "3D", "2D");
-                    EllipsoidalCS horizontalCS;
-                    try {
-                        horizontalCS = FactoryFinder.getCSFactory(null).
-                                createEllipsoidalCS(properties, axis0, axis1);
-                    } catch (FactoryException e) {
-                        Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
-                        horizontalCS = new DefaultEllipsoidalCS(properties, axis0, axis1);
-                    }
-                    properties = CRSUtilities.changeDimensionInName(crs, "3D", "2D");
-                    GeographicCRS horizontalCRS;
-                    try {
-                        horizontalCRS = getCRSFactory().createGeographicCRS(properties, datum, horizontalCS);
-                    } catch (FactoryException e) {
-                        Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
-                        horizontalCRS = new DefaultGeographicCRS(properties, datum, horizontalCS);
-                    }
-                    return horizontalCRS;
-                }
-            }
-        }
-        if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getCoordinateReferenceSystems()) {
+            return getHorizontalCRS((SingleCRS) crs);
+        } else if (crs instanceof CompoundCRS) {
+            for (final SingleCRS c : ((CompoundCRS) crs).getComponents()) {
                 final SingleCRS candidate = getHorizontalCRS(c);
                 if (candidate != null) {
                     return candidate;
                 }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first horizontal coordinate reference system found in the given CRS,
+     */
+    private static SingleCRS getHorizontalCRS(final SingleCRS crs) {
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        final int dimension = cs.getDimension();
+        if (dimension == 2) {
+            /*
+             * For two-dimensional CRS, returns the CRS directly if it is either a
+             * GeographicCRS, or any kind of derived CRS having a GeographicCRS as
+             * its base.
+             */
+            CoordinateReferenceSystem base = crs;
+            while (base instanceof GeneralDerivedCRS) {
+                base = ((GeneralDerivedCRS) base).getBaseCRS();
+            }
+            // No need to test for ProjectedCRS, since the code above unwrap it.
+            if (base instanceof GeographicCRS) {
+                return crs; // Really returns 'crs', not 'base'.
+            }
+        } else if (dimension >= 3 && crs instanceof GeographicCRS) {
+            /*
+             * For three-dimensional Geographic CRS, extracts the axis having a direction
+             * like "North", "North-East", "East", etc. If we find exactly two of them,
+             * we can build a new GeographicCRS using them.
+             */
+            CoordinateSystemAxis axis0 = null, axis1 = null;
+            int count = 0;
+            for (int i=0; i<dimension; i++) {
+                final CoordinateSystemAxis axis = cs.getAxis(i);
+search:         if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getDirection())) {
+                    switch (count++) {
+                        case 0: axis0 = axis; break;
+                        case 1: axis1 = axis; break;
+                        default: break search;
+                    }
+                }
+            }
+            if (count == 2) {
+                final GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
+                Map<String,?> properties = CRSUtilities.changeDimensionInName(cs, "3D", "2D");
+                EllipsoidalCS horizontalCS;
+                try {
+                    horizontalCS = FactoryFinder.getCSFactory(null).
+                            createEllipsoidalCS(properties, axis0, axis1);
+                } catch (FactoryException e) {
+                    Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
+                    horizontalCS = new DefaultEllipsoidalCS(properties, axis0, axis1);
+                }
+                properties = CRSUtilities.changeDimensionInName(crs, "3D", "2D");
+                GeographicCRS horizontalCRS;
+                try {
+                    horizontalCRS = getCRSFactory().createGeographicCRS(properties, datum, horizontalCS);
+                } catch (FactoryException e) {
+                    Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
+                    horizontalCRS = new DefaultGeographicCRS(properties, datum, horizontalCS);
+                }
+                return horizontalCRS;
             }
         }
         return null;
@@ -658,11 +664,9 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             return (ProjectedCRS) crs;
         }
         if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getCoordinateReferenceSystems()) {
-                final ProjectedCRS candidate = getProjectedCRS(c);
-                if (candidate != null) {
-                    return candidate;
+            for (final SingleCRS c : ((CompoundCRS) crs).getComponents()) {
+                if (c instanceof ProjectedCRS) {
+                    return (ProjectedCRS) c;
                 }
             }
         }
@@ -683,11 +687,9 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             return (VerticalCRS) crs;
         }
         if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getCoordinateReferenceSystems()) {
-                final VerticalCRS candidate = getVerticalCRS(c);
-                if (candidate != null) {
-                    return candidate;
+            for (final SingleCRS c : ((CompoundCRS) crs).getComponents()) {
+                if (c instanceof VerticalCRS) {
+                    return (VerticalCRS) c;
                 }
             }
         }
@@ -708,11 +710,9 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             return (TemporalCRS) crs;
         }
         if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getCoordinateReferenceSystems()) {
-                final TemporalCRS candidate = getTemporalCRS(c);
-                if (candidate != null) {
-                    return candidate;
+            for (final SingleCRS c : ((CompoundCRS) crs).getComponents()) {
+                if (c instanceof TemporalCRS) {
+                    return (TemporalCRS) c;
                 }
             }
         }
@@ -729,16 +729,15 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @since 2.4
      */
     public static Ellipsoid getEllipsoid(final CoordinateReferenceSystem crs) {
-        final Datum datum = CRSUtilities.getDatum(crs);
+        Datum datum = CRSUtilities.getDatum(crs);
         if (datum instanceof GeodeticDatum) {
             return ((GeodeticDatum) datum).getEllipsoid();
         }
         if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getCoordinateReferenceSystems()) {
-                final Ellipsoid candidate = getEllipsoid(c);
-                if (candidate != null) {
-                    return candidate;
+            for (final SingleCRS c : ((CompoundCRS) crs).getComponents()) {
+                datum = c.getDatum();
+                if (datum instanceof GeodeticDatum) {
+                    return ((GeodeticDatum) datum).getEllipsoid();
                 }
             }
         }

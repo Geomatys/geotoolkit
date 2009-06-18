@@ -30,8 +30,8 @@
  *     META-INF/services/org.geotoolkit.referencing.operation.MathTransformProvider
  * }
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.01
  *
  * @since 1.2
  * @module

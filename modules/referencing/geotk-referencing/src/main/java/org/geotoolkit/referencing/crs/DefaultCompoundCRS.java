@@ -51,7 +51,7 @@ import org.geotoolkit.resources.Errors;
  * {@link CoordinateReferenceSystem}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 1.2
  * @module
@@ -101,7 +101,9 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
             this.crs     = that.crs;
             this.singles = that.singles;
         } else {
-            this.crs = copy(crs.getCoordinateReferenceSystems());
+            final List<SingleCRS> components = crs.getComponents();
+            this.singles = UnmodifiableArrayList.wrap(components.toArray(new SingleCRS[components.size()]));
+            this.crs = singles;
         }
     }
 
@@ -153,9 +155,13 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * @param properties Set of properties. Should contains at least {@code "name"}.
      * @param crs The array of coordinate reference system making this compound CRS.
      */
-    public DefaultCompoundCRS(final Map<String,?> properties, CoordinateReferenceSystem[] crs) {
+    public DefaultCompoundCRS(final Map<String,?> properties, CoordinateReferenceSystem... crs) {
         super(properties, createCoordinateSystem(crs));
-        this.crs = copy(Arrays.asList(crs));
+        if (computeSingleCRS(Arrays.asList(crs))) {
+            this.crs = singles; // Shares the same list.
+        } else {
+            this.crs = UnmodifiableArrayList.wrap(crs.clone());
+        }
     }
 
     /**
@@ -178,31 +184,13 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     }
 
     /**
-     * Returns an unmodifiable copy of the given list. As a side effect, this method computes the
-     * {@linkplain singles} list. If it appears that the list of {@code SingleCRS} is equal to the
-     * given list, then it is returned in other to share the same list in both {@link #crs} and
-     * {@link #singles} references.
-     * <p>
-     * <strong>WARNING:</strong> this method is invoked by constructors <em>before</em>
-     * the {@linkplain #crs} field is set. Do not use this field.
-     */
-    private List<? extends CoordinateReferenceSystem> copy(
-            List<? extends CoordinateReferenceSystem> crs)
-    {
-        if (computeSingleCRS(crs)) {
-            crs = singles; // Shares the same list.
-        } else {
-            crs = UnmodifiableArrayList.wrap(crs.toArray(new CoordinateReferenceSystem[crs.size()]));
-        }
-        return crs;
-    }
-
-    /**
-     * The ordered list of coordinate reference systems.
+     * The ordered list of coordinate reference systems. This method is a departure of
+     * ISO 19111, which don't allow nested compound CRS. The Geotoolkit allows such
+     * nested compound CRS in order to preserve their metadata (scope, <i>etc.</i>).
      *
      * @return The coordinate reference systems as an unmodifiable list.
      */
-    @Override
+    @Override // Do not delete this method when the interface method will be removed.
     @SuppressWarnings("unchecked") // We are safe if the list is read-only.
     public List<CoordinateReferenceSystem> getCoordinateReferenceSystems() {
         return (List) crs;
@@ -214,7 +202,20 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * objects.
      *
      * @return The single coordinate reference systems as an unmodifiable list.
+     *
+     * @since 3.01 (derived from 3.00).
      */
+    @Override
+    public List<SingleCRS> getComponents() {
+        return singles;
+    }
+
+    /**
+     * @deprecated Renamed as {@link #getComponents()}, which is now defined in GeoAPI interface.
+     *
+     * @return The single coordinate reference systems as an unmodifiable list.
+     */
+    @Deprecated
     public List<SingleCRS> getSingleCRS() {
         return singles;
     }
@@ -226,7 +227,11 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * @param  crs The coordinate reference system.
      * @return The single coordinate reference systems.
      * @throws ClassCastException if a CRS is neither a {@link SingleCRS} or a {@link CompoundCRS}.
+     *
+     * @deprecated Not needed anymore now that GeoAPI defines a {@link CompoundCRS#getComponents()}
+     * method.
      */
+    @Deprecated
     public static List<SingleCRS> getSingleCRS(final CoordinateReferenceSystem crs) {
         final List<SingleCRS> singles;
         if (crs instanceof DefaultCompoundCRS) {
