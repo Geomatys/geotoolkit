@@ -57,7 +57,8 @@ propOrder = {
     "changeNote",
     "name",
     "narrower",
-    "modified"
+    "modified",
+    "example"
 
 })
 public class Concept {
@@ -230,7 +231,7 @@ public class Concept {
         }
         return null;
     }
-    
+
     public String getAbout() {
         return about;
     }
