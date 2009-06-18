@@ -18,7 +18,9 @@ package org.geotoolkit.skos.xml;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -86,6 +88,9 @@ public class Concept {
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String scopeNote;
+
+    @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
+    private String example;
 
     @XmlElement(namespace = "http://xmlns.com/foaf/0.1")
     private String name;
@@ -168,6 +173,62 @@ public class Concept {
         this.definition = definition;
         this.externalID = externalID;
         this.prefLabel  = prefLabel;
+    }
+
+    public String getPropertyValue(String property) {
+        if (property != null) {
+            if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equals("definition")) {
+                return definition;
+            }
+
+            if (property.equals("http://www.w3.org/2004/02/skos/core#prefLabel") || property.equals("preferredLabel")) {
+                return prefLabel;
+            }
+
+            if (property.equals("http://www.w3.org/2004/02/skos/core#scopeNote") || property.equals("scopeNote")) {
+                return scopeNote;
+            }
+
+            if ((property.equals("http://www.w3.org/2004/02/skos/core#altLabel") || property.equals("nonPreferredLabels")) && altLabel!= null && altLabel.size() > 0) {
+                return altLabel.get(0);
+            }
+
+            if (property.equals("http://www.w3.org/2004/02/skos/core#example") || property.equals("example")) {
+                return example;
+            }
+        }
+        return null;
+    }
+
+    public Map<String, String> getRelations() {
+        Map<String, String> response = new HashMap<String, String>();
+        if (narrower != null) {
+            for (String naro : narrower)
+                response.put(naro, "http://www.w3.org/2004/02/skos/core#narrower");
+        }
+        if (broader != null) {
+            for (String bro : broader)
+                response.put(bro, "http://www.w3.org/2004/02/skos/core#broader");
+        }
+
+        if (related != null) {
+            response.put(related, "http://www.w3.org/2004/02/skos/core#related");
+        }
+        return response;
+    }
+
+    public List<String> getRelations(String property) {
+        if ("http://www.w3.org/2004/02/skos/core#narrower".equals(property)) {
+            return narrower;
+        }
+        if ("http://www.w3.org/2004/02/skos/core#broader".equals(property)) {
+            return broader;
+        }
+
+        if ("http://www.w3.org/2004/02/skos/core#related".equals(property)) {
+            return Arrays.asList(related);
+        }
+        return null;
     }
     
     public String getAbout() {
@@ -519,6 +580,20 @@ public class Concept {
         this.name = name;
     }
 
+    /**
+     * @return the example
+     */
+    public String getExample() {
+        return example;
+    }
+
+    /**
+     * @param example the example to set
+     */
+    public void setExample(String example) {
+        this.example = example;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[Concept]:").append('\n');
@@ -574,6 +649,8 @@ public class Concept {
             sb.append("type:").append(type).append('\n');
         if (value != null)
             sb.append("value:").append(value).append('\n');
+        if (example != null)
+            sb.append("example:").append(example).append('\n');
 
         return sb.toString();
     }
@@ -610,6 +687,7 @@ public class Concept {
                    Utilities.equals(this.scopeNote,   that.scopeNote)   &&
                    Utilities.equals(this.title,       that.title)       &&
                    Utilities.equals(this.type,        that.type)        &&
+                   Utilities.equals(this.example,     that.example)     &&
                    Utilities.equals(this.value,       that.value);
         }
         return false;
@@ -622,4 +700,6 @@ public class Concept {
         hash = 47 * hash + (this.externalID != null ? this.externalID.hashCode() : 0);
         return hash;
     }
+
+    
 }
