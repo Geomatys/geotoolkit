@@ -54,6 +54,9 @@ public interface LabelDescriptor {
      */
     Paint getHaloPaint();
 
+    /**
+     * @return the geometry that should be used for the label.
+     */
     ProjectedGeometry getGeometry();
 
 }
