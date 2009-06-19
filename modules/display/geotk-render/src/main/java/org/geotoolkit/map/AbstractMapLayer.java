@@ -27,7 +27,7 @@ import javax.swing.event.EventListenerList;
 
 import org.geotools.data.DefaultQuery;
 import org.geotools.data.Query;
-import org.geotools.factory.CommonFactoryFinder;
+
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -35,8 +35,8 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.Utilities;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.primitive.Graphic;
 import org.opengis.filter.Filter;
 import org.opengis.style.Description;
@@ -95,7 +95,7 @@ public abstract class AbstractMapLayer implements MapLayer {
         if (style == null){
             throw new NullPointerException("Style can not be null");
         }
-        this.style = style;
+        setStyle(style);
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
         this.selectionStyle = null;
     }
@@ -180,13 +180,16 @@ public abstract class AbstractMapLayer implements MapLayer {
         final MutableStyle oldStyle;
         synchronized (this) {
             oldStyle = this.style;
-            if(oldStyle.equals(style)){
+            if(style.equals(oldStyle)){
                 return;
             }
 
             synchronized(listeners){
                 if(listeners.getListenerCount() > 0){
-                    oldStyle.removeListener(styleListener);
+
+                    if(oldStyle != null){
+                        oldStyle.removeListener(styleListener);
+                    }
                     this.style = style;
                     this.style.addListener(styleListener);
                 }else{

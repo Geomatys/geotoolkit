@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
+import org.geotoolkit.display2d.container.stateless.AbstractLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -50,11 +50,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class StatefullCoverageLayerJ2D extends AbstractGraphicJ2D{
+public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer>{
 
     private static final Logger LOGGER = Logger.getLogger(StatefullCoverageLayerJ2D.class.getName());
 
-    private final CoverageMapLayer layer;
     private final StatefullProjectedCoverage projectedCoverage;
 
     //compare values to update caches if necessary
@@ -63,16 +62,10 @@ public class StatefullCoverageLayerJ2D extends AbstractGraphicJ2D{
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(ReferencedCanvas2D canvas, CoverageMapLayer layer){
-        super(canvas, layer.getBounds().getCoordinateReferenceSystem());
-        this.layer = layer;
+        super(canvas, layer);
 
         this.dataCRS = layer.getCoverageReader().getCoverageBounds().getCoordinateReferenceSystem();
 
-        try {
-            setEnvelope(layer.getBounds());
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "",ex);
-        }
 
         params = new StatefullContextParams(canvas,null);
         this.projectedCoverage = new StatefullProjectedCoverage(params, layer);

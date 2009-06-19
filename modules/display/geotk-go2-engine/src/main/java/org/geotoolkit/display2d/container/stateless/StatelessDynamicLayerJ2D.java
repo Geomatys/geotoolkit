@@ -17,20 +17,18 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.*;
 import java.util.List;
 import java.util.logging.Level;
+
+import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.DynamicMapLayer;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Single object to represent a complete mapcontext.
@@ -38,19 +36,11 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author johann sorel (Geomatys)
  */
-public class StatelessDynamicLayerJ2D extends AbstractGraphicJ2D{
+public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<DynamicMapLayer>{
     
-    private final DynamicMapLayer layer;
     
     public StatelessDynamicLayerJ2D(final ReferencedCanvas2D canvas, final DynamicMapLayer layer){
-        super(canvas, getCRS(layer));
-        this.layer = layer;
-        
-        try{
-            setEnvelope(layer.getBounds());
-        }catch(TransformException ex){
-            ex.printStackTrace();
-        }
+        super(canvas, layer);
     }
     
     /**
@@ -78,23 +68,11 @@ public class StatelessDynamicLayerJ2D extends AbstractGraphicJ2D{
         }
     }
         
-    private static CoordinateReferenceSystem getCRS(final DynamicMapLayer layer){
-        return layer.getBounds().getCoordinateReferenceSystem();
-    }
-
     @Override
     public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
         //since this is a distant source, we have no way to find a child graphic.
         graphics.add(this);
         return graphics;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getUserObject() {
-        return layer;
     }
 
 }

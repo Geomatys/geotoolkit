@@ -42,7 +42,6 @@ import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.Envelope2D;
@@ -82,20 +81,10 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  *
  * @author johann sorel (Geomatys)
  */
-public class StatelessFeatureLayerJ2D extends AbstractGraphicJ2D{
-    
-    protected final FeatureMapLayer layer;
+public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     
     public StatelessFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
-        super(canvas, layer.getBounds().getCoordinateReferenceSystem());
-        this.layer = layer;
-        
-        try {
-            setEnvelope(layer.getBounds());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
+        super(canvas, layer);
     }
 
     /**
@@ -199,7 +188,7 @@ public class StatelessFeatureLayerJ2D extends AbstractGraphicJ2D{
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
-                System.err.println("FeatureGraphicLayerJ2D ligne 150 :" +ex.getMessage());
+                System.err.println("FeatureGraphicLayerJ2D ligne 191 :" +ex.getMessage());
 //                renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
                 env = new Envelope2D();
             }
@@ -452,14 +441,6 @@ public class StatelessFeatureLayerJ2D extends AbstractGraphicJ2D{
         }else{
             return searchGraphicAt(layer, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getUserObject() {
-        return layer;
     }
 
 }

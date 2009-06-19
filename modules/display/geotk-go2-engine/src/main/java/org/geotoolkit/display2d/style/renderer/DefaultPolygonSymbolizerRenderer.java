@@ -299,7 +299,6 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final Shape shape;
 
         //TODO use symbol unit to adjust offset
-        System.out.println("using ISO geom");
         Geometry geom = projectedFeature.getObjectiveGeometry();
         geom = geom.getBuffer(offset);
         shape = GO2Utilities.toJava2D(geom);

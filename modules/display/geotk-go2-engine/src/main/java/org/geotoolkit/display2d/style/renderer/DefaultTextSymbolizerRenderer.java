@@ -54,10 +54,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.aggregate.MultiPrimitive;
-import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -104,7 +101,6 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
             
-
             //we adjust coefficient for rendering ------------------------------
             float coeff = 1;
             if(symbolUnit.equals(NonSI.PIXEL)){
@@ -160,13 +156,6 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
 
         final Feature feature = projectedFeature.getFeature();
         final LabelRenderer renderer = context.getLabelRenderer(true);
-
-        final org.opengis.geometry.Geometry geom;
-        try {
-            geom = projectedGeometry.getDisplayGeometry();
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
-        }
 
         final LabelLayer labelLayer = new DefaultLabelLayer(false, true);
 
