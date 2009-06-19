@@ -252,7 +252,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             }
 
         }else if( geom instanceof Curve || geom instanceof MultiPrimitive
-                || geom instanceof Polygon ){
+                || geom instanceof Polygon || geom instanceof PolyhedralSurface){
 
             DirectPosition pt2d = geom.getCentroid();
 

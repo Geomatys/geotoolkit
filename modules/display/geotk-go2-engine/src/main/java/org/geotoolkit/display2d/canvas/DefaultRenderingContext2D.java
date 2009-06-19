@@ -22,13 +22,10 @@ import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -37,6 +34,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.intelligent.AILabelRenderer;
@@ -48,8 +46,6 @@ import org.geotoolkit.resources.Errors;
 
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -413,7 +409,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     public float getUnitCoefficient(final Unit<Length> uom){
         Float f = coeffs.get(uom);
         if(f==null){
-            f = calculateCoefficient(uom);
+            f = GO2Utilities.calculateScaleCoefficient(this,uom);
             coeffs.put(uom, f);
         }
 
@@ -435,57 +431,6 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     public double getScale() {
         return canvas.getController().getScale();
     }
-
-    /**
-     * Calculate the coefficient between the objective unit and the given one.
-     */
-    private float calculateCoefficient(final Unit symbolUnit){
-        if(symbolUnit == null || objectiveCRS == null){
-            throw new NullPointerException("symbol unit and objectiveCRS cant be null");
-        }
-
-        //we have a special unit we must adjust the coefficient
-
-        final CoordinateSystem cs = objectiveCRS.getCoordinateSystem();
-        final int dimension = cs.getDimension();
-        final List<Double> converters = new ArrayList<Double>();
-
-        //go throw each dimension and append valid converters
-        for (int i=0; i<dimension; i++){
-            final CoordinateSystemAxis axis = cs.getAxis(i);
-            final Unit axisUnit = axis.getUnit();
-            if (axisUnit.isCompatible(symbolUnit)){
-                final UnitConverter converter = axisUnit.getConverterTo(symbolUnit);
-
-                if(!converter.isLinear()){
-                    throw new UnsupportedOperationException("Cannot convert nonlinear units yet");
-                }else{
-                    converters.add(converter.convert(1) - converter.convert(0));
-                }
-            }
-        }
-
-        final float coeff;
-
-        //calculate coefficient
-        if(converters.isEmpty()){
-            //no valid converter
-            coeff = 1;
-        }else if(converters.size() == 1){
-            //only one valid converter
-            coeff = converters.get(0).floatValue();
-        }else{
-            double sum = 0;
-            for(final Double coef : converters){
-                sum += coef*coef ;
-            }
-            coeff = (float) Math.sqrt( sum/2d );
-        }
-
-        return 1/coeff;
-    }
-
-
 
     // Informations about the currently painted area ---------------------------
     /**

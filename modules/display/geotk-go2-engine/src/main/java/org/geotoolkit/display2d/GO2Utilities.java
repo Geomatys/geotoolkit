@@ -28,8 +28,10 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +41,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Length;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
@@ -63,6 +69,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;
@@ -74,6 +81,11 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Style;
 import org.opengis.style.Rule;
@@ -360,6 +372,89 @@ public class GO2Utilities {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // some scale utility methods //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Calculate the coefficient between the objective unit and the given one.
+     */
+    public static float calculateScaleCoefficient(RenderingContext2D context, Unit<Length> symbolUnit){
+        CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
+        
+        if(symbolUnit == null || objectiveCRS == null){
+            throw new NullPointerException("symbol unit and objectiveCRS cant be null");
+        }
+
+        //we have a special unit we must adjust the coefficient
+
+        final CoordinateSystem cs = objectiveCRS.getCoordinateSystem();
+        final int dimension = cs.getDimension();
+        final List<Double> converters = new ArrayList<Double>();
+
+        //go throw each dimension and append valid converters
+        for (int i=0; i<dimension; i++){
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            Unit axisUnit = axis.getUnit();
+            if (axisUnit.isCompatible(symbolUnit)){
+                final UnitConverter converter = axisUnit.getConverterTo(symbolUnit);
+
+                if(!converter.isLinear()){
+                    throw new UnsupportedOperationException("Cannot convert nonlinear units yet");
+                }else{
+                    converters.add(converter.convert(1) - converter.convert(0));
+                }
+            }else if(axisUnit == NonSI.DEGREE_ANGLE){
+                //calculate coefficient at center of the screen.
+                Rectangle rect = context.getCanvasDisplayBounds();
+                AffineTransform2D trs = context.getDisplayToObjective();
+                Point2D pt = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
+                pt = trs.transform(pt,pt);
+
+                //TODO not correct yet, I'm not sure how to select the correct
+                //axis for calculation
+                if(!axis.getDirection().equals(AxisDirection.NORTH)) continue;
+
+                GeographicCRS crs = (GeographicCRS) objectiveCRS;
+
+                double a = crs.getDatum().getEllipsoid().getSemiMajorAxis();
+                double b = crs.getDatum().getEllipsoid().getSemiMinorAxis();
+                double e2 = 1 - Math.pow((b/a),2);
+
+                //TODO not sure of this neither
+//                System.out.println(i);
+                double phi = Math.toRadians((i==0)? pt.getY() : pt.getX());
+                double s = a * (Math.cos(phi)) / Math.sqrt( 1 - e2 * Math.pow(Math.sin(phi),2) );
+
+                s = Math.toRadians(s);
+
+                Unit ellipsoidUnit = crs.getDatum().getEllipsoid().getAxisUnit();
+                final UnitConverter converter = ellipsoidUnit.getConverterTo(symbolUnit);
+                s = converter.convert(s) - converter.convert(0);
+
+                converters.add(s);
+                
+            }
+        }
+
+        final float coeff;
+
+        //calculate coefficient
+        if(converters.isEmpty()){
+            coeff = 1;
+        }else if(converters.size() == 1){
+            //only one valid converter
+            coeff = converters.get(0).floatValue();
+        }else{
+            double sum = 0;
+            for(final Double coef : converters){
+                sum += coef*coef ;
+            }
+            coeff = (float) Math.sqrt( sum/2d );
+        }
+
+        return 1/coeff;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // information about styles ////////////////////////////////////////////////
