@@ -41,15 +41,21 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultLabelRenderer implements LabelRenderer{
 
-
-    private final RenderingContext2D context;
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
+    private RenderingContext2D context = null;
     
-    public DefaultLabelRenderer(RenderingContext2D context) {
+    public DefaultLabelRenderer() {
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setRenderingContext(RenderingContext2D context){
         if(context == null) throw new NullPointerException("Rendering context can not be null");
         this.context = context;
     }
-    
+
     /**
      * {@inheritDoc }
      */ 

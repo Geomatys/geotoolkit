@@ -29,6 +29,11 @@ import org.opengis.referencing.operation.TransformException;
 public interface LabelRenderer {
 
     /**
+     * Set the renderingContext associated to this label renderer.
+     */
+    void setRenderingContext(RenderingContext2D context);
+
+    /**
      * Get the renderingContext associated to this label renderer.
      */
     RenderingContext2D getRenderingContext();

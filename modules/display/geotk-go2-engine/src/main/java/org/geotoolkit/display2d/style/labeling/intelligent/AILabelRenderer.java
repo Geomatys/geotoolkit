@@ -38,21 +38,26 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
  */
 public class AILabelRenderer implements LabelRenderer{
 
-    private final AIPointLabelCandidateRenderer POINT_RENDERER;
-    private final AILinearLabelCandidateRenderer LINEAR_RENDERER;
-
-
-    private final RenderingContext2D context;
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
+
+    private RenderingContext2D context;
+    private AIPointLabelCandidateRenderer pointRenderer;
+    private AILinearLabelCandidateRenderer LinearRenderer;
     
-    public AILabelRenderer(RenderingContext2D context) {
+    public AILabelRenderer() {
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setRenderingContext(RenderingContext2D context){
         if(context == null) throw new NullPointerException("Rendering context can not be null");
         this.context = context;
-
-        LINEAR_RENDERER = new AILinearLabelCandidateRenderer(context);
-        POINT_RENDERER = new AIPointLabelCandidateRenderer(context);
+        LinearRenderer = new AILinearLabelCandidateRenderer(context);
+        pointRenderer = new AIPointLabelCandidateRenderer(context);
     }
-    
+
     /**
      * {@inheritDoc }
      */ 
@@ -88,9 +93,9 @@ public class AILabelRenderer implements LabelRenderer{
                 Candidate c = null;
 
                 if(label instanceof PointLabelDescriptor){
-                    c = POINT_RENDERER.generateCandidat((PointLabelDescriptor) label);
+                    c = pointRenderer.generateCandidat((PointLabelDescriptor) label);
                 }else if(label instanceof LinearLabelDescriptor){
-                    c = LINEAR_RENDERER.generateCandidat((LinearLabelDescriptor) label);
+                    c = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
                 }else{
                     c = null;
                 }
@@ -109,9 +114,9 @@ public class AILabelRenderer implements LabelRenderer{
         //paint the remaining candidates
         for(Candidate candidate : candidates){
             if(candidate instanceof PointCandidate){
-                POINT_RENDERER.render(candidate);
+                pointRenderer.render(candidate);
             }else if(candidate instanceof LinearCandidate){
-                LINEAR_RENDERER.render(candidate);
+                LinearRenderer.render(candidate);
             }
         }
         

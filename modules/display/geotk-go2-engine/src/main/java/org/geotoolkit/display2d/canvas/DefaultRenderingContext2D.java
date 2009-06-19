@@ -37,13 +37,13 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
-import org.geotoolkit.display2d.style.labeling.intelligent.AILabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -86,6 +86,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public final class DefaultRenderingContext2D implements RenderingContext2D{
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultRenderingContext2D.class);
 
     /**
      * The originating canvas.
@@ -381,11 +383,20 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public LabelRenderer getLabelRenderer(final boolean create) {
         if(labelRenderer == null && create){
-            Object lr = (String)canvas.getRenderingHint(GO2Hints.KEY_LABELING);
-            if(GO2Hints.LABELING_INTELLIGENT.equals(lr)){
-                labelRenderer = new AILabelRenderer(this);
+            Class candidate = (Class)canvas.getRenderingHint(GO2Hints.KEY_LABEL_RENDERER_CLASS);
+
+            if(candidate != null && LabelRenderer.class.isAssignableFrom(candidate)){
+                try {
+                    labelRenderer = (LabelRenderer) candidate.newInstance();
+                    labelRenderer.setRenderingContext(this);
+                } catch (InstantiationException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
             }else{
-                labelRenderer = new DefaultLabelRenderer(this);
+                labelRenderer = new DefaultLabelRenderer();
+                labelRenderer.setRenderingContext(this);
             }
         }
         return labelRenderer;
