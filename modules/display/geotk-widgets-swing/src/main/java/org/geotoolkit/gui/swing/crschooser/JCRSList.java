@@ -31,10 +31,12 @@ import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
-import org.geotools.resources.SwingUtilities;
+
 import org.jdesktop.swingx.JXList;
+
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
@@ -77,6 +79,7 @@ public class JCRSList extends JComponent{
         
         liste.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 int index = e.getFirstIndex();
                 

@@ -60,13 +60,6 @@ public class JMarkPane extends StyleElementEditor<Mark> {
                 ff.literal("cross"),
                 ff.literal("x")
                 );
-//            guiWKN.setModel(
-//                org.geotools.style.StyleConstants.MARK_CIRCLE,
-//                org.geotools.style.StyleConstants.MARK_CROSS,
-//                org.geotools.style.StyleConstants.MARK_SQUARE,
-//                org.geotools.style.StyleConstants.MARK_STAR,
-//                org.geotools.style.StyleConstants.MARK_TRIANGLE,
-//                org.geotools.style.StyleConstants.MARK_X);
         }catch(Exception ex){
             ex.printStackTrace();
         }

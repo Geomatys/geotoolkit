@@ -118,7 +118,7 @@ public class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     /** The filter types that this class can encode */
     protected FilterCapabilities capabilities = null;
     /** Standard java logger */
-    private static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.filter");
+    private static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.filter");
     /** Map of expression types to cql representation */
     private static Map expressions = new HashMap();
 
@@ -151,7 +151,7 @@ public class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * Performs the encoding, sends the encoded CQL to the writer passed in.
      *
      * @param filter the Filter to be encoded.
-     * @throws org.geotools.gui.swing.misc.FilterToCQLException  If filter type not supported, or if there
+     * @throws org.geotoolkit.gui.swing.misc.FilterToCQLException  If filter type not supported, or if there
      *         were io problems.
      *
      */

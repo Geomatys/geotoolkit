@@ -36,7 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.geotoolkit.gui.swing.go.GoMap2D;
+import org.geotoolkit.gui.swing.go2.GoMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.map.map2d.Map2D;
 

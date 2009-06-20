@@ -15,31 +15,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.resource;
+package org.geotoolkit.gui.swing.go2.control.information;
 
-import java.util.ResourceBundle;
-import org.geotoolkit.util.ResourceInternationalString;
-import org.opengis.util.InternationalString;
+import java.util.List;
+import javax.measure.unit.Unit;
+import javax.swing.JComboBox;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
- * Internalization of all styling widgets.
- * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class MessageBundle {
+public class JUOMChooser extends JComboBox{
 
-    private static final String PATH = "org/geotoolkit/gui/swing/resource/Bundle";
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(PATH);
-    
-    /**
-     * Get the local string for the given key.
-     */
-    public static String getString(String key){
-        return BUNDLE.getString(key);
-    }
-
-    public static InternationalString getI18NString(String key){
-        return new ResourceInternationalString(PATH, key);
+    public JUOMChooser(List<Unit> units) {
+        super(new ListComboBoxModel(units));
+        setSelectedIndex(0);
     }
 
 }

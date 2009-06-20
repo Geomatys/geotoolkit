@@ -37,13 +37,13 @@ import javax.swing.ImageIcon;
 public class IconBundle {
 
     private static IconBundle instance;
-    public static final ImageIcon EMPTY_ICON = new ImageIcon(IconBundle.class.getResource("/org/geotools/gui/swing/resource/icon/blanc.png"));
-    public static final ImageIcon EMPTY_ICON_16 = new ImageIcon(IconBundle.class.getResource("/org/geotools/gui/swing/resource/icon/blanc16.png"));
+    public static final ImageIcon EMPTY_ICON = new ImageIcon(IconBundle.class.getResource("/org/geotoolkit/gui/swing/resource/icon/blanc.png"));
+    public static final ImageIcon EMPTY_ICON_16 = new ImageIcon(IconBundle.class.getResource("/org/geotoolkit/gui/swing/resource/icon/blanc16.png"));
     private List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
     private WeakHashMap<String, ImageIcon> iconsmap = new WeakHashMap<String, ImageIcon>();
 
     private IconBundle() {
-        bundles.add( ResourceBundle.getBundle("org/geotools/gui/swing/resource/IconBundle") );
+        bundles.add( ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/IconBundle") );
     }
 
     private URL getURL(String adress, Class base) {

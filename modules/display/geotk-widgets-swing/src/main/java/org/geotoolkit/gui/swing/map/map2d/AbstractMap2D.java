@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.map.map2d;
 
+import org.geotoolkit.gui.swing.BufferLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;

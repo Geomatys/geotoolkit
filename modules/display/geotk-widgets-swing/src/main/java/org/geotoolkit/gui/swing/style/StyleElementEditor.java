@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.style;
 import javax.swing.JPanel;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotools.filter.visitor.IsStaticExpressionVisitor;
+import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory2;

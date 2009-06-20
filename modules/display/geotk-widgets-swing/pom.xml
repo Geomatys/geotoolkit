@@ -2,8 +2,8 @@
 <!-- =======================================================================
         Maven Project Configuration File
 
-        The Geotools Project
-            http://www.geotools.org/
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
 
         Version: $Id$
      ======================================================================= -->
@@ -27,16 +27,8 @@
   <artifactId>geotk-widgets-swing-pending</artifactId>
   <packaging>jar</packaging>
   <name>Display swing widgets</name>
-  <url>http://maven.geotools.fr/reports/modules/unsupported/widgets-swing-pending/</url>
 
-  <scm>
-    <connection>
-      scm:svn:http://svn.osgeo.org/geotools/trunk/modules/unsupported/widgets-swing-pending/
-    </connection>
-    <url>http://svn.osgeo.org/geotools/trunk/modules/unsupported/widgets-swing-pending/</url>
-  </scm>
-
-  <description>Swing widgets, coming from project AlterSIG. Will be added in module swing widgets once cleaned up.</description>
+  <description>Swing pending widgets for geotoolkit</description>
 
   <licenses>
     <license>
@@ -190,16 +182,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <mode>development</mode>
-              <url>${pom.url}</url>
-            </manifestEntries>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
-        </configuration>
       </plugin>
 
       <plugin>
