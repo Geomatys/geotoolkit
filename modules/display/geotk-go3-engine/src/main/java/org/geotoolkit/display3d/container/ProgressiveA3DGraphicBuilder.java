@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
  *    (C) 2009, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.display3d.container;
 
-import com.ardor3d.scenegraph.shape.Box;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.display3d.canvas.A3DCanvas;

@@ -71,6 +71,7 @@ public class ModificationDelegate extends AbstractMouseDelegate {
 
         gc.gridy = 0;
         JPanel general = new JPanel(new GridLayout(3, 3));
+        general.setOpaque(false);
         general.add(new JButton(" "));
         general.add(new JButton(" "));
         general.add(new JButton(" "));
@@ -88,6 +89,7 @@ public class ModificationDelegate extends AbstractMouseDelegate {
 
         gc.gridy = 2;
         JPanel intelli = new JPanel(new GridLayout(1, 3));
+        intelli.setOpaque(false);
         intelli.add(new JButton(" "));
         intelli.add(new JButton(" "));
         intelli.add(new JButton(" "));
@@ -98,6 +100,7 @@ public class ModificationDelegate extends AbstractMouseDelegate {
 
         gc.gridy = 4;
         JPanel other = new JPanel(new GridLayout(1, 3));
+        other.setOpaque(false);
         other.add(new JButton(" "));
         other.add(new JButton(" "));
         other.add(guiEnd);

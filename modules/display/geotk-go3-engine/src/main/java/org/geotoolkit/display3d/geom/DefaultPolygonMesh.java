@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
  *    (C) 2009, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,7 +17,6 @@
 package org.geotoolkit.display3d.geom;
 
 import com.ardor3d.bounding.BoundingBox;
-import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.renderer.state.CullState;
