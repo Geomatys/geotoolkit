@@ -44,15 +44,15 @@ import javax.swing.event.MouseInputListener;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display.canvas.GraphicVisitor;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -140,7 +140,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     private boolean squareArea;
     private boolean withinArea;
     private boolean geographicArea;
-    private GoMap2D map2D;
+    private Map2D map2D;
     private int key = -1;
 
 
@@ -172,11 +172,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
         this.withinArea = withinArea;
     }
 
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map2D;
     }
 
-    public void setMap(GoMap2D map2D) {
+    public void setMap(Map2D map2D) {
         this.map2D = map2D;
     }
 
@@ -288,7 +288,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     }
 
     @Override
-    public ReferencedCanvas2D getCanvas() {
+    public J2DCanvas getCanvas() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

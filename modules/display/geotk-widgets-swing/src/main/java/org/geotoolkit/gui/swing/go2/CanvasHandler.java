@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.go2;
 
 import java.awt.Component;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
  */
 public interface CanvasHandler {
     
-    ReferencedCanvas2D getCanvas();    
+    J2DCanvas getCanvas();
     
     void install(Component component);
     

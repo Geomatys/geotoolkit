@@ -22,7 +22,7 @@ import java.awt.Color;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  * Color Decoration
@@ -37,23 +37,28 @@ public class ColorDecoration extends JPanel implements MapDecoration{
         setBackground(Color.WHITE);
     }
     
+    @Override
     public void refresh() {
         revalidate();
         repaint();
     }
 
+    @Override
     public JComponent geComponent() {
         return this;
     }
 
+    @Override
     public void setMap2D(Map2D map) {
         
     }
 
+    @Override
     public Map2D getMap2D() {
         return null;
     }
 
+    @Override
     public void dispose() {
     }
 

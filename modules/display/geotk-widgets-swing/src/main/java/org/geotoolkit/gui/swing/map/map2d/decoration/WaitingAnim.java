@@ -32,17 +32,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
 
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.interpolation.PropertySetter;
@@ -124,8 +121,8 @@ public class WaitingAnim extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(map != null && map instanceof GoMap2D){
-                    GoMap2D go = (GoMap2D) map;
+                if(map != null && map instanceof Map2D){
+                    Map2D go = (Map2D) map;
                     go.getCanvas().getMonitor().stopRendering();
                 }
             }

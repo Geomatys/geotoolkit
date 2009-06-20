@@ -19,17 +19,14 @@ package org.geotoolkit.gui.swing.go2;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 
-import org.geotoolkit.display2d.canvas.J2DCanvasComponentAdapter;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-
-import org.geotoolkit.gui.swing.map.map2d.AbstractMap2D;
 
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
@@ -38,29 +35,39 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  *
- * @author Johann Sorel
+ * @author Johann Sorel (Geomatys)
  */
-public class J2DMap extends AbstractMap2D implements GoMap2D{
+public class JMap2D extends AbstractMap2D{
 
     
     private CanvasHandler handler;
-    
-    private final J2DCanvasComponentAdapter canvas;
-    private final ContextContainer2D renderer;
-        
-    public J2DMap(){
+    private final SwingVolatileGeoComponent geoComponent;
+
+    public JMap2D(){
+        this(false);
+    }
+
+    public JMap2D(boolean statefull){
         super();
-        canvas = new J2DCanvasComponentAdapter(DefaultGeographicCRS.WGS84,this);
-        renderer = new DefaultContextContainer2D(canvas, false);
-        canvas.setContainer(renderer);
+        geoComponent = new SwingVolatileGeoComponent(DefaultGeographicCRS.WGS84);
+        setMapComponent(geoComponent);
+        final ReferencedCanvas2D canvas = geoComponent.getCanvas();
+        canvas.setContainer(new DefaultContextContainer2D(canvas, statefull));
         canvas.getController().setAutoRepaint(true);
-        canvas.setRenderingHint(GO2Hints.KEY_GENERALIZE, true);
-        canvas.setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, true);
+//        canvas.setRenderingHint(GO2Hints.KEY_GENERALIZE, true);
+//        canvas.setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, true);
 
         canvas.addCanvasListener(new CanvasListener() {
 
             @Override
             public void canvasChanged(CanvasEvent event) {
+
+                if(canvas.getController().isAutoRepaint()){
+                    //dont show the painting icon if the cans is in auto render mode
+                    // since it may repaint dynamic graphic it would show up all the time
+                    return;
+                }
+
                 if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
                     getInformationDecoration().setPaintingIconVisible(false);
                 }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
@@ -74,32 +81,31 @@ public class J2DMap extends AbstractMap2D implements GoMap2D{
         try {
             canvas.setObjectiveCRS(DefaultGeographicCRS.WGS84);
         } catch (TransformException ex) {
-            Logger.getLogger(J2DMap.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JMap2D.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {        
-        super.paintComponent(g);
-        Graphics2D output = (Graphics2D) g;     
-        canvas.paint(output);
+                
     }
 
     @Override
     public J2DCanvas getCanvas() {
-        return canvas;
+        return geoComponent.getCanvas();
     }
-    
-    public ContextContainer2D getRenderer(){
-        return renderer;
-    }
-    
 
+    public void setStatefull(boolean stateFull){
+        MapContext context = getContainer().getContext();
+        ContextContainer2D container = new DefaultContextContainer2D(geoComponent.getCanvas(), stateFull);
+        container.setContext(context);
+        geoComponent.getCanvas().setContainer(container);
+    }
+
+    public ContextContainer2D getContainer(){
+        return (ContextContainer2D) geoComponent.getCanvas().getContainer();
+    }
+    
     @Override
     public void dispose() {
-        canvas.dispose();
+        geoComponent.dispose();
     }
-    
     
     @Override
     public CanvasHandler getHandler(){
@@ -129,4 +135,4 @@ public class J2DMap extends AbstractMap2D implements GoMap2D{
 
     }
 
-        }
+}

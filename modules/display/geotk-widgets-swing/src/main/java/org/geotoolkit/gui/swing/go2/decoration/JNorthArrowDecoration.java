@@ -31,7 +31,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
 import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
 import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 
 /**

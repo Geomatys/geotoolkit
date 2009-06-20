@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  * Panoramic handler
@@ -42,7 +42,7 @@ public class PanHandler extends AbstractNavigationHandler {
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
-    public PanHandler(GoMap2D map) {
+    public PanHandler(Map2D map) {
         super(map);
         final Toolkit tk = Toolkit.getDefaultToolkit();
         final ImageIcon ico_zoomPan = IconBundle.getInstance().getIcon("16_zoom_pan");

@@ -37,8 +37,8 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
-import org.geotoolkit.gui.swing.go2.J2DMapVolatile;
+import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,7 +57,7 @@ public class JCoordinateBar extends JToolBar {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
     private final myListener listener = new myListener();
-    private GoMap2D map = null;
+    private Map2D map = null;
     private String error = MessageBundle.getString("map_control_coord_error");
 
     private final JCheckBox guiAxis = new JCheckBox();
@@ -69,7 +69,7 @@ public class JCoordinateBar extends JToolBar {
         this(null);
     }
 
-    public JCoordinateBar(GoMap2D candidate) {
+    public JCoordinateBar(Map2D candidate) {
         setLayout(new GridBagLayout());
 
         guiAxis.setSelected(true);
@@ -85,8 +85,8 @@ public class JCoordinateBar extends JToolBar {
         guiStatefull.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if(map != null && map instanceof J2DMapVolatile){
-                    ((J2DMapVolatile)map).setStatefull(guiStatefull.isSelected());
+                if(map != null && map instanceof JMap2D){
+                    ((JMap2D)map).setStatefull(guiStatefull.isSelected());
                 }
             }
         });
@@ -136,11 +136,11 @@ public class JCoordinateBar extends JToolBar {
         setMap(candidate);
     }
 
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map;
     }
 
-    public void setMap(GoMap2D map) {
+    public void setMap(Map2D map) {
         
         if(this.map != null){
             this.map.getComponent().removeMouseMotionListener(listener);

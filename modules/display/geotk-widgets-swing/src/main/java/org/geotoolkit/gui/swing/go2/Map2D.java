@@ -15,41 +15,54 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.map.map2d;
+package org.geotoolkit.gui.swing.go2;
 
 import java.awt.Component;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration;
+import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 
 /**
- * Map2D interface, used for mapcontext viewing
- * 
+ *
  * @author Johann Sorel
  */
 public interface Map2D {
-        
+
+    /**
+     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
+     * {@linkplain AWTCanvas2D#getHandler canvas handler} changed.
+     */
+    public static final String HANDLER_PROPERTY = "handler";
+    
+    public CanvasHandler getHandler();
+
+    public void setHandler(CanvasHandler handler);
+
+    /**
+     * @return the effective Go2 Canvas.
+     */
+    public J2DCanvas getCanvas();
+
     /**
      * must be called when the map2d is not used anymore.
      * to avoid memoryleack if it uses thread or other resources
      */
     public void dispose();
-                        
+
     /**
-     * get the visual component 
+     * get the visual component
      * @return Component
      */
     public Component getComponent();
-    
-    public ReferencedCanvas2D getCanvas();
-        
+
+
     //----------------------map decorations-------------------------------------
     /**
      * set the top InformationDecoration of the map2d widget
      * @param info , can't be null
      */
-    public void setInformationDecoration(InformationDecoration info);    
+    public void setInformationDecoration(InformationDecoration info);
     /**
      * get the top InformationDecoration of the map2d widget
      * @return InformationDecoration
@@ -93,5 +106,5 @@ public interface Map2D {
      * @return array of MapDecoration
      */
     public MapDecoration[] getDecorations();
-        
+
 }

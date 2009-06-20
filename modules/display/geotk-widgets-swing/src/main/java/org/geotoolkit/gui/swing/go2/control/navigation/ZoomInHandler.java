@@ -30,7 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  * Zoom in Handler for GoMap2D.
@@ -43,7 +43,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
-    public ZoomInHandler(GoMap2D map) {
+    public ZoomInHandler(Map2D map) {
         super(map);
         
         final Toolkit tk = Toolkit.getDefaultToolkit();

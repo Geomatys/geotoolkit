@@ -27,7 +27,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import javax.swing.JComponent;
 
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 
 /**

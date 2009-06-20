@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import javax.swing.JButton;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.geotoolkit.gui.swing.go2.GoMap2D;
 public class JCRSButton extends JButton{
 
     private final CRSAction ACTION_CRS = new CRSAction();
-    private GoMap2D map = null;
+    private Map2D map = null;
 
     public JCRSButton(){
         super();
@@ -39,7 +39,7 @@ public class JCRSButton extends JButton{
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(GoMap2D map2d) {
+    public void setMap(Map2D map2d) {
         map = map2d;
         ACTION_CRS.setMap(map);
     }

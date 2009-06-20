@@ -43,8 +43,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 
 /**
@@ -54,7 +53,7 @@ import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 public class JClassicNavigationDecoration extends JComponent implements MapDecoration {
 
     private final JClassicNavigationDecoration THIS = this;
-    private GoMap2D map = null;
+    private Map2D map = null;
     
     
     private boolean minimized = false;
@@ -518,8 +517,8 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             this.map.getCanvas().removePropertyChangeListener(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
         }
         
-        if(map instanceof GoMap2D){
-            this.map = (GoMap2D) map;
+        if(map instanceof Map2D){
+            this.map = (Map2D) map;
             this.map.getCanvas().addPropertyChangeListener(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
         }
     }

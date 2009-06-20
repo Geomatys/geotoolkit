@@ -15,19 +15,18 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.map.map2d;
+package org.geotoolkit.gui.swing.go2;
 
-import org.geotoolkit.gui.swing.BufferLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import org.geotoolkit.gui.swing.BufferLayout;
 import org.geotoolkit.gui.swing.map.map2d.decoration.DefaultInformationDecoration;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.map.map2d.decoration.ColorDecoration;

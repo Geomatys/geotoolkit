@@ -41,7 +41,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
 
 import org.opengis.referencing.operation.TransformException;

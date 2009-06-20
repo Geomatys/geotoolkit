@@ -28,7 +28,7 @@ import java.util.List;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.extractor.MapContextExtractor;
 import org.geotoolkit.gui.swing.go2.control.navigation.AbstractNavigationHandler;
 
@@ -44,7 +44,7 @@ public class InformationHandler extends AbstractNavigationHandler {
     private final MapContextExtractor extractor = new MapContextExtractor();
     private double zoomFactor = 2;
 
-    public InformationHandler(GoMap2D map) {
+    public InformationHandler(Map2D map) {
         super(map);
     }
         

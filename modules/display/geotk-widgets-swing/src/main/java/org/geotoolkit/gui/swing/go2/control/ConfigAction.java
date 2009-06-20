@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 
 /**
@@ -30,7 +30,7 @@ import org.geotoolkit.gui.swing.go2.GoMap2D;
  */
 public class ConfigAction extends AbstractAction {
 
-    private GoMap2D map = null;
+    private Map2D map = null;
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
@@ -41,11 +41,11 @@ public class ConfigAction extends AbstractAction {
         }
     }
 
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map;
     }
 
-    public void setMap(GoMap2D map) {
+    public void setMap(Map2D map) {
         this.map = map;
         setEnabled(map != null);
     }

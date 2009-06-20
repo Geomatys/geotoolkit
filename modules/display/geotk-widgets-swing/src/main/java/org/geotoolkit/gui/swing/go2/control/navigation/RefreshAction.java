@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
 /**
@@ -32,7 +32,7 @@ public class RefreshAction extends AbstractAction {
 
     private static final ImageIcon ICON_REFRESH = IconBundle.getInstance().getIcon("16_data_reload");
 
-    private GoMap2D map = null;
+    private Map2D map = null;
 
     public RefreshAction() {
         super("",ICON_REFRESH);
@@ -48,11 +48,11 @@ public class RefreshAction extends AbstractAction {
         }
     }
 
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map;
     }
 
-    public void setMap(GoMap2D map) {
+    public void setMap(Map2D map) {
         this.map = map;
         setEnabled(map != null);
     }

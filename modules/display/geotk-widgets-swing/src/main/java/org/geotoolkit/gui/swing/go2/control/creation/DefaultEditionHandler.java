@@ -20,9 +20,9 @@ package org.geotoolkit.gui.swing.go2.control.creation;
 
 import java.awt.Component;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  *
@@ -31,17 +31,17 @@ import org.geotoolkit.gui.swing.go2.GoMap2D;
 public class DefaultEditionHandler implements CanvasHandler {
     
     private final DefaultEditionDecoration deco = new DefaultEditionDecoration();
-    private GoMap2D map;
+    private Map2D map;
 
-    public DefaultEditionHandler(GoMap2D map) {
+    public DefaultEditionHandler(Map2D map) {
         this.map = map;
     }
 
-    public void setMap(GoMap2D map){
+    public void setMap(Map2D map){
         this.map = map;
     }
 
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map;
     }
 
@@ -65,7 +65,7 @@ public class DefaultEditionHandler implements CanvasHandler {
     }
 
     @Override
-    public ReferencedCanvas2D getCanvas() {
+    public J2DCanvas getCanvas() {
         return map.getCanvas();
     }
 

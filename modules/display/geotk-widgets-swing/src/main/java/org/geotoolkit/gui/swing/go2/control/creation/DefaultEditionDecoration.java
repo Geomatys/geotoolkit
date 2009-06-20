@@ -70,9 +70,8 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.RoundedBorder;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
 import org.geotoolkit.gui.swing.misc.Render.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -731,7 +730,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mouseClicked(MouseEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseClicked(arg0);
             }
         }
@@ -739,7 +738,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mousePressed(MouseEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mousePressed(arg0);
             }
         }
@@ -747,7 +746,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mouseReleased(MouseEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseReleased(arg0);
             }
         }
@@ -756,7 +755,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         public void mouseEntered(MouseEvent arg0) {
             map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseEntered(arg0);
             }
         }
@@ -764,7 +763,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mouseExited(MouseEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseExited(arg0);
             }
         }
@@ -772,7 +771,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mouseDragged(MouseEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseDragged(arg0);
             }
         }
@@ -780,7 +779,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mouseMoved(MouseEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseMoved(arg0);
             }
         }
@@ -788,7 +787,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void keyTyped(KeyEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.keyTyped(arg0);
             }
         }
@@ -796,7 +795,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void keyPressed(KeyEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.keyPressed(arg0);
             }
         }
@@ -804,7 +803,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void keyReleased(KeyEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.keyReleased(arg0);
             }
         }
@@ -812,7 +811,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         @Override
         public void mouseWheelMoved(MouseWheelEvent arg0) {
             if(delegate != null){
-                delegate.setMap((GoMap2D) map);
+                delegate.setMap((Map2D) map);
                 delegate.mouseWheelMoved(arg0);
             }
         }

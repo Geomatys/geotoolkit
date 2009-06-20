@@ -30,7 +30,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -81,7 +81,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     };
 
         
-    private GoMap2D map = null;
+    private Map2D map = null;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -94,7 +94,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JSelectionBar(GoMap2D map) {
+    public JSelectionBar(Map2D map) {
         setMap(map);
 
         final JPopupMenu menu = new JPopupMenu();
@@ -151,7 +151,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public void setMap(GoMap2D map2d) {
+    public void setMap(Map2D map2d) {
         map = map2d;
 
         if(map != null){
@@ -165,7 +165,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map;
     }
 

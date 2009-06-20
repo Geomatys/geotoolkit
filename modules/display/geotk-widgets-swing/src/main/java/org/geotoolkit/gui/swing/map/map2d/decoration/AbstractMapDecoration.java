@@ -17,7 +17,8 @@
  */
 package org.geotoolkit.gui.swing.map.map2d.decoration;
 
-import org.geotoolkit.gui.swing.map.map2d.Map2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
+
 
 /**
  * Abstract implementation of MapDecoration, handle the 
@@ -29,14 +30,17 @@ public abstract class AbstractMapDecoration implements MapDecoration{
 
     protected Map2D map = null;
     
+    @Override
     public void setMap2D(Map2D map) {
         this.map = map;
     }
 
+    @Override
     public Map2D getMap2D() {
         return map;
     }
 
+    @Override
     public void dispose() {
     }
     

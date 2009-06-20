@@ -25,7 +25,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration.LEVEL;
 
 /**
@@ -36,10 +37,10 @@ import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration.LEVEL
  */
 public class AbstractNavigationHandler implements CanvasHandler{
 
-    protected final GoMap2D map;
+    protected final Map2D map;
     protected final ZoomDecoration decorationPane = new ZoomDecoration();
 
-    public AbstractNavigationHandler(GoMap2D map) {
+    public AbstractNavigationHandler(Map2D map) {
         this.map = map;
     }
 
@@ -105,7 +106,7 @@ public class AbstractNavigationHandler implements CanvasHandler{
      * {@inheritDoc }
      */
     @Override
-    public ReferencedCanvas2D getCanvas() {
+    public J2DCanvas getCanvas() {
         return map.getCanvas();
     }
 

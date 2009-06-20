@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
 
@@ -33,7 +33,7 @@ public class MesureLenghtAction extends AbstractAction {
 
     private static final ImageIcon ICON_LENGHT = IconBundle.getInstance().getIcon("16_mesure_lenght");
 
-    private GoMap2D map = null;
+    private Map2D map = null;
 
     public MesureLenghtAction(){
         super("",ICON_LENGHT);
@@ -46,11 +46,11 @@ public class MesureLenghtAction extends AbstractAction {
         }
     }
 
-    public GoMap2D getMap() {
+    public Map2D getMap() {
         return map;
     }
 
-    public void setMap(GoMap2D map) {
+    public void setMap(Map2D map) {
         this.map = map;
         setEnabled(map != null);
     }

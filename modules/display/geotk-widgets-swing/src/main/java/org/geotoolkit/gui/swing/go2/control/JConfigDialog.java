@@ -22,7 +22,7 @@ import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import org.geotoolkit.gui.swing.go2.GoMap2D;
+import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.JNorthArrowDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
 import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
@@ -35,10 +35,10 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  */
 public class JConfigDialog extends javax.swing.JDialog {
 
-    private final GoMap2D map;
+    private final Map2D map;
 
     /** Creates new form JConfigDialog */
-    public JConfigDialog(java.awt.Frame parent,GoMap2D map) {
+    public JConfigDialog(java.awt.Frame parent,Map2D map) {
         super(parent, true);
         this.map = map;
         initComponents();
