@@ -18,8 +18,10 @@
 package org.geotoolkit.map;
 
 import org.geotools.data.FeatureSource;
+import org.geotools.data.Query;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Id;
 
 /**
  * MapLayer holding Features.
@@ -35,4 +37,45 @@ public interface FeatureMapLayer extends MapLayer{
      */
     FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource();
     
+    
+    /**
+     * Returns the definition query (filter) for this layer. If no definition
+     * query has  been defined {@link Query.ALL} is returned.
+     *
+     */
+    Query getQuery();
+
+    /**
+     * Sets a definition query for the layer wich acts as a filter for the
+     * features that the layer will draw.
+     * 
+     * <p>
+     * A consumer must ensure that this query is used in  combination with the
+     * bounding box filter generated on each map interaction to limit the
+     * number of features returned to those that complains both the definition
+     * query  and relies inside the area of interest.
+     * </p>
+     * <p>
+     * IMPORTANT: only include attribute names in the query if you want them to
+     * be ALWAYS returned. It is desirable to not include attributes at all
+     * but let the layer user (a renderer?) to decide wich attributes are actually
+     * needed to perform its requiered operation.
+     * </p>
+     *
+     * @param query
+     */
+    void setQuery(Query query);
+
+    /**
+     * A separate filter for datas that are selected on this layer.
+     * @return Filter, can be null or empty.
+     */
+    Id getSelectionFilter();
+
+    /**
+     * Set the selection fiter.
+     * @param filter Id
+     */
+    void setSelectionFilter(Id filter);
+
 }

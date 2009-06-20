@@ -22,18 +22,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableModel;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.jdesktop.swingx.JXTable;
 
 import org.geotools.data.DefaultQuery;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Query;
-import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
@@ -52,10 +50,10 @@ import org.opengis.filter.FilterFactory;
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class FeatureSourceModel implements TableModel {
+public class FeatureSourceModel extends DefaultTableModel {
 
-    private ArrayList<PropertyDescriptor> columns = new ArrayList<PropertyDescriptor>();
-    private ArrayList<Feature> features = new ArrayList<Feature>();
+    private final ArrayList<PropertyDescriptor> columns = new ArrayList<PropertyDescriptor>();
+    private final ArrayList<Feature> features = new ArrayList<Feature>();
     private MapLayer layer;
     private JXTable tab;
     private Query query = Query.ALL; 
@@ -64,7 +62,7 @@ public class FeatureSourceModel implements TableModel {
      * @param tab
      * @param layer 
      */
-    public FeatureSourceModel(JXTable tab, MapLayer layer) {
+    public FeatureSourceModel(JXTable tab, FeatureMapLayer layer) {
         super();
         this.tab = tab;
         this.layer = layer;
@@ -141,12 +139,20 @@ public class FeatureSourceModel implements TableModel {
 
     @Override
     public int getRowCount() {
-        return features.size();
+        if(features != null){
+            return features.size();
+        }else{
+            return 0;
+        }
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
+    }
+
+    public Feature getFeatureAt(int rowIndex){
+        return features.get(rowIndex);
     }
 
     @Override
@@ -188,11 +194,4 @@ public class FeatureSourceModel implements TableModel {
         }
     }
 
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-    }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-    }
 }

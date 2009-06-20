@@ -25,9 +25,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
-import org.geotools.data.DefaultQuery;
-import org.geotools.data.Query;
-
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -38,7 +35,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.filter.Filter;
 import org.opengis.style.Description;
 
 /**
@@ -73,10 +69,6 @@ public abstract class AbstractMapLayer implements MapLayer {
     protected MutableStyle style;
 
     protected MutableStyle selectionStyle;
-
-    protected Query query = Query.ALL;
-
-    protected Filter selectionFilter = Filter.EXCLUDE;
 
     protected ElevationModel elevation = null;
 
@@ -202,28 +194,6 @@ public abstract class AbstractMapLayer implements MapLayer {
     }
 
     @Override
-    public Filter getSelectionFilter(){
-        return selectionFilter;
-    }
-
-    @Override
-    public void setSelectionFilter(Filter filter){
-        if (filter == null) {
-            throw new NullPointerException("Filter can't be null");
-        }
-
-        final Filter oldfilter;
-        synchronized (this) {
-            oldfilter = this.selectionFilter;
-            if(oldfilter == filter){
-                return;
-            }
-            this.selectionFilter = filter;
-        }
-        firePropertyChange(SELECTION_FILTER_PROPERTY, oldfilter, this.selectionFilter);
-    }
-
-    @Override
     public MutableStyle getSelectionStyle(){
         return selectionStyle;
     }
@@ -296,50 +266,6 @@ public abstract class AbstractMapLayer implements MapLayer {
             this.selectable = selectable;
         }
         firePropertyChange(SELECTABLE_PROPERTY, oldSelectable, this.selectable);
-    }
-
-
-    /**
-     * Returns the definition query established for this layer.
-     * 
-     * @return the definition query established for this layer. If not set, just
-     *         returns {@link Query.ALL}, if set, returns a copy of the actual
-     *         query object to avoid external modification
-     * 
-     * @see org.geotools.map.MapLayer#getQuery()
-     */
-    @Override
-    public Query getQuery() {
-        return (query == Query.ALL) ? query : new DefaultQuery(query);
-    }
-
-    /**
-     * Sets a definition query for this layer.
-     * 
-     * <p>
-     * If present (other than <code>Query.ALL</code>, a renderer or consumer
-     * must use it to limit the number of returned features based on the filter
-     * it holds and the value of the maxFeatures attributes, and also can use it
-     * as a performance hto limit the number of requested attributes
-     * </p>
-     * 
-     * @param query the full filter for this layer. can not be null.
-     */
-    @Override
-    public void setQuery(final Query query) {
-        if (query == null) {
-            throw new NullPointerException( "must provide a Query. Do you mean Query.ALL?");
-        }
-
-        final Query oldQuery;
-        synchronized (this) {
-            oldQuery = this.query;
-            if(oldQuery.equals(query)){
-                return;
-            }
-            this.query = new DefaultQuery(query);
-        }
-        firePropertyChange(QUERY_PROPERTY, oldQuery, this.query);
     }
     
     /**
@@ -471,10 +397,6 @@ public abstract class AbstractMapLayer implements MapLayer {
         }
         buf.append(", style=");
         buf.append(style);
-        if (query != Query.ALL) {
-            buf.append(", query=");
-            buf.append(query);
-        }
         buf.append("]");
         return buf.toString();
     }

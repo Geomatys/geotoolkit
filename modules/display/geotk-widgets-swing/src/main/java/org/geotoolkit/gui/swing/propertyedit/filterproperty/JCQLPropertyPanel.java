@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 import org.geotools.data.DefaultQuery;
 import org.geotoolkit.gui.swing.filter.JCQLFilterPanel;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
 
 /**
  * CQL property panel
@@ -29,7 +29,7 @@ import org.geotoolkit.map.MapLayer;
  */
 public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
 
-    private MapLayer layer;
+    private FeatureMapLayer layer;
         
     private void parse(){
         setLayer(layer);
@@ -38,8 +38,8 @@ public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
     
     @Override
     public void setTarget(Object target) {
-        if (target instanceof MapLayer) {
-            layer = (MapLayer) target;
+        if (target instanceof FeatureMapLayer) {
+            layer = (FeatureMapLayer) target;
             parse();
         }
     }

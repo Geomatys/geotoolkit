@@ -100,7 +100,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final List<CachedRule> rules;
 
         final Filter selectionFilter = layer.getSelectionFilter();
-        if(!selectionFilter.equals(Filter.EXCLUDE)){
+        if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
             final List<Rule> selectionRules;
             final List<Rule> normalRules = GO2Utilities.getValidRules(
                     layer.getStyle(), renderingContext.getScale(), sft);

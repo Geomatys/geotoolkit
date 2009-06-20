@@ -20,9 +20,9 @@ package org.geotoolkit.gui.swing.go.control.selection;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -56,12 +56,13 @@ import org.geotoolkit.gui.swing.go.GoMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-
 import org.geotoolkit.referencing.CRS;
+
 import org.geotools.data.DefaultQuery;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
+
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -99,13 +100,23 @@ public class DefaultSelectionHandler implements CanvasHandler {
         public void endVisit() {
             super.endVisit();
 
-            for(final MapLayer layer : selection.keySet()){
-                Filter f = layer.getSelectionFilter();
-                f = combine(f, selection.get(layer));
-                layer.setSelectionFilter(f);
+            //disable auto repaint to avoid a repaint on each layer selection change
+            map2D.getCanvas().getController().setAutoRepaint(false);
+
+            MapContext context = ((ContextContainer2D)map2D.getCanvas().getContainer()).getContext();
+
+            for(final MapLayer layer : context.layers()){
+                if(layer instanceof FeatureMapLayer && layer.isSelectable()){
+                    FeatureMapLayer fml = (FeatureMapLayer)layer;
+                    Id f = fml.getSelectionFilter();
+                    f = combine(f, selection.get(fml));
+                    fml.setSelectionFilter(f);
+                }
             }
 
             selection.clear();
+
+            map2D.getCanvas().getController().setAutoRepaint(true);
         }
 
         @Override
@@ -169,29 +180,27 @@ public class DefaultSelectionHandler implements CanvasHandler {
         this.map2D = map2D;
     }
 
-    private Filter combine(Filter original, Set<? extends Identifier> ids){
-        final Filter f;
+    private Id combine(Id original, Set<? extends Identifier> ids){
+        final Id f;
 
         if(key == KeyEvent.VK_CONTROL){
             //add selection
-            if(original instanceof Id){
-                Set<Identifier> in = new HashSet<Identifier>(ids);
-                in.addAll(((Id)original).getIdentifiers());
-                f = FF.id(in);
-            }else{
-                f = FF.id(ids);
-            }
+            Set<Identifier> in = new HashSet<Identifier>(ids);
+            in.addAll(((Id)original).getIdentifiers());
+            f = FF.id(in);
         } else if (key == KeyEvent.VK_SHIFT){
             //remove the commun part selection
-            if(original instanceof Id){
-                Set<Identifier> in = new HashSet<Identifier>(((Id)original).getIdentifiers());
+            Set<Identifier> in = new HashSet<Identifier>(((Id)original).getIdentifiers());
+            if(ids != null){
                 in.removeAll(ids);
-                f = FF.id(in);
-            }else{
-                f = FF.id(ids);
             }
+            f = FF.id(in);
         } else {
-            f = FF.id(ids);
+            if(ids != null){
+                f = FF.id(ids);
+            }else{
+                f = null;
+            }
         }
 
         return f;
@@ -224,6 +233,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
                     for(MapLayer layer : layers){
                         if(layer instanceof FeatureMapLayer && layer.isSelectable() && layer.isVisible()){
+                            FeatureMapLayer fml = (FeatureMapLayer)layer;
                             final Set<Identifier> ids = new HashSet<Identifier>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
@@ -253,7 +263,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 Logger.getLogger(DefaultSelectionHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
 
-                            Filter selection = combine(layer.getSelectionFilter(), ids);
+                            Id selection = combine(fml.getSelectionFilter(), ids);
                             fl.setSelectionFilter(selection);
                         }
                     }

@@ -39,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @author Johann Sorel (Geomatys)
  */
-final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMapLayer {
+final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
 
     private final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
 

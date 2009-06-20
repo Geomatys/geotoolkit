@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.filter;
 
 import javax.swing.JComponent;
 
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.filter.Filter;
 
 /**
@@ -30,9 +30,9 @@ import org.opengis.filter.Filter;
 public interface FilterPanel {
 
     
-    public void setLayer(MapLayer layer);
+    public void setLayer(FeatureMapLayer layer);
     
-    public MapLayer getLayer();
+    public FeatureMapLayer getLayer();
     
     /**
      * 

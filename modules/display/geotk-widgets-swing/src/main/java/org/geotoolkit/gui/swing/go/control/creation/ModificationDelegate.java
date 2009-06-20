@@ -22,12 +22,17 @@ import java.awt.event.MouseEvent;
 
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
 /**
@@ -57,16 +62,47 @@ public class ModificationDelegate extends AbstractMouseDelegate {
     }
 
     public void prepare(JPanel panDetail){
-        panDetail.setLayout(new GridLayout(3, 3));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(new JButton(" "));
-        panDetail.add(guiEnd);
+
+        GridBagLayout gbl = new GridBagLayout();
+        panDetail.setLayout(gbl);
+
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.HORIZONTAL;
+
+        gc.gridy = 0;
+        JPanel general = new JPanel(new GridLayout(3, 3));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        general.add(new JButton(" "));
+        panDetail.add(general, gc);
+
+        gc.gridy = 1;
+        panDetail.add(new JSeparator(SwingConstants.HORIZONTAL), gc);
+
+
+        gc.gridy = 2;
+        JPanel intelli = new JPanel(new GridLayout(1, 3));
+        intelli.add(new JButton(" "));
+        intelli.add(new JButton(" "));
+        intelli.add(new JButton(" "));
+        panDetail.add(intelli, gc);
+
+        gc.gridy = 3;
+        panDetail.add(new JSeparator(SwingConstants.HORIZONTAL), gc);
+
+        gc.gridy = 4;
+        JPanel other = new JPanel(new GridLayout(1, 3));
+        other.add(new JButton(" "));
+        other.add(new JButton(" "));
+        other.add(guiEnd);
+        panDetail.add(other, gc);
+
         panDetail.revalidate();
         panDetail.setVisible(true);
     }

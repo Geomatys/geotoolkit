@@ -46,7 +46,7 @@ import org.opengis.filter.Filter;
 public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
 
     private Filter filter = null;
-    private MapLayer layer;
+    private FeatureMapLayer layer;
 
     private final ListSelectionListener listListener = new ListSelectionListener() {
 
@@ -285,7 +285,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(FeatureMapLayer layer) {
 
         if (layer == null) {
             throw new NullPointerException();
@@ -296,7 +296,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     @Override
-    public MapLayer getLayer() {
+    public FeatureMapLayer getLayer() {
         return layer;
     }
  
