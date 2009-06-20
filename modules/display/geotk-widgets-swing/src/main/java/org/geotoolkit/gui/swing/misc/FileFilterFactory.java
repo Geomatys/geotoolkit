@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.misc.filter;
+package org.geotoolkit.gui.swing.misc;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;

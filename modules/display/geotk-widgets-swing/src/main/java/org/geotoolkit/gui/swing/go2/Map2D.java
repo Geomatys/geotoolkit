@@ -20,8 +20,8 @@ package org.geotoolkit.gui.swing.go2;
 import java.awt.Component;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 
-import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration;
-import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
  *

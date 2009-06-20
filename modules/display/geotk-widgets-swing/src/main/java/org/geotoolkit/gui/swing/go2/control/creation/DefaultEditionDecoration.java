@@ -72,7 +72,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
-import org.geotoolkit.gui.swing.misc.Render.LayerListRenderer;
+import org.geotoolkit.gui.swing.misc.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;

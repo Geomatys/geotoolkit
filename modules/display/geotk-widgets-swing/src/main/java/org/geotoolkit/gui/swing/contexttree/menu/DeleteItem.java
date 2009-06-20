@@ -15,62 +15,44 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree.menu;
+package org.geotoolkit.gui.swing.contexttree.menu;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
-import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
-import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 
 /**
- * Default popup control for property page of MapLayer, use for JContextTreePopup
+ * delete item for JContextTree
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class LayerPropertyItem extends AbstractTreePopupItem {
+public class DeleteItem extends AbstractTreePopupItem{
 
     private WeakReference<MapLayer> layerRef;
-    private final List<PropertyPane> lst = new ArrayList<PropertyPane>();
-
-    /** 
-     * Creates a new instance of DefaultContextPropertyPop 
+    
+    /**
+     * delete item for jcontexttree
      */
-    public LayerPropertyItem() {
-        super(MessageBundle.getString("contexttreetable_properties"));
+    public DeleteItem(){
+        super( MessageBundle.getString("contexttreetable_delete") );
         init();
     }
 
-    /**
-     * set the list of PropertyPanel to use
-     * @param liste
-     */
-    public void setPropertyPanels(List<PropertyPane> liste) {
-        lst.clear();
-        lst.addAll(liste);
-    }
-
-    private void init() {
-        lst.add(new LayerGeneralPanel());
-        lst.add(new LayerCRSPropertyPanel());
-        lst.add(new LayerFilterPropertyPanel());
-        lst.add(new LayerStylePropertyPanel());
+    private void init(){
+        setIcon( IconBundle.getInstance().getIcon("16_delete") );
+        setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
 
         addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(layerRef == null) return;
@@ -78,13 +60,12 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
                 MapLayer layer = layerRef.get();
                 if(layer == null) return;
 
-
-                JPropertyDialog.showDialog(lst, layer);
-
+                tree.getContext().layers().remove(layer);
             }
-        });
+        }
+        );
     }
-
+    
     @Override
     public boolean isValid(TreePath[] selection) {
         return uniqueAndType(selection,MapLayer.class);
@@ -96,4 +77,5 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
         layerRef = new WeakReference<MapLayer>((MapLayer) node.getUserObject());
         return this;
     }
+
 }

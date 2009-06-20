@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.MouseInputListener;
 import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration.LEVEL;
+import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 
 /**
  *

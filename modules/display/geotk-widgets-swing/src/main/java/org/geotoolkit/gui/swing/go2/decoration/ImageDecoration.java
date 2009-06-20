@@ -15,34 +15,40 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.map.map2d.decoration;
+package org.geotoolkit.gui.swing.go2.decoration;
+
+import javax.swing.JComponent;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
-
+import org.jdesktop.swingx.JXImagePanel;
 
 /**
- * Abstract implementation of MapDecoration, handle the 
- * getMap2D and setMap2D methods.
+ * Image Decoration
  * 
  * @author Johann Sorel
  */
-public abstract class AbstractMapDecoration implements MapDecoration{
+public class ImageDecoration extends JXImagePanel implements MapDecoration{
 
-    protected Map2D map = null;
     
-    @Override
+    public ImageDecoration(){}
+    
+    public void refresh() {
+        revalidate();
+        repaint();
+    }
+
+    public JComponent geComponent() {
+        return this;
+    }
+    
     public void setMap2D(Map2D map) {
-        this.map = map;
+        
     }
 
-    @Override
     public Map2D getMap2D() {
-        return map;
+        return null;
     }
 
-    @Override
     public void dispose() {
     }
-    
-
 }

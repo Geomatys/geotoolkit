@@ -15,40 +15,39 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.map.map2d.decoration;
-
-import javax.swing.JComponent;
-
-import org.geotoolkit.gui.swing.go2.Map2D;
-import org.jdesktop.swingx.JXImagePanel;
+package org.geotoolkit.gui.swing.go2.decoration;
 
 /**
- * Image Decoration
+ * Information decoration
  * 
  * @author Johann Sorel
  */
-public class ImageDecoration extends JXImagePanel implements MapDecoration{
+public interface InformationDecoration extends MapDecoration{
 
-    
-    public ImageDecoration(){}
-    
-    public void refresh() {
-        revalidate();
-        repaint();
-    }
-
-    public JComponent geComponent() {
-        return this;
+    public static enum LEVEL{
+        NORMAL,
+        INFO,
+        WARNING,
+        ERROR
     }
     
-    public void setMap2D(Map2D map) {
-        
-    }
-
-    public Map2D getMap2D() {
-        return null;
-    }
-
-    public void dispose() {
-    }
+    public static int DEFAULT_TIME = 10000;
+    
+    public void setPaintingIconVisible(boolean b);
+    
+    public boolean isPaintingIconVisible();
+    
+    public void displayLowLevelMessages(boolean display);
+    
+    public boolean isDisplayingLowLevelMessages();
+    
+    /**
+     * 
+     * @param text
+     * @param time : time cant be inferior to 3000 (3seconds)
+     * @param level
+     */
+    public void displayMessage(String text, int time, LEVEL level);
+    
+    
 }

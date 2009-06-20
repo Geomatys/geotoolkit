@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.map.map2d.decoration;
+package org.geotoolkit.gui.swing.go2.decoration;
 
 import javax.swing.JComponent;
 import org.geotoolkit.gui.swing.go2.Map2D;

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree;
+package org.geotoolkit.gui.swing.contexttree;
 
 import java.awt.Graphics;
 
@@ -26,19 +26,19 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 
 
 /**
- * Component used to present layer visibility
+ * Component used to present layer selectability
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-final class VisibleCheck extends JCheckBox {
+final class SelectionCheck extends JCheckBox {
 
-    private static final ImageIcon ICO_VISIBLE = IconBundle.getInstance().getIcon("16_visible");
-    private static final ImageIcon ICO_NOVISIBLE = IconBundle.getInstance().getIcon("16_novisible");
+    private static final ImageIcon ICO_SELECT = IconBundle.getInstance().getIcon("16_select");
+    private static final ImageIcon ICO_NOSELECT = IconBundle.getInstance().getIcon("16_noselect");
 
     @Override
     public void paintComponent(Graphics g) {
         int x = (getWidth() - 16) / 2;
         int y = (getHeight() - 16) / 2;
-        g.drawImage((isSelected()) ? ICO_VISIBLE.getImage() : ICO_NOVISIBLE.getImage(), x, y, this);
+        g.drawImage((isSelected()) ? ICO_SELECT.getImage() : ICO_NOSELECT.getImage(), x, y, this);
     }
 }

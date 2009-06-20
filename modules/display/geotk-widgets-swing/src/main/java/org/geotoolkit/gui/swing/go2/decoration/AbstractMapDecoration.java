@@ -15,37 +15,34 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree;
+package org.geotoolkit.gui.swing.go2.decoration;
 
-import java.awt.Component;
-
-import javax.swing.tree.TreePath;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 
 /**
- * Interface used to build a Popup control for JContextTree
+ * Abstract implementation of MapDecoration, handle the 
+ * getMap2D and setMap2D methods.
  * 
- * @author Johann Sorel (Puzzle-GIS)
+ * @author Johann Sorel
  */
-public interface TreePopupItem {
+public abstract class AbstractMapDecoration implements MapDecoration{
 
-
-    public void setTree(JContextTree tree);
-
-    public JContextTree getTree();
-
-    /**
-     * return true if the control should by shown
-     * @param selection 
-     * @return 
-     */
-    public boolean isValid(TreePath[] selection);
+    protected Map2D map = null;
     
-    /**
-     * return the component to by shown
-     * @param selection 
-     * @return 
-     */
-    public Component getComponent(TreePath[] selection);
+    @Override
+    public void setMap2D(Map2D map) {
+        this.map = map;
+    }
+
+    @Override
+    public Map2D getMap2D() {
+        return map;
+    }
+
+    @Override
+    public void dispose() {
+    }
     
+
 }

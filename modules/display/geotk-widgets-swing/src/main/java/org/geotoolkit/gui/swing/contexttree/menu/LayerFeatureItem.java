@@ -15,52 +15,54 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree.menu;
+package org.geotoolkit.gui.swing.contexttree.menu;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.lang.ref.WeakReference;
-import javax.swing.KeyStroke;
+import java.util.ArrayList;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
+import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
+import org.geotoolkit.gui.swing.propertyedit.LayerFeaturePropertyPanel;
+import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+
 
 /**
- * delete item for JContextTree
+ * Default popup control for property page of MapLayer, use for JContextTreePopup
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class DeleteItem extends AbstractTreePopupItem{
-
-    private WeakReference<MapLayer> layerRef;
+public class LayerFeatureItem extends AbstractTreePopupItem{
     
-    /**
-     * delete item for jcontexttree
+    private WeakReference<FeatureMapLayer> layerRef;
+    
+    /** 
+     * Creates a new instance of DefaultContextPropertyPop 
      */
-    public DeleteItem(){
-        super( MessageBundle.getString("contexttreetable_delete") );
+    public LayerFeatureItem() {
+        super( MessageBundle.getString("contexttreetable_feature_table")  );
         init();
     }
-
+        
     private void init(){
-        setIcon( IconBundle.getInstance().getIcon("16_delete") );
-        setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
-
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(layerRef == null) return;
 
-                MapLayer layer = layerRef.get();
+                FeatureMapLayer layer = layerRef.get();
                 if(layer == null) return;
 
-                tree.getContext().layers().remove(layer);
+                ArrayList<PropertyPane> lst = new ArrayList<PropertyPane>();
+                lst.add(new LayerFeaturePropertyPanel());
+                JPropertyDialog.showDialog(lst, layer);
+                
             }
         }
         );
@@ -68,14 +70,14 @@ public class DeleteItem extends AbstractTreePopupItem{
     
     @Override
     public boolean isValid(TreePath[] selection) {
-        return uniqueAndType(selection,MapLayer.class);
+        return uniqueAndType(selection,FeatureMapLayer.class);
     }
 
     @Override
     public Component getComponent(TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-        layerRef = new WeakReference<MapLayer>((MapLayer) node.getUserObject());
+        layerRef = new WeakReference<FeatureMapLayer>((FeatureMapLayer) node.getUserObject());
         return this;
     }
-
+    
 }

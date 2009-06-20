@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration.LEVEL;
+import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 
 /**
  * Abstract handler who handle several navigation methods and

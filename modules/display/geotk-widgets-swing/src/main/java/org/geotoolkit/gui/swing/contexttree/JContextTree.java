@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree;
+package org.geotoolkit.gui.swing.contexttree;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

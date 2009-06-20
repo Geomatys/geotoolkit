@@ -15,39 +15,37 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.map.map2d.decoration;
+package org.geotoolkit.gui.swing.contexttree;
+
+import java.awt.Component;
+
+import javax.swing.tree.TreePath;
+
 
 /**
- * Information decoration
+ * Interface used to build a Popup control for JContextTree
  * 
- * @author Johann Sorel
+ * @author Johann Sorel (Puzzle-GIS)
  */
-public interface InformationDecoration extends MapDecoration{
+public interface TreePopupItem {
 
-    public static enum LEVEL{
-        NORMAL,
-        INFO,
-        WARNING,
-        ERROR
-    }
-    
-    public static int DEFAULT_TIME = 10000;
-    
-    public void setPaintingIconVisible(boolean b);
-    
-    public boolean isPaintingIconVisible();
-    
-    public void displayLowLevelMessages(boolean display);
-    
-    public boolean isDisplayingLowLevelMessages();
+
+    public void setTree(JContextTree tree);
+
+    public JContextTree getTree();
+
+    /**
+     * return true if the control should by shown
+     * @param selection 
+     * @return 
+     */
+    public boolean isValid(TreePath[] selection);
     
     /**
-     * 
-     * @param text
-     * @param time : time cant be inferior to 3000 (3seconds)
-     * @param level
+     * return the component to by shown
+     * @param selection 
+     * @return 
      */
-    public void displayMessage(String text, int time, LEVEL level);
-    
+    public Component getComponent(TreePath[] selection);
     
 }

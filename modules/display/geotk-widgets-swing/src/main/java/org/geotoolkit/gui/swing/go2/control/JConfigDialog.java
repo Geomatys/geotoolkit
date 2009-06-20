@@ -25,7 +25,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.JNorthArrowDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
-import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 

@@ -29,7 +29,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
  * Selection decoration

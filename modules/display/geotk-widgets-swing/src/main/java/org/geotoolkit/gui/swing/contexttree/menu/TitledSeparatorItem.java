@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree.menu;
+package org.geotoolkit.gui.swing.contexttree.menu;
 
 import java.awt.Component;
 
@@ -23,7 +23,7 @@ import javax.swing.Icon;
 import javax.swing.SwingConstants;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.TreePopupItem;
+import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
 import org.jdesktop.swingx.JXTitledSeparator;
 
 /**

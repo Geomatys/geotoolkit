@@ -15,15 +15,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree;
+package org.geotoolkit.gui.swing.contexttree;
 
 import java.awt.Component;
 import java.awt.Point;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
-import org.geotoolkit.gui.swing.maptree.menu.SeparatorItem;
-import org.geotoolkit.gui.swing.maptree.menu.TitledSeparatorItem;
+import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
+import org.geotoolkit.gui.swing.contexttree.menu.TitledSeparatorItem;
 
 /**
  * TreePopup item.

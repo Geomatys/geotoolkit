@@ -15,25 +15,42 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.maptree;
+package org.geotoolkit.gui.swing.contexttree.menu;
 
-import javax.swing.JMenuItem;
-import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.Component;
+
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.tree.TreePath;
 
+import org.geotoolkit.gui.swing.contexttree.JContextTree;
+import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
+
 /**
- *
- * @author eclesia
+ * Default popup control separator, use for JContextTreePopup
+ * 
+ * @author Johann Sorel (Puzzle-GIS)
  */
-public abstract class AbstractTreePopupItem extends JMenuItem implements TreePopupItem{
+public class SeparatorItem extends JSeparator implements TreePopupItem{
 
-    protected JContextTree tree = null;
+    private JContextTree tree = null;
 
-    public AbstractTreePopupItem() {
+    /** 
+     * Creates a new instance of separator
+     */
+    public SeparatorItem() {
+        super();
+        setOrientation(SwingConstants.HORIZONTAL);
+    }
+    
+    @Override
+    public boolean isValid(TreePath[] selection) {
+        return true;
     }
 
-    public AbstractTreePopupItem(String str) {
-        super(str);
+    @Override
+    public Component getComponent(TreePath[] selection) {
+        return this;
     }
 
     @Override
@@ -45,17 +62,5 @@ public abstract class AbstractTreePopupItem extends JMenuItem implements TreePop
     public JContextTree getTree() {
         return tree;
     }
-
-    protected static boolean uniqueAndType(TreePath[] selection,Class C) {
-        if (selection != null && selection.length == 1){
-            TreePath path = selection[0];
-            if( path != null && path.getLastPathComponent() != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                return  C.isInstance(node.getUserObject()) ;
-            }
-        }
-        return false;
-
-    }
-
+    
 }

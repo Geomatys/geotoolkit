@@ -34,7 +34,7 @@ import javax.swing.JScrollPane;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
  * Infomation decoration

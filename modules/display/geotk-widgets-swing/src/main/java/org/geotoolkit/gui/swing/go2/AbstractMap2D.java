@@ -27,10 +27,10 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import org.geotoolkit.gui.swing.BufferLayout;
-import org.geotoolkit.gui.swing.map.map2d.decoration.DefaultInformationDecoration;
-import org.geotoolkit.gui.swing.map.map2d.decoration.MapDecoration;
-import org.geotoolkit.gui.swing.map.map2d.decoration.ColorDecoration;
-import org.geotoolkit.gui.swing.map.map2d.decoration.InformationDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.DefaultInformationDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
+import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
 
 /**
  * Default implementation of Map2D
