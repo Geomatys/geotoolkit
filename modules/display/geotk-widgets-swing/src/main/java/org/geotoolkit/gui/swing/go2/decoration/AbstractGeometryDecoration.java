@@ -44,6 +44,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -51,6 +52,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Puzzle-GIS)
  */
 public abstract class AbstractGeometryDecoration extends JPanel implements MapDecoration{
+
+    private static final Logger LOGGER = Logging.getLogger(AbstractGeometryDecoration.class);
 
     protected final List<Geometry> geometries = new ArrayList<Geometry>();
     private DefaultRenderingContext2D context = null;
@@ -137,7 +140,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
             try {
                 paintGeometry(g2,context, projected);
             } catch (TransformException ex) {
-                Logger.getLogger(AbstractGeometryDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
 

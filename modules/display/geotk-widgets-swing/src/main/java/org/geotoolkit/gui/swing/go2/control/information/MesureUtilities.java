@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
@@ -53,6 +54,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public class MesureUtilities {
+
+    private static final Logger LOGGER = Logging.getLogger(MesureUtilities.class);
 
     public static double calculateLenght(Geometry geom, CoordinateReferenceSystem geomCRS, Unit<Length> unit){
 
@@ -89,9 +92,9 @@ public class MesureUtilities {
             return lenght;
 
         } catch (MismatchedDimensionException ex) {
-                Logger.getLogger(MesureUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(MesureUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         return 0;
@@ -140,11 +143,11 @@ public class MesureUtilities {
             return area;
 
         } catch (FactoryException ex) {
-            Logger.getLogger(MesureUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (MismatchedDimensionException ex) {
-            Logger.getLogger(MesureUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(MesureUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } 
 
         return 0;        

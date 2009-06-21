@@ -121,7 +121,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         final JPopupMenu menu = new JPopupMenu();
 
-        JMenuItem mi = new JMenuItem("Clear selection");
+        JMenuItem mi = new JMenuItem(MessageBundle.getString("clear_selection"));
         menu.add(mi);
         mi.addActionListener(new ActionListener() {
             @Override
@@ -250,10 +250,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addContainerGap()
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jbu_action))
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

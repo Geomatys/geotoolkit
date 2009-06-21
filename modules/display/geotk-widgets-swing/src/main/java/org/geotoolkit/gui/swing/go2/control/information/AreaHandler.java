@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Panoramic handler
@@ -47,6 +48,8 @@ import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
  * @author Johann Sorel
  */
 public class AreaHandler implements CanvasHandler {
+
+    private static final Logger LOGGER = Logging.getLogger(AreaHandler.class);
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
@@ -132,7 +135,7 @@ public class AreaHandler implements CanvasHandler {
                     coords.add(new Coordinate(crds[0], crds[1]));
                     updateGeometry();
                 } catch (NoninvertibleTransformException ex) {
-                    Logger.getLogger(LenghtHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
 
             } else if (mousebutton == MouseEvent.BUTTON3) {

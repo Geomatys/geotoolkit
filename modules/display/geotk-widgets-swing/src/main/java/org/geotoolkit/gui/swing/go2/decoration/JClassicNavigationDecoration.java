@@ -44,7 +44,7 @@ import javax.swing.JComponent;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
@@ -52,7 +52,9 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  */
 public class JClassicNavigationDecoration extends JComponent implements MapDecoration {
 
-    private final JClassicNavigationDecoration THIS = this;
+
+    private static final Logger LOGGER = Logging.getLogger(JClassicNavigationDecoration.class);
+
     private Map2D map = null;
     
     
@@ -296,7 +298,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(0, getHeight() / 10);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(JNeoNavigationDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -306,7 +308,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(0, -getHeight() / 10);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(JNeoNavigationDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -316,7 +318,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(getWidth() / 10, 0);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(JNeoNavigationDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -326,7 +328,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(-getWidth() / 10, 0);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(JNeoNavigationDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -337,7 +339,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().setRotation(d);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(JNeoNavigationDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
 
         }

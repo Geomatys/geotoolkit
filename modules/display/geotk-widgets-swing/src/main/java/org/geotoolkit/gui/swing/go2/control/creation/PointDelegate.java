@@ -20,9 +20,6 @@ package org.geotoolkit.gui.swing.go2.control.creation;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.awt.event.MouseEvent;
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * point creation handler

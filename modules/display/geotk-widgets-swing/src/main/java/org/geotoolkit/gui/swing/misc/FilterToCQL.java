@@ -76,6 +76,7 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Encodes a filter into a CQL statement.  NOT TRUSTABLE YET !!!
@@ -118,7 +119,7 @@ public class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     /** The filter types that this class can encode */
     protected FilterCapabilities capabilities = null;
     /** Standard java logger */
-    private static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.filter");
+    private static final Logger LOGGER = Logging.getLogger(FilterToCQL.class);
     /** Map of expression types to cql representation */
     private static Map expressions = new HashMap();
 

@@ -79,6 +79,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
@@ -106,6 +107,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class DefaultEditionDecoration extends AbstractGeometryDecoration {
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultEditionDecoration.class);
 
     private enum ACTION{
         NONE,
@@ -483,7 +486,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
                 try {
                     geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
                 } catch (Exception ex) {
-                    Logger.getLogger(DefaultEditionDecoration.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
 
                 List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
@@ -654,7 +657,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
             dispToObj = trs.createInverse();
         } catch (NoninvertibleTransformException ex) {
             dispToObj = new AffineTransform();
-            Logger.getLogger(DefaultEditionDecoration.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         double[] crds = new double[]{x,y};
         dispToObj.transform(crds, 0, crds, 0, 1);

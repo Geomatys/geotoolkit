@@ -27,12 +27,15 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class ZoomAllAction extends AbstractAction {
+
+    private static final Logger LOGGER = Logging.getLogger(ZoomAllAction.class);
 
     private static final ImageIcon ICON_ZOOM_ALL = IconBundle.getInstance().getIcon("16_zoom_all");
 
@@ -49,9 +52,9 @@ public class ZoomAllAction extends AbstractAction {
             try {
                 map.getCanvas().getController().setVisibleArea(rect);
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(ZoomAllAction.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(ZoomAllAction.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             } 
         }
     }

@@ -28,6 +28,7 @@ import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;
@@ -39,6 +40,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class JMap2D extends AbstractMap2D{
 
+    private static final Logger LOGGER = Logging.getLogger(JMap2D.class);
     
     private CanvasHandler handler;
     private final SwingVolatileGeoComponent geoComponent;
@@ -81,7 +83,7 @@ public class JMap2D extends AbstractMap2D{
         try {
             canvas.setObjectiveCRS(DefaultGeographicCRS.WGS84);
         } catch (TransformException ex) {
-            Logger.getLogger(JMap2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
                 
     }

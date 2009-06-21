@@ -26,12 +26,15 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class ZoomOutAction extends AbstractAction {
+
+    private static final Logger LOGGER = Logging.getLogger(ZoomOutAction.class);
 
     private static final ImageIcon ICON_ZOOM_OUT = IconBundle.getInstance().getIcon("16_zoom_out");
 
@@ -50,7 +53,7 @@ public class ZoomOutAction extends AbstractAction {
             try {
                 map.getCanvas().getController().scale(0.5d);
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(ZoomAllAction.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             } 
         }
     }

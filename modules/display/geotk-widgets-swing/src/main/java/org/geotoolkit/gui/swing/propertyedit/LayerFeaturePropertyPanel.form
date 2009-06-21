@@ -4,7 +4,7 @@
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/geotools/gui/swing/resource/Bundle"/>
+    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/geotoolkit/gui/swing/resource/Bundle"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
@@ -21,11 +21,11 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jcb_edit" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="guiCount" pref="374" max="32767" attributes="0"/>
+              <Component id="guiCount" pref="539" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jbu_action" min="-2" max="-2" attributes="0"/>
           </Group>
-          <Component id="jScrollPane1" alignment="0" pref="511" max="32767" attributes="0"/>
+          <Component id="jScrollPane1" alignment="0" pref="676" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -62,7 +62,7 @@
     <Component class="javax.swing.JCheckBox" name="jcb_edit">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotools/gui/swing/resource/Bundle.properties" key="property_edit" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_edit" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -78,7 +78,7 @@
     <Component class="javax.swing.JButton" name="jbu_action">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotools/gui/swing/resource/Bundle.properties" key="property_action" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_action" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>

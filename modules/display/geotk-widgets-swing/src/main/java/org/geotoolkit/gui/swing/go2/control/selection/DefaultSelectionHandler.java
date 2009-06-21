@@ -58,6 +58,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotools.data.DefaultQuery;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -78,6 +79,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel
  */
 public class DefaultSelectionHandler implements CanvasHandler {
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultSelectionHandler.class);
 
     protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
@@ -260,7 +263,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 }
                                 fi.close();
                             } catch (Exception ex) {
-                                Logger.getLogger(DefaultSelectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                LOGGER.log(Level.SEVERE, null, ex);
                             }
 
                             Id selection = combine(fml.getSelectionFilter(), ids);
