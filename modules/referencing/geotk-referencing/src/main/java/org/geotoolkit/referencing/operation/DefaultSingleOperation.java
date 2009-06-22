@@ -45,7 +45,17 @@ import org.geotoolkit.io.wkt.Formatter;
 
 
 /**
- * A single (not {@linkplain DefaultConcatenatedOperation concatenated}) coordinate operation.
+ * A parameterized mathematical operation on coordinates that transforms or converts
+ * coordinates to another {@linkplain CoordinateReferenceSystem coordinate reference
+ * system}. This coordinate operation thus uses an {@linkplain OperationMethod operation
+ * method}, usually with associated parameter values.
+ * <p>
+ * In the Geotoolkit implementation, the {@linkplain #getParameterValues parameter values}
+ * are inferred from the {@linkplain #transform transform}. Other implementations may have
+ * to overrides the {@link #getParameterValues} method.
+ * <p>
+ * This is a single (not {@linkplain DefaultConcatenatedOperation concatenated})
+ * coordinate operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.01

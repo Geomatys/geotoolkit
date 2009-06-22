@@ -20,6 +20,7 @@ package org.geotoolkit.referencing;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.awt.geom.Point2D;
@@ -789,25 +790,38 @@ search:         if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getDirec
      *   <li>{@code ogc:uri:.....} - understood to match the EPSG database axis order.</li>
      *   <li>{@code AUTO:43200} - without the parameters that are specific to AUTO codes.</li>
      * </ul>
+     *
+     * {@section Comparison with other methods}
+     * Note that this method returns the code of an arbitrary authority. More specifically it uses
+     * the first non-null element found in {@code crs.getIdentifiers()}, or if there is none it uses
+     * {@code crs.getName()} - which is not garanteed to be a valid identifier. If the code of a
+     * specific authority is wanted (typically EPSG), then consider using the static methods defined
+     * in {@link AbstractIdentifiedObject} instead.
      * <p>
-     * Note that this method returns the code of an arbitrary authority.
-     * If the code of a specific authority is wanted (typically EPSG), then consider using
-     * the static methods defined in {@link AbstractIdentifiedObject} instead.
+     * Note also that this method uses only the metadata defined in the given CRS; it does not
+     * scan any database for fetching the missing identifiers. For a more exhaustive scan, use
+     * one of the lookup methods defined below.
      *
      * @param  crs The coordinate reference system, or {@code null}.
      * @return SRS represented as a string for communication between systems, or {@code null}.
      *
+     * @see #lookupIdentifier(IdentifiedObject, boolean)
      * @see AbstractIdentifiedObject#getIdentifier(IdentifiedObject, Citation)
      *
      * @since 2.5
      */
     public static String toSRS(final CoordinateReferenceSystem crs) {
         if (crs != null) {
-            final ReferenceIdentifier name;
+            ReferenceIdentifier name = null;
             final Set<ReferenceIdentifier> identifiers = crs.getIdentifiers();
-            if (identifiers!=null && !identifiers.isEmpty()) {
-                name = identifiers.iterator().next();
-            } else {
+            if (identifiers != null) {
+                for (final Iterator<ReferenceIdentifier> it=identifiers.iterator(); it.hasNext();) {
+                    if ((name = it.next()) != null) {
+                        break;
+                    }
+                }
+            }
+            if (name == null) {
                 name = crs.getName();
             }
             if (name != null) {

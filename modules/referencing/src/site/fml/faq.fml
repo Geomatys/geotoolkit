@@ -28,7 +28,45 @@
   UNIT["m", 1]]</pre></blockquote>
       </answer>
     </faq>
+    <faq id="lookupIdentifier">
+      <question>
+        How do I get the EPSG code of an existing CRS?
+      </question>
+      <answer>
+        <p>The <em>identifier</em> of a Coordinate Reference System (CRS) object can be obtained by the
+        <code>getIdentifiers()</code> method, which usually return a collection of zero or one element.
+        If the CRS has been created from a <cite>Well Known Text</cite> (WKT) parsing and the WKT ends
+        with an <code>AUTHORITY["EPSG", "<var>xxxx</var>"]</code> element, then the identifier (an EPSG
+        code in this example) is the value in that <code>AUTHORITY</code> element. If the CRS has been
+        created from the EPSG <cite>Authority Factory</cite>, then the factory should have already put
+        the code in the collection of identifiers. If the CRS has been created in a different way, then
+        the collection returned by the <code>getIdentifiers()</code> method may or may not be empty depending
+        if the program that created the CRS has taken the responsability of providing an identifier.</p>
+
+        <p>If the collection of identifiers is empty, the most effective fix is to make sure that
+        the WKT contains an <code>AUTHORITY</code> declaration. If this is not possible, then the
+        <code>org.geotoolkit.referencing.CRS</code> class contains some <code>lookupIdentifier(&hellip;)</code>
+        convenience methods which may help. Example:</p>
+
+<blockquote><pre>CoordinateReferenceSystem myCRS = ...;
+String identifier = CRS.lookupIdentifier(Citations.EPSG, myCRS, true);
+if (identifier != null) {
+    System.out.println("The EPSG code has been found: " + identifier);
+}</pre></blockquote>
+
+        <p>The above call will first inspects the collection returned by <code>myCRS.getIdentifiers()</code>.
+        If no suitable value is found, then it will scan the EPSG database for a CRS equals (ignoring
+        metadata) to the given one. <strong>Note that this scan is sensitive to axis order.</strong>
+        Most geographic CRS in the EPSG database are declared with (<var>latitude</var>, <var>longitude</var>)
+        axis order. Consequently If the given CRS has (<var>longitude</var>, <var>latitude</var>) axis
+        order, then the scan is likely to find no match unless it has been instructed to force the
+        longitude axis to appear first.</p>
+      </answer>
+    </faq>
   </part>
+
+  <!-- ======================================================================================== -->
+
   <part id="transforms">
     <title>Coordinate transformations</title>
     <faq id="BursaWolf">
