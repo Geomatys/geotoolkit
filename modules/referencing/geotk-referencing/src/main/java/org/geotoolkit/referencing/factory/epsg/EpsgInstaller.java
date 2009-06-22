@@ -266,7 +266,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             log.setSourceClassName(EpsgInstaller.class.getName());
             log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());
             ThreadedEpsgFactory.LOGGER.log(log);
-            runner.splitMultirows = true;
+            runner.maxRowsPerInsert = 100;
             for (String script : EpsgScriptRunner.SCRIPTS) {
                 script += ".sql";
                 final InputStream in = EpsgScriptRunner.class.getResourceAsStream(script);

@@ -36,7 +36,7 @@ import org.geotoolkit.internal.jdbc.ScriptRunner;
  * be used for other flavors (not officially supported by EPSG) like JavaDB.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 3.00
  * @module
@@ -72,11 +72,12 @@ final class EpsgScriptRunner extends ScriptRunner {
     private final boolean supportsSchemas;
 
     /**
-     * {@code true} if we should split multirow insertions into multiple {@code INSERT}
-     * statements. Should be {@code true} only when reading the files modified by the
-     * {@code geotk-epsg-pack} module.
+     * The maximum number of rows per {@code INSERT} statement. Should be modified only when
+     * reading the files modified by the {@code geotk-epsg-pack} module, otherwise we assume
+     * that the user know what he is doing. This is used because attempts to insert too many
+     * rows with a single statement on Derby database cause a {@link StackTraceOverflow}.
      */
-    boolean splitMultirows;
+    int maxRowsPerInsert;
 
     /**
      * {@code true} if the Pilcrow character (¶ - decimal code 182) should be replaced by
@@ -264,7 +265,7 @@ final class EpsgScriptRunner extends ScriptRunner {
         if (replaceParagraphs) {
             StringUtilities.replace(sql, "\u00B6", "\n");
         }
-        if (splitMultirows && StringUtilities.startsWith(sql, "INSERT INTO", true)) {
+        if (maxRowsPerInsert != 0 && StringUtilities.startsWith(sql, "INSERT INTO", true)) {
             /*
              * The following code is very specific to the syntax of the scripts generated
              * by the geotk-epsg-pack module. It is executed only when running the scripts
@@ -272,19 +273,35 @@ final class EpsgScriptRunner extends ScriptRunner {
              */
             int position = sql.indexOf("\n");
             if (position >= 0) {
-                int begin, count = 0;
-                // Fetch the "INSERT INTO" part, which is expected to be on its own line.
+                /*
+                 * Fetch the "INSERT INTO" part, which is expected to be on its own line.
+                 * We will left this part of the buffer unchanged, and write only after
+                 * the offset.
+                 */
                 final StringBuilder buffer = new StringBuilder(sql.substring(0, position)).append(' ');
                 final int offset = buffer.length();
-                while ((position = sql.indexOf("\n", begin = ++position)) >= 0) {
-                    int end = position;
-                    if (end > begin) {
-                        if (sql.charAt(end-1) == ',') {
-                            end--;
-                        }
-                        count += super.execute(buffer.append(sql.substring(begin, end)));
-                        buffer.setLength(offset);
+                int begin = position + 1;
+                int count = 0;
+                int nrows = maxRowsPerInsert;
+                while ((position = sql.indexOf("\n", ++position)) >= 0) {
+                    if (--nrows != 0 || position == begin) {
+                        /*
+                         * Continue to extract lines until we have reached the 'maxRowsPerInsert'
+                         * amount. Also continue if we still have no line at all (position == begin).
+                         */
+                        continue;
                     }
+                    int end = position;
+                    if (sql.charAt(end-1) == ',') {
+                        end--;
+                    }
+                    count += super.execute(buffer.append(sql.substring(begin, end)));
+                    /*
+                     * Prepare for inspecting next lines.
+                     */
+                    buffer.setLength(offset);
+                    nrows = maxRowsPerInsert;
+                    begin = position + 1;
                 }
                 // Executes the last statement.
                 count += super.execute(buffer.append(sql.substring(begin)));
