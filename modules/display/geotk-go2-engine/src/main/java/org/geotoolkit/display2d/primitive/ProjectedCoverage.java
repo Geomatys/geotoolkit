@@ -17,11 +17,10 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.io.IOException;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.CoverageMapLayer;
-
 import org.geotoolkit.coverage.io.CoverageReadParam;
 
 import org.opengis.display.primitive.Graphic;

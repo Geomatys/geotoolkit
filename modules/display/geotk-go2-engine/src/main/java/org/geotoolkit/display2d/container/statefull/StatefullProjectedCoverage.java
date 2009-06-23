@@ -22,8 +22,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -32,7 +30,6 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.util.collection.Cache;
-
 import org.geotoolkit.coverage.io.CoverageReadParam;
 
 import org.opengis.geometry.Envelope;
@@ -69,22 +66,14 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public GridCoverage2D getCoverage(CoverageReadParam param) {
+    public GridCoverage2D getCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException{
         GridCoverage2D value = cache.peek(param);
         if (value == null) {
             Cache.Handler<GridCoverage2D> handler = cache.lock(param);
             try {
                 value = handler.peek();
                 if (value == null) {
-                    try {
-                        value = layer.getCoverageReader().read(param);
-                    } catch (FactoryException ex) {
-                        Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (TransformException ex) {
-                        Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    value = layer.getCoverageReader().read(param);
                 }
             } finally {
                 handler.putAndUnlock(value);
