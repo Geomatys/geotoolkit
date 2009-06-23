@@ -55,33 +55,30 @@ import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
@@ -149,27 +146,27 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
         //bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
 
-        if(!gridCRS.equals(bounds.getCoordinateReferenceSystem())){
-            try {
-                bounds = CRS.transform(bounds, gridCRS);
-            } catch (TransformException ex) {
-                Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());
-            pos.x = resolution[0];
-            pos.y = resolution[1];
-
-            try{
-                MathTransform trs = context.getMathTransform(context.getObjectiveCRS(), gridCRS);
-                DirectPosition pos2 = trs.transform(pos, null);
-                resolution[0] = pos2.getOrdinate(0);
-                resolution[1] = pos2.getOrdinate(1);
-            }catch(Exception ex){
-                throw new PortrayalException(ex);
-            }
-
-        }
+//        if(!gridCRS.equals(bounds.getCoordinateReferenceSystem())){
+//            try {
+//                bounds = CRS.transform(bounds, gridCRS);
+//            } catch (TransformException ex) {
+//                Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//
+//            DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());
+//            pos.x = resolution[0];
+//            pos.y = resolution[1];
+//
+//            try{
+//                MathTransform trs = context.getMathTransform(context.getObjectiveCRS(), gridCRS);
+//                DirectPosition pos2 = trs.transform(pos, null);
+//                resolution[0] = Math.abs(pos2.getOrdinate(0));
+//                resolution[1] = Math.abs(pos2.getOrdinate(1));
+//            }catch(Exception ex){
+//                throw new PortrayalException(ex);
+//            }
+//
+//        }
 
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
@@ -186,7 +183,7 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
             throw new PortrayalException(ex);
         }
 
-        if(!dataCoverage.getCoordinateReferenceSystem2D().equals(context.getObjectiveCRS())){
+        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),context.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
             try{
                 //we resample the native view of the coverage only, the style will be applied later.
