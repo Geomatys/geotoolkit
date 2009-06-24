@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.filter.capability;
 
+import org.geotoolkit.filter.visitor.IsSupportedFilterVisitor;
+import org.opengis.filter.Filter;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.capability.IdCapabilities;
 import org.opengis.filter.capability.ScalarCapabilities;
@@ -71,6 +73,14 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
     @Override
     public String getVersion() {
         return version;
+    }
+
+    public boolean supports(final Filter filter) {
+        if (filter == null) {
+            return false;
+        }
+        final IsSupportedFilterVisitor supportedVisitor = new IsSupportedFilterVisitor(this);
+        return (Boolean) filter.accept(supportedVisitor, null);
     }
 
     /**

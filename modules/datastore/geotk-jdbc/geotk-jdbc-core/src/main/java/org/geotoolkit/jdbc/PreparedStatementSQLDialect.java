@@ -25,7 +25,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import org.geotools.util.Converters;
+import org.geotoolkit.util.Converters;
 
 import com.vividsolutions.jts.geom.Geometry;
 

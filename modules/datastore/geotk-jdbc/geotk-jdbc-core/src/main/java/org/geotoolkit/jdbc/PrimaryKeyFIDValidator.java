@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotools.filter.visitor.SimplifyingFilterVisitor.FIDValidator;
+import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor.FIDValidator;
 
 
 /**

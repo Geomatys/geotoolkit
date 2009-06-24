@@ -76,6 +76,10 @@
           <version>${geomodified.version}</version>
           <scope>test</scope>
       </dependency>
+      <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gtm-api</artifactId>
+      </dependency>
 
   </dependencies>
             

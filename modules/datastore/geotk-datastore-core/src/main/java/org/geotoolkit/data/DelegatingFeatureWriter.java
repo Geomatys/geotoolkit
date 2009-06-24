@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,17 +14,24 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.postgis;
+package org.geotoolkit.data;
 
-import org.geotoolkit.jdbc.JDBCFeatureLockingTest;
-import org.geotoolkit.jdbc.JDBCTestSetup;
+import org.geotools.data.FeatureWriter;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 
 
-public class PostgisFeatureLockingTest extends JDBCFeatureLockingTest {
+/**
+ * Interface for wrapping feature writers which delegate to another feature writer.
+ *
+ * @author Justin Deoliveira, OpenGEO
+ * @since 2.5
+ *
+ */
+public interface DelegatingFeatureWriter<T extends FeatureType,F extends Feature> extends FeatureWriter<T, F> {
 
-    @Override
-    protected JDBCTestSetup createTestSetup() {
-        return new PostGISTestSetup();
-    }
-
+    /**
+     * @return The delegate writer.
+     */
+    FeatureWriter<T,F> getDelegate();
 }

@@ -18,11 +18,11 @@ package org.geotoolkit.jdbc;
 
 import java.util.Iterator;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.Query;
 import org.geotools.data.QueryCapabilities;
 import org.geotoolkit.data.store.ContentFeatureSource;
-import org.geotools.factory.CommonFactoryFinder;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -122,7 +122,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testGetFeaturesWithInvalidFilter() throws Exception {
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
 
         // make sure a complaint related to the invalid filter is thrown here
@@ -186,7 +186,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testGetFeaturesWithInvalidQuery() {
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
 
         // make sure a complaint related to the invalid filter is thrown here

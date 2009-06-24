@@ -14,17 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.postgis.ps;
+package org.geotoolkit.feature.type;
 
-import org.geotoolkit.jdbc.JDBCFeatureLockingTest;
-import org.geotoolkit.jdbc.JDBCTestSetup;
+import org.opengis.feature.type.AssociationDescriptor;
+import org.opengis.feature.type.AssociationType;
+import org.opengis.feature.type.Name;
 
 
-public class PostgisFeatureLockingTest extends JDBCFeatureLockingTest {
+public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor
+        implements AssociationDescriptor {
 
-    @Override
-    protected JDBCTestSetup createTestSetup() {
-        return new PostGISPSTestSetup();
+    public DefaultAssociationDescriptor(AssociationType type, Name name, int min, int max, boolean isNillable) {
+        super(type, name, min, max, isNillable);
     }
 
+    @Override
+    public AssociationType getType() {
+        return (AssociationType) super.getType();
+    }
 }

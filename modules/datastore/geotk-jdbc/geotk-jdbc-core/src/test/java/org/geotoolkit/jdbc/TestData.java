@@ -19,9 +19,9 @@ package org.geotoolkit.jdbc;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.geotools.data.DataUtilities;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -77,7 +77,7 @@ public class TestData {
         this.initialFidValue = initialFidValue;
 
         gf = new GeometryFactory();
-        ff = CommonFactoryFinder.getFilterFactory(null);
+        ff = FactoryFinder.getFilterFactory(null);
     }
 
     public void build() throws Exception {
@@ -177,7 +177,7 @@ public class TestData {
         riverBounds.expandToInclude(ReferencedEnvelope.reference(riverFeatures[0].getBounds()));
         riverBounds.expandToInclude(ReferencedEnvelope.reference(riverFeatures[1].getBounds()));
 
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         rv1Filter = ff.id(Collections.singleton(ff.featureId(RIVER + ".rv1")));
 
         //  9,5   11,5   

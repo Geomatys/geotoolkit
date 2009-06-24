@@ -121,7 +121,7 @@ public final class JDBCState extends ContentState {
     @Override
     protected void finalize() throws Throwable {
         if ( connection != null && !connection.isClosed()) {
-            Logger.getLogger( "org.geotools.jdbc").severe("State finalized with open connection.");
+            Logger.getLogger( "org.geotoolkit.jdbc").severe("State finalized with open connection.");
         }
     }
 }

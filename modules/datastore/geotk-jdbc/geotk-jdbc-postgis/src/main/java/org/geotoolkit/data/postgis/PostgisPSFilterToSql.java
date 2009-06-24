@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.postgis;
 
-import org.geotools.filter.FilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.jdbc.PreparedFilterToSQL;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -40,7 +40,7 @@ public class PostgisPSFilterToSql extends PreparedFilterToSQL {
     }
 
     @Override
-    protected FilterCapabilities createFilterCapabilities() {
+    protected DefaultFilterCapabilities createFilterCapabilities() {
         return FilterToSqlHelper.createFilterCapabilities();
     }
 

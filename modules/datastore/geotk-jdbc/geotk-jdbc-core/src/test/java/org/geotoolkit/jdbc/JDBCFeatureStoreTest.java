@@ -23,13 +23,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.geotools.data.CollectionFeatureReader;
+import org.geotoolkit.data.CollectionFeatureReader;
 import org.geotools.data.FeatureReader;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.DefaultFeatureCollection;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -114,7 +114,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
             collection.add(b.buildFeature(null));
         }
 
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = new CollectionFeatureReader(collection, collection.getSchema());
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = new CollectionFeatureReader(collection, collection.getSchema());
         featureStore.setFeatures(reader);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureStore.getFeatures();
@@ -221,7 +221,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
     
     public void testModifyFeaturesInvalidFilter() throws IOException {
         SimpleFeatureType t = featureStore.getSchema();
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
         
         try {
@@ -248,8 +248,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
     }
     
     public void testRemoveFeaturesWithInvalidFilter() throws IOException {
-        SimpleFeatureType t = featureStore.getSchema();
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
         
         try {
