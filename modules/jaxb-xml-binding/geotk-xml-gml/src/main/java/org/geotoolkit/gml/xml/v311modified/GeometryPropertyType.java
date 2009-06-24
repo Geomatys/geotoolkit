@@ -22,7 +22,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -77,6 +79,29 @@ public class GeometryPropertyType {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    @XmlTransient
+    private ObjectFactory factory = new ObjectFactory();
+
+    public GeometryPropertyType() {
+
+    }
+
+    public GeometryPropertyType(AbstractGeometryType value) {
+        if (value instanceof PolygonType) {
+            geometry = factory.createPolygon((PolygonType) value);
+        } else if (value instanceof CurveType) {
+            geometry = factory.createCurve((CurveType) value);
+        } else if (value instanceof PointType) {
+            geometry = factory.createPoint((PointType) value);
+        } else if (value instanceof LineStringType) {
+            geometry = factory.createLineString((LineStringType) value);
+        } else if (value instanceof PolyhedralSurfaceType) {
+            geometry = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
+        } else {
+            throw new IllegalArgumentException("unexpected geometry type:" + value);
+        }
+    }
 
     /**
      * Gets the value of the geometry property.
@@ -287,6 +312,52 @@ public class GeometryPropertyType {
      */
     public void setActuate(String value) {
         this.actuate = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof GeometryPropertyType) {
+            final GeometryPropertyType that = (GeometryPropertyType) object;
+
+            boolean geom = false;
+            if (this.geometry != null && that.geometry != null) {
+                geom = Utilities.equals(this.geometry.getValue(),   that.geometry.getValue());
+            } else if (this.geometry == null && that.geometry == null) {
+                geom = true;
+            }
+
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title)            &&
+                   geom;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.geometry != null ? this.geometry.hashCode() : 0);
+        hash = 79 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 79 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 79 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 79 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 79 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 79 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
     }
 
 }

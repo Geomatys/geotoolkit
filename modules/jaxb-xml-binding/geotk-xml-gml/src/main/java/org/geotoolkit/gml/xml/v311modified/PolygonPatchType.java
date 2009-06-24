@@ -63,12 +63,29 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
     @XmlAttribute
     private SurfaceInterpolationType interpolation;
 
+    public PolygonPatchType() {
+
+    }
+
+    public PolygonPatchType(SurfaceInterpolationType interpolation, AbstractRingType exterior, List<? extends AbstractRingType> interiors) {
+        this.interpolation = interpolation;
+        ObjectFactory factory = new ObjectFactory();
+        if (exterior != null) {
+            this.exterior = factory.createExterior(new AbstractRingPropertyType(exterior));
+        }
+        if (interiors != null) {
+            this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+            for (AbstractRingType inte : interiors) {
+                this.interior.add(factory.createInterior(new AbstractRingPropertyType(inte)));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the exterior property.
      * 
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
@@ -81,7 +98,6 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      * 
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */

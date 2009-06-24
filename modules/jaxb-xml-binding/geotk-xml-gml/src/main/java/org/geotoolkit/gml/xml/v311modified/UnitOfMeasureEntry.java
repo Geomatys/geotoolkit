@@ -103,11 +103,14 @@ public class UnitOfMeasureEntry { //implements BaseUnit {
         if (object == this) {
             return true;
         }
-        final UnitOfMeasureEntry that = (UnitOfMeasureEntry) object;
-        return Utilities.equals(this.name,  that.name) &&
-               Utilities.equals(this.id,   that.id) &&
-               Utilities.equals(this.quantityType, that.quantityType) &&
-               Utilities.equals(this.unitsSystem, that.unitsSystem);
+        if (object instanceof UnitOfMeasureEntry) {
+            final UnitOfMeasureEntry that = (UnitOfMeasureEntry) object;
+            return Utilities.equals(this.name,  that.name) &&
+                   Utilities.equals(this.id,   that.id) &&
+                   Utilities.equals(this.quantityType, that.quantityType) &&
+                   Utilities.equals(this.unitsSystem, that.unitsSystem);
+            }
+        return false;
     }
 
     @Override

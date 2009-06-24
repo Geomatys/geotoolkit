@@ -53,6 +53,23 @@ public class AbstractRingPropertyType {
     @XmlElementRef(name = "AbstractRing", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractRingType> abstractRing;
 
+    public AbstractRingPropertyType() {
+
+    }
+
+    public AbstractRingPropertyType(AbstractRingType ring) {
+        if (ring != null) {
+            ObjectFactory factory = new ObjectFactory();
+            if (ring instanceof RingType) {
+                abstractRing = factory.createRing((RingType) ring);
+            } else if (ring instanceof LinearRingType) {
+                abstractRing = factory.createLinearRing((LinearRingType) ring);
+            } else {
+                throw new IllegalArgumentException("unexpected sub type of AbstractRingType");
+            }
+        }
+    }
+
     /**
      * Gets the value of the abstractRing property.
      * 

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.geometry.DirectPosition;
 
 
 /**
@@ -69,8 +70,8 @@ import javax.xml.bind.annotation.XmlType;
 public class LineStringSegmentType extends AbstractCurveSegmentType {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
-        @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
+        @XmlElementRef(name = "pointRep",      namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
+        @XmlElementRef(name = "pos",           namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     })
     private List<JAXBElement<?>> posOrPointPropertyOrPointRep;
@@ -78,6 +79,22 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
     private CoordinatesType coordinates;
     @XmlAttribute
     private CurveInterpolationType interpolation;
+
+    public LineStringSegmentType() {
+
+    }
+
+    public LineStringSegmentType(Integer numDerivativesAtStart, Integer numDerivativesAtEnd, Integer numDerivativeInterior,
+            CurveInterpolationType interpolation, List<DirectPosition> positions) {
+        super(numDerivativesAtStart, numDerivativesAtEnd, numDerivativeInterior);
+        this.interpolation = interpolation;
+        posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+        ObjectFactory factory = new ObjectFactory();
+        for (DirectPosition pos : positions) {
+            DirectPositionType position = new DirectPositionType(pos);
+            posOrPointPropertyOrPointRep.add(factory.createPos(position));
+        }
+    }
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.

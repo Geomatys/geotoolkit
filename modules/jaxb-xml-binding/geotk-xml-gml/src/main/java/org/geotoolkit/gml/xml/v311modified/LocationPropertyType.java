@@ -207,7 +207,7 @@ public class LocationPropertyType {
             boolean geom = false;
             if (this.abstractGeometry != null && that.abstractGeometry != null) {
                 geom = Utilities.equals(this.abstractGeometry.getValue(),   that.abstractGeometry.getValue());
-            } else if (this.abstractGeometry != null && that.abstractGeometry != null) {
+            } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
                 geom = true;
             }
 

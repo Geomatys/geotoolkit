@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -55,6 +56,20 @@ public class CurveSegmentArrayPropertyType {
     @XmlElementRef(name = "AbstractCurveSegment", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment;
 
+    public CurveSegmentArrayPropertyType() {
+
+    }
+
+    public CurveSegmentArrayPropertyType(List<? extends AbstractCurveSegmentType> segments) {
+        if (segments != null) {
+            ObjectFactory factory = new ObjectFactory();
+            abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+            for (AbstractCurveSegmentType segment : segments) {
+                abstractCurveSegment.add(factory.createLineStringSegment((LineStringSegmentType) segment));
+            }
+        }
+    }
+
     /**
      * Gets the value of the abstractCurveSegment property.
      */
@@ -63,6 +78,40 @@ public class CurveSegmentArrayPropertyType {
             abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
         }
         return this.abstractCurveSegment;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CurveSegmentArrayPropertyType) {
+            final CurveSegmentArrayPropertyType that = (CurveSegmentArrayPropertyType) object;
+
+            if (this.abstractCurveSegment != null && that.abstractCurveSegment != null) {
+                for (int i = 0; i < abstractCurveSegment.size(); i++) {
+                    AbstractCurveSegmentType thisGeom = this.abstractCurveSegment.get(i).getValue();
+                    AbstractCurveSegmentType thatGeom = that.abstractCurveSegment.get(i).getValue();
+
+                    if (!Utilities.equals(thisGeom,   thatGeom))
+                        return false;
+                }
+                return true;
+            } else if (this.abstractCurveSegment == null && that.abstractCurveSegment == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.abstractCurveSegment != null ? this.abstractCurveSegment.hashCode() : 0);
+        return hash;
     }
 
 }

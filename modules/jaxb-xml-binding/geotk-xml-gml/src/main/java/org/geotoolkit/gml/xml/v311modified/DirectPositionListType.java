@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311modified;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -58,13 +57,13 @@ public class DirectPositionListType {
     private List<Double> value;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger count;
+    private Integer count;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
     private List<String> axisLabels;
     @XmlAttribute
@@ -87,7 +86,7 @@ public class DirectPositionListType {
      * Gets the value of the count property.
      * 
      */
-    public BigInteger getCount() {
+    public Integer getCount() {
         return count;
     }
 
@@ -95,7 +94,7 @@ public class DirectPositionListType {
      * Sets the value of the count property.
      * 
      */
-    public void setCount(BigInteger value) {
+    public void setCount(Integer value) {
         this.count = value;
     }
 
@@ -119,7 +118,7 @@ public class DirectPositionListType {
      * Gets the value of the srsDimension property.
      * 
      */
-    public BigInteger getSrsDimension() {
+    public Integer getSrsDimension() {
         return srsDimension;
     }
 
@@ -127,7 +126,7 @@ public class DirectPositionListType {
      * Sets the value of the srsDimension property.
      * 
      */
-    public void setSrsDimension(BigInteger value) {
+    public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
 

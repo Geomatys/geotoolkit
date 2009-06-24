@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311modified;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -55,19 +55,29 @@ import javax.xml.bind.annotation.XmlType;
 public abstract class AbstractCurveSegmentType {
 
     @XmlAttribute
-    private BigInteger numDerivativesAtStart;
+    private Integer numDerivativesAtStart;
     @XmlAttribute
-    private BigInteger numDerivativesAtEnd;
+    private Integer numDerivativesAtEnd;
     @XmlAttribute
-    private BigInteger numDerivativeInterior;
+    private Integer numDerivativeInterior;
+
+    public AbstractCurveSegmentType() {
+
+    }
+
+    public AbstractCurveSegmentType(Integer numDerivativesAtStart, Integer numDerivativesAtEnd, Integer numDerivativeInterior) {
+        this.numDerivativeInterior = numDerivativeInterior;
+        this.numDerivativesAtEnd   = numDerivativesAtEnd;
+        this.numDerivativesAtStart = numDerivativesAtStart;
+    }
 
     /**
      * Gets the value of the numDerivativesAtStart property.
      * 
      */
-    public BigInteger getNumDerivativesAtStart() {
+    public Integer getNumDerivativesAtStart() {
         if (numDerivativesAtStart == null) {
-            return new BigInteger("0");
+            return 0;
         } else {
             return numDerivativesAtStart;
         }
@@ -77,7 +87,7 @@ public abstract class AbstractCurveSegmentType {
      * Sets the value of the numDerivativesAtStart property.
      * 
      */
-    public void setNumDerivativesAtStart(BigInteger value) {
+    public void setNumDerivativesAtStart(Integer value) {
         this.numDerivativesAtStart = value;
     }
 
@@ -85,9 +95,9 @@ public abstract class AbstractCurveSegmentType {
      * Gets the value of the numDerivativesAtEnd property.
      * 
      */
-    public BigInteger getNumDerivativesAtEnd() {
+    public Integer getNumDerivativesAtEnd() {
         if (numDerivativesAtEnd == null) {
-            return new BigInteger("0");
+            return 0;
         } else {
             return numDerivativesAtEnd;
         }
@@ -97,7 +107,7 @@ public abstract class AbstractCurveSegmentType {
      * Sets the value of the numDerivativesAtEnd property.
      * 
      */
-    public void setNumDerivativesAtEnd(BigInteger value) {
+    public void setNumDerivativesAtEnd(Integer value) {
         this.numDerivativesAtEnd = value;
     }
 
@@ -105,9 +115,9 @@ public abstract class AbstractCurveSegmentType {
      * Gets the value of the numDerivativeInterior property.
      * 
      */
-    public BigInteger getNumDerivativeInterior() {
+    public Integer getNumDerivativeInterior() {
         if (numDerivativeInterior == null) {
-            return new BigInteger("0");
+            return 0;
         } else {
             return numDerivativeInterior;
         }
@@ -117,8 +127,33 @@ public abstract class AbstractCurveSegmentType {
      * Sets the value of the numDerivativeInterior property.
      * 
      */
-    public void setNumDerivativeInterior(BigInteger value) {
+    public void setNumDerivativeInterior(Integer value) {
         this.numDerivativeInterior = value;
     }
 
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractCurveSegmentType) {
+            final AbstractCurveSegmentType that = (AbstractCurveSegmentType) object;
+            return  Utilities.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
+                    Utilities.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
+                    Utilities.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.numDerivativesAtStart != null ? this.numDerivativesAtStart.hashCode() : 0);
+        hash = 31 * hash + (this.numDerivativesAtEnd   != null ? this.numDerivativesAtEnd.hashCode()   : 0);
+        hash = 31 * hash + (this.numDerivativeInterior != null ? this.numDerivativeInterior.hashCode() : 0);
+        return hash;
+    }
 }

@@ -140,6 +140,29 @@ public class DirectPositionType implements DirectPosition{
     }
 
     /**
+     * Build a light direct position.
+     *
+     * @param values a List of coordinates.
+     */
+    public DirectPositionType(DirectPosition position) {
+        if (position != null) {
+            this.value = new ArrayList<Double>();
+            for (double d : position.getCoordinate()) {
+                value.add(d);
+            }
+            CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
+            if ( crs != null) {
+                try {
+                    this.srsName = CRS.lookupIdentifier(crs, true);
+                } catch (FactoryException ex) {
+                    Logger.getLogger(DirectPositionType.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            this.srsDimension = null;
+        }
+    }
+
+    /**
      * A type for a list of values of the respective simple type.
      * Gets the value of the value property.
      * (unmodifiable)
