@@ -120,7 +120,7 @@ import org.opengis.filter.spatial.Within;
 public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisitor {
 
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.filter");
+            .getLogger("org.geotoolkit.filter");
 
     /**
      * The stack holding the bits of the filter that are not processable by something with the given

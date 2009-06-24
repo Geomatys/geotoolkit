@@ -54,8 +54,6 @@ import org.geotools.data.FeatureReader;
  * </p>
  * 
  * @author Jody Garnett, Refractions Research
- * @source $URL:
- *         http://svn.geotools.org/geotools/branches/2.2.x/module/main/src/org/geotools/data/DiffFeatureReader.java $
  */
 public class DiffFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 
