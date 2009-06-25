@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.util.ResourceBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -110,7 +111,8 @@ public class JFillPane extends StyleElementEditor<Fill>{
 
         setOpaque(false);
 
-        butFill.setText("null");
+        ResourceBundle bundle = ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/Bundle"); // NOI18N
+        butFill.setText(bundle.getString("fill")); // NOI18N
         butFill.setBorderPainted(false);
 
 

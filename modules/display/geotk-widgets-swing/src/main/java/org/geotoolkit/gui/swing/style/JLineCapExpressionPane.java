@@ -42,8 +42,8 @@ import org.opengis.filter.expression.Expression;
 public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
 
     private static final ImageIcon ICON_CAP_ROUND = IconBundle.getInstance().getIcon("16_linecap_round");
-    private static final ImageIcon ICON_CAP_SQUARE = IconBundle.getInstance().getIcon("16_linecap_round");
-    private static final ImageIcon ICON_CAP_BUTT = IconBundle.getInstance().getIcon("16_linecap_round");
+    private static final ImageIcon ICON_CAP_SQUARE = IconBundle.getInstance().getIcon("16_linecap_square");
+    private static final ImageIcon ICON_CAP_BUTT = IconBundle.getInstance().getIcon("16_linecap_butt");
 
     /** Creates new form JColorExpressionPane */
     public JLineCapExpressionPane() {

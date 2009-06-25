@@ -117,11 +117,11 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiMime, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+                .addComponent(guiMime, GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiURL, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+                .addComponent(guiURL, GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel2, jLabel3});

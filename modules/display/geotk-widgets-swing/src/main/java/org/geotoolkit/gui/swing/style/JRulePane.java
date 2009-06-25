@@ -103,6 +103,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
 
 
 
+
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("minscale")); // NOI18N
         jsp_minscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
@@ -112,10 +113,8 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jsp_maxscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
         jck_else.setText(MessageBundle.getString("else_filter")); // NOI18N
-        jck_else.setOpaque(false);
-
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1.getContentContainer());
-        jXTitledPanel1.getContentContainer().setLayout(jXTitledPanel1Layout);
+        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
+        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
 
 
 
@@ -137,7 +136,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addComponent(but_edit)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
                     .addComponent(jck_else))
                 .addContainerGap())
         );
@@ -172,8 +171,8 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("name")); // NOI18N
         jLabel6.setText(MessageBundle.getString("abstract")); // NOI18N
-        GroupLayout jXTitledPanel2Layout = new GroupLayout(jXTitledPanel2.getContentContainer());
-        jXTitledPanel2.getContentContainer().setLayout(jXTitledPanel2Layout);
+        GroupLayout jXTitledPanel2Layout = new GroupLayout(jXTitledPanel2);
+        jXTitledPanel2.setLayout(jXTitledPanel2Layout);
         jXTitledPanel2Layout.setHorizontalGroup(
             jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel2Layout.createSequentialGroup()
@@ -182,15 +181,15 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
                     .addGroup(jXTitledPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
                     .addGroup(jXTitledPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
                     .addGroup(Alignment.TRAILING, jXTitledPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)))
+                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jXTitledPanel2Layout.setVerticalGroup(

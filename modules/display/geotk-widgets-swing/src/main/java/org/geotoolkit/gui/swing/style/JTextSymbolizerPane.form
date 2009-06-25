@@ -16,19 +16,19 @@
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
   </AuxValues>
 
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jXTitledPanel1" alignment="0" max="32767" attributes="0"/>
-          <Component id="jXTitledPanel4" alignment="0" pref="382" max="32767" attributes="0"/>
-          <Component id="jXTitledPanel2" alignment="0" pref="382" max="32767" attributes="0"/>
-          <Component id="jXTitledPanel3" alignment="0" pref="382" max="32767" attributes="0"/>
-          <Component id="jXTitledPanel5" alignment="0" pref="382" max="32767" attributes="0"/>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+          <Component id="jXTitledPanel4" alignment="0" pref="384" max="32767" attributes="0"/>
+          <Component id="jXTitledPanel2" alignment="0" pref="384" max="32767" attributes="0"/>
+          <Component id="jXTitledPanel3" alignment="0" pref="384" max="32767" attributes="0"/>
+          <Component id="jXTitledPanel5" alignment="0" pref="384" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <Component id="jXTitledPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jXTitledPanel4" min="-2" max="-2" attributes="0"/>
@@ -38,22 +38,22 @@
               <Component id="jXTitledPanel3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jXTitledPanel5" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                  </Layout>
-                  <SubComponents>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
     <Container class="org.jdesktop.swingx.JXTitledPanel" name="jXTitledPanel2">
-                      <Properties>
+      <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder/>
           </Border>
-                        </Property>
+        </Property>
         <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="" key="fill" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-                        </Property>
-                      </Properties>
+        </Property>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
         <Property name="alignment" type="int" value="0"/>
@@ -61,83 +61,83 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JFillPane" name="guiFill">
-                    </Component>
-              </SubComponents>
-            </Container>
+        </Component>
+      </SubComponents>
+    </Container>
     <Container class="org.jdesktop.swingx.JXTitledPanel" name="jXTitledPanel3">
-              <Properties>
+      <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder/>
           </Border>
-                </Property>
-                <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+        </Property>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="" key="halo" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
+        </Property>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
         <Property name="alignment" type="int" value="0"/>
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
-              <SubComponents>
+      <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JHaloPane" name="guiHalo">
-                </Component>
-              </SubComponents>
-            </Container>
+        </Component>
+      </SubComponents>
+    </Container>
     <Container class="org.jdesktop.swingx.JXTitledPanel" name="jXTitledPanel4">
-              <Properties>
+      <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder/>
           </Border>
-                </Property>
-                <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+        </Property>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="" key="fonts" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
+        </Property>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
         <Property name="alignment" type="int" value="0"/>
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
-              <SubComponents>
+      <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JFontPane" name="guiFont">
-                </Component>
-              </SubComponents>
-            </Container>
+        </Component>
+      </SubComponents>
+    </Container>
     <Container class="org.jdesktop.swingx.JXTitledPanel" name="jXTitledPanel5">
-              <Properties>
+      <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder/>
           </Border>
-                </Property>
-                <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+        </Property>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="" key="placement" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
+        </Property>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
         <Property name="alignment" type="int" value="0"/>
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
-              <SubComponents>
+      <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JLabelPlacementPane" name="guiPlacement">
-                </Component>
-              </SubComponents>
-            </Container>
+        </Component>
+      </SubComponents>
+    </Container>
     <Container class="org.jdesktop.swingx.JXTitledPanel" name="jXTitledPanel1">
-              <Properties>
+      <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder/>
           </Border>
-                </Property>
-                <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+        </Property>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="" key="general" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -155,7 +155,7 @@
                           <Component id="guiLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="189" max="32767" attributes="0"/>
+                  <EmptySpace pref="198" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -176,7 +176,7 @@
           </Group>
         </DimensionLayout>
       </Layout>
-              <SubComponents>
+      <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JGeomPane" name="guiGeom">
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
@@ -184,12 +184,12 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="label" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="label" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JTextExpressionPane" name="guiLabel">
-                </Component>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

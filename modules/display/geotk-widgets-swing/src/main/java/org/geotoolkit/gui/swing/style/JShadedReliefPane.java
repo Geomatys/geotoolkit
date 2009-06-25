@@ -87,10 +87,9 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         setOpaque(false);
 
 
+
         jLabel1.setText(MessageBundle.getString("factor")); // NOI18N
         guiBrightness.setText(MessageBundle.getString("brightnessonly")); // NOI18N
-        guiBrightness.setOpaque(false);
-
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(

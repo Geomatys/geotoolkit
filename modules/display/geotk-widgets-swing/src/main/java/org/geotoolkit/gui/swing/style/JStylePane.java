@@ -56,6 +56,10 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
     private void initComponents() {
 
 
+
+
+
+
         jXTitledPanel1 = new JXTitledPanel();
         jck_default = new JCheckBox();
         jLabel2 = new JLabel();
@@ -68,11 +72,6 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
         jck_default.setText(MessageBundle.getString("default")); // NOI18N
-        jck_default.setOpaque(false);
-
-
-
-
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("name")); // NOI18N
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
@@ -80,17 +79,17 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
         jLabel1.setText(MessageBundle.getString("title")); // NOI18N
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("abstract")); // NOI18N
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1.getContentContainer());
-        jXTitledPanel1.getContentContainer().setLayout(jXTitledPanel1Layout);
+        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
+        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
         jXTitledPanel1Layout.setHorizontalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                 .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                        .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE))
+                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1)

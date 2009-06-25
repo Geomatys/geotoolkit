@@ -197,8 +197,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1.getContentContainer());
-        jXTitledPanel1.getContentContainer().setLayout(jXTitledPanel1Layout);
+        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
+        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
         jXTitledPanel1Layout.setHorizontalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel1Layout.createSequentialGroup()
@@ -219,7 +219,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.TRAILING, false)
                         .addComponent(guiUOM, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(guiGeom, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         jXTitledPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
@@ -243,7 +243,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(butChannels, GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
+                    .addComponent(butChannels, GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE)
                     .addComponent(jLabel3))
                 .addContainerGap())
         );
@@ -256,8 +256,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel2.setTitle(MessageBundle.getString("contrast")); // NOI18N
-        jXTitledPanel2.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel2.getContentContainer().add(guiContrast);
+        jXTitledPanel2.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel2.add(guiContrast);
 
 
         jXTitledPanel4.setBorder(BorderFactory.createEtchedBorder());
@@ -265,7 +265,6 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         grpOutline.add(guinone);
         guinone.setSelected(true);
         guinone.setText(MessageBundle.getString("none")); // NOI18N
-        guinone.setOpaque(false);
         guinone.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guinoneActionPerformed(evt);
@@ -274,7 +273,6 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         grpOutline.add(guiLine);
         guiLine.setText(MessageBundle.getString("line")); // NOI18N
-        guiLine.setOpaque(false);
         guiLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiLineActionPerformed(evt);
@@ -283,7 +281,6 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         grpOutline.add(guiPolygon);
         guiPolygon.setText(MessageBundle.getString("polygon")); // NOI18N
-        guiPolygon.setOpaque(false);
         guiPolygon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiPolygonActionPerformed(evt);
@@ -310,8 +307,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        GroupLayout jXTitledPanel4Layout = new GroupLayout(jXTitledPanel4.getContentContainer());
-        jXTitledPanel4.getContentContainer().setLayout(jXTitledPanel4Layout);
+        GroupLayout jXTitledPanel4Layout = new GroupLayout(jXTitledPanel4);
+        jXTitledPanel4.setLayout(jXTitledPanel4Layout);
         jXTitledPanel4Layout.setHorizontalGroup(
             jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel4Layout.createSequentialGroup()
@@ -326,7 +323,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                         .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(butLineSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(88, Short.MAX_VALUE))
         );
 
         jXTitledPanel4Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLine, guiPolygon, guinone});
@@ -349,8 +346,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         jXTitledPanel3.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel3.setTitle(MessageBundle.getString("relief")); // NOI18N
-        jXTitledPanel3.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel3.getContentContainer().add(guiRelief);
+        jXTitledPanel3.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel3.add(guiRelief);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -358,8 +355,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jXTitledPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

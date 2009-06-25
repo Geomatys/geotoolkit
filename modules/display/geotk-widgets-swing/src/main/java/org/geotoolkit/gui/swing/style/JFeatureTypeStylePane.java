@@ -96,8 +96,14 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
             }
         });
 
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1.getContentContainer());
-        jXTitledPanel1.getContentContainer().setLayout(jXTitledPanel1Layout);
+        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
+        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
+
+
+
+
+
+
 
         jXTitledPanel1Layout.setHorizontalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -107,15 +113,15 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
+                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE))
                     .addGroup(Alignment.TRAILING, jXTitledPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
+                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE))
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)))
+                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -142,37 +148,25 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
         jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel2.setTitle(MessageBundle.getString("filter2")); // NOI18N
         jck_any.setText(MessageBundle.getString("semantic_any")); // NOI18N
-        jck_any.setOpaque(false);
-
         jck_point.setText(MessageBundle.getString("semantic_point")); // NOI18N
-        jck_point.setOpaque(false);
-
         jck_line.setText(MessageBundle.getString("semantic_line")); // NOI18N
-        jck_line.setOpaque(false);
-
         jck_polygon.setText(MessageBundle.getString("semantic_polygon")); // NOI18N
-        jck_polygon.setOpaque(false);
-
         jck_text.setText(MessageBundle.getString("semantic_text")); // NOI18N
-        jck_text.setOpaque(false);
-
         jck_raster.setText(MessageBundle.getString("semantic_raster")); // NOI18N
-        jck_raster.setOpaque(false);
-
         jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel4.setText(MessageBundle.getString("featuretypename")); // NOI18N
         jLabel4.setEnabled(false);
 
         guiftn.setEnabled(false);
 
-        GroupLayout jXTitledPanel2Layout = new GroupLayout(jXTitledPanel2.getContentContainer());
-        jXTitledPanel2.getContentContainer().setLayout(jXTitledPanel2Layout);
+        GroupLayout jXTitledPanel2Layout = new GroupLayout(jXTitledPanel2);
+        jXTitledPanel2.setLayout(jXTitledPanel2Layout);
         jXTitledPanel2Layout.setHorizontalGroup(
             jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(guiftn, GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(guiftn, GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                     .addGroup(jXTitledPanel2Layout.createSequentialGroup()
                         .addGroup(jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(jck_any)

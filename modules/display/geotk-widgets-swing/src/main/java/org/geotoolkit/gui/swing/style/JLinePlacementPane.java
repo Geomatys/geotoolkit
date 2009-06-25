@@ -109,18 +109,15 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
 
 
 
+
+
+
         jLabel1.setText(MessageBundle.getString("offset2")); // NOI18N
         jLabel2.setText(MessageBundle.getString("initial_gap")); // NOI18N
         jLabel3.setText(MessageBundle.getString("gap")); // NOI18N
         guiRepetead.setText(MessageBundle.getString("repeated")); // NOI18N
-        guiRepetead.setOpaque(false);
-
         guiAligned.setText(MessageBundle.getString("aligned")); // NOI18N
-        guiAligned.setOpaque(false);
-
         guiGeneralized.setText(MessageBundle.getString("generalize")); // NOI18N
-        guiGeneralized.setOpaque(false);
-
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(

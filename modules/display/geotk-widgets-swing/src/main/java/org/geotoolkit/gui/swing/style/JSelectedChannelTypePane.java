@@ -88,9 +88,9 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
         setOpaque(false);
 
         jXTitledSeparator1.setAlpha(0.5F);
+        jXTitledSeparator1.setHorizontalAlignment(0);
 
 
-        jXTitledSeparator1.setHorizontalAlignment(SwingConstants.CENTER);
         jXTitledSeparator1.setTitle(MessageBundle.getString("contrast")); // NOI18N
         jLabel1.setText(MessageBundle.getString("name")); // NOI18N
         guiName.setOpaque(false);
@@ -103,8 +103,8 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
                 .addComponent(jLabel1)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiName, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
-            .addComponent(jXTitledSeparator1, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                .addContainerGap(52, Short.MAX_VALUE))
+            .addComponent(jXTitledSeparator1, GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())

@@ -126,31 +126,31 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
         jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel2.setTitle(MessageBundle.getString("fill")); // NOI18N
-        jXTitledPanel2.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel2.getContentContainer().add(guiFill);
+        jXTitledPanel2.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel2.add(guiFill);
 
         jXTitledPanel3.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel3.setTitle(MessageBundle.getString("halo")); // NOI18N
-        jXTitledPanel3.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel3.getContentContainer().add(guiHalo);
+        jXTitledPanel3.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel3.add(guiHalo);
 
         jXTitledPanel4.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel4.setTitle(MessageBundle.getString("fonts")); // NOI18N
-        jXTitledPanel4.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel4.getContentContainer().add(guiFont);
+        jXTitledPanel4.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel4.add(guiFont);
 
         jXTitledPanel5.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel5.setTitle(MessageBundle.getString("placement")); // NOI18N
-        jXTitledPanel5.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel5.getContentContainer().add(guiPlacement);
+        jXTitledPanel5.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel5.add(guiPlacement);
 
 
 
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
         jLabel1.setText(MessageBundle.getString("label")); // NOI18N
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1.getContentContainer());
-        jXTitledPanel1.getContentContainer().setLayout(jXTitledPanel1Layout);
+        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
+        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
         jXTitledPanel1Layout.setHorizontalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel1Layout.createSequentialGroup()
@@ -163,7 +163,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(189, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
         jXTitledPanel1Layout.setVerticalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -186,10 +186,10 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel4, GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel5, GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel4, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel5, GroupLayout.PREFERRED_SIZE, 384, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
