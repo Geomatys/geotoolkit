@@ -88,6 +88,9 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
      */
     public JSelectionBar() {
         this(null);
+
+        guiSelect.setToolTipText(MessageBundle.getString("map_select"));
+        guiConfig.setToolTipText(MessageBundle.getString("map_select_config"));
     }
 
     /**

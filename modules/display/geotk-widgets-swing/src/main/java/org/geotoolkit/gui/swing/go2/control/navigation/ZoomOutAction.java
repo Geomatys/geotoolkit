@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -42,6 +43,7 @@ public class ZoomOutAction extends AbstractAction {
 
     public ZoomOutAction() {
         super("",ICON_ZOOM_OUT);
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_out"));
     }
 
     /**

@@ -23,6 +23,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 
 /**
@@ -37,6 +38,7 @@ public class MesureAreaAction extends AbstractAction {
 
     public MesureAreaAction(){
         super("", ICON_AREA);
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_area"));
     }
 
     @Override

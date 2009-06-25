@@ -22,8 +22,8 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.go2.control.information.InformationHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  *
@@ -37,6 +37,7 @@ public class InformationAction extends AbstractAction {
 
     public InformationAction(){
         super("",ICON_INFO);
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
     }
 
     @Override

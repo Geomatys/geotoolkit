@@ -28,6 +28,7 @@ import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * 
@@ -55,14 +56,14 @@ public class JEditionBar extends JToolBar implements MapControlBar{
         }
     };
 
-        
-    
 
     /**
      * Creates a new instance of JMap2DControlBar
      */
     public JEditionBar() {
         this(null);
+
+        guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
 
     }
 

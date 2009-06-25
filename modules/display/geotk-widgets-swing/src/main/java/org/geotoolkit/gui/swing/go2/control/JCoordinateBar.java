@@ -81,6 +81,7 @@ public class JCoordinateBar extends JToolBar {
                 }
             }
         });
+        guiAxis.setToolTipText(MessageBundle.getString("map_xy_ratio"));
 
         guiStatefull.addActionListener(new ActionListener() {
             @Override
@@ -90,6 +91,7 @@ public class JCoordinateBar extends JToolBar {
                 }
             }
         });
+        guiStatefull.setToolTipText(MessageBundle.getString("map_statefull"));
 
         gui_crsButton.setEnabled(false);
         guiAxis.setPressedIcon(ICON_XY);

@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import javax.swing.JButton;
 import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  *
@@ -33,6 +34,7 @@ public class JCRSButton extends JButton{
         super();
         setAction(ACTION_CRS);
         setText("CRS");
+        setToolTipText(MessageBundle.getString("map_crs"));
     }
 
     /**

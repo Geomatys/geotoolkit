@@ -23,6 +23,7 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  *
@@ -36,6 +37,7 @@ public class RefreshAction extends AbstractAction {
 
     public RefreshAction() {
         super("",ICON_REFRESH);
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_refresh"));
     }
 
     /**
