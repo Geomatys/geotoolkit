@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display3d.canvas;
 
+import com.ardor3d.input.logical.TwoInputStates;
 import java.awt.Dimension;
 import java.util.logging.Logger;
 import java.awt.event.ComponentAdapter;
@@ -153,22 +154,22 @@ public class A3DCanvas extends ReferencedCanvas{
         logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.H),
             new TriggerAction() {
             @Override
-                public void perform(Canvas source, InputState inputState, double tpf) {
-                    if (source != canvas) {
+            public void perform(Canvas source, TwoInputStates arg1, double arg2) {
+                if (source != canvas) {
                         return;
                     }
-                }
+            }
             }));
         logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.J),
             new TriggerAction() {
+
             @Override
-                public void perform(Canvas source, InputState inputState, double tpf) {
-                    if (source != canvas) {
+            public void perform(Canvas source, TwoInputStates arg1, double arg2) {
+                if (source != canvas) {
                         return;
                     }
-
                     mouseManager.setCursor(MouseCursor.SYSTEM_DEFAULT);
-                }
+            }
             }));
 
 //        refresher.addCanvas(canvas);

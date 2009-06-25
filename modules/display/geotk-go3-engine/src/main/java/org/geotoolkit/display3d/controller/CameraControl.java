@@ -169,6 +169,14 @@ public class CameraControl {
                     control.rotate(source.getCanvasRenderer().getCamera(), -mouse.getDx(), -mouse.getDy());
                 }
             }
+
+            @Override
+            public void perform(Canvas source, TwoInputStates inputState, double arg2) {
+                final MouseState mouse = inputState.getCurrent().getMouseState();
+                if (mouse.getDx() != 0 || mouse.getDy() != 0) {
+                    control.rotate(source.getCanvasRenderer().getCamera(), -mouse.getDx(), -mouse.getDy());
+                }
+            }
         };
         layer.registerTrigger(new InputTrigger(dragOnly ? dragged : TriggerConditions.mouseMoved(), dragAction));
     }
@@ -191,9 +199,9 @@ public class CameraControl {
             }
         };
         final TriggerAction moveAction = new TriggerAction() {
-
-            public void perform(final Canvas source, final InputState inputState, final double tpf) {
-                control.move(source.getCanvasRenderer().getCamera(), inputState.getKeyboardState(), tpf);
+            @Override
+            public void perform(Canvas source, TwoInputStates inputState, double tpf) {
+                control.move(source.getCanvasRenderer().getCamera(), inputState.getCurrent().getKeyboardState(), tpf);
             }
         };
         layer.registerTrigger(new InputTrigger(keysHeld, moveAction));
