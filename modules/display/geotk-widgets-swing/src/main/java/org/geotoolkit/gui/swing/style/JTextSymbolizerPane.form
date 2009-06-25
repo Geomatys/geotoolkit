@@ -51,7 +51,7 @@
           </Border>
                         </Property>
         <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="fill" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="fill" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
                         </Property>
                       </Properties>
 
@@ -60,7 +60,7 @@
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
       <SubComponents>
-        <Component class="org.geotools.gui.swing.style.JFillPane" name="guiFill">
+        <Component class="org.geotoolkit.gui.swing.style.JFillPane" name="guiFill">
                     </Component>
               </SubComponents>
             </Container>
@@ -72,7 +72,7 @@
           </Border>
                 </Property>
                 <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="halo" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="halo" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
 
@@ -81,7 +81,7 @@
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
               <SubComponents>
-        <Component class="org.geotools.gui.swing.style.JHaloPane" name="guiHalo">
+        <Component class="org.geotoolkit.gui.swing.style.JHaloPane" name="guiHalo">
                 </Component>
               </SubComponents>
             </Container>
@@ -93,7 +93,7 @@
           </Border>
                 </Property>
                 <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="fonts" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="fonts" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
 
@@ -102,7 +102,7 @@
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
               <SubComponents>
-        <Component class="org.geotools.gui.swing.style.JFontPane" name="guiFont">
+        <Component class="org.geotoolkit.gui.swing.style.JFontPane" name="guiFont">
                 </Component>
               </SubComponents>
             </Container>
@@ -114,7 +114,7 @@
           </Border>
                 </Property>
                 <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="placement" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="placement" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
 
@@ -123,7 +123,7 @@
         <Property name="horizontalGap" type="int" value="10"/>
       </Layout>
               <SubComponents>
-        <Component class="org.geotools.gui.swing.style.JLabelPlacementPane" name="guiPlacement">
+        <Component class="org.geotoolkit.gui.swing.style.JLabelPlacementPane" name="guiPlacement">
                 </Component>
               </SubComponents>
             </Container>
@@ -135,7 +135,7 @@
           </Border>
                 </Property>
                 <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="general" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="general" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
 
@@ -177,18 +177,18 @@
         </DimensionLayout>
       </Layout>
               <SubComponents>
-        <Component class="org.geotools.gui.swing.style.JGeomPane" name="guiGeom">
+        <Component class="org.geotoolkit.gui.swing.style.JGeomPane" name="guiGeom">
         </Component>
-        <Component class="org.geotools.gui.swing.style.JUOMPane" name="guiUOM">
+        <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="label" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="label" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
-        <Component class="org.geotools.gui.swing.style.JTextExpressionPane" name="guiLabel">
+        <Component class="org.geotoolkit.gui.swing.style.JTextExpressionPane" name="guiLabel">
                 </Component>
       </SubComponents>
     </Container>

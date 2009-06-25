@@ -7,7 +7,7 @@
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/geotools/gui/swing/style/Bundle"/>
+    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/geotoolkit/gui/swing/resource/Bundle"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
@@ -49,21 +49,21 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="org.geotools.gui.swing.style.JContrastEnhancement" name="guiContrast">
+    <Component class="org.geotoolkit.gui.swing.style.JContrastEnhancement" name="guiContrast">
     </Component>
     <Component class="org.jdesktop.swingx.JXTitledSeparator" name="jXTitledSeparator1">
       <Properties>
         <Property name="alpha" type="float" value="0.5"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="contrast" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="contrast" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="name" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="name" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

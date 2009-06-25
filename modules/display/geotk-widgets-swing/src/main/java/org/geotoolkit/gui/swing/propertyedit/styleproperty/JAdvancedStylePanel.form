@@ -51,7 +51,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="org.geotools.gui.swing.style.JStyleTree" name="tree">
+        <Component class="org.geotoolkit.gui.swing.style.JStyleTree" name="tree">
         </Component>
       </SubComponents>
     </Container>

@@ -118,17 +118,14 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("gamma")); // NOI18N
         methodGroup.add(guiNone);
+
         guiNone.setText(MessageBundle.getString("method_none")); // NOI18N
-        guiNone.setOpaque(false);
-
         methodGroup.add(guiHistogram);
+
         guiHistogram.setText(MessageBundle.getString("method_histogram")); // NOI18N
-        guiHistogram.setOpaque(false);
-
         methodGroup.add(guiNormalize);
-        guiNormalize.setText(MessageBundle.getString("method_normalize")); // NOI18N
-        guiNormalize.setOpaque(false);
 
+        guiNormalize.setText(MessageBundle.getString("method_normalize")); // NOI18N
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(

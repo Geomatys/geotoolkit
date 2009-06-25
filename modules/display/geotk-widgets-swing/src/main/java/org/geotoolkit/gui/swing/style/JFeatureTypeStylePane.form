@@ -42,7 +42,7 @@
           </Border>
         </Property>
         <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="general" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="general" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
 
@@ -105,7 +105,7 @@
             </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="title" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="title" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -113,7 +113,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="name" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="name" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -121,7 +121,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="abstract" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="abstract" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -144,7 +144,7 @@
           </Border>
         </Property>
         <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="filter2" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="filter2" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
 
@@ -207,42 +207,42 @@
         <Component class="javax.swing.JCheckBox" name="jck_any">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="semantic_any" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="semantic_any" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jck_point">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="semantic_point" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="semantic_point" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jck_line">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="semantic_line" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="semantic_line" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jck_polygon">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="semantic_polygon" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="semantic_polygon" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jck_text">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="semantic_text" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="semantic_text" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jck_raster">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="semantic_raster" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="semantic_raster" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -250,7 +250,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="featuretypename" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="" key="featuretypename" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>

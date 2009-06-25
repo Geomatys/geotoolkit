@@ -95,7 +95,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotools/gui/swing/style/Bundle.properties" key="size" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="size" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -103,7 +103,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotools/gui/swing/style/Bundle.properties" key="rotation" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="rotation" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -111,21 +111,21 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotools/gui/swing/style/Bundle.properties" key="opacity" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="opacity" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
-        <Component class="org.geotools.gui.swing.style.JDisplacementPane" name="guiDisplacement">
+        <Component class="org.geotoolkit.gui.swing.style.JDisplacementPane" name="guiDisplacement">
         </Component>
-        <Component class="org.geotools.gui.swing.style.JNumberExpressionPane" name="guiSize">
+        <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiSize">
         </Component>
-        <Component class="org.geotools.gui.swing.style.JNumberExpressionPane" name="guiRotation">
+        <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiRotation">
         </Component>
-        <Component class="org.geotools.gui.swing.style.JNumberExpressionPane" name="guiAlpha">
+        <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiAlpha">
         </Component>
       </SubComponents>
     </Container>
-    <Component class="org.geotools.gui.swing.style.JMarkTable" name="guiGraphics">
+    <Component class="org.geotoolkit.gui.swing.style.JMarkTable" name="guiGraphics">
     </Component>
   </SubComponents>
 </Form>

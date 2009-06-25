@@ -7,7 +7,7 @@
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/geotools/gui/swing/style/Bundle"/>
+    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/geotoolkit/gui/swing/resource/Bundle"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
@@ -45,24 +45,24 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="org.geotools.gui.swing.style.JAnchorPointPane" name="guiAnchor">
+    <Component class="org.geotoolkit.gui.swing.style.JAnchorPointPane" name="guiAnchor">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="&lt;anchor&gt;">
-              <ResourceString PropertyName="titleX" bundle="" key="anchor" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="" key="anchor" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
     </Component>
-    <Component class="org.geotools.gui.swing.style.JDisplacementPane" name="guiDisplacement">
+    <Component class="org.geotoolkit.gui.swing.style.JDisplacementPane" name="guiDisplacement">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="&lt;displacement&gt;">
-              <ResourceString PropertyName="titleX" bundle="" key="displacement" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="" key="displacement" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -71,11 +71,11 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="rotation" replaceFormat="Utilities.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="rotation" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="org.geotools.gui.swing.style.JNumberExpressionPane" name="guiRotation">
+    <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiRotation">
     </Component>
   </SubComponents>
 </Form>
