@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311modified.AbstractGMLEntry;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -58,7 +59,8 @@ propOrder = {
     "name",
     "narrower",
     "modified",
-    "example"
+    "example",
+    "geometry"
 
 })
 public class Concept {
@@ -141,7 +143,8 @@ public class Concept {
     @XmlElement(namespace="http://purl.org/dc/terms")
     private String modified;
 
-    
+    @XmlElement(namespace="http://www.opengis.net/gml")
+    private AbstractGMLEntry geometry;
 
 
 
@@ -595,6 +598,20 @@ public class Concept {
         this.example = example;
     }
 
+    /**
+     * @return the geometry
+     */
+    public AbstractGMLEntry getGeometry() {
+        return geometry;
+    }
+
+    /**
+     * @param geometry the geometry to set
+     */
+    public void setGeometry(AbstractGMLEntry geometry) {
+        this.geometry = geometry;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[Concept]:").append('\n');
@@ -652,6 +669,8 @@ public class Concept {
             sb.append("value:").append(value).append('\n');
         if (example != null)
             sb.append("example:").append(example).append('\n');
+        if (geometry != null)
+            sb.append("geometry:").append(geometry).append('\n');
 
         return sb.toString();
     }
@@ -689,6 +708,7 @@ public class Concept {
                    Utilities.equals(this.title,       that.title)       &&
                    Utilities.equals(this.type,        that.type)        &&
                    Utilities.equals(this.example,     that.example)     &&
+                   Utilities.equals(this.geometry,    that.geometry)    &&
                    Utilities.equals(this.value,       that.value);
         }
         return false;
@@ -701,6 +721,4 @@ public class Concept {
         hash = 47 * hash + (this.externalID != null ? this.externalID.hashCode() : 0);
         return hash;
     }
-
-    
 }

@@ -128,7 +128,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements E
         if (object == this) {
             return true;
         }
-        if (super.equals(object)) {
+        if (object instanceof AbstractGeometryType && super.equals(object)) {
             final AbstractGeometryType that = (AbstractGeometryType) object;
 
             return Utilities.equals(this.axisLabels,   that.axisLabels)   &&

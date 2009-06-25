@@ -23,14 +23,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotools.data.BatchFeatureEvent;
+import org.geotoolkit.data.BatchFeatureEvent;
 import org.geotools.data.FeatureEvent;
 import org.geotools.data.FeatureListener;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Transaction;
 import org.geotools.data.FeatureEvent.Type;
 import org.geotools.data.Transaction.State;
-import org.geotools.factory.CommonFactoryFinder;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -128,7 +129,7 @@ public class ContentState {
      */
     protected State callback = new State() {
         @Override
-        public void setTransaction(Transaction transaction) {
+        public void setTransaction(final Transaction transaction) {
         }
         @Override
         public void addAuthorization(String AuthID) throws IOException {
@@ -281,7 +282,8 @@ public class ContentState {
             return;
         }
 
-        final FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        final FilterFactory2 ff = 
+                (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         final Set<FeatureId> fids = new HashSet<FeatureId>();
         fids.add( feature.getIdentifier() );
         final Filter filter = ff.id( fids );
@@ -302,7 +304,8 @@ public class ContentState {
             return;
         }
 
-        final FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        final FilterFactory2 ff =
+                (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         final Set<FeatureId> fids = new HashSet<FeatureId>();
         fids.add( feature.getIdentifier() );
         final Filter filter = ff.id( fids );
@@ -318,7 +321,8 @@ public class ContentState {
             return;
         }
 
-        final FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        final FilterFactory2 ff =
+                (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         final Set<FeatureId> fids = new HashSet<FeatureId>();
         fids.add( feature.getIdentifier() );
         final Filter filter = ff.id( fids );

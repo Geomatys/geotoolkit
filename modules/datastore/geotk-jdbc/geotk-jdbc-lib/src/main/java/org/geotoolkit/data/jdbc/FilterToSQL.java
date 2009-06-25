@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -28,11 +29,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.FilterCapabilities;
-import org.geotools.filter.FunctionImpl;
-import org.geotools.filter.LikeFilterImpl;
-import org.geotools.util.Converters;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
+import org.geotoolkit.filter.capability.DefaultComparisonOperators;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFunctionName;
+import org.geotoolkit.filter.capability.DefaultFunctions;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
+import org.geotoolkit.filter.capability.DefaultOperator;
+import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialOperator;
+import org.geotoolkit.filter.capability.DefaultSpatialOperators;
+import org.geotoolkit.util.Converters;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.And;
@@ -54,6 +64,7 @@ import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.BinaryExpression;
 import org.opengis.filter.expression.Divide;
@@ -80,6 +91,8 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.filter.DefaultPropertyIsLike;
+import org.geotoolkit.filter.function.AbstractFunction;
 
 /**
  * Encodes a filter into a SQL WHERE statement.  It should hopefully be generic
@@ -127,10 +140,10 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     protected static final String IO_ERROR = "io problem writing filter";
 
     /** The filter types that this class can encode */
-    protected FilterCapabilities capabilities = null;
+    protected DefaultFilterCapabilities capabilities = null;
 
     /** Standard java logger */
-    private static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.filter");
+    private static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc");
 
     /** Character used to escape database schema, table and column names */
     private String sqlNameEscape = "";
@@ -175,7 +188,8 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      */
     public void encode(Filter filter) throws FilterToSQLException {
         if (out == null) throw new FilterToSQLException("Can't encode to a null writer.");
-        if (getCapabilities().fullySupports(filter)) {
+        // TODO; test if the filter is supported
+        //if (getCapabilities().fullySupports(filter)) {
 
             try {
                 out.write("WHERE ");
@@ -186,9 +200,9 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 LOGGER.warning("Unable to export filter" + ioe);
                 throw new FilterToSQLException("Problem writing filter: ", ioe);
             }
-        } else {
-            throw new FilterToSQLException("Filter type not supported");
-        }
+//        } else {
+//            throw new FilterToSQLException("Filter type not supported");
+//        }
     }
 
     /**
@@ -277,18 +291,46 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      *
      * @return FilterCapabilities for this Filter
      */
-    protected FilterCapabilities createFilterCapabilities() {
-        FilterCapabilities capabilities = new FilterCapabilities();
+    protected DefaultFilterCapabilities createFilterCapabilities() {
+        final DefaultIdCapabilities idCaps = new DefaultIdCapabilities(true, true);
 
-        capabilities.addAll(FilterCapabilities.LOGICAL_OPENGIS);
-        capabilities.addAll(FilterCapabilities.SIMPLE_COMPARISONS_OPENGIS);
-        capabilities.addType(PropertyIsNull.class);
-        capabilities.addType(PropertyIsBetween.class);
-        capabilities.addType(Id.class);
-        capabilities.addType(IncludeFilter.class);
-        capabilities.addType(ExcludeFilter.class);
+        final DefaultOperator[] ops = new DefaultOperator[]{
+            new DefaultOperator("and"),
+            new DefaultOperator("or"),
+            new DefaultOperator("not")
+        };
+        final DefaultComparisonOperators compOps = new DefaultComparisonOperators(ops);
+        final DefaultFunctionName[] functionNames = new DefaultFunctionName[] {
+            new DefaultFunctionName("equals", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("greaterThan", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("greaterThanEqual", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("lessThan", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("lessThanEqual", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("notEquals", Collections.singletonList("obj"), 0)
+        };
+        final DefaultFunctions functions = new DefaultFunctions(functionNames);
+        final DefaultArithmeticOperators arithmOps = new DefaultArithmeticOperators(true, functions);
+        final DefaultScalarCapabilities scalCaps = new DefaultScalarCapabilities(true, compOps, arithmOps);
 
-        return capabilities;
+        final DefaultSpatialOperator[] spatialOp = new DefaultSpatialOperator[] {
+            new DefaultSpatialOperator("include", new GeometryOperand[] {
+                GeometryOperand.Envelope, GeometryOperand.Polygon
+            })
+        };
+        final DefaultSpatialOperators spatialOps = new DefaultSpatialOperators(spatialOp);
+        final DefaultSpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(null, spatialOps);
+
+        final DefaultFilterCapabilities caps = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps);
+
+//        capabilities.addAll(FilterCapabilities.LOGICAL_OPENGIS);
+//        capabilities.addAll(FilterCapabilities.SIMPLE_COMPARISONS_OPENGIS);
+//        capabilities.addType(PropertyIsNull.class);
+//        capabilities.addType(PropertyIsBetween.class);
+//        capabilities.addType(Id.class);
+//        capabilities.addType(IncludeFilter.class);
+//        capabilities.addType(ExcludeFilter.class);
+
+        return caps;
     }
 
     /**
@@ -304,7 +346,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      *
      * @return The capabilities supported by this encoder.
      */
-    public synchronized final FilterCapabilities getCapabilities() {
+    public synchronized final DefaultFilterCapabilities getCapabilities() {
         if (capabilities == null) {
             capabilities = createFilterCapabilities();
         }
@@ -315,7 +357,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     /**
      * Sets the capabilities for the encoder.
      */
-    public void setCapabilities(FilterCapabilities capabilities) {
+    public void setCapabilities(DefaultFilterCapabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -388,7 +430,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             lowerbounds.accept(this, context);
             out.write(" AND ");
             upperbounds.accept(this, context);
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
         return extraData;
@@ -423,7 +465,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             literal += multi;
         }
 
-    	String pattern = LikeFilterImpl.convertToSQL92(esc, multi, single, matchCase, literal);
+    	String pattern = DefaultPropertyIsLike.convertToSQL92(esc, multi, single, literal);
 
         try {
             if (!matchCase){
@@ -440,7 +482,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
 
 	    	out.write(pattern);
 	    	out.write("' ");
-    	} catch (java.io.IOException ioe) {
+    	} catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
         return extraData;
@@ -661,16 +703,22 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             }
             else {
                 //wrap both sides in "lower"
-                FunctionImpl f = new FunctionImpl();
-                f.setName( "lower" );
-
-                f.setParameters(Arrays.asList(left));
-                f.accept(this, Arrays.asList(leftContext));
-
-                out.write(" " + type + " ");
-
-                f.setParameters(Arrays.asList(right));
-                f.accept(this, Arrays.asList(rightContext));
+                final AbstractFunction absFuncLeft = new AbstractFunction("lower", new Expression[]{left}, null) {
+                    @Override
+                    public Object evaluate(Object object) {
+                        // TODO: find a right implementation of Function !!!
+                        return null;
+                    }
+                };
+                absFuncLeft.accept(this, Arrays.asList(leftContext));
+                final AbstractFunction absFuncRight = new AbstractFunction("lower", new Expression[]{right}, null) {
+                    @Override
+                    public Object evaluate(Object object) {
+                        // TODO: find a right implementation of Function !!!
+                        return null;
+                    }
+                };
+                absFuncRight.accept(this, Arrays.asList(rightContext));
             }
 
         } catch (java.io.IOException ioe) {
@@ -901,7 +949,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             // handle geometry case
             if (literal instanceof Geometry) {
                 // call this method for backwards compatibility with subclasses
-                visitLiteralGeometry(CommonFactoryFinder.getFilterFactory(null).literal(literal));
+                visitLiteralGeometry(FactoryFinder.getFilterFactory(null).literal(literal));
             } else {
                 // write out the literal allowing subclasses to override this
                 // behaviour (for writing out dates and the like using the BDMS custom functions)
@@ -951,8 +999,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             out.write(String.valueOf(literal));
         } else {
             // we don't know what this is, let's convert back to a string
-            String encoding = (String) Converters.convert(literal,
-                    String.class, null);
+            String encoding = (String) Converters.convert(literal, String.class);
             if (encoding == null) {
                 // could not convert back to string, use original l value
                 encoding = literal.toString();

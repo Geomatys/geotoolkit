@@ -24,10 +24,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureWriter;
-import org.geotools.data.FilteringFeatureWriter;
+import org.geotoolkit.data.FilteringFeatureWriter;
 import org.geotools.data.Query;
 import org.geotools.data.QueryCapabilities;
 import org.geotools.data.ResourceInfo;

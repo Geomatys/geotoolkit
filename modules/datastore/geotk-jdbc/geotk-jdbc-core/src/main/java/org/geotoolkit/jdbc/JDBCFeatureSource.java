@@ -29,21 +29,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureReader;
-import org.geotools.data.FilteringFeatureReader;
+import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotools.data.Query;
 import org.geotools.data.QueryCapabilities;
-import org.geotools.data.ReTypeFeatureReader;
+import org.geotoolkit.data.ReTypeFeatureReader;
 import org.geotools.data.Transaction;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureSource;
 import static org.geotoolkit.factory.Hints.Key;
-import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.filter.FilterAttributeExtractor;
-import org.geotools.filter.visitor.PostPreProcessFilterSplittingVisitor;
-import org.geotools.filter.visitor.SimplifyingFilterVisitor;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.filter.FilterAttributeExtractor;
+import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Association;
@@ -53,7 +53,8 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
+
 
 public class JDBCFeatureSource extends ContentFeatureSource {
 
@@ -312,10 +313,10 @@ public class JDBCFeatureSource extends ContentFeatureSource {
         final Filter[] split = new Filter[2];
         if ( original != null ) {
             //create a filter splitter
-            final PostPreProcessFilterSplittingVisitor splitter = new PostPreProcessFilterSplittingVisitor(getDataStore()
-                    .getFilterCapabilities(), getSchema(), null);
+            final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(getDataStore().getFilterCapabilities(),
+                    getSchema(), null);
             original.accept(splitter, null);
-        
+
             split[0] = splitter.getFilterPre();
             split[1] = splitter.getFilterPost();
         }

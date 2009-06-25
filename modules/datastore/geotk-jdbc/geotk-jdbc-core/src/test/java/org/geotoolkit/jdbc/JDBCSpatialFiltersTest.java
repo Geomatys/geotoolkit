@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotools.factory.CommonFactoryFinder;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -37,6 +38,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequenceFactory;
+
 
 /**
  * Excercises spatial filters
@@ -75,7 +77,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     protected abstract JDBCDataStoreAPITestSetup createTestSetup();
 
     public void testBboxFilter() throws Exception {
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         // should match only "r2"
         BBOX bbox = ff.bbox(aname("geom"), 2, 3, 4, 5, "EPSG:4326");
         FeatureCollection features = dataStore.getFeatureSource(tname("road")).getFeatures(bbox);
@@ -83,7 +85,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
     
     public void testBboxFilterDefault() throws Exception {
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         // should match only "r2"
         BBOX bbox = ff.bbox("", 2, 3, 4, 5, "EPSG:4326");
         FeatureCollection features = dataStore.getFeatureSource(tname("road")).getFeatures(bbox);
@@ -91,7 +93,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testCrossesFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r2"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -102,7 +105,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testIntersectsFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r1"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -113,7 +117,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testIntersectsRingFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r1"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -124,7 +129,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testTouchesFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r1"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -135,7 +141,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testContainsFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r2"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -153,7 +160,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
      * @throws Exception
      */
     public void testWithinFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r2"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -166,7 +174,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testDisjointFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r2"
         GeometryFactory gf = new GeometryFactory();
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
@@ -179,7 +188,8 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
     }
 
     public void testEqualsFilter() throws Exception {
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         // should match only "r3"
         GeometryFactory gf = new GeometryFactory();
         Geometry g = gf.createGeometry((Geometry) td.roadFeatures[2].getDefaultGeometry());

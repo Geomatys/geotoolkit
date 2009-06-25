@@ -33,14 +33,13 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.Transaction;
 import org.geotoolkit.factory.Hints;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.filter.identity.FeatureIdImpl;
-import org.geotools.util.Converters;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Association;
 import org.opengis.feature.FeatureFactory;
@@ -69,6 +68,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.util.Converters;
 
 /**
  * Reader for jdbc datastore
@@ -830,7 +830,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
 
         public void setID(final String id) {
-            ((FeatureIdImpl)fid).setID(id);
+            fid = new DefaultFeatureId(id);
         }
 
         @Override

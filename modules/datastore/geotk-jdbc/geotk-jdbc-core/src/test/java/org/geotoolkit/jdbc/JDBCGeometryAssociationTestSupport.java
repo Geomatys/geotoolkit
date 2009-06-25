@@ -18,7 +18,7 @@ package org.geotoolkit.jdbc;
 
 import java.util.Map;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.Transaction;
 import org.geotoolkit.factory.Hints;

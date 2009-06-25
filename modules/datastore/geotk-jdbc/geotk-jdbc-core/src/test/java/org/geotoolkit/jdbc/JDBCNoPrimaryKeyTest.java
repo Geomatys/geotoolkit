@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotools.data.DataUtilities;
+import org.geotoolkit.data.DataUtilities;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
-import org.geotools.factory.CommonFactoryFinder;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -35,7 +35,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     protected static final String NAME = "name";
     protected static final String GEOM = "geom";
     
-    protected FilterFactory ff = CommonFactoryFinder.getFilterFactory(null); 
+    protected FilterFactory ff = FactoryFinder.getFilterFactory(null); 
     protected SimpleFeatureType lakeSchema;
 
     @Override

@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureLock;
-import org.geotools.data.FeatureLockException;
+import org.geotoolkit.data.FeatureLockException;
 import org.geotools.data.FeatureLocking;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.FeatureWriter;
-import org.geotools.data.InProcessLockingManager;
+import org.geotoolkit.data.InProcessLockingManager;
 import org.geotools.data.LockingManager;
 import org.geotools.data.Query;
 import org.geotools.feature.FeatureCollection;

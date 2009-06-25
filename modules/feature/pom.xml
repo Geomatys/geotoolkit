@@ -57,6 +57,17 @@
         <role>Developer</role>
       </roles>
     </developer>
+    <developer>
+      <name>Cédric Briançon</name>
+      <id>cedricbr</id>
+      <email>cedric.briancon@geomatys.fr</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
   </developers>
 
 
@@ -92,6 +103,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-filter</module>
+    <module>geotk-feature</module>
   </modules>
 
 </project>

@@ -24,15 +24,16 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.geotools.data.AbstractDataStoreFactory;
+import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.Parameter;
 import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.type.FeatureTypeFactoryImpl;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotools.data.DataAccessFactory.Param;
 
 
 /**
@@ -149,10 +150,10 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         }
 
         // factories
-        dataStore.setFilterFactory(CommonFactoryFinder.getFilterFactory(null));
+        dataStore.setFilterFactory(FactoryFinder.getFilterFactory(null));
         dataStore.setGeometryFactory(new GeometryFactory());
-        dataStore.setFeatureTypeFactory(new FeatureTypeFactoryImpl());
-        dataStore.setFeatureFactory(CommonFactoryFinder.getFeatureFactory(null));
+        dataStore.setFeatureTypeFactory(new DefaultFeatureTypeFactory());
+        dataStore.setFeatureFactory(FactoryFinder.getFeatureFactory(null));
 
         //call subclass hook and return
         return createDataStoreInternal(dataStore, params);

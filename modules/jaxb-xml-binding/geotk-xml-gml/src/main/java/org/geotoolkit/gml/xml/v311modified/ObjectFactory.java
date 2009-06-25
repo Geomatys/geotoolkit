@@ -286,6 +286,9 @@ public class ObjectFactory {
     private final static QName _GeometricComplex_QNAME          = new QName("http://www.opengis.net/gml", "GeometricComplex");
     private final static QName _Ring_QNAME                      = new QName("http://www.opengis.net/gml", "Ring");
     private final static QName _LinearRing_QNAME                = new QName("http://www.opengis.net/gml", "LinearRing");
+    private final static QName _MultiGeometry_QNAME             = new QName("http://www.opengis.net/gml", "MultiGeometry");
+    private final static QName _GeometryMembers_QNAME           = new QName("http://www.opengis.net/gml", "geometryMembers");
+    private final static QName _OrientableCurve_QNAME           = new QName("http://www.opengis.net/gml", "OrientableCurve");
     
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.gml
@@ -1232,6 +1235,57 @@ public class ObjectFactory {
      */
     public TinType.ControlPoint createTinTypeControlPoint() {
         return new TinType.ControlPoint();
+    }
+
+    /**
+     * Create an instance of {@link GeometryArrayPropertyType }
+     *
+     */
+    public GeometryArrayPropertyType createGeometryArrayPropertyType() {
+        return new GeometryArrayPropertyType();
+    }
+    
+    /**
+     * Create an instance of {@link MultiGeometryType }
+     *
+     */
+    public MultiGeometryType createMultiGeometryType() {
+        return new MultiGeometryType();
+    }
+
+    /**
+     * Create an instance of {@link OrientableCurveType }
+     *
+     */
+    public OrientableCurveType createOrientableCurveType() {
+        return new OrientableCurveType();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OrientableCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
+    public JAXBElement<OrientableCurveType> createOrientableCurve(OrientableCurveType value) {
+        return new JAXBElement<OrientableCurveType>(_OrientableCurve_QNAME, OrientableCurveType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MultiGeometryType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
+    public JAXBElement<MultiGeometryType> createMultiGeometry(MultiGeometryType value) {
+        return new JAXBElement<MultiGeometryType>(_MultiGeometry_QNAME, MultiGeometryType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GeometryArrayPropertyType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryMembers")
+    public JAXBElement<GeometryArrayPropertyType> createGeometryMembers(GeometryArrayPropertyType value) {
+        return new JAXBElement<GeometryArrayPropertyType>(_GeometryMembers_QNAME, GeometryArrayPropertyType.class, null, value);
     }
     
     /**

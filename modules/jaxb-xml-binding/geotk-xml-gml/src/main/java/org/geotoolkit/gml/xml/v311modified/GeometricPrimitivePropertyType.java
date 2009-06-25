@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A property that has a geometric primitive as its value domain can either be an appropriate geometry element 
- * 			encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry 
- * 			elements located elsewhere in the same document). Either the reference or the contained element must be given, but neither 
- * 			both nor none.
+ * encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry 
+ * elements located elsewhere in the same document).
+ * Either the reference or the contained element must be given, but neither both nor none.
  * 
  * <p>Java class for GeometricPrimitivePropertyType complex type.
  * 

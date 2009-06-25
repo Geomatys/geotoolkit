@@ -25,13 +25,13 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

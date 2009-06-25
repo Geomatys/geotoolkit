@@ -32,27 +32,29 @@ import java.util.logging.Logger;
 
 import org.geotools.data.Query;
 import org.geotoolkit.factory.Hints;
-import org.geotools.filter.FilterCapabilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.ExcludeFilter;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.Subtract;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.util.Collections;
+import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
+import org.geotoolkit.filter.capability.DefaultComparisonOperators;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFunctionName;
+import org.geotoolkit.filter.capability.DefaultFunctions;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
+import org.geotoolkit.filter.capability.DefaultOperator;
+import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialOperator;
+import org.geotoolkit.filter.capability.DefaultSpatialOperators;
+import org.opengis.filter.capability.GeometryOperand;
 
 
 /**
@@ -112,26 +114,63 @@ public abstract class SQLDialect {
     /**
      * The basic filter capabilities all databases should have
      */
-    public static FilterCapabilities BASE_DBMS_CAPABILITIES = new FilterCapabilities() {
-        {
-            addAll(FilterCapabilities.LOGICAL_OPENGIS);
-            addAll(FilterCapabilities.SIMPLE_COMPARISONS_OPENGIS);
+    public static DefaultFilterCapabilities BASE_DBMS_CAPABILITIES;
+    static {
+        final DefaultIdCapabilities idCaps = new DefaultIdCapabilities(true, true);
 
-            //simple arithmetic
-            addType(Add.class);
-            addType(Subtract.class);
-            addType(Multiply.class);
-            addType(Divide.class);
+        final DefaultOperator[] ops = new DefaultOperator[]{
+            new DefaultOperator("and"),
+            new DefaultOperator("or"),
+            new DefaultOperator("not")
+        };
+        final DefaultComparisonOperators compOps = new DefaultComparisonOperators(ops);
+        final DefaultFunctionName[] functionNames = new DefaultFunctionName[] {
+            new DefaultFunctionName("equals", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("greaterThan", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("greaterThanEqual", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("lessThan", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("lessThanEqual", Collections.singletonList("obj"), 0),
+            new DefaultFunctionName("notEquals", Collections.singletonList("obj"), 0)
+        };
+        final DefaultFunctions functions = new DefaultFunctions(functionNames);
+        final DefaultArithmeticOperators arithmOps = new DefaultArithmeticOperators(true, functions);
+        final DefaultScalarCapabilities scalCaps = new DefaultScalarCapabilities(true, compOps, arithmOps);
 
-            //simple comparisons
-            addType(PropertyIsNull.class);
-            addType(PropertyIsBetween.class);
-            addType(Id.class);
-            addType(IncludeFilter.class);
-            addType(ExcludeFilter.class);
-            addType(PropertyIsLike.class);
-        }
-    };
+        final DefaultSpatialOperator[] spatialOp = new DefaultSpatialOperator[] {
+            new DefaultSpatialOperator("include", new GeometryOperand[] {
+                GeometryOperand.Envelope, GeometryOperand.Polygon, GeometryOperand.Point
+            })
+        };
+        final DefaultSpatialOperators spatialOps = new DefaultSpatialOperators(spatialOp);
+        final GeometryOperand[] geomOperands = new GeometryOperand[] {
+            GeometryOperand.Envelope, GeometryOperand.Polygon, GeometryOperand.Point
+        };
+        final DefaultSpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(geomOperands, spatialOps);
+
+        BASE_DBMS_CAPABILITIES = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps);
+    }
+//
+//    = new FilterCapabilities() {
+//
+//        {
+//            addAll(FilterCapabilities.LOGICAL_OPENGIS);
+//            addAll(FilterCapabilities.SIMPLE_COMPARISONS_OPENGIS);
+//
+//            //simple arithmetic
+//            addType(Add.class);
+//            addType(Subtract.class);
+//            addType(Multiply.class);
+//            addType(Divide.class);
+//
+//            //simple comparisons
+//            addType(PropertyIsNull.class);
+//            addType(PropertyIsBetween.class);
+//            addType(Id.class);
+//            addType(IncludeFilter.class);
+//            addType(ExcludeFilter.class);
+//            addType(PropertyIsLike.class);
+//        }
+//    };
 
     /**
      * The datastore using the dialect

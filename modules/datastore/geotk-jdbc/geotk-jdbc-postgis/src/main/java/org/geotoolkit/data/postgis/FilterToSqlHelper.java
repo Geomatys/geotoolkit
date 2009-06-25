@@ -20,8 +20,13 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotools.filter.FilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.jdbc.SQLDialect;
+import org.opengis.filter.capability.FilterCapabilities;
+import org.opengis.filter.capability.IdCapabilities;
+import org.opengis.filter.capability.ScalarCapabilities;
+import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
@@ -50,24 +55,29 @@ class FilterToSqlHelper {
         this.delegate = delegate;
     }
 
-    public static FilterCapabilities createFilterCapabilities() {
-        final FilterCapabilities caps = new FilterCapabilities();
-        caps.addAll(SQLDialect.BASE_DBMS_CAPABILITIES);
+    public static DefaultFilterCapabilities createFilterCapabilities() {
 
-        // adding the spatial filters support
-        caps.addType(BBOX.class);
-        caps.addType(Contains.class);
-        caps.addType(Crosses.class);
-        caps.addType(Disjoint.class);
-        caps.addType(Equals.class);
-        caps.addType(Intersects.class);
-        caps.addType(Overlaps.class);
-        caps.addType(Touches.class);
-        caps.addType(Within.class);
-        caps.addType(DWithin.class);
-        caps.addType(Beyond.class);
-
-        return caps;
+//        final FilterCapabilities caps = new FilterCapabilities();
+//        caps.addAll(SQLDialect.BASE_DBMS_CAPABILITIES);
+//
+//        // adding the spatial filters support
+//        caps.addType(BBOX.class);
+//        caps.addType(Contains.class);
+//        caps.addType(Crosses.class);
+//        caps.addType(Disjoint.class);
+//        caps.addType(Equals.class);
+//        caps.addType(Intersects.class);
+//        caps.addType(Overlaps.class);
+//        caps.addType(Touches.class);
+//        caps.addType(Within.class);
+//        caps.addType(DWithin.class);
+//        caps.addType(Beyond.class);
+        /*final IdCapabilities idCapsBase = SQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities();
+        final SpatialCapabilities spatialCapsBase = SQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities();
+        final SpatialCapabilities spatialCapsFinal = new DefaultSpatialCapabilities(operands, operators);
+        final ScalarCapabilities scalarCapsbase = SQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities();
+        return new DefaultFilterCapabilities(null, idCapsBase, spatialCapsFinal, scalarCapsbase);*/
+        return SQLDialect.BASE_DBMS_CAPABILITIES;
     }
 
     protected Object visitBinarySpatialOperator(final BinarySpatialOperator filter,

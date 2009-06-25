@@ -56,6 +56,11 @@
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-utility</artifactId>
     </dependency>
+    <dependency>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>geotk-xml-gml</artifactId>
+        <version>${geotoolkit.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

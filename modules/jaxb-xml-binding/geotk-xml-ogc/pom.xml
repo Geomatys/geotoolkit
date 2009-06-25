@@ -63,20 +63,20 @@
   -->
   <dependencies>
     <dependency>
-     <groupId>org.geotoolkit.pending</groupId>
+      <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-gml</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-     <groupId>org.geotoolkit</groupId>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
     </dependency>
     <dependency>
-     <groupId>org.geotools</groupId>
-      <artifactId>gtm-main</artifactId>
+      <groupId>org.geotools</groupId>
+      <artifactId>gtm-api</artifactId>
     </dependency>
     <dependency>
-     <groupId>com.vividsolutions</groupId>
+      <groupId>com.vividsolutions</groupId>
       <artifactId>jts</artifactId>
     </dependency>
   </dependencies>

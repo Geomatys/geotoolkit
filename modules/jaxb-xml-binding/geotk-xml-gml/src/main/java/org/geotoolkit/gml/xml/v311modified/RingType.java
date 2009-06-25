@@ -26,9 +26,14 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
- * A Ring is used to represent a single connected component of a surface boundary. It consists of a sequence of curves connected in a cycle (an object whose boundary is empty).
- * A Ring is structurally similar to a composite curve in that the endPoint of each curve in the sequence is the startPoint of the next curve in the Sequence. Since the sequence is circular, there is no exception to this rule. Each ring, like all boundaries, is a cycle and each ring is simple.
- * NOTE: Even though each Ring is simple, the boundary need not be simple. The easiest case of this is where one of the interior rings of a surface is tangent to its exterior ring.
+ * A Ring is used to represent a single connected component of a surface boundary.
+ * It consists of a sequence of curves connected in a cycle (an object whose boundary is empty).
+ * A Ring is structurally similar to a composite curve in that the endPoint of each curve in the sequence
+ * is the startPoint of the next curve in the Sequence.
+ * Since the sequence is circular, there is no exception to this rule.
+ * Each ring, like all boundaries, is a cycle and each ring is simple.
+ * NOTE: Even though each Ring is simple, the boundary need not be simple.
+ * The easiest case of this is where one of the interior rings of a surface is tangent to its exterior ring.
  * 
  * <p>Java class for RingType complex type.
  * 
@@ -55,11 +60,21 @@ import org.opengis.filter.expression.ExpressionVisitor;
 public class RingType extends AbstractRingType {
 
     @XmlElement(required = true)
-    protected List<CurvePropertyType> curveMember;
+    private List<CurvePropertyType> curveMember;
+
+    public RingType() {
+
+    }
+
+    public RingType(List<CurvePropertyType> curveMember) {
+        this.curveMember = curveMember;
+    }
 
     /**
-     * This element references or contains one curve in the composite curve. The curves are contiguous, the collection of curves is ordered.
-     * NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may use, for example, another CompositeCurve as a curve member.Gets the value of the curveMember property.
+     * This element references or contains one curve in the composite curve.
+     * The curves are contiguous, the collection of curves is ordered.
+     * NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may use,
+     * for example, another CompositeCurve as a curve member.Gets the value of the curveMember property.
      */
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {

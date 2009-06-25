@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,9 +41,9 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 
 import org.geotools.data.DataStore;
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.GmlObjectStore;
-import org.geotools.data.InProcessLockingManager;
+import org.geotoolkit.data.InProcessLockingManager;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
 import org.geotoolkit.data.jdbc.FilterToSQL;
@@ -58,11 +59,11 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.NameImpl;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.filter.FilterCapabilities;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotools.util.Converters;
+import org.geotoolkit.util.Converters;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -70,6 +71,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -81,7 +83,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import java.util.Arrays;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+
 
 /**
  * Datastore implementation for jdbc based relational databases.
@@ -288,7 +291,7 @@ public final class JDBCDataStore extends ContentDataStore
      *
      * @return The filter capabilities, never <code>null</code>.
      */
-    public FilterCapabilities getFilterCapabilities() {
+    public DefaultFilterCapabilities getFilterCapabilities() {
         if (dialect instanceof PreparedStatementSQLDialect) {
             return ((PreparedStatementSQLDialect) dialect).createPreparedFilterToSQL().getCapabilities();
         } else {

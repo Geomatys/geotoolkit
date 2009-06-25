@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;

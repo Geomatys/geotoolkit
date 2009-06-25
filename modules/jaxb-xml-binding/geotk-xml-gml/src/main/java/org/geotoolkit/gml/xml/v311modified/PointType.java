@@ -68,11 +68,14 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      * @param id The identifier of the point.
      * @param pos A direcPosition locating the point.
      */
-    public PointType(String id, DirectPositionType pos) {
+    public PointType(String id, DirectPosition pos) {
         super.setId(id);
-        this.pos = pos;
+        if (pos instanceof DirectPositionType)
+            this.pos = (DirectPositionType)pos;
+        else
+            this.pos = new DirectPositionType(pos);
     }
-    
+
     /**
      * Build a point Type with the specified coordinates.
      * 
@@ -99,7 +102,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
    
     
     /**
-     * Retourne un description de l'objet.
+     * Return a String description of the object.
      */
     @Override
     public String toString() {
@@ -116,7 +119,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
     }
     
     /**
-     * Vérifie que cette station est identique à l'objet spécifié
+     * Verify that the point is identical to the specified object.
      */
     @Override
     public boolean equals(final Object object) {

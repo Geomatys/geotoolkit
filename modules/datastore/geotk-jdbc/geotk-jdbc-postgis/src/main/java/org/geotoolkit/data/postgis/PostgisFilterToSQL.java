@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotools.filter.FilterCapabilities;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -32,6 +31,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 
@@ -69,7 +69,7 @@ public class PostgisFilterToSQL extends FilterToSQL {
     }
 
     @Override
-    protected FilterCapabilities createFilterCapabilities() {
+    protected DefaultFilterCapabilities createFilterCapabilities() {
         return FilterToSqlHelper.createFilterCapabilities();
     }
 

@@ -19,19 +19,17 @@ package org.geotoolkit.jdbc;
 import java.util.HashSet;
 import java.util.List;
 
-import org.geotools.data.DataUtilities;
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotoolkit.data.store.ContentFeatureSource;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.LiteCoordinateSequenceFactory;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -70,7 +68,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
     protected static final String NAME = "name";
 
-    protected static final FilterFactory FF = CommonFactoryFinder.getFilterFactory(null);
+    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     protected SimpleFeatureType poly3DType;
 
@@ -214,9 +212,6 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
         // setup a query that mimicks the streaming renderer behaviour
         DefaultQuery q = new DefaultQuery(tname(LINE3D));
-        Hints hints = new Hints(HintsPending.JTS_COORDINATE_SEQUENCE_FACTORY,
-                new LiteCoordinateSequenceFactory());
-   //     q.setHints(hints);
         q.setCoordinateSystemReproject(horizontal);
 
         // check the srs you get is the flat one 

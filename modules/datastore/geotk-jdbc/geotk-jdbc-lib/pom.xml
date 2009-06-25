@@ -52,8 +52,9 @@
       <artifactId>gtm-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-main</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-filter</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>
