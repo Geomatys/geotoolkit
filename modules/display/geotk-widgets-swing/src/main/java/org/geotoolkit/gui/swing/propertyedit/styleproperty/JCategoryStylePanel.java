@@ -21,6 +21,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -85,6 +87,13 @@ import org.opengis.style.Symbolizer;
  */
 public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
+    private static final List<Palette> PALETTES;
+
+    static{
+        PALETTES = new ArrayList<Palette>();
+        PALETTES.add(new RandomPalette());
+    }
+
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -95,11 +104,16 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
     public JCategoryStylePanel() {
         initComponents();
         guiTable.setModel(model);
+        
         guiProperty.setRenderer(new PropertyRenderer());
+
+        guiPalette.setModel(new ListComboBoxModel(PALETTES));
+        guiPalette.setRenderer(new PaletteRenderer());
+        guiPalette.setSelectedIndex(0);
 
         guiTable.getColumnModel().getColumn(0).setCellRenderer(new RuleStyleRenderer());
         guiTable.getColumnModel().getColumn(1).setCellRenderer(new RulePropertyRenderer());
-        guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteRenderer());
+        guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
         guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
 
         guiTable.setShowGrid(false, false);
@@ -129,7 +143,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
     private Symbolizer createSymbolizer(){
         Stroke stroke = SF.stroke(Color.BLACK, 1);
-        Fill fill = SF.fill(new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f));
+        Fill fill = SF.fill( ((Palette)guiPalette.getSelectedItem()).next() );
         return SF.polygonSymbolizer(stroke,fill,null);
     }
 
@@ -154,7 +168,6 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
 
 
-        guiAddAll = new JButton();
         guiAddOne = new JButton();
         guiRemoveAll = new JButton();
         jPanel1 = new JPanel();
@@ -168,13 +181,6 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         guiPalette = new JComboBox();
         jScrollPane1 = new JScrollPane();
         guiTable = new JXTable();
-
-        guiAddAll.setText(MessageBundle.getString("add_all_values")); // NOI18N
-        guiAddAll.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiAddAllActionPerformed(evt);
-            }
-        });
 
         guiAddOne.setText(MessageBundle.getString("add_value")); // NOI18N
         guiAddOne.addActionListener(new ActionListener() {
@@ -216,7 +222,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(guiLblPalette)
                                 .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiPalette, 0, 278, Short.MAX_VALUE)
+                                .addComponent(guiPalette, 0, 277, Short.MAX_VALUE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(guiLblModel)
                                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -224,7 +230,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(guiLblProperty)
                                 .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiProperty, 0, 267, Short.MAX_VALUE)
+                                .addComponent(guiProperty, 0, 266, Short.MAX_VALUE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(guiOther)))
                         .addContainerGap())
@@ -254,34 +260,25 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(guiAddAll)
-                .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiAddOne)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiRemoveAll)
                 .addContainerGap())
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiAddAll)
                     .addComponent(guiAddOne)
                     .addComponent(guiRemoveAll)))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void guiAddAllActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiAddAllActionPerformed
-
-
-
-    }//GEN-LAST:event_guiAddAllActionPerformed
 
     private void guiAddOneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
         String val = JOptionPane.showInputDialog(MessageBundle.getString("value")+" :");
@@ -374,7 +371,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("property_style_category");
+        return MessageBundle.getString("property_style_classification_unique");
     }
 
     @Override
@@ -393,7 +390,6 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton guiAddAll;
     private JButton guiAddOne;
     private JButton guiGenerate;
     private JLabel guiLblModel;
@@ -421,12 +417,55 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         }
     }
 
-    private class DeleteRenderer extends AbstractCellEditor implements TableCellEditor,TableCellRenderer{
+    private class PaletteRenderer extends DefaultListCellRenderer{
+
+        private Palette palette = null;
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            PaletteRenderer.this.setText(" Random ");
+
+            if(value instanceof Palette){
+                palette = (Palette)value;
+            }
+            return PaletteRenderer.this;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            if(palette != null){
+                Dimension d = PaletteRenderer.this.getSize();
+                Rectangle rect = new Rectangle(d);
+                rect.grow(-2, -2);
+                palette.render((Graphics2D) g, rect);
+            }
+
+        }
+
+    }
+
+
+    private class DeleteRenderer extends DefaultTableCellRenderer{
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            DeleteRenderer.this.setIcon(IconBundle.getInstance().getIcon("16_delete"));
+            return DeleteRenderer.this;
+        }
+        
+    }
+
+    private class DeleteEditor extends AbstractCellEditor implements TableCellEditor,TableCellRenderer{
 
         private final JButton button = new JButton();
         private Object value;
 
-        public DeleteRenderer() {
+        public DeleteEditor() {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
             button.setIcon(IconBundle.getInstance().getIcon("16_delete"));
@@ -436,7 +475,6 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
                 public void actionPerformed(ActionEvent e) {
                     if(value != null && value instanceof Rule){
                         model.rules.remove(value);
-
                         guiTable.revalidate();
                         guiTable.repaint();
                     }

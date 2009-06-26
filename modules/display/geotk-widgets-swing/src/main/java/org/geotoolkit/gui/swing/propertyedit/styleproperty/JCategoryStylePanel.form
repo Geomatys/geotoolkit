@@ -17,15 +17,13 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+          <Component id="jScrollPane1" alignment="0" pref="468" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="guiAddAll" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
               <Component id="guiAddOne" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiRemoveAll" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jScrollPane1" alignment="0" pref="469" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -33,10 +31,9 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="217" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="194" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="guiAddAll" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="guiAddOne" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="guiRemoveAll" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -45,16 +42,6 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JButton" name="guiAddAll">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="add_all_values" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiAddAllActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="guiAddOne">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -97,7 +84,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="guiLblPalette" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="guiPalette" pref="278" max="32767" attributes="0"/>
+                                  <Component id="guiPalette" pref="277" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="guiLblModel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -106,7 +93,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="guiLblProperty" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="guiProperty" pref="267" max="32767" attributes="0"/>
+                                  <Component id="guiProperty" pref="266" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="guiOther" min="-2" max="-2" attributes="0"/>
                               </Group>
