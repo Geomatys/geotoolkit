@@ -56,11 +56,6 @@
           <version>${geotoolkit.version}</version>
           <scope>provided</scope>
       </dependency>
-
-      <dependency>
-          <groupId>org.geotools</groupId>
-          <artifactId>gtm-main</artifactId>
-      </dependency>
   </dependencies>
             
   </project>

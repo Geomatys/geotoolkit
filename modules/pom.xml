@@ -121,10 +121,10 @@
     <module>referencing</module>
     <module>geometry</module>
     <module>feature</module>
+    <module>datastore</module>
     <module>display</module>
     <module>jaxb-xml-binding</module>
     <module>coverage</module>
-    <module>datastore</module>
   </modules>
 
 

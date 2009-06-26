@@ -31,9 +31,6 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBException;
 import junit.framework.TestCase;
 
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.sld.MutableNamedLayer;
@@ -470,7 +467,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
     private static PropertyIsBetween createFilter(){
-       FilterFactory ff = CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
+       FilterFactory ff = FactoryFinder.getFilterFactory(null);
        Expression field = ff.property("aFiled");
        Expression lower = ff.literal(50d);
        Expression upper = ff.literal(100d);

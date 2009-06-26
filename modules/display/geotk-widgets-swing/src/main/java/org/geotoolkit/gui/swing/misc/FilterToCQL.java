@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.geotools.data.jdbc.fidmapper.FIDMapper;
+import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
 import org.geotools.filter.FilterCapabilities;
 import org.geotools.filter.LikeFilterImpl;
 import org.geotools.util.Converters;
