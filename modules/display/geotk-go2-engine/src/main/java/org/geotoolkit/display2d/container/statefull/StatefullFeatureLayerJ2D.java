@@ -229,6 +229,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             CanvasMonitor monitor, RenderingContext2D context, List<CachedRule> rules){
         // read & paint in the same thread, all symbolizer for each feature
         final FeatureIterator<SimpleFeature> iterator = features.features();
+
+        //sort the rules
+        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
+        final int elseRuleIndex = sortByElseRule(sortedRules);
+
         try{
             while(iterator.hasNext()){
                 if(monitor.stopRequested()) return;
@@ -236,26 +241,47 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
                 //search in the cache
                 final String id = feature.getID();
-                StatefullProjectedFeature graphic = cache.get(id);
+                StatefullProjectedFeature projectedFeature = cache.get(id);
 
-                if(graphic == null){
+                if(projectedFeature == null){
                     //not in cache, create it
-                    graphic = new StatefullProjectedFeature(params, feature);
-                    cache.put(id, graphic);
+                    projectedFeature = new StatefullProjectedFeature(params, feature);
+                    cache.put(id, projectedFeature);
                 }
 
-                for (final CachedRule rule : rules) {
-                    final Filter rulefilter = rule.getFilter();
+                boolean painted = false;
+                for(int i=0;i<elseRuleIndex;i++){
+                    final CachedRule rule = sortedRules[i];
+                    final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
-                    if (rulefilter == null || rulefilter.evaluate(feature)) {
+                    if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                        painted = true;
                         for (final CachedSymbolizer symbol : rule.symbolizers()) {
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
-                                renderer.portray(graphic, symbol, context);
+                                renderer.portray(projectedFeature, symbol, context);
                             }
                         }
                     }
                 }
+
+                //the feature hasn't been painted, paint it with the 'else' rules
+                if(!painted){
+                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
+                        final CachedRule rule = sortedRules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                            for (final CachedSymbolizer symbol : rule.symbolizers()) {
+                                final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
+                                if(renderer != null){
+                                    renderer.portray(projectedFeature, symbol, context);
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }catch(PortrayalException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -271,6 +297,9 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         List<StatefullProjectedFeature> cycle = new ArrayList<StatefullProjectedFeature>();
 
+        //sort the rules
+        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
+        final int elseRuleIndex = sortByElseRule(sortedRules);
 
         try{
             while(iterator.hasNext()){
@@ -293,13 +322,17 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             iterator.close();
         }
 
+        List<StatefullProjectedFeature> unPainted = new ArrayList<StatefullProjectedFeature>(cycle);
+
         try{
-            for (final CachedRule rule : rules) {
+           for(int i=0;i<elseRuleIndex;i++){
+                final CachedRule rule = sortedRules[i];
                 final Filter rulefilter = rule.getFilter();
                 for (final CachedSymbolizer symbol : rule.symbolizers()) {
                     for(StatefullProjectedFeature feature : cycle){
                         //test if the rule is valid for this feature
                         if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
+                            unPainted.remove(feature);
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
                                 renderer.portray(feature, symbol, context);
@@ -308,6 +341,24 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                     }
                 }
             }
+
+            for(int i=elseRuleIndex;i<sortedRules.length;i++){
+                final CachedRule rule = sortedRules[i];
+                final Filter rulefilter = rule.getFilter();
+                for (final CachedSymbolizer symbol : rule.symbolizers()) {
+                    for(StatefullProjectedFeature feature : unPainted){
+                        //test if the rule is valid for this feature
+                        if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
+                            unPainted.remove(feature);
+                            final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
+                            if(renderer != null){
+                                renderer.portray(feature, symbol, context);
+                            }
+                        }
+                    }
+                }
+            }
+
         }catch(PortrayalException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
         }
@@ -396,6 +447,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         //if empty we stop this layer rendering
         if(features == null || features.isEmpty()) return graphics;
 
+
+        //sort the rules
+        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
+        final int elseRuleIndex = sortByElseRule(sortedRules);
+
         // read & paint in the same thread
         final FeatureIterator<SimpleFeature> iterator = features.features();
         try{
@@ -404,22 +460,42 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
                 //search in the cache
                 final String id = feature.getID();
-                StatefullProjectedFeature graphic = cache.get(id);
+                StatefullProjectedFeature projectedFeature = cache.get(id);
 
-                if(graphic == null){
+                if(projectedFeature == null){
                     //not in cache, create it
-                    graphic = new StatefullProjectedFeature(params, feature);
-                    cache.put(id, graphic);
+                    projectedFeature = new StatefullProjectedFeature(params, feature);
+                    cache.put(id, projectedFeature);
                 }
 
-                for (final CachedRule rule : rules) {
+                boolean painted = false;
+                for(int i=0;i<elseRuleIndex;i++){
+                    final CachedRule rule = sortedRules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                        painted = true;
                         for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                            if(GO2Utilities.hit(graphic, symbol, context, mask, visitFilter)){
-                                graphics.add( graphic );
+                            if(GO2Utilities.hit(projectedFeature, symbol, context, mask, visitFilter)){
+                                if(feature != null) graphics.add( projectedFeature );
                                 break;
+                            }
+                        }
+                    }
+                }
+
+                //the feature hasn't been painted, paint it with the 'else' rules
+                if(!painted){
+                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
+                        final CachedRule rule = sortedRules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                            for (final CachedSymbolizer symbol : rule.symbolizers()) {
+                                if(GO2Utilities.hit(projectedFeature, symbol, context, mask, visitFilter)){
+                                    if(feature != null) graphics.add( projectedFeature );
+                                    break;
+                                }
                             }
                         }
                     }

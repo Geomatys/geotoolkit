@@ -124,25 +124,25 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
 
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel1.setTitle(MessageBundle.getString("stroke")); // NOI18N
-        jXTitledPanel1.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel1.getContentContainer().add(guiStroke);
+        jXTitledPanel1.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel1.add(guiStroke);
 
         jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel2.setTitle(MessageBundle.getString("fill")); // NOI18N
-        jXTitledPanel2.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel2.getContentContainer().add(guiFill);
+        jXTitledPanel2.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel2.add(guiFill);
 
         jXTitledPanel3.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel3.setTitle(MessageBundle.getString("displacement")); // NOI18N
-        jXTitledPanel3.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel3.getContentContainer().add(guiOffset);
-        jXTitledPanel3.getContentContainer().add(guiDisp);
+        jXTitledPanel3.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jXTitledPanel3.add(guiOffset);
+        jXTitledPanel3.add(guiDisp);
 
 
         jXTitledPanel4.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel4.setTitle(MessageBundle.getString("general")); // NOI18N
-        GroupLayout jXTitledPanel4Layout = new GroupLayout(jXTitledPanel4.getContentContainer());
-        jXTitledPanel4.getContentContainer().setLayout(jXTitledPanel4Layout);
+        GroupLayout jXTitledPanel4Layout = new GroupLayout(jXTitledPanel4);
+        jXTitledPanel4.setLayout(jXTitledPanel4Layout);
         jXTitledPanel4Layout.setHorizontalGroup(
             jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel4Layout.createSequentialGroup()
@@ -150,7 +150,7 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
                 .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(187, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         jXTitledPanel4Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiGeom, guiUOM});
@@ -170,9 +170,9 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jXTitledPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

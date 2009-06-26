@@ -34,28 +34,12 @@ public interface PropertyPane {
     
     public void reset();
     
-    /**
-     * 
-     * @return
-     */
     public String getTitle();
     
-    /**
-     * 
-     * @return
-     */
     public ImageIcon getIcon();
     
-    /**
-     * 
-     * @return
-     */
     public String getToolTip();
     
-    /**
-     * 
-     * @return
-     */
     public Component getComponent();
     
 }

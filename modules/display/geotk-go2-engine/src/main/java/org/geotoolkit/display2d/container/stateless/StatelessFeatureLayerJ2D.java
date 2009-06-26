@@ -257,6 +257,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             monitor.exceptionOccured(ex, Level.SEVERE);
         }
 
+        //sort the rules
+        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
+        final int elseRuleIndex = sortByElseRule(sortedRules);
 
         // read & paint in the same thread
         final FeatureIterator<SimpleFeature> iterator = features.features();
@@ -266,10 +269,13 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 final SimpleFeature feature = iterator.next();
                 projectedFeature.setFeature(feature);
 
-                for (final CachedRule rule : rules) {
+                boolean painted = false;
+                for(int i=0;i<elseRuleIndex;i++){
+                    final CachedRule rule = sortedRules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                        painted = true;
                         for (final CachedSymbolizer symbol : rule.symbolizers()) {
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
@@ -278,6 +284,24 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                         }
                     }
                 }
+
+                //the feature hasn't been painted, paint it with the 'else' rules
+                if(!painted){
+                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
+                        final CachedRule rule = sortedRules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                            for (final CachedSymbolizer symbol : rule.symbolizers()) {
+                                final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
+                                if(renderer != null){
+                                    renderer.portray(projectedFeature, symbol, renderingContext);
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }catch(PortrayalException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -358,7 +382,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
 
         final StatefullContextParams params = new StatefullContextParams(getCanvas(),layer);
-        final StatefullProjectedFeature graphic = new StatefullProjectedFeature(params);
+        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);
         params.updateGeneralizationFactor(renderingContext, dataCRS);
@@ -386,23 +410,49 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 //        }
 
 
+        //sort the rules
+        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
+        final int elseRuleIndex = sortByElseRule(sortedRules);
+
+
         try{
             while(iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
-                graphic.setFeature(feature);
+                projectedFeature.setFeature(feature);
 
-                for (final CachedRule rule : rules) {
+                boolean painted = false;
+                for(int i=0;i<elseRuleIndex;i++){
+                    final CachedRule rule = sortedRules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                        painted = true;
                         for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                            if(GO2Utilities.hit(graphic, symbol, renderingContext, mask, visitFilter)){
+                            if(GO2Utilities.hit(projectedFeature, symbol, renderingContext, mask, visitFilter)){
                                 if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
                                 break;
                             }
                         }
                     }
                 }
+
+                //the feature hasn't been painted, paint it with the 'else' rules
+                if(!painted){
+                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
+                        final CachedRule rule = sortedRules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                            for (final CachedSymbolizer symbol : rule.symbolizers()) {
+                                if(GO2Utilities.hit(projectedFeature, symbol, renderingContext, mask, visitFilter)){
+                                    if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
             }
         }finally{
             iterator.close();
@@ -441,6 +491,29 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }else{
             return searchGraphicAt(layer, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
         }
+    }
+
+    /**
+     * sort the rules, isolate the else rules, they must be handle differently
+     */
+    protected int sortByElseRule(CachedRule[] sortedRules){
+        int elseRuleIndex = sortedRules.length;
+
+        for(int i=0; i<elseRuleIndex; i++){
+            CachedRule r =sortedRules[i];
+            if(r.getSource().isElseFilter()){
+                elseRuleIndex--;
+
+                for(int j=i+1;j<sortedRules.length;j++){
+                    sortedRules[j-1] = sortedRules[j];
+                }
+
+                //move the rule at the end
+                sortedRules[sortedRules.length-1] = r;
+            }
+        }
+
+        return elseRuleIndex;
     }
 
 }

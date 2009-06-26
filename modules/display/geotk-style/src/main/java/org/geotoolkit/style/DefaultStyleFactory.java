@@ -231,8 +231,12 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         fts.setName(name);
         fts.setDescription(description);
         fts.setFeatureInstanceIDs(definedFor);
-        fts.featureTypeNames().addAll(featureTypeNames);
-        fts.semanticTypeIdentifiers().addAll(types);
+        if(featureTypeNames != null){
+            fts.featureTypeNames().addAll(featureTypeNames);
+        }
+        if(types != null){
+            fts.semanticTypeIdentifiers().addAll(types);
+        }
 
         for(Rule rule : rules){
             if(fts instanceof MutableFeatureTypeStyle){
