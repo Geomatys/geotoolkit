@@ -97,10 +97,6 @@
             <artifactId>geotk-geometry</artifactId>
             <version>${geotoolkit.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gtm-main</artifactId>
-        </dependency>
     </dependencies>
     
     <build>
