@@ -80,6 +80,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     private final StatefullContextParams params;
     private final CoordinateReferenceSystem dataCRS;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
+
+    //List of attributs currently in the cached features
+    //the cache must be cleared when the content of the style attributs needed changes
+    private final Set<String> cachedAttributs = new HashSet<String>();
     
     public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
@@ -131,6 +135,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             }
 
         }
+    }
+
+    private synchronized void clearCache(){
+        cache.clear();
     }
 
     @Override
@@ -199,6 +207,14 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final DefaultQuery query = new DefaultQuery();
         query.setFilter(filter);
         query.setPropertyNames(atts);
+
+        if(copy.size() != cachedAttributs.size() || !cachedAttributs.containsAll(copy)){
+            //the attributs needed for styling have changed, the cache is obsolete
+            clearCache();
+            cachedAttributs.clear();
+            cachedAttributs.addAll(copy);
+        }
+
 
         if(monitor.stopRequested()) return;
 
@@ -432,6 +448,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final DefaultQuery query = new DefaultQuery();
         query.setFilter(filter);
         query.setPropertyNames(atts);
+
+        if(copy.size() != cachedAttributs.size() || !cachedAttributs.containsAll(copy)){
+            //the attributs needed for styling have changed, the cache is obsolete
+            clearCache();
+            cachedAttributs.clear();
+            cachedAttributs.addAll(copy);
+        }
 
 
         final FeatureCollection<SimpleFeatureType,SimpleFeature> features;

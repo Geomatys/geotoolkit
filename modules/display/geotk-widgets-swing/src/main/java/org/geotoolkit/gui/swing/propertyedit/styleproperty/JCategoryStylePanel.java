@@ -18,6 +18,11 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -47,15 +52,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
+
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -63,20 +70,33 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+
 import org.geotools.data.DefaultQuery;
 import org.geotools.feature.FeatureIterator;
+
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Fill;
+import org.opengis.style.Graphic;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.LineSymbolizer;
+import org.opengis.style.Mark;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
@@ -86,6 +106,8 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class JCategoryStylePanel extends JPanel implements PropertyPane{
+
+    private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
     private static final List<Palette> PALETTES;
 
@@ -100,6 +122,8 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
     private final RuleModel model = new RuleModel();
     private final List<PropertyName> properties = new ArrayList<PropertyName>();
     private FeatureMapLayer layer = null;
+    private Symbolizer template = null;
+    private Class<? extends Symbolizer> expectedType = null;
 
     public JCategoryStylePanel() {
         initComponents();
@@ -112,9 +136,13 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         guiPalette.setSelectedIndex(0);
 
         guiTable.getColumnModel().getColumn(0).setCellRenderer(new RuleStyleRenderer());
+        guiTable.getColumnModel().getColumn(0).setCellEditor(new RuleStyleEditor());
         guiTable.getColumnModel().getColumn(1).setCellRenderer(new RulePropertyRenderer());
-        guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
+        guiTable.getColumnModel().getColumn(1).setCellEditor(new RulePropertyEditor());
+        guiTable.getColumnModel().getColumn(2).setCellRenderer(new RuleNameRenderer());
+        guiTable.getColumnModel().getColumn(2).setCellEditor(new RuleNameEditor());
         guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
+        guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
 
         guiTable.setShowGrid(false, false);
         guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.white, HighlighterFactory.QUICKSILVER, 1)});
@@ -124,27 +152,169 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
     }
 
     private void parse(){
+
+        model.rules.clear();
+        guiTable.revalidate();
+        guiTable.repaint();
+        guiOther.setSelected(false);
+
         properties.clear();
-        if(layer == null){
-            model.rules.clear();
-        }else{
-            for(PropertyDescriptor desc : layer.getFeatureSource().getSchema().getDescriptors()){
+        if(layer != null){
+            SimpleFeatureType schema = layer.getFeatureSource().getSchema();
+
+            for(PropertyDescriptor desc : schema.getDescriptors()){
                 Class<?> type = desc.getType().getBinding();
 
                 if(!Geometry.class.isAssignableFrom(type)){
                     properties.add(FF.property(desc.getName().getLocalPart()));
                 }
+            }
+            
+            //find the geometry class for template
+            GeometryDescriptor geo = schema.getGeometryDescriptor();
+            Class<?> geoClass = geo.getType().getBinding();
+
+            if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
+                Stroke stroke = SF.stroke(Color.BLACK, 1);
+                Fill fill = SF.fill(Color.BLUE);
+                template = SF.polygonSymbolizer(stroke,fill,null);
+                expectedType = PolygonSymbolizer.class;
+            }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
+                Stroke stroke = SF.stroke(Color.BLUE, 2);
+                template = SF.lineSymbolizer(stroke,null);
+                expectedType = LineSymbolizer.class;
+            }else{
+                Stroke stroke = SF.stroke(Color.BLACK, 1);
+                Fill fill = SF.fill(Color.BLUE);
+                List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+                symbols.add(SF.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
+                Graphic gra = SF.graphic(symbols, FF.literal(1), FF.literal(12), FF.literal(0), SF.anchorPoint(), SF.displacement());
+                template = SF.pointSymbolizer(gra, null);
+                expectedType = PointSymbolizer.class;
+            }
+
+
+            guiProperty.setModel(new ListComboBoxModel(properties));
+
+            //try to rebuild the previous analyze if it was one
+            List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+
+            if(ftss.size() == 1){
+                MutableFeatureTypeStyle fts = ftss.get(0);
+
+                List<MutableRule> rules = fts.rules();
+
+                for(Rule r : rules){
+                    List<? extends Symbolizer> symbols = r.symbolizers();
+
+                    if(symbols.size() != 1) break;
+
+                    Symbolizer symbol = symbols.get(0);
+                    if(expectedType.isInstance(symbol)){
+
+                        if(r.isElseFilter()){
+                            //it looks like it's a valid classification "other" rule
+                            model.rules.add(r);
+                            template = symbol;
+                            guiOther.setSelected(true);
+                        }else{
+                            Filter f = r.getFilter();
+                            if(f != null && f instanceof PropertyIsEqualTo){
+                                PropertyIsEqualTo equal = (PropertyIsEqualTo) f;
+                                Expression exp1 = equal.getExpression1();
+                                Expression exp2 = equal.getExpression2();
+
+                                if(exp1 instanceof PropertyName && exp2 instanceof Literal){
+                                    if(properties.contains(exp1)){
+                                        //it looks like it's a valid classification property rule
+                                        model.rules.add(r);
+                                        template = symbol;
+                                        guiProperty.setSelectedItem(exp1);
+                                    }else{
+                                        //property is not in the schema
+                                        break;
+                                    }
+                                }else if(exp2 instanceof PropertyName && exp1 instanceof Literal){
+                                    if(properties.contains(exp2)){
+                                        //it looks like it's a valid classification property rule
+                                        model.rules.add(r);
+                                        template = symbol;
+                                        guiProperty.setSelectedItem(exp2);
+                                    }else{
+                                        //property is not in the schema
+                                        break;
+                                    }
+                                }else{
+                                    //mismatch analyze structure
+                                    break;
+                                }
+                            }
+                        }
+
+                    }else{
+                        break;
+                    }
+
+                }
 
             }
+        }else{
+            guiProperty.setModel(new ListComboBoxModel(properties));
         }
 
-        guiProperty.setModel(new ListComboBoxModel(properties));
+        updateModelGlyph();
+        guiTable.revalidate();
+        guiTable.repaint();
     }
 
     private Symbolizer createSymbolizer(){
-        Stroke stroke = SF.stroke(Color.BLACK, 1);
-        Fill fill = SF.fill( ((Palette)guiPalette.getSelectedItem()).next() );
-        return SF.polygonSymbolizer(stroke,fill,null);
+        return derivateSymbolizer(template, ((Palette)guiPalette.getSelectedItem()).next());
+    }
+
+    /**
+     * Derivate a symbolizer with a new color.
+     */
+    private Symbolizer derivateSymbolizer(Symbolizer symbol, Color color){
+
+        if(symbol instanceof PolygonSymbolizer){
+            PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
+            Fill fill = SF.fill(SF.literal(color),ps.getFill().getOpacity());
+            return SF.polygonSymbolizer(ps.getName(), ps.getGeometryPropertyName(),
+                    ps.getDescription(), ps.getUnitOfMeasure(),
+                    ps.getStroke(),fill,ps.getDisplacement(),ps.getPerpendicularOffset());
+        }else if(symbol instanceof LineSymbolizer){
+            LineSymbolizer ls = (LineSymbolizer) symbol;
+            Stroke oldStroke = ls.getStroke();
+            Stroke stroke = SF.stroke(SF.literal(color),oldStroke.getOpacity(),oldStroke.getWidth(),
+                    oldStroke.getLineJoin(),oldStroke.getLineCap(),oldStroke.getDashArray(),oldStroke.getDashOffset());
+            return SF.lineSymbolizer(ls.getName(), ls.getGeometryPropertyName(),
+                    ls.getDescription(), ls.getUnitOfMeasure(), stroke, ls.getPerpendicularOffset());
+        }else if(symbol instanceof PointSymbolizer){
+            PointSymbolizer ps = (PointSymbolizer) symbol;
+            Graphic oldGraphic = ps.getGraphic();
+            Mark oldMark = (Mark) oldGraphic.graphicalSymbols().get(0);
+            Fill fill = SF.fill(SF.literal(color),oldMark.getFill().getOpacity());
+            List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+            symbols.add(SF.mark(oldMark.getWellKnownName(), fill, oldMark.getStroke()));
+            Graphic graphic = SF.graphic(symbols, oldGraphic.getOpacity(),oldGraphic.getSize(),
+                    oldGraphic.getRotation(),oldGraphic.getAnchorPoint(),oldGraphic.getDisplacement());
+            return SF.pointSymbolizer(graphic,ps.getGeometryPropertyName());
+        }else{
+            throw new IllegalArgumentException("unexpected symbolizer type : " + symbol);
+        }
+
+    }
+
+    private void updateModelGlyph(){
+        if(template == null){
+            guiModel.setIcon(null);
+            guiModel.setText(" ");
+        }else{
+            BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
+            DefaultGlyphService.render(template, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+            guiModel.setIcon(new ImageIcon(img));
+            guiModel.setText("");
+        }
     }
 
     private Rule createRule(PropertyName property, Object obj){
@@ -202,6 +372,11 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
         guiLblModel.setText(MessageBundle.getString("model")); // NOI18N
         guiModel.setText(" ");
+        guiModel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiModelActionPerformed(evt);
+            }
+        });
 
         guiGenerate.setText(MessageBundle.getString("generate")); // NOI18N
         guiGenerate.addActionListener(new ActionListener() {
@@ -245,13 +420,15 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
                     .addComponent(guiOther))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiLblPalette)
+                    .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiPalette, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLblModel)
+                    .addComponent(guiLblModel, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiModel))
                 .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(guiGenerate))
         );
+
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLblModel, guiLblPalette, guiModel, guiPalette});
 
         jScrollPane1.setViewportView(guiTable);
 
@@ -340,6 +517,11 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         guiTable.repaint();
 
     }//GEN-LAST:event_guiGenerateActionPerformed
+
+    private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
+        template = JPropertyDialog.showSymbolizerDialog(template, layer);
+        updateModelGlyph();
+    }//GEN-LAST:event_guiModelActionPerformed
 
     @Override
     public void setTarget(Object layer) {
@@ -448,7 +630,6 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
     }
 
-
     private class DeleteRenderer extends DefaultTableCellRenderer{
 
         @Override
@@ -460,7 +641,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
         
     }
 
-    private class DeleteEditor extends AbstractCellEditor implements TableCellEditor,TableCellRenderer{
+    private class DeleteEditor extends AbstractCellEditor implements TableCellEditor{
 
         private final JButton button = new JButton();
         private Object value;
@@ -490,12 +671,6 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            this.value = value;
-            return button;
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             this.value = value;
             return button;
         }
@@ -532,9 +707,95 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
     }
 
-    private class RuleStyleRenderer extends DefaultTableCellRenderer{
+    private class RulePropertyEditor extends AbstractCellEditor implements TableCellEditor{
 
-        private final Dimension dim = new Dimension(30, 20);
+        private final JTextField field = new JTextField();
+        private MutableRule value;
+
+        public RulePropertyEditor() {
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return FF.literal(field.getText());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if(value instanceof MutableRule){
+                this.value = (MutableRule) value;
+
+                Filter f = this.value.getFilter();
+
+                if(f != null && f instanceof PropertyIsEqualTo){
+                    PropertyIsEqualTo prop = (PropertyIsEqualTo) f;
+
+                    if(prop.getExpression1() instanceof Literal){
+                        field.setText(prop.getExpression1().toString());
+                    }else if(prop.getExpression2() instanceof Literal){
+                        field.setText(prop.getExpression2().toString());
+                    }
+
+                }
+
+            }else{
+                this.value = null;
+            }
+            return field;
+        }
+
+
+    }
+
+    private class RuleNameRenderer extends DefaultTableCellRenderer{
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            RuleNameRenderer.this.setText("");
+
+            if(value instanceof Rule){
+                Rule r = (Rule) value;
+                RuleNameRenderer.this.setText(r.getDescription().getTitle().toString());
+            }
+
+            return RuleNameRenderer.this;
+        }
+
+    }
+
+    private class RuleNameEditor extends AbstractCellEditor implements TableCellEditor{
+
+        private final JTextField field = new JTextField();
+        private MutableRule value;
+
+        public RuleNameEditor() {
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return field.getText();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if(value instanceof MutableRule){
+                this.value = (MutableRule) value;
+
+                field.setText(this.value.getDescription().getTitle().toString());
+
+            }else{
+                field.setText("");
+                this.value = null;
+            }
+            return field;
+        }
+
+
+    }
+
+    private class RuleStyleRenderer extends DefaultTableCellRenderer{
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -544,11 +805,55 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
             if(value instanceof Rule){
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render((Rule)value, new Rectangle(dim), img.createGraphics());
+                DefaultGlyphService.render((Rule)value, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
                 RuleStyleRenderer.this.setIcon(new ImageIcon(img));
             }
 
             return RuleStyleRenderer.this;
+        }
+
+    }
+
+    private class RuleStyleEditor extends AbstractCellEditor implements TableCellEditor{
+
+        private final JButton button = new JButton();
+        private MutableRule value;
+
+        public RuleStyleEditor() {
+            button.setBorderPainted(false);
+            button.setContentAreaFilled(false);
+
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(value != null){
+                        Symbolizer symbol = JPropertyDialog.showSymbolizerDialog(value.symbolizers().get(0), layer);
+                        value.symbolizers().clear();
+                        value.symbolizers().add(symbol);
+                        guiTable.revalidate();
+                        guiTable.repaint();
+                    }
+                }
+            });
+
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return null;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if(value instanceof MutableRule){
+                this.value = (MutableRule) value;
+                BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(this.value, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+                button.setIcon(new ImageIcon(img));
+            }else{
+                this.value = null;
+            }
+            return button;
         }
 
     }
@@ -574,14 +879,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            switch(columnIndex){
-                case 0: return rules.get(rowIndex);
-                case 1: return rules.get(rowIndex);
-                case 2: return rules.get(rowIndex).getDescription().getTitle().toString();
-                case 3: return rules.get(rowIndex);
-            }
-
-            return null;
+            return rules.get(rowIndex);
         }
 
         @Override
@@ -595,6 +893,35 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
             return "";
         }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+            MutableRule rule = (MutableRule) rules.get(rowIndex);
+
+            if(aValue instanceof Literal){
+                //the property value field has changed
+                Filter f = rule.getFilter();
+
+                if(f != null){
+                    PropertyIsEqualTo prop = (PropertyIsEqualTo) f;
+                    if(prop.getExpression1() instanceof Literal){
+                       rule.setFilter(FF.equals(prop.getExpression2(),(Expression) aValue));
+                    }else if(prop.getExpression2() instanceof Literal){
+                       rule.setFilter(FF.equals(prop.getExpression1(),(Expression) aValue));
+                    }
+                }
+
+
+            }else if(aValue instanceof String){
+                //the rule title changed
+                rule.setDescription(SF.description((String)aValue, (String)aValue));
+            }
+
+            super.setValueAt(aValue, rowIndex, columnIndex);
+
+        }
+
 
 
 

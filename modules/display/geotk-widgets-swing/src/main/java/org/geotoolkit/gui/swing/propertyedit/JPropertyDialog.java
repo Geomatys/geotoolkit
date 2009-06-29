@@ -31,8 +31,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSymbolizerStylePanel;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.opengis.style.Symbolizer;
 
 
 /**
@@ -51,7 +53,7 @@ public class JPropertyDialog extends JDialog{
     private ArrayList<PropertyPane> panels = new ArrayList<PropertyPane>();
     
     /** Creates a new instance of ASDialog */
-    private JPropertyDialog() {
+    private JPropertyDialog(boolean app, boolean rev, boolean clo) {
         super();
         setModal(true);
         setTitle(MessageBundle.getString("property_properties"));
@@ -60,9 +62,9 @@ public class JPropertyDialog extends JDialog{
         bas.setFloatable(false);
         bas.setLayout(new FlowLayout(FlowLayout.RIGHT));
         
-        bas.add(apply);
-        bas.add(revert);
-        bas.add(close);
+        if(app)bas.add(apply);
+        if(rev)bas.add(revert);
+        if(clo)bas.add(close);
         
         apply.setIcon(IconBundle.getInstance().getIcon("16_apply"));
         revert.setIcon(IconBundle.getInstance().getIcon("16_reload"));
@@ -127,7 +129,7 @@ public class JPropertyDialog extends JDialog{
     }
     
     public static void showDialog(List<PropertyPane> lst, Object target){
-        JPropertyDialog dia = new JPropertyDialog();
+        JPropertyDialog dia = new JPropertyDialog(true,true,true);
         
         for(PropertyPane pro : lst){
             pro.setTarget(target);
@@ -138,6 +140,23 @@ public class JPropertyDialog extends JDialog{
         dia.setLocationRelativeTo(null);
         dia.setVisible(true);
     }
-   
+
+    public static Symbolizer showSymbolizerDialog(Symbolizer symbol, Object target){
+
+        JSymbolizerStylePanel pane = new JSymbolizerStylePanel();
+        pane.setTarget(target);
+        pane.setSymbolizer(symbol);
+
+        JPropertyDialog dia = new JPropertyDialog(false,false,true);
+
+        dia.addEditPanel(pane);
+
+        dia.setSize(700,500);
+        dia.setLocationRelativeTo(null);
+        dia.setModal(true);
+        dia.setVisible(true);
+
+        return pane.getSymbolizer();
+    }
     
 }

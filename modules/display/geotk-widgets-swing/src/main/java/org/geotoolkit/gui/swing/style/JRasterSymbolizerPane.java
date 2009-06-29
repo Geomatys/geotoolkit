@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import javax.swing.JPanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -154,42 +155,38 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private void initComponents() {
 
         grpOutline = new ButtonGroup();
-        jXTitledPanel1 = new JXTitledPanel();
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
-        butChannels = new JButton();
-        guiGeom = new JGeomPane();
-        guiUOM = new JUOMPane();
-        guiOpacity = new JNumberExpressionPane();
-        guiOverLap = new JTextExpressionPane();
-        jXTitledPanel2 = new JXTitledPanel();
         guiContrast = new JContrastEnhancement();
-        jXTitledPanel4 = new JXTitledPanel();
+        guiRelief = new JShadedReliefPane();
+        jPanel1 = new JPanel();
+        butChannels = new JButton();
+        jLabel3 = new JLabel();
+        guiOverLap = new JTextExpressionPane();
+        jLabel2 = new JLabel();
+        jLabel1 = new JLabel();
+        guiOpacity = new JNumberExpressionPane();
+        guiUOM = new JUOMPane();
+        guiGeom = new JGeomPane();
+        jPanel2 = new JPanel();
         guinone = new JRadioButton();
         guiLine = new JRadioButton();
         guiPolygon = new JRadioButton();
         butPolygonSymbolizer = new JButton();
         butLineSymbolizer = new JButton();
-        jXTitledPanel3 = new JXTitledPanel();
-        guiRelief = new JShadedReliefPane();
 
         setOpaque(false);
 
 
 
+        guiContrast.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("contrast"))); // NOI18N
+        guiRelief.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("relief"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setOpaque(false);
 
-
-        jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("overlap")); // NOI18N
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("channels")); // NOI18N
         butChannels.setText(MessageBundle.getString("edit")); // NOI18N
         butChannels.setBorderPainted(false);
+
+
+
         butChannels.setPreferredSize(new Dimension(79, 22));
         butChannels.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -197,71 +194,71 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
-        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
-        jXTitledPanel1Layout.setHorizontalGroup(
-            jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
+        jLabel3.setText(MessageBundle.getString("channels")); // NOI18N
+        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
+        jLabel2.setText(MessageBundle.getString("overlap")); // NOI18N
+        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
+        jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(butChannels, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.TRAILING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false)
                         .addComponent(guiUOM, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guiGeom, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(59, Short.MAX_VALUE))
+                        .addComponent(guiGeom, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {butChannels, guiOpacity, guiOverLap});
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {butChannels, guiOpacity, guiOverLap});
 
-        jXTitledPanel1Layout.setVerticalGroup(
-            jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(butChannels, GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE)
                     .addComponent(jLabel3))
                 .addContainerGap())
         );
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOpacity, jLabel1});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOpacity, jLabel1});
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOverLap, jLabel2});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOverLap, jLabel2});
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {butChannels, jLabel3});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {butChannels, jLabel3});
 
-        jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel2.setTitle(MessageBundle.getString("contrast")); // NOI18N
-        jXTitledPanel2.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel2.add(guiContrast);
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("outline"))); // NOI18N
+        jPanel2.setOpaque(false);
 
-
-        jXTitledPanel4.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel4.setTitle(MessageBundle.getString("outline")); // NOI18N
         grpOutline.add(guinone);
         guinone.setSelected(true);
         guinone.setText(MessageBundle.getString("none")); // NOI18N
@@ -307,67 +304,62 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        GroupLayout jXTitledPanel4Layout = new GroupLayout(jXTitledPanel4);
-        jXTitledPanel4.setLayout(jXTitledPanel4Layout);
-        jXTitledPanel4Layout.setHorizontalGroup(
-            jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel4Layout.createSequentialGroup()
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guinone)
-                    .addGroup(jXTitledPanel4Layout.createSequentialGroup()
-                        .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
                             .addComponent(guiLine)
                             .addComponent(guiPolygon))
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(butLineSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(88, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
-        jXTitledPanel4Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLine, guiPolygon, guinone});
+        jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLine, guiPolygon, guinone});
 
-        jXTitledPanel4Layout.setVerticalGroup(
-            jXTitledPanel4Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel4Layout.createSequentialGroup()
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guinone)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(butLineSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiLine))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel4Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiPolygon))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
-
-        jXTitledPanel3.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel3.setTitle(MessageBundle.getString("relief")); // NOI18N
-        jXTitledPanel3.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel3.add(guiRelief);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(guiRelief, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addComponent(guiContrast, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jXTitledPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jXTitledPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jXTitledPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiRelief, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jXTitledPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -458,10 +450,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel jLabel3;
-    private JXTitledPanel jXTitledPanel1;
-    private JXTitledPanel jXTitledPanel2;
-    private JXTitledPanel jXTitledPanel3;
-    private JXTitledPanel jXTitledPanel4;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
     
 }
