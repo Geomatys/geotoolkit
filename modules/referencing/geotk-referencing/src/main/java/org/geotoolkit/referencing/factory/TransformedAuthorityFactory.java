@@ -381,10 +381,10 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
                 modified = crsFactory.createEngineeringCRS(properties,
                         (EngineeringDatum) datum, cs);
             } else if (crs instanceof CompoundCRS) {
-                final List<SingleCRS> elements = ((CompoundCRS) crs).getComponents();
-                final SingleCRS[] m = new SingleCRS[elements.size()];
+                final List<CoordinateReferenceSystem> elements = ((CompoundCRS) crs).getComponents();
+                final CoordinateReferenceSystem[] m = new CoordinateReferenceSystem[elements.size()];
                 for (int i=0; i<m.length; i++) {
-                    m[i] = (SingleCRS) replace(elements.get(i));
+                    m[i] = replace(elements.get(i));
                 }
                 modified = crsFactory.createCompoundCRS(properties, m);
             } else {

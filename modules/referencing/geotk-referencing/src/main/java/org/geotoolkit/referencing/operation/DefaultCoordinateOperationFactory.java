@@ -22,7 +22,6 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 import java.util.List;
-import java.util.Collections;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
@@ -42,6 +41,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
@@ -199,20 +199,16 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * inverse projection, before they get simplified by DefaultConcatenatedOperation, etc.).
          */
         if (sourceCRS instanceof CompoundCRS) {
-            final CompoundCRS source = (CompoundCRS) sourceCRS;
-            final List<SingleCRS> sources = source.getComponents();
-            List<SingleCRS> targets;
-            if (targetCRS instanceof CompoundCRS) {
-                final CompoundCRS target = (CompoundCRS) targetCRS;
-                targets = target.getComponents();
-                if (containsIgnoreMetadata(sources, targets)) {
+            final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
+            final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
+            if (containsIgnoreMetadata(sources, targets)) {
+                final CompoundCRS source = (CompoundCRS) sourceCRS;
+                if (targetCRS instanceof CompoundCRS) {
+                    final CompoundCRS target = (CompoundCRS) targetCRS;
                     return createOperationStep(source, target);
                 }
-            }
-            if (targetCRS instanceof SingleCRS) {
-                final SingleCRS target = (SingleCRS) targetCRS;
-                targets = Collections.singletonList(target);
-                if (containsIgnoreMetadata(sources, targets)) {
+                if (targetCRS instanceof SingleCRS) {
+                    final SingleCRS target = (SingleCRS) targetCRS;
                     return createOperationStep(source, target);
                 }
             }
@@ -1180,7 +1176,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final SingleCRS   targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> sources = sourceCRS.getComponents();
+        final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
         if (sources.size() == 1) {
             return createOperation(sources.get(0), targetCRS);
         }
@@ -1218,7 +1214,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final CompoundCRS targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> targets = targetCRS.getComponents();
+        final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
         if (targets.size() == 1) {
             return createOperation(sourceCRS, targets.get(0));
         }
@@ -1247,8 +1243,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final CompoundCRS targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> sources = sourceCRS.getComponents();
-        final List<SingleCRS> targets = targetCRS.getComponents();
+        final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
+        final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
         if (targets.size() == 1) {
             return createOperation(sourceCRS, targets.get(0));
         }
@@ -1311,17 +1307,17 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * need reordering (for matching the order of target CRS) if any ordinates reordering and
          * source ordinates drops are required.
          */
-        final SingleCRS[]           ordered = new SingleCRS          [targets.size()];
-        final CoordinateOperation[] steps   = new CoordinateOperation[targets.size()];
-        final boolean[]             done    = new boolean            [sources.size()];
-        final int[]                 indices = new int[getDimension(sourceCRS)];
+        final CoordinateReferenceSystem[] ordered = new CoordinateReferenceSystem[targets.size()];
+        final CoordinateOperation[]       steps   = new CoordinateOperation      [targets.size()];
+        final boolean[]                   done    = new boolean                  [sources.size()];
+        final int[]                       indices = new int[getDimension(sourceCRS)];
         int count=0, dimensions=0;
 search: for (int j=0; j<targets.size(); j++) {
             int lower, upper=0;
             final CoordinateReferenceSystem target = targets.get(j);
             OperationNotFoundException cause = null;
             for (int i=0; i<sources.size(); i++) {
-                final SingleCRS source = sources.get(i);
+                final CoordinateReferenceSystem source = sources.get(i);
                 lower  = upper;
                 upper += getDimension(source);
                 if (done[i]) continue;
@@ -1383,8 +1379,8 @@ search: for (int j=0; j<targets.size(); j++) {
         for (int i=0; i<targets.size(); i++) {
             CoordinateOperation step = steps[i];
             final Map<String,?> properties = AbstractIdentifiedObject.getProperties(step);
-            final SingleCRS source = ordered[i];
-            final SingleCRS target = targets.get(i);
+            final CoordinateReferenceSystem source = ordered[i];
+            final CoordinateReferenceSystem target = targets.get(i);
             final CoordinateReferenceSystem targetStepCRS;
             ordered[i] = target; // Used for the construction of targetStepCRS.
             MathTransform mt = step.getMathTransform();
@@ -1396,7 +1392,7 @@ search: for (int j=0; j<targets.size(); j++) {
                 targetStepCRS = ordered[0];
             } else {
                 targetStepCRS = factories.getCRSFactory().createCompoundCRS(
-                        getTemporaryName(target), ordered);
+                                    getTemporaryName(target), ordered);
             }
             lower  = upper;
             upper += getDimension(source);

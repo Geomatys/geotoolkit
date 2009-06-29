@@ -35,7 +35,6 @@ import org.opengis.geometry.DirectPosition;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
@@ -141,11 +140,7 @@ public final class CRSUtilities {
     private static List<? extends CoordinateReferenceSystem> getComponents(CoordinateReferenceSystem crs) {
         if (crs instanceof CompoundCRS) {
             final List<? extends CoordinateReferenceSystem> components;
-            if (crs instanceof DefaultCompoundCRS) {
-                components = ((DefaultCompoundCRS) crs).getCoordinateReferenceSystems();
-            } else {
-                components = ((CompoundCRS) crs).getComponents();
-            }
+            components = ((CompoundCRS) crs).getComponents();
             if (!components.isEmpty()) {
                 return components;
             }

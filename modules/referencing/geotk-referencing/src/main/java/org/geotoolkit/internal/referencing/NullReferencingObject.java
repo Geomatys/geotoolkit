@@ -103,7 +103,7 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
 
     /** Returns an empty list in all cases. */
     @Override
-    public List<SingleCRS> getComponents() {
+    public List<CoordinateReferenceSystem> getComponents() {
         return Collections.emptyList();
     }
 
