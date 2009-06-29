@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class NeverFailMonitor extends AbstractCanvasMonitor{
 
-    private static final Logger LOGGER = Logger.getLogger("org/geotools/display/canvas/control/NeverFailMonitor");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display.canvas.control");
     
     /**
      * {@inheritDoc }

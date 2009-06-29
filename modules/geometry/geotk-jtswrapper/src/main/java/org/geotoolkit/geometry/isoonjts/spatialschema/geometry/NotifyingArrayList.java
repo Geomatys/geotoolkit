@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -25,6 +25,7 @@ import java.util.Collection;
  * so that it can invalidate any cached JTS objects it had.
  */
 public class NotifyingArrayList<T> extends ArrayList<T> {
+    private static final long serialVersionUID = 4564579379192943141L;
     private JTSGeometry parent;
 
     public NotifyingArrayList() {

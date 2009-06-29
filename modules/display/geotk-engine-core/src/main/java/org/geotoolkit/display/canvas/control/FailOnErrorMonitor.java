@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class FailOnErrorMonitor extends AbstractCanvasMonitor{
 
-    private static final Logger LOGGER = Logger.getLogger("org/geotools/display/canvas/control/FailOnErrorMonitor");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.display.canvas.control");
     
     /**
      * {@inheritDoc }

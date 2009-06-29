@@ -30,7 +30,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -45,7 +44,7 @@ import java.util.logging.Logger;
 public class FontCache {
     /** The logger for the rendering module. */
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.rendering");
+            .getLogger("org.geotoolkit.renderer.style");
 
     static FontCache defaultInstance;
 

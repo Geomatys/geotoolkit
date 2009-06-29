@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPointArray;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;

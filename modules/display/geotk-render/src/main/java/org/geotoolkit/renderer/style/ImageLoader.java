@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  */
 class ImageLoader implements Runnable {
     /** The logger for the rendering module. */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.renderer.style");
+    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.renderer.style");
 
     /** The images managed by the loader */
     private static Map images = new HashMap();
@@ -177,6 +177,7 @@ class ImageLoader implements Runnable {
     /**
      * Runs the loading thread
      */
+    @Override
     public void run() {
         int myID = 0;
         Image img = null;

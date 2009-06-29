@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -25,6 +25,7 @@ public class WKTParserTest extends TestCase {
     // TODO: POLYGON ((280 380, 280 200, 60 200, 60 380, 180 220, 280 380),(40 160, 260 160, 240 60, 20 80, 40 160))
     GeometryParser parser;
     
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         

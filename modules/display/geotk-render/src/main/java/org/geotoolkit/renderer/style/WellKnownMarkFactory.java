@@ -31,7 +31,7 @@ public class WellKnownMarkFactory implements MarkFactory {
 
     /** The logger for the rendering module. */
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger(
-            "org.geotools.rendering");
+            "org.geotoolkit.rendering.style");
 
     /** Cross general path */
     public static final GeneralPath CROSS;
@@ -147,6 +147,7 @@ public class WellKnownMarkFactory implements MarkFactory {
 
     
     
+    @Override
     public Shape getShape(Graphics2D graphics, Expression symbolUrl, Feature feature) throws Exception {
         // cannot handle a null url
         if(symbolUrl == null)

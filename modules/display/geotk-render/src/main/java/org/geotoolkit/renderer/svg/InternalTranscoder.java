@@ -27,8 +27,7 @@ import org.w3c.dom.Document;
 
 /**
  *
- * @author  jamesm 
- * @source $URL: http://svn.geotools.org/trunk/modules/library/render/src/main/java/org/geotools/renderer/style/InternalTranscoder.java $
+ * @author  jamesm
  */
 final class InternalTranscoder extends ImageTranscoder {
 

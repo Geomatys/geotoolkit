@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  * 
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    
@@ -27,7 +27,7 @@ import java.io.IOException;
  * @source $URL$
  */
 public class FeatureLockException extends IOException {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6257796552547874140L;
     String featureID;
 
     public FeatureLockException() {
