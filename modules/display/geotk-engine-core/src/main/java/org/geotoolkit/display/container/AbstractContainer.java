@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.geotoolkit.display.canvas.DisplayObject;
 import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;

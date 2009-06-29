@@ -26,7 +26,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -55,13 +54,10 @@ import org.opengis.filter.expression.Expression;
  */
 public class TTFMarkFactory implements MarkFactory {
 
-    /** The logger for the rendering module. */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.rendering.style.TTFMarkFactory");
-
     private static FontRenderContext FONT_RENDER_CONTEXT = new FontRenderContext(
             new AffineTransform(), false, false);
 
+    @Override
     public Shape getShape(Graphics2D graphics, Expression symbolUrl, Feature feature)
             throws Exception {
         String markUrl = symbolUrl.evaluate(feature, String.class);

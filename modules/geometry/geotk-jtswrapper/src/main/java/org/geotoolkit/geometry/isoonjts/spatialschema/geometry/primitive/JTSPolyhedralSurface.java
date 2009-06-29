@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -41,6 +41,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @version $Revision $
  */
 public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {
+    private static final long serialVersionUID = 4153619785904408034L;
     
     protected final List<JTSPolygon> patches = new ArrayList();
 

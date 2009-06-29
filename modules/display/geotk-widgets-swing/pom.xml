@@ -119,22 +119,13 @@
 
     <dependency>
       <groupId>org.geotools</groupId>
-      <artifactId>gtm-coverage</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-main</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
       <artifactId>gtm-cql</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-postgis</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jdbc-postgis</artifactId>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>

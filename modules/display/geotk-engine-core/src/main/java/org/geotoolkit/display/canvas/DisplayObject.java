@@ -48,7 +48,7 @@ public class DisplayObject {
     /**
      * The logger for the display implementation module.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotools.display");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display.canvas");
 
     /**
      * Listeners to be notified about any changes in this object properties.

@@ -269,32 +269,7 @@
       </dependency>
       <dependency>
         <groupId>org.geotools</groupId>
-        <artifactId>gtm-main</artifactId>
-        <version>${geomodified.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gtm-coverage</artifactId>
-        <version>${geomodified.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotools</groupId>
         <artifactId>gtm-cql</artifactId>
-        <version>${geomodified.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gtm-postgis</artifactId>
-        <version>${geomodified.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gtm-shapefile</artifactId>
-        <version>${geomodified.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gtm-referencing</artifactId>
         <version>${geomodified.version}</version>
       </dependency>
 

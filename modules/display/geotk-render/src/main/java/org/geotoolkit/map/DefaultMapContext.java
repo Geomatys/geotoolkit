@@ -53,7 +53,7 @@ import org.opengis.style.Description;
  */
 final class DefaultMapContext implements MapContext {
 
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.map");
+    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.map");
 
     private final List<MapLayer> layers = new NotifiedCheckedList<MapLayer>(MapLayer.class) {
 

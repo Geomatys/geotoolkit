@@ -35,10 +35,8 @@ import org.geotoolkit.legacy.array.DynamicArray;
 
 
 /**
- * Test the <code>org.geotools.renderer.array</code> package.
+ * Test the <code>org.geotoolkit.display.array</code> package.
  *
- * @source $URL: http://svn.geotools.org/branches/legacy/migrate/test/org/geotools/renderer/array/PointArrayTest.java $
- * @version $Id: PointArrayTest.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  */
 public class PointArrayTest extends TestCase {

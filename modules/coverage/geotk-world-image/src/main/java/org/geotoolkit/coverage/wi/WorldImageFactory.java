@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 public class WorldImageFactory {
     
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.coverage");
+    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.coverage.wi");
     
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.

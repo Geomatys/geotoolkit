@@ -30,6 +30,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  */
 class DefaultContainerEvent extends ContainerEvent{
+    private static final long serialVersionUID = -5439770733913262681L;
 
     /**
      * graphics concerned by the container event.

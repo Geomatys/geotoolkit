@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -29,21 +29,18 @@ import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
 import org.opengis.geometry.primitive.Ring;
-import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurface;
 
 public class SurfaceImplTest extends TestCase {
     private JTSPositionFactory postitionFactory;
     private JTSPrimitiveFactory primitiveFactory;
     private JTSGeometryFactory geometryFactory;
     
+    @Override
     protected void setUp() throws Exception {
         postitionFactory = new JTSPositionFactory( DefaultGeographicCRS.WGS84 );
         primitiveFactory = new JTSPrimitiveFactory( DefaultGeographicCRS.WGS84 );

@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.MathTransform;
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultCanvasEvent extends CanvasEvent{
+    private static final long serialVersionUID = 1096308047301145181L;
 
     private final CanvasState oldCanvaState;
     private final CanvasState newCanvaState;

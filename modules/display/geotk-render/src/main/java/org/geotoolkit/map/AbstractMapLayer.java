@@ -44,7 +44,7 @@ import org.opengis.style.Description;
  */
 public abstract class AbstractMapLayer implements MapLayer {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotools.map");
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
     
     private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
     

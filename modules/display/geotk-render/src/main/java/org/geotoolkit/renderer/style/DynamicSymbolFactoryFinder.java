@@ -48,14 +48,11 @@ import org.geotoolkit.factory.FactoryRegistry;
  * <p>
  * Example:<br/><code>org.geotools.data.jdbc.DBCPDataSourceFactory</code>
  * </p>
- * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/unsupported/h2/src/main/java/org/geotools/data/jdbc/ds/DataSourceFinder.java $
  */
 public final class DynamicSymbolFactoryFinder {
     /** The logger for the filter module. */
     protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.jdbc");
+            .getLogger("org.geotoolkit.renderer.style");
 
     /**
      * The service registry for this manager. Will be initialized only when
