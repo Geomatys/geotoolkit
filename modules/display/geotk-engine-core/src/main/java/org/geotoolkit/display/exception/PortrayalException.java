@@ -25,6 +25,7 @@ package org.geotoolkit.display.exception;
 public class PortrayalException extends Exception{
 
     private static final String ERROR = "Portrayal exception";
+    private static final long serialVersionUID = 3200411272785006830L;
     
     public PortrayalException(){
         super(ERROR);

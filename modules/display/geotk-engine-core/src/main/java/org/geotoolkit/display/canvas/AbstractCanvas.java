@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display.canvas;
 
-import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
 import javax.swing.event.EventListenerList;
 

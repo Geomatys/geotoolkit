@@ -22,9 +22,6 @@ import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.RandomAccess;
 
-// Geotools dependencies
-import org.geotoolkit.geometry.DirectPosition2D;
-
 
 /**
  * Exposes a {@link PointArray2D} as a list of positions with efficient random access.
@@ -58,6 +55,7 @@ final class ListAdapter extends AbstractList implements RandomAccess, Serializab
     /**
      * Returns this list size.
      */
+    @Override
     public int size() {
         return array.length();
     }
@@ -65,6 +63,7 @@ final class ListAdapter extends AbstractList implements RandomAccess, Serializab
     /**
      * Returns the position at the specified index.
      */
+    @Override
     public Object get(final int index) {
         return array.get(index, null);
     }

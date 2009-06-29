@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display.canvas;
 
-import java.awt.Shape;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -29,7 +28,6 @@ import java.util.Collections;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.display.canvas.CanvasState;
-import org.opengis.util.InternationalString;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.DerivedCRS;
@@ -65,10 +63,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.opengis.display.container.ContainerEvent;
 
 
 /**
