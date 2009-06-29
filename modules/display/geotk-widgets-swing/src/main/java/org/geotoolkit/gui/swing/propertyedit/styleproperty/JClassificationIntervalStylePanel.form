@@ -19,10 +19,12 @@
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
           <Component id="jScrollPane1" alignment="0" pref="468" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
+              <Component id="guiInvert" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="guiAddOne" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiRemoveAll" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace pref="152" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -31,9 +33,10 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="194" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="221" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="guiInvert" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="guiAddOne" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="guiRemoveAll" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -93,14 +96,30 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="guiLblProperty" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="guiProperty" pref="266" max="32767" attributes="0"/>
+                                  <Component id="guiProperty" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="guiOther" min="-2" max="-2" attributes="0"/>
+                                  <Component id="guiLblNormalize" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="guiNormalize" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
-                      <Component id="guiGenerate" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="guiClassify" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiGenerate" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="guiLblMethod" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiMethod" min="-2" pref="130" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiLblClasses" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiClasses" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
           </Group>
@@ -111,17 +130,28 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="guiLblProperty" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="guiProperty" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="guiOther" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLblNormalize" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiNormalize" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="guiLblPalette" linkSize="1" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="guiPalette" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiPalette" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="guiLblModel" linkSize="1" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                       <Component id="guiModel" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiLblMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLblClasses" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiClasses" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="guiGenerate" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiGenerate" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiClassify" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -131,13 +161,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="guiOther">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="otherRule" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -177,6 +200,40 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="guiPalette">
         </Component>
+        <Component class="javax.swing.JLabel" name="guiLblNormalize">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="normalize" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="guiNormalize">
+        </Component>
+        <Component class="javax.swing.JButton" name="guiClassify">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="classify" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="guiLblMethod">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="guiMethod">
+        </Component>
+        <Component class="javax.swing.JLabel" name="guiLblClasses">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="classes" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="guiClasses">
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -190,5 +247,12 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="guiInvert">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="invert_palette" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

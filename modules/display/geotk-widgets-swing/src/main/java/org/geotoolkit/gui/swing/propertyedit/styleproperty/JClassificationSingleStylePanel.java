@@ -105,7 +105,7 @@ import org.opengis.style.Symbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class JCategoryStylePanel extends JPanel implements PropertyPane{
+public class JClassificationSingleStylePanel extends JPanel implements PropertyPane{
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
@@ -125,7 +125,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
     private Symbolizer template = null;
     private Class<? extends Symbolizer> expectedType = null;
 
-    public JCategoryStylePanel() {
+    public JClassificationSingleStylePanel() {
         initComponents();
         guiTable.setModel(model);
         
@@ -428,7 +428,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
                 .addComponent(guiGenerate))
         );
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLblModel, guiLblPalette, guiModel, guiPalette});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLblModel, guiLblPalette, guiModel});
 
         jScrollPane1.setViewportView(guiTable);
 
@@ -449,7 +449,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiAddOne)
@@ -558,7 +558,7 @@ public class JCategoryStylePanel extends JPanel implements PropertyPane{
 
     @Override
     public ImageIcon getIcon() {
-        return null;
+        return IconBundle.getInstance().getIcon("16_classification_single");
     }
 
     @Override
