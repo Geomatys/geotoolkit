@@ -141,6 +141,36 @@ public final class ParserTest {
     }
 
     /**
+     * Tests a WKT having an unquoted integer authority code instead than a quoted string.
+     * This test has been added after a test case provided by a user on the mailing list.
+     *
+     * @throws ParseException Should never happen.
+     */
+    @Test
+    public void testIntegerAuthorityCodeWKT() throws ParseException {
+        final String wkt =
+            "PROJCS[\"North_Pole_Stereographic\"," +
+              "GEOGCS[\"GCS_WGS_1984\"," +
+                "DATUM[\"D_WGS_1984\"," +
+                  "SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
+                "PRIMEM[\"Greenwich\",0.0]," +
+                "UNIT[\"Degree\",0.0174532925199433]]," +
+              "PROJECTION[\"Stereographic\"]," +
+              "PARAMETER[\"False_Easting\",0.0]," +
+              "PARAMETER[\"False_Northing\",0.0]," +
+              "PARAMETER[\"Central_Meridian\",0.0]," +
+              "PARAMETER[\"Scale_Factor\",1.0]," +
+              "PARAMETER[\"Latitude_Of_Origin\",90.0]," +
+              "UNIT[\"Meter\",1.0]," +
+              "AUTHORITY[\"ESRI\",102018]]";
+
+        final ReferencingParser parser = new ReferencingParser();
+        CoordinateReferenceSystem crs = parser.parseCoordinateReferenceSystem(wkt);
+        assertEquals(1, crs.getIdentifiers().size());
+        assertEquals("102018", crs.getIdentifiers().iterator().next().getCode());
+    }
+
+    /**
      * Tests the Oracle variant of WKT.
      *
      * @throws ParseException Should never happen.
@@ -148,24 +178,24 @@ public final class ParserTest {
     @Test
     public void testOracleWKT() throws ParseException {
         final String wkt =
-                "PROJCS[\"Datum 73 / Modified Portuguese Grid\"," +
-                 " GEOGCS [ \"Datum 73\"," +
-                   " DATUM[\"Datum 73 (EPSG ID 6274)\"," +
-                     " SPHEROID [\"International 1924 (EPSG ID 7022)\", 6378388, 297]," +
-                     " -231, 102.6, 29.8, .6149999999999993660366746131394108039579," +
-                     " -.1979999999999997958947342656936639661522," +
-                      " .8809999999999990918346509498793836069706, .99999821]," +
-                   " PRIMEM [ \"Greenwich\", 0.000000 ]," +
-                   " UNIT [\"Decimal Degree\", 0.01745329251994328]]," +
-                 " PROJECTION[\"Transverse_Mercator\"]," +
-//               " PROJECTION[\"Modified Portuguese Grid (EPSG OP 19974)\"]," +
+            "PROJCS[\"Datum 73 / Modified Portuguese Grid\"," +
+             " GEOGCS [ \"Datum 73\"," +
+               " DATUM[\"Datum 73 (EPSG ID 6274)\"," +
+                 " SPHEROID [\"International 1924 (EPSG ID 7022)\", 6378388, 297]," +
+                 " -231, 102.6, 29.8, .6149999999999993660366746131394108039579," +
+                 " -.1979999999999997958947342656936639661522," +
+                  " .8809999999999990918346509498793836069706, .99999821]," +
+               " PRIMEM [ \"Greenwich\", 0.000000 ]," +
+               " UNIT [\"Decimal Degree\", 0.01745329251994328]]," +
+             " PROJECTION[\"Transverse_Mercator\"]," +
+//           " PROJECTION[\"Modified Portuguese Grid (EPSG OP 19974)\"]," +
 // TODO: The real projection is "Modified Portugues", but it is not yet implemented in Geotoolkit.
-                 " PARAMETER[\"Latitude_Of_Origin\", 39.66666666666666666666666666666666666667]," +
-                 " PARAMETER[\"Central_Meridian\", -8.13190611111111111111111111111111111111]," +
-                 " PARAMETER[\"Scale_Factor\", 1]," +
-                 " PARAMETER [\"False_Easting\", 180.598]," +
-                 " PARAMETER[\"False_Northing\", -86.99]," +
-                 " UNIT [\"Meter\", 1]]";
+             " PARAMETER[\"Latitude_Of_Origin\", 39.66666666666666666666666666666666666667]," +
+             " PARAMETER[\"Central_Meridian\", -8.13190611111111111111111111111111111111]," +
+             " PARAMETER[\"Scale_Factor\", 1]," +
+             " PARAMETER [\"False_Easting\", 180.598]," +
+             " PARAMETER[\"False_Northing\", -86.99]," +
+             " UNIT [\"Meter\", 1]]";
 
         assertFalse(Symbols.DEFAULT.containsAxis(wkt));
         final ReferencingParser parser = new ReferencingParser();

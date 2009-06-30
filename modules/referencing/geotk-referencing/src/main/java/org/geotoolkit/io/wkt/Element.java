@@ -444,7 +444,27 @@ final class Element {
             final Object object = iterator.next();
             if (object instanceof String) {
                 iterator.remove();
-                return (String)object;
+                return (String) object;
+            }
+        }
+        throw missingParameter(key);
+    }
+
+    /**
+     * Removes the next {@link Object} from the list and returns it.
+     *
+     * @param  key The parameter name. Used for formatting
+     *         an error message if no number are found.
+     * @return The next {@link Object} on the list (never {@code null}).
+     * @throws ParseException if no more object is available.
+     */
+    public Object pullObject(final String key) throws ParseException {
+        final Iterator<Object> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            final Object object = iterator.next();
+            if (object != null) {
+                iterator.remove();
+                return object;
             }
         }
         throw missingParameter(key);

@@ -389,7 +389,7 @@ public class ReferencingParser extends MathTransformParser {
             }
         } else {
             final String auth = element.pullString("name");
-            final String code = element.pullString("code");
+            final String code = element.pullObject("code").toString(); // Accepts Integer as well as String.
             element.close();
             final Citation authority = Citations.fromName(auth);
             properties = new HashMap<String,Object>(4);
