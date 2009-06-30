@@ -85,18 +85,6 @@ public class DefaultRepresentativeFraction extends Number implements Representat
     }
 
     /**
-     * Returns the scale value.
-     *
-     * @return The scale value.
-     * @deprecated This is equivalent to {@link #doubleValue}.
-     */
-    @Override
-    @Deprecated
-    public double toScale(){
-        return doubleValue();
-    }
-
-    /**
      * Returns the scale in a form usable for computation.
      *
      * @return <code>1.0 / {@linkplain #getDenominator() denominator}</code>

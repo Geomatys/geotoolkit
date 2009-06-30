@@ -633,17 +633,6 @@ public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serial
     }
 
     /**
-     * @deprecated Renamed as {@link #tip}.
-     *
-     * @since 2.3
-     */
-    @Override
-    @Deprecated
-    public LocalName name() {
-        return getName().name();
-    }
-
-    /**
      * The last element in the sequence of {@linkplain #getParsedNames parsed names}.
      * By default, this is the same value than {@link #getCode} provided as a local name.
      *

@@ -150,15 +150,6 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
     }
 
     /**
-     * @deprecated Renamed as {@link #getDirectPosition}.
-     */
-    @Override
-    @Deprecated
-    public DirectPosition getPosition() {
-        return this;
-    }
-
-    /**
      * Returns always {@code this}, the direct position for this
      * {@linkplain org.opengis.geometry.coordinate.Position position}.
      *
@@ -211,17 +202,6 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
     @Override
     public double[] getCoordinate() {
         return new double[] {x,y};
-    }
-
-    /**
-     * @deprecated Renamed as {@link #getCoordinate} for consistency with ISO 19107.
-     *
-     * @return A copy of the coordinates.
-     */
-    @Override
-    @Deprecated
-    public double[] getCoordinates() {
-        return getCoordinate();
     }
 
     /**

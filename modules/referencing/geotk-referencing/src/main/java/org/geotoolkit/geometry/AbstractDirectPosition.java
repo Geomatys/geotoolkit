@@ -48,15 +48,6 @@ public abstract class AbstractDirectPosition implements DirectPosition {
     }
 
     /**
-     * @deprecated Renamed as {@link #getDirectPosition}.
-     */
-    @Override
-    @Deprecated
-    public DirectPosition getPosition() {
-        return this;
-    }
-
-    /**
      * Returns always {@code this}, the direct position for this
      * {@linkplain org.opengis.geometry.coordinate.Position position}.
      *
@@ -102,17 +93,6 @@ public abstract class AbstractDirectPosition implements DirectPosition {
             ordinates[i] = getOrdinate(i);
         }
         return ordinates;
-    }
-
-    /**
-     * @deprecated Renamed as {@link #getCoordinate} for consistency with ISO 19107.
-     *
-     * @return A copy of the coordinates.
-     */
-    @Override
-    @Deprecated
-    public double[] getCoordinates() {
-        return getCoordinate();
     }
 
     /**

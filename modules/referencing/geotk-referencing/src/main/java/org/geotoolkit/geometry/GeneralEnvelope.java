@@ -573,20 +573,6 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     }
 
     /**
-     * Returns the center ordinate along the specified dimension.
-     *
-     * @param  dimension The dimension to query.
-     * @return The mid ordinate value along the given dimension.
-     *
-     * @deprecated Renamed as {@link #getMedian(int)}.
-     */
-    @Override
-    @Deprecated
-    public final double getCenter(final int dimension) {
-        return getMedian(dimension);
-    }
-
-    /**
      * Returns the median ordinate along the specified dimension. The result should be equals
      * (minus rounding error) to <code>({@linkplain #getMaximum getMaximum}(dimension) -
      * {@linkplain #getMinimum getMinimum}(dimension)) / 2</code>.
@@ -598,22 +584,6 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     @Override
     public final double getMedian(final int dimension) throws IndexOutOfBoundsException {
         return 0.5*(ordinates[dimension] + ordinates[dimension + ordinates.length/2]);
-    }
-
-    /**
-     * Returns the envelope length along the specified dimension.
-     * This length is equal to the maximum ordinate minus the
-     * minimal ordinate.
-     *
-     * @param  dimension The dimension to query.
-     * @return The difference along maximal and minimal ordinates in the given dimension.
-     *
-     * @deprecated Renamed as {@link #getSpan(int)}.
-     */
-    @Override
-    @Deprecated
-    public final double getLength(final int dimension) {
-        return getSpan(dimension);
     }
 
     /**

@@ -174,17 +174,6 @@ public abstract class AbstractName implements GenericName, Serializable {
     }
 
     /**
-     * Returns the last element in the sequence of {@linkplain #getParsedNames parsed names}.
-     *
-     * @deprecated Renamed as {@link #tip}.
-     */
-    @Override
-    @Deprecated
-    public final LocalName name() {
-        return tip();
-    }
-
-    /**
      * Returns a view of this name as a fully-qualified name. The {@linkplain #scope scope}
      * of a fully qualified name is {@linkplain DefaultNameSpace#isGlobal global}. If the
      * scope of this name is already global, then this method returns {@code this}.

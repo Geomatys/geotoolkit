@@ -133,36 +133,10 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      * Returns the median ordinate along the specified dimension.
      *
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     *
-     * @deprecated Renamed {@link #getMedian}.
-     */
-    @Override
-    @Deprecated
-    public double getCenter(final int dimension) throws IndexOutOfBoundsException {
-        return getMedian(dimension);
-    }
-
-    /**
-     * Returns the median ordinate along the specified dimension.
-     *
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
      */
     @Override
     public double getMedian(final int dimension) throws IndexOutOfBoundsException {
         return (ordinates[dimension] + ordinates[dimension + ordinates.length/2]) / 2 ;
-    }
-
-    /**
-     * Returns the envelope span (typically width or height) along the specified dimension.
-     *
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     *
-     * @deprecated Renamed {@link #getSpan}.
-     */
-    @Override
-    @Deprecated
-    public double getLength(final int dimension) throws IndexOutOfBoundsException {
-        return getSpan(dimension);
     }
 
     /**

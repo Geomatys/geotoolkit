@@ -20,7 +20,6 @@
  */
 package org.geotoolkit.naming;
 
-import java.util.Set;
 import java.util.List;
 import java.util.ListIterator;
 import java.io.Serializable;
@@ -425,17 +424,6 @@ public class DefaultNameSpace implements NameSpace, Serializable {
             }
         }
         return child;
-    }
-
-    /**
-     * Returns the set of {@linkplain GenericName generic names} registered with this namespace.
-     *
-     * @deprecated Not implemented.
-     */
-    @Override
-    @Deprecated
-    public Set<GenericName> getNames() {
-        throw new UnsupportedOperationException();
     }
 
     /**
