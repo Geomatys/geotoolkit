@@ -128,6 +128,8 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
         guiLblClasses.setText(MessageBundle.getString("classes")); // NOI18N
 
+        guiClasses.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(1), null, Integer.valueOf(1)));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(

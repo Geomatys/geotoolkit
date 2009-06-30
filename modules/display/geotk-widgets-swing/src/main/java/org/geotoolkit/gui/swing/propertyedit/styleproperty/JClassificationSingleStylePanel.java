@@ -109,11 +109,11 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
-    private static final List<Palette> PALETTES;
+    private static final List<RandomPalette> PALETTES;
 
     static{
-        PALETTES = new ArrayList<Palette>();
-        PALETTES.add(new RandomPalette());
+        PALETTES = new ArrayList<RandomPalette>();
+        PALETTES.add(new DefaultRandomPalette());
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
@@ -145,7 +145,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
 
         guiTable.setShowGrid(false, false);
-        guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.white, HighlighterFactory.QUICKSILVER, 1)});
+        guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.WHITE, HighlighterFactory.QUICKSILVER, 1)});
 
         guiTable.getColumnExt(0).setMaxWidth(30);
         guiTable.getColumnExt(3).setMaxWidth(20);
@@ -268,7 +268,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }
 
     private Symbolizer createSymbolizer(){
-        return derivateSymbolizer(template, ((Palette)guiPalette.getSelectedItem()).next());
+        return derivateSymbolizer(template, ((RandomPalette)guiPalette.getSelectedItem()).next());
     }
 
     /**
@@ -601,7 +601,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     private class PaletteRenderer extends DefaultListCellRenderer{
 
-        private Palette palette = null;
+        private RandomPalette palette = null;
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -609,8 +609,8 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
             PaletteRenderer.this.setText(" Random ");
 
-            if(value instanceof Palette){
-                palette = (Palette)value;
+            if(value instanceof RandomPalette){
+                palette = (RandomPalette)value;
             }
             return PaletteRenderer.this;
         }

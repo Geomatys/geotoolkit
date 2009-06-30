@@ -17,11 +17,6 @@
 
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -32,32 +27,30 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -73,35 +66,22 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-
-import org.geotools.data.DefaultQuery;
-import org.geotools.feature.FeatureIterator;
 
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.And;
+import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
-import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -110,24 +90,27 @@ import org.opengis.style.Symbolizer;
  */
 public class JClassificationIntervalStylePanel extends JPanel implements PropertyPane{
 
+    private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
+
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
-    private static final List<Palette> PALETTES;
+    private static final List<IntervalPalette> PALETTES;
 
     static{
-        PALETTES = new ArrayList<Palette>();
-        PALETTES.add(new RandomPalette());
+        PALETTES = new ArrayList<IntervalPalette>();
+        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.BLUE,Color.RED}));
+        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.GREEN,Color.WHITE,Color.BLUE}));
+        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.GREEN,Color.WHITE}));
+        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.RED,Color.YELLOW,Color.WHITE}));
+        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.BLACK,Color.CYAN}));
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final RuleModel model = new RuleModel();
-    private final List<PropertyName> properties = new ArrayList<PropertyName>();
     private final Analyze analyze = new Analyze();
     private FeatureMapLayer layer = null;
-    private Symbolizer template = null;
-    private Class<? extends Symbolizer> expectedType = null;
 
     public JClassificationIntervalStylePanel() {
         initComponents();
@@ -149,10 +132,13 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
 
         guiTable.setShowGrid(false, false);
-        guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.white, HighlighterFactory.QUICKSILVER, 1)});
+        guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.WHITE, HighlighterFactory.QUICKSILVER, 1)});
 
         guiTable.getColumnExt(0).setMaxWidth(30);
         guiTable.getColumnExt(3).setMaxWidth(20);
+
+        guiMethod.setModel(new EnumComboBoxModel(Analyze.METHOD.class));
+
     }
 
     private void parse(){
@@ -161,153 +147,34 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable.revalidate();
         guiTable.repaint();
 
-        properties.clear();
         if(layer != null){
-            SimpleFeatureType schema = layer.getFeatureSource().getSchema();
-
-            for(PropertyDescriptor desc : schema.getDescriptors()){
-                Class<?> type = desc.getType().getBinding();
-
-                if(!Geometry.class.isAssignableFrom(type)){
-                    properties.add(FF.property(desc.getName().getLocalPart()));
-                }
-            }
-            
-            //find the geometry class for template
-            GeometryDescriptor geo = schema.getGeometryDescriptor();
-            Class<?> geoClass = geo.getType().getBinding();
-
-            if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
-                Stroke stroke = SF.stroke(Color.BLACK, 1);
-                Fill fill = SF.fill(Color.BLUE);
-                template = SF.polygonSymbolizer(stroke,fill,null);
-                expectedType = PolygonSymbolizer.class;
-            }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
-                Stroke stroke = SF.stroke(Color.BLUE, 2);
-                template = SF.lineSymbolizer(stroke,null);
-                expectedType = LineSymbolizer.class;
-            }else{
-                Stroke stroke = SF.stroke(Color.BLACK, 1);
-                Fill fill = SF.fill(Color.BLUE);
-                List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-                symbols.add(SF.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
-                Graphic gra = SF.graphic(symbols, FF.literal(1), FF.literal(12), FF.literal(0), SF.anchorPoint(), SF.displacement());
-                template = SF.pointSymbolizer(gra, null);
-                expectedType = PointSymbolizer.class;
-            }
-
-
-            guiProperty.setModel(new ListComboBoxModel(properties));
-
-            //try to rebuild the previous analyze if it was one
-            List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
-
-            if(ftss.size() == 1){
-                MutableFeatureTypeStyle fts = ftss.get(0);
-
-                List<MutableRule> rules = fts.rules();
-
-                for(Rule r : rules){
-                    List<? extends Symbolizer> symbols = r.symbolizers();
-
-                    if(symbols.size() != 1) break;
-
-                    Symbolizer symbol = symbols.get(0);
-                    if(expectedType.isInstance(symbol)){
-
-                        if(r.isElseFilter()){
-                            //it looks like it's a valid classification "other" rule
-                            model.rules.add(r);
-                            template = symbol;
-                        }else{
-                            Filter f = r.getFilter();
-                            if(f != null && f instanceof PropertyIsEqualTo){
-                                PropertyIsEqualTo equal = (PropertyIsEqualTo) f;
-                                Expression exp1 = equal.getExpression1();
-                                Expression exp2 = equal.getExpression2();
-
-                                if(exp1 instanceof PropertyName && exp2 instanceof Literal){
-                                    if(properties.contains(exp1)){
-                                        //it looks like it's a valid classification property rule
-                                        model.rules.add(r);
-                                        template = symbol;
-                                        guiProperty.setSelectedItem(exp1);
-                                    }else{
-                                        //property is not in the schema
-                                        break;
-                                    }
-                                }else if(exp2 instanceof PropertyName && exp1 instanceof Literal){
-                                    if(properties.contains(exp2)){
-                                        //it looks like it's a valid classification property rule
-                                        model.rules.add(r);
-                                        template = symbol;
-                                        guiProperty.setSelectedItem(exp2);
-                                    }else{
-                                        //property is not in the schema
-                                        break;
-                                    }
-                                }else{
-                                    //mismatch analyze structure
-                                    break;
-                                }
-                            }
-                        }
-
-                    }else{
-                        break;
-                    }
-
-                }
-
-            }
-        }else{
-            guiProperty.setModel(new ListComboBoxModel(properties));
+            analyze.setLayer(layer);
         }
 
+        guiProperty.setModel(new ListComboBoxModel(new ArrayList<PropertyName>(analyze.getProperties())));
+        updateNormalizeList();
         updateModelGlyph();
+
         guiTable.revalidate();
         guiTable.repaint();
     }
 
-    private Symbolizer createSymbolizer(){
-        return derivateSymbolizer(template, ((Palette)guiPalette.getSelectedItem()).next());
-    }
+    private void updateNormalizeList(){
 
-    /**
-     * Derivate a symbolizer with a new color.
-     */
-    private Symbolizer derivateSymbolizer(Symbolizer symbol, Color color){
+        Object oldSelected = guiNormalize.getSelectedItem();
 
-        if(symbol instanceof PolygonSymbolizer){
-            PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
-            Fill fill = SF.fill(SF.literal(color),ps.getFill().getOpacity());
-            return SF.polygonSymbolizer(ps.getName(), ps.getGeometryPropertyName(),
-                    ps.getDescription(), ps.getUnitOfMeasure(),
-                    ps.getStroke(),fill,ps.getDisplacement(),ps.getPerpendicularOffset());
-        }else if(symbol instanceof LineSymbolizer){
-            LineSymbolizer ls = (LineSymbolizer) symbol;
-            Stroke oldStroke = ls.getStroke();
-            Stroke stroke = SF.stroke(SF.literal(color),oldStroke.getOpacity(),oldStroke.getWidth(),
-                    oldStroke.getLineJoin(),oldStroke.getLineCap(),oldStroke.getDashArray(),oldStroke.getDashOffset());
-            return SF.lineSymbolizer(ls.getName(), ls.getGeometryPropertyName(),
-                    ls.getDescription(), ls.getUnitOfMeasure(), stroke, ls.getPerpendicularOffset());
-        }else if(symbol instanceof PointSymbolizer){
-            PointSymbolizer ps = (PointSymbolizer) symbol;
-            Graphic oldGraphic = ps.getGraphic();
-            Mark oldMark = (Mark) oldGraphic.graphicalSymbols().get(0);
-            Fill fill = SF.fill(SF.literal(color),oldMark.getFill().getOpacity());
-            List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-            symbols.add(SF.mark(oldMark.getWellKnownName(), fill, oldMark.getStroke()));
-            Graphic graphic = SF.graphic(symbols, oldGraphic.getOpacity(),oldGraphic.getSize(),
-                    oldGraphic.getRotation(),oldGraphic.getAnchorPoint(),oldGraphic.getDisplacement());
-            return SF.pointSymbolizer(graphic,ps.getGeometryPropertyName());
-        }else{
-            throw new IllegalArgumentException("unexpected symbolizer type : " + symbol);
-        }
+        List<PropertyName> lstnormalize = new ArrayList<PropertyName>();
+        lstnormalize.add(Analyze.NO_VALUE);
+        lstnormalize.addAll(analyze.getProperties());
+        lstnormalize.remove(guiProperty.getSelectedItem());
+        guiNormalize.setModel(new ListComboBoxModel(lstnormalize));
+
+        guiNormalize.setSelectedItem(oldSelected);
 
     }
 
     private void updateModelGlyph(){
+        Symbolizer template = analyze.getTemplate();
         if(template == null){
             guiModel.setIcon(null);
             guiModel.setText(" ");
@@ -317,13 +184,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             guiModel.setIcon(new ImageIcon(img));
             guiModel.setText("");
         }
-    }
-
-    private Rule createRule(PropertyName property, Object obj){
-        MutableRule r = SF.rule(createSymbolizer());
-        r.setFilter(FF.equals(property, FF.literal(obj)));
-        r.setDescription(SF.description(obj.toString(), obj.toString()));
-        return r;
     }
 
     /** This method is called from within the constructor to
@@ -339,7 +199,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
 
 
-        guiAddOne = new JButton();
         guiRemoveAll = new JButton();
         jPanel1 = new JPanel();
         guiLblProperty = new JLabel();
@@ -360,13 +219,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable = new JXTable();
         guiInvert = new JButton();
 
-        guiAddOne.setText(MessageBundle.getString("add_value")); // NOI18N
-        guiAddOne.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiAddOneActionPerformed(evt);
-            }
-        });
-
         guiRemoveAll.setText(MessageBundle.getString("remove_all_values")); // NOI18N
         guiRemoveAll.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -376,6 +228,12 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("properties"))); // NOI18N
         guiLblProperty.setText(MessageBundle.getString("property")); // NOI18N
+        guiProperty.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiPropertyActionPerformed(evt);
+            }
+        });
+
         guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
         guiLblModel.setText(MessageBundle.getString("model")); // NOI18N
         guiModel.setText(" ");
@@ -398,9 +256,22 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
 
 
+        guiNormalize.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiNormalizeActionPerformed(evt);
+            }
+        });
+
         guiClassify.setText(MessageBundle.getString("classify")); // NOI18N
         guiLblMethod.setText(MessageBundle.getString("method")); // NOI18N
         guiLblClasses.setText(MessageBundle.getString("classes")); // NOI18N
+        guiClasses.setModel(new SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(1), null, Integer.valueOf(1)));
+        guiClasses.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                guiClassesStateChanged(evt);
+            }
+        });
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -408,39 +279,40 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(guiLblPalette)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiPalette, 0, 160, Short.MAX_VALUE)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiLblModel)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiModel))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(guiLblProperty)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiProperty, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiLblNormalize)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiNormalize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiClassify)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiGenerate))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiLblMethod)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiLblClasses)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiClasses, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(guiLblProperty)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiProperty, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiLblNormalize)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiNormalize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(guiLblMethod)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiLblClasses)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiClasses, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiClassify)
+                            .addContainerGap(48, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(guiLblPalette)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiPalette, 0, 268, Short.MAX_VALUE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiLblModel)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(guiModel)
+                            .addContainerGap()))
+                    .addComponent(guiGenerate, Alignment.TRAILING)))
         );
+
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLblMethod, guiLblPalette, guiLblProperty});
+
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -449,22 +321,21 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                     .addComponent(guiProperty, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiLblNormalize)
                     .addComponent(guiNormalize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiPalette, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLblModel, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiModel))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiLblMethod)
                     .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiLblClasses)
-                    .addComponent(guiClasses, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiClasses, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiClassify))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiGenerate)
-                    .addComponent(guiClassify)))
+                    .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiPalette, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiLblModel, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiModel))
+                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(guiGenerate))
         );
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLblModel, guiLblPalette, guiModel});
@@ -472,6 +343,11 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         jScrollPane1.setViewportView(guiTable);
 
         guiInvert.setText(bundle.getString("invert_palette")); // NOI18N
+        guiInvert.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiInvertActionPerformed(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -482,33 +358,21 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             .addGroup(layout.createSequentialGroup()
                 .addComponent(guiInvert)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiAddOne)
-                .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiRemoveAll)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(237, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiInvert)
-                    .addComponent(guiAddOne)
                     .addComponent(guiRemoveAll)))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void guiAddOneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
-        String val = JOptionPane.showInputDialog(MessageBundle.getString("value")+" :");
-        Rule r = createRule((PropertyName) guiProperty.getSelectedItem(), val);
-
-        model.rules.add(r);
-        guiTable.revalidate();
-        guiTable.repaint();
-    }//GEN-LAST:event_guiAddOneActionPerformed
 
     private void guiRemoveAllActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
         model.rules.clear();
@@ -517,47 +381,49 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
     private void guiGenerateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
-
-        //search the different values
-        final Set<Object> differentValues = new HashSet<Object>();
-        final PropertyName property = (PropertyName)guiProperty.getSelectedItem();
-        final DefaultQuery query = new DefaultQuery();
-        query.setPropertyNames(new String[]{property.getPropertyName()});
-        
-        FeatureIterator<SimpleFeature> features = null;
-        try{
-            features = layer.getFeatureSource().getFeatures(query).features();
-            while(features.hasNext()){
-                SimpleFeature sf = features.next();
-                differentValues.add(property.evaluate(sf));
-            }
-        }catch(IOException ex){
-            ex.printStackTrace();
-        }finally{
-            if(features != null){
-                features.close();
-            }
-        }
-
-        //generate the different rules
-        List<Rule> rules = new ArrayList<Rule>();
-
-        for(Object obj : differentValues){
-            rules.add(createRule(property, obj));
-        }
-
         model.rules.clear();
-        model.rules.addAll(rules);
+        model.rules.addAll(analyze.generateRules((IntervalPalette) guiPalette.getSelectedItem()));
+
+        guiTable.revalidate();
+        guiTable.repaint();
+    }//GEN-LAST:event_guiGenerateActionPerformed
+
+    private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
+        analyze.setTemplate(JPropertyDialog.showSymbolizerDialog(analyze.getTemplate(), layer));
+        updateModelGlyph();
+    }//GEN-LAST:event_guiModelActionPerformed
+
+    private void guiPropertyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiPropertyActionPerformed
+        analyze.setClassification((PropertyName) guiProperty.getSelectedItem());
+        updateNormalizeList();
+    }//GEN-LAST:event_guiPropertyActionPerformed
+
+    private void guiNormalizeActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNormalizeActionPerformed
+        PropertyName prop = (PropertyName) guiNormalize.getSelectedItem();
+        analyze.setNormalize(prop);
+    }//GEN-LAST:event_guiNormalizeActionPerformed
+
+    private void guiClassesStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiClassesStateChanged
+        analyze.setNbClasses((Integer)guiClasses.getModel().getValue());
+    }//GEN-LAST:event_guiClassesStateChanged
+
+    private void guiInvertActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiInvertActionPerformed
+
+        Symbolizer[] symbols = new Symbolizer[model.rules.size()];
+
+        for(int i=0;i<model.rules.size();i++){
+            symbols[model.rules.size()-1-i] = model.rules.get(i).symbolizers().get(0);
+        }
+
+        for(int i=0;i<model.rules.size();i++){
+            model.rules.get(i).symbolizers().clear();
+            ((MutableRule)model.rules.get(i)).symbolizers().add(symbols[i]);
+        }
 
         guiTable.revalidate();
         guiTable.repaint();
 
-    }//GEN-LAST:event_guiGenerateActionPerformed
-
-    private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        template = JPropertyDialog.showSymbolizerDialog(template, layer);
-        updateModelGlyph();
-    }//GEN-LAST:event_guiModelActionPerformed
+    }//GEN-LAST:event_guiInvertActionPerformed
 
     @Override
     public void setTarget(Object layer) {
@@ -608,7 +474,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton guiAddOne;
     private JSpinner guiClasses;
     private JButton guiClassify;
     private JButton guiGenerate;
@@ -732,15 +597,16 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                 Rule r = (Rule) value;
                 Filter f = r.getFilter();
 
-                if(f != null && f instanceof PropertyIsEqualTo){
-                    PropertyIsEqualTo prop = (PropertyIsEqualTo) f;
+                if(f != null && f instanceof And){
+                    And prop = (And) f;
 
-                    if(prop.getExpression1() instanceof Literal){
-                        RulePropertyRenderer.this.setText(prop.getExpression1().toString());
-                    }else if(prop.getExpression2() instanceof Literal){
-                        RulePropertyRenderer.this.setText(prop.getExpression2().toString());
-                    }
+                    BinaryComparisonOperator under = (BinaryComparisonOperator) prop.getChildren().get(0);
+                    BinaryComparisonOperator above = (BinaryComparisonOperator) prop.getChildren().get(1);
 
+                    Number nUnder = under.getExpression2().evaluate(null, Number.class);
+                    Number nAbove = above.getExpression2().evaluate(null, Number.class);
+
+                    this.setText( FORMAT.format(nUnder.doubleValue()) + " -> " + FORMAT.format(nAbove.doubleValue()) );
                 }
 
             }
@@ -917,7 +783,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return true;
+            return columnIndex != 1;
         }
 
         @Override

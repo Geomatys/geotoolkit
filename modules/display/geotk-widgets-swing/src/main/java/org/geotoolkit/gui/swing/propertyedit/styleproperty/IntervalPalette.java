@@ -25,10 +25,8 @@ import java.awt.Rectangle;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Palette {
+public interface IntervalPalette extends Palette{
 
-    Color next();
-
-    void render(Graphics2D g, Rectangle rect);
+    Color interpolate(double d);
 
 }
