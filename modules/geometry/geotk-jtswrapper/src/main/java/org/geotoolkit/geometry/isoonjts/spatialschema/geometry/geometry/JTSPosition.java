@@ -32,16 +32,7 @@ public class JTSPosition implements Position {
     public JTSPosition(final DirectPosition position) {
         this.position = position;
     }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Deprecated
-    @Override
-    public DirectPosition getPosition() {
-        return position;
-    }
-    
+        
     /**
      * {@inheritDoc }
      */

@@ -281,11 +281,6 @@ public class DirectPositionType implements DirectPosition{
     }
 
     @Override
-    public double[] getCoordinates() {
-        return getCoordinate();
-    }
-
-    @Override
     public double getOrdinate(int dimension) throws IndexOutOfBoundsException {
         return value.get(dimension);
     }
@@ -294,11 +289,6 @@ public class DirectPositionType implements DirectPosition{
     public void setOrdinate(int dimension, double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         this.value.remove(dimension);
         this.value.add(dimension, value);
-    }
-
-    @Override
-    public DirectPosition getPosition() {
-        return this;
     }
 
     @Override

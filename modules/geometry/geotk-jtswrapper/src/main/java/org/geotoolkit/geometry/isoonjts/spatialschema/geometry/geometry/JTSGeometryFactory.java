@@ -155,7 +155,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
 //                list.add(dp);
 //            }
             Position position = (Position) it.next();
-            DirectPosition directPosition = position.getPosition();
+            DirectPosition directPosition = position.getDirectPosition();
             list.add(directPosition);
         }
         return result;

@@ -82,15 +82,6 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     //*************************************************************************
 
     /**
-     * {@inheritDoc }
-     */
-    @Deprecated
-    @Override
-    public DirectPosition getPosition() {
-        return getDirectPosition();
-    }
-
-    /**
      * Returns a copy of this point's position.  We must return a copy (and not
      * a reference to our internal object), otherwise the caller could modify
      * the values of the object and we would not know.

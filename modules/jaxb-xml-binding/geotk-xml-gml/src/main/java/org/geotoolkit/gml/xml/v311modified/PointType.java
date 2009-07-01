@@ -329,9 +329,4 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public DirectPosition getPosition() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

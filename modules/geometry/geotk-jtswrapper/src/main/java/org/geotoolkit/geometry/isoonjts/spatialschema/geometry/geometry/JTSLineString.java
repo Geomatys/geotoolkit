@@ -146,7 +146,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
         List list = pa.positions();
         int n = controlPoints.length();
         for (int i=n-1; i>=0; i--) {
-            list.add(new GeneralDirectPosition(controlPoints.positions().get(i).getPosition()));
+            list.add(new GeneralDirectPosition(controlPoints.positions().get(i).getDirectPosition()));
         }
         return result;
     }

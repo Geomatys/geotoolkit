@@ -115,7 +115,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      */
     @Override
     public Point createPoint(final Position position) {
-        return new JTSPoint(position.getPosition(), crs);
+        return new JTSPoint(position.getDirectPosition(), crs);
     }
 
     /**

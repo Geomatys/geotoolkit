@@ -192,7 +192,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                     if (cellDimension != null) {
                         DirectPosition vector = new GeneralDirectPosition(cellDimension);
                         vector = CRSUtilities.deltaTransform(transform, origin, vector);
-                        cellDimension = vector.getCoordinates();
+                        cellDimension = vector.getCoordinate();
                         for (int i = 0; i < cellDimension.length; i++) {
                             cellDimension[i] = Math.abs(cellDimension[i]);
                         }

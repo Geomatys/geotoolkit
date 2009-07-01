@@ -167,7 +167,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
 
         public MockDirectPosition( DirectPosition position ) {
             assert position.getCoordinateReferenceSystem() == crs;
-            coordinates = position.getCoordinates();
+            coordinates = position.getCoordinate();
         }
 
         public CoordinateReferenceSystem getCoordinateReferenceSystem() {
@@ -608,7 +608,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
     }
     public Point createPoint( Position position ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
-        return new MockPoint(position.getPosition());
+        return new MockPoint(position.getDirectPosition());
     }
     class MockPoint implements Point {
         private DirectPosition position;

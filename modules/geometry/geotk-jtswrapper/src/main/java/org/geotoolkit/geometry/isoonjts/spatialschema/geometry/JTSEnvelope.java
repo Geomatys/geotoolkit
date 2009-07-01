@@ -78,14 +78,6 @@ public class JTSEnvelope implements Envelope {
         return upperCorner.getOrdinate(dimension);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Deprecated
-    @Override
-    public final double getCenter(int dimension) {
-        return 0.5 * (upperCorner.getOrdinate(dimension) + lowerCorner.getOrdinate(dimension));
-    }
 
     /**
      * {@inheritDoc }
@@ -93,15 +85,6 @@ public class JTSEnvelope implements Envelope {
     @Override
     public final double getMedian(int dimension) {
         return 0.5 * (upperCorner.getOrdinate(dimension) + lowerCorner.getOrdinate(dimension));
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Deprecated
-    @Override
-    public final double getLength(int dimension) {
-        return upperCorner.getOrdinate(dimension) - lowerCorner.getOrdinate(dimension);
     }
 
     /**
