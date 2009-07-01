@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wms;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -42,31 +44,77 @@ public class WebMapServer {
 
     public WebMapServer(URL serverURL, String version) {
         final WMSVersion vers;
-        if(version.equals("1.1.1")){
+        if (version.equals("1.1.1")) {
             vers = WMSVersion.v111;
-        }else if(version.equals("1.3.0")){
+        } else if (version.equals("1.3.0")) {
             vers = WMSVersion.v130;
-        }else{
-            throw new IllegalArgumentException("Unknowned version : "+ version);
+        } else {
+            throw new IllegalArgumentException("Unknowned version : " + version);
         }
 
         this.version = vers;
         this.serverURL = serverURL;
+        this.capabilities = null;
     }
 
     public WebMapServer(URL serverURL, WMSVersion version) {
         this.version = version;
         this.serverURL = serverURL;
+        this.capabilities = null;
     }
 
-    public AbstractWMSCapabilities getCapabilities() throws MalformedURLException, JAXBException {
-
-        if(capabilities != null){
-            return capabilities;
+    public WebMapServer(URL serverURL, String version, AbstractWMSCapabilities capabilities) {
+        final WMSVersion vers;
+        if (version.equals("1.1.1")) {
+            vers = WMSVersion.v111;
+        } else if (version.equals("1.3.0")) {
+            vers = WMSVersion.v130;
+        } else {
+            throw new IllegalArgumentException("Unknowned version : " + version);
         }
 
-        GetCapabilitiesRequest request = createGetCapabilities();
-        capabilities = WMSBindingUtilities.unmarshall(request.getURL(), version);
+        this.version = vers;
+        this.serverURL = serverURL;
+        this.capabilities = capabilities;
+    }
+
+    public WebMapServer(URL serverURL, WMSVersion version, AbstractWMSCapabilities capabilities) {
+        this.version = version;
+        this.serverURL = serverURL;
+        this.capabilities = capabilities;
+    }
+
+    public AbstractWMSCapabilities getCapabilities() {
+
+        if (capabilities != null) {
+            return capabilities;
+        }
+        //Thread to prevent infinite request on a server
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    capabilities = WMSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
+                } catch (Exception ex) {
+                    capabilities = null;
+                    try {
+                        Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "BAD URL !!! The server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
+                    } catch (MalformedURLException ex1) {
+                        Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "MALFORMED URL !!! The server doesn't answer. ", ex1);
+                    }
+                }
+            }
+        };
+        thread.start();
+        long start = System.currentTimeMillis();
+        try {
+            thread.join(10000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "THREAD DEATH !!! The thread to obtain GetCapabilities is dead.", ex);
+        }
+        if ((System.currentTimeMillis() - start) > 10000) {
+            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "TIMEOUT !!! The server makes too much time to answer. ");
+        }
 
         return capabilities;
     }
@@ -75,20 +123,25 @@ public class WebMapServer {
         return version;
     }
 
-    public GetMapRequest createGetMap(){
-        switch(version){
-            case v111 : return new GetMap111(serverURL.toString());
-            case v130 : return new GetMap130(serverURL.toString());
-            default: throw new IllegalArgumentException("Version was not defined");
+    public GetMapRequest createGetMap() {
+        switch (version) {
+            case v111:
+                return new GetMap111(serverURL.toString());
+            case v130:
+                return new GetMap130(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
         }
     }
 
-    public GetCapabilitiesRequest createGetCapabilities(){
-        switch(version){
-            case v111 : return new GetCapabilities111(serverURL.toString());
-            case v130 : return new GetCapabilities130(serverURL.toString());
-            default: throw new IllegalArgumentException("Version was not defined");
+    public GetCapabilitiesRequest createGetCapabilities() {
+        switch (version) {
+            case v111:
+                return new GetCapabilities111(serverURL.toString());
+            case v130:
+                return new GetCapabilities130(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
         }
     }
-
 }
