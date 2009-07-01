@@ -31,7 +31,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="212" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="210" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="guiInvert" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -202,6 +202,9 @@
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="classify" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiClassifyActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblMethod">
           <Properties>
@@ -211,6 +214,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="guiMethod">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiMethodActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblClasses">
           <Properties>

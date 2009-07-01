@@ -39,6 +39,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -60,6 +61,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.Analyze.METHOD;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -138,22 +140,33 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable.getColumnExt(3).setMaxWidth(20);
 
         guiMethod.setModel(new EnumComboBoxModel(Analyze.METHOD.class));
+        guiMethod.setRenderer(new MethodRenderer());
 
     }
 
     private void parse(){
-
         model.rules.clear();
-        guiTable.revalidate();
-        guiTable.repaint();
 
         if(layer != null){
             analyze.setLayer(layer);
+            if(analyze.isIntervalStyle(layer.getStyle())){
+                model.rules.addAll(layer.getStyle().featureTypeStyles().get(0).rules());
+            }
         }
 
-        guiProperty.setModel(new ListComboBoxModel(new ArrayList<PropertyName>(analyze.getProperties())));
+        List<PropertyName> props = analyze.getProperties();
+        guiProperty.setModel(new ListComboBoxModel(new ArrayList<PropertyName>(props)));
+
+        if(!props.isEmpty()){
+            guiProperty.setSelectedIndex(0);
+        }
+
         updateNormalizeList();
         updateModelGlyph();
+
+        guiMethod.setSelectedItem(analyze.getMethod());
+        guiClasses.setValue(analyze.getNbClasses());
+        
 
         guiTable.revalidate();
         guiTable.repaint();
@@ -255,7 +268,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
 
 
-
         guiNormalize.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNormalizeActionPerformed(evt);
@@ -263,7 +275,19 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         });
 
         guiClassify.setText(MessageBundle.getString("classify")); // NOI18N
+        guiClassify.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiClassifyActionPerformed(evt);
+            }
+        });
+
         guiLblMethod.setText(MessageBundle.getString("method")); // NOI18N
+        guiMethod.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiMethodActionPerformed(evt);
+            }
+        });
+
         guiLblClasses.setText(MessageBundle.getString("classes")); // NOI18N
         guiClasses.setModel(new SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(1), null, Integer.valueOf(1)));
         guiClasses.addChangeListener(new ChangeListener() {
@@ -366,7 +390,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiInvert)
@@ -424,6 +448,28 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable.repaint();
 
     }//GEN-LAST:event_guiInvertActionPerformed
+
+    private void guiMethodActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiMethodActionPerformed
+        analyze.setMethod((METHOD) guiMethod.getSelectedItem());
+    }//GEN-LAST:event_guiMethodActionPerformed
+
+    private void guiClassifyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiClassifyActionPerformed
+
+        JAnalizePanel panel = new JAnalizePanel(analyze);
+
+        JDialog dialog = new JDialog();
+        dialog.setModal(true);
+        dialog.setAlwaysOnTop(true);
+        dialog.setContentPane(panel);
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(guiClassify);
+        dialog.setVisible(true);
+
+        guiMethod.setSelectedItem(analyze.getMethod());
+        guiClasses.setValue(analyze.getNbClasses());
+
+    }//GEN-LAST:event_guiClassifyActionPerformed
 
     @Override
     public void setTarget(Object layer) {
@@ -536,6 +582,21 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         }
 
+    }
+
+    private class MethodRenderer extends DefaultListCellRenderer{
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            MethodRenderer.this.setText(" ");
+
+            if(value instanceof Analyze.METHOD){
+                MethodRenderer.this.setText(((Analyze.METHOD)value).getTitle());
+            }
+            return MethodRenderer.this;
+        }
     }
 
     private class DeleteRenderer extends DefaultTableCellRenderer{

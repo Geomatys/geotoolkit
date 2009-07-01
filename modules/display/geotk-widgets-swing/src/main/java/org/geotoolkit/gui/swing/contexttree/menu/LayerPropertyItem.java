@@ -79,7 +79,7 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
                 if(layer == null) return;
 
 
-                JPropertyDialog.showDialog(lst, layer);
+                JPropertyDialog.showDialog(lst, layer, false);
 
             }
         });

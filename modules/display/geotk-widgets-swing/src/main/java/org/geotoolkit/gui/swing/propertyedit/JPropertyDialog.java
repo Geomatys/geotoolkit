@@ -53,9 +53,9 @@ public class JPropertyDialog extends JDialog{
     private ArrayList<PropertyPane> panels = new ArrayList<PropertyPane>();
     
     /** Creates a new instance of ASDialog */
-    private JPropertyDialog(boolean app, boolean rev, boolean clo) {
+    private JPropertyDialog(boolean modal,boolean app, boolean rev, boolean clo) {
         super();
-        setModal(true);
+        setModal(modal);
         setTitle(MessageBundle.getString("property_properties"));
         
         JToolBar bas = new JToolBar();
@@ -129,17 +129,22 @@ public class JPropertyDialog extends JDialog{
     }
     
     public static void showDialog(List<PropertyPane> lst, Object target){
-        JPropertyDialog dia = new JPropertyDialog(true,true,true);
-        
+        showDialog(lst,target, true);
+    }
+
+    public static void showDialog(List<PropertyPane> lst, Object target, boolean modal){
+        JPropertyDialog dia = new JPropertyDialog(modal,true,true,true);
+
         for(PropertyPane pro : lst){
             pro.setTarget(target);
             dia.addEditPanel(pro);
         }
-        
+
         dia.setSize(700,500);
         dia.setLocationRelativeTo(null);
         dia.setVisible(true);
     }
+
 
     public static Symbolizer showSymbolizerDialog(Symbolizer symbol, Object target){
 
@@ -147,13 +152,12 @@ public class JPropertyDialog extends JDialog{
         pane.setTarget(target);
         pane.setSymbolizer(symbol);
 
-        JPropertyDialog dia = new JPropertyDialog(false,false,true);
+        JPropertyDialog dia = new JPropertyDialog(true,false,false,true);
 
         dia.addEditPanel(pane);
 
         dia.setSize(700,500);
         dia.setLocationRelativeTo(null);
-        dia.setModal(true);
         dia.setVisible(true);
 
         return pane.getSymbolizer();

@@ -320,6 +320,12 @@
         <version>2.7.1</version>
       </dependency>
 
+      <dependency>
+        <groupId>jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>1.0.12</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -652,6 +658,12 @@
       <name>Geotoolkit repository</name>
       <url>http://maven.geotoolkit.org/</url>
     </repository>
+    <!--repository>
+      <id>jfreechart</id>
+      <name>JFreeChart repository</name>
+      <url>http://repo1.maven.org/maven2/jfree/jfreechart/</url>
+    </repository-->
+
   </repositories>
 
 
