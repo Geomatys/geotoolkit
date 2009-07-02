@@ -39,13 +39,13 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
  */
 @XmlType(name = "MD_Constraints", propOrder={
-    "useLimitation"
+    "useLimitations"
 })
 @XmlSeeAlso({DefaultLegalConstraints.class, DefaultSecurityConstraints.class})
 @XmlRootElement(name = "MD_Constraints")
@@ -53,13 +53,13 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = 7197823876215294777L;
+    private static final long serialVersionUID = 1771854790746022204L;
 
     /**
      * Limitation affecting the fitness for use of the resource.
      * Example, "not to be used for navigation".
      */
-    private Collection<InternationalString> useLimitation;
+    private Collection<InternationalString> useLimitations;
 
     /**
      * Constructs an initially empty constraints.
@@ -84,8 +84,20 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
      */
     @Override
     @XmlElement(name = "useLimitation")
-    public synchronized Collection<InternationalString> getUseLimitation() {
-        return xmlOptional(useLimitation = nonNullCollection(useLimitation, InternationalString.class));
+    public synchronized Collection<InternationalString> getUseLimitations() {
+        return xmlOptional(useLimitations = nonNullCollection(useLimitations, InternationalString.class));
+    }
+
+    /**
+     * Returns the limitation affecting the fitness for use of the resource.
+     * Example: "not to be used for navigation".
+     *
+     * @deprecated Renamed as {@link #getUseLimitations()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<InternationalString> getUseLimitation() {
+        return getUseLimitations();
     }
 
     /**
@@ -94,8 +106,21 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
      *
      * @param newValues The new use limitation.
      */
-    public synchronized void setUseLimitation(final Collection<? extends InternationalString> newValues) {
-        useLimitation = copyCollection(newValues, useLimitation, InternationalString.class);
+    public synchronized void setUseLimitations(final Collection<? extends InternationalString> newValues) {
+        useLimitations = copyCollection(newValues, useLimitations, InternationalString.class);
+    }
+
+    /**
+     * Sets the limitation affecting the fitness for use of the resource.
+     * Example: "not to be used for navigation".
+     *
+     * @param newValues The new use limitation.
+     *
+     * @deprecated Renamed as {@link #setUseLimitations(Collection)} (with an "s").
+     */
+    @Deprecated
+    public void setUseLimitation(final Collection<? extends InternationalString> newValues) {
+        setUseLimitations(newValues);
     }
 
     /**

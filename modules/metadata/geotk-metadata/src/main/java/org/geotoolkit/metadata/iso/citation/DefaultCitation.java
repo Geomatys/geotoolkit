@@ -46,7 +46,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -59,7 +59,7 @@ import org.geotoolkit.util.SimpleInternationalString;
     "editionDate",
     "identifiers",
     "citedResponsibleParties",
-    "presentationForm",
+    "presentationForms",
     "series",
     "otherCitationDetails",
     "collectiveTitle",
@@ -71,7 +71,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -4415559967618358778L;
+    private static final long serialVersionUID = 490722440306018256L;
 
     /**
      * Name by which the cited resource is known.
@@ -115,7 +115,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * Mode in which the resource is represented, or an empty string if none.
      */
-    private Collection<PresentationForm> presentationForm;
+    private Collection<PresentationForm> presentationForms;
 
     /**
      * Information about the series, or aggregate dataset, of which the dataset is a part.
@@ -362,8 +362,19 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "presentationForm")
-    public synchronized Collection<PresentationForm> getPresentationForm() {
-        return xmlOptional(presentationForm = nonNullCollection(presentationForm, PresentationForm.class));
+    public synchronized Collection<PresentationForm> getPresentationForms() {
+        return xmlOptional(presentationForms = nonNullCollection(presentationForms, PresentationForm.class));
+    }
+
+    /**
+     * Returns the mode in which the resource is represented, or an empty string if none.
+     *
+     * @deprecated Renamed as {@link #getPresentationForms()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<PresentationForm> getPresentationForm() {
+        return getPresentationForms();
     }
 
     /**
@@ -371,10 +382,19 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      *
      * @param newValues The new presentation form.
      */
-    public synchronized void setPresentationForm(
-            final Collection<? extends PresentationForm> newValues)
-    {
-        presentationForm = copyCollection(newValues, presentationForm, PresentationForm.class);
+    public synchronized void setPresentationForms(final Collection<? extends PresentationForm> newValues) {
+        presentationForms = copyCollection(newValues, presentationForms, PresentationForm.class);
+    }
+
+    /**
+     * Sets the mode in which the resource is represented, or an empty string if none.
+     *
+     * @param newValues The new presentation form.
+     *
+     * @deprecated Renamed as {@link #setPresentationForms(Collection)} (with an "s").
+     */
+    public void setPresentationForm(final Collection<? extends PresentationForm> newValues) {
+        setPresentationForms(newValues);
     }
 
     /**

@@ -58,8 +58,8 @@ public final class PropertyTreeTest {
         final InternationalString title = new SimpleInternationalString("Undercurrent");
         citation.setTitle(title);
         citation.setISBN("9782505004509");
-        citation.getPresentationForm().add(PresentationForm.DOCUMENT_HARDCOPY);
-        citation.getPresentationForm().add(PresentationForm.IMAGE_HARDCOPY);
+        citation.getPresentationForms().add(PresentationForm.DOCUMENT_HARDCOPY);
+        citation.getPresentationForms().add(PresentationForm.IMAGE_HARDCOPY);
         citation.getAlternateTitles().add(new SimpleInternationalString("Alt A"));
         citation.getAlternateTitles().add(new SimpleInternationalString("Alt B"));
 
@@ -88,7 +88,7 @@ public final class PropertyTreeTest {
             "│       └───A japanese author\n" +
             "├───ISBN\n" +
             "│   └───9782505004509\n" +
-            "└───Presentation Form\n" +
+            "└───Presentation Forms\n" +
             "    ├───document hardcopy\n" +
             "    └───image hardcopy\n", Trees.toString(tree));
 

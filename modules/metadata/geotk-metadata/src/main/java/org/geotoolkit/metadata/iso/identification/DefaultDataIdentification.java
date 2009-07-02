@@ -44,7 +44,7 @@ import org.opengis.util.InternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -52,11 +52,11 @@ import org.opengis.util.InternationalString;
 @XmlType(name = "MD_DataIdentification", propOrder={
     "spatialRepresentationTypes",
     "spatialResolutions",
-    "language",
+    "languages",
     "characterSets",
     "topicCategories",
     "environmentDescription",
-    "extent",
+    "extents",
     "supplementalInformation"
 })
 @XmlRootElement(name = "MD_DataIdentification")
@@ -64,7 +64,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     /**
      * Serial number for compatibility with different versions.
      */
-    private static final long serialVersionUID = -4418520352804939785L;
+    private static final long serialVersionUID = 2099051218533426785L;
 
     /**
      * Method used to spatially represent geographic information.
@@ -80,7 +80,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     /**
      * Language(s) used within the dataset.
      */
-    private Collection<Locale> language;
+    private Collection<Locale> languages;
 
     /**
      * Full name of the character coding standard used for the dataset.
@@ -102,7 +102,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      * Additional extent information including the bounding polygon, vertical, and temporal
      * extent of the dataset.
      */
-    private Collection<Extent> extent;
+    private Collection<Extent> extents;
 
     /**
      * Any other descriptive information about the dataset.
@@ -140,7 +140,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
                                      final Collection<? extends TopicCategory> topicCategories)
     {
         super(citation, abstracts);
-        setLanguage(language);
+        setLanguages(language);
         setTopicCategories(topicCategories);
     }
 
@@ -193,8 +193,21 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      */
     @Override
     @XmlElement(name = "language", required = true)
-    public synchronized Collection<Locale> getLanguage() {
-        return language = nonNullCollection(language, Locale.class);
+    public synchronized Collection<Locale> getLanguages() {
+        return languages = nonNullCollection(languages, Locale.class);
+    }
+
+    /**
+     * Returns the language(s) used within the dataset.
+     *
+     * @return Language(s) used.
+     *
+     * @deprecated Renamed as {@link #getLanguages()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<Locale> getLanguage() {
+        return getLanguages();
     }
 
     /**
@@ -202,8 +215,20 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      *
      * @param newValues The new languages.
      */
-    public synchronized void setLanguage(final Collection<? extends Locale> newValues)  {
-        language = copyCollection(newValues, language, Locale.class);
+    public synchronized void setLanguages(final Collection<? extends Locale> newValues)  {
+        languages = copyCollection(newValues, languages, Locale.class);
+    }
+
+    /**
+     * Sets the language(s) used within the dataset.
+     *
+     * @param newValues The new languages.
+     *
+     * @deprecated Renamed as {@link #setLanguages(Collection)} (with an "s").
+     */
+    @Deprecated
+    public void setLanguage(final Collection<? extends Locale> newValues)  {
+        setLanguages(newValues);
     }
 
     /**
@@ -270,8 +295,20 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      */
     @Override
     @XmlElement(name = "extent")
-    public synchronized Collection<Extent> getExtent() {
-        return xmlOptional(extent = nonNullCollection(extent, Extent.class));
+    public synchronized Collection<Extent> getExtents() {
+        return xmlOptional(extents = nonNullCollection(extents, Extent.class));
+    }
+
+    /**
+     * Returns additional extent information including the bounding polygon, vertical, and temporal
+     * extent of the dataset.
+     *
+     * @deprecated Renamed as {@link #getExtents()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<Extent> getExtent() {
+        return getExtents();
     }
 
     /**
@@ -279,8 +316,20 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      *
      * @param newValues The new extents
      */
-    public synchronized void setExtent(final Collection<? extends Extent> newValues) {
-        extent = copyCollection(newValues, extent, Extent.class);
+    public synchronized void setExtents(final Collection<? extends Extent> newValues) {
+        extents = copyCollection(newValues, extents, Extent.class);
+    }
+
+    /**
+     * Sets additional extent information.
+     *
+     * @param newValues The new extents
+     *
+     * @deprecated Renamed as {@link #getExtents()} (with an "s").
+     */
+    @Deprecated
+    public void setExtent(final Collection<? extends Extent> newValues) {
+        setExtents(newValues);
     }
 
     /**

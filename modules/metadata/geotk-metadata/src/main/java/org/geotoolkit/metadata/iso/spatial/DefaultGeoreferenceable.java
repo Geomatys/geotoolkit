@@ -43,7 +43,7 @@ import org.opengis.metadata.spatial.Georeferenceable;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -52,14 +52,14 @@ import org.opengis.metadata.spatial.Georeferenceable;
     "controlPointAvailable",
     "orientationParameterAvailable",
     "orientationParameterDescription",
-    "parameterCitation"
+    "parameterCitations"
 })
 @XmlRootElement(name = "MD_Georeferenceable")
 public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation implements Georeferenceable {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = 5203270142818028946L;
+    private static final long serialVersionUID = 7369639367164358759L;
 
     /**
      * Indication of whether or not control point(s) exists.
@@ -84,7 +84,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
     /**
      * Reference providing description of the parameters.
      */
-    private Collection<Citation> parameterCitation;
+    private Collection<Citation> parameterCitations;
 
     /**
      * Constructs an initially empty georeferenceable.
@@ -215,8 +215,19 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      */
     @Override
     @XmlElement(name = "parameterCitation")
-    public synchronized Collection<Citation> getParameterCitation() {
-        return xmlOptional(parameterCitation = nonNullCollection(parameterCitation, Citation.class));
+    public synchronized Collection<Citation> getParameterCitations() {
+        return xmlOptional(parameterCitations = nonNullCollection(parameterCitations, Citation.class));
+    }
+
+    /**
+     * Returns a reference providing description of the parameters.
+     *
+     * @deprecated Renamed as {@link #getParameterCitations()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<Citation> getParameterCitation() {
+        return getParameterCitations();
     }
 
     /**
@@ -224,8 +235,20 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      *
      * @param newValues The new parameter citations.
      */
-    public synchronized void setParameterCitation(final Collection<? extends Citation> newValues) {
-        parameterCitation = copyCollection(newValues, parameterCitation, Citation.class);
+    public synchronized void setParameterCitations(final Collection<? extends Citation> newValues) {
+        parameterCitations = copyCollection(newValues, parameterCitations, Citation.class);
+    }
+
+    /**
+     * Sets a reference providing description of the parameters.
+     *
+     * @param newValues The new parameter citations.
+     *
+     * @deprecated Renamed as {@link #setParameterCitations(Collection)} (with an "s").
+     */
+    @Deprecated
+    public void setParameterCitation(final Collection<? extends Citation> newValues) {
+        setParameterCitations(newValues);
     }
 
     /**

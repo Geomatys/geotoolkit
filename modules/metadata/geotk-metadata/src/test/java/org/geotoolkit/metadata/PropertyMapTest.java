@@ -78,7 +78,7 @@ public final class PropertyMapTest {
          */
         assertNull(expected.put("presentationForm", Collections.singleton(PresentationForm.DOCUMENT_HARDCOPY)));
         assertEquals(Collections.emptySet(), map.put("presentationForm", PresentationForm.DOCUMENT_HARDCOPY));
-        assertEquals(Collections.singleton(PresentationForm.DOCUMENT_HARDCOPY), citation.getPresentationForm());
+        assertEquals(Collections.singleton(PresentationForm.DOCUMENT_HARDCOPY), citation.getPresentationForms());
         assertEquals(expected, map);
         /*
          * Adds back the ISBN value.

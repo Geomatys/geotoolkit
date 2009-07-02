@@ -48,14 +48,14 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
  */
 @XmlType(name = "MD_Identification", propOrder={
     "citation", "abstract", "purpose", "credits", "status", "pointOfContacts",
-    "resourceMaintenance", "graphicOverviews", "resourceFormat", "descriptiveKeywords",
+    "resourceMaintenances", "graphicOverviews", "resourceFormats", "descriptiveKeywords",
     "resourceSpecificUsages", "resourceConstraints", "aggregationInfo"
 })
 @XmlSeeAlso({DefaultDataIdentification.class, DefaultServiceIdentification.class})
@@ -64,7 +64,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     /**
      * Serial number for compatibility with different versions.
      */
-    private static final long serialVersionUID = -3715084806249419137L;
+    private static final long serialVersionUID = 5794381277658853611L;
 
     /**
      * Citation data for the resource(s).
@@ -100,7 +100,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     /**
      * Provides information about the frequency of resource updates, and the scope of those updates.
      */
-    private Collection<MaintenanceInformation> resourceMaintenance;
+    private Collection<MaintenanceInformation> resourceMaintenances;
 
     /**
      * Provides a graphic that illustrates the resource(s) (should include a legend for the graphic).
@@ -110,7 +110,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     /**
      * Provides a description of the format of the resource(s).
      */
-    private Collection<Format> resourceFormat;
+    private Collection<Format> resourceFormats;
 
     /**
      * Provides category keywords, their type, and reference source.
@@ -278,9 +278,20 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      */
     @Override
     @XmlElement(name = "resourceMaintenance")
-    public synchronized Collection<MaintenanceInformation> getResourceMaintenance() {
-        return xmlOptional(resourceMaintenance = nonNullCollection(resourceMaintenance,
-                                                       MaintenanceInformation.class));
+    public synchronized Collection<MaintenanceInformation> getResourceMaintenances() {
+        return xmlOptional(resourceMaintenances = nonNullCollection(resourceMaintenances,
+                MaintenanceInformation.class));
+    }
+
+    /**
+     * Provides information about the frequency of resource updates, and the scope of those updates.
+     *
+     * @deprecated Renamed as {@link #getResourceMaintenances()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<MaintenanceInformation> getResourceMaintenance() {
+        return getResourceMaintenances();
     }
 
     /**
@@ -288,11 +299,22 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @param newValues The new resource maintenance info.
      */
-    public synchronized void setResourceMaintenance(
+    public synchronized void setResourceMaintenances(
             final Collection<? extends MaintenanceInformation> newValues)
     {
-        resourceMaintenance = copyCollection(newValues, resourceMaintenance,
-                                             MaintenanceInformation.class);
+        resourceMaintenances = copyCollection(newValues, resourceMaintenances, MaintenanceInformation.class);
+    }
+
+    /**
+     * Sets information about the frequency of resource updates, and the scope of those updates.
+     *
+     * @param newValues The new resource maintenance info.
+     *
+     * @deprecated Renamed as {@link #setResourceMaintenances(Collection)} (with an "s").
+     */
+    @Deprecated
+    public void setResourceMaintenance(final Collection<? extends MaintenanceInformation> newValues) {
+        setResourceMaintenances(newValues);
     }
 
     /**
@@ -320,8 +342,19 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      */
     @Override
     @XmlElement(name = "resourceFormat")
-    public synchronized Collection<Format> getResourceFormat() {
-        return xmlOptional(resourceFormat = nonNullCollection(resourceFormat, Format.class));
+    public synchronized Collection<Format> getResourceFormats() {
+        return xmlOptional(resourceFormats = nonNullCollection(resourceFormats, Format.class));
+    }
+
+    /**
+     * Provides a description of the format of the resource(s).
+     *
+     * @deprecated Renamed as {@link #getResourceFormats()} (with an "s").
+     */
+    @Override
+    @Deprecated
+    public Collection<Format> getResourceFormat() {
+        return getResourceFormats();
     }
 
     /**
@@ -329,8 +362,20 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @param newValues The new resource format.
      */
-    public synchronized void setResourceFormat(final Collection<? extends Format> newValues) {
-        resourceFormat = copyCollection(newValues, resourceFormat, Format.class);
+    public synchronized void setResourceFormats(final Collection<? extends Format> newValues) {
+        resourceFormats = copyCollection(newValues, resourceFormats, Format.class);
+    }
+
+    /**
+     * Sets a description of the format of the resource(s).
+     *
+     * @param newValues The new resource format.
+     *
+     * @deprecated Renamed as {@link #setResourceFormats(Collection)} (with an "s").
+     */
+    @Deprecated
+    public void setResourceFormat(final Collection<? extends Format> newValues) {
+        setResourceFormats(newValues);
     }
 
     /**

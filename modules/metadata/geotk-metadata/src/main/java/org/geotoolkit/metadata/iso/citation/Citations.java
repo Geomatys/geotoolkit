@@ -83,7 +83,7 @@ public final class Citations {
     static {
         final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC");
         c.addAuthority("OGC", false);
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL);
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         OGC = c;
         // NOTE: Most OGC properties will be copied into OPEN_GIS as well.
@@ -103,9 +103,9 @@ public final class Citations {
     static {
         final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS");
         c.addAuthority("OpenGIS", false);
-        c.getAlternateTitles() .addAll(OGC.getAlternateTitles());
-        c.getIdentifiers()     .addAll(OGC.getIdentifiers());
-        c.getPresentationForm().addAll(OGC.getPresentationForm());
+        c.getAlternateTitles()  .addAll(OGC.getAlternateTitles());
+        c.getIdentifiers()      .addAll(OGC.getIdentifiers());
+        c.getPresentationForms().addAll(OGC.getPresentationForms());
         c.freeze();
         OPEN_GIS = c;
     }
@@ -222,7 +222,7 @@ public final class Citations {
          * later rather looks like the output of a numerical model (e.g. meteorological model).
          * The WMS specification is distributed as a PDF document.
          */
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL);
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         WMS = c;
     }
@@ -237,7 +237,7 @@ public final class Citations {
     static {
         final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.GEOTIFF, "GEOTIFF");
         c.addAuthority("GeoTIFF", false);
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL);
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         GEOTIFF = c;
     }
@@ -292,7 +292,7 @@ public final class Citations {
     static {
         final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.EPSG, "EPSG");
         c.addAuthority("EPSG", true);
-        c.getPresentationForm().add(PresentationForm.TABLE_DIGITAL);
+        c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
         c.freeze();
         EPSG = c;
     }
@@ -334,7 +334,7 @@ public final class Citations {
         parties.add(DefaultResponsibleParty.OGC);
         parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, OnLineFunction.DOWNLOAD,
                                              "http://www.opengis.org/docs/01-068r3.pdf"));
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO = c;
     }
@@ -377,7 +377,7 @@ public final class Citations {
         final Collection<ResponsibleParty> parties = c.getCitedResponsibleParties();
         parties.add(DefaultResponsibleParty.OGC);
         parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnLineResource.WMS));
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO2 = c;
     }
@@ -398,7 +398,7 @@ public final class Citations {
         final DefaultCitation c = new CitationConstant("Web Map Service CRS", "CRS");
         c.addAuthority("CRS", false);
         c.getCitedResponsibleParties().addAll(AUTO2.getCitedResponsibleParties());
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         CRS = c;
     }
@@ -416,7 +416,7 @@ public final class Citations {
         c.addAuthority("urn:ogc:def", false);
         c.addAuthority("urn:x-ogc:def", false);
         c.getCitedResponsibleParties().add(DefaultResponsibleParty.OGC);
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL);
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         URN_OGC = c;
     }
@@ -433,7 +433,7 @@ public final class Citations {
         final DefaultCitation c = new CitationConstant("URL in OGC namespace", "HTTP_OGC");
         c.addAuthority("http://www.opengis.net", false);
         c.getCitedResponsibleParties().add(DefaultResponsibleParty.OGC);
-        c.getPresentationForm().add(PresentationForm.DOCUMENT_DIGITAL);
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         HTTP_OGC = c;
     }

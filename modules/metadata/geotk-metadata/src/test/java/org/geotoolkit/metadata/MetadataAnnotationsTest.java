@@ -96,7 +96,7 @@ public final class MetadataAnnotationsTest {
         localizedString.add(Locale.FRENCH,  "Geotoolkit, projet OpenSource");
         localizedString.add(Locale.ITALIAN, "Geotoolkit, progetto OpenSource");
         dataIdent.setAbstract(localizedString);
-        dataIdent.setLanguage(Arrays.asList(new Locale[] {
+        dataIdent.setLanguages(Arrays.asList(new Locale[] {
             Locale.FRENCH
         }));
         metadata.setIdentificationInfo(Arrays.asList(new Identification[] {
