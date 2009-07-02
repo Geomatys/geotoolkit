@@ -183,7 +183,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
         for(Serializable ser :sers){
 
-            if(ser instanceof String){
+            if(ser instanceof String && !ser.toString().trim().isEmpty()){
 //                result = filterFactory.literal((String)ser);
 //                break;
             }else if(ser instanceof JAXBElement<?>){
