@@ -36,6 +36,7 @@ import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.StyleConstants;
 
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.style.Fill;
 import org.opengis.style.Mark;
 import org.opengis.style.Stroke;
@@ -161,8 +162,19 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
             color = Color.RED;
         }
 
-        if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Number.class).floatValue();
+        if(expOpa != null && GO2Utilities.isStatic(expOpa)){
+            System.out.println(expOpa);
+            System.out.println(expOpa.getClass());
+            Literal literal = (Literal) expOpa;
+            System.out.println(">>>>>>>>>>>>>>>>>>> " +literal.getValue() );
+            System.out.println(">>>>>>>>>>>>>>>>>>> " +literal.getValue().getClass() );
+            Number num = expOpa.evaluate(null, Number.class);
+            if(num != null){
+                opacity = num.floatValue();
+            }else{
+                opacity = 0.6f;
+            }
+            
         }else{
             opacity = 0.6f;
         }

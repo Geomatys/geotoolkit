@@ -362,7 +362,14 @@ public class OGC100toGTTransformer {
     /**
      * Transform a literalType in Expression.
      */
-    public Expression visitExpression(LiteralType type){        
+    public Expression visitExpression(LiteralType type){
+        List<Object> content = type.getContent();
+
+        for(Object obj : content){
+            if(obj != null && !obj.toString().trim().isEmpty()){
+                return filterFactory.literal(obj);
+            }
+        }
         return filterFactory.literal(type.getContent().get(0).toString());
     }
 

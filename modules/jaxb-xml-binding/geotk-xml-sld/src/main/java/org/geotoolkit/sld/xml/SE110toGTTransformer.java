@@ -214,19 +214,23 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 //        JAXBElementBinaryOperatorType> 
 //        JAXBElementPropertyNameType> 
 //        JAXBElementBinaryOperatorType>
-        
-        if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName()) ){
-            //its a float array
-            float[] values = null;
-            
-            return values;
-        }else if(svg.getContent().size() >= 1 && svg.getContent().get(0).getClass().equals(String.class)){
-            //it's a basic String, handle it as a literal
-            return filterFactory.literal(svg.getContent().get(0).toString());
-        }else if(svg.getContent().size() >= 1 && svg.getContent().get(0) instanceof JAXBElement<?>){
-            return visitExpression( (JAXBElement<?>)svg.getContent().get(0) );
+
+
+        List<Serializable> content = svg.getContent();
+        for(Serializable obj : content){
+            if(obj instanceof String && !obj.toString().trim().isEmpty()){
+                return filterFactory.literal(obj.toString());
+            }else if(obj instanceof JAXBElement<?>){
+                return visitExpression( (JAXBElement<?>)obj );
+            }
         }
-        
+
+        if(!content.isEmpty()){
+            //we arrived here with finding a real value but the content is not empty
+            //so it's an empty string value
+            return filterFactory.literal("");
+        }
+
         return null;
     }
 
