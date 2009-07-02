@@ -163,11 +163,7 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
         }
 
         if(expOpa != null && GO2Utilities.isStatic(expOpa)){
-            System.out.println(expOpa);
-            System.out.println(expOpa.getClass());
             Literal literal = (Literal) expOpa;
-            System.out.println(">>>>>>>>>>>>>>>>>>> " +literal.getValue() );
-            System.out.println(">>>>>>>>>>>>>>>>>>> " +literal.getValue().getClass() );
             Number num = expOpa.evaluate(null, Number.class);
             if(num != null){
                 opacity = num.floatValue();
