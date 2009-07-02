@@ -370,7 +370,7 @@ public class OGC100toGTTransformer {
                 return filterFactory.literal(obj);
             }
         }
-        return filterFactory.literal(type.getContent().get(0).toString());
+        return filterFactory.literal("");
     }
 
 }
