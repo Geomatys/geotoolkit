@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class MaxFunction extends AbstractFunction {
 
     public MaxFunction(final Expression expression1, final Expression expression2) {
-        super("max", new Expression[] {expression1, expression2}, null);
+        super(DefaultMathFunctionFactory.MAX, new Expression[] {expression1, expression2}, null);
     }
 
     @Override

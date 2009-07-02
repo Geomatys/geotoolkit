@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class ToDegreesFunction extends AbstractFunction {
 
     public ToDegreesFunction(final Expression expression) {
-        super("toDegrees", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.TO_DEGREES, new Expression[] {expression}, null);
     }
 
     @Override

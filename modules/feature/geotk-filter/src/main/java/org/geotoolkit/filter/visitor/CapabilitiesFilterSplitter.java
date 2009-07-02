@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *    
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,8 +26,11 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.filter.IllegalFilterException;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+
+import org.geotoolkit.util.logging.Logging;
+import org.geotools.filter.IllegalFilterException;
+
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -116,47 +120,38 @@ import org.opengis.filter.spatial.Within;
  * @source $URL$
  * @since 2.5.3
  */
-@SuppressWarnings( { "nls", "unchecked" })
+@SuppressWarnings({"nls", "unchecked"})
 public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisitor {
 
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.filter");
-
+    private static final Logger LOGGER = Logging.getLogger(CapabilitiesFilterSplitter.class);
     /**
      * The stack holding the bits of the filter that are not processable by something with the given
      * {@link FilterCapabilities}
      */
     private Stack postStack = new Stack();
-
     /**
      * The stack holding the bits of the filter that <b>are</b> processable by something with the
      * given {@link FilterCapabilities}
      */
     private Stack preStack = new Stack();
-
     /**
      * Operates similar to postStack. When a update is determined to affect an attribute expression
      * the update filter is pushed on to the stack, then ored with the filter that contains the
      * expression.
      */
     private Set changedStack = new HashSet();
-
     /**
      * The given filterCapabilities that we're splitting on.
      */
     private DefaultFilterCapabilities fcs = null;
-
     private FeatureType parent = null;
-
     private Filter original = null;
-
     /**
      * If we're in the middle of a client-side transaction, this object will help us figure out what
      * we need to handle from updates/deletes that we're tracking client-side.
      */
     private ClientTransactionAccessor transactionAccessor;
-
-    private FilterFactory ff;
+    private final FilterFactory ff;
 
     /**
      * Create a new instance.
@@ -187,10 +182,11 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      *         by geotools.
      */
     public Filter getFilterPost() {
-        if (!changedStack.isEmpty())
-            // Return the original filter to ensure that
-            // correct features are filtered
+        if (!changedStack.isEmpty()) // Return the original filter to ensure that
+        // correct features are filtered
+        {
             return original;
+        }
 
         if (postStack.size() > 1) {
             LOGGER.warning("Too many post stack items after run: " + postStack.size());
@@ -231,8 +227,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             }
         }
 
-        if (changedStack.isEmpty())
+        if (changedStack.isEmpty()) {
             return f;
+        }
 
         Iterator iter = changedStack.iterator();
         Filter updateFilter = (Filter) iter.next();
@@ -245,8 +242,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
                 updateFilter = (Filter) ff.or(updateFilter, next);
             }
         }
-        if (updateFilter == Filter.INCLUDE || f == Filter.INCLUDE)
+        if (updateFilter == Filter.INCLUDE || f == Filter.INCLUDE) {
             return Filter.INCLUDE;
+        }
         return ff.or(f, updateFilter);
     }
 
@@ -284,8 +282,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      */
     @Override
     public Object visit(PropertyIsBetween filter, Object extradata) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
         // Do we support this filter type at all?
         if (fcs.supports(filter)) {
@@ -418,8 +417,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     private void visitBinaryComparisonOperator(BinaryComparisonOperator filter) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
         // supports it as a group -- no need to check the type
         if (!fcs.supports(filter)) {
@@ -531,12 +531,13 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     private void visitBinarySpatialOperator(BinarySpatialOperator filter) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
-        Class[] spatialOps = new Class[] { Beyond.class, Contains.class, Crosses.class,
-                Disjoint.class, DWithin.class, Equals.class, Intersects.class, Overlaps.class,
-                Touches.class, Within.class };
+        Class[] spatialOps = new Class[]{Beyond.class, Contains.class, Crosses.class,
+            Disjoint.class, DWithin.class, Equals.class, Intersects.class, Overlaps.class,
+            Touches.class, Within.class};
 
         for (int i = 0; i < spatialOps.length; i++) {
             if (spatialOps[i].isAssignableFrom(filter.getClass())) {
@@ -589,8 +590,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     @Override
     public Object visit(PropertyIsLike filter, Object notUsed) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
         // if (!fcs.supports(PropertyIsLike.class)) {
         if (!fcs.supports(filter)) {
@@ -633,8 +635,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     private void visitLogicOperator(Filter filter) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
         // if (!fcs.supports(Not.class) && !fcs.supports(And.class) && !fcs.supports(Or.class))
         // {
@@ -700,16 +703,18 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
                     if (filter instanceof And) {
                         Filter f = (Filter) postStack.pop();
 
-                        while (postStack.size() > i)
+                        while (postStack.size() > i) {
                             f = ff.and(f, (Filter) postStack.pop());
+                        }
 
                         postStack.push(f);
 
                         if (j < preStack.size()) {
                             f = (Filter) preStack.pop();
 
-                            while (preStack.size() > j)
+                            while (preStack.size() > j) {
                                 f = ff.and(f, (Filter) preStack.pop());
+                            }
                             preStack.push(f);
                         }
                     } else {
@@ -756,8 +761,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     @Override
     public Object visit(PropertyIsNull filter, Object notUsed) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
         if (!fcs.supports(filter)) {
             postStack.push(filter);
@@ -781,8 +787,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     @Override
     public Object visit(Id filter, Object notUsed) {
-        if (original == null)
+        if (original == null) {
             original = filter;
+        }
 
         // figure out how to check that this is top level.
         // otherwise this is fine
@@ -797,17 +804,16 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     public Object visit(PropertyName expression, Object notUsed) {
         // JD: use an expression to get at the attribute type intead of accessing directly
         if (parent != null && expression.evaluate(parent) == null) {
-            throw new IllegalArgumentException("Property '" + expression.getPropertyName()
-                    + "' could not be found in " + parent.getName());
+            throw new IllegalArgumentException("Property '" + expression.getPropertyName() + "' could not be found in " + parent.getName());
         }
         if (transactionAccessor != null) {
-            Filter updateFilter = (Filter) transactionAccessor.getUpdateFilter(expression
-                    .getPropertyName());
+            Filter updateFilter = (Filter) transactionAccessor.getUpdateFilter(expression.getPropertyName());
             if (updateFilter != null) {
                 changedStack.add(updateFilter);
                 preStack.push(updateFilter);
-            } else
+            } else {
                 preStack.push(expression);
+            }
         } else {
             preStack.push(expression);
         }
@@ -851,8 +857,8 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         // if (!fcs.supports(Add.class) && !fcs.supports(Subtract.class)
         // && !fcs.supports(Multiply.class) && !fcs.supports(Divide.class)) {
         /*if (!fcs.fullySupports(expression)) {
-            postStack.push(expression);
-            return;
+        postStack.push(expression);
+        return;
         }*/
 
         int i = postStack.size();
@@ -893,8 +899,8 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     @Override
     public Object visit(Function expression, Object notUsed) {
         /*if (!fcs.fullySupports(expression)) {
-            postStack.push(expression);
-            return null;
+        postStack.push(expression);
+        return null;
         }*/
 
         if (expression.getName() == null) {
@@ -909,16 +915,18 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             ((Expression) expression.getParameters().get(i)).accept(this, null);
 
             if (i < postStack.size()) {
-                while (j < preStack.size())
+                while (j < preStack.size()) {
                     preStack.pop();
+                }
                 postStack.pop();
                 postStack.push(expression);
 
                 return null;
             }
         }
-        while (j < preStack.size())
+        while (j < preStack.size()) {
             preStack.pop();
+        }
         preStack.push(expression);
         return null;
     }

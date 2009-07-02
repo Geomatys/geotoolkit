@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class AsinFunction extends AbstractFunction {
 
     public AsinFunction(final Expression expression) {
-        super("atan", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.ASIN, new Expression[] {expression}, null);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class AsinFunction extends AbstractFunction {
         final Number number = parameters.get(0).evaluate(feature, Number.class);
         if (number == null) {
             throw new IllegalArgumentException(
-                    "Filter Function problem for function atan argument #0 - expected type double");
+                    "Filter Function problem for function asin argument #0 - expected type double");
         }
 
-        return Math.atan(number.doubleValue());
+        return Math.asin(number.doubleValue());
     }
 }

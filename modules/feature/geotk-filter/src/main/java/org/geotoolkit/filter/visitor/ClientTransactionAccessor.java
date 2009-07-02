@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *    
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,20 +28,20 @@ import org.opengis.filter.Filter;
  */
 public interface ClientTransactionAccessor {
 
-	/**
-	 * Returns all the filters indicating deleted feature ANDed together.  This is used to tell the server what features
-	 * to NOT return.
-	 * 
-	 * @return all the filters indicating deleted feature ANDed together. 
-	 */
-	Filter getDeleteFilter();
+    /**
+     * Returns all the filters indicating deleted feature ANDed together.  This is used to tell the server what features
+     * to NOT return.
+     *
+     * @return all the filters indicating deleted feature ANDed together.
+     */
+    Filter getDeleteFilter();
 
-	/**
-	 * Returns all the filters of updates that affect the attribute in the expression ORed together.
-	 * 
-	 * @param attributePath the xpath identifier of the attribute.
-	 * @return all the filters of updates that affect the attribute in the expression ORed together.
-	 */
-	Filter getUpdateFilter(String attributePath);
-
+    /**
+     * Returns all the filters of updates that affect the attribute in the expression ORed together.
+     *
+     * @param attributePath the xpath identifier of the attribute.
+     * @return all the filters of updates that affect the attribute in the expression ORed together.
+     */
+    Filter getUpdateFilter(String attributePath);
+    
 }

@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class RintFunction extends AbstractFunction {
 
     public RintFunction(final Expression expression) {
-        super("rint", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.RINT, new Expression[] {expression}, null);
     }
 
     @Override

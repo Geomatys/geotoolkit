@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class RoundFunction extends AbstractFunction {
 
     public RoundFunction(final Expression expression) {
-        super("round", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.ROUND, new Expression[] {expression}, null);
     }
 
     @Override
@@ -36,13 +36,13 @@ public class RoundFunction extends AbstractFunction {
         }
 
         if (number instanceof Double) {
-            return Math.abs(number.doubleValue());
+            return Math.round(number.doubleValue());
         }
         if (number instanceof Float) {
-            return Math.abs(number.floatValue());
+            return Math.round(number.floatValue());
         }
 
-        throw new IllegalArgumentException(
-                    "Filter Function problem for function round argument #0 - expected type double or float");
+        //no round needed
+        return number;
     }
 }

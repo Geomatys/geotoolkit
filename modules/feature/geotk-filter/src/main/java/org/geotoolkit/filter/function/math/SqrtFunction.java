@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class SqrtFunction extends AbstractFunction {
 
     public SqrtFunction(final Expression expression) {
-        super("cos", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.SQRT, new Expression[] {expression}, null);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class SqrtFunction extends AbstractFunction {
         final Number number = parameters.get(0).evaluate(feature, Number.class);
         if (number == null) {
             throw new IllegalArgumentException(
-                    "Filter Function problem for function cos argument #0 - expected type double");
+                    "Filter Function problem for function sqrt argument #0 - expected type double");
         }
 
-        return Math.cos(number.doubleValue());
+        return Math.sqrt(number.doubleValue());
     }
 }

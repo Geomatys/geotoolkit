@@ -20,10 +20,6 @@ package org.geotoolkit.filter;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.filter.expression.Expression;
 

@@ -40,7 +40,9 @@ public class Functions {
 
         while(factories.hasNext()){
             final FunctionFactory ff = factories.next();
-            FACTORIES.put(ff.getName(), ff);
+            for(String name : ff.getNames()){
+                FACTORIES.put(name, ff);
+            }
         }
 
     }
@@ -58,7 +60,7 @@ public class Functions {
     public static final Function function(String name, Literal fallback, Expression ... parameters){
         final FunctionFactory ff = FACTORIES.get(name);
         if(ff != null){
-            return ff.createFunction(fallback, parameters);
+            return ff.createFunction(name,fallback, parameters);
         }
         return null;
     }

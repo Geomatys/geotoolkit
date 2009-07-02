@@ -42,7 +42,6 @@ import static org.geotoolkit.factory.Hints.Key;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotoolkit.filter.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -54,6 +53,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 
 
 public class JDBCFeatureSource extends ContentFeatureSource {

@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -81,7 +82,7 @@ import org.opengis.filter.spatial.Within;
  */
 public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisitor {
 
-    private FilterCapabilities capabilities;
+    private final FilterCapabilities capabilities;
 
     public IsSupportedFilterVisitor( FilterCapabilities capabilities ){
         this.capabilities = capabilities;

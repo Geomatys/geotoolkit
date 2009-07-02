@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class CosFunction extends AbstractFunction {
 
     public CosFunction(final Expression expression) {
-        super("cos", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.COS, new Expression[] {expression}, null);
     }
 
     @Override

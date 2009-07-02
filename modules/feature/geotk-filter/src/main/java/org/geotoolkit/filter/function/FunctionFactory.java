@@ -24,16 +24,15 @@ import org.opengis.filter.expression.Literal;
 /**
  * Function factories are capable to create function given
  * a specific number and order of expressions.
- * Each created function shall have the same name as it's parent factory.
  *
  * @author Johann Sorel (Geomatys)
  */
 public interface FunctionFactory {
 
     /**
-     * @return Name of the created functions.
+     * @return Names of the created functions.
      */
-    String getName();
+    String[] getNames();
 
     /**
      * Create a function with the given parameters.
@@ -43,6 +42,6 @@ public interface FunctionFactory {
      * @return Function
      * @throws java.lang.IllegalArgumentException if some arguments are missing or incorrect
      */
-    Function createFunction(Literal fallback, Expression ... parameters) throws IllegalArgumentException;
+    Function createFunction(String name,Literal fallback, Expression ... parameters) throws IllegalArgumentException;
 
 }

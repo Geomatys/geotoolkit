@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -116,12 +117,11 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit(final And filter, final Object extraData) {
-        final List children = filter.getChildren();
-        final List newChildren = new ArrayList();
-        for (Iterator iter = children.iterator(); iter.hasNext();) {
-            final Filter child = (Filter) iter.next();
+        final List<Filter> children = filter.getChildren();
+        final List<Filter> newChildren = new ArrayList<Filter>();
+        for (final Filter child : children) {
             if (child != null) {
-                newChildren.add(child.accept(this, extraData));
+                newChildren.add((Filter)child.accept(this, extraData));
             }
         }
         return getFactory(extraData).and(newChildren);
@@ -139,12 +139,11 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit(final Or filter, final Object extraData) {
-        final List children = filter.getChildren();
-        final List newChildren = new ArrayList();
-        for (Iterator iter = children.iterator(); iter.hasNext();) {
-            Filter child = (Filter) iter.next();
+        final List<Filter> children = filter.getChildren();
+        final List<Filter> newChildren = new ArrayList<Filter>();
+        for (Filter child : children) {
             if (child != null) {
-                newChildren.add(child.accept(this, extraData));
+                newChildren.add((Filter)child.accept(this, extraData));
             }
         }
         return getFactory(extraData).or(newChildren);
@@ -330,11 +329,11 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit(final Function expression, final Object extraData) {
-        final List old = expression.getParameters();
+        final List<Expression> old = expression.getParameters();
         final Expression[] args = new Expression[old.size()];
         int i = 0;
-        for (Iterator iter = old.iterator(); iter.hasNext(); i++) {
-            Expression exp = (Expression) iter.next();
+        for (Iterator<Expression> iter = old.iterator(); iter.hasNext(); i++) {
+            Expression exp = iter.next();
             args[i] = visit(exp, extraData);
         }
         return getFactory(extraData).function(expression.getName(), args);

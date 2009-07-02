@@ -23,7 +23,7 @@ import org.geotoolkit.filter.function.AbstractFunction;
 public class RandomFunction extends AbstractFunction {
 
     public RandomFunction() {
-        super("random", null, null);
+        super(DefaultMathFunctionFactory.RANDOM, null, null);
     }
 
     @Override

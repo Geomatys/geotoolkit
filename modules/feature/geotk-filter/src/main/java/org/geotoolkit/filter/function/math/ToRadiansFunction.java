@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class ToRadiansFunction extends AbstractFunction {
 
     public ToRadiansFunction(final Expression expression) {
-        super("toRadians", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.TO_RADIANS, new Expression[] {expression}, null);
     }
 
     @Override

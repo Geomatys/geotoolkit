@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class AtanFunction extends AbstractFunction {
 
     public AtanFunction(final Expression expression) {
-        super("acos", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.ATAN, new Expression[] {expression}, null);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class AtanFunction extends AbstractFunction {
         final Number number = parameters.get(0).evaluate(feature, Number.class);
         if (number == null) {
             throw new IllegalArgumentException(
-                    "Filter Function problem for function acos argument #0 - expected type double");
+                    "Filter Function problem for function atan argument #0 - expected type double");
         }
 
-        return Math.acos(number.doubleValue());
+        return Math.atan(number.doubleValue());
     }
 }

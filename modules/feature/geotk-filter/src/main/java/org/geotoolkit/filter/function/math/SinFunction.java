@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class SinFunction extends AbstractFunction {
 
     public SinFunction(final Expression expression) {
-        super("sqrt", new Expression[] {expression}, null);
+        super(DefaultMathFunctionFactory.SIN, new Expression[] {expression}, null);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class SinFunction extends AbstractFunction {
         final Number number = parameters.get(0).evaluate(feature, Number.class);
         if (number == null) {
             throw new IllegalArgumentException(
-                    "Filter Function problem for function sqrt argument #0 - expected type double");
+                    "Filter Function problem for function sin argument #0 - expected type double");
         }
 
-        return Math.sqrt(number.doubleValue());
+        return Math.sin(number.doubleValue());
     }
 }

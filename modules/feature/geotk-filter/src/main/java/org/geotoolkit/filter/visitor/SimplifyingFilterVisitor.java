@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *    
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -69,6 +70,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
      * A 'null-object' fid validator that assumes any feature id in an {@link Id} filter is valid
      */
     public static final FIDValidator ANY_FID_VALID = new FIDValidator() {
+        @Override
         public boolean isValid(String fid) {
             return true;
         }
@@ -92,6 +94,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
             pattern = Pattern.compile(regularExpression);
         }
 
+        @Override
         public boolean isValid(String fid) {
             return pattern.matcher(fid).matches();
         }
