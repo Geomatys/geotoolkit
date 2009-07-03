@@ -20,9 +20,11 @@ package org.geotoolkit.referencing.crs;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 
 import org.opengis.test.referencing.CRSTest;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 
 /**
@@ -40,7 +42,18 @@ public class GeoapiTest extends CRSTest {
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG",
-                new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class)));
+        super(getFactory());
+    }
+
+    /**
+     * Returns the authority factory to be used for the tests, or {@code null} if none.
+     */
+    private static CRSAuthorityFactory getFactory() {
+        try {
+            return AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG",
+                    new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class));
+        } catch (FactoryNotFoundException e) {
+            return null; // We have the effect of skipping the tests.
+        }
     }
 }

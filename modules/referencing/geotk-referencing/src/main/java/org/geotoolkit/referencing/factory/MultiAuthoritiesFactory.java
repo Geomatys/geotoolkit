@@ -114,6 +114,13 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      */
     public MultiAuthoritiesFactory(final Collection<? extends AuthorityFactory> factories) {
         inProgress = new ThreadLocal<Boolean>();
+        /*
+         * The hints map initially contains a value for Hints.NAME_FACTORY, which has been set
+         * by the parent constructor. However this factory doesn't use NameFactory (except for
+         * formatting somme error messages), so remove the previous hints so we depend only on
+         * the hints present in the factory given by the caller.
+         */
+//        hints.clear();
         if (factories!=null && !factories.isEmpty()) {
             for (final AuthorityFactory factory : factories) {
                 if (factory instanceof Factory) {
@@ -355,7 +362,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * Returns {@code true} if the specified factory should be excluded from the search. This method
      * excludes {@code MultiAuthoritiesFactory} and adapters around {@code MultiAuthoritiesFactory}.
      * The purpose is actually to exclude {@link URN_AuthorityFactory} and similar adapters around
-     * all factories, since it leads to duplicated search and innacurate identifier to be returned
+     * all factories, since it leads to duplicated search and inaccurate identifier to be returned
      * by {@link #findIdentifier}.
      */
     static boolean isExcluded(final AuthorityFactory factory) {

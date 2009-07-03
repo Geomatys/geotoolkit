@@ -273,7 +273,7 @@ public class FactoryRegistry extends ServiceRegistry {
              */
             debug("ENTRY", category, key, null, null);
         }
-        Class<?> implementation = null;
+        Class<?> implementationType = null;
         if (key != null) {
             /*
              * Sanity check: make sure that the key class is appropriate for the category.
@@ -346,18 +346,18 @@ public class FactoryRegistry extends ServiceRegistry {
                             }
                         }
                         if (length != 0) {
-                            implementation = types[length-1]; // Last try to be done below.
+                            implementationType = types[length-1]; // Last try to be done below.
                         }
                     } else {
-                        implementation = (Class<?>) hint;
+                        implementationType = (Class<?>) hint;
                     }
                 }
             }
         }
-        if (debug && implementation != null) {
-            debug("CHECK", category, key, "consider hint[last]", implementation);
+        if (debug && implementationType != null) {
+            debug("CHECK", category, key, "consider hint[last]", implementationType);
         }
-        final T candidate = getServiceImplementation(category, implementation, filter, hints);
+        final T candidate = getServiceImplementation(category, implementationType, filter, hints);
         if (candidate != null) {
             if (debug) {
                 debug("RETURN", category, key, "found implementation", candidate.getClass());
@@ -368,7 +368,7 @@ public class FactoryRegistry extends ServiceRegistry {
             debug("THROW", category, key, "could not find implementation.", null);
         }
         throw new FactoryNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1,
-                  implementation!=null ? implementation : category));
+                implementationType!=null ? implementationType : category));
     }
 
     /**
@@ -416,13 +416,13 @@ public class FactoryRegistry extends ServiceRegistry {
      * This method is overridden by {@link DynamicFactoryRegistry} in order to search in its
      * cache if no instance was found by this method.
      *
-     * @param  category       The category to look for. Usually an interface class.
-     * @param  implementation The desired class for the implementation, or {@code null} if none.
-     * @param  filter         An optional filter, or {@code null} if none.
-     * @param  hints          A {@linkplain Hints map of hints}, or {@code null} if none.
+     * @param  category The category to look for. Usually an interface class.
+     * @param  implementationType The desired class for the implementation, or {@code null} if none.
+     * @param  filter An optional filter, or {@code null} if none.
+     * @param  hints A {@linkplain Hints map of hints}, or {@code null} if none.
      * @return A factory for the specified category and hints, or {@code null} if none.
      */
-    <T> T getServiceImplementation(final Class<T> category, final Class<?> implementation,
+    <T> T getServiceImplementation(final Class<T> category, final Class<?> implementationType,
                                    final Filter filter, final Hints hints)
     {
         final boolean wantSameClass = wantSameClass(hints);
@@ -430,7 +430,7 @@ public class FactoryRegistry extends ServiceRegistry {
             final T candidate = it.next();
             // Implementation class must be tested before 'isAcceptable'
             // in order to avoid StackOverflowError in some situations.
-            if (!isInstance(candidate, implementation, wantSameClass)) {
+            if (!isInstance(candidate, implementationType, wantSameClass)) {
                 continue;
             }
             if (!isAcceptable(candidate, category, hints, filter)) {
@@ -485,7 +485,6 @@ public class FactoryRegistry extends ServiceRegistry {
          * Geotoolkit implementation, some hints computation are deferred until a connection to
          * the database is etablished (which 'isAvailable' does in order to test the connection).
          */
-        boolean isAvailable = true;
         if (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
             final Class<? extends Factory> type = factory.getClass();
@@ -493,7 +492,10 @@ public class FactoryRegistry extends ServiceRegistry {
                 throw new RecursiveSearchException(type);
             }
             try {
-                isAvailable = factory.isAvailable();
+                if (!factory.isAvailable()) {
+                    unavailable(factory);
+                    return false;
+                }
             } finally {
                 if (!testingAvailability.remove(type)) {
                     throw new AssertionError(type); // Should never happen.
@@ -544,10 +546,7 @@ public class FactoryRegistry extends ServiceRegistry {
         if (!isAcceptable(candidate, category, hints)) {
             return false;
         }
-        if (!isAvailable) {
-            unavailable((Factory) candidate);
-        }
-        return isAvailable;
+        return true;
     }
 
     /**
@@ -579,11 +578,9 @@ public class FactoryRegistry extends ServiceRegistry {
     }
 
     /**
-     * Invoked when a factory meets every conditions (including the user-provided
-     * {@linkplain Hints hints}), except that it declares itelf as unavailable.
-     * <p>
-     * The default implementation does nothing. Subclasses can override this method
-     * if they want to track the reasons why a factory is unavailable.
+     * Invoked when a factory declares itelf as unavailable. The default implementation does
+     * nothing. Subclasses can override this method if they want to track those unavailable
+     * factories.
      *
      * @param factory The factory which declares itself as unavailable.
      *

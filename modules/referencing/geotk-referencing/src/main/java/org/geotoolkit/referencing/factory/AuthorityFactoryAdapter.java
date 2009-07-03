@@ -309,7 +309,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     {
         for (int f=0; f<TYPE_COUNT; f++) {
             /*
-             * Removes every AUTHORITY_FACTORY hints except the "keep" one. The removal, if needed,
+             * Removes every AUTHORITY_FACTORY hints except the "kept" ones. The removal, if needed,
              * is performed in a copy of the supplied hints in order to keep user's map unmodified.
              *
              * This removal is performed because AUTHORITY_FACTORY hints are typically supplied to the

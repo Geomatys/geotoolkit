@@ -237,12 +237,12 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
         final boolean wantSameClass = wantSameClass(hints);
         for (final Iterator<T> it=getUnfilteredProviders(category); it.hasNext();) {
             final T factory = it.next();
-            final Class<?> implementation = factory.getClass();
-            if (unavailables.contains(implementation)) {
+            final Class<?> implementationType = factory.getClass();
+            if (unavailables.contains(implementationType)) {
                 // We already tried this factory before and failed.
                 continue;
             }
-            if (!isAssignableTo(implementation, types, wantSameClass)) {
+            if (!isAssignableTo(implementationType, types, wantSameClass)) {
                 continue;
             }
             if (filter!=null && !filter.filter(factory)) {
@@ -250,7 +250,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             }
             final T candidate;
             try {
-                candidate = createSafe(category, implementation, hints);
+                candidate = createSafe(category, implementationType, hints);
             } catch (FactoryNotFoundException exception) {
                 // The factory has a dependency which has not been found.
                 // Be tolerant to that kind of error.
@@ -297,10 +297,8 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     }
 
     /**
-     * Invoked when a factory meets every conditions (including the user-provided
-     * {@linkplain Hints hints}), except that it declares itelf as unavailable.
-     * This method is used for remembering that it is not worth to try creating
-     * that factory again.
+     * Invoked when a factory declares itelf as unavailable. This method is used
+     * for remembering that it is not worth to try creating that factory again.
      *
      * @param factory The factory which declares itself as unavailable.
      *

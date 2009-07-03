@@ -212,7 +212,7 @@ public class GeodeticCalculator {
     /**
      * {@code true} if the source and destination points are almost antipodal. If {@code true},
      * then the distance and direction computed by {@link #computeDirection} are likely to be
-     * innacurate.
+     * inaccurate.
      */
     private boolean antipodal;
 
@@ -771,7 +771,7 @@ public class GeodeticCalculator {
      * @return The azimuth, in decimal degrees from -180° to +180°.
      * @throws IllegalStateException if the destination point has not been set.
      *
-     * @todo Current implementation will provides an innacurate value for antipodal points. For
+     * @todo Current implementation will provides an inaccurate value for antipodal points. For
      *       now a warning is logged in such case. In a future version (if we have volunter time)
      *       we should provides a solution (search Internet for "<cite>azimuth antipodal
      *       points</cite>").
@@ -781,7 +781,7 @@ public class GeodeticCalculator {
             computeDirection();
             if (antipodal) {
                 Logging.getLogger(GeodeticCalculator.class).warning(
-                        "Azimuth is innacurate for antipodal points.");
+                        "Azimuth is inaccurate for antipodal points.");
             }
         }
         return toDegrees(azimuth);
