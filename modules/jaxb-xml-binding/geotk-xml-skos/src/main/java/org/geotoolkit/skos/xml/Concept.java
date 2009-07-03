@@ -144,7 +144,7 @@ public class Concept {
     private String modified;
 
     @XmlElement(namespace="http://www.opengis.net/gml")
-    private AbstractGMLEntry geometry;
+    private List<AbstractGMLEntry> geometry;
 
 
 
@@ -601,14 +601,14 @@ public class Concept {
     /**
      * @return the geometry
      */
-    public AbstractGMLEntry getGeometry() {
+    public List<AbstractGMLEntry> getGeometry() {
         return geometry;
     }
 
     /**
      * @param geometry the geometry to set
      */
-    public void setGeometry(AbstractGMLEntry geometry) {
+    public void setGeometry(List<AbstractGMLEntry> geometry) {
         this.geometry = geometry;
     }
 
