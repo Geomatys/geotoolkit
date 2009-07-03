@@ -39,7 +39,10 @@ import org.opengis.metadata.SpatialAttributeSupplement;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated This type has been removed from ISO 19115:2003
  */
+@Deprecated
 @XmlRootElement(name = "MD_SpatialAttributeSupplement")
 public class DefaultSpatialAttributeSupplement extends MetadataEntity
         implements SpatialAttributeSupplement

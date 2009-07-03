@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.ApplicationSchemaInformation;
-import org.opengis.metadata.SpatialAttributeSupplement;
 import org.opengis.metadata.citation.Citation;
 
 
@@ -37,7 +36,7 @@ import org.opengis.metadata.citation.Citation;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.01
  *
  * @since 2.1
  * @module
@@ -94,11 +93,6 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      * Software dependent format used for the application schema software dependent file.
      */
     private String softwareDevelopmentFileFormat;
-
-    /**
-     * Information about the spatial attributes in the application schema for the feature types.
-     */
-    private SpatialAttributeSupplement featureCatalogueSupplement;
 
     /**
      * Construct an initially empty application schema information.
@@ -264,29 +258,5 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
     public synchronized void setSoftwareDevelopmentFileFormat(final String newValue) {
         checkWritePermission();
         softwareDevelopmentFileFormat = newValue;
-    }
-
-    /**
-     * Information about the spatial attributes in the application schema for the feature types.
-     *
-     * @deprecated removed from ISO 19115
-     */
-    @Override
-    @Deprecated
-    public SpatialAttributeSupplement getFeatureCatalogueSupplement() {
-        return featureCatalogueSupplement;
-    }
-
-    /**
-     * Sets information about the spatial attributes in the application schema for the feature types.
-     *
-     * @param newValue The new feature catalog supplement.
-     *
-     * @deprecated removed from ISO 19115
-     */
-    @Deprecated
-    public synchronized void setFeatureCatalogueSupplement(final SpatialAttributeSupplement newValue) {
-        checkWritePermission();
-        featureCatalogueSupplement = newValue;
     }
 }
