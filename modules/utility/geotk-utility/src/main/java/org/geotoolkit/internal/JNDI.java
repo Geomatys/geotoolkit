@@ -57,8 +57,6 @@ public final class JNDI {
      * @return The initial context (never {@code null}).
      * @throws NamingException if the initial context can't be created.
      *
-     * @see #init(InitialContext)
-     *
      * @since 2.4
      */
     public static synchronized InitialContext getInitialContext(final Hints hints)

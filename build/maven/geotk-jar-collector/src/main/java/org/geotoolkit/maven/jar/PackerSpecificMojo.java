@@ -123,7 +123,7 @@ public class PackerSpecificMojo extends AbstractMojo {
         final PackFiles pack = new PackFiles(new File(targetDirectory, Packer.PACK_DIRECTORY));
         File directory = new File(targetDirectory, "site/apidocs");
         try {
-            pack.pack(directory, "geotk-javadoc.zip");
+            pack.pack(directory, "geotk-" + VERSION + "-javadoc.zip");
         } catch (IOException e) {
             throw new MojoExecutionException("Error packing the ZIP file for javadoc.", e);
         }
@@ -132,7 +132,7 @@ public class PackerSpecificMojo extends AbstractMojo {
          */
         directory = parent.getBasedir();
         try {
-            pack.pack(directory, "geotk-sources.zip");
+            pack.pack(directory, "geotk-" + VERSION + "-sources.zip");
         } catch (IOException e) {
             throw new MojoExecutionException("Error packing the ZIP file for source code.", e);
         }

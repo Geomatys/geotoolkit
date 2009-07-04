@@ -22,9 +22,10 @@
     <!--     Menus to appears on the left side of each page   -->
     <!-- ==================================================== -->
     <menu name="Quick links" inherit="none">
-      <item name="Download" href="http://www.geotoolkit.org/download.html"/>
-      <item name="Javadoc"  href="http://javadoc.geotoolkit.org"/>
-      <item name="FAQ"      href="http://www.geotoolkit.org/faq.html"/>
+      <item name="Download"     href="http://www.geotoolkit.org/download.html"/>
+      <item name="Javadoc"      href="http://javadoc.geotoolkit.org"/>
+      <item name="FAQ"          href="http://www.geotoolkit.org/faq.html"/>
+      <item name="Mailing list" href="http://www.geotoolkit.org/mail-lists.html"/>
     </menu>
 
     <menu ref="modules"/> <!-- Replaced by menu for submodules. -->

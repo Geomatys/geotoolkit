@@ -238,8 +238,8 @@ public final class ImageUtilities {
      *       words, the size that left as few empty pixels as possible).</li>
      * </ul>
      *
-     * @param size
-     * @return
+     * @param size The image size.
+     * @return Suggested tile size for the given image size.
      */
     public static Dimension toTileSize(final Dimension size) {
         Dimension defaultSize = JAI.getDefaultTileSize();
