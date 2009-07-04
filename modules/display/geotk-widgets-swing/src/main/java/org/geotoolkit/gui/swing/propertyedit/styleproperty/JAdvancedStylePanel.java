@@ -32,6 +32,7 @@ import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JFeatureTypeStylePane;
 import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
 import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
@@ -232,7 +233,7 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
 
     @Override
     public String getTitle() {
-        return "advanced";
+        return MessageBundle.getString("advanced");
     }
 
     @Override

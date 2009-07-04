@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
@@ -39,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.geotoolkit.gui.swing.crschooser.JCRSList;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.util.converter.Classes;
@@ -103,7 +105,8 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
         jScrollPane1 = new JScrollPane();
         wktArea = new JTextArea();
 
-        jLabel1.setText("Coordinate Reference Systems :");
+        ResourceBundle bundle = ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/Bundle"); // NOI18N
+        jLabel1.setText(bundle.getString("crschooser_crs")); // NOI18N
 
         gui_jtf_crs.setEditable(false);
         gui_jtf_crs.addActionListener(new ActionListener() {
@@ -126,8 +129,8 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(21, 21, 21)))
@@ -141,11 +144,11 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(gui_jtf_crs, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("List", jPanel1);
+        jTabbedPane1.addTab(bundle.getString("crschooser_list"), jPanel1); // NOI18N
 
         wktArea.setColumns(20);
         wktArea.setEditable(false);
@@ -158,14 +161,14 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -222,17 +225,17 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
 
     @Override
     public String getTitle() {
-        return "CRS";
+        return MessageBundle.getString("crs");
     }
 
     @Override
     public ImageIcon getIcon() {
-        return IconBundle.EMPTY_ICON;
+        return null;
     }
 
     @Override
     public String getToolTip() {
-        return "Projection";
+        return MessageBundle.getString("crs");
     }
 
     @Override
