@@ -79,7 +79,7 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -239,7 +239,9 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         sizeFields = new SizeFields(locale, DEFAULT_TILE_SIZE, minSize);
         sizeFields.setSizeValue(tileSize);
         formatChoices = ImageFormatEntry.comboBox(preferredFormat);
-        formatChoices.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
+        final JPanel formatPanel = new JPanel(new BorderLayout());
+        formatPanel.add(formatChoices, BorderLayout.CENTER);
+        formatPanel.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
         directoryField = new FileField(locale, null, true);
         directoryField.setFile(directory);
         directoryField.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OUTPUT_DIRECTORY)));
@@ -253,7 +255,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         c.weightx=1; c.fill=GridBagConstraints.HORIZONTAL;
         c.gridx=0; c.anchor=GridBagConstraints.LINE_START;
         c.gridy=0; controlPane.add(sizeFields, c);
-        c.gridy++; controlPane.add(formatChoices, c);
+        c.gridy++; controlPane.add(formatPanel, c);
         c.gridy++; controlPane.add(directoryField, c); c.weighty=1; c.fill=GridBagConstraints.BOTH;
         c.gridy++; controlPane.add(explain, c);
         /*

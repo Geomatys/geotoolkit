@@ -37,7 +37,7 @@ import org.geotoolkit.internal.setup.ControlPanel;
  * The main menu, which propose to setup or start a wizard.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.01
  * @module
@@ -69,7 +69,7 @@ final class Menu extends JFrame implements ActionListener {
                 "Select directories and install the NADCON and EPSG data. " +
                 "This setup is optional. If executed, the setting will be " +
                 "remembered for all subsequent Geotoolkit.org usage.", c);
-        setSize(700, 200);
+        setSize(740, 200);
         setLocationRelativeTo(null);
         setVisible(true);
     }

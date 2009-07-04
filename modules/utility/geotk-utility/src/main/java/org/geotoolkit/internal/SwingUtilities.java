@@ -49,7 +49,7 @@ import org.geotoolkit.util.logging.Logging;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.0
  * @module
@@ -81,7 +81,11 @@ public final class SwingUtilities {
      * @param method The method invoking this one.  Used only for logging purpose.
      */
     public static void setLookAndFeel(final Class<?> caller, final String method) {
-        try {
+        /*
+         * MacOS come with a default L&F which is different than in standard JDK.
+         * Leave it unchanged.
+         */
+        if (!OS.MAC_OS.equals(OS.current())) try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
             Logging.recoverableException(caller, method, e);

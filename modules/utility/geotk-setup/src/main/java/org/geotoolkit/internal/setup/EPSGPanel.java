@@ -15,7 +15,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.internal.setup;
 
 import java.awt.GridBagConstraints;
@@ -60,7 +59,7 @@ import static java.awt.GridBagConstraints.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -184,7 +183,7 @@ final class EPSGPanel extends JPanel implements ActionListener {
          */
         final JButton apply = new JButton(resources.getString(Vocabulary.Keys.APPLY));
         c.gridx=2; c.gridy++;
-        c.fill=NONE; c.anchor=EAST;
+        c.fill=NONE; c.anchor=EAST; c.insets.top=6;
         add(apply,c);
         apply.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {

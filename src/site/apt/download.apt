@@ -83,6 +83,7 @@ Downloading Geotoolkit Binaries
   These Geotoolkit bundles can be downloaded from:
 
     * {{{http://download.geotoolkit.org/}Monthly releases}}
+
     * {{{http://hudson.geomatys.com/job/Geotoolkit/}Nightly builds (last 2 weeks)}}
 
   Serveral bundles are available, each one providing successively more functionality. Choose

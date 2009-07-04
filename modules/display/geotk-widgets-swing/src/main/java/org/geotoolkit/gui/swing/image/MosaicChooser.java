@@ -75,7 +75,7 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -158,6 +158,7 @@ public class MosaicChooser extends JPanel implements Dialog {
          * be created.
          */
         final JTable successTable = new JTable(tiles);
+        successTable.setAutoCreateRowSorter(true);
         final TableColumnModel columns = successTable.getColumnModel();
         columns.getColumn(0).setPreferredWidth(250); // Gives more space to the column of filenames.
         for (int i=2; i<=5; i++) {
