@@ -102,7 +102,7 @@ public final class ThreadedAuthorityFactoryTest {
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
 
-        Thread.sleep(TIMEOUT_RESOLUTION * 3);
+        Thread.sleep(TIMEOUT_RESOLUTION * 5);
         assertEquals("Expected no new worker.",    factories, threaded.factories());
         assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
         assertTrue  ("Worker should be disposed.", factories.get(1).isDisposed());
