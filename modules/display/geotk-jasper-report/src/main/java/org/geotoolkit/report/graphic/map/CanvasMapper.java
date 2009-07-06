@@ -29,6 +29,7 @@ import net.sf.jasperreports.engine.JRRenderable;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.report.graphic.JRRendererMapper;
 import org.geotoolkit.report.JRMapperFactory;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -38,6 +39,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public class CanvasMapper extends JRRendererMapper{
+
+    private static final Logger LOGGER = Logging.getLogger(CanvasMapper.class);
 
     
     CanvasMapper(JRMapperFactory<JRRenderable,MapContext> factory) {
@@ -64,11 +67,11 @@ public class CanvasMapper extends JRRendererMapper{
             }
 
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(CanvasMapper.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }catch (IOException ex) {
-            Logger.getLogger(CanvasMapper.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }catch (TransformException ex) {
-            Logger.getLogger(CanvasMapper.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return canvas;
     }

@@ -423,7 +423,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 //            bb = JTS.transform(bb, CRS.findMathTransform(context.getObjectiveCRS(), layerBounds.getCoordinateReferenceSystem(),true));
 //            bbox = new DefaultBoundingBox(JTS.toEnvelope(bb),layerBounds.getCoordinateReferenceSystem());
 //        } catch (Exception ex) {
-//            Logger.getLogger(StatefullFeatureLayerJ2D.class.getName()).log(Level.SEVERE, null, ex);
+//            Logging.getLogger(StatefullFeatureLayerJ2D.class).log(Level.SEVERE, null, ex);
 //        }
 
 

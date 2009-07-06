@@ -31,6 +31,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -42,6 +43,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
+
+    private static final Logger LOGGER = Logging.getLogger(GridMarkGraphicBuilder.class);
 
     /**
      * {@inheritDoc }
@@ -63,7 +66,7 @@ public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 //            try {
 //                feature = layer.getFeatureSource().getFeatures().features().next();
 //            } catch (IOException ex) {
-//                Logger.getLogger(GridMarkGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//                LOGGER.log(Level.SEVERE, null, ex);
 //            }
 //            
 //            GridCoverage2D coverage = (GridCoverage2D) feature.getProperty("grid").getValue();
@@ -72,11 +75,11 @@ public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 //get the default gridcoverage
                 coverage = coverageLayer.getCoverageReader().read(null);
             } catch (FactoryException ex) {
-                Logger.getLogger(GridMarkGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             } catch (TransformException ex) {
-                Logger.getLogger(GridMarkGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(GridMarkGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
             
             if(coverage != null){

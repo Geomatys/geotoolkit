@@ -36,6 +36,7 @@ import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
@@ -439,7 +440,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
             try {
                 updateObjectiveCRS((CoordinateReferenceSystem) evt.getNewValue());
             } catch (TransformException ex) {
-                Logger.getLogger(AbstractContainer.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(AbstractContainer.class).log(Level.SEVERE, null, ex);
             }
         }
     }

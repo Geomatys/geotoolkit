@@ -108,6 +108,7 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -188,7 +189,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         try {
             uri = new URI(ort.getHref());
         } catch (URISyntaxException ex) {
-            Logger.getLogger(SLD110toGTTransformer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(SLD110toGTTransformer.class).log(Level.SEVERE, null, ex);
         }
 
         if (uri != null) {
@@ -389,7 +390,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                     MutableFeatureTypeStyle fts = xmlUtilities.readFeatureTypeStyle(or, Specification.SymbologyEncoding.V_1_1_0);
                     return fts;
                 }catch(JAXBException ex){
-                    Logger.getLogger(SE110toGTTransformer.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger(SE110toGTTransformer.class).log(Level.WARNING, null, ex);
                 }
                 return null;
             }
@@ -493,7 +494,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 MutableRule rule = xmlUtilities.readRule(or, Specification.SymbologyEncoding.V_1_1_0);
                 return rule;
             } catch (JAXBException ex) {
-                Logger.getLogger(SE110toGTTransformer.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger(SE110toGTTransformer.class).log(Level.WARNING, null, ex);
             }
             return null;
         }

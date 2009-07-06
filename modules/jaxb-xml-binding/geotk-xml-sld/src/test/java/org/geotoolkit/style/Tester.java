@@ -40,6 +40,7 @@ import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
+import org.geotoolkit.util.logging.Logging;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -150,7 +151,7 @@ public class Tester {
         OnLineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
-            Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(Tester.class).log(Level.SEVERE, null, ex);
         }
         SLDLibrary lib = SLD_FACTORY.createSLDLibrary(online);
         geoSLD.libraries().add(lib);

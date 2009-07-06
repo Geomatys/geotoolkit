@@ -41,6 +41,7 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -102,7 +103,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
         try {
             return getCompleteFeature(getFeatureId());
         } catch (IOException ex) {
-            Logger.getLogger(DefaultGraphicFeatureJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultGraphicFeatureJ2D.class).log(Level.SEVERE, null, ex);
         }
 
         return null;

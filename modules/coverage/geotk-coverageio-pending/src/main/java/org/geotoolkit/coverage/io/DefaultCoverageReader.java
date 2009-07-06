@@ -33,6 +33,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -70,7 +71,7 @@ public class DefaultCoverageReader implements CoverageReader{
         try {
             rect = new Rectangle(reader.getWidth(0), reader.getHeight(0));
         } catch (IOException ex) {
-            Logger.getLogger(CoverageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(CoverageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.boundsGRID = rect;
         
@@ -78,7 +79,7 @@ public class DefaultCoverageReader implements CoverageReader{
         try {
             rectCRS = CRS.transform((MathTransform2D)gridToCRS, rect, rectCRS);
         } catch (TransformException ex) {
-            Logger.getLogger(CoverageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(CoverageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.boundsCRS = rectCRS;
         

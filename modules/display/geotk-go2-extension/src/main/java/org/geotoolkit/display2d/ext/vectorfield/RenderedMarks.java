@@ -46,6 +46,7 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.util.XArrays;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.FactoryException;
@@ -322,14 +323,14 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
             try {
                 objectiveToDisplay = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
             } catch (FactoryException ex) {
-                Logger.getLogger(RenderedMarks.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(RenderedMarks.class).log(Level.SEVERE, null, ex);
             }
                         
             MathTransform2D coverageToObjective = null;
             try {
                 coverageToObjective = (MathTransform2D) context.getMathTransform(getEnvelope().getCoordinateReferenceSystem(), context.getObjectiveCRS());
             } catch (FactoryException ex) {
-                Logger.getLogger(RenderedMarks.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(RenderedMarks.class).log(Level.SEVERE, null, ex);
             }
             /*
              * If the transforms are not valids, compute them now. We will compute one affine

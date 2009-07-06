@@ -52,7 +52,7 @@ public class GetMap130 extends AbstractGetMap {
         try {
             map.put("CRS", CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
         } catch (FactoryException ex) {
-            Logger.getLogger(GetMap130.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         return map;

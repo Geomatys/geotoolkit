@@ -49,6 +49,7 @@ import org.opengis.metadata.MetaData;
 // geotools dependencies
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -87,7 +88,7 @@ public class ObservationEntry implements Observation {
      * A logger (debugging purpose)
      */
     @XmlTransient
-    Logger logger = Logger.getLogger("observationEntry");
+    Logger logger = Logging.getLogger("observationEntry");
     
     /**
      *The observation name

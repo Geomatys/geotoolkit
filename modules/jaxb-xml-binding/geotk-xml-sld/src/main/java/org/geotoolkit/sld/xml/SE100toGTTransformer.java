@@ -42,6 +42,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -110,7 +111,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         try {
             uri = new URI(ort.getHref());
         } catch (URISyntaxException ex) {
-            Logger.getLogger(SLD110toGTTransformer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(SLD110toGTTransformer.class).log(Level.SEVERE, null, ex);
         }
 
         if (uri != null) {

@@ -67,6 +67,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.geotoolkit.sld.xml.Specification;
+import org.geotoolkit.util.logging.Logging;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -262,7 +263,7 @@ public class XMLUtilitiesTest extends TestCase{
         OnLineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
-            Logger.getLogger(XMLUtilitiesTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(XMLUtilitiesTest.class).log(Level.SEVERE, null, ex);
         }
         SLDLibrary lib = SLD_FACTORY.createSLDLibrary(online);
         geoSLD.libraries().add(lib);

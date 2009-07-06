@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotools.data.Transaction;
 import org.geotools.data.Transaction.State;
 
@@ -95,7 +96,7 @@ public final class JDBCTransactionState implements State {
     @Override
     protected void finalize() throws Throwable {
         if (cx != null && !cx.isClosed()) {
-            Logger.getLogger("org.geotoolkit.jdbc").severe("State finalized with open connection.");
+            Logging.getLogger("org.geotoolkit.jdbc").severe("State finalized with open connection.");
         }
     }
 }

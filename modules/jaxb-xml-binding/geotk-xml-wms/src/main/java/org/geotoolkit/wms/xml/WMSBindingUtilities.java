@@ -30,6 +30,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.metadata.citation.OnLineResource;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -99,7 +100,7 @@ import org.xml.sax.InputSource;
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logger.getLogger(WMSBindingUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(WMSBindingUtilities.class).log(Level.SEVERE, null, ex);
                 return null;
             }
 

@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -117,7 +118,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                 setObjectiveCRS(newCRS);
             } catch (TransformException ex) {
                 ex.printStackTrace();
-                Logger.getLogger(AbstractReferencedGraphic.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(AbstractReferencedGraphic.class).log(Level.SEVERE, null, ex);
             }
         }
         

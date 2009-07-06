@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
@@ -34,7 +35,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class DefaultPropertyIsLike implements PropertyIsLike {
 
-    private final Logger LOGGER = Logger.getLogger(DefaultPropertyIsLike.class.getName());
+    private final Logger LOGGER = Logging.getLogger(DefaultPropertyIsLike.class);
 
     /** The attribute value, which must be an attribute expression. */
     private final Expression attribute;

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -155,7 +156,7 @@ public class DirectPositionType implements DirectPosition{
                 try {
                     this.srsName = CRS.lookupIdentifier(crs, true);
                 } catch (FactoryException ex) {
-                    Logger.getLogger(DirectPositionType.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
                 }
             }
             this.srsDimension = null;
@@ -264,9 +265,9 @@ public class DirectPositionType implements DirectPosition{
         try {
             return CRS.decode(srsName);
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DirectPositionType.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(DirectPositionType.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
         }
         return null;
     }

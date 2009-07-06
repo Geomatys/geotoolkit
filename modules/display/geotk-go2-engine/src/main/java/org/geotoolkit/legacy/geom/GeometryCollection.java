@@ -1097,7 +1097,7 @@ public class GeometryCollection extends Geometry implements Comparable {
             try {
                 polygon.compress(level);
             } catch (FactoryException ex) {
-                Logger.getLogger(GeometryCollection.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
             
             
@@ -1163,7 +1163,7 @@ public class GeometryCollection extends Geometry implements Comparable {
             try {
                 polygon.setResolution(resolution);
             } catch (FactoryException ex) {
-                Logger.getLogger(GeometryCollection.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
             
             if (polygon.isEmpty()) {

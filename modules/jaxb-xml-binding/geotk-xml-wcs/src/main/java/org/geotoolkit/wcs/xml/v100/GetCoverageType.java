@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -96,7 +97,7 @@ public class GetCoverageType implements GetCoverage {
     @XmlAttribute(required = true)
     private String version;
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wcs.xml.v100");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs.xml.v100");
 
     /**
      * Empty constructor used by JAXB.

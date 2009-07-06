@@ -44,6 +44,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.shape.XRectangle2D;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.RenderingState;
 
 /**
@@ -224,7 +225,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         try {
             getController().setVisibleArea(renderer.getContext().getAreaOfInterest());
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(CanvasRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(CanvasRenderer.class).log(Level.SEVERE, null, ex);
         }
         
         g2d = (Graphics2D) g.create();

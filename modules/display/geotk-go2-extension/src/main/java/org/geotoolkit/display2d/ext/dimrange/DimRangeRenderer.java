@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.AbstractSymbolizer;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -101,7 +102,7 @@ public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,C
             try {
                 bounds = CRS.transform(bounds, gridCRS);
             } catch (TransformException ex) {
-                Logger.getLogger(DimRangeRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(DimRangeRenderer.class).log(Level.SEVERE, null, ex);
             }
 
             DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());

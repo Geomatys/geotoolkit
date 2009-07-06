@@ -44,6 +44,7 @@ import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -1680,6 +1681,6 @@ final class LineString implements Serializable {
     static void unexpectedException(final String classe, final String method,
                                     final TransformException exception)
     {
-        Logger.getLogger(LineString.class.toString()).log(Level.WARNING, method.toString() +" " +exception.getMessage());
+        Logging.getLogger(LineString.class).log(Level.WARNING, method.toString() +" " +exception.getMessage());
     }
 }

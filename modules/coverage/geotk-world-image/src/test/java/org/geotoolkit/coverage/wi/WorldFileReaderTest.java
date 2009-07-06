@@ -38,7 +38,7 @@ public class WorldFileReaderTest {
 //        try {
 //            reader = new WorldImageFactory().createMosaicReader(input);
 //        } catch (IOException ex) {
-//            Logger.getLogger(WorldImageFactory.class.getName()).log(Level.SEVERE, null, ex);
+//            Logging.getLogger(WorldImageFactory.class).log(Level.SEVERE, null, ex);
 //        }
 //
 //        System.out.println(reader);

@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentState;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -121,7 +122,7 @@ public final class JDBCState extends ContentState {
     @Override
     protected void finalize() throws Throwable {
         if ( connection != null && !connection.isClosed()) {
-            Logger.getLogger( "org.geotoolkit.jdbc").severe("State finalized with open connection.");
+            Logging.getLogger("org.geotoolkit.jdbc").severe("State finalized with open connection.");
         }
     }
 }

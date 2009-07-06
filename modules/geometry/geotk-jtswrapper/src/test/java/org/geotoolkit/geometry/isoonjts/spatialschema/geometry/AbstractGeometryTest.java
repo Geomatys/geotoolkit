@@ -39,6 +39,7 @@ import org.opengis.geometry.primitive.Surface;
 import junit.framework.TestCase;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Provided test case.
@@ -70,7 +71,7 @@ public abstract class AbstractGeometryTest extends TestCase{
         try {
             crs = crsFact.createFromWKT(WGS84_WKT);
         } catch (FactoryException ex) {
-            Logger.getLogger(AbstractGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(AbstractGeometryTest.class).log(Level.SEVERE, null, ex);
         }
         GEOMETRY_FACTORY = new JTSGeometryFactory(crs);
         PRIMITIVE_FACTORY = new JTSPrimitiveFactory(crs);

@@ -56,6 +56,7 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.MapContext;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.container.ContainerListener;
 import org.opengis.display.container.GraphicsContainer;
@@ -209,7 +210,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
             contextNode.setTranslation(-translateX*scaling,0,-translateY*scaling);
 
         } catch (IOException ex) {
-            Logger.getLogger(A3DContainer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(A3DContainer.class).log(Level.SEVERE, null, ex);
         }
         scene.attachChild(contextNode);
     }

@@ -37,6 +37,7 @@ import javax.xml.bind.Unmarshaller;
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
 import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,7 +49,7 @@ import static org.junit.Assert.*;
  */
 public class FilterXMLBindingTest {
 
-    private Logger       logger = Logger.getLogger("org.geotoolkit.filter");
+    private Logger       logger = Logging.getLogger("org.geotoolkit.filter");
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

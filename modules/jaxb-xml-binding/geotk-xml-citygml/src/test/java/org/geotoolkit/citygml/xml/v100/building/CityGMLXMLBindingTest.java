@@ -21,6 +21,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -31,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class CityGMLXMLBindingTest {
 
-    private Logger         logger = Logger.getLogger("org.geotoolkit.filter");
+    private Logger         logger = Logging.getLogger("org.geotoolkit.filter");
     private Unmarshaller   Unmarshaller;
     private Marshaller     Marshaller;
     private MarshallerPool pool;

@@ -47,6 +47,7 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
@@ -209,7 +210,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             try {
                 dispToObj.invert();
             } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(J2DCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(J2DCanvas.class).log(Level.SEVERE, null, ex);
             }
 
             final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);

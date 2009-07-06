@@ -61,6 +61,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.collection.Cache;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -323,9 +324,8 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                 ite.close();
             }
 
-
         } catch (Exception ex) {
-            Logger.getLogger(FeatureLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(FeatureLayerNode.class).log(Level.SEVERE, null, ex);
         }
 
 

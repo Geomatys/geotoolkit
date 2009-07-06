@@ -340,7 +340,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
 //        try {
 //            canvas.repaint(this, objectiveArea, displayArea);
 //        } catch (PortrayalException ex) {
-//            Logger.getLogger(ReferencedGraphic2D.class.getName()).log(Level.SEVERE, null, ex);
+//            Logging.getLogger(ReferencedGraphic2D.class).log(Level.SEVERE, null, ex);
 //        }
         
     }

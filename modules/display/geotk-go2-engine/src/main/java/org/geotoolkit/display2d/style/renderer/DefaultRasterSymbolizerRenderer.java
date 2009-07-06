@@ -74,6 +74,7 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.util.converter.Classes;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.Envelope;
@@ -94,7 +95,7 @@ import org.opengis.style.ShadedRelief;
  */
 public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName());
+    private static final Logger LOGGER = Logging.getLogger(DefaultRasterSymbolizerRenderer.class);
 
     /**
      * {@inheritDoc }
@@ -150,7 +151,7 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
 //            try {
 //                bounds = CRS.transform(bounds, gridCRS);
 //            } catch (TransformException ex) {
-//                Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
+//                LOGGER.log(Level.SEVERE, null, ex);
 //            }
 //
 //            DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());
@@ -284,7 +285,7 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         try {
             shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logger.getLogger(DefaultRasterSymbolizerRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             return false;
         }
 

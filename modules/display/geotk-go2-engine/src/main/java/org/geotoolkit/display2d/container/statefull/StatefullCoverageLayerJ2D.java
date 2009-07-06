@@ -40,6 +40,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -52,7 +53,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer>{
 
-    private static final Logger LOGGER = Logger.getLogger(StatefullCoverageLayerJ2D.class.getName());
+    private static final Logger LOGGER = Logging.getLogger(StatefullCoverageLayerJ2D.class);
 
     private final StatefullProjectedCoverage projectedCoverage;
 

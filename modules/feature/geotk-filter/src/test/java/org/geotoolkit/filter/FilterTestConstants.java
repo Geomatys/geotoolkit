@@ -36,6 +36,7 @@ import org.geotoolkit.feature.dummy.DummySimpleFeature;
 import org.geotoolkit.feature.dummy.DummySimpleFeatureType;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.FilterFactory2;
@@ -51,6 +52,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class FilterTestConstants {
 
+    private static final Logger LOGGER = Logging.getLogger(FilterTestConstants.class);
+
     public static final FilterFactory2 FF = new DefaultFilterFactory2();
     public static final GeometryFactory GF = new GeometryFactory();
 
@@ -64,9 +67,9 @@ public class FilterTestConstants {
         try {
             crs = CRS.decode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(FilterTestConstants.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(FilterTestConstants.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         final List<AttributeDescriptor> desc = new ArrayList<AttributeDescriptor>();

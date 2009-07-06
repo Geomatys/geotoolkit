@@ -50,6 +50,7 @@ import org.geotoolkit.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.CoordinateOperation;
 
 
@@ -82,7 +83,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
     /**
      * The logger for the renderer module.
      */
-    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.renderer.geom");
+    protected static final Logger LOGGER = Logging.getLogger(Geometry.class);
 
     /**
      * The default coordinate system for all geometries. This is the coordinate

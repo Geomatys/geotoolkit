@@ -50,6 +50,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -60,7 +61,7 @@ import static org.junit.Assert.*;
  */
 public class SmlXMLBindingTest {
 
-    private Logger       logger = Logger.getLogger("org.geotoolkit.sml");
+    private Logger       logger = Logging.getLogger("org.geotoolkit.sml");
     private MarshallerPool  pool;
     private ObjectFactory sml100Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v101.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();

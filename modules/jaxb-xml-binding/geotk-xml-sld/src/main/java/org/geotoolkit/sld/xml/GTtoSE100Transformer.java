@@ -45,6 +45,7 @@ import org.geotoolkit.ogc.xml.v100.UpperBoundaryType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.Geometry;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
@@ -954,7 +955,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
         try {
             ort.setHref(or.getLinkage().toURL().toString());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(GTtoSE100Transformer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(GTtoSE100Transformer.class).log(Level.SEVERE, null, ex);
         }
         return ort;
     }

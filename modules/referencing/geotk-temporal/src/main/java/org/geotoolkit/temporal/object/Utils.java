@@ -30,6 +30,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.Duration;
@@ -45,7 +46,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
  */
 public class Utils {
 
-    Logger logger = Logger.getLogger("org.geotoolkit.temporal");
+    private static final Logger logger = Logging.getLogger(Utils.class);
     /**
      * The number of millisecond in one year.
      */

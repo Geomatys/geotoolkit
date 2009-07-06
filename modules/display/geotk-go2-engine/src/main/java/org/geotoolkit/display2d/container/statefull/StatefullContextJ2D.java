@@ -43,6 +43,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.CollectionChangeEvent;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.operation.TransformException;
 
@@ -54,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class StatefullContextJ2D extends AbstractGraphicJ2D{
 
-    private static final Logger LOGGER = Logger.getLogger(StatefullContextJ2D.class.getName());
+    private static final Logger LOGGER = Logging.getLogger(StatefullContextJ2D.class);
 
     private final Map<MapLayer, GraphicJ2D> layerGraphics = new HashMap<MapLayer, GraphicJ2D>();
     
@@ -113,9 +114,9 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D{
             setEnvelope(context.getBounds());
             parseContext(this.context);
         } catch (TransformException ex) {
-            Logger.getLogger(StatefullContextJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(StatefullContextJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         this.context.addContextListener(contextListener);
     }

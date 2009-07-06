@@ -38,6 +38,7 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 
@@ -102,7 +103,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         try {
             return query(env, rect.getBounds().getSize());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(WMSMapLayer.class).log(Level.SEVERE, null, ex);
         }
 
         return null;

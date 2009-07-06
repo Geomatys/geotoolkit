@@ -65,6 +65,7 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 // Geotools dependencies
 import org.geotoolkit.metadata.iso.DefaultMetaData;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
 //Junit dependencies
@@ -78,7 +79,7 @@ import static org.junit.Assert.*;
  */
 public class CswXMLBindingTest {
     
-    private Logger       logger = Logger.getLogger("org.constellation.filter");
+    private static Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
 
     private MarshallerPool pool202;
     private Unmarshaller recordUnmarshaller202;
@@ -256,23 +257,23 @@ public class CswXMLBindingTest {
         
         RecordType expResult = new RecordType(id, title, type, subject, format, modified, date, Abstract, bbox, creator, distributor, null, spatial, references);
         
-        logger.finer("DATE " +expResult.getDate() + " - " + result.getDate());
+        LOGGER.finer("DATE " +expResult.getDate() + " - " + result.getDate());
         assertEquals(expResult.getDate(), result.getDate());
 
-        logger.finer("ABSTRACT " +expResult.getAbstract() + " - " + result.getAbstract());
+        LOGGER.finer("ABSTRACT " +expResult.getAbstract() + " - " + result.getAbstract());
         assertEquals(expResult.getAbstract(), result.getAbstract());
         
-        logger.finer("SPATIAL " +expResult.getSpatial() + " - " + result.getSpatial());
+        LOGGER.finer("SPATIAL " +expResult.getSpatial() + " - " + result.getSpatial());
         assertEquals(expResult.getSpatial(), result.getSpatial());
         
-        logger.finer("BBOXES " +expResult.getBoundingBox() + " - " + result.getBoundingBox());
+        LOGGER.finer("BBOXES " +expResult.getBoundingBox() + " - " + result.getBoundingBox());
         assertEquals(expResult.getBoundingBox().get(0).getValue(), result.getBoundingBox().get(0).getValue());
         
                 
-        logger.finer("RESULT: " + result.toString());
-        logger.finer("");
-        logger.finer("EXPRESULT: " + expResult.toString());
-        logger.finer("-----------------------------------------------------------");
+        LOGGER.finer("RESULT: " + result.toString());
+        LOGGER.finer("");
+        LOGGER.finer("EXPRESULT: " + expResult.toString());
+        LOGGER.finer("-----------------------------------------------------------");
         assertEquals(expResult, result);
         
         
@@ -312,7 +313,7 @@ public class CswXMLBindingTest {
         jb = (JAXBElement) recordUnmarshaller200.unmarshal(sr);
         org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
         
-        logger.finer("result:" + result2.toString());
+        LOGGER.finer("result:" + result2.toString());
         
          /*
          * Test Unmarshalling csw Record v2.0.0 with http://www.purl... DC namespace
@@ -350,7 +351,7 @@ public class CswXMLBindingTest {
         jb = (JAXBElement) recordUnmarshaller200.unmarshal(sr);
         result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
         
-        logger.finer("result:" + result2.toString());
+        LOGGER.finer("result:" + result2.toString());
     }
 
     /**
@@ -896,8 +897,8 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         
-        logger.finer("RESULT:" + '\n' + result);
-        logger.finer("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
         assertEquals(expResult, result);
         
  
@@ -963,7 +964,7 @@ public class CswXMLBindingTest {
         "        </csw:Constraint>"                                                     + '\n' +
         "    </csw:Query>"                                                              + '\n' +
         "</csw:GetRecords>" + '\n';
-        logger.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("RESULT:" + '\n' + result);
         
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -972,8 +973,8 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         
-        logger.finer("RESULT:" + '\n' + result);
-        logger.finer("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
         assertEquals(expResult, result);
         
  
@@ -1039,8 +1040,8 @@ public class CswXMLBindingTest {
          
         
         
-        logger.info("RESULT:" + '\n' + result);
-        logger.info("EXPRESULT:" + '\n' + expResult);
+        LOGGER.info("RESULT:" + '\n' + result);
+        LOGGER.info("EXPRESULT:" + '\n' + expResult);
         GetRecordsType gres = (GetRecordsType)result;
         QueryType expQT = (QueryType) expResult.getAbstractQuery();
         QueryType resQT = (QueryType) gres.getAbstractQuery();

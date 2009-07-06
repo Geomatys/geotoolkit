@@ -44,6 +44,7 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.util.SimpleInternationalString;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -100,6 +101,8 @@ import static org.geotoolkit.style.StyleConstants.*;
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultStyleFactory extends Factory implements MutableStyleFactory {
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultStyleFactory.class);
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -748,7 +751,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         URI uri = null;
         try { uri = url.toURI();
         } catch (URISyntaxException ex) {
-            Logger.getLogger(DefaultStyleFactory.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         ExternalGraphic ext = new DefaultExternalGraphic(
@@ -764,7 +767,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         URI uri2 = null;
         try { uri2 = new URI(uri);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(DefaultStyleFactory.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         ExternalGraphic ext = new DefaultExternalGraphic(

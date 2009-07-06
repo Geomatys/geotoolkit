@@ -41,17 +41,7 @@ public class ZoomAllAction extends AbstractAction {
         if (map != null) {
             MapContext context = map.getContainer2().getContext();
             if(context == null) return;
-
             map.getController().setCameraPosition(0, 20, 0);
-
-//            Envelope env;
-//            try {
-//                env = context.getBounds();
-//                map.getController().setCameraPosition(env.getMedian(0),5,env.getMedian(1));
-//            } catch (IOException ex) {
-//                Logger.getLogger(ZoomAllAction.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
         }
     }
 

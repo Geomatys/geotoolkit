@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -28,6 +30,8 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest{
+
+    protected static final Logger LOGGER = Logging.getLogger(AbstractGetMap.class);
 
     protected final String version;
     protected final HashMap<String,String> dims = new HashMap<String, String>();

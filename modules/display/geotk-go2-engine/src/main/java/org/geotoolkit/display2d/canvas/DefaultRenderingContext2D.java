@@ -197,7 +197,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         try {
             this.displayToObjective = (AffineTransform2D) objToDisp.inverse();
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(DefaultRenderingContext2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultRenderingContext2D.class).log(Level.SEVERE, null, ex);
         }
         this.monitor = monitor;
         

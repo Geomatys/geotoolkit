@@ -35,6 +35,7 @@ import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,6 +47,8 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultController2D implements CanvasController2D{
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultController2D.class);
 
     /**
      * Small number for floating point comparaisons.
@@ -193,7 +196,7 @@ public class DefaultController2D implements CanvasController2D{
             translateObjective(diffX, diffY);
         } catch (NoninvertibleTransformException ex) {
             //TODO should add the throw error in geoapi
-            Logger.getLogger(DefaultController2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -479,7 +482,7 @@ public class DefaultController2D implements CanvasController2D{
             Shape shp = getTransform().createInverse().createTransformedShape(dipsEnv);
             setVisibleArea(shp.getBounds2D());
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(DefaultController2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
     }

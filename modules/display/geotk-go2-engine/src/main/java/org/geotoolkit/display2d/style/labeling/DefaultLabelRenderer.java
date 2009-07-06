@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -104,7 +105,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         try {
             geom = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logger.getLogger(DefaultLabelRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultLabelRenderer.class).log(Level.SEVERE, null, ex);
             return;
         }
 
@@ -150,7 +151,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         try {
             geom = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logger.getLogger(DefaultLabelRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultLabelRenderer.class).log(Level.SEVERE, null, ex);
             return;
         }
 

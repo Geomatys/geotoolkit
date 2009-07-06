@@ -174,7 +174,7 @@ final class PolylineCache {
                 destination.setData(array, length, curves);
                 return;
             } catch (NoninvertibleTransformException exception) {
-                Logger.getLogger(PolylineCache.class.toString()).log(Level.WARNING, "getPathIterator : " + exception.getMessage());
+                Logging.getLogger(PolylineCache.class).log(Level.WARNING, "getPathIterator : " + exception.getMessage());
                 // Continue... On va simplement reconstruire le tableau � partir de la base.
             } else {
                 // Should be uncommon. Doesn't hurt, but may be a memory issue for big polyline.

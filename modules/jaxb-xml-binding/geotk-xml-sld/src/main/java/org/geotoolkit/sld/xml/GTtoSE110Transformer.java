@@ -94,6 +94,7 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -1093,7 +1094,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         try {
             ort.setHref(onlineResource.getLinkage().toURL().toString());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(GTtoSE110Transformer.class).log(Level.SEVERE, null, ex);
         }
         return ort;
     }

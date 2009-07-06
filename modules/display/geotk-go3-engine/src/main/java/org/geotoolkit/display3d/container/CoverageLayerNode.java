@@ -45,6 +45,7 @@ import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -53,6 +54,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class CoverageLayerNode extends A3DGraphic{
+
+    private static final Logger LOGGER = Logging.getLogger(CoverageLayerNode.class);
 
 //    private static final UpdateThread UPDATER = new UpdateThread();
 //
@@ -82,7 +85,7 @@ public class CoverageLayerNode extends A3DGraphic{
         try {
             env = CRS.transform(env, canvas.getObjectiveCRS());
         } catch (TransformException ex) {
-            Logger.getLogger(CoverageLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         final Quad back = new Quad("quadPlan",env.getSpan(0), env.getSpan(1));
@@ -108,11 +111,11 @@ public class CoverageLayerNode extends A3DGraphic{
 //            box.setRenderState(ms);
 
         } catch (FactoryException ex) {
-            Logger.getLogger(CoverageLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(CoverageLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(CoverageLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         return back;
@@ -150,7 +153,7 @@ public class CoverageLayerNode extends A3DGraphic{
             try {
                 sleep(5000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(CoverageLayerNode.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
 
             Mesh mesh = buildQuad();

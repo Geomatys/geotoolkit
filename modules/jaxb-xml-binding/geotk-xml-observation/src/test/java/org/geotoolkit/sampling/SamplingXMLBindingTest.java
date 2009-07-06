@@ -29,6 +29,7 @@ import org.geotoolkit.gml.xml.v311modified.PointType;
 
 //Junit dependencies
 import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,7 +40,7 @@ import static org.junit.Assert.*;
  */
 public class SamplingXMLBindingTest {
 
-    private Logger       logger = Logger.getLogger("org.constellation.metadata.fra");
+    private Logger logger = Logging.getLogger("org.constellation.metadata.fra");
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;

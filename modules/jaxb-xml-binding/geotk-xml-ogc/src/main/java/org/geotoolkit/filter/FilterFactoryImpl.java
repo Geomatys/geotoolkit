@@ -81,6 +81,7 @@ import org.geotoolkit.ogc.xml.v110modified.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110modified.WithinType;
 
 // GeoAPI dependencies
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -145,7 +146,7 @@ import org.opengis.geometry.Geometry;
  */
 public class FilterFactoryImpl implements FilterFactory2 {
 
-    private final Logger logger = Logger.getLogger("org.geotoolkit.filter");
+    private final Logger logger = Logging.getLogger("org.geotoolkit.filter");
     
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     

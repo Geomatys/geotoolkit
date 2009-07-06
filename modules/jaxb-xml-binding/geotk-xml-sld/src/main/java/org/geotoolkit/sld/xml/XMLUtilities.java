@@ -47,6 +47,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnLineResource;
@@ -146,7 +147,7 @@ public final class XMLUtilities {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logger.getLogger(XMLUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(XMLUtilities.class).log(Level.SEVERE, null, ex);
                 return null;
             }
             

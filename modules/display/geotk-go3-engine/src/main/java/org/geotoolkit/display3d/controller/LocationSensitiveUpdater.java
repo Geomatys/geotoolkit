@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display3d.container.A3DContainer;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
@@ -94,7 +95,7 @@ public class LocationSensitiveUpdater extends Thread{
                 //we dont need to consume much cpu
                 sleep(100);
             } catch (InterruptedException ex) {
-                Logger.getLogger(LocationSensitiveUpdater.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger(LocationSensitiveUpdater.class).log(Level.SEVERE, null, ex);
             }
 
         }

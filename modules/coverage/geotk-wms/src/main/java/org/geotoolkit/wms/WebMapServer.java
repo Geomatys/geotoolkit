@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetMap111;
 import org.geotoolkit.wms.v130.GetCapabilities130;
@@ -37,6 +38,8 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Johann Sorel (Geomatys)
  */
 public class WebMapServer {
+
+    private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
     private final WMSVersion version;
     private final URL serverURL;
@@ -98,9 +101,9 @@ public class WebMapServer {
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
-                        Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "BAD URL !!! The server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
+                        LOGGER.log(Level.SEVERE, "Wrong URL, the server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
-                        Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "MALFORMED URL !!! The server doesn't answer. ", ex1);
+                        LOGGER.log(Level.SEVERE, "Malformed URL, the server doesn't answer. ", ex1);
                     }
                 }
             }
@@ -110,10 +113,10 @@ public class WebMapServer {
         try {
             thread.join(10000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "THREAD DEATH !!! The thread to obtain GetCapabilities is dead.", ex);
+            LOGGER.log(Level.SEVERE, "The thread to obtain GetCapabilities doesn't answer.", ex);
         }
         if ((System.currentTimeMillis() - start) > 10000) {
-            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, "TIMEOUT !!! The server makes too much time to answer. ");
+            LOGGER.log(Level.SEVERE, "TimeOut error, the server takes too much time to answer. ");
         }
 
         return capabilities;

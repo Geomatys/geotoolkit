@@ -38,6 +38,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -63,6 +64,8 @@ import org.opengis.style.Style;
  * @author Johann Sorel (Geomatys)
  */
 public abstract  class ContextContainer2D extends AbstractContainer2D{
+
+    private static final Logger LOGGER = Logging.getLogger(ContextContainer2D.class);
 
     public static final Style DEFAULT_SELECTION_STYLE;
 
@@ -139,9 +142,9 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(ContextContainer2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(ContextContainer2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         return XRectangle2D.INFINITY;
@@ -178,9 +181,9 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(ContextContainer2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(ContextContainer2D.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
         GeneralEnvelope genv = new GeneralEnvelope(crs);

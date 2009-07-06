@@ -29,6 +29,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.RequestStatus;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -65,7 +66,7 @@ public class RequestStatusType implements RequestStatus {
     private XMLGregorianCalendar timestamp;
     
     @XmlTransient
-    private Logger logger = Logger.getLogger("org.constellation.cat.csw");
+    private Logger logger = Logging.getLogger(RequestStatusType.class);
 
     /**
      * An empty constructor used by JAXB

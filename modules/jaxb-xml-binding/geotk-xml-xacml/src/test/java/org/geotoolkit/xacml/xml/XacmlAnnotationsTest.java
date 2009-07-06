@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Cédric Briançon
  */
 public class XacmlAnnotationsTest {
-     private Logger logger = Logger.getLogger("org.geotoolkit.xacml.xml");
+     private Logger logger = Logging.getLogger("org.geotoolkit.xacml.xml");
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

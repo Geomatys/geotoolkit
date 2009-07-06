@@ -39,6 +39,7 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -60,7 +61,7 @@ public class ContextNode extends A3DGraphic{
         try {
             this.attachChild(buildPlan(context.getBounds()));
         } catch (IOException ex) {
-            Logger.getLogger(ContextNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(ContextNode.class).log(Level.SEVERE, null, ex);
         }
 
         for(final MapLayer layer : context.layers()){

@@ -19,6 +19,7 @@ package org.geotoolkit.temporal.object;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.OrdinalReferenceSystem;
@@ -34,6 +35,8 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author Mehdi Sidhoum (Geomatys)
  */
 public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, Separation {
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultTemporalGeometricPrimitive.class);
 
     /**
      * Returns the distance from this TM_GeometricPrimitive to another TM_GeometricPrimitive, 
@@ -51,7 +54,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
                     try {
                         throw new Exception("the TM_TemporalPositions are not both associated with the same TM_ReferenceSystem !");
                     } catch (Exception ex) {
-                        Logger.getLogger(DefaultTemporalGeometricPrimitive.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, null, ex);
                     }
                 }
             } else if (((Instant) this).getPosition().anyOther() != null) {
@@ -60,7 +63,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
                     try {
                         throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdianlReferenceSystem !");
                     } catch (Exception ex) {
-                        Logger.getLogger(DefaultTemporalGeometricPrimitive.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, null, ex);
                     }
                 }
             } else if (((Instant) other).getPosition().anyOther() != null) {
@@ -69,7 +72,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
                     try {
                         throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdianlReferenceSystem !");
                     } catch (Exception ex) {
-                        Logger.getLogger(DefaultTemporalGeometricPrimitive.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, null, ex);
                     }
                 }
             }
