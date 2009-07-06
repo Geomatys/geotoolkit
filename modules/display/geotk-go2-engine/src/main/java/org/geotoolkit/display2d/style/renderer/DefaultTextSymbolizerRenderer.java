@@ -293,6 +293,21 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                 g.draw(shape);
             }
         }
+
+
+        Paint paint = null;
+        if(GO2Utilities.isStatic(symbol.getSource().getFill().getColor())){
+            paint = symbol.getSource().getFill().getColor().evaluate(null, Color.class);
+        }
+
+        if(paint == null){
+            paint = Color.BLACK;
+        }
+
+        g.setPaint(paint);
+        g.setFont(font);
+        g.drawString("T", 0, 0);
+
     }
 
 }

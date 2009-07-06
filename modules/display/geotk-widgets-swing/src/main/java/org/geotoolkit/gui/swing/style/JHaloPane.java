@@ -24,7 +24,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Halo;
 
@@ -35,7 +34,6 @@ import org.opengis.style.Halo;
  */
 public class JHaloPane extends StyleElementEditor<Halo> {
 
-    private Halo halo = null;
     private MapLayer layer = null;
 
     /** Creates new form JHaloPanel */
@@ -62,30 +60,19 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
     @Override
     public void parse(Halo halo) {
-        this.halo = halo;
-
-//        if (halo != null) {
-//            guiFill.setEdited(halo.getFill());
-//            guiRadius.setExpression(halo.getRadius());
-//        }
+        if (halo != null) {
+            guiFill.parse(halo.getFill());
+            guiRadius.parse(halo.getRadius());
+        }
     }
 
     @Override
     public Halo create() {
-//        if (halo == null) {
-//            halo = new StyleBuilder().createHalo();
-//        }
-
-        apply();
-        return halo;
+        return getStyleFactory().halo(guiFill.create(), guiRadius.create());
     }
 
+    @Override
     public void apply() {
-//        if (halo != null) {
-//            halo.setFill(guiFill.getEdited());
-//            halo.setRadius(guiRadius.getExpression());
-//
-//        }
     }
 
     /** This method is called from within the constructor to
@@ -119,7 +106,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiRadius, GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE))
+                    .addComponent(guiRadius, GroupLayout.PREFERRED_SIZE, 22, Short.MAX_VALUE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
@@ -132,4 +119,5 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     private JNumberExpressionPane guiRadius;
     private JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
 }

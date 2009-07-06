@@ -72,9 +72,25 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
 
             //we validate the previous edition pane
             if (editor != null) {
-                editor.apply();
-            }
 
+                Object obj = editor.create();
+                if(obj instanceof Symbolizer){
+                    TreePath oldPath = e.getOldLeadSelectionPath();
+                    Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
+                    MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
+
+                    int index =rule.symbolizers().indexOf(symbol);
+                    if(index >=0){
+                        ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).setUserObject(obj);
+                        rule.symbolizers().remove(symbol);
+                        rule.symbolizers().add((Symbolizer) obj);
+                    }
+
+                }else{
+                    editor.apply();
+                }
+                
+            }
            
             if (path != null) {
                 Object val = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
@@ -188,8 +204,25 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
     
     @Override
     public void apply() {
+        
         if (editor != null) {
-            editor.apply();
+
+            Object obj = editor.create();
+            if(obj instanceof Symbolizer){
+                TreePath oldPath = tree.getLeadSelectionPath();
+                Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
+                MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
+
+                int index =rule.symbolizers().indexOf(symbol);
+                if(index >=0){
+                    ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).setUserObject(obj);
+                    rule.symbolizers().remove(symbol);
+                    rule.symbolizers().add((Symbolizer) obj);
+                }
+
+            }else{
+                editor.apply();
+            }
         }
 
         style = tree.getStyle();

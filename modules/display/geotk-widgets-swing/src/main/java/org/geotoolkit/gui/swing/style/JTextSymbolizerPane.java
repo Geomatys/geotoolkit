@@ -45,7 +45,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
     /** Creates new form JTextSymbolizer */
     public JTextSymbolizerPane() {
         initComponents();
-            }
+    }
 
     /**
      * {@inheritDoc }
@@ -59,7 +59,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         guiGeom.setLayer(layer);
         guiLabel.setLayer(layer);
         guiPlacement.setLayer(layer);
-            }
+    }
 
     /**
      * {@inheritDoc }
@@ -67,7 +67,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
     @Override
     public MapLayer getLayer() {
         return layer;
-            }
+    }
 
     /**
      * {@inheritDoc }
@@ -98,7 +98,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
             guiFont.parse(symbol.getFont());
             guiHalo.parse(symbol.getHalo());
             guiPlacement.parse(symbol.getLabelPlacement());        
-    }
+        }
     }
 
     /** This method is called from within the constructor to

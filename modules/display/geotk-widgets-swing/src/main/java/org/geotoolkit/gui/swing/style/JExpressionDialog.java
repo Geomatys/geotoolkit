@@ -116,13 +116,10 @@ public class JExpressionDialog extends javax.swing.JDialog {
 
             lst_field.removeAll();
 
-            Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getFeatureSource().getSchema().getDescriptors();
-            Iterator<PropertyDescriptor> it = col.iterator();
-
-            PropertyDescriptor desc;
-            Vector<String> vec = new Vector<String>();
-            while (it.hasNext()) {
-                desc = it.next();
+            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getFeatureSource().getSchema().getDescriptors();
+            final Vector<String> vec = new Vector<String>();
+            
+            for(PropertyDescriptor desc : col){
                 vec.add(desc.getName().toString());
             }
 

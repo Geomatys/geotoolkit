@@ -42,7 +42,7 @@ public class JFontPane extends StyleElementEditor<Font>{
     /** Creates new form JfontPanel */
     public JFontPane() {
         initComponents();
-//        init();
+        init();
     }
     
     private void init(){

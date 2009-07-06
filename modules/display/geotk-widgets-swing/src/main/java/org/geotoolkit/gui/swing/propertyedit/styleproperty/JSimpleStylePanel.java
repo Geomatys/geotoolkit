@@ -76,30 +76,17 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
     private MapLayer layer;
     private StyleElementEditor<? extends Symbolizer> detail = null;
 
-    /** Creates new form XMLStylePanel */
+    
     public JSimpleStylePanel() {
         check.setSelected(false);
         check.setText(MessageBundle.getString("property_style_label_enable"));
-        check.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(check.isSelected()){
-                    labelPane.add(BorderLayout.CENTER,new JScrollPane(textSymbolPane));
-                }else{
-                    labelPane.removeAll();
-                    labelPane.add(BorderLayout.NORTH,topLabelBar);
-                }
-                labelPane.revalidate();
-                labelPane.repaint();
-    }
-        });
+        labelPane.add(BorderLayout.NORTH,topLabelBar);
+        labelPane.add(BorderLayout.CENTER,new JScrollPane(textSymbolPane));
 
         topLabelBar.setFloatable(false);
         topLabelBar.setLayout(new FlowLayout(FlowLayout.CENTER));
         topLabelBar.add(check);
-
-        labelPane.add(BorderLayout.NORTH,topLabelBar);
 
         add(MessageBundle.getString("property_style_style"), stylePane);
         add(MessageBundle.getString("property_style_label"), labelPane);
@@ -143,11 +130,12 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
         if(layer instanceof MapLayer){
             this.layer = (MapLayer) layer;
             parse();
-            }
+        }
     }
 
     private void parse() {
         stylePane.removeAll();
+        textSymbolPane.setLayer(layer);
 
         if (layer != null) {
                 
@@ -238,12 +226,14 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
                 }
 
                 JScrollPane jsp = new JScrollPane(detail);
-                    jsp.setBorder(null);
-                    jsp.setViewportBorder(null);
+                jsp.setBorder(null);
+                jsp.setViewportBorder(null);
                 stylePane.add(BorderLayout.CENTER, jsp );
             }
             
         }
+
+        check.setSelected(false);
 
         loop:
         for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
@@ -258,6 +248,9 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
             }
         }
 
+        if(!check.isSelected()){
+            textSymbolPane.parse(new DefaultStyleFactory().textSymbolizer());
+        }
 
         stylePane.revalidate();
         stylePane.repaint();
@@ -272,7 +265,5 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
     public String getToolTip() {
         return "";
     }
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
+
 }

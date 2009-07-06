@@ -164,7 +164,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
-        names.add(expression.getPropertyName());
+        String propName = expression.getPropertyName();
+        if(!propName.trim().isEmpty()){
+            names.add(propName);
+        }
         return names;
     }
     
