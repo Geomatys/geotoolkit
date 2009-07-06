@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.type.DefaultFeatureType;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -38,8 +39,7 @@ import org.opengis.util.InternationalString;
  * @author Justin
  * @author Ben Caradoc-Davies, CSIRO Exploration and Mining
  */
-public class DefaultSimpleFeatureType extends DefaultFeatureType implements
-        SimpleFeatureType {
+public class DefaultSimpleFeatureType extends DefaultFeatureType implements SimpleFeatureType {
 
     // list of types
     List<AttributeType> types = null;

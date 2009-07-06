@@ -17,7 +17,6 @@
 package org.geotoolkit.feature.simple;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,9 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.DefaultGeometryAttribute;
-import org.geotools.feature.IllegalAttributeException;
 import org.geotoolkit.feature.type.Types;
+import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
+
 import org.geotools.geometry.jts.ReferencedEnvelope;
+
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -42,8 +44,7 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.util.Converters;
-
+import org.geotools.feature.IllegalAttributeException;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -58,11 +59,11 @@ public class DefaultSimpleFeature implements SimpleFeature {
     /**
      * The actual values held by this feature
      */
-    protected Object[] values;
+    protected final Object[] values;
     /**
      * The attribute name -> position index
      */
-    protected Map<String, Integer> index;
+    protected final Map<String, Integer> index;
     /**
      * The set of user data attached to the feature (lazily created)
      */
@@ -95,8 +96,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
      * @param validating
      */
     public DefaultSimpleFeature(final Object[] values, final SimpleFeatureType featureType, final FeatureId id,
-            final boolean validating)
-    {
+            final boolean validating){
         this.id = id;
         this.featureType = featureType;
         this.values = values;
@@ -158,14 +158,13 @@ public class DefaultSimpleFeature implements SimpleFeature {
 
     @Override
     public List<Object> getAttributes() {
-        return new ArrayList(Arrays.asList(values));
+        return UnmodifiableArrayList.wrap(values);
     }
 
     @Override
     public Object getDefaultGeometry() {
         // should be specified in the index as the default key (null)
-        Object defaultGeometry =
-                index.get(null) != null ? getAttribute(index.get(null)) : null;
+        Object defaultGeometry = index.get(null) != null ? getAttribute(index.get(null)) : null;
 
         // not found? do we have a default geometry at all?
         if (defaultGeometry == null) {

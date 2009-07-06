@@ -38,85 +38,84 @@ import org.opengis.util.InternationalString;
  *
  */
 public class DefaultFeatureType extends DefaultComplexType implements FeatureType {
-	
-	private GeometryDescriptor defaultGeometry;
-	private CoordinateReferenceSystem crs;
 
-	public DefaultFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
+    private GeometryDescriptor defaultGeometry;
+    private CoordinateReferenceSystem crs;
+
+    public DefaultFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
-            final List<Filter> restrictions, final AttributeType superType, final InternationalString description)
-    {
-		super(name, schema, true, isAbstract, restrictions, superType, description);
-		this.defaultGeometry = defaultGeometry;
-		
-		if ( defaultGeometry != null && 
-		        !(defaultGeometry.getType() instanceof GeometryType ) )  {
-		    throw new IllegalArgumentException( "defaultGeometry must have a GeometryType");
-		}
-        
-	}
+            final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
+        super(name, schema, true, isAbstract, restrictions, superType, description);
+        this.defaultGeometry = defaultGeometry;
+
+        if (defaultGeometry != null &&
+                !(defaultGeometry.getType() instanceof GeometryType)) {
+            throw new IllegalArgumentException("defaultGeometry must have a GeometryType");
+        }
+
+    }
 
     @Override
-	public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-	    if(crs == null) {
-    	    if ( getGeometryDescriptor() != null && getGeometryDescriptor().getType().getCoordinateReferenceSystem() != null) {
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        if (crs == null) {
+            if (getGeometryDescriptor() != null && getGeometryDescriptor().getType().getCoordinateReferenceSystem() != null) {
                 crs = defaultGeometry.getType().getCoordinateReferenceSystem();
             }
-    	    if(crs == null) {
-        	    for (PropertyDescriptor property : getDescriptors()) {
-                    if ( property instanceof GeometryDescriptor ) {
+            if (crs == null) {
+                for (PropertyDescriptor property : getDescriptors()) {
+                    if (property instanceof GeometryDescriptor) {
                         GeometryDescriptor geometry = (GeometryDescriptor) property;
-                        if ( geometry.getType().getCoordinateReferenceSystem() != null ) {
+                        if (geometry.getType().getCoordinateReferenceSystem() != null) {
                             crs = geometry.getType().getCoordinateReferenceSystem();
                             break;
                         }
                     }
                 }
-    	    }
-	    }
-        
+            }
+        }
+
         return crs;
-	}
-	
+    }
+
     @Override
-	public GeometryDescriptor getGeometryDescriptor() {
-	    if (defaultGeometry == null) {
+    public GeometryDescriptor getGeometryDescriptor() {
+        if (defaultGeometry == null) {
             for (PropertyDescriptor property : getDescriptors()) {
-                if (property instanceof GeometryDescriptor ) {
-                    defaultGeometry = (GeometryDescriptor) property; 
+                if (property instanceof GeometryDescriptor) {
+                    defaultGeometry = (GeometryDescriptor) property;
                     break;
                 }
             }
         }
         return defaultGeometry;
-	}
-	
+    }
+
     @Override
-	public boolean equals(Object o) {
-	    if(this == o) {
-	        return true;
-	    }
-	    if(!super.equals(o)){
-	        return false;
-	    }
-	    if (getClass() != o.getClass()) {
-	        return false;
-	    }
-	    FeatureType other = (FeatureType) o;
-	    if (!Utilities.equals( defaultGeometry, other.getGeometryDescriptor())) {
-	        return false;
-	    }
-	    return true;
-	}
-	
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        FeatureType other = (FeatureType) o;
+        if (!Utilities.equals(defaultGeometry, other.getGeometryDescriptor())) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
-	public int hashCode() {
-		int hashCode = super.hashCode();
-		
-		if ( defaultGeometry != null ) {
-			hashCode = hashCode ^ defaultGeometry.hashCode();
-		}
-		
-		return hashCode;
-	}
+    public int hashCode() {
+        int hashCode = super.hashCode();
+
+        if (defaultGeometry != null) {
+            hashCode = hashCode ^ defaultGeometry.hashCode();
+        }
+
+        return hashCode;
+    }
 }
