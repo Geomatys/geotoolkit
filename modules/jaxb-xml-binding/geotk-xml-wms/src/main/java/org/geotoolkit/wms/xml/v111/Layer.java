@@ -453,16 +453,13 @@ public class Layer extends AbstractLayer {
          *<Dimension name="time" ..../>
          *<Extent name="time" ...>value1,value2,....</Extent> 
          */
-        List<Extent> listExt =  getExtent();   
-        System.out.println("Nombre d'extent : "+ listExt.size());     
+        List<Extent> listExt =  getExtent();      
         for (int i=0;i<listExt.size();i++){  
             AbstractDimension dimTmp = list.get(i);
             Extent extTmp = listExt.get(i);
             if(dimTmp.getDefault() == null)
                 dimTmp.setDefault(extTmp.getDefault());
             dimTmp.setValue(extTmp.getvalue());
-            System.out.println("Dimension dans getcapabilities : "+  dimTmp.getName());
-            System.out.println("Extent dans getcapabilities : "+ extTmp.getvalue());
         }
    
         return list;
