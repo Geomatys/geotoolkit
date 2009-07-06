@@ -216,6 +216,36 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 //        JAXBElementPropertyNameType> 
 //        JAXBElementBinaryOperatorType>
 
+        if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName()) ){
+
+            List<Serializable> content = svg.getContent();
+            Object value = null;
+            for(Serializable obj : content){
+                if(obj instanceof String && !obj.toString().trim().isEmpty()){
+                    value = obj.toString();
+                }else if(obj instanceof JAXBElement<?>){
+                    value = visitExpression( (JAXBElement<?>)obj );
+                }
+            }
+
+            if(value != null){
+                //its a float array
+                float[] values = new float[]{0,0};
+                String[] parts = value.toString().split(" ");
+
+                for(int i=0;i < parts.length && i<2 ;i++){
+                    try{
+                        Float f = Float.valueOf(parts[0]);
+                        values[i] = f.floatValue();
+                    }catch(NumberFormatException ne){}
+                }
+
+                return values;
+            }else{
+                return null;
+            }
+
+        }
 
         List<Serializable> content = svg.getContent();
         for(Serializable obj : content){

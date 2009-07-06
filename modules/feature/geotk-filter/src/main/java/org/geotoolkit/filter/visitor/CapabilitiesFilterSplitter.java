@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.geotools.filter.IllegalFilterException;
 
 import org.opengis.feature.type.FeatureType;
@@ -128,29 +128,29 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * The stack holding the bits of the filter that are not processable by something with the given
      * {@link FilterCapabilities}
      */
-    private Stack postStack = new Stack();
+    private final Stack postStack = new Stack();
     /**
      * The stack holding the bits of the filter that <b>are</b> processable by something with the
      * given {@link FilterCapabilities}
      */
-    private Stack preStack = new Stack();
+    private final Stack preStack = new Stack();
     /**
      * Operates similar to postStack. When a update is determined to affect an attribute expression
      * the update filter is pushed on to the stack, then ored with the filter that contains the
      * expression.
      */
-    private Set changedStack = new HashSet();
+    private final Set changedStack = new HashSet();
     /**
      * The given filterCapabilities that we're splitting on.
      */
-    private DefaultFilterCapabilities fcs = null;
-    private FeatureType parent = null;
+    private final DefaultFilterCapabilities fcs;
+    private final FeatureType parent;
     private Filter original = null;
     /**
      * If we're in the middle of a client-side transaction, this object will help us figure out what
      * we need to handle from updates/deletes that we're tracking client-side.
      */
-    private ClientTransactionAccessor transactionAccessor;
+    private final ClientTransactionAccessor transactionAccessor;
     private final FilterFactory ff;
 
     /**
@@ -182,13 +182,13 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      *         by geotools.
      */
     public Filter getFilterPost() {
-        if (!changedStack.isEmpty()) // Return the original filter to ensure that
-        // correct features are filtered
-        {
+        if (!changedStack.isEmpty()){
+            // Return the original filter to ensure that
+            // correct features are filtered
             return original;
         }
 
-        if (postStack.size() > 1) {
+        if (postStack.size() > 1){
             LOGGER.warning("Too many post stack items after run: " + postStack.size());
         }
 

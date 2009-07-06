@@ -435,7 +435,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
                     lastCRS = crs;
                 }
                 
-                final GeneralEnvelope bounds = CRS.transform(transform, candidateEnvelope);
+//                final GeneralEnvelope bounds = CRS.transform(transform, candidateEnvelope);
                 
                 
 //                if (graphicsEnvelope.isNull()) {
@@ -445,10 +445,11 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
 //                }
             } catch (FactoryException exception) {
                 handleException(sourceClassName, sourceMethodName, exception);
-            } catch (TransformException exception) {
-                handleException(sourceClassName, sourceMethodName, exception);
-                // Continue. The envelope for this graphic will be ignored.
             }
+//            catch (TransformException exception) {
+//                handleException(sourceClassName, sourceMethodName, exception);
+//                // Continue. The envelope for this graphic will be ignored.
+//            }
         }
     }
 

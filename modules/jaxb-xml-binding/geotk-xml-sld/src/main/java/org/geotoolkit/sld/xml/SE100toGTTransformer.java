@@ -139,11 +139,38 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 //        JAXBElementBinaryOperatorType>
         
         if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(css.getName()) ){
-            //its a float array
-            float[] values = null;
-            
-            return values;
-        }else if(css.getContent().size() >= 1){
+
+            List<Serializable> content = css.getContent();
+            Object value = null;
+            for(Serializable obj : content){
+                if(obj instanceof String && !obj.toString().trim().isEmpty()){
+                    value = obj.toString();
+                }else if(obj instanceof JAXBElement<?>){
+                    value = visitExpression( (JAXBElement<?>)obj );
+                }
+            }
+
+            if(value != null){
+                //its a float array
+                float[] values = new float[]{0,0};
+                String[] parts = value.toString().split(" ");
+
+                for(int i=0;i < parts.length && i<2 ;i++){
+                    try{
+                        Float f = Float.valueOf(parts[0]);
+                        values[i] = f.floatValue();
+                    }catch(NumberFormatException ne){}
+                }
+
+                return values;
+            }else{
+                return null;
+            }
+
+        }
+
+
+        if(css.getContent().size() >= 1){
             for(Object obj : css.getContent()){
                 if(obj instanceof String){
 //                    System.out.println("laaaaa " + obj);
