@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class AbsFunction extends AbstractFunction {
 
     public AbsFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.ABS, new Expression[] {expression}, null);
+        super(MathFunctionFactory.ABS, new Expression[] {expression}, null);
     }
 
     @Override

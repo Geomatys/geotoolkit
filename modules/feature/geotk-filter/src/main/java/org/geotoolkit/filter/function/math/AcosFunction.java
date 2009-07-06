@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class AcosFunction extends AbstractFunction {
 
     public AcosFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.ACOS, new Expression[] {expression}, null);
+        super(MathFunctionFactory.ACOS, new Expression[] {expression}, null);
     }
 
     @Override

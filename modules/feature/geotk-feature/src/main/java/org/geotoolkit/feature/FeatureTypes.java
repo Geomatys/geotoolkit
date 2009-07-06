@@ -28,7 +28,6 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotoolkit.filter.function.LengthFunction;
 import org.geotools.geometry.jts.JTS;
 import org.geotoolkit.util.Utilities;
 import org.geotools.feature.IllegalAttributeException;
@@ -51,6 +50,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.filter.function.other.LengthFunction;
 
 /**
  * Utility methods for working against the FeatureType interface.

@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class TanFunction extends AbstractFunction {
 
     public TanFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.TAN, new Expression[] {expression}, null);
+        super(MathFunctionFactory.TAN, new Expression[] {expression}, null);
     }
 
     @Override

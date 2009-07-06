@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class FloorFunction extends AbstractFunction {
 
     public FloorFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.FLOOR, new Expression[] {expression}, null);
+        super(MathFunctionFactory.FLOOR, new Expression[] {expression}, null);
     }
 
     @Override

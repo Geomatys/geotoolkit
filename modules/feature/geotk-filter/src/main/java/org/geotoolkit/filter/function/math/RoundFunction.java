@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class RoundFunction extends AbstractFunction {
 
     public RoundFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.ROUND, new Expression[] {expression}, null);
+        super(MathFunctionFactory.ROUND, new Expression[] {expression}, null);
     }
 
     @Override

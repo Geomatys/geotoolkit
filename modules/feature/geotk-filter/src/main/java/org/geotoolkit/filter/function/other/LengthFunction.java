@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.function;
+package org.geotoolkit.filter.function.other;
 
+import org.geotoolkit.filter.function.*;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 

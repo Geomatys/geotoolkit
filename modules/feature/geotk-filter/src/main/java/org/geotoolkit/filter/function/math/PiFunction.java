@@ -23,7 +23,7 @@ import org.geotoolkit.filter.function.AbstractFunction;
 public class PiFunction extends AbstractFunction {
 
     public PiFunction() {
-        super(DefaultMathFunctionFactory.PI, null, null);
+        super(MathFunctionFactory.PI, null, null);
     }
 
     @Override

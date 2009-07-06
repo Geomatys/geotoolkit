@@ -1,1 +1,2 @@
-org.geotoolkit.filter.function.math.DefaultMathFunctionFactory
+org.geotoolkit.filter.function.math.MathFunctionFactory
+org.geotoolkit.filter.function.other.OtherFunctionFactory

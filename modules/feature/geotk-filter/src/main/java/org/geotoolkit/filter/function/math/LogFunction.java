@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class LogFunction extends AbstractFunction {
 
     public LogFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.LOG, new Expression[] {expression}, null);
+        super(MathFunctionFactory.LOG, new Expression[] {expression}, null);
     }
 
     @Override

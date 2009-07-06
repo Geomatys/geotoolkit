@@ -15,16 +15,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.function;
+package org.geotoolkit.filter.function.other;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.filter.expression.Expression;
 
-
+/**
+ * Function which evaluate the first attribut of a feature and if it's a
+ * Geometry, return it's type.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
 public class GeometryTypeFunction extends AbstractFunction {
 
     public GeometryTypeFunction(final Expression expression) {
-        super("geometryType", new Expression[] {expression}, null);
+        super(OtherFunctionFactory.GEOMETRY_TYPE, new Expression[] {expression}, null);
     }
 
     @Override

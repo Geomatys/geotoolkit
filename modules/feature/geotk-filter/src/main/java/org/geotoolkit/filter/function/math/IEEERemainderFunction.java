@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class IEEERemainderFunction extends AbstractFunction {
 
     public IEEERemainderFunction(final Expression expression1, final Expression expression2) {
-        super(DefaultMathFunctionFactory.IEEE_REMAINDER, new Expression[] {expression1, expression2}, null);
+        super(MathFunctionFactory.IEEE_REMAINDER, new Expression[] {expression1, expression2}, null);
     }
 
     @Override

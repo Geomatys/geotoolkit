@@ -27,7 +27,6 @@ import org.geotools.feature.NameImpl;
 import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotools.filter.IllegalFilterException;
-import org.geotoolkit.filter.function.LengthFunction;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -43,6 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 
 
 /**
@@ -605,7 +605,7 @@ public class AttributeTypeBuilder {
         if (length < 0) {
             return null;
         }
-        final LengthFunction lengthFunction = (LengthFunction) ff.function("LengthFunction",
+        final Expression lengthFunction = ff.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT,
                 new Expression[]{ff.property(".")});
         if (lengthFunction == null) {
             return null;

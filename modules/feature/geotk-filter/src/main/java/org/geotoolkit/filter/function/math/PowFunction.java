@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class PowFunction extends AbstractFunction {
 
     public PowFunction(final Expression expression1, final Expression expression2) {
-        super(DefaultMathFunctionFactory.POW, new Expression[] {expression1, expression2}, null);
+        super(MathFunctionFactory.POW, new Expression[] {expression1, expression2}, null);
     }
 
     @Override

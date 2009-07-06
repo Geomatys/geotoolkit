@@ -42,7 +42,6 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.IllegalFilterException;
-import org.geotoolkit.filter.function.GeometryTypeFunction;
 import org.geotoolkit.filter.function.math.CeilFunction;
 import org.geotoolkit.geometry.jts.LiteCoordinateSequence;
 import org.geotoolkit.geometry.jts.LiteCoordinateSequenceFactory;
@@ -61,6 +60,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.function.other.GeometryTypeFunction;
 
 
 public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {

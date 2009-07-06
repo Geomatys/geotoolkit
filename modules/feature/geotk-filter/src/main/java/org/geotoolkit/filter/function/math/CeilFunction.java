@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class CeilFunction extends AbstractFunction {
 
     public CeilFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.CEIL, new Expression[] {expression}, null);
+        super(MathFunctionFactory.CEIL, new Expression[] {expression}, null);
     }
 
     @Override

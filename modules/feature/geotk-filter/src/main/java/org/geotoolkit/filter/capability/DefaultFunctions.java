@@ -19,9 +19,7 @@ package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.capability.Functions;
 

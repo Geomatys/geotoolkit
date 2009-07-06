@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class SinFunction extends AbstractFunction {
 
     public SinFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.SIN, new Expression[] {expression}, null);
+        super(MathFunctionFactory.SIN, new Expression[] {expression}, null);
     }
 
     @Override

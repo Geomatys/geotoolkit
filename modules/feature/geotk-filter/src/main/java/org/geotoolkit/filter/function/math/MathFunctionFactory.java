@@ -27,7 +27,7 @@ import org.opengis.filter.expression.Literal;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultMathFunctionFactory implements FunctionFactory{
+public class MathFunctionFactory implements FunctionFactory{
 
     public static final String ABS                  = "abs";
     public static final String ACOS                 = "acos";

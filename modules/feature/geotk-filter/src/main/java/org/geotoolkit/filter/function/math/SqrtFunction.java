@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class SqrtFunction extends AbstractFunction {
 
     public SqrtFunction(final Expression expression) {
-        super(DefaultMathFunctionFactory.SQRT, new Expression[] {expression}, null);
+        super(MathFunctionFactory.SQRT, new Expression[] {expression}, null);
     }
 
     @Override

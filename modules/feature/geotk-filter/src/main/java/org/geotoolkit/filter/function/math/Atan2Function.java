@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 public class Atan2Function extends AbstractFunction {
 
     public Atan2Function(final Expression expression1, final Expression expression2) {
-        super(DefaultMathFunctionFactory.ATAN2, new Expression[] {expression1, expression2}, null);
+        super(MathFunctionFactory.ATAN2, new Expression[] {expression1, expression2}, null);
     }
 
     @Override
