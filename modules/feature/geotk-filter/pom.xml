@@ -2,10 +2,8 @@
 <!-- =======================================================================    
         Maven Project Configuration File                                        
                                                                                 
-        The Geotools Project                                                    
-            http://www.geotools.org/                                            
-                                                                                
-        Version: $Id$              
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0" 
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -75,6 +73,11 @@
           <artifactId>gtm-api</artifactId>
       </dependency>
 
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.7.0</version>
+      </dependency>
   </dependencies>
             
   </project>

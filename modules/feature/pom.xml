@@ -104,6 +104,7 @@
   <modules>
     <module>geotk-filter</module>
     <module>geotk-feature</module>
+    <module>geotk-cql</module>
   </modules>
 
 </project>

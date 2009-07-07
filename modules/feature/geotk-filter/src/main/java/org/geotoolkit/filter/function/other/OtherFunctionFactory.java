@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.FunctionFactory;
@@ -22,6 +21,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
+
 
 /**
  * Factory registering the various functions.
@@ -32,13 +32,14 @@ public class OtherFunctionFactory implements FunctionFactory{
 
     public static final String GEOMETRY_TYPE            = "geometryType";
     public static final String EXPRESSION_VALUE_LENGHT  = "length";
-
+    public static final String PROPERTY_EXISTS          = "PropertyExists";
     private static final String[] NAMES;
 
-    static{
-        NAMES = new String[]{
-         GEOMETRY_TYPE,
-         EXPRESSION_VALUE_LENGHT};
+    static {
+        NAMES = new String[] {
+                    GEOMETRY_TYPE,
+                    EXPRESSION_VALUE_LENGHT,
+                    PROPERTY_EXISTS};
     }
 
     /**
@@ -57,6 +58,7 @@ public class OtherFunctionFactory implements FunctionFactory{
 
         if(name.equals(GEOMETRY_TYPE))                  return new GeometryTypeFunction(parameters[0]);
         else if(name.equals(EXPRESSION_VALUE_LENGHT))   return new LengthFunction((PropertyName) parameters[0]);
+        else if(name.equals(PROPERTY_EXISTS))           return new PropertyExistsFunction(parameters[0]);
 
         throw new IllegalArgumentException("Unknowed function name : "+ name);
     }
