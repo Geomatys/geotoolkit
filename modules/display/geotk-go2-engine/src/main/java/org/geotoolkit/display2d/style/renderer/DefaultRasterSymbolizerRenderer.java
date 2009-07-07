@@ -79,7 +79,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
@@ -136,39 +135,8 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
     public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
 
-
-//        final GeneralEnvelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
-//        bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
-
-        double[] resolution = context.getResolution();
-
-        final CoordinateReferenceSystem gridCRS = projectedCoverage.getCoverageLayer().getBounds().getCoordinateReferenceSystem();
-
-        Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
-        //bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
-
-//        if(!gridCRS.equals(bounds.getCoordinateReferenceSystem())){
-//            try {
-//                bounds = CRS.transform(bounds, gridCRS);
-//            } catch (TransformException ex) {
-//                LOGGER.log(Level.SEVERE, null, ex);
-//            }
-//
-//            DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());
-//            pos.x = resolution[0];
-//            pos.y = resolution[1];
-//
-//            try{
-//                MathTransform trs = context.getMathTransform(context.getObjectiveCRS(), gridCRS);
-//                DirectPosition pos2 = trs.transform(pos, null);
-//                resolution[0] = Math.abs(pos2.getOrdinate(0));
-//                resolution[1] = Math.abs(pos2.getOrdinate(1));
-//            }catch(Exception ex){
-//                throw new PortrayalException(ex);
-//            }
-//
-//        }
-
+        final double[] resolution = context.getResolution();
+        final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
         GridCoverage2D dataCoverage;
@@ -254,8 +222,6 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         CachedSymbolizer outline = symbol.getOutLine();
         if(outline != null){
             GO2Utilities.portray(projectedCoverage, outline, context);
-//            final ProjectedFeature outlineFeature = createFeature(context.getCanvas(), dataCoverage.getEnvelope2D());
-//            GO2Utilities.portray(outlineFeature, outline, context);
         }
 
         context.switchToDisplayCRS();
