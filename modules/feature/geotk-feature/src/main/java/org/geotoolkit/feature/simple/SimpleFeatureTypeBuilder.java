@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.referencing.CRS;
@@ -914,7 +914,7 @@ public class SimpleFeatureTypeBuilder {
             return null;
         }
 
-        return new NameImpl(uri, local);
+        return new DefaultName(uri, local);
     }
 
     /**

@@ -37,7 +37,7 @@ import org.geotools.data.LockingManager;
 import org.geotools.data.Query;
 import org.geotools.data.ServiceInfo;
 import org.geotools.data.Transaction;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeature;
@@ -651,7 +651,7 @@ public abstract class AbstractDataStore implements DataStore {
         String[] typeNames = getTypeNames();
         List<Name> names = new ArrayList<Name>(typeNames.length);
         for (String typeName : typeNames) {
-            names.add(new NameImpl(typeName));
+            names.add(new DefaultName(typeName));
         }
         return names;
     }

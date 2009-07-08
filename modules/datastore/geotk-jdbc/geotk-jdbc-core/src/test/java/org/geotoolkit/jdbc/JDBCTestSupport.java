@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -165,7 +165,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * mixed case names for example)
      */
     protected Name aname( Name raw ) {
-        return new NameImpl( raw.getNamespaceURI(), aname( raw.getLocalPart() ) );
+        return new DefaultName( raw.getNamespaceURI(), aname( raw.getLocalPart() ) );
     }
     
     /**

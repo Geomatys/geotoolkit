@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeType;
@@ -94,7 +94,7 @@ public class DefaultComplexType extends DefaultAttributeType implements ComplexT
 
     @Override
     public PropertyDescriptor getDescriptor(final String name) {
-        return getDescriptor(new NameImpl(name));
+        return getDescriptor(new DefaultName(name));
     }
 
     @Override

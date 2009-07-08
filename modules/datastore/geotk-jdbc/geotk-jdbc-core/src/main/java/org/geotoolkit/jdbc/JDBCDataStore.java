@@ -58,7 +58,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -639,7 +639,7 @@ public final class JDBCDataStore extends ContentDataStore
                         continue;
                     }
 
-                    typeNames.add(new NameImpl(namespaceURI, tableName));
+                    typeNames.add(new DefaultName(namespaceURI, tableName));
                 }
             } finally {
                 closeSafe(tables);
