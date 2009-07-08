@@ -113,13 +113,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-cql</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-cql</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -127,7 +123,12 @@
       <artifactId>geotk-jdbc-postgis</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gtm-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>net.java.dev.timingframework</groupId>
       <artifactId>timingframework</artifactId>

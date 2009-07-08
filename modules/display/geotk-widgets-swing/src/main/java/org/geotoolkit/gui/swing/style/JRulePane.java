@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -36,9 +35,11 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
+
+import org.geotoolkit.filter.text.cql2.CQL;
+import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.jdesktop.swingx.JXTitledPanel;

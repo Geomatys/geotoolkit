@@ -21,7 +21,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotools.data.DataUtilities;
+import org.geotoolkit.data.DataUtilities;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.NameImpl;

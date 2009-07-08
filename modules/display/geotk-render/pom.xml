@@ -100,10 +100,15 @@
       <artifactId>geotk-coverageio-pending</artifactId>
       <version>${geotoolkit.version}</version>
     </dependency>
-    
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-cql</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-cql</artifactId>
+      <version>${geotoolkit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-datastore-core</artifactId>
+      <version>${geotoolkit.version}</version>
     </dependency>
 
     <dependency>
