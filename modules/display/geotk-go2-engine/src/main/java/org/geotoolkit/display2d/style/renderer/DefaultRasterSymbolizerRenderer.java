@@ -135,8 +135,9 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
     public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
 
-        final double[] resolution = context.getResolution();
+        double[] resolution = context.getResolution();
         final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
+        resolution = checkResolution(resolution,bounds);
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
         GridCoverage2D dataCoverage;
@@ -191,7 +192,7 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
             elevationCoverage = elevationCoverage.view(ViewType.GEOPHYSICS);
             final MathTransform2D eleTrs2D = elevationCoverage.getGridGeometry().getGridToCRS2D();
             if(eleTrs2D instanceof AffineTransform){
-                RenderedImage shadowImage = elevationCoverage.getRenderedImage();                
+                RenderedImage shadowImage = elevationCoverage.getRenderedImage();
                 shadowImage = shadowed(shadowImage);
 
                 if(shadowImage.getColorModel() != null && shadowImage.getSampleModel() != null){
@@ -215,7 +216,7 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
             }else{
                 throw new PortrayalException("Could not render elevation model, GridToCRS is a not an AffineTransform, found a " + eleTrs2D.getClass() );
             }
-            
+
         }
 
         //draw the border if there is one---------------------------------------
@@ -314,7 +315,7 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
     // Renderedmage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
+    private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
                 final RenderingHints hints) throws PortrayalException {
 
         coverage = coverage.view(ViewType.RENDERED);
@@ -730,6 +731,26 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         pb.addSource(image);
         pb.add(lookup);
         return JAI.create("lookup", pb, null);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // usefull methods /////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Chack that the resolution asked match at least the span of the envelope.
+     * @param resolution : resolution to check
+     * @param bounds : reference envelope
+     * @return resolution changed if necessary
+     */
+    private static double[] checkResolution(double[] resolution, Envelope bounds) {
+        double span0 = bounds.getSpan(0);
+        double span1 = bounds.getSpan(1);
+
+        if(resolution[0] > span0) resolution[0] = span0;
+        if(resolution[1] > span1) resolution[1] = span1;
+
+        return resolution;
     }
 
 }

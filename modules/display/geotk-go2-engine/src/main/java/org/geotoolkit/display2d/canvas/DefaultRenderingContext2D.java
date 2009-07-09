@@ -259,6 +259,9 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     }
 
     public void dispose(){
+        if(graphics != null){
+            graphics.dispose();
+        }
         reset();
     }
     

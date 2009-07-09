@@ -242,4 +242,10 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         return super.getEnvelope();
     }
 
+    @Override
+    public void dispose() {
+        projectedCoverage.dispose();
+        super.dispose();
+    }
+
 }

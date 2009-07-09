@@ -91,4 +91,15 @@ public class DefaultContextContainer2D extends ContextContainer2D{
         return context;
     }
 
+    @Override
+    public void dispose() {
+        for(GraphicJ2D gra : contextGraphics){
+            gra.dispose();
+        }
+        contextGraphics.clear();
+        super.dispose();
+    }
+
+
+
 }

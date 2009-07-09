@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import org.geotoolkit.display.canvas.*;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -28,6 +27,8 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import org.geotoolkit.display.canvas.CanvasController2D;
+import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.canvas.RenderingContext;

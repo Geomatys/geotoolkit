@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class StatefullProjectedCoverage implements ProjectedCoverage {
 
-    private final Cache<CoverageReadParam,GridCoverage2D> cache = new Cache<CoverageReadParam,GridCoverage2D>();
+    private final Cache<CoverageReadParam,GridCoverage2D> cache = new Cache<CoverageReadParam,GridCoverage2D>(1,0,false);
 
     private final StatefullContextParams params;
     private final CoverageMapLayer layer;
@@ -141,6 +141,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
      */
     @Override
     public void dispose() {
+        cache.clear();
     }
 
     @Override
