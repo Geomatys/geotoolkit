@@ -130,7 +130,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                                       : projectedGeometry.getObjectiveShape();
             }
         }catch (TransformException ex){
-            throw new PortrayalException(ex);
+            throw new PortrayalException("Could not calculate projected geometry",ex);
         }
 
 

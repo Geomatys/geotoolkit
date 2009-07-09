@@ -122,7 +122,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
                     final AffineTransform inverse = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
                     coeff *= Math.abs(XAffineTransform.getScale(inverse));
                 }catch(FactoryException ex){
-                    throw new PortrayalException(ex);
+                    throw new PortrayalException("Could not calculate objective to display transform",ex);
                 }
             }
 
@@ -141,7 +141,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             try {
                 geom = projectedGeometry.getDisplayGeometry();
             } catch (TransformException ex) {
-                throw new PortrayalException(ex);
+                throw new PortrayalException("Could not calculate display projected geometry",ex);
             }
 
             if(geom instanceof Point){

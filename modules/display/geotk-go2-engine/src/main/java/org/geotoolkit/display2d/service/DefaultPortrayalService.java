@@ -109,14 +109,15 @@ public class DefaultPortrayalService implements PortrayalService{
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
         canvas.setBackground(background);
-        
+
+        renderer.setContext(context);
         try {
-            renderer.setContext(context);
             canvas.getController().setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
-            canvas.getController().setTemporalRange(start, end);
         } catch (TransformException ex) {
-            throw new PortrayalException(ex);
+            throw new PortrayalException("Could not set objective crs",ex);
         }
+
+        canvas.getController().setTemporalRange(start, end);
 
         //we specifically say to not repect X/Y proportions
         if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
@@ -191,13 +192,13 @@ public class DefaultPortrayalService implements PortrayalService{
             }
         }
 
+        renderer.setContext(context);
         try {
-            renderer.setContext(context);
             canvas.getController().setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
-            canvas.getController().setTemporalRange(start, end);
         } catch (TransformException ex) {
-            throw new PortrayalException(ex);
+            throw new PortrayalException("Could not set objective crs",ex);
         }
+        canvas.getController().setTemporalRange(start, end);
 
         //we specifically say to not repect X/Y proportions
         final CanvasController2D control = canvas.getController();
@@ -251,11 +252,11 @@ public class DefaultPortrayalService implements PortrayalService{
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
 
+        renderer.setContext(context);
         try {
-            renderer.setContext(context);
             canvas.getController().setObjectiveCRS(coverage.getCoordinateReferenceSystem());
         } catch (TransformException ex) {
-            throw new PortrayalException(ex);
+            throw new PortrayalException("Could not set objective crs",ex);
         }
 
         //we specifically say to not repect X/Y proportions
@@ -263,7 +264,7 @@ public class DefaultPortrayalService implements PortrayalService{
         try {
             canvas.getController().setVisibleArea(mapArea);
         } catch (IllegalArgumentException ex) {
-            throw new PortrayalException(ex);
+            throw new PortrayalException("Could not set map to requested area",ex);
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
         }
@@ -283,11 +284,11 @@ public class DefaultPortrayalService implements PortrayalService{
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
 
+        renderer.setContext(context);
         try {
-            renderer.setContext(context);
             canvas.getController().setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
         } catch (TransformException ex) {
-            throw new PortrayalException(ex);
+            throw new PortrayalException("Could not set objective crs",ex);
         }
 
         //we specifically say to not repect X/Y proportions

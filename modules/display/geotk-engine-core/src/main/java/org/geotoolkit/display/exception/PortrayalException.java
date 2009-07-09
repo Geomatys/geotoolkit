@@ -26,6 +26,8 @@ public class PortrayalException extends Exception{
 
     private static final String ERROR = "Portrayal exception";
     private static final long serialVersionUID = 3200411272785006830L;
+
+    private Exception wrapped = null;
     
     public PortrayalException(){
         super(ERROR);
@@ -44,11 +46,36 @@ public class PortrayalException extends Exception{
     }
     
     public PortrayalException(Exception ex){
-        super(ERROR +" : "+ explore(ex), ex);
+        super(ERROR +" : ");
+        wrapped = ex;
     }
-    
-    private static String explore(Exception ex){
-        return (ex.getMessage() != null) ? ex.getMessage() : "";
+
+    @Override
+    public Throwable getCause() {
+        return (wrapped == null) ? super.getCause() : wrapped.getCause();
     }
-    
+
+    @Override
+    public String getLocalizedMessage() {
+        if(wrapped != null){
+            return super.getLocalizedMessage() + wrapped.getLocalizedMessage();
+        }else{
+            return super.getLocalizedMessage();
+        }
+    }
+
+    @Override
+    public String getMessage() {
+        if(wrapped != null){
+            return super.getMessage() + wrapped.getMessage();
+        }else{
+            return super.getMessage();
+        }
+    }
+
+    @Override
+    public StackTraceElement[] getStackTrace() {
+        return (wrapped == null) ? super.getStackTrace() : wrapped.getStackTrace();
+    }
+
 }

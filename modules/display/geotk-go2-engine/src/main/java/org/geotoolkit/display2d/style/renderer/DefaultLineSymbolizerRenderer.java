@@ -123,14 +123,14 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
             try {
                 j2dShape = projectedGeometry.getDisplayShape();
             } catch (TransformException ex) {
-                throw new PortrayalException(ex);
+                throw new PortrayalException("Could not calculate display projected geometry",ex);
             }
         }else{
             context.switchToObjectiveCRS();
             try {
                 j2dShape = projectedGeometry.getObjectiveShape();
             } catch (TransformException ex) {
-                throw new PortrayalException(ex);
+                throw new PortrayalException("Could not calculate objective projected geometry",ex);
             }
         }
 

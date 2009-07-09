@@ -114,7 +114,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
                     final AffineTransform inverse = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
                     coeff *= Math.abs(XAffineTransform.getScale(inverse));
                 }catch(FactoryException ex){
-                    throw new PortrayalException(ex);
+                    throw new PortrayalException("Could not calculate display to objective transform",ex);
                 }
             }
 
