@@ -36,7 +36,7 @@ import org.geotools.data.ServiceInfo;
 import org.geotools.data.Transaction;
 import org.geotools.feature.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
@@ -311,7 +311,7 @@ public abstract class ContentDataStore implements DataStore {
      */
     @Override
     public ContentFeatureSource getFeatureSource(final String typeName) throws IOException {
-        return getFeatureSource(new NameImpl(namespaceURI,typeName), Transaction.AUTO_COMMIT);
+        return getFeatureSource(new DefaultName(namespaceURI,typeName), Transaction.AUTO_COMMIT);
     }
 
     /**
@@ -501,7 +501,7 @@ public abstract class ContentDataStore implements DataStore {
      * Helper method to wrap a non-qualified name.
      */
     final protected Name name(final String typeName) {
-        return new NameImpl(namespaceURI,typeName);
+        return new DefaultName(namespaceURI,typeName);
     }
 
     /**
@@ -630,7 +630,7 @@ public abstract class ContentDataStore implements DataStore {
         final String[] typeNames = getTypeNames();
         final List<Name> names = new ArrayList<Name>(typeNames.length);
         for (String typeName : typeNames) {
-            names.add(new NameImpl(typeName));
+            names.add(new DefaultName(typeName));
         }
         return names;
     }

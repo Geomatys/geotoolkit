@@ -24,13 +24,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
 
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
 
@@ -269,7 +268,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         fts.semanticTypeIdentifiers().addAll(visitSemantics(ftst.getSemanticTypeIdentifier()));
         
         if(ftst.getFeatureTypeName() != null){
-            fts.featureTypeNames().add(new NameImpl(ftst.getFeatureTypeName()));
+            fts.featureTypeNames().add(new DefaultName(ftst.getFeatureTypeName()));
         }
         
         if(ftst.getRule() == null || ftst.getRule().isEmpty()){

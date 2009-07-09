@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -54,7 +55,6 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 
-import org.geotools.data.DefaultQuery;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;

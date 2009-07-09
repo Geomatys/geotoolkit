@@ -59,6 +59,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
+import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -72,7 +73,6 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 
-import org.geotools.data.DefaultQuery;
 import org.geotools.feature.FeatureIterator;
 
 import org.jdesktop.swingx.JXTable;

@@ -48,7 +48,7 @@ import org.geotoolkit.feature.FeatureCollections;
 import org.geotools.feature.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
 import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotools.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
@@ -1602,13 +1602,13 @@ public final class DataUtilities extends FeatureUtilities {
 
             final Class clazz = type(type);
             if (Geometry.class.isAssignableFrom(clazz)) {
-                final GeometryType at = new DefaultGeometryType(new NameImpl(name), clazz, crs, false, false,
+                final GeometryType at = new DefaultGeometryType(new DefaultName(name), clazz, crs, false, false,
                                                                 Collections.EMPTY_LIST, null, null);
-                return new DefaultGeometryDescriptor(at, new NameImpl(name), 0, 1, nillable, null);
+                return new DefaultGeometryDescriptor(at, new DefaultName(name), 0, 1, nillable, null);
             } else {
-                final AttributeType at = new DefaultAttributeType(new NameImpl(name), clazz, false, false,
+                final AttributeType at = new DefaultAttributeType(new DefaultName(name), clazz, false, false,
                                                                   Collections.EMPTY_LIST, null, null);
-                return new DefaultAttributeDescriptor(at, new NameImpl(name), 0, 1, nillable, null);
+                return new DefaultAttributeDescriptor(at, new DefaultName(name), 0, 1, nillable, null);
             }
         } catch (ClassNotFoundException e) {
             throw new SchemaException("Could not type " + name + " as:" + type, e);

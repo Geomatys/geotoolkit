@@ -21,10 +21,10 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotools.data.DataUtilities;
+import org.geotoolkit.data.DataUtilities;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.MutableStyle;
 
 import org.geotoolkit.style.MutableStyleFactory;
@@ -83,7 +83,7 @@ public final class MapBuilder {
         if(name == null){
             throw new NullPointerException("Name can not be null");
         }
-        return new DefaultCoverageMapLayer(new SimpleCoverageReader(grid), style, new NameImpl(name) );
+        return new DefaultCoverageMapLayer(new SimpleCoverageReader(grid), style, new DefaultName(name) );
     }
 
     /**
@@ -93,7 +93,7 @@ public final class MapBuilder {
          if(name == null){
             throw new NullPointerException("Name can not be null");
         }
-        return new DefaultCoverageMapLayer(reader, style, new NameImpl(name) );
+        return new DefaultCoverageMapLayer(reader, style, new DefaultName(name) );
     }
 
     /**

@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotools.data.DefaultQuery;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 
+import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;

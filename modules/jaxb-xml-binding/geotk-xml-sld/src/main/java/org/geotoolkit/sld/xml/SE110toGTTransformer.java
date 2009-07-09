@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -38,12 +37,11 @@ import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.util.SimpleInternationalString;
 
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 
 import org.geotoolkit.se.xml.v110.AnchorPointType;
-import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
 import org.geotoolkit.se.xml.v110.ColorMapType;
 import org.geotoolkit.se.xml.v110.ContrastEnhancementType;
@@ -60,8 +58,6 @@ import org.geotoolkit.se.xml.v110.GraphicStrokeType;
 import org.geotoolkit.se.xml.v110.GraphicType;
 import org.geotoolkit.se.xml.v110.HaloType;
 import org.geotoolkit.se.xml.v110.ImageOutlineType;
-import org.geotoolkit.se.xml.v110.InterpolateType;
-import org.geotoolkit.se.xml.v110.InterpolationPointType;
 import org.geotoolkit.se.xml.v110.LabelPlacementType;
 import org.geotoolkit.se.xml.v110.LegendGraphicType;
 import org.geotoolkit.se.xml.v110.LinePlacementType;
@@ -433,7 +429,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(cst.getSemanticTypeIdentifier()));
             
             if(cst.getCoverageName() != null){
-                fts.featureTypeNames().add(new NameImpl(cst.getCoverageName()));
+                fts.featureTypeNames().add(new DefaultName(cst.getCoverageName()));
             }
             
             if(cst.getRuleOrOnlineResource() == null || cst.getRuleOrOnlineResource().isEmpty()){
@@ -453,7 +449,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(ftst.getSemanticTypeIdentifier()));
             
             if(ftst.getFeatureTypeName() != null){
-                fts.featureTypeNames().add(new NameImpl(ftst.getFeatureTypeName()));
+                fts.featureTypeNames().add(new DefaultName(ftst.getFeatureTypeName()));
             }
             
             if(ftst.getRuleOrOnlineResource() == null || ftst.getRuleOrOnlineResource().isEmpty()){

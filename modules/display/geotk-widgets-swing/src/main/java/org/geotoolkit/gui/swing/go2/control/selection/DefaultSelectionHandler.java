@@ -57,9 +57,9 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-
 import org.geotoolkit.util.logging.Logging;
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
+
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;

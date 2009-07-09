@@ -31,7 +31,6 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotools.geometry.jts.JTS;
 import org.geotoolkit.util.Utilities;
 import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.NameImpl;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -98,13 +97,13 @@ public class FeatureTypes {
         ABSTRACT_FEATURE_TYPE = featureType;
     }
     /** default feature collection name */
-    public static final NameImpl DEFAULT_TYPENAME =
-            new NameImpl("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
+    public static final DefaultName DEFAULT_TYPENAME =
+            new DefaultName("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
     /** represent an unbounded field length */
     public static final int ANY_LENGTH = -1;
     /** An feature type with no attributes */
     public static final SimpleFeatureType EMPTY = new DefaultSimpleFeatureType(
-            new NameImpl("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
+            new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
     /**
      * This is a 'suitable replacement for extracting the expected field length of an attribute

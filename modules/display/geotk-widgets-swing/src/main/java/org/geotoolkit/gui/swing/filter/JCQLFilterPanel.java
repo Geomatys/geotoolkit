@@ -27,11 +27,10 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
+import org.geotoolkit.filter.text.cql2.CQL;
+import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.misc.FilterToCQL;
-import org.geotoolkit.gui.swing.misc.FilterToCQLException;
+
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -118,15 +117,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     private void parse(Filter filter) {
-
-        FilterToCQL visitor = new FilterToCQL();
-
-        try {
-            txt_cql.setText(visitor.encodeToString(layer.getQuery().getFilter()));
-        } catch (FilterToCQLException e) {
-            e.printStackTrace();
-        }
-
+        txt_cql.setText(CQL.toCQL(filter));
     }
 
     private void parse(MapLayer ly) {

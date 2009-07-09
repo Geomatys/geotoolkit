@@ -35,7 +35,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotools.data.AbstractDataStore;
+import org.geotoolkit.data.AbstractDataStore;
 import org.geotools.data.DataStore;
 import org.geotools.data.ServiceInfo;
 import org.geotoolkit.gui.swing.resource.MessageBundle;

@@ -26,11 +26,12 @@ import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.swingx.JXTable;
 
-import org.geotools.data.DefaultQuery;
-import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Query;
 import org.geotools.feature.FeatureIterator;
+
+import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;

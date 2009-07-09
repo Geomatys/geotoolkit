@@ -20,9 +20,9 @@ package org.geotoolkit.renderer.style;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.filter.text.cql2.CQL;
+import org.geotoolkit.filter.text.cql2.CQLException;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
@@ -55,7 +55,7 @@ import org.opengis.filter.expression.Expression;
  * 
  */
 public class ExpressionExtractor {
-    static final FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+    static final FilterFactory ff = FactoryFinder.getFilterFactory(null);
     
     /**
      * Parses the original string and returns an array or parsed expressions, in

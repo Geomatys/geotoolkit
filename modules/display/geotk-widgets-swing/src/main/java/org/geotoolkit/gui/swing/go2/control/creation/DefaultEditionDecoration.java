@@ -78,15 +78,15 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
-
 import org.geotoolkit.util.logging.Logging;
-import org.geotools.data.DefaultTransaction;
+import org.geotoolkit.data.DefaultTransaction;
+import org.geotoolkit.feature.FeatureCollections;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.JTS;
 
 import org.jdesktop.swingx.combobox.ListComboBoxModel;

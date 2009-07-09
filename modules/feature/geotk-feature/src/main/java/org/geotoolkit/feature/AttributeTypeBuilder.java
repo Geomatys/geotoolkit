@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotools.filter.IllegalFilterException;
@@ -513,7 +513,7 @@ public class AttributeTypeBuilder {
      *
      */
     public AttributeDescriptor buildDescriptor(final String name, final AttributeType type) {
-        return buildDescriptor(new NameImpl(name), type);
+        return buildDescriptor(new DefaultName(name), type);
     }
 
     /**
@@ -526,7 +526,7 @@ public class AttributeTypeBuilder {
      *
      */
     public GeometryDescriptor buildDescriptor(final String name, final GeometryType type) {
-        return buildDescriptor(new NameImpl(name), type);
+        return buildDescriptor(new DefaultName(name), type);
     }
 
     public AttributeDescriptor buildDescriptor(final Name name, final AttributeType type) {
@@ -575,9 +575,9 @@ public class AttributeTypeBuilder {
 
     private Name name() {
         if (separator == null) {
-            return new NameImpl(namespaceURI, typeName());
+            return new DefaultName(namespaceURI, typeName());
         } else {
-            return new NameImpl(namespaceURI, separator, typeName());
+            return new DefaultName(namespaceURI, separator, typeName());
         }
     }
 

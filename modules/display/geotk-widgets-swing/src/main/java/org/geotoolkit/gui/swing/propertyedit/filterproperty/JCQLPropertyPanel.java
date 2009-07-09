@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 
-import org.geotools.data.DefaultQuery;
+import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.gui.swing.filter.JCQLFilterPanel;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.map.FeatureMapLayer;

@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.ogc.xml;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import org.geotools.feature.NameImpl;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
@@ -388,7 +387,7 @@ public class OGC110toGTTransformer {
      */
     public Name visitQName(QName qname){
         if(qname == null) return null;
-        return new NameImpl(qname);
+        return new DefaultName(qname);
     }
     
 }
