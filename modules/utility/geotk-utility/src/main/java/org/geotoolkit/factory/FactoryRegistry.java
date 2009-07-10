@@ -714,8 +714,11 @@ public class FactoryRegistry extends ServiceRegistry {
             }
         }
         /*
-         * After loading all plugins for the current category, gives a chance
-         * to factories to set their ordering relative to other factories.
+         * After loading all plugins for the current category, gives factories a chance to setup
+         * their ordering relative to other factories. This operation must be inconditional, even
+         * if there is no new plugins (newServices == false) because the scan may have registered
+         * again existing plugins, in which case their previous ordering have been lost and must
+         * be reset.
          */
         Factory.Organizer organizer = null;
         final Iterator<T> it = getServiceProviders(category, false);
@@ -728,6 +731,7 @@ public class FactoryRegistry extends ServiceRegistry {
                 (organizer.factory = (Factory) candidate).setOrdering(organizer);
             }
         }
+        pluginScanned(category);
     }
 
     /**
@@ -741,6 +745,19 @@ public class FactoryRegistry extends ServiceRegistry {
             }
             scanForPlugins(getClassLoaders(), category);
         }
+    }
+
+    /**
+     * Invoked after the factories of the given category have been scanned. The default
+     * implementation does nothing, which is usually the desired behavior (the public API
+     * should be used instead). However {@link FactoryFinder} uses this method as an easy
+     * hook for setting ordering based on the plugin vendor.
+     *
+     * @param category The category of the plugins which have been added.
+     *
+     * @since 3.02
+     */
+    void pluginScanned(final Class<?> category) {
     }
 
     /**
@@ -1024,15 +1041,24 @@ public class FactoryRegistry extends ServiceRegistry {
                                            final Filter service1, final Filter service2)
     {
         boolean done = false;
-        T impl1 = null;
-        T impl2 = null;
-        for (final Iterator<? extends T> it=getServiceProviders(category, false); it.hasNext();) {
+        List<T> precedences = new ArrayList<T>(); // The plugins of the service which have precedence.
+        for (final Iterator<? extends T> it=getServiceProviders(category, true); it.hasNext();) {
             final T factory = it.next();
-            if (service1.filter(factory)) impl1 = factory;
-            if (service2.filter(factory)) impl2 = factory;
-            if (impl1!=null && impl2!=null && impl1!=impl2) {
-                if (set) done |=   setOrdering(category, impl1, impl2);
-                else     done |= unsetOrdering(category, impl1, impl2);
+            if (service1.filter(factory)) {
+                precedences.add(factory);
+            }
+        }
+        if (precedences != null) {
+            for (final Iterator<? extends T> it=getServiceProviders(category, false); it.hasNext();) {
+                final T factory = it.next();
+                if (service2.filter(factory)) {
+                    for (final T precedence : precedences) {
+                        if (precedence != factory) {
+                            if (set) done |=   setOrdering(category, precedence, factory);
+                            else     done |= unsetOrdering(category, precedence, factory);
+                        }
+                    }
+                }
             }
         }
         return done;

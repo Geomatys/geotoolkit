@@ -39,6 +39,7 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.CitationFactory;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.primitive.PrimitiveFactory;
@@ -168,7 +169,17 @@ public class FactoryFinder {
                     CSAuthorityFactory.class,
                     CRSAuthorityFactory.class,
                     CoordinateOperationAuthorityFactory.class
-            });
+            }) {
+                /*
+                 * Geotoolkit is a fork of GeoTools. If both appear on the classpath, conflicts
+                 * may arise unless we specify which one should have precedence over the other.
+                 */
+                @Override void pluginScanned(final Class<?> category) {
+                    final VendorFilter filter1 = new VendorFilter("Geotoolkit", true);
+                    final VendorFilter filter2 = new VendorFilter("GeoTools", false);
+                    setOrdering(category, filter1, filter2);
+                }
+            };
             ShutdownHook.INSTANCE.register(registry);
         }
         return registry;
@@ -701,8 +712,8 @@ public class FactoryFinder {
      */
     @Configuration
     public static boolean setVendorOrdering(final String vendor1, final String vendor2) {
-        final VendorFilter filter1 = new VendorFilter(vendor1);
-        final VendorFilter filter2 = new VendorFilter(vendor2);
+        final VendorFilter filter1 = new VendorFilter(vendor1, true);
+        final VendorFilter filter2 = new VendorFilter(vendor2, false);
         final boolean changed;
         synchronized (FactoryFinder.class) {
             changed = getServiceRegistry().setOrdering(Factory.class, filter1, filter2);
@@ -726,8 +737,8 @@ public class FactoryFinder {
      */
     @Configuration
     public static boolean unsetVendorOrdering(final String vendor1, final String vendor2) {
-        final VendorFilter filter1 = new VendorFilter(vendor1);
-        final VendorFilter filter2 = new VendorFilter(vendor2);
+        final VendorFilter filter1 = new VendorFilter(vendor1, true);
+        final VendorFilter filter2 = new VendorFilter(vendor2, false);
         final boolean changed;
         synchronized (FactoryFinder.class) {
             changed = getServiceRegistry().unsetOrdering(Factory.class, filter1, filter2);
@@ -748,10 +759,16 @@ public class FactoryFinder {
         private final String vendor;
 
         /**
+         * The value to returns if the factory does not specify the vendor.
+         */
+        private final boolean defaultValue;
+
+        /**
          * Constructs a filter for the given vendor.
          */
-        public VendorFilter(final String vendor) {
+        public VendorFilter(final String vendor, final boolean defaultValue) {
             this.vendor = vendor;
+            this.defaultValue = defaultValue;
         }
 
         /**
@@ -759,7 +776,13 @@ public class FactoryFinder {
          */
         @Override
         public boolean filter(final Object provider) {
-            return Citations.titleMatches(((Factory)provider).getVendor(), vendor);
+            if (provider instanceof Factory) {
+                final Citation candidate = ((Factory) provider).getVendor();
+                if (candidate != null) {
+                    return Citations.titleMatches(candidate, vendor);
+                }
+            }
+            return defaultValue;
         }
     }
 

@@ -30,6 +30,7 @@ import org.opengis.referencing.datum.PrimeMeridian;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.datum.GeotoolsFactory;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 
@@ -49,12 +50,14 @@ import static org.junit.Assert.*;
 public final class DatumAliasesTest {
     /**
      * Tests the registration. {@link DatumAliases} should be before
-     * {@link ReferencingObjectFactory}.
+     * {@link ReferencingObjectFactory}. The dummy GeoTools factory
+     * should be last.
      */
     @Test
     public void testRegistration() {
-        int aliases = -1;
-        int objects = -1;
+        int aliases  = -1;
+        int objects  = -1;
+        int geotools = -1;
         int position = 0;
         for (final DatumFactory factory : FactoryFinder.getDatumFactories(null)) {
             if (factory instanceof DatumAliases) {
@@ -65,11 +68,17 @@ public final class DatumAliasesTest {
                 assertEquals(-1, objects);
                 objects = position;
             }
+            if (factory instanceof GeotoolsFactory) {
+                assertEquals(-1, geotools);
+                geotools = position;
+            }
             position++;
         }
-        assertTrue("DatumAliases factory not found.",      aliases >= 0);
-        assertTrue("ReferencingObjectFactory not found.",  objects >= 0);
+        assertTrue("DatumAliases factory not found.",      aliases  >= 0);
+        assertTrue("ReferencingObjectFactory not found.",  objects  >= 0);
+        assertTrue("Pseudo-GeotoolsFactory not found.",    geotools >= 0);
         assertTrue("DatumAliases should have precedence.", aliases < objects);
+        assertTrue("GeotoolsFactory should be last.",      objects < geotools);
     }
 
     /**
