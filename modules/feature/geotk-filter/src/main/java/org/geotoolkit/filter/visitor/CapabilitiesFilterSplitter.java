@@ -29,8 +29,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.util.logging.Logging;
 
-import org.geotools.filter.IllegalFilterException;
-
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -671,15 +669,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         } else {
             if (filter instanceof Or) {
                 Filter orReplacement;
-
-                try {
-                    orReplacement = translateOr((Or) filter);
-                    orReplacement.accept(this, null);
-                } catch (IllegalFilterException e) {
-                    popToSize(preStack, j);
-                    postStack.push(filter);
-                    return;
-                }
+                orReplacement = translateOr((Or) filter);
+                orReplacement.accept(this, null);
+                
                 if (postStack.size() > i) {
                     popToSize(postStack, i);
                     postStack.push(filter);
@@ -937,7 +929,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         return null;
     }
 
-    private Filter translateOr(Or filter) throws IllegalFilterException {
+    private Filter translateOr(Or filter) {
         if (!(filter instanceof Or)) {
             return filter;
         }
