@@ -188,7 +188,9 @@ public class PostGISDialect extends BasicSQLDialect {
                 return new WKTReader().read(envelope).getEnvelopeInternal();
             } else {
                 // empty one
-                return new Envelope();
+                final Envelope env = new Envelope();
+                env.init(0, 0, 0, 0);
+                return env;
             }
         } catch (ParseException e) {
             throw (IOException) new IOException(

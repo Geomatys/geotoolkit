@@ -823,7 +823,8 @@ public final class JDBCDataStore extends ContentDataStore
 
                 if (e == null) {
                     e = new Envelope();
-                    e.setToNull();
+                    e.init(0, 0, 0, 0);
+                    //e.setToNull();
                 }
 
                 if (e instanceof ReferencedEnvelope) {
