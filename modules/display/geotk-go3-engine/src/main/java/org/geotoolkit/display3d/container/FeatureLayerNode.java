@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display3d.container;
 
-import org.geotoolkit.display3d.geom.DefaultPolygonMesh;
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.type.ReadOnlyColorRGBA;
@@ -27,7 +26,6 @@ import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.Spatial;
-import com.ardor3d.scenegraph.hint.DataMode;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.scenegraph.shape.Tube;
 import com.ardor3d.util.geom.BufferUtils;
@@ -46,22 +44,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.data.FeatureSource;
+
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.controller.LocationSensitiveGraphic;
+import org.geotoolkit.display3d.geom.DefaultPolygonMesh;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;

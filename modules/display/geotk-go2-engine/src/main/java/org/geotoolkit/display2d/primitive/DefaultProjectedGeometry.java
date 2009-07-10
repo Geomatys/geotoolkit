@@ -17,11 +17,13 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
+
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.awt.Shape;
 
-import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
+import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

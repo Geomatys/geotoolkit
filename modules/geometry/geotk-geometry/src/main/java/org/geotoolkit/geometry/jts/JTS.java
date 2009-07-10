@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -574,7 +573,7 @@ public final class JTS {
      * @param geom Provided Geometry
      * @return RefernecedEnveleope describing the bounds of the provided Geometry
      */
-    public static org.opengis.geometry.Envelope toEnvelope(Geometry geom) {
+    public static JTSEnvelope2D toEnvelope(Geometry geom) {
         if (geom == null) {
             return null; //return new ReferencedEnvelope(); // very empty!
         }
@@ -598,12 +597,7 @@ public final class JTS {
             }
         }
 
-        GeneralEnvelope env = new GeneralEnvelope(crs);
-        Envelope ienv = geom.getEnvelopeInternal();
-        env.setRange(0, ienv.getMinX(), ienv.getMaxX());
-        env.setRange(1, ienv.getMinY(), ienv.getMaxY());
-
-        return env;
+        return new JTSEnvelope2D( geom.getEnvelopeInternal(), crs );
     }
 
     /**
