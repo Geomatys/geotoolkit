@@ -27,13 +27,12 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
  * @since 2.1.x
  * @source $URL$
  */
-public class LiteCoordinateSequence extends PackedCoordinateSequence{
+public class LiteCoordinateSequence extends PackedCoordinateSequence {
 
     /**
      * The packed coordinate array
      */
     private double[] coords;
-    
     /**
      * Cached size, getSize() gets called an incredible number of times during rendering
      * (a profile shows 2 million calls when rendering 90.000 linear features)
@@ -47,13 +46,12 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      * 
      */
     public LiteCoordinateSequence(double[] coords) {
-      this.dimension=2;
-      if (coords.length % dimension != 0) {
-        throw new IllegalArgumentException("Packed array does not contain "
-            + "an integral number of coordinates");
-      }
-      this.coords = coords;
-      this.size = coords.length / dimension;
+        this.dimension = 2;
+        if (coords.length % dimension != 0) {
+            throw new IllegalArgumentException("Packed array does not contain " + "an integral number of coordinates");
+        }
+        this.coords = coords;
+        this.size = coords.length / dimension;
     }
 
     /**
@@ -62,12 +60,12 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      * @param coordinates
      */
     public LiteCoordinateSequence(float[] coordinates) {
-      this.coords = new double[coordinates.length];
-      this.dimension=2;
-      this.size = coords.length / dimension;
-      for (int i = 0; i < coordinates.length; i++) {
-        this.coords[i] = coordinates[i];
-      }
+        this.coords = new double[coordinates.length];
+        this.dimension = 2;
+        this.size = coords.length / dimension;
+        for (int i = 0; i < coordinates.length; i++) {
+            this.coords[i] = coordinates[i];
+        }
     }
 
     /**
@@ -76,17 +74,19 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      * @param coordinates
      */
     public LiteCoordinateSequence(Coordinate[] coordinates) {
-      if (coordinates == null)
-        coordinates = new Coordinate[0];
-      this.dimension=2;
+        if (coordinates == null) {
+            coordinates = new Coordinate[0];
+        }
+        this.dimension = 2;
 
-      coords = new double[coordinates.length * this.dimension];
-      for (int i = 0; i < coordinates.length; i++) {
-        coords[i * this.dimension] = coordinates[i].x;
-        if (this.dimension >= 2)
-          coords[i * this.dimension + 1] = coordinates[i].y;
-      }
-      this.size = coordinates.length;
+        coords = new double[coordinates.length * this.dimension];
+        for (int i = 0; i < coordinates.length; i++) {
+            coords[i * this.dimension] = coordinates[i].x;
+            if (this.dimension >= 2) {
+                coords[i * this.dimension + 1] = coordinates[i].y;
+            }
+        }
+        this.size = coordinates.length;
     }
 
     /**
@@ -97,14 +97,15 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      * 
      */
     public LiteCoordinateSequence(int size, int dimension) {
-    	if( dimension!=2 )
-    		throw new IllegalArgumentException("This type of sequence is always 2 dimensional");
-    	this.dimension=2;
-    	coords = new double[size * this.dimension];
-    	this.size = coords.length / dimension;
-    	
+        if (dimension != 2) {
+            throw new IllegalArgumentException("This type of sequence is always 2 dimensional");
+        }
+        this.dimension = 2;
+        coords = new double[size * this.dimension];
+        this.size = coords.length / dimension;
+
     }
-    
+
     /**
      * Copy constructor
      * @param seq
@@ -117,7 +118,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
         double[] orig = seq.getArray();
         this.coords = new double[orig.length];
         System.arraycopy(orig, 0, coords, 0, coords.length);
-        
+
     }
 
     /**
@@ -125,10 +126,10 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      */
     @Override
     public Coordinate getCoordinateInternal(int i) {
-      double x = coords[i * dimension];
-      double y = coords[i * dimension + 1];
-      double z = dimension == 2 ? java.lang.Double.NaN : coords[i * dimension + 2];
-      return new Coordinate(x, y, z);
+        double x = coords[i * dimension];
+        double y = coords[i * dimension + 1];
+        double z = dimension == 2 ? java.lang.Double.NaN : coords[i * dimension + 2];
+        return new Coordinate(x, y, z);
     }
 
     /**
@@ -136,7 +137,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      */
     @Override
     public int size() {
-   		return size;
+        return size;
     }
 
     /**
@@ -144,9 +145,9 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      */
     @Override
     public Object clone() {
-      double[] clone = new double[coords.length];
-      System.arraycopy(coords, 0, clone, 0, coords.length);
-      return new LiteCoordinateSequence(clone);
+        double[] clone = new double[coords.length];
+        System.arraycopy(coords, 0, clone, 0, coords.length);
+        return new LiteCoordinateSequence(clone);
     }
 
     /**
@@ -157,9 +158,9 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      */
     @Override
     public double getOrdinate(int index, int ordinate) {
-      return coords[index * dimension + ordinate];
+        return coords[index * dimension + ordinate];
     }
-    
+
     /**
      * @see com.vividsolutions.jts.geom.CoordinateSequence#getX(int)
      */
@@ -182,66 +183,66 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence{
      */
     @Override
     public void setOrdinate(int index, int ordinate, double value) {
-      coordRef = null;
-      coords[index * dimension + ordinate] = value;
+        coordRef = null;
+        coords[index * dimension + ordinate] = value;
     }
 
     @Override
-    public Envelope expandEnvelope(Envelope env)
-    {
-      double minx = coords[0];
-      double maxx = minx;
-      double miny = coords[1];
-      double maxy = miny;
-      for (int i = 0; i < coords.length; i += dimension ) {
-    	  double x = coords[i];
-    	  if(x < minx)
-    		  minx = x;
-    	  else if(x > maxx)
-    		  maxx = x;
-    	  double y = coords[i + 1];
-    	  if(y < miny)
-    		  miny = y;
-    	  else if(y > maxy)
-    		  maxy = y;
-      }
-      env.expandToInclude(minx, miny);
-      env.expandToInclude(maxx, maxy);
-      return env;
+    public Envelope expandEnvelope(Envelope env) {
+        double minx = coords[0];
+        double maxx = minx;
+        double miny = coords[1];
+        double maxy = miny;
+        for (int i = 0; i < coords.length; i += dimension) {
+            double x = coords[i];
+            if (x < minx) {
+                minx = x;
+            } else if (x > maxx) {
+                maxx = x;
+            }
+            double y = coords[i + 1];
+            if (y < miny) {
+                miny = y;
+            } else if (y > maxy) {
+                maxy = y;
+            }
+        }
+        env.expandToInclude(minx, miny);
+        env.expandToInclude(maxx, maxy);
+        return env;
     }
 
-	/**
-	 */
-	public double[] getArray() {
-		return coords;
-	}
+    /**
+     */
+    public double[] getArray() {
+        return coords;
+    }
 
-	/**
-	 * @param coords2
-	 */
-	public void setArray(double[] coords2) {
-		coords = coords2;
-		size = coords.length / dimension;
-		coordRef = null;
-	}
-	
-	/**
-	 *  if this is a dimension=2 seq, then this is the same as getArray().
-	 *  If its >2 dims this will make a new array with dim=2
-	 */
-	public double[] getXYArray()
-	{
-		if (dimension==2)  //this is always true
-			return coords;
-		// this should never run, but its here for the future...
-		int n = size();
-		double[] result = new double[n*2];
-		for (int t=0;t<n;t++)
-		{
-			result[t*2] = getOrdinate(t,0);
-			result[t*2+1] = getOrdinate(t,1);
-		}
-		return result;
-	}
-	
+    /**
+     * @param coords2
+     */
+    public void setArray(double[] coords2) {
+        coords = coords2;
+        size = coords.length / dimension;
+        coordRef = null;
+    }
+
+    /**
+     *  if this is a dimension=2 seq, then this is the same as getArray().
+     *  If its >2 dims this will make a new array with dim=2
+     */
+    public double[] getXYArray() {
+        if (dimension == 2){
+            //this is always true
+            return coords;
+        }
+        // this should never run, but its here for the future...
+        int n = size();
+        double[] result = new double[n * 2];
+        for (int t = 0; t < n; t++) {
+            result[t * 2] = getOrdinate(t, 0);
+            result[t * 2 + 1] = getOrdinate(t, 1);
+        }
+        return result;
+    }
 }

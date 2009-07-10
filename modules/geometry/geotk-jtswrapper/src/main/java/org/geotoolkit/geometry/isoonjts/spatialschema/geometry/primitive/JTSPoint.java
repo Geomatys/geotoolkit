@@ -16,6 +16,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -32,9 +33,6 @@ import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.geometry.complex.Composite;
-
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-
 
 /**
  * Basic data type for a geometric object consisting of one and only one point.

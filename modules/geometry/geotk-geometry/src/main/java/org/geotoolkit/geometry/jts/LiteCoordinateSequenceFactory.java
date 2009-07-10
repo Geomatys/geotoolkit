@@ -29,34 +29,34 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
  */
 public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory {
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
-	 */
+    /* (non-Javadoc)
+     * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
+     */
     @Override
-	public CoordinateSequence create(Coordinate[] coordinates) {
-		return new LiteCoordinateSequence(coordinates);
-	}
+    public CoordinateSequence create(Coordinate[] coordinates) {
+        return new LiteCoordinateSequence(coordinates);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.CoordinateSequence)
-	 */
+    /* (non-Javadoc)
+     * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.CoordinateSequence)
+     */
     @Override
-	public CoordinateSequence create(CoordinateSequence coordSeq) {
-		return new LiteCoordinateSequence(coordSeq.toCoordinateArray());
-	}
+    public CoordinateSequence create(CoordinateSequence coordSeq) {
+        return new LiteCoordinateSequence(coordSeq.toCoordinateArray());
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(int, int)
-	 */
+    /* (non-Javadoc)
+     * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(int, int)
+     */
     @Override
-	public CoordinateSequence create(int size, int dimension) {
-		return new LiteCoordinateSequence(size, dimension);
-	}
+    public CoordinateSequence create(int size, int dimension) {
+        return new LiteCoordinateSequence(size, dimension);
+    }
 
-	/**
-	 * @param points
-	 */
-	public CoordinateSequence create(double[] points) {
-		return new LiteCoordinateSequence(points);
-	}
+    /**
+     * @param points
+     */
+    public CoordinateSequence create(double[] points) {
+        return new LiteCoordinateSequence(points);
+    }
 }
