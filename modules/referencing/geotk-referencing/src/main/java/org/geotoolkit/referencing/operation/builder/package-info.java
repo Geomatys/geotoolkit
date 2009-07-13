@@ -29,7 +29,7 @@
  * The package consists of two types of convenience classes: the various builder classes
  * which use a set of individual control points to obtain the conversion and the
  * {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper} class
- * which derives the conversion from a grid range to a georeferenced Envelope.
+ * which derives the conversion from a grid envelope to a georeferenced Envelope.
  * <p>
  * The builder classes should be used by users who have two data sets that are known to share
  * certain common points but who currently do not line up. This could be the case, for example,

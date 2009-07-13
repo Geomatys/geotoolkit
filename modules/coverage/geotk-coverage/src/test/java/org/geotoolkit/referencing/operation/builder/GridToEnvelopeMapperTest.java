@@ -86,15 +86,15 @@ public final class GridToEnvelopeMapperTest {
         }
 
         ///////////////////////////////////////////////////////////////
-        ///  Tests the setting of grid range and envelope.
+        ///  Tests the setting of grid envelope and georeferenced envelope.
         ///
         Point2D.Double point = new Point2D.Double();
-        GeneralGridEnvelope gridRange;
+        GeneralGridEnvelope gridEnvelope;
         GeneralEnvelope envelope;
-        gridRange = new GeneralGridEnvelope(new int[] {10, 20}, new int[] {110, 220}, false);
+        gridEnvelope = new GeneralGridEnvelope(new int[] {10, 20}, new int[] {110, 220}, false);
         envelope  = new GeneralEnvelope(new double[] {1, 4, 6}, new double[] {11, 44, 66});
-        mapper.setGridRange(gridRange);
-        assertSame(gridRange, mapper.getGridRange());
+        mapper.setGridRange(gridEnvelope);
+        assertSame(gridEnvelope, mapper.getGridRange());
         try {
             mapper.getEnvelope();
             fail();
@@ -108,7 +108,7 @@ public final class GridToEnvelopeMapperTest {
             // This is the expected exception.
         }
         try {
-            new GridToEnvelopeMapper(gridRange, envelope);
+            new GridToEnvelopeMapper(gridEnvelope, envelope);
             fail();
         } catch (MismatchedDimensionException e) {
             // This is the expected exception.

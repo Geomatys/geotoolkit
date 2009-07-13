@@ -87,9 +87,9 @@ public final class Errors extends IndexedResourceBundle {
         public static final int BAD_ENTRY = 7;
 
         /**
-         * Illegal grid range [{1} .. {2}] for dimension {0}.
+         * Illegal grid envelope [{1} .. {2}] for dimension {0}.
          */
-        public static final int BAD_GRID_RANGE_$3 = 8;
+        public static final int BAD_GRID_ENVELOPE_$3 = 8;
 
         /**
          * Illegal data at line {1} in file "{0}".

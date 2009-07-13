@@ -46,9 +46,9 @@ import org.geotoolkit.resources.Errors;
  *   <li>An optional {@linkplain GridEnvelope grid envelope} (a.k.a. "<cite>grid range</cite>"),
  *       usually inferred from the {@linkplain RenderedImage rendered image} size.</li>
  *   <li>An optional "grid to CRS" {@linkplain MathTransform transform}, which may be inferred
- *       from the grid range and the envelope.</li>
- *   <li>An optional {@linkplain Envelope envelope}, which may be inferred from the grid range
- *       and the "grid to CRS" transform.</li>
+ *       from the grid envelope and the georeferenced envelope.</li>
+ *   <li>An optional georeferenced {@linkplain Envelope envelope}, which may be inferred from
+ *       the grid envelope and the "grid to CRS" transform.</li>
  *   <li>An optional {@linkplain CoordinateReferenceSystem coordinate reference system} to be
  *       given to the envelope.</li>
  * </ul>
@@ -56,7 +56,7 @@ import org.geotoolkit.resources.Errors;
  * All grid geometry attributes are optional because some of them may be inferred from a wider
  * context. For example a grid geometry know nothing about {@linkplain RenderedImage rendered
  * images}, but {@link GridCoverage2D} do. Consequently, the later may infer the {@linkplain
- * GridEnvelope grid range} by itself.
+ * GridEnvelope grid envelope} by itself.
  * <p>
  * By default, any request for an undefined attribute will thrown an
  * {@link InvalidGridGeometryException}. In order to check if an attribute is defined,
@@ -96,7 +96,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     public static final int ENVELOPE = 2;
 
     /**
-     * A bitmask to specify the validity of the {@linkplain #getGridRange grid range}.
+     * A bitmask to specify the validity of the {@linkplain #getGridRange grid envelope}.
      * This is given as an argument to the {@link #isDefined} method.
      *
      * @since 2.2
@@ -117,6 +117,10 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * arbitrary {@link RenderedImage}. A grid with 512 cells can have a minimum coordinate of 0
      * and maximum of 512, with 511 as the highest valid index.
      *
+     * {@note A more ISO 19123 compliant name would be <code>gridEnvelope</code>. However
+     *        <code>gridName</code> was used in the legacy OGC 01-004 specification and is
+     *        kept here for compatibility raisons.}
+     *
      * @see RenderedImage#getMinX
      * @see RenderedImage#getMinY
      * @see RenderedImage#getWidth
@@ -125,7 +129,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     protected final GridEnvelope gridRange;
 
     /**
-     * The envelope, which is usually the {@linkplain #gridRange grid range}
+     * The envelope, which is usually the {@linkplain #gridRange grid envelope}
      * {@linkplain #gridToCRS transformed} to real world coordinates. This
      * envelope contains the {@linkplain CoordinateReferenceSystem coordinate
      * reference system} of "real world" coordinates.
@@ -197,7 +201,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     }
 
     /**
-     * Constructs a new grid geometry from a grid range and a {@linkplain MathTransform math
+     * Constructs a new grid geometry from a grid envelope and a {@linkplain MathTransform math
      * transform} mapping {@linkplain PixelInCell#CELL_CENTER pixel center}.
      *
      * @param gridRange
@@ -214,7 +218,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *          if the math transform and the CRS don't have consistent dimensions.
      * @throws IllegalArgumentException
      *          if the math transform can't transform coordinates in the domain of the
-     *          specified grid range.
+     *          specified grid envelope.
      *
      * @since 2.2
      */
@@ -227,7 +231,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     }
 
     /**
-     * Constructs a new grid geometry from a grid range and a {@linkplain MathTransform math transform}
+     * Constructs a new grid geometry from a grid envelope and a {@linkplain MathTransform math transform}
      * mapping pixel {@linkplain PixelInCell#CELL_CENTER center} or {@linkplain PixelInCell#CELL_CORNER
      * corner}. This is the most general constructor, the one that gives the maximal control over
      * the grid geometry to be created.
@@ -248,7 +252,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *          if the math transform and the CRS don't have consistent dimensions.
      * @throws IllegalArgumentException
      *          if the math transform can't transform coordinates in the domain of the
-     *          specified grid range.
+     *          specified grid envelope.
      *
      * @since 2.5
      */
@@ -292,7 +296,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @throws MismatchedDimensionException
      *          if the math transform and the envelope doesn't have consistent dimensions.
      * @throws IllegalArgumentException
-     *          if the math transform can't transform coordinates in the domain of the grid range.
+     *          if the math transform can't transform coordinates in the domain of the grid envelope.
      *
      * @since 2.5
      */
@@ -345,7 +349,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *          coincide with the lower right corner of the last pixel.
      *
      * @throws MismatchedDimensionException
-     *          if the grid range and the envelope doesn't have consistent dimensions.
+     *          if the grid envelope and the georeferenced envelope doesn't have consistent dimensions.
      *
      * @since 2.2
      */
@@ -376,7 +380,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     }
 
     /**
-     * Clones the given grid range if necessary. This is mostly a protection for {@link GridEnvelope2D}
+     * Clones the given grid envelope if necessary. This is mostly a protection for {@link GridEnvelope2D}
      * which is mutable, at the opposite of {@link GeneralGridEnvelope} which is immutable. We test
      * for the {@link GridEnvelope2D} super-class which defines a {@code clone()} method, instead of
      * {@link GridEnvelope2D} itself, for gaining some generality.
@@ -428,7 +432,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
 
     /**
      * Returns the bounding box of "real world" coordinates for this grid geometry. This envelope
-     * is the {@linkplain #getGridRange grid range} {@linkplain #getGridToCRS transformed} to the
+     * is the {@linkplain #getGridRange grid envelope} {@linkplain #getGridToCRS transformed} to the
      * "real world" coordinate system.
      *
      * @return The bounding box in "real world" coordinates (never {@code null}).
@@ -454,8 +458,8 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * {@link RenderedImage}. A grid with 512 cells can have a minimum coordinate of 0 and
      * maximum of 512, with 511 as the highest valid index.
      *
-     * @return The grid range (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no grid range (i.e.
+     * @return The grid envelope (never {@code null}).
+     * @throws InvalidGridGeometryException if this grid geometry has no grid envelope (i.e.
      *         <code>{@linkplain #isDefined isDefined}({@linkplain #GRID_RANGE})</code>
      *         returned {@code false}).
      *

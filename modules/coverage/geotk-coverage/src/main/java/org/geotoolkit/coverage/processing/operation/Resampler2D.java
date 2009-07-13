@@ -177,7 +177,7 @@ final class Resampler2D extends GridCoverage2D {
 
     /**
      * Creates a new coverage with a different coordinate reference reference system. If a
-     * grid geometry is supplied, only its {@linkplain GridGeometry2D#getRange grid range}
+     * grid geometry is supplied, only its {@linkplain GridGeometry2D#getRange grid envelope}
      * and {@linkplain GridGeometry2D#getGridToCRS grid to CRS} transform are taken in account.
      *
      * @param sourceCoverage
@@ -227,7 +227,7 @@ final class Resampler2D extends GridCoverage2D {
          */
         final boolean automaticGG, automaticGR;
         /*
-         * Grid range and "grid to CRS" transform are the only grid geometry informations used
+         * Grid envelope and "grid to CRS" transform are the only grid geometry informations used
          * by this method. If they are not available, this is equivalent to not providing grid
          * geometry at all. In such case set to 'targetGG' reference to null, since null value
          * is what the remaining code will check for.
@@ -345,14 +345,14 @@ final class Resampler2D extends GridCoverage2D {
                 allSteps = mtFactory.createConcatenatedTransform(step1, step3);
                 if (!targetGG.isDefined(GridGeometry2D.GRID_RANGE)) {
                     /*
-                     * If the target grid range was not explicitely specified, a grid range will be
-                     * automatically computed in such a way that it will maps to the same envelope
-                     * (at least approximatively).
+                     * If the target grid envelope was not explicitely specified, a grid envelope
+                     * will be automatically computed in such a way that it will maps to the same
+                     * georeferenced envelope (at least approximatively).
                      */
-                    Envelope gridRange;
-                    gridRange = toEnvelope(sourceGG.getGridRange());
-                    gridRange = CRS.transform(allSteps.inverse(), gridRange);
-                    targetGG  = new GridGeometry2D(new GeneralGridEnvelope(gridRange,
+                    Envelope gridEnvelope;
+                    gridEnvelope = toEnvelope(sourceGG.getGridRange());
+                    gridEnvelope = CRS.transform(allSteps.inverse(), gridEnvelope);
+                    targetGG  = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
                             PixelInCell.CELL_CORNER, false), step1, targetCRS);
                 }
             }
@@ -376,14 +376,14 @@ final class Resampler2D extends GridCoverage2D {
              *
              * - User provided no GridGeometry at all. Then, constructs an image of the same size
              *   than the source image and set an envelope big enough to contains the projected
-             *   coordinates. The transform will derive from the grid range and the envelope.
+             *   coordinates. The transform will derive from the grid and georeferenced envelopes.
              *
-             * - User provided only a grid range.  Then, set an envelope big enough to contains
-             *   the projected coordinates. The transform will derive from the grid range and
-             *   the envelope.
+             * - User provided only a grid envelope. Then, set an envelope big enough to contains
+             *   the projected coordinates. The transform will derive from the grid and georeferenced
+             *   envelopes.
              *
              * - User provided only a "grid to CRS" transform. Then, transform the projected
-             *   envelope to "grid units" using the specified transform and create a grid range
+             *   envelope to "grid units" using the specified transform and create a grid envelope
              *   big enough to hold the result.
              */
             if (targetGG == null) {
@@ -397,9 +397,9 @@ final class Resampler2D extends GridCoverage2D {
             } else {
                 step1 = targetGG.getGridToCRS(CORNER);
                 if (!targetGG.isDefined(GridGeometry2D.GRID_RANGE)) {
-                    GeneralEnvelope gridRange = CRS.transform(step1.inverse(), targetEnvelope);
+                    GeneralEnvelope gridEnvelope = CRS.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
-                    targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridRange,
+                    targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
                             PixelInCell.CELL_CENTER, false), step1, targetCRS);
                 }
             }
@@ -463,8 +463,8 @@ final class Resampler2D extends GridCoverage2D {
          * Creates the border extender from the background values. We add it inconditionnaly as
          * a matter of principle, but it will be ignored by all JAI operations except "Affine".
          * There is an exception for the case where the user didn't specified explicitly the
-         * desired target grid range. NOT specifying border extender will allows "Affine" to
-         * shrink the target image bounds to the range containing computed values.
+         * desired target grid envelope. NOT specifying border extender will allows "Affine"
+         * to shrink the target image bounds to the range containing computed values.
          */
         final double[] background = CoverageUtilities.getBackgroundValues(sourceCoverage);
         if (background != null && background.length != 0) {
@@ -550,7 +550,7 @@ final class Resampler2D extends GridCoverage2D {
              *
              * NOTE 2: "Affine", "Scale", "Translate", "Rotate" and similar operations ignore
              *         the 'xmin', 'ymin', 'width' and 'height' image layout. Consequently, we
-             *         can't use this operation if the user provided explicitly a grid range.
+             *         can't use this operation if the user provided explicitly a grid envelope.
              *
              * NOTE 3: If the user didn't specified any grid geometry, then a yet cheaper approach
              *         is to just update the 'gridToCRS' value. We returns a grid coverage wrapping
@@ -811,7 +811,7 @@ final class Resampler2D extends GridCoverage2D {
     /**
      * Checks if two geometries are equal, ignoring unspecified fields. If one or both
      * geometries has no "gridToCRS" transform, then this properties is not taken in account.
-     * Same apply for the grid range.
+     * Same apply for the grid envelope.
      *
      * @param  sourceGG The source geometry (never {@code null}).
      * @param  targetGG The target geometry. May be {@code null}, which is considered as equivalent.
@@ -841,16 +841,16 @@ final class Resampler2D extends GridCoverage2D {
     }
 
     /**
-     * Casts the specified grid range into an envelope. This is used before to transform
-     * the envelope using {@link CRSUtilities#transform(MathTransform, Envelope)}.
+     * Casts the specified grid envelope into a georeferenced envelope. This is used before to
+     * transform the envelope using {@link CRSUtilities#transform(MathTransform, Envelope)}.
      */
-    private static Envelope toEnvelope(final GridEnvelope gridRange) {
-        final int dimension = gridRange.getDimension();
+    private static Envelope toEnvelope(final GridEnvelope gridEnvelope) {
+        final int dimension = gridEnvelope.getDimension();
         final double[] lower = new double[dimension];
         final double[] upper = new double[dimension];
         for (int i=0; i<dimension; i++) {
-            lower[i] = gridRange.getLow(i);
-            upper[i] = gridRange.getHigh(i) + 1;
+            lower[i] = gridEnvelope.getLow(i);
+            upper[i] = gridEnvelope.getHigh(i) + 1;
         }
         return new GeneralEnvelope(lower, upper);
     }

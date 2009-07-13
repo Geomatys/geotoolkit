@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 
 /**
- * A simple grid geometry holding the grid range as a {@linkplain Rectangle rectangle} and the
+ * A simple grid geometry holding the grid envelope as a {@linkplain Rectangle rectangle} and the
  * <cite>grid to CRS</cite> relationship as an {@linkplain AffineTransform affine transform}.
  * This grid geometry does not hold any Coordinate Reference System information. Because of that,
  * it is not suitable to {@link GridCoverage2D} (the later rather use {@link GridGeometry2D}).
@@ -57,7 +57,7 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
     private static final long serialVersionUID = 1985363181119389264L;
 
     /**
-     * The grid range.
+     * The grid envelope. This is called "grid range" for legacy raisons.
      */
     private final GridEnvelope2D gridRange;
 
@@ -96,8 +96,8 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
 
     /**
      * Returns the image envelope in "real world" coordinates. This is the {@linkplain #getGridRange
-     * grid range} transformed using the {@link #getGridToCRS grid to CRS} transform, assuming that
-     * the transform maps {@linkplain PixelOrientation#CENTER pixel center}.
+     * grid envelope} transformed using the {@link #getGridToCRS grid to CRS} transform, assuming
+     * that the transform maps {@linkplain PixelOrientation#CENTER pixel center}.
      *
      * @return The image envelope in "real world" coordinates.
      *
@@ -108,10 +108,10 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
     }
 
     /**
-     * Returns the image envelope in "real world" coordinates. This is the {@linkplain #getGridRange
-     * grid range} transformed using the {@link #getGridToCRS grid to CRS} transform. The transform
-     * may maps pixel center or a corner, depending on the value of the {@code orientation}
-     * argument.
+     * Returns the georeferenced image envelope in "real world" coordinates. This is the
+     * {@linkplain #getGridRange grid envelope} transformed using the {@link #getGridToCRS
+     * grid to CRS} transform. The transform may maps pixel center or a corner, depending
+     * on the value of the {@code orientation} argument.
      * <p>
      * According OGC specification, the transform shall maps pixel center. However Java2D usage
      * is to maps the upper-left corner. Because this {@code ImageGeometry} class is primarily

@@ -87,7 +87,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
     /**
      * Index of column ({@link #gridDimensionX}) and row ({@link #gridDimensionY}) ordinates
      * in a grid point. They are the index of the first two dimensions with a {@linkplain
-     * GridEnvelope#getSpan span} greater than 1 in the {@linkplain #getGridRange grid range}.
+     * GridEnvelope#getSpan span} greater than 1 in the {@linkplain #getGridRange grid envelope}.
      * Their values are usually 0 and 1 respectively.
      * <p>
      * It is garanteed that {@link #gridDimensionX} &lt; {@link #gridDimensionY}.
@@ -201,13 +201,13 @@ public class GridGeometry2D extends GeneralGridGeometry {
     }
 
     /**
-     * Constructs a new grid geometry from a grid range and a math transform. The arguments are
+     * Constructs a new grid geometry from a grid envelope and a math transform. The arguments are
      * passed unchanged to the {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,
      * MathTransform, CoordinateReferenceSystem) super-class constructor}. However, they must
      * obey to the following additional constraints:
      * <p>
      * <ul>
-     *   <li>Only two dimensions in the grid range can have a
+     *   <li>Only two dimensions in the grid envelope can have a
      *       {@linkplain GridEnvelope#getSpan span} larger than 1.</li>
      * </ul>
      *
@@ -225,7 +225,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         consistent dimensions.
      * @throws IllegalArgumentException if {@code gridRange} has more than 2 dimensions with
      *         a {@linkplain GridEnvelope#getSpan span} larger than 1, or if the math transform
-     *         can't transform coordinates in the domain of the specified grid range.
+     *         can't transform coordinates in the domain of the specified grid envelope.
      *
      * @since 2.2
      */
@@ -266,7 +266,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws MismatchedDimensionException if the math transform and the CRS don't have
      *         consistent dimensions.
      * @throws IllegalArgumentException if the math transform can't transform coordinates
-     *         in the domain of the specified grid range.
+     *         in the domain of the specified grid envelope.
      *
      * @since 2.5
      */
@@ -320,7 +320,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         consistent dimensions.
      * @throws IllegalArgumentException if {@code gridRange} has more than 2 dimensions with
      *         a {@linkplain GridEnvelope#getSpan span} larger than 1, or if the math transform
-     *         can't transform coordinates in the domain of the specified grid range.
+     *         can't transform coordinates in the domain of the specified grid envelope.
      *
      * @since 2.5
      */
@@ -403,7 +403,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws MismatchedDimensionException if the math transform and the envelope doesn't have
      *         consistent dimensions.
      * @throws IllegalArgumentException if the math transform can't transform coordinates
-     *         in the domain of the grid range.
+     *         in the domain of the grid envelope.
      *
      * @since 2.5
      */
@@ -441,7 +441,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @throws IllegalArgumentException if {@code gridRange} has more than 2 dimensions with
      *         a {@linkplain GridEnvelope#getSpan span} larger than 1.
-     * @throws MismatchedDimensionException if the grid range and the CRS doesn't have
+     * @throws MismatchedDimensionException if the grid envelope and the CRS doesn't have
      *         consistent dimensions.
      *
      * @since 2.2
@@ -533,10 +533,10 @@ public class GridGeometry2D extends GeneralGridGeometry {
 
     /**
      * Returns the math transform for two dimensions of the specified transform. This methods
-     * search for the grid dimensions in the given grid range having a length greater than 1.
-     * The corresponding CRS dimensions are inferred from the transform itself.
+     * search for all grid dimensions in the given grid envelope having a length greater than
+     * 1 pixel. The corresponding CRS dimensions are inferred from the transform itself.
      *
-     * @param  gridRange The grid range, or {@code null} if unknown.
+     * @param  gridRange The grid envelope, or {@code null} if unknown.
      * @param  transform The transform, or {@code null} if none.
      * @param  axis An array of length 4 initialized to 0. This is the array where to store
      *         {@link #gridDimensionX}, {@link #gridDimensionY}, {@link #axisDimensionX} and
@@ -558,8 +558,8 @@ public class GridGeometry2D extends GeneralGridGeometry {
             return (MathTransform2D) transform;
         }
         /*
-         * Finds the axis for the two dimensional parts. We infer them from the grid range.
-         * If no grid range were specified, then we assume that they are the 2 first dimensions.
+         * Finds the axis for the two dimensional parts. We infer them from the grid envelope.
+         * If no grid envelope were specified, then we assume that they are the 2 first dimensions.
          */
         final DimensionFilter filter = DimensionFilter.getInstance(hints);
         if (gridRange != null) {
@@ -761,11 +761,11 @@ public class GridGeometry2D extends GeneralGridGeometry {
     }
 
     /**
-     * Returns the two-dimensional part of the {@linkplain #getGridRange grid range}
+     * Returns the two-dimensional part of the {@linkplain #getGridRange grid envelope}
      * as a rectangle. Note that the returned object is a {@link Rectangle} subclass.
      *
-     * @return The grid range (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no grid range (i.e.
+     * @return The grid envelope (never {@code null}).
+     * @throws InvalidGridGeometryException if this grid geometry has no grid envelope (i.e.
      *         <code>{@linkplain #isDefined isDefined}({@linkplain #GRID_RANGE GRID_RANGE})</code>
      *         returned {@code false}).
      *

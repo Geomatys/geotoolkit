@@ -106,7 +106,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     private static final long serialVersionUID = 667472989475027853L;
 
     /**
-     * Whatever default grid range computation should be performed on transform
+     * Whatever default grid envelope computation should be performed on transform
      * relative to pixel center or relative to pixel corner.  The former is OGC
      * convention while the later is Java convention.
      */
@@ -236,7 +236,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         sampleDimensions = new GridSampleDimension[image.getNumBands()];
         RenderedSampleDimension.create(name, image, bands, sampleDimensions);
         /*
-         * Computes the grid range if it was not explicitly provided. The range will be inferred
+         * Computes the grid envelope if it was not explicitly provided. The range will be inferred
          * from the image size, if needed. The envelope computation (if needed) requires a valid
          * 'gridToCRS' transform in the GridGeometry object. In any case, the envelope must be
          * non-empty and its dimension must matches the coordinate reference system's dimension.
@@ -268,8 +268,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                                       GridGeometry2D.GRID_RANGE |
                                       GridGeometry2D.GRID_TO_CRS);
         /*
-         * Last argument checks. The image size must be consistent with the grid range
-         * and the envelope must be non-empty.
+         * Last argument checks. The image size must be consistent with the grid envelope
+         * and the georeferenced envelope must be non-empty.
          */
         final String error = checkConsistency(image, gridGeometry);
         if (error != null) {
@@ -314,7 +314,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 label = Integer.valueOf(i);
             }
             if (range.getLow(i)!=min || range.getSpan(i)!=span) {
-                return Errors.format(Errors.Keys.BAD_GRID_RANGE_$3, label, min, min + span);
+                return Errors.format(Errors.Keys.BAD_GRID_ENVELOPE_$3, label, min, min + span);
             }
         }
         return null;

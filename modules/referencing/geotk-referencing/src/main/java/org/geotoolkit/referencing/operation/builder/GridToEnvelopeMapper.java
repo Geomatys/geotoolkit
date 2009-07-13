@@ -39,17 +39,16 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A helper class for building <var>n</var>-dimensional {@linkplain AffineTransform
- * affine transform} mapping {@linkplain GridEnvelope grid ranges} to {@linkplain Envelope
- * envelopes}. The affine transform will be computed automatically from the information
- * specified by the {@link #setGridRange setGridRange} and {@link #setEnvelope setEnvelope}
- * methods, which are mandatory. All other setter methods are optional hints about the
- * affine transform to be created. This builder is convenient when the following conditions
- * are meet:
+ * A helper class for building <var>n</var>-dimensional {@linkplain AffineTransform affine transform}
+ * mapping {@linkplain GridEnvelope grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
+ * The affine transform will be computed automatically from the information specified by the
+ * {@link #setGridRange setGridRange} and {@link #setEnvelope setEnvelope} methods, which are
+ * mandatory. All other setter methods are optional hints about the affine transform to be created.
+ * This builder is convenient when the following conditions are meet:
  *
  * <ul>
  *   <li><p>Pixels coordinates (usually (<var>x</var>,<var>y</var>) integer values inside
- *       the rectangle specified by the grid range) are expressed in some
+ *       the rectangle specified by the grid envelope) are expressed in some
  *       {@linkplain CoordinateReferenceSystem coordinate reference system} known at compile
  *       time. This is often the case. For example the CRS attached to {@link BufferedImage}
  *       has always ({@linkplain AxisDirection#COLUMN_POSITIVE column},
@@ -115,14 +114,14 @@ public class GridToEnvelopeMapper {
     private int defined;
 
     /**
-     * The grid range, or {@code null} if not yet specified.
+     * The grid envelope, or {@code null} if not yet specified.
      */
-    private GridEnvelope gridRange;
+    private GridEnvelope gridEnvelope;
 
     /**
      * The envelope, or {@code null} if not yet specified.
      */
-    private Envelope envelope;
+    private Envelope userEnvelope;
 
     /**
      * Whatever the {@code gridToCRS} transform will maps pixel center or corner.
@@ -153,29 +152,28 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Creates a new instance for the specified grid range and envelope.
+     * Creates a new instance for the specified grid envelope and georeferenced envelope.
      *
-     * @param  gridRange The valid coordinate range of a grid coverage.
-     * @param  userRange The corresponding coordinate range in user coordinate. This envelope must
+     * @param  gridEnvelope The valid coordinate range of a grid coverage.
+     * @param  userEnvelope The corresponding coordinate range in user coordinate. This envelope must
      *         contains entirely all pixels, i.e. the envelope's upper left corner must coincide
      *         with the upper left corner of the first pixel and the envelope's lower right corner
      *         must coincide with the lower right corner of the last pixel.
-     * @throws MismatchedDimensionException if the grid range and the envelope doesn't have
-     *         consistent dimensions.
+     * @throws MismatchedDimensionException if the two envelopes don't have consistent dimensions.
      */
-    public GridToEnvelopeMapper(final GridEnvelope gridRange, final Envelope userRange)
+    public GridToEnvelopeMapper(final GridEnvelope gridEnvelope, final Envelope userEnvelope)
             throws MismatchedDimensionException
     {
-        ensureNonNull("gridRange", gridRange);
-        ensureNonNull("userRange", userRange);
-        final int gridDim = gridRange.getDimension();
-        final int userDim = userRange.getDimension();
+        ensureNonNull("gridEnvelope", gridEnvelope);
+        ensureNonNull("userEnvelope", userEnvelope);
+        final int gridDim = gridEnvelope.getDimension();
+        final int userDim = userEnvelope.getDimension();
         if (userDim != gridDim) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$2, gridDim, userDim));
         }
-        this.gridRange = gridRange;
-        this.envelope  = userRange;
+        this.gridEnvelope = gridEnvelope;
+        this.userEnvelope = userEnvelope;
     }
 
     /**
@@ -192,21 +190,21 @@ public class GridToEnvelopeMapper {
     /**
      * Makes sure that the specified objects have the same dimension.
      */
-    private static void ensureDimensionMatch(final GridEnvelope gridRange,
-                                             final Envelope envelope,
+    private static void ensureDimensionMatch(final GridEnvelope gridEnvelope,
+                                             final Envelope userEnvelope,
                                              final boolean checkingRange)
     {
-        if (gridRange != null && envelope != null) {
+        if (gridEnvelope != null && userEnvelope != null) {
             final String label;
             final int dim1, dim2;
             if (checkingRange) {
-                label = "gridRange";
-                dim1  = gridRange.getDimension();
-                dim2  = envelope .getDimension();
+                label = "gridEnvelope";
+                dim1  = gridEnvelope.getDimension();
+                dim2  = userEnvelope .getDimension();
             } else {
-                label = "envelope";
-                dim1  = envelope .getDimension();
-                dim2  = gridRange.getDimension();
+                label = "userEnvelope";
+                dim1  = userEnvelope .getDimension();
+                dim2  = gridEnvelope.getDimension();
             }
             if (dim1 != dim2) {
                 throw new MismatchedDimensionException(Errors.format(
@@ -229,11 +227,11 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns whatever the grid range maps {@linkplain PixelInCell#CELL_CENTER pixel center}
+     * Returns whatever the grid coordinates map {@linkplain PixelInCell#CELL_CENTER pixel center}
      * or {@linkplain PixelInCell#CELL_CORNER pixel corner}. The former is OGC convention while
      * the later is Java2D/JAI convention. The default is cell center (OGC convention).
      *
-     * @return Whatever the grid range maps pixel center or corner.
+     * @return Whatever the grid coordinates map pixel center or corner.
      *
      * @since 2.5
      */
@@ -242,11 +240,11 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Sets whatever the grid range maps {@linkplain PixelInCell#CELL_CENTER pixel center}
+     * Sets whatever the grid coordinates map {@linkplain PixelInCell#CELL_CENTER pixel center}
      * or {@linkplain PixelInCell#CELL_CORNER pixel corner}. The former is OGC convention
      * while the later is Java2D/JAI convention.
      *
-     * @param anchor Whatever the grid range maps pixel center or corner.
+     * @param anchor Whatever the grid coordinates map pixel center or corner.
      *
      * @since 2.5
      */
@@ -259,59 +257,59 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns the grid range.
+     * Returns the grid envelope.
      *
-     * @return The grid range.
-     * @throws IllegalStateException if the grid range has not yet been defined.
+     * @return The grid envelope.
+     * @throws IllegalStateException if the grid envelope has not yet been defined.
      */
     public GridEnvelope getGridRange() throws IllegalStateException {
-        if (gridRange == null) {
+        if (gridEnvelope == null) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_VALUE_$1, "gridRange"));
+                    Errors.Keys.MISSING_PARAMETER_VALUE_$1, "gridEnvelope"));
         }
-        return gridRange;
+        return gridEnvelope;
     }
 
     /**
-     * Sets the grid range.
+     * Sets the grid envelope.
      *
-     * @param gridRange The new grid range.
+     * @param gridEnvelope The new grid envelope.
      */
-    public void setGridRange(final GridEnvelope gridRange) {
-        ensureNonNull("gridRange", gridRange);
-        ensureDimensionMatch(gridRange, envelope, true);
-        if (!Utilities.equals(this.gridRange, gridRange)) {
-            this.gridRange = gridRange;
+    public void setGridRange(final GridEnvelope gridEnvelope) {
+        ensureNonNull("gridEnvelope", gridEnvelope);
+        ensureDimensionMatch(gridEnvelope, userEnvelope, true);
+        if (!Utilities.equals(this.gridEnvelope, gridEnvelope)) {
+            this.gridEnvelope = gridEnvelope;
             reset();
         }
     }
 
     /**
-     * Returns the envelope. For performance reason, this method do not
+     * Returns the georeferenced envelope. For performance reason, this method do not
      * clone the envelope. So the returned object should not be modified.
      *
      * @return The envelope.
      * @throws IllegalStateException if the envelope has not yet been defined.
      */
     public Envelope getEnvelope() throws IllegalStateException {
-        if (envelope == null) {
+        if (userEnvelope == null) {
             throw new IllegalStateException(Errors.format(
                     Errors.Keys.MISSING_PARAMETER_VALUE_$1, "envelope"));
         }
-        return envelope;
+        return userEnvelope;
     }
 
     /**
-     * Sets the envelope. This method do not clone the specified envelope,
+     * Sets the georeferenced envelope. This method do not clone the specified envelope,
      * so it should not be modified after this method has been invoked.
      *
      * @param envelope The new envelope.
      */
     public void setEnvelope(final Envelope envelope) {
         ensureNonNull("envelope", envelope);
-        ensureDimensionMatch(gridRange, envelope, false);
-        if (!Utilities.equals(this.envelope, envelope)) {
-            this.envelope = envelope;
+        ensureDimensionMatch(gridEnvelope, envelope, false);
+        if (!Utilities.equals(this.userEnvelope, envelope)) {
+            this.userEnvelope = envelope;
             reset();
         }
     }
@@ -334,8 +332,8 @@ public class GridToEnvelopeMapper {
      * following assumptions:
      *
      * <ul>
-     *   <li><p>Axis order in the grid range matches exactly axis order in the envelope, except
-     *       for the special case described in the next point. In other words, if axis order in
+     *   <li><p>Axis order in the grid envelope matches exactly axis order in the genreferenced envelope,
+     *       except for the special case described in the next point. In other words, if axis order in
      *       the underlying image is (<var>column</var>, <var>row</var>) (which is the case for
      *       a majority of images), then the envelope should probably have a (<var>longitude</var>,
      *       <var>latitude</var>) or (<var>easting</var>, <var>northing</var>) axis order.</p></li>
@@ -414,10 +412,10 @@ public class GridToEnvelopeMapper {
                 // No coordinate system. Reverse the second axis inconditionnaly
                 // (except if there is not enough dimensions).
                 int length = 0;
-                if (gridRange != null) {
-                    length = gridRange.getDimension();
-                } else if (envelope != null) {
-                    length = envelope.getDimension();
+                if (gridEnvelope != null) {
+                    length = gridEnvelope.getDimension();
+                } else if (userEnvelope != null) {
+                    length = userEnvelope.getDimension();
                 }
                 if (length >= 2) {
                     reverseAxis = new boolean[length];
@@ -454,11 +452,11 @@ public class GridToEnvelopeMapper {
     public void reverseAxis(final int dimension) {
         if (reverseAxis == null) {
             final int length;
-            if (gridRange != null) {
-                length = gridRange.getDimension();
+            if (gridEnvelope != null) {
+                length = gridEnvelope.getDimension();
             } else {
-                ensureNonNull("envelope", envelope);
-                length = envelope.getDimension();
+                ensureNonNull("envelope", userEnvelope);
+                length = userEnvelope.getDimension();
             }
             reverseAxis = new boolean[length];
         }
@@ -496,9 +494,9 @@ public class GridToEnvelopeMapper {
      * Returns the coordinate system in use with the envelope.
      */
     private CoordinateSystem getCoordinateSystem() {
-        if (envelope != null) {
+        if (userEnvelope != null) {
             final CoordinateReferenceSystem crs;
-            crs = envelope.getCoordinateReferenceSystem();
+            crs = userEnvelope.getCoordinateReferenceSystem();
             if (crs != null) {
                 return crs.getCoordinateSystem();
             }
@@ -510,16 +508,16 @@ public class GridToEnvelopeMapper {
      * Creates a math transform using the information provided by setter methods.
      *
      * @return The math transform.
-     * @throws IllegalStateException if the grid range or the envelope were not set.
+     * @throws IllegalStateException if the grid envelope or the georeferenced envelope were not set.
      */
     public MathTransform createTransform() throws IllegalStateException {
         if (transform == null) {
-            final GridEnvelope gridRange = getGridRange();
-            final Envelope     userRange = getEnvelope();
-            final boolean      swapXY    = getSwapXY();
-            final boolean[]    reverse   = getReverseAxis();
-            final PixelInCell  gridType  = getPixelAnchor();
-            final int          dimension = gridRange.getDimension();
+            final GridEnvelope gridEnvelope = getGridRange();
+            final Envelope     userEnvelope = getEnvelope();
+            final boolean      swapXY       = getSwapXY();
+            final boolean[]    reverse      = getReverseAxis();
+            final PixelInCell  gridType     = getPixelAnchor();
+            final int          dimension    = gridEnvelope.getDimension();
             /*
              * Setup the multi-dimensional affine transform for use with OpenGIS.
              * According OpenGIS specification, transforms must map pixel center.
@@ -536,21 +534,21 @@ public class GridToEnvelopeMapper {
             }
             final Matrix matrix = MatrixFactory.create(dimension + 1);
             for (int i=0; i<dimension; i++) {
-                // NOTE: i is a dimension in the 'gridRange' space (source coordinates).
-                //       j is a dimension in the 'userRange' space (target coordinates).
+                // NOTE: i is a dimension in the 'gridEnvelope' space (source coordinates).
+                //       j is a dimension in the 'userEnvelope' space (target coordinates).
                 int j = i;
                 if (swapXY && j<=1) {
                     j = 1-j;
                 }
-                double scale = userRange.getSpan(j) / gridRange.getSpan(i);
+                double scale = userEnvelope.getSpan(j) / gridEnvelope.getSpan(i);
                 double offset;
                 if (reverse == null || j >= reverse.length || !reverse[j]) {
-                    offset = userRange.getMinimum(j);
+                    offset = userEnvelope.getMinimum(j);
                 } else {
                     scale  = -scale;
-                    offset = userRange.getMaximum(j);
+                    offset = userEnvelope.getMaximum(j);
                 }
-                offset -= scale * (gridRange.getLow(i) - translate);
+                offset -= scale * (gridEnvelope.getLow(i) - translate);
                 matrix.setElement(j, j,         0.0   );
                 matrix.setElement(j, i,         scale );
                 matrix.setElement(j, dimension, offset);

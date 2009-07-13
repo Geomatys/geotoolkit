@@ -233,7 +233,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     }
 
     /**
-     * Creates an envelope for a grid range transformed to an envelope using the specified
+     * Creates a georeferenced envelope from a grid envelope transformed using the specified
      * math transform. The <cite>grid to CRS</cite> transform should map either the
      * {@linkplain PixelInCell#CELL_CENTER cell center} (as in OGC convention) or
      * {@linkplain PixelInCell#CELL_CORNER cell corner} (as in Java2D/JAI convention)
@@ -245,10 +245,10 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * the more detailled {@link PixelOrientation}, because the later is restricted to the
      * two-dimensional case while the former can be used for any number of dimensions.
      *
-     * @param gridRange The grid range.
-     * @param anchor    Whatever grid range coordinates map to pixel center or pixel corner.
-     * @param gridToCRS The transform (usually affine) from grid range to the envelope CRS.
-     * @param crs       The envelope CRS, or {@code null} if unknow.
+     * @param gridEnvelope The grid envelope in integer coordinates.
+     * @param anchor       Whatever grid coordinates map to pixel center or pixel corner.
+     * @param gridToCRS    The transform (usually affine) from grid envelope to the CRS.
+     * @param crs          The CRS for the envelope to be created, or {@code null} if unknow.
      *
      * @throws MismatchedDimensionException If one of the supplied object doesn't have
      *         a dimension compatible with the other objects.
@@ -259,15 +259,15 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      *
      * @see org.geotoolkit.coverage.grid.GeneralGridEnvelope#GeneralGridEnvelope(Envelope,PixelInCell,boolean)
      */
-    public GeneralEnvelope(final GridEnvelope  gridRange,
+    public GeneralEnvelope(final GridEnvelope  gridEnvelope,
                            final PixelInCell   anchor,
                            final MathTransform gridToCRS,
                            final CoordinateReferenceSystem crs)
             throws IllegalArgumentException
     {
-        ensureNonNull("gridRange", gridRange);
+        ensureNonNull("gridEnvelope", gridEnvelope);
         ensureNonNull("gridToCRS", gridToCRS);
-        final int dimRange  = gridRange.getDimension();
+        final int dimRange  = gridEnvelope.getDimension();
         final int dimSource = gridToCRS.getSourceDimensions();
         final int dimTarget = gridToCRS.getTargetDimensions();
         ensureSameDimension(dimRange, dimSource);
@@ -283,7 +283,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
              * Note: the offset of 1 after getHigh(i) is because high values are inclusive according
              *       ISO specification, while our algorithm and Java usage expect exclusive values.
              */
-            setRange(i, gridRange.getLow(i) - offset, gridRange.getHigh(i) - (offset - 1));
+            setRange(i, gridEnvelope.getLow(i) - offset, gridEnvelope.getHigh(i) - (offset - 1));
         }
         final GeneralEnvelope transformed;
         try {

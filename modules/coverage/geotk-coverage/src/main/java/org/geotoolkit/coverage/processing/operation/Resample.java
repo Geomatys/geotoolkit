@@ -65,8 +65,8 @@ import org.geotoolkit.resources.Errors;
  *       reference system to Universal Transverse Mercator CRS.</LI>
  *   <LI><b>Subsetting</b><br>
  *       A subset of a grid can be viewed as a separate coverage by using this operation with a
- *       grid geometry which as the same geoferencing and a region. Grid range in the grid geometry
- *       defines the region to subset in the grid coverage.</LI>
+ *       grid geometry which as the same geoferencing and a region. Grid envelope in the grid
+ *       geometry defines the region to subset in the grid coverage.</LI>
  * </UL>
  *
  * <P><b>Name:</b>&nbsp;{@code "Resample"}<BR>
@@ -182,7 +182,7 @@ public class Resample extends Operation2D {
      */
     public Resample() {
         super(new DefaultParameterDescriptorGroup(Citations.OGC, "Resample",
-              new ParameterDescriptor[] {
+              new ParameterDescriptor<?>[] {
                     SOURCE_0,
                     INTERPOLATION_TYPE,
                     COORDINATE_REFERENCE_SYSTEM,
@@ -273,12 +273,12 @@ public class Resample extends Operation2D {
              * Different CRS. We need to infer an image size, which may be the same than the
              * original size or something smaller if the envelope is a subarea. We process by
              * transforming the target envelope to the source CRS and compute a new grid geometry
-             * with that envelope. The grid range of that grid geometry is the new image size.
+             * with that envelope. The grid envelope of that grid geometry is the new image size.
              * Note that failure to transform the envelope is non-fatal (we will assume that the
              * target image should have the same size). Then create again a new grid geometry,
              * this time with the target envelope.
              */
-            GridEnvelope gridRange;
+            GridEnvelope gridEnvelope;
             try {
                 final GeneralEnvelope transformed;
                 transformed = CRS.transform(CRS.getCoordinateOperationFactory(true)
@@ -298,11 +298,11 @@ public class Resample extends Operation2D {
                 recoverableException("resample", exception);
             } catch (TransformException exception) {
                 recoverableException("resample", exception);
-                // Will use the grid range from the original geometry,
+                // Will use the grid envelope from the original geometry,
                 // which will result in keeping the same image size.
             }
-            gridRange = gridGeometry.getGridRange();
-            gridGeometry = new GridGeometry2D(gridRange, target);
+            gridEnvelope = gridGeometry.getGridRange();
+            gridGeometry = new GridGeometry2D(gridEnvelope, target);
         }
         return gridGeometry;
     }

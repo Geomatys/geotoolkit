@@ -29,9 +29,9 @@ import org.geotoolkit.resources.Errors;
 /**
  * A combinaison of {@code <Envelope>} and {@code <RectifiedGrid>} elements in
  * {@linkplain GeographicMetadataFormat geographic metadata format}. This class offers similar
- * service than {@linkplain Envelope envelope} and {@link GridEnvelope grid range}, except
+ * service than {@linkplain Envelope envelope} and {@link GridEnvelope grid envelope}, except
  * that the maximum value for {@linkplain #getOrdinateRange coordinate range} and
- * {@linkplain #getGridRange grid range} are inclusives.
+ * {@linkplain #getGridRange grid envelope} are inclusives.
  * <p>
  * The {@code <GridEnvelope>} child element is typically (but not always) initialized
  * to the following ranges:
@@ -135,7 +135,7 @@ public class ImageGeometry extends MetadataAccessor {
     }
 
     /**
-     * Sets the grid range along the specified dimension. If the dimension is greater
+     * Sets the grid envelope along the specified dimension. If the dimension is greater
      * than the current envelope dimension, then this dimension is added.
      *
      * @param dimension The dimension to set. It can eventually be greater than {@link #getDimension}.
