@@ -110,7 +110,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
 
     /**
      * Puts every entries from the given map. This method is overloaded for performance
-     * raisons since we are not interrested in the return value of the {@link #put} method.
+     * raisons since we are not interested in the return value of the {@link #put} method.
      */
     @Override
     public void putAll(final Map<? extends String, ?> map) {

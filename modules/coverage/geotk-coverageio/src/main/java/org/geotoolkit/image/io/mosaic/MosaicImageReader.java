@@ -1198,7 +1198,7 @@ public class MosaicImageReader extends ImageReader {
         }
         /*
          * Gets a MosaicImageReadParam instance to be used for caching Tile parameters. There is
-         * no need to invokes 'getDefaultReadParam()' since we are interrested only in the cache
+         * no need to invokes 'getDefaultReadParam()' since we are interested only in the cache
          * that MosaicImageReadParam provide.
          */
         MosaicController controller = null;
@@ -1363,7 +1363,7 @@ public class MosaicImageReader extends ImageReader {
                     /*
                      * The read operation ignored our destination image.  By default we treat that
                      * as an error since the SampleModel may be incompatible and changing it would
-                     * break the geophysics meaning of pixel values. However if we are interrested
+                     * break the geophysics meaning of pixel values. However if we are interested
                      * only in the visual aspect, we can copy the data (slow, consumes memory) and
                      * let Java2D performs the required color conversions. Note that it should not
                      * occur anyway if we choose correctly the raw image type in the code above.

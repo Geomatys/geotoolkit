@@ -56,7 +56,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
             Pattern.CASE_INSENSITIVE);
 
     /**
-     * The base directions we are interrested in. Any direction not in
+     * The base directions we are interested in. Any direction not in
      * this group will be rejected by our parser.
      */
     private static final AxisDirection[] BASE_DIRECTIONS = new AxisDirection[] {

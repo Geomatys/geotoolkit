@@ -36,7 +36,7 @@
  * <p>
  * Users wanting to know more about the available projections and their parameters should look
  * at the {@linkplain org.geotoolkit.referencing.operation.provider provider} package. Only users
- * interrested in the <em>implementation</em> of those projections should look at this package.
+ * interested in the <em>implementation</em> of those projections should look at this package.
  *
  *
  * {@section Definition of terms}
