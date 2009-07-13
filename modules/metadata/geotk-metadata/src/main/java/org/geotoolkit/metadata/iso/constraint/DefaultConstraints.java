@@ -111,19 +111,6 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
     }
 
     /**
-     * Sets the limitation affecting the fitness for use of the resource.
-     * Example: "not to be used for navigation".
-     *
-     * @param newValues The new use limitation.
-     *
-     * @deprecated Renamed as {@link #setUseLimitations(Collection)} (with an "s").
-     */
-    @Deprecated
-    public void setUseLimitation(final Collection<? extends InternationalString> newValues) {
-        setUseLimitations(newValues);
-    }
-
-    /**
      * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
      * process is going to be done. This method is automatically called by JAXB
      * when the marshalling begins.

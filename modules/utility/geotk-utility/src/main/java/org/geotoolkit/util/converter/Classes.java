@@ -277,19 +277,6 @@ public final class Classes {
     }
 
     /**
-     * @deprecated Renamed {@link #findSpecializedClass(Collection)}.
-     *
-     * @param  objects A collection of objects.
-     * @return The most specialized class.
-     *
-     * @since 3.00
-     */
-    @Deprecated
-    public static Class<?> specializedClass(final Collection<?> objects) {
-        return findSpecializedClass(objects);
-    }
-
-    /**
      * Returns the most specific class which is a common parent of all the specified classes.
      * This method is not public in order to make sure that it contains only classes, not
      * interfaces, since our implementation is not designed for multi-inheritances.
@@ -330,19 +317,6 @@ public final class Classes {
     }
 
     /**
-     * @deprecated Renamed {@link #findCommonClass(Collection)}.
-     *
-     * @param  objects A collection of objects.
-     * @return The most specific class common to all supplied objects.
-     *
-     * @since 3.00
-     */
-    @Deprecated
-    public static Class<?> commonClass(final Collection<?> objects) {
-        return findCommonClass(objects);
-    }
-
-    /**
      * Returns the most specific class which {@linkplain Class#isAssignableFrom is assignable from}
      * the given classes or a parent of those classes. This method returns either {@code c1},
      * {@code c2} or a common parent of {@code c1} and {@code c2}.
@@ -370,20 +344,6 @@ public final class Classes {
             c2 = c2.getSuperclass();
         } while (c1 != null && c2 != null);
         return Object.class;
-    }
-
-    /**
-     * @deprecated Renamed {@link #findCommonClass(Class, Class)}.
-     *
-     * @param  c1 The first class.
-     * @param  c2 The second class.
-     * @return The most specific class common to the supplied classes.
-     *
-     * @since 3.00
-     */
-    @Deprecated
-    public static Class<?> commonClass(Class<?> c1, Class<?> c2) {
-        return findCommonClass(c1, c2);
     }
 
     /**
@@ -476,23 +436,6 @@ compare:for (int i=0; i<c1.length; i++) {
             }
         }
         return n == 0; // If n>0, at least one interface was not found in 'c1'.
-    }
-
-    /**
-     * @deprecated Renamed {@link #implementSameInterfaces(Class, Class, Class)}.
-     *
-     * @param <T>     A common parent for both objects.
-     * @param object1 The first object to check for interfaces.
-     * @param object2 The second object to check for interfaces.
-     * @param base    The parent of all interfaces to check.
-     * @return        {@code true} if both objects implement the same set of interfaces.
-     */
-    @Deprecated
-    public static <T> boolean sameInterfaces(final Class<? extends T> object1,
-                                             final Class<? extends T> object2,
-                                             final Class<T> base)
-    {
-        return implementSameInterfaces(object1, object2, base);
     }
 
     /**

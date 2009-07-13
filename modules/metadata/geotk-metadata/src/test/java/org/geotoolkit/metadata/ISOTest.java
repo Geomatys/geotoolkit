@@ -74,7 +74,7 @@ public final class ISOTest {
      * will automatically scans for dependencies even if an interface do not appears in this
      * list. This list should not contains any {@link CodeList}.
      */
-    private static final Class<?>[] TEST = new Class[] {
+    private static final Class<?>[] TEST = new Class<?>[] {
         org.opengis.metadata.ApplicationSchemaInformation.class,
         org.opengis.metadata.ExtendedElementInformation.class,
         org.opengis.metadata.FeatureTypeList.class,
@@ -82,7 +82,6 @@ public final class ISOTest {
         org.opengis.metadata.MetaData.class,
         org.opengis.metadata.MetadataExtensionInformation.class,
         org.opengis.metadata.PortrayalCatalogueReference.class,
-        org.opengis.metadata.SpatialAttributeSupplement.class,
         org.opengis.metadata.citation.Address.class,
         org.opengis.metadata.citation.Citation.class,
         org.opengis.metadata.citation.CitationDate.class,
@@ -167,7 +166,7 @@ public final class ISOTest {
     /**
      * GeoAPI interfaces that are know to be unimplemented at this stage.
      */
-    private static final Class<?>[] UNIMPLEMENTED = new Class[] {
+    private static final Class<?>[] UNIMPLEMENTED = new Class<?>[] {
         AggregateInformation.class,
         CitationFactory.class,          // SHOULD THIS INTERFACE REALLY EXISTS IN GEOAPI?
         RepresentativeFraction.class,   // Implemented on top of 'Number'.
@@ -224,7 +223,7 @@ public final class ISOTest {
             final Object dummyInstance;
             final boolean isImplemented = isImplemented(accessor.type);
             if (isImplemented) try {
-                dummyInstance = accessor.implementation.getConstructor((Class[]) null).
+                dummyInstance = accessor.implementation.getConstructor((Class<?>[]) null).
                         newInstance((Object[]) null);
             } catch (Exception e) {
                 fail(e.toString());
@@ -257,7 +256,7 @@ public final class ISOTest {
                 Class<?> type = accessor.type(i);
                 if (Collection.class.isAssignableFrom(type)) {
                     final Object example = accessor.get(i, dummyInstance);
-                    if (example instanceof CheckedCollection) {
+                    if (example instanceof CheckedCollection<?>) {
                         type = ((CheckedCollection<?>) example).getElementType();
                     }
                 }

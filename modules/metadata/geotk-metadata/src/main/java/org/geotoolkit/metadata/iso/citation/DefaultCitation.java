@@ -387,17 +387,6 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     }
 
     /**
-     * Sets the mode in which the resource is represented, or an empty string if none.
-     *
-     * @param newValues The new presentation form.
-     *
-     * @deprecated Renamed as {@link #setPresentationForms(Collection)} (with an "s").
-     */
-    public void setPresentationForm(final Collection<? extends PresentationForm> newValues) {
-        setPresentationForms(newValues);
-    }
-
-    /**
      * Returns the information about the series, or aggregate dataset, of which the dataset is
      * a part. Returns {@code null} if none.
      */

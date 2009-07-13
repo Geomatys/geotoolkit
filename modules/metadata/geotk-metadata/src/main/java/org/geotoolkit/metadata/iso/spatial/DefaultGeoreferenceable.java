@@ -240,18 +240,6 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
     }
 
     /**
-     * Sets a reference providing description of the parameters.
-     *
-     * @param newValues The new parameter citations.
-     *
-     * @deprecated Renamed as {@link #setParameterCitations(Collection)} (with an "s").
-     */
-    @Deprecated
-    public void setParameterCitation(final Collection<? extends Citation> newValues) {
-        setParameterCitations(newValues);
-    }
-
-    /**
      * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
      * process is going to be done. This method is automatically called by JAXB
      * when the marshalling begins.

@@ -306,18 +306,6 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     }
 
     /**
-     * Sets information about the frequency of resource updates, and the scope of those updates.
-     *
-     * @param newValues The new resource maintenance info.
-     *
-     * @deprecated Renamed as {@link #setResourceMaintenances(Collection)} (with an "s").
-     */
-    @Deprecated
-    public void setResourceMaintenance(final Collection<? extends MaintenanceInformation> newValues) {
-        setResourceMaintenances(newValues);
-    }
-
-    /**
      * Provides a graphic that illustrates the resource(s) (should include a legend for the graphic).
      */
     @Override
@@ -364,18 +352,6 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      */
     public synchronized void setResourceFormats(final Collection<? extends Format> newValues) {
         resourceFormats = copyCollection(newValues, resourceFormats, Format.class);
-    }
-
-    /**
-     * Sets a description of the format of the resource(s).
-     *
-     * @param newValues The new resource format.
-     *
-     * @deprecated Renamed as {@link #setResourceFormats(Collection)} (with an "s").
-     */
-    @Deprecated
-    public void setResourceFormat(final Collection<? extends Format> newValues) {
-        setResourceFormats(newValues);
     }
 
     /**

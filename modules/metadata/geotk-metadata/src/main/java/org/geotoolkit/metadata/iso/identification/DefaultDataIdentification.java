@@ -220,18 +220,6 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     }
 
     /**
-     * Sets the language(s) used within the dataset.
-     *
-     * @param newValues The new languages.
-     *
-     * @deprecated Renamed as {@link #setLanguages(Collection)} (with an "s").
-     */
-    @Deprecated
-    public void setLanguage(final Collection<? extends Locale> newValues)  {
-        setLanguages(newValues);
-    }
-
-    /**
      * Returns the full name of the character coding standard used for the dataset.
      */
     @Override
@@ -318,18 +306,6 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      */
     public synchronized void setExtents(final Collection<? extends Extent> newValues) {
         extents = copyCollection(newValues, extents, Extent.class);
-    }
-
-    /**
-     * Sets additional extent information.
-     *
-     * @param newValues The new extents
-     *
-     * @deprecated Renamed as {@link #getExtents()} (with an "s").
-     */
-    @Deprecated
-    public void setExtent(final Collection<? extends Extent> newValues) {
-        setExtents(newValues);
     }
 
     /**

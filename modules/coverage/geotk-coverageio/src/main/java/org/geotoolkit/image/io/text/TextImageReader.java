@@ -120,6 +120,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * @deprecated Should be specified in metadata instead, and implementations should use
      *             {@code SampleConverter}.
      */
+    @Deprecated
     protected double getPadValue(final int imageIndex) throws IOException {
         return (originatingProvider instanceof Spi) ? ((Spi) originatingProvider).padValue : Double.NaN;
     }

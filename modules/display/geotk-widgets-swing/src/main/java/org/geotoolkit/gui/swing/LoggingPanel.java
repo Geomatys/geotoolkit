@@ -122,8 +122,8 @@ public class LoggingPanel extends JPanel {
     /**
      * Foreground and background colors to use for displaying logging messages.
      *
-     * @see #getForeground(LogRecord)
-     * @see #getBackground(LogRecord)
+     * @see #getForeground(Level)
+     * @see #getBackground(Level)
      */
     private Highlighter[] levelColors = new Highlighter[0];
 
@@ -277,41 +277,6 @@ public class LoggingPanel extends JPanel {
         messageFont = font;
         firePropertyChange("messageFont", old, font);
         repaint();
-    }
-
-    /**
-     * Returns the foreground color for the specified log record. This method is invoked at
-     * rendering time for every cell in the table's "message" column. The default implementation
-     * returns a color based on the record's level, using colors set with {@link #setLevelColor
-     * setLevelColor(...)}.
-     *
-     * @param  record The record to get the foreground color.
-     * @return The foreground color for the specified record, or {@code null} for the default color.
-     *
-     * @deprecated This method is no longer invoked at rendering time. If only the color
-     *             information is wanted, use {@link #getForeground(Level)} instead.
-     */
-    @Deprecated
-    public Color getForeground(final LogRecord record) {
-        return getForeground(record.getLevel());
-    }
-
-    /**
-     * Returns the background color for the specified log record. This method is invoked at
-     * rendering time for every cell in the table's "message" column. The default implementation
-     * returns a color based on the record's level, using colors set with {@link #setLevelColor
-     * setLevelColor(...)}.
-     *
-     * @param  record The record to get the background color.
-     * @return The background color for the specified record,
-     *         or {@code null} for the default color.
-     *
-     * @deprecated This method is no longer invoked at rendering time. If only the color
-     *             information is wanted, use {@link #getBackground(Level)} instead.
-     */
-    @Deprecated
-    public Color getBackground(final LogRecord record) {
-        return getBackground(record.getLevel());
     }
 
     /**
