@@ -43,6 +43,7 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.SampleCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 
 import org.junit.*;
@@ -55,46 +56,11 @@ import static org.junit.Assert.*;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  */
 public final class ResampleTest extends GridProcessingTestCase {
-    /**
-     * The source grid coverage, to be initialized by {@link #setUp}.
-     * Contains 8-bits indexed color model for a PNG image, with categories.
-     */
-    private GridCoverage2D coverage;
-
-    /**
-     * An other source coverage initialized by {@link #setUp}.
-     * Contains indexed color model for a GIF image, without categories.
-     */
-    private GridCoverage2D indexedCoverage;
-
-    /**
-     * An other source coverage initialized by {@link #setUp}.
-     * Contains indexed color model for a GIF image, without categories.
-     */
-    private GridCoverage2D indexedCoverageWithTransparency;
-
-    /**
-     * An other source coverage initialized by {@link #setUp}.
-     * Contains float values.
-     */
-    private GridCoverage2D floatCoverage;
-
-    /**
-     * Set up common objects used for all tests.
-     */
-    @Before
-    public void setUp() {
-        coverage                        = EXAMPLES.get(0);
-//      indexedCoverage                 = EXAMPLES.get(2);
-//      indexedCoverageWithTransparency = EXAMPLES.get(3);
-        floatCoverage                   = EXAMPLES.get(4);
-    }
-
     /**
      * Returns a projected CRS for test purpose.
      */
@@ -129,8 +95,8 @@ public final class ResampleTest extends GridProcessingTestCase {
      * @param coverage  The coverage to project.
      * @return The operation name which was applied on the image, or {@code null} if none.
      */
-    private static String showProjected(final GridCoverage2D coverage) {
-        return showProjected(coverage, coverage.getCoordinateReferenceSystem(), null, null, true);
+    private String showProjected() {
+        return showResampled(coverage.getCoordinateReferenceSystem(), null, null, true);
     }
 
     /**
@@ -140,10 +106,10 @@ public final class ResampleTest extends GridProcessingTestCase {
      */
     @Test
     public void testIdentity() {
-        assertEquals("Lookup", showProjected(coverage));
-//      assertNull(showProjected(indexedCoverage));
-//      assertNull(showProjected(indexedCoverageWithTransparency));
-        assertNull(showProjected(floatCoverage));
+        loadSampleCoverage(SampleCoverage.SST);
+        assertEquals("Lookup", showProjected());
+        loadSampleCoverage(SampleCoverage.FLOAT);
+        assertNull(showProjected());
     }
 
     /**
@@ -155,11 +121,11 @@ public final class ResampleTest extends GridProcessingTestCase {
         final MathTransform gridToCRS = null;
         g1 = new GridGeometry2D(new GeneralGridEnvelope(new Rectangle(50,50,100,100), 2), gridToCRS, null);
         g2 = new GridGeometry2D(new GeneralGridEnvelope(new Rectangle(50,50,200,200), 2), gridToCRS, null);
-        assertEquals("Crop",   showProjected(coverage,        null, g2, null, false));
-        assertEquals("Lookup", showProjected(coverage,        null, g2, null, true ));
-//      assertEquals("Crop",   showProjected(indexedCoverage, null, g1, null, false));
-//      assertEquals("Crop",   showProjected(indexedCoverageWithTransparency, null, g1, null, false));
-        assertEquals("Crop",   showProjected(floatCoverage, null, g1,
+        loadSampleCoverage(SampleCoverage.SST);
+        assertEquals("Crop",   showResampled(null, g2, null, false));
+        assertEquals("Lookup", showResampled(null, g2, null, true ));
+        loadSampleCoverage(SampleCoverage.FLOAT);
+        assertEquals("Crop",   showResampled(null, g1,
                 new Hints(Hints.COVERAGE_PROCESSING_VIEW, ViewType.PHOTOGRAPHIC), true));
     }
 
@@ -168,7 +134,8 @@ public final class ResampleTest extends GridProcessingTestCase {
      */
     @Test
     public void testStereographic() {
-        assertEquals("Warp", showProjected(coverage,getProjectedCRS(coverage), null, null, true));
+        loadSampleCoverage(SampleCoverage.SST);
+        assertEquals("Warp", showResampled(getProjectedCRS(coverage), null, null, true));
     }
 
     /**
@@ -189,9 +156,8 @@ public final class ResampleTest extends GridProcessingTestCase {
                   "AXIS[\"Lat\",NORTH]," +
                   "AXIS[\"Long\",EAST]," +
                   "AUTHORITY[\"EPSG\",\"4269\"]]");
-//      assertEquals("Warp", showProjected(indexedCoverage, crs, null, null, false));
-//      assertEquals("Warp", showProjected(indexedCoverageWithTransparency, crs, null, null, false));
-        assertEquals("Warp", showProjected(floatCoverage, crs, null, photo, true));
+        loadSampleCoverage(SampleCoverage.FLOAT);
+        assertEquals("Warp", showResampled(crs, null, photo, true));
     }
 
     /**
@@ -200,11 +166,10 @@ public final class ResampleTest extends GridProcessingTestCase {
     @Test
     public void testAffine() {
         final Hints photo = new Hints(Hints.COVERAGE_PROCESSING_VIEW, ViewType.PHOTOGRAPHIC);
-        showTranslated(coverage,                        null, true,  "Lookup", "Affine");
-//      showTranslated(indexedCoverage,                 null, true,  "Lookup", "Affine");
-//      showTranslated(indexedCoverageWithTransparency, null, false, "Lookup", "Affine");
-        showTranslated(floatCoverage,
-                photo, false, "org.geotoolkit.SampleTranscode", "org.geotoolkit.SampleTranscode");
+        loadSampleCoverage(SampleCoverage.SST);
+        showTranslated(null, true,  "Lookup", "Affine");
+        loadSampleCoverage(SampleCoverage.FLOAT);
+        showTranslated(photo, false, "org.geotoolkit.SampleTranscode", "org.geotoolkit.SampleTranscode");
     }
 
     /**
@@ -215,9 +180,8 @@ public final class ResampleTest extends GridProcessingTestCase {
      */
     @Test
     public void testTranslation() throws NoninvertibleTransformException {
+        loadSampleCoverage(SampleCoverage.SST);
         doTranslation(coverage);
-//      doTranslation(indexedCoverage);
-//      doTranslation(indexedCoverageWithTransparency);
     }
 
     /**

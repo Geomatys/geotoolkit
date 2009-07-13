@@ -40,6 +40,8 @@ import static org.junit.Assert.*;
 
 /**
  * Base class for tests on {@link AbstractCoverage} subclasses.
+ * This base class provides static methods working on {@link Coverage}
+ * and {@link AffineTransform} objects.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

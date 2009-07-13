@@ -22,7 +22,7 @@ import java.awt.image.RenderedImage;
 import javax.media.jai.OperationNode;
 
 import org.opengis.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.SampleCoverage;
 import static org.geotoolkit.coverage.grid.ViewType.*;
 
 import org.junit.*;
@@ -33,16 +33,11 @@ import static org.junit.Assert.*;
  * Tests JAI operation wrapped as {@link OperatorJAI}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  */
 public final class OperationsTest extends GridProcessingTestCase {
-    /**
-     * Sample image.
-     */
-    private GridCoverage2D SST;
-
     /**
      * The grid coverage processor.
      */
@@ -54,7 +49,7 @@ public final class OperationsTest extends GridProcessingTestCase {
     @Before
     public void setUp() {
         processor = Operations.DEFAULT;
-        SST = EXAMPLES.get(0);
+        loadSampleCoverage(SampleCoverage.SST);
     }
 
     /**
@@ -65,7 +60,7 @@ public final class OperationsTest extends GridProcessingTestCase {
     @Test
     public void testSubtract() {
         double[]      constants      = new double[] {18.75};
-        GridCoverage  sourceCoverage = SST.view(GEOPHYSICS);
+        GridCoverage  sourceCoverage = coverage.view(GEOPHYSICS);
         GridCoverage  targetCoverage = (GridCoverage) processor.subtract(sourceCoverage, constants);
         RenderedImage sourceImage    = sourceCoverage.getRenderableImage(0,1).createDefaultRendering();
         RenderedImage targetImage    = targetCoverage.getRenderableImage(0,1).createDefaultRendering();
@@ -112,7 +107,7 @@ public final class OperationsTest extends GridProcessingTestCase {
      */
     @Test
     public void testNodataFilter() {
-        GridCoverage  sourceCoverage = SST.view(GEOPHYSICS);
+        GridCoverage  sourceCoverage = coverage.view(GEOPHYSICS);
         GridCoverage  targetCoverage = processor.nodataFilter(sourceCoverage);
         RenderedImage sourceImage    = sourceCoverage.getRenderableImage(0,1).createDefaultRendering();
         RenderedImage targetImage    = targetCoverage.getRenderableImage(0,1).createDefaultRendering();
@@ -157,7 +152,7 @@ public final class OperationsTest extends GridProcessingTestCase {
      */
     @Test
     public void testGradientMagnitude() {
-        GridCoverage  sourceCoverage = SST.view(GEOPHYSICS);
+        GridCoverage  sourceCoverage = coverage.view(GEOPHYSICS);
         GridCoverage  targetCoverage = (GridCoverage) processor.gradientMagnitude(sourceCoverage);
         RenderedImage sourceImage    = sourceCoverage.getRenderableImage(0,1).createDefaultRendering();
         RenderedImage targetImage    = targetCoverage.getRenderableImage(0,1).createDefaultRendering();

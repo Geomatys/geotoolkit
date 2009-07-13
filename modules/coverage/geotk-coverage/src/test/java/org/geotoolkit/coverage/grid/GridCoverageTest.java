@@ -39,8 +39,7 @@ public final class GridCoverageTest extends GridCoverageTestCase {
      */
     @Test
     public void testRandomCoverage() {
-        final CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
-        final GridCoverage2D coverage = getRandomCoverage(crs);
+        createRandomCoverage();
         assertRasterEquals(coverage, coverage); // Actually a test of assertEqualRasters(...).
         assertSame(coverage.getRenderedImage(), coverage.getRenderableImage(0,1).createDefaultRendering());
         /*
@@ -64,8 +63,8 @@ public final class GridCoverageTest extends GridCoverageTestCase {
      */
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        GridCoverage2D coverage = EXAMPLES.get(0);
-        GridCoverage2D serial = serialize(coverage);
+        loadSampleCoverage(SampleCoverage.SST);
+        GridCoverage2D serial = serialize();
         assertNotSame(coverage, serial);
         assertEquals(GridCoverage2D.class, serial.getClass());
         // Compares the geophysics view for working around the

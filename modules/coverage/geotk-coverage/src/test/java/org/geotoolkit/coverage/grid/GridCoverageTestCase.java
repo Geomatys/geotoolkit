@@ -17,26 +17,17 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.List;
 import java.util.Random;
-import java.util.AbstractList;
-import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import javax.imageio.ImageIO;
-import javax.media.jai.RasterFactory;
 
-import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
@@ -44,27 +35,19 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.CoverageTestCase;
-import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
-import org.geotoolkit.image.ImageTestCase;
-import org.geotoolkit.test.TestData;
 
-import static java.awt.Color.decode;
 import static javax.measure.unit.SI.*;
-import static org.geotoolkit.util.NumberRange.create;
 import static org.junit.Assert.*;
 
 
 /**
- * Base class for grid coverage tests. This base class provides factory methods for sample
- * {@link GridCoverage2D}, and {@code assertEqual} methods for comparing values.
+ * Base class for grid coverage tests. This class provides a {@link GridCoverage2D} field,
+ * and some convenience methods working on it.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  */
@@ -75,22 +58,39 @@ public abstract class GridCoverageTestCase extends CoverageTestCase {
     private static final Random random = new Random(684673898634768L);
 
     /**
-     * Returns a grid coverage filled with random values. The coordinate
-     * reference system default to {@link DefaultGeographicCRS#WGS84}.
-     *
-     * @return A random coverage.
+     * The coverage to be tested. An instance can be obtained by
+     * {@link #loadSampleCoverage(SampleCoverage)} or {@link #createRandomCoverage()}.
      */
-    protected static GridCoverage2D getRandomCoverage() {
-        return getRandomCoverage(DefaultGeographicCRS.WGS84);
+    protected GridCoverage2D coverage;
+
+    /**
+     * Loads the given sample coverage. The result is stored in the {@link #coverage} field.
+     *
+     * @param  s The enum for the sample grid coverage to load.
+     */
+    protected final void loadSampleCoverage(final SampleCoverage s) {
+        try {
+            coverage = s.load();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
-     * Returns a grid coverage filled with random values.
+     * Creates a grid coverage filled with random values. The coordinate
+     * reference system default to {@link DefaultGeographicCRS#WGS84}.
+     */
+    protected final void createRandomCoverage() {
+        createRandomCoverage(DefaultGeographicCRS.WGS84);
+    }
+
+    /**
+     * Creates a grid coverage filled with random values.
+     * The result is stored in the {@link #coverage} field.
      *
      * @param crs The coverage coordinate reference system.
-     * @return A random coverage.
      */
-    protected static GridCoverage2D getRandomCoverage(final CoordinateReferenceSystem crs) {
+    protected final void createRandomCoverage(final CoordinateReferenceSystem crs) {
         /*
          * Some constants used for the construction and tests of the grid coverage.
          */
@@ -174,190 +174,19 @@ public abstract class GridCoverageTestCase extends CoverageTestCase {
                 }
             }
         }
-        return coverage;
+        this.coverage = coverage;
     }
 
     /**
-     * An immutable list of grid coverages to be used for testing purpose. Coverages are read
-     * when a the {@code get(int)} method is invoked.
-     */
-    protected static final List<GridCoverage2D> EXAMPLES = new AbstractList<GridCoverage2D>() {
-        /**
-         * The coverages returned by previous invocations.
-         */
-        private final GridCoverage2D[] cached = new GridCoverage2D[5];
-
-        /**
-         * Returns the number of available coverages which may be used as example.
-         */
-        @Override
-        public int size() {
-            return cached.length;
-        }
-
-        /**
-         * Returns a {@link GridCoverage} which may be used as a "real world" example.
-         *
-         * @param  number The example number, from 0 inclusive to {@link #size()} exclusive.
-         * @return The "real world" grid coverage.
-         */
-        @Override
-        public synchronized GridCoverage2D get(final int number) {
-            GridCoverage2D coverage = cached[number];
-            if (coverage == null) {
-                cached[number] = coverage = load(number);
-            }
-            return coverage;
-        }
-
-        /**
-         * Loads the image at the given index. This is invoked by {@link #get}
-         * the first time a given coverage is requested.
-         */
-        private GridCoverage2D load(final int number) {
-            final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-            final String                   path;
-            final Category[]         categories;
-            final CoordinateReferenceSystem crs;
-            final Rectangle2D            bounds;
-            final GridSampleDimension[]   bands;
-            switch (number) {
-                default: {
-                    throw new IndexOutOfBoundsException(String.valueOf(number));
-                }
-                /* ------------------------------------------------------------
-                 * Thematic           :  Sea Surface Temperature (SST) in °C
-                 * Data packaging     :  Indexed 8-bits
-                 * Nodata values      :  [0 .. 29] and [240 .. 255] inclusive.
-                 * Conversion formula :  (°C) = (packed value)/10 + 10
-                 * Geographic extent  :  (41°S, 35°E) - (5°N, 80°E)
-                 * Image size         :  (450 x 460) pixels
-                 *
-                 * This is a raster from Earth observations using a relatively straightforward
-                 * conversion formula to geophysics values (a linear transform using the usual
-                 * scale and offset parameters, in this case 0.1 and 10 respectively).     The
-                 * interresting part of this example is that it contains a lot of nodata values.
-                 */
-                case 0: {
-                    path = "QL95209.png";
-                    crs  = DefaultGeographicCRS.WGS84;
-                    categories = new Category[] {
-                        new Category("Coast line", decode("#000000"), create(  0,   0)),
-                        new Category("Cloud",      decode("#C3C3C3"), create(  1,   9)),
-                        new Category("Unused",     decode("#822382"), create( 10,  29)),
-                        new Category("Sea Surface Temperature", null, create( 30, 219), 0.1, 10.0),
-                        new Category("Unused",     decode("#A0505C"), create(220, 239)),
-                        new Category("Land",       decode("#D2C8A0"), create(240, 254)),
-                        new Category("No data",    decode("#FFFFFF"), create(255, 255)),
-                    };
-                    bounds = new Rectangle2D.Double(35, -41, 45, 46);
-                    bands = new GridSampleDimension[] {
-                        new GridSampleDimension("Measure", categories, CELSIUS)
-                    };
-                    break;
-                }
-                /* ------------------------------------------------------------
-                 * Thematic           :  Chlorophyle-a concentration in mg/m³
-                 * Data packaging     :  Indexed 8-bits
-                 * Nodata values      :  0 and 255
-                 * Conversion formula :  (mg/m³) = 10 ^ ((packed value)*0.015 - 1.985)
-                 * Geographic extent  :  (34°N, 07°W) - (45°N, 12°E)
-                 * Image size         :  (300 x 175) pixels
-                 *
-                 * This is a raster from Earth observations using a more complex conversion
-                 * formula to geophysics values (an exponential one). The usual scale and
-                 * offset parameters are not enough in this case.
-                 */
-                case 1: {
-                    path = "CHL01195.png";
-                    crs  = DefaultGeographicCRS.WGS84;
-                    final MathTransform1D sampleToGeophysics = (MathTransform1D)
-                            ConcatenatedTransform.create(LinearTransform1D.create(0.015, -1.985),
-                                                         ExponentialTransform1D.create(10, 1));
-                    categories = new Category[] {
-                        new Category("Land",    decode("#000000"), create(255, 255)),
-                        new Category("No data", decode("#FFFFFF"), create(  0,   0)),
-                        new Category("Chl-a",   null,              create(  1, 254), sampleToGeophysics)
-                    };
-                    bounds = new Rectangle2D.Double(-7, 34, 19, 11);
-                    bands = new GridSampleDimension[] {
-                        new GridSampleDimension("Measure", categories, MILLI(GRAM).divide(CUBIC_METRE))
-                    };
-                    break;
-                }
-                /* ------------------------------------------------------------
-                 * Thematic           :  World Digital Elevation Model (DEM)
-                 * Geographic extent  :  (90°S, 180°W) - (90°N, 180°E)
-                 */
-                case 2: {
-                    path   = "world_dem.gif";
-                    bounds = new Rectangle2D.Double(-180, -90, 360, 180);
-                    crs    = DefaultGeographicCRS.WGS84;
-                    bands  = null;
-                    break;
-                }
-                /* ------------------------------------------------------------
-                 * Thematic           :  World Bathymetry (DEM)
-                 * Geographic extent  :  (90°S, 180°W) - (90°N, 180°E)
-                 */
-                case 3:{
-                    path   = "BATHY.gif";
-                    bounds = new Rectangle2D.Double(-180, -90, 360, 180);
-                    crs    = DefaultGeographicCRS.WGS84;
-                    bands  = null;
-                    break;
-                }
-                /*
-                 * A float coverage. Because we use only one tile with one band, the code below
-                 * is pretty similar to the code we would have if we were just setting the values
-                 * in a matrix.
-                 */
-                case 4: {
-                    final int width  = 500;
-                    final int height = 500;
-                    WritableRaster raster =
-                            RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, width, height, 1, null);
-                    for (int y=0; y<height; y++) {
-                        for (int x=0; x<width; x++) {
-                            raster.setSample(x, y, 0, x+y);
-                        }
-                    }
-                    final Color[] colors = new Color[] {
-                        Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED
-                    };
-                    return factory.create("Float coverage", raster,
-                            new Envelope2D(DefaultGeographicCRS.WGS84, 35, -41, 35+45, -41+46),
-                                        null, null, null, new Color[][] {colors}, null);
-                }
-            }
-            /*
-             * Now creates the coverage from the informations selected in the above switch
-             * statement.
-             */
-            final RenderedImage image;
-            try {
-                image = ImageIO.read(TestData.getResource(ImageTestCase.class, path));
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
-            final String filename = new File(path).getName();
-            final GeneralEnvelope envelope = new GeneralEnvelope(bounds);
-            envelope.setCoordinateReferenceSystem(crs);
-            return factory.create(filename, image, envelope, bands, null, null);
-        }
-    };
-
-    /**
-     * Tests the serialization of the packed and geophysics views of a grid coverage.
+     * Tests the serialization of the packed and geophysics views of the
+     * {@linkplain #coverage current coverage}.
      *
-     * @param  coverage The coverage to serialize.
      * @return The deserialized grid coverage as packed view.
      * @throws IOException if an I/O operation was needed and failed.
      * @throws ClassNotFoundException Should never happen.
      */
-    protected static GridCoverage2D serialize(GridCoverage2D coverage)
-            throws IOException, ClassNotFoundException
-    {
+    protected final GridCoverage2D serialize() throws IOException, ClassNotFoundException {
+        assertNotNull("CoverageTestCase.coverage field is not assigned.", coverage);
         coverage.tileEncoding = null;
         /*
          * The previous line is not something that we should do.
@@ -379,8 +208,8 @@ public abstract class GridCoverageTestCase extends CoverageTestCase {
         } finally {
             in.close();
         }
-        coverage = read.view(ViewType.PACKED);
-        assertNotSame(read, coverage);
-        return coverage;
+        final GridCoverage2D view = read.view(ViewType.PACKED);
+        assertNotSame(read, view);
+        return view;
     }
 }

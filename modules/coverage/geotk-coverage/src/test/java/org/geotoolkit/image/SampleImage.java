@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * Enumeration of sample data that can be loaded by {@link ImageTestCase#loadSampleImage}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -50,6 +50,16 @@ public enum SampleImage {
     INDEXED("QL95209.png", 1873283205L),
 
     /**
+     * Chlorophyl-a concentration (CHL) using indexed color model. From a color model point of view,
+     * this image brings nothing new compared to {@link #INDEXED}. However the interresting part for
+     * a coverage is that the relationship between pixels and geophysics values is a logarithmic one
+     * instead than a linear one.
+     *
+     * @since 3.02
+     */
+    INDEXED_LOGARITHMIC("CHL01195.png", 600909489L),
+
+    /**
      * The boundary of a shape. Used for testing <cite>scanline flood fill</cite>.
      * There is no accurate CRS associated to this image.
      */
@@ -58,7 +68,7 @@ public enum SampleImage {
     /**
      * The filename to load.
      */
-    private final String filename;
+    public final String filename;
 
     /**
      * The expected checksum.
@@ -82,12 +92,12 @@ public enum SampleImage {
     }
 
     /**
-     * Loads the sample image. This method may returns a cached image for performance.
+     * Loads the sample image. This method may returns a cached image for performance reasons.
      *
      * @return The sample image.
      * @throws IOException If the image can not be read.
      */
-    final synchronized BufferedImage load() throws IOException {
+    public final synchronized BufferedImage load() throws IOException {
         BufferedImage image;
         if (cache != null) {
             image = cache.get();

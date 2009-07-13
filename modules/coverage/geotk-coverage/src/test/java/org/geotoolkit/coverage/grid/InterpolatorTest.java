@@ -33,55 +33,26 @@ import static org.junit.Assert.*;
  * Tests the {@link Interpolator2D} implementation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  */
 public final class InterpolatorTest extends GridCoverageTestCase {
     /**
-     * The interpolators to use.
-     */
-    private Interpolation[] interpolations;
-
-    /**
-     * Setup the {@linkplain #interpolations} values.
-     */
-    @Before
-    public void setup() {
-        final int[] types = {
-            Interpolation.INTERP_BICUBIC,
-            Interpolation.INTERP_BILINEAR,
-            Interpolation.INTERP_NEAREST
-        };
-        interpolations = new Interpolation[types.length];
-        for (int i=0; i<interpolations.length; i++) {
-            interpolations[i] = Interpolation.getInstance(types[i]);
-        }
-    }
-
-    /**
-     * Tests the instances to be created.
-     */
-    public void testRandomCoverage() {
-        final GridCoverage2D coverage = getRandomCoverage();
-        assertTrue(coverage instanceof Interpolator2D);
-        assertTrue(coverage.view(ViewType.GEOPHYSICS) instanceof Interpolator2D);
-        assertTrue(coverage.view(ViewType.PACKED)     instanceof Interpolator2D);
-    }
-
-    /**
      * Tests bilinear intersection at pixel edges. It should be equals
      * to the average of the four pixels around.
      */
+    @Test
     public void testInterpolationAtEdges() {
         // Following constant is pixel size (in degrees).
-        // This constant must be identical to the one defined in 'getRandomCoverage()'
+        // This constant must be identical to the one defined in 'createRandomCoverage()'
         final double PIXEL_SIZE = 0.25;
-        GridCoverage2D coverage = getRandomCoverage();
+        createRandomCoverage();
         coverage = coverage.view(ViewType.GEOPHYSICS);
-        coverage = Interpolator2D.create(coverage, new Interpolation[] {
-            Interpolation.getInstance(Interpolation.INTERP_BILINEAR)
-        });
+        coverage = Interpolator2D.create(coverage, Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
+        assertTrue(coverage instanceof Interpolator2D);
+        assertTrue(coverage.view(ViewType.GEOPHYSICS) instanceof Interpolator2D);
+        assertTrue(coverage.view(ViewType.PACKED)     instanceof Interpolator2D);
         final int  band = 0; // Band to test.
         double[] buffer = null;
         final Raster          data = coverage.getRenderedImage().getData();
@@ -116,9 +87,18 @@ public final class InterpolatorTest extends GridCoverageTestCase {
      */
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        GridCoverage2D coverage = EXAMPLES.get(0);
+        final int[] types = {
+            Interpolation.INTERP_BICUBIC,
+            Interpolation.INTERP_BILINEAR,
+            Interpolation.INTERP_NEAREST
+        };
+        final Interpolation[] interpolations = new Interpolation[types.length];
+        for (int i=0; i<interpolations.length; i++) {
+            interpolations[i] = Interpolation.getInstance(types[i]);
+        }
+        loadSampleCoverage(SampleCoverage.SST);
         coverage = Interpolator2D.create(coverage, interpolations);
-        GridCoverage2D serial = serialize(coverage);
+        GridCoverage2D serial = serialize();
         assertNotSame(coverage, serial);
         assertEquals(Interpolator2D.class, serial.getClass());
         // Compares the geophysics view for working around the
