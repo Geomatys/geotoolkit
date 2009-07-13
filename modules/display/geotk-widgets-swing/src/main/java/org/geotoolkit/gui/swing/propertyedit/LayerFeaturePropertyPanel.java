@@ -45,8 +45,8 @@ import javax.swing.table.DefaultTableModel;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.MapLayer;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.model.FeatureSourceModel;
 import org.geotoolkit.map.FeatureMapLayer;

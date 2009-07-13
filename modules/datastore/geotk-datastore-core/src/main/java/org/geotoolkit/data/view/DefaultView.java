@@ -25,23 +25,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.geotools.data.DataSourceException;
-import org.geotools.data.DataStore;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.FeatureLocking;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Query;
-import org.geotools.data.QueryCapabilities;
-import org.geotools.data.ResourceInfo;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.FeatureLocking;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.QueryCapabilities;
+import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotoolkit.data.crs.ReprojectFeatureResults;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
@@ -497,7 +497,7 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
             }
 
             @Override
-            public ReferencedEnvelope getBounds() {
+            public JTSEnvelope2D getBounds() {
                 try {
                     return DefaultView.this.getBounds();
                 } catch (IOException e) {
@@ -559,7 +559,7 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
      *             If bounds of definitionQuery
      */
     @Override
-    public ReferencedEnvelope getBounds() throws IOException {
+    public JTSEnvelope2D getBounds() throws IOException {
         if (constraintQuery.getCoordinateSystemReproject() == null) {
             if (constraintQuery.getFilter() == null || constraintQuery.getFilter() == Filter.INCLUDE ||
                 Filter.INCLUDE.equals(constraintQuery.getFilter()))
@@ -600,7 +600,7 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
      *             If a problem is encountered with source
      */
     @Override
-    public ReferencedEnvelope getBounds(Query query) throws IOException {
+    public JTSEnvelope2D getBounds(Query query) throws IOException {
         if (constraintQuery.getCoordinateSystemReproject() == null) {
             try {
                 query = makeDefinitionQuery(query);

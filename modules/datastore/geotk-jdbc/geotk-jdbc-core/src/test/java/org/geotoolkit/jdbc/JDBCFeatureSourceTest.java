@@ -19,13 +19,13 @@ package org.geotoolkit.jdbc;
 import java.util.Iterator;
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.Query;
-import org.geotools.data.QueryCapabilities;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.QueryCapabilities;
 import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -62,7 +62,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
 
     public void testBounds() throws Exception {
-        ReferencedEnvelope bounds = featureSource.getBounds();
+        JTSEnvelope2D bounds = featureSource.getBounds();
         assertEquals(0l, Math.round(bounds.getMinX()));
         assertEquals(0l, Math.round(bounds.getMinY()));
         assertEquals(2l, Math.round(bounds.getMaxX()));
@@ -78,7 +78,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         DefaultQuery query = new DefaultQuery();
         query.setFilter(filter);
 
-        ReferencedEnvelope bounds = featureSource.getBounds(query);
+        JTSEnvelope2D bounds = featureSource.getBounds(query);
         assertEquals(1l, Math.round(bounds.getMinX()));
         assertEquals(1l, Math.round(bounds.getMinY()));
         assertEquals(1l, Math.round(bounds.getMaxX()));
@@ -256,10 +256,10 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         // check actual iteration
         Iterator<SimpleFeature> it = features.iterator();
         int count = 0;
-        ReferencedEnvelope env = new ReferencedEnvelope(features.getSchema().getCoordinateReferenceSystem());
+        JTSEnvelope2D env = new JTSEnvelope2D(features.getSchema().getCoordinateReferenceSystem());
         while(it.hasNext()) {
             SimpleFeature f = it.next();
-            env.expandToInclude(ReferencedEnvelope.reference(f.getBounds()));
+            env.expandToInclude(JTSEnvelope2D.reference(f.getBounds()));
             count++;
         }
         assertEquals(2, count);
@@ -282,7 +282,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         Iterator<SimpleFeature> it = features.iterator();
         assertTrue(it.hasNext());
         SimpleFeature f = it.next();
-        ReferencedEnvelope fe = ReferencedEnvelope.reference(f.getBounds());
+        JTSEnvelope2D fe = JTSEnvelope2D.reference(f.getBounds());
         assertEquals(2, ((Number) f.getAttribute(aname("intProperty"))).intValue());
         assertFalse(it.hasNext());
         features.close(it);
@@ -304,7 +304,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         Iterator<SimpleFeature> it = features.iterator();
         assertTrue(it.hasNext());
         SimpleFeature f = it.next();
-        ReferencedEnvelope fe = ReferencedEnvelope.reference(f.getBounds());
+        JTSEnvelope2D fe = JTSEnvelope2D.reference(f.getBounds());
         assertEquals(1, ((Number) f.getAttribute(aname("intProperty"))).intValue());
         assertFalse(it.hasNext());
         features.close(it);

@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.feature.SchemaException;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -183,7 +183,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
      * @see org.geotools.data.FeatureResults#getBounds()
      */
     @Override
-    public ReferencedEnvelope getBounds() {
+    public JTSEnvelope2D getBounds() {
         final FeatureIterator<SimpleFeature> r = features();
         try {
             final Envelope newBBox = new Envelope();
@@ -198,7 +198,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
                     newBBox.expandToInclude(internal);
                 }
             }
-            return ReferencedEnvelope.reference(newBBox);
+            return JTSEnvelope2D.reference(newBBox);
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while computing reprojected bounds",
                     e);

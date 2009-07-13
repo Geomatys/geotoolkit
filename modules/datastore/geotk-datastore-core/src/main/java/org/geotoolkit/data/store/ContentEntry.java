@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.Transaction;
 import org.opengis.feature.type.Name;
 
 

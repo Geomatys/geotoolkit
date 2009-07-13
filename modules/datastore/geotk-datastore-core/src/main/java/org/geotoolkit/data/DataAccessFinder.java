@@ -28,9 +28,9 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
-import org.geotools.data.DataAccess;
-import org.geotools.data.DataAccessFactory;
-import org.geotools.data.DataStoreFactorySpi;
+import org.geotoolkit.data.DataAccess;
+import org.geotoolkit.data.DataAccessFactory;
+import org.geotoolkit.data.DataStoreFactorySpi;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

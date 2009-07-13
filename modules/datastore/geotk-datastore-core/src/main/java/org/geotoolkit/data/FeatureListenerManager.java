@@ -25,12 +25,12 @@ import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.Transaction;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -255,7 +255,7 @@ public class FeatureListenerManager {
      * @param commit true if
      */
     public void fireFeaturesAdded(final String typeName, final Transaction transaction,
-            final ReferencedEnvelope bounds, final boolean commit)
+            final JTSEnvelope2D bounds, final boolean commit)
     {
         if (commit) {
             fireCommit(typeName, transaction, FeatureEvent.FEATURES_ADDED, bounds);
@@ -330,7 +330,7 @@ public class FeatureListenerManager {
      *        unknown)
      */
     public void fireFeaturesChanged(final String typeName, final Transaction transaction,
-            final ReferencedEnvelope bounds, final boolean commit)
+            final JTSEnvelope2D bounds, final boolean commit)
     {
         if (commit) {
             fireCommit(typeName, transaction, FeatureEvent.FEATURES_CHANGED, bounds);
@@ -382,7 +382,7 @@ public class FeatureListenerManager {
      * @param transaction
      */
     private void fireCommit(final String typeName, final Transaction transaction, final int type,
-            final ReferencedEnvelope bounds)
+            final JTSEnvelope2D bounds)
     {
         FeatureSource<? extends FeatureType, ? extends Feature> featureSource;
         FeatureListener[] listeners;
@@ -414,7 +414,7 @@ public class FeatureListenerManager {
      * @param bounds
      */
     private void fireEvent(final String typeName, final Transaction transaction, final int type,
-            final ReferencedEnvelope bounds)
+            final JTSEnvelope2D bounds)
     {
         FeatureSource<? extends FeatureType, ? extends Feature> featureSource;
         FeatureListener[] listeners;
@@ -462,7 +462,7 @@ public class FeatureListenerManager {
      *        unknown)
      */
     public void fireFeaturesRemoved(final String typeName, final Transaction transaction,
-            final ReferencedEnvelope bounds, final boolean commit)
+            final JTSEnvelope2D bounds, final boolean commit)
     {
         if (commit) {
             fireCommit(typeName, transaction, FeatureEvent.FEATURES_REMOVED, bounds);

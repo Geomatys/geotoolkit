@@ -18,7 +18,7 @@ package org.geotoolkit.feature;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.utility.FeatureUtilities;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

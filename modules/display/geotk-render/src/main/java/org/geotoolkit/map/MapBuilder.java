@@ -22,8 +22,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.data.DataUtilities;
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.MutableStyle;
 

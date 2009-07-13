@@ -24,13 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotools.feature.CollectionListener;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.visitor.FeatureVisitor;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.collection.CollectionListener;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.opengis.feature.FeatureVisitor;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.feature.utility.NullProgressListener;
-import org.geotools.util.ProgressListener;
+import org.opengis.util.ProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -574,10 +574,6 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         listeners.remove(listener);
     }
 
-    public final void accepts(FeatureVisitor visitor, ProgressListener progress) throws IOException {
-        accepts((org.opengis.feature.FeatureVisitor) visitor, (org.opengis.util.ProgressListener) progress);
-    }
-
     @Override
     public SimpleFeatureType getSchema() {
         return schema;
@@ -587,7 +583,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      * Subclasses need to override this.
      */
     @Override
-    public ReferencedEnvelope getBounds() {
+    public JTSEnvelope2D getBounds() {
         throw new UnsupportedOperationException("subclasses should override");
     }
 }

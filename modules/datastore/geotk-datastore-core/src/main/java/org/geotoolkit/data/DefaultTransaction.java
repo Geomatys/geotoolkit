@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.Transaction;
 
 
 /**

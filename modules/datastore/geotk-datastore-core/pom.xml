@@ -49,11 +49,6 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-api</artifactId>
-      <version>${geomodified.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-feature</artifactId>
       <version>${project.version}</version>

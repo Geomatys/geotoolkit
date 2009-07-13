@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -31,7 +31,7 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
     /**
      * null bounds
      */
-    private final static ReferencedEnvelope bounds = new ReferencedEnvelope(new Envelope(), null);
+    private final static JTSEnvelope2D bounds = new JTSEnvelope2D(new Envelope(), null);
 
     static {
         bounds.setToNull();
@@ -42,7 +42,7 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
     }
 
     @Override
-    public ReferencedEnvelope getBounds() {
+    public JTSEnvelope2D getBounds() {
         return bounds;
     }
 

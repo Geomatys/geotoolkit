@@ -23,7 +23,7 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.filter.IllegalFilterException;
+import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.filter.text.commons.ICompiler;
 import org.geotoolkit.filter.text.commons.IToken;
 import org.geotoolkit.filter.text.commons.Result;

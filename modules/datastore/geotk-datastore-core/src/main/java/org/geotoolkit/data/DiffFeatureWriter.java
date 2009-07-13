@@ -19,13 +19,13 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureWriter;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -136,7 +136,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
         if (live != null) {
             // mark live as removed
             diff.remove(live.getID());
-            fireNotification(FeatureEvent.FEATURES_REMOVED, ReferencedEnvelope.reference(live.getBounds()));
+            fireNotification(FeatureEvent.FEATURES_REMOVED, JTSEnvelope2D.reference(live.getBounds()));
             live = null;
             current = null;
         } else if (current != null) {
@@ -161,7 +161,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
             // We have a modification to record!
             diff.modify(live.getID(), current);
 
-            final ReferencedEnvelope bounds = new ReferencedEnvelope((CoordinateReferenceSystem) null);
+            final JTSEnvelope2D bounds = new JTSEnvelope2D((CoordinateReferenceSystem) null);
             bounds.include(live.getBounds());
             bounds.include(current.getBounds());
             fireNotification(FeatureEvent.FEATURES_CHANGED, bounds);
@@ -171,7 +171,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
             // We have new content to record
             //
             diff.add(current.getID(), current);
-            fireNotification(FeatureEvent.FEATURES_ADDED, ReferencedEnvelope.reference(current.getBounds()));
+            fireNotification(FeatureEvent.FEATURES_ADDED, JTSEnvelope2D.reference(current.getBounds()));
             current = null;
         } else {
             throw new IOException("No feature available to write");
@@ -249,5 +249,5 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
      *        FeatureType.FEATURES_REMOVED
      * @param bounds
      */
-    protected abstract void fireNotification(int eventType, ReferencedEnvelope bounds);
+    protected abstract void fireNotification(int eventType, JTSEnvelope2D bounds);
 }

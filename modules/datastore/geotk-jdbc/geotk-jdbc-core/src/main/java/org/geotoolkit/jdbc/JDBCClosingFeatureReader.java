@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.DelegatingFeatureReader;
-import org.geotools.data.FeatureReader;
+import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

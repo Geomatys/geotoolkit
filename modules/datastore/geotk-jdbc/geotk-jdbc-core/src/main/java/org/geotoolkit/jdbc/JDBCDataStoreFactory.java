@@ -25,15 +25,15 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotools.data.DataStore;
-import org.geotools.data.Parameter;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.Parameter;
 import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotools.data.DataAccessFactory.Param;
+import org.geotoolkit.data.DataAccessFactory.Param;
 
 
 /**

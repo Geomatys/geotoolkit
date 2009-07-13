@@ -55,9 +55,9 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;

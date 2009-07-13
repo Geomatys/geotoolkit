@@ -73,7 +73,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureIterator;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.event.EventListenerList;
 
-import org.geotools.data.FeatureSource;
+import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;

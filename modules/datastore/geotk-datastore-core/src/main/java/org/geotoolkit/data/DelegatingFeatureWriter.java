@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data;
 
-import org.geotools.data.FeatureWriter;
+import org.geotoolkit.data.FeatureWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

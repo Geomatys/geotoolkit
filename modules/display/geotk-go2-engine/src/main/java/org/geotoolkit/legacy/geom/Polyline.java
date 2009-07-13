@@ -48,7 +48,6 @@ import org.geotoolkit.math.Statistics;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotools.resources.Arguments;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.math.XMath;
@@ -1983,7 +1982,7 @@ public class Polyline extends Geometry {
             throws IOException
     {
         if (locale == null) locale = Locale.getDefault();
-        if (out    == null)    out = Arguments.getWriter(System.out);
+//        if (out    == null)    out = Arguments.getWriter(System.out); //TODO remove for build
 
         final int            width = 8; // Columns width.
         final int        precision = 3; // Significant digits.

@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotools.data.DataSourceException;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.IllegalAttributeException;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.operation.MathTransform;

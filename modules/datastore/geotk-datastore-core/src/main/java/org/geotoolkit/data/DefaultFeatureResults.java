@@ -24,20 +24,20 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.data.store.DataFeatureCollection;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureCollections;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.DataStore;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Query;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.Transaction;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -275,19 +275,19 @@ public class DefaultFeatureResults extends DataFeatureCollection {
      * @see org.geotools.data.FeatureResults#getBounds()
      */
     @Override
-    public ReferencedEnvelope getBounds() {
-        ReferencedEnvelope bounds;
+    public JTSEnvelope2D getBounds() {
+        JTSEnvelope2D bounds;
 
         try {
             bounds = featureSource.getBounds(query);
         } catch (IOException e1) {
-            bounds = new ReferencedEnvelope((CoordinateReferenceSystem) null);
+            bounds = new JTSEnvelope2D((CoordinateReferenceSystem) null);
         }
 
         if (bounds == null) {
             try {
                 SimpleFeature feature;
-                bounds = new ReferencedEnvelope();
+                bounds = new JTSEnvelope2D();
 
                 final FeatureReader<SimpleFeatureType, SimpleFeature> reader = boundsReader();
 
@@ -299,9 +299,9 @@ public class DefaultFeatureResults extends DataFeatureCollection {
                 reader.close();
             } catch (IllegalAttributeException e) {
                 //throw new DataSourceException("Could not read feature ", e);
-                bounds = new ReferencedEnvelope();
+                bounds = new JTSEnvelope2D();
             } catch (IOException e) {
-                bounds = new ReferencedEnvelope();
+                bounds = new JTSEnvelope2D();
             }
         }
 

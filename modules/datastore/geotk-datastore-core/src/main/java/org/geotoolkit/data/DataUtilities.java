@@ -43,13 +43,13 @@ import org.geotoolkit.data.collection.CollectionDataStore;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultFeatureCollection;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureCollections;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.DefaultName;
-import org.geotools.feature.SchemaException;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -57,7 +57,7 @@ import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 //import org.geotoolkit.filter.FilterAttributeExtractor;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
@@ -87,10 +87,11 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.feature.utility.FeatureUtilities;
-import org.geotools.data.DataStore;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Query;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -537,7 +538,7 @@ public final class DataUtilities extends FeatureUtilities {
         // Please extend this to support additional classes.
         //
         // And good luck getting Cloneable to work
-        throw new IllegalAttributeException("Do not know how to deep copy " + type.getName());
+        throw new SimpleIllegalAttributeException("Do not know how to deep copy " + type.getName());
     }
 
     /**
@@ -1623,7 +1624,7 @@ public final class DataUtilities extends FeatureUtilities {
     public static Envelope bounds(final FeatureCollection<? extends FeatureType, ? extends Feature> collection) {
         final FeatureIterator<? extends Feature> i = collection.features();
         try {
-            final ReferencedEnvelope bounds = new ReferencedEnvelope(collection.getSchema().getCoordinateReferenceSystem());
+            final JTSEnvelope2D bounds = new JTSEnvelope2D(collection.getSchema().getCoordinateReferenceSystem());
             if (!i.hasNext()) {
                 bounds.setToNull();
                 return bounds;

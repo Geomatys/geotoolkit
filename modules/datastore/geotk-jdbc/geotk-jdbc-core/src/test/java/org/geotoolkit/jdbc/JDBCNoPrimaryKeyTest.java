@@ -17,12 +17,12 @@
 package org.geotoolkit.jdbc;
 
 import org.geotoolkit.data.DataUtilities;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
@@ -66,7 +66,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     
     public void testGetBounds() throws Exception {
         // GEOT-2067 Make sure it's possible to compute bounds out of a view
-        ReferencedEnvelope reference = dataStore.getFeatureSource(tname(LAKE)).getBounds();
+        JTSEnvelope2D reference = dataStore.getFeatureSource(tname(LAKE)).getBounds();
         assertEquals(12.0, reference.getMinX());
         assertEquals(16.0, reference.getMaxX());
         assertEquals(4.0, reference.getMinY());

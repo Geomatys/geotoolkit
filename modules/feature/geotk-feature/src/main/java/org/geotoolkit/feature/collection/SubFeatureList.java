@@ -26,8 +26,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.collection.RandomFeatureAccess;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -39,7 +37,7 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
 
-public class SubFeatureList extends SubFeatureCollection implements RandomFeatureAccess {
+public class SubFeatureList extends SubFeatureCollection implements RandomAccessFeatureCollection {
 
     /** Order by which content should be sorted */
     private List<SortBy> sort;
@@ -95,8 +93,8 @@ public class SubFeatureList extends SubFeatureCollection implements RandomFeatur
      *             if index is not between 0 and size
      */
     public SimpleFeature get(final int position) {
-        if (collection instanceof RandomFeatureAccess) {
-            final RandomFeatureAccess random = (RandomFeatureAccess) collection;
+        if (collection instanceof RandomAccessFeatureCollection) {
+            final RandomAccessFeatureCollection random = (RandomAccessFeatureCollection) collection;
             final FeatureId fid = index().get(position);
             return random.getFeatureMember(fid.getID());
         }
@@ -252,8 +250,8 @@ public class SubFeatureList extends SubFeatureCollection implements RandomFeatur
         if (position == -1) {
             throw new NoSuchElementException(id);
         }
-        if (collection instanceof RandomFeatureAccess) {
-            RandomFeatureAccess random = (RandomFeatureAccess) collection;
+        if (collection instanceof RandomAccessFeatureCollection) {
+            RandomAccessFeatureCollection random = (RandomAccessFeatureCollection) collection;
             random.getFeatureMember(id);
         }
         return (SimpleFeature) get(position);
@@ -265,8 +263,8 @@ public class SubFeatureList extends SubFeatureCollection implements RandomFeatur
         if (position == -1) {
             throw new NoSuchElementException(id);
         }
-        if (collection instanceof RandomFeatureAccess) {
-            final RandomFeatureAccess random = (RandomFeatureAccess) collection;
+        if (collection instanceof RandomAccessFeatureCollection) {
+            final RandomAccessFeatureCollection random = (RandomAccessFeatureCollection) collection;
             if (index != null) {
                 index.remove(id);
             }
@@ -276,8 +274,8 @@ public class SubFeatureList extends SubFeatureCollection implements RandomFeatur
     }
 
     public SimpleFeature remove(final int position) {
-        if (collection instanceof RandomFeatureAccess) {
-            final RandomFeatureAccess random = (RandomFeatureAccess) collection;
+        if (collection instanceof RandomAccessFeatureCollection) {
+            final RandomAccessFeatureCollection random = (RandomAccessFeatureCollection) collection;
             final FeatureId fid = index().get(position);
             return random.removeFeatureMember(fid.getID());
         }

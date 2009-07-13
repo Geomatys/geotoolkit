@@ -19,8 +19,8 @@ package org.geotoolkit.jdbc;
 import java.util.Map;
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

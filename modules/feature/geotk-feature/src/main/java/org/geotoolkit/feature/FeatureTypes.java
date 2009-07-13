@@ -28,10 +28,9 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotools.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.Utilities;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -211,7 +210,7 @@ public class FeatureTypes {
      * @throws IllegalAttributeException
      */
     public static SimpleFeature transform(SimpleFeature feature, final SimpleFeatureType schema, final MathTransform transform)
-            throws MismatchedDimensionException, TransformException, IllegalAttributeException
+            throws MismatchedDimensionException, TransformException, SimpleIllegalAttributeException
     {
         feature = SimpleFeatureBuilder.copy(feature);
 

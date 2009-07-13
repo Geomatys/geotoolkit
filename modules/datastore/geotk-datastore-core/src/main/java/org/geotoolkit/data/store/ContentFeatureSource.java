@@ -26,22 +26,22 @@ import java.util.Set;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureSource;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.MaxFeatureReader;
-import org.geotools.data.Query;
-import org.geotools.data.QueryCapabilities;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.QueryCapabilities;
 import org.geotoolkit.data.ReTypeFeatureReader;
-import org.geotools.data.ResourceInfo;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.ResourceInfo;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
-import org.geotools.factory.Hints;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.PropertyNameResolvingVisitor;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.feature.utility.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -120,8 +120,8 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
         
         //set up hints
         hints = new HashSet<Hints.Key>();
-        hints.add( Hints.JTS_GEOMETRY_FACTORY );
-        hints.add( Hints.JTS_COORDINATE_SEQUENCE_FACTORY );
+//        hints.add( Hints.JTS_GEOMETRY_FACTORY );
+//        hints.add( Hints.JTS_COORDINATE_SEQUENCE_FACTORY );
         
         //add subclass specific hints
         addHints( hints );
@@ -208,7 +208,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
             }
 
             @Override
-            public ReferencedEnvelope getBounds() {
+            public JTSEnvelope2D getBounds() {
                 try {
                     return ContentFeatureSource.this.getBounds();
                 } catch (IOException e) {
@@ -334,7 +334,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * </p>
      */
     @Override
-    public final ReferencedEnvelope getBounds() throws IOException {
+    public final JTSEnvelope2D getBounds() throws IOException {
 
         //return all(entry.getState(transaction)).getBounds();
         return getBounds(Query.ALL);
@@ -350,7 +350,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * </p>
      */
     @Override
-    public final ReferencedEnvelope getBounds(Query query) throws IOException {
+    public final JTSEnvelope2D getBounds(Query query) throws IOException {
         query = joinQuery(query);
         query = resolvePropertyNames(query);
         /*
@@ -366,7 +366,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
         //
         //calculate the bounds
         //
-        final ReferencedEnvelope bounds = getBoundsInternal(query);
+        final JTSEnvelope2D bounds = getBoundsInternal(query);
 
         /*
         if ( query == Query.ALL ) {
@@ -385,7 +385,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * Calculates the bounds of a specified query. Subclasses must implement this
      * method.
      */
-    protected abstract ReferencedEnvelope getBoundsInternal(final Query query) throws IOException;
+    protected abstract JTSEnvelope2D getBoundsInternal(final Query query) throws IOException;
 
     /**
      * Returns the count of the number of features of the feature source.

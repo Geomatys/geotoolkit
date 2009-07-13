@@ -24,15 +24,15 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.BatchFeatureEvent;
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Transaction;
-import org.geotools.data.FeatureEvent.Type;
-import org.geotools.data.Transaction.State;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.FeatureEvent.Type;
+import org.geotoolkit.data.Transaction.State;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -105,7 +105,7 @@ public class ContentState {
     /**
      * cached bounds of features
      */
-    protected ReferencedEnvelope bounds;
+    protected JTSEnvelope2D bounds;
 
     /**
      * entry maintaining the state
@@ -169,7 +169,7 @@ public class ContentState {
         featureType = state.featureType;
         count = state.count;
         bounds = state.bounds == null ?
-                null : new ReferencedEnvelope( state.bounds );
+                null : new JTSEnvelope2D( state.bounds );
         batchFeatureEvent = null;
    }
 
@@ -229,14 +229,14 @@ public class ContentState {
     /**
      * The cached spatial extent.
      */
-    public final ReferencedEnvelope getBounds(){
+    public final JTSEnvelope2D getBounds(){
     	return bounds;
     }
 
     /**
      * Sets the cached spatial extent.
      */
-    public final void setBounds(final ReferencedEnvelope bounds){
+    public final void setBounds(final JTSEnvelope2D bounds){
     	this.bounds = bounds;
     }
 
@@ -276,7 +276,7 @@ public class ContentState {
         return false;
     }
     public void fireFeatureUpdated(final FeatureSource<?,?> source, final Feature feature,
-            final ReferencedEnvelope before)
+            final JTSEnvelope2D before)
     {
         if (listeners.isEmpty() && tx != Transaction.AUTO_COMMIT) {
             return;
@@ -287,7 +287,7 @@ public class ContentState {
         final Set<FeatureId> fids = new HashSet<FeatureId>();
         fids.add( feature.getIdentifier() );
         final Filter filter = ff.id( fids );
-        final ReferencedEnvelope bounds = new ReferencedEnvelope( feature.getBounds() );
+        final JTSEnvelope2D bounds = new JTSEnvelope2D( feature.getBounds() );
         bounds.expandToInclude( before );
 
         final FeatureEvent event = new FeatureEvent(source, Type.CHANGED, bounds, filter );
@@ -309,7 +309,7 @@ public class ContentState {
         final Set<FeatureId> fids = new HashSet<FeatureId>();
         fids.add( feature.getIdentifier() );
         final Filter filter = ff.id( fids );
-        final ReferencedEnvelope bounds = new ReferencedEnvelope( feature.getBounds() );
+        final JTSEnvelope2D bounds = new JTSEnvelope2D( feature.getBounds() );
 
         final FeatureEvent event = new FeatureEvent(source, Type.ADDED, bounds, filter );
 
@@ -326,7 +326,7 @@ public class ContentState {
         final Set<FeatureId> fids = new HashSet<FeatureId>();
         fids.add( feature.getIdentifier() );
         final Filter filter = ff.id( fids );
-        final ReferencedEnvelope bounds = new ReferencedEnvelope( feature.getBounds() );
+        final JTSEnvelope2D bounds = new JTSEnvelope2D( feature.getBounds() );
 
         final FeatureEvent event = new FeatureEvent(source, Type.REMOVED, bounds, filter );
 

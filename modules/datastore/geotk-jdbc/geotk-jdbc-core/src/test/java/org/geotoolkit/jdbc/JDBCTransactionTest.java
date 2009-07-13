@@ -19,12 +19,12 @@ package org.geotoolkit.jdbc;
 import java.io.IOException;
 
 import org.geotoolkit.data.DefaultTransaction;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.Query;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.DefaultFeatureCollection;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

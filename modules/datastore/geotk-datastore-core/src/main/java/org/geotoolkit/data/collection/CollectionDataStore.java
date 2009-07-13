@@ -20,18 +20,19 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.Query;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.Query;
 import org.geotoolkit.data.SchemaNotFoundException;
-import org.geotools.data.Transaction;
-import org.geotools.feature.CollectionEvent;
-import org.geotools.feature.CollectionListener;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.data.Transaction;
+import org.geotoolkit.feature.collection.CollectionEvent;
+import org.geotoolkit.feature.collection.CollectionListener;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureCollections;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -140,7 +141,7 @@ public class CollectionDataStore extends AbstractDataStore {
      *      org.geotools.data.Query)
      */
     @Override
-    protected ReferencedEnvelope getBounds(final Query query) throws SchemaNotFoundException {
+    protected JTSEnvelope2D getBounds(final Query query) throws SchemaNotFoundException {
         final String featureTypeName = query.getTypeName();
         if (!featureType.getTypeName().equals(featureTypeName)) {
             throw new SchemaNotFoundException(featureTypeName);
@@ -152,9 +153,9 @@ public class CollectionDataStore extends AbstractDataStore {
     /**
      * @param query
      */
-    protected ReferencedEnvelope getBoundsInternal(final Query query) {
+    protected JTSEnvelope2D getBoundsInternal(final Query query) {
         final FeatureIterator<SimpleFeature> iterator = collection.features();
-        final ReferencedEnvelope envelope = new ReferencedEnvelope(featureType.getCoordinateReferenceSystem());
+        final JTSEnvelope2D envelope = new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
 
         if (iterator.hasNext()) {
             int count = 1;
@@ -206,7 +207,7 @@ public class CollectionDataStore extends AbstractDataStore {
         @Override
         public void collectionChanged(final CollectionEvent tce) {
             final String typeName = featureType.getTypeName();
-            final ReferencedEnvelope bounds = getBoundsInternal(Query.ALL);
+            final JTSEnvelope2D bounds = getBoundsInternal(Query.ALL);
 
             switch (tce.getEventType()) {
                 case CollectionEvent.FEATURES_ADDED:

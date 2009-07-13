@@ -17,9 +17,9 @@
 package org.geotoolkit.jdbc;
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.Query;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.Transaction;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

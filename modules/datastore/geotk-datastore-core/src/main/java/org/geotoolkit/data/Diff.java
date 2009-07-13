@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.BoundingBox;
 
@@ -125,7 +125,7 @@ public class Diff {
                 modifiedFeatures.put(fid, f);
             }
             if (old != null) {
-                spatialIndex.remove(ReferencedEnvelope.reference(old.getBounds()), old);
+                spatialIndex.remove(JTSEnvelope2D.reference(old.getBounds()), old);
             }
             addToSpatialIndex(f);
         }
@@ -142,7 +142,7 @@ public class Diff {
         if (f.getDefaultGeometry() != null) {
             BoundingBox bounds = f.getBounds();
             if (!bounds.isEmpty()) {
-                spatialIndex.insert(ReferencedEnvelope.reference(bounds), f);
+                spatialIndex.insert(JTSEnvelope2D.reference(bounds), f);
             }
         }
     }
@@ -159,7 +159,7 @@ public class Diff {
                 modifiedFeatures.put(fid, TransactionStateDiff.NULL);
             }
             if (old != null) {
-                spatialIndex.remove(ReferencedEnvelope.reference(old.getBounds()), old);
+                spatialIndex.remove(JTSEnvelope2D.reference(old.getBounds()), old);
             }
         }
     }
@@ -179,14 +179,14 @@ public class Diff {
                 Entry e = (Map.Entry) i.next();
                 SimpleFeature f = (SimpleFeature) e.getValue();
                 if (!diff.modifiedFeatures.containsKey(f.getID())) {
-                    tree.insert(ReferencedEnvelope.reference(f.getBounds()), f);
+                    tree.insert(JTSEnvelope2D.reference(f.getBounds()), f);
                 }
             }
             Iterator j = diff.modified2.entrySet().iterator();
             while (j.hasNext()) {
                 Entry e = (Map.Entry) j.next();
                 SimpleFeature f = (SimpleFeature) e.getValue();
-                tree.insert(ReferencedEnvelope.reference(f.getBounds()), f);
+                tree.insert(JTSEnvelope2D.reference(f.getBounds()), f);
             }
         }
 

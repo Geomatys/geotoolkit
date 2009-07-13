@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotools.data.ServiceInfo;
+import org.geotoolkit.data.ServiceInfo;
 
 
 /**

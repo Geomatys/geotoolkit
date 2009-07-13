@@ -27,9 +27,9 @@ import java.util.Set;
 import org.geotoolkit.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotoolkit.data.crs.ReprojectFeatureResults;
 import org.geotoolkit.data.store.EmptyFeatureCollection;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
@@ -37,13 +37,13 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.DataStore;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Query;
-import org.geotools.data.QueryCapabilities;
-import org.geotools.data.ResourceInfo;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.QueryCapabilities;
+import org.geotoolkit.data.ResourceInfo;
+import org.geotoolkit.data.Transaction;
 
 /**
  * This is a starting point for providing your own FeatureSource<SimpleFeatureType, SimpleFeature> implementation.
@@ -128,7 +128,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
             }
 
             @Override
-            public ReferencedEnvelope getBounds() {
+            public JTSEnvelope2D getBounds() {
                 try {
                     return AbstractFeatureSource.this.getBounds();
                 } catch (IOException e) {
@@ -289,7 +289,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      * @throws IOException DOCUMENT ME!
      */
     @Override
-    public ReferencedEnvelope getBounds() throws IOException {
+    public JTSEnvelope2D getBounds() throws IOException {
 //        return getBounds(Query.ALL); // DZ should this not return just the bounds for this type?
         return getBounds(getSchema() == null ? Query.ALL : new DefaultQuery(getSchema().getTypeName()));
     }
@@ -312,9 +312,9 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      * @throws IOException DOCUMENT ME!
      */
     @Override
-    public ReferencedEnvelope getBounds(final Query query) throws IOException {
+    public JTSEnvelope2D getBounds(final Query query) throws IOException {
         if (query.getFilter() == Filter.EXCLUDE) {
-            return new ReferencedEnvelope(new Envelope(), getSchema().getCoordinateReferenceSystem());
+            return new JTSEnvelope2D(new Envelope(), getSchema().getCoordinateReferenceSystem());
         }
 
         final DataStore dataStore = getDataStore();

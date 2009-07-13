@@ -19,8 +19,8 @@ package org.geotoolkit.map;
 
 import java.util.List;
 
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Query;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.Query;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.primitive.Graphic;

@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.geotools.data.FeatureWriter;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

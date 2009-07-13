@@ -45,9 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.data.FeatureSource;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureSource;
 
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.controller.LocationSensitiveGraphic;

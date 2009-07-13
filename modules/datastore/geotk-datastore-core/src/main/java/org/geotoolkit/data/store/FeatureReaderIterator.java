@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotools.data.FeatureReader;
-import org.geotools.feature.IllegalAttributeException;
+import org.geotoolkit.data.FeatureReader;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

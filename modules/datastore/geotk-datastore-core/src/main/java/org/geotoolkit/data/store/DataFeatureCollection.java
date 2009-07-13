@@ -27,22 +27,22 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureWriter;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.collection.DelegateFeatureReader;
-import org.geotools.feature.CollectionEvent;
-import org.geotools.feature.CollectionListener;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.CollectionEvent;
+import org.geotoolkit.feature.collection.CollectionListener;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 
-import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.collection.DelegateFeatureIterator;
 import org.geotoolkit.feature.collection.SubFeatureCollection;
-import org.geotools.feature.visitor.FeatureVisitor;
-import org.geotools.filter.SortBy2;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.feature.FeatureVisitor;
+import org.opengis.filter.sort.SortBy;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.feature.utility.NullProgressListener;
-import org.geotools.util.ProgressListener;
+import org.opengis.util.ProgressListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -129,7 +129,7 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
     // To be implemented by subclass
     //
     @Override
-    public abstract ReferencedEnvelope getBounds();
+    public abstract JTSEnvelope2D getBounds();
 
     public abstract int getCount() throws IOException;
 
@@ -526,26 +526,13 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy order) {
-        if (order instanceof SortBy2) {
-            SortBy2 advanced = (SortBy2) order;
+        if (order instanceof SortBy) {
+            SortBy advanced = (SortBy) order;
             return sort(advanced);
         }
         return null; // new OrderedFeatureList( this, order );
     }
 
-    /**
-     * Allows for "Advanced" sort capabilities specific to the
-     * GeoTools platform!
-     * <p>
-     * Advanced in this case really means making use of a generic
-     * Expression, rather then being limited to PropertyName.
-     * </p>
-     * @param order GeoTools SortBy
-     * @return FeatureList sorted according to provided order
-     */
-    public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy2 order) {
-        return null;
-    }
 
     @Override
     public String getID() {
@@ -561,10 +548,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
     public final void removeListener(final CollectionListener listener)
             throws NullPointerException {
         listeners.remove(listener);
-    }
-
-    public final void accepts(final FeatureVisitor visitor, final ProgressListener progress) throws IOException {
-        accepts((org.opengis.feature.FeatureVisitor) visitor, (org.opengis.util.ProgressListener) progress);
     }
 
     @Override

@@ -84,10 +84,10 @@ import org.geotoolkit.feature.FeatureCollections;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.Transaction;
+import org.geotoolkit.feature.collection.FeatureCollection;
 
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 

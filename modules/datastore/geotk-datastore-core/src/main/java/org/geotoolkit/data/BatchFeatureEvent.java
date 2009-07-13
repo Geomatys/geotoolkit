@@ -18,13 +18,13 @@ package org.geotoolkit.data;
 
 import java.util.List;
 
-import org.geotools.data.FeatureEvent.Type;
+import org.geotoolkit.data.FeatureEvent.Type;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureSource;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureSource;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.And;
@@ -47,11 +47,11 @@ public class BatchFeatureEvent extends FeatureEvent {
     private static final long serialVersionUID = 3154238322369916486L;
 
     public BatchFeatureEvent(final FeatureSource<? extends FeatureType, ? extends Feature> featureSource) {
-        this(featureSource, new ReferencedEnvelope(), Filter.EXCLUDE);
+        this(featureSource, new JTSEnvelope2D(), Filter.EXCLUDE);
     }
 
     public BatchFeatureEvent(final FeatureSource<? extends FeatureType, ? extends Feature> featureSource,
-            final ReferencedEnvelope bounds, final Filter filter) {
+            final JTSEnvelope2D bounds, final Filter filter) {
         super(featureSource, Type.COMMIT, bounds, filter);
     }
     /**
@@ -90,15 +90,15 @@ public class BatchFeatureEvent extends FeatureEvent {
             }
         }
 
-        if (filter == Filter.INCLUDE || bounds == ReferencedEnvelope.EVERYTHING) {
+        if (filter == Filter.INCLUDE || bounds == JTSEnvelope2D.EVERYTHING) {
             // someone already gave as "generic" something has changed event
             // so we are never going to be able to be more specific
             return;
         }
-        if (change.getFilter() == Filter.INCLUDE || change.getBounds() == ReferencedEnvelope.EVERYTHING) {
+        if (change.getFilter() == Filter.INCLUDE || change.getBounds() == JTSEnvelope2D.EVERYTHING) {
             // something has changed but we are not sure what...
             filter = Filter.INCLUDE;
-            bounds = ReferencedEnvelope.EVERYTHING;
+            bounds = JTSEnvelope2D.EVERYTHING;
             return;
         }
         bounds.expandToInclude(change.getBounds());

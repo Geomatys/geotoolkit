@@ -25,17 +25,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureWriter;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FilteringFeatureWriter;
-import org.geotools.data.Query;
-import org.geotools.data.QueryCapabilities;
-import org.geotools.data.ResourceInfo;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.QueryCapabilities;
+import org.geotoolkit.data.ResourceInfo;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureStore;
 import org.geotoolkit.factory.Hints;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -142,7 +142,7 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
     }
 
     @Override
-    protected ReferencedEnvelope getBoundsInternal(final Query query) throws IOException {
+    protected JTSEnvelope2D getBoundsInternal(final Query query) throws IOException {
         return delegate.getBoundsInternal(query);
     }
 

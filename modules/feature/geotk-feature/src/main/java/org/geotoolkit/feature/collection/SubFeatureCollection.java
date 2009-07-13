@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.utility.FeatureUtilities;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;

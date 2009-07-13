@@ -40,12 +40,12 @@ import java.util.logging.Level;
 
 import javax.sql.DataSource;
 
-import org.geotools.data.DataStore;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.GmlObjectStore;
+import org.geotoolkit.data.GmlObjectStore;
 import org.geotoolkit.data.InProcessLockingManager;
-import org.geotools.data.Query;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.jdbc.FilterToSQLException;
 import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
@@ -56,11 +56,11 @@ import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotoolkit.data.store.ContentState;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Converters;
 
@@ -155,7 +155,7 @@ public final class JDBCDataStore extends ContentDataStore
     /**
      * The envelope returned when bounds is called against a geometryless feature type
      */
-    protected static final ReferencedEnvelope EMPTY_ENVELOPE = new ReferencedEnvelope();
+    protected static final JTSEnvelope2D EMPTY_ENVELOPE = new JTSEnvelope2D();
     /**
      * data source
      */
@@ -483,7 +483,7 @@ public final class JDBCDataStore extends ContentDataStore
      *
      */
     @Override
-    public Object getGmlObject(final GmlObjectId id, final org.geotools.factory.Hints hints) throws IOException {
+    public Object getGmlObject(final GmlObjectId id, final Hints hints) throws IOException {
         //geometry?
         if (isAssociations()) {
 
@@ -792,7 +792,7 @@ public final class JDBCDataStore extends ContentDataStore
      * @param query Specifies rows to include in bounds calculation, as well as how many
      *              features and the offset if needed
      */
-    protected ReferencedEnvelope getBounds(final SimpleFeatureType featureType, final Query query,
+    protected JTSEnvelope2D getBounds(final SimpleFeatureType featureType, final Query query,
             final Connection cx) throws IOException {
 
         // handle geometryless case by returning an emtpy envelope
@@ -815,7 +815,7 @@ public final class JDBCDataStore extends ContentDataStore
             }
 
             try {
-                final ReferencedEnvelope bounds;
+                final JTSEnvelope2D bounds;
                 Envelope e = null;
                 if (rs.next()) {
                     e = dialect.decodeGeometryEnvelope(rs, 1, st.getConnection());
@@ -827,8 +827,8 @@ public final class JDBCDataStore extends ContentDataStore
                     //e.setToNull();
                 }
 
-                if (e instanceof ReferencedEnvelope) {
-                    bounds = (ReferencedEnvelope) e;
+                if (e instanceof JTSEnvelope2D) {
+                    bounds = (JTSEnvelope2D) e;
                 } else {
                     //set the crs to be the crs of the feature type
                     // grab the 2d part of the crs
@@ -836,9 +836,9 @@ public final class JDBCDataStore extends ContentDataStore
                             featureType.getCoordinateReferenceSystem());
 
                     if (e != null) {
-                        bounds = new ReferencedEnvelope(e, flatCRS);
+                        bounds = new JTSEnvelope2D(e, flatCRS);
                     } else {
-                        bounds = new ReferencedEnvelope(flatCRS);
+                        bounds = new JTSEnvelope2D(flatCRS);
                         bounds.setToNull();
                     }
                 }

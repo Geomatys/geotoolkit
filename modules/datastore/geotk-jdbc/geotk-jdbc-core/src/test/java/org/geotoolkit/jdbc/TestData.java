@@ -22,7 +22,7 @@ import java.util.HashSet;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -60,8 +60,8 @@ public class TestData {
     public SimpleFeatureType roadType;
     public SimpleFeatureType subRoadType;
     public SimpleFeature[] roadFeatures;
-    public ReferencedEnvelope roadBounds;
-    public ReferencedEnvelope rd12Bounds;
+    public JTSEnvelope2D roadBounds;
+    public JTSEnvelope2D rd12Bounds;
     public Filter rd1Filter;
     public Filter rd2Filter;
     public Filter rd12Filter;
@@ -69,7 +69,7 @@ public class TestData {
     public SimpleFeatureType riverType;
     public SimpleFeatureType subRiverType;
     public SimpleFeature[] riverFeatures;
-    public ReferencedEnvelope riverBounds;
+    public JTSEnvelope2D riverBounds;
     public Filter rv1Filter;
     public SimpleFeature newRiver;
 
@@ -115,10 +115,10 @@ public class TestData {
         roadFeatures[2] = SimpleFeatureBuilder.build(roadType,
                 new Object[] { new Integer(3), line(new int[] { 3, 2, 4, 2, 5, 3 }), "r3" },
                 ROAD +"." + (initialFidValue + 2));
-        roadBounds = new ReferencedEnvelope(CRS.decode("EPSG:4326"));
-        roadBounds.expandToInclude(new ReferencedEnvelope(roadFeatures[0].getBounds()));
-        roadBounds.expandToInclude(new ReferencedEnvelope(roadFeatures[1].getBounds()));
-        roadBounds.expandToInclude(new ReferencedEnvelope(roadFeatures[2].getBounds()));
+        roadBounds = new JTSEnvelope2D(CRS.decode("EPSG:4326"));
+        roadBounds.expandToInclude(new JTSEnvelope2D(roadFeatures[0].getBounds()));
+        roadBounds.expandToInclude(new JTSEnvelope2D(roadFeatures[1].getBounds()));
+        roadBounds.expandToInclude(new JTSEnvelope2D(roadFeatures[2].getBounds()));
 
         rd1Filter = ff.id(Collections.singleton(ff.featureId(ROAD + "." + (initialFidValue))));
         rd2Filter = ff.id(Collections.singleton(ff.featureId(ROAD + "." + (initialFidValue + 1))));
@@ -128,9 +128,9 @@ public class TestData {
         fids.add(ff.featureId(ROAD + "." + (initialFidValue + 1)));
         rd12Filter = ff.id(fids);
 
-        rd12Bounds = new ReferencedEnvelope();
-        rd12Bounds.expandToInclude(new ReferencedEnvelope(roadFeatures[0].getBounds()));
-        rd12Bounds.expandToInclude(new ReferencedEnvelope(roadFeatures[1].getBounds()));
+        rd12Bounds = new JTSEnvelope2D();
+        rd12Bounds.expandToInclude(new JTSEnvelope2D(roadFeatures[0].getBounds()));
+        rd12Bounds.expandToInclude(new JTSEnvelope2D(roadFeatures[1].getBounds()));
         //   + 2,3
         //  / rd4
         // + 1,2
@@ -173,9 +173,9 @@ public class TestData {
                             { 4, 6, 4, 8, 6, 10 }
                         }), "rv2", new Double(3.0)
                 }, RIVER +"." + (initialFidValue + 1));
-        riverBounds = new ReferencedEnvelope(CRS.decode("EPSG:4326"));
-        riverBounds.expandToInclude(ReferencedEnvelope.reference(riverFeatures[0].getBounds()));
-        riverBounds.expandToInclude(ReferencedEnvelope.reference(riverFeatures[1].getBounds()));
+        riverBounds = new JTSEnvelope2D(CRS.decode("EPSG:4326"));
+        riverBounds.expandToInclude(JTSEnvelope2D.reference(riverFeatures[0].getBounds()));
+        riverBounds.expandToInclude(JTSEnvelope2D.reference(riverFeatures[1].getBounds()));
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         rv1Filter = ff.id(Collections.singleton(ff.featureId(RIVER + ".rv1")));

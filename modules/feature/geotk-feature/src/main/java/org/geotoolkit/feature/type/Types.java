@@ -19,8 +19,9 @@ package org.geotoolkit.feature.type;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.util.Converters;
-import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -104,12 +105,12 @@ public class Types {
     {
 
         if (type == null) {
-            throw new IllegalAttributeException("null type");
+            throw new SimpleIllegalAttributeException("null type");
         }
 
         if (attributeContent == null) {
             if (!attribute.isNillable()) {
-                throw new IllegalAttributeException(type.getName() + " not nillable");
+                throw new SimpleIllegalAttributeException(type.getName() + " not nillable");
             }
             return;
         }
@@ -129,14 +130,14 @@ public class Types {
             final Class clazz = attributeContent.getClass();
             final Class binding = type.getBinding();
             if (binding != null && binding != clazz && !binding.isAssignableFrom(clazz)) {
-                throw new IllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
+                throw new SimpleIllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
             }
         }
 
         if (type.getRestrictions() != null) {
             for (Filter f : type.getRestrictions()) {
                 if (!f.evaluate(attribute)) {
-                    throw new IllegalAttributeException("Attribute instance (" + attribute.getIdentifier() + ")" + "fails to pass filter: " + f);
+                    throw new SimpleIllegalAttributeException("Attribute instance (" + attribute.getIdentifier() + ")" + "fails to pass filter: " + f);
                 }
             }
         }
@@ -210,14 +211,14 @@ public class Types {
             final Class clazz = value.getClass();
             final Class binding = type.getBinding();
             if (binding != null && !binding.isAssignableFrom(clazz)) {
-                throw new IllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
+                throw new SimpleIllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
             }
         }
 
         if (type.getRestrictions() != null && type.getRestrictions().size() > 0) {
             for (Filter filter : type.getRestrictions()) {
                 if (!filter.evaluate(value)) {
-                    throw new IllegalAttributeException(type.getName() + " restriction " + filter + " not met by: " + value);
+                    throw new SimpleIllegalAttributeException(type.getName() + " restriction " + filter + " not met by: " + value);
                 }
             }
         }
@@ -263,7 +264,7 @@ public class Types {
         String expectedName = expected.getName().getLocalPart();
         final String actualName = actual.getName().getLocalPart();
         if (!expectedName.equals(actualName)) {
-            throw new IllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
+            throw new SimpleIllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
         }
         // check attributes names
         final Set<String> names = new TreeSet<String>();
@@ -275,11 +276,11 @@ public class Types {
             if (names.contains(expectedName)) {
                 names.remove(expectedName); // only use once!
             } else {
-                throw new IllegalAttributeException("Expected to find a match for '" + expectedName + "' but was not available remaining names: " + names);
+                throw new SimpleIllegalAttributeException("Expected to find a match for '" + expectedName + "' but was not available remaining names: " + names);
             }
         }
         if (!names.isEmpty()) {
-            throw new IllegalAttributeException("Expected to find attributes '" + expectedName + "' but was not available remaining names: " + names);
+            throw new SimpleIllegalAttributeException("Expected to find attributes '" + expectedName + "' but was not available remaining names: " + names);
         }
 
         // check attribute bindings
@@ -315,11 +316,11 @@ public class Types {
         final String expectedName = expected.getName().getLocalPart();
         final String actualName = actual.getName().getLocalPart();
         if (!expectedName.equals(actualName)) {
-            throw new IllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
+            throw new SimpleIllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
         }
         // check attributes names
         if (expected.getAttributeCount() != actual.getAttributeCount()) {
-            throw new IllegalAttributeException("Expected " + expected.getAttributeCount() + " attributes, but was supplied " + actual.getAttributeCount());
+            throw new SimpleIllegalAttributeException("Expected " + expected.getAttributeCount() + " attributes, but was supplied " + actual.getAttributeCount());
         }
         for (int i = 0; i < expected.getAttributeCount(); i++) {
             Class<?> expectedBinding = expected.getDescriptor(i).getType().getBinding();

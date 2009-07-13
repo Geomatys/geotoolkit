@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.Transaction;
-import org.geotools.data.Transaction.State;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.Transaction.State;
+import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
@@ -218,14 +218,14 @@ public class TransactionStateDiff implements State {
 
                         // notify
                         store.listenerManager.fireFeaturesRemoved(typeName,
-                                transaction, ReferencedEnvelope.reference(feature.getBounds()), true);
+                                transaction, JTSEnvelope2D.reference(feature.getBounds()), true);
                     } else {
                         try {
                             feature.setAttributes(update.getAttributes());
                             writer.write();
 
                             // notify                        
-                            final ReferencedEnvelope bounds = new ReferencedEnvelope((CoordinateReferenceSystem) null);
+                            final JTSEnvelope2D bounds = new JTSEnvelope2D((CoordinateReferenceSystem) null);
                             bounds.include(feature.getBounds());
                             bounds.include(update.getBounds());
                             store.listenerManager.fireFeaturesChanged(typeName,
@@ -258,7 +258,7 @@ public class TransactionStateDiff implements State {
 
                             // notify
                             store.listenerManager.fireFeaturesAdded(typeName,
-                                    transaction, ReferencedEnvelope.reference(nextFeature.getBounds()), true);
+                                    transaction, JTSEnvelope2D.reference(nextFeature.getBounds()), true);
                         } catch (IllegalAttributeException e) {
                             throw new DataSourceException("Could update " + fid,
                                     e);
@@ -339,7 +339,7 @@ public class TransactionStateDiff implements State {
         return new DiffFeatureWriter(reader, diff, filter) {
 
             @Override
-            public void fireNotification(final int eventType, final ReferencedEnvelope bounds) {
+            public void fireNotification(final int eventType, final JTSEnvelope2D bounds) {
                 switch (eventType) {
                     case FeatureEvent.FEATURES_ADDED:
                         store.listenerManager.fireFeaturesAdded(typeName,
@@ -392,7 +392,7 @@ public class TransactionStateDiff implements State {
         }
 
         @Override
-        public ReferencedEnvelope getBounds() {
+        public JTSEnvelope2D getBounds() {
             return null;
         }
 

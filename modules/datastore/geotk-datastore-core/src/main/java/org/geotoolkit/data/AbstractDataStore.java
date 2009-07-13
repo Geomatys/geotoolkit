@@ -27,19 +27,19 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.view.DefaultView;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.DataStore;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.LockingManager;
-import org.geotools.data.Query;
-import org.geotools.data.ServiceInfo;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.LockingManager;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.ServiceInfo;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.DefaultName;
-import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
@@ -585,7 +585,7 @@ public abstract class AbstractDataStore implements DataStore {
      * @throws SchemaNotFoundException
      * @throws IOException
      */
-    protected ReferencedEnvelope getBounds(Query query) throws IOException {
+    protected JTSEnvelope2D getBounds(Query query) throws IOException {
         return null; // too expensive
     }
 

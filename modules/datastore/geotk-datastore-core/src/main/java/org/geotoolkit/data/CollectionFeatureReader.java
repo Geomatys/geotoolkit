@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotools.data.FeatureReader;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.IllegalAttributeException;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

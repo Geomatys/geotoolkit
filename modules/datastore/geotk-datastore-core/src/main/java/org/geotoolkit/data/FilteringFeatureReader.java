@@ -19,9 +19,9 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureReader;
-import org.geotools.feature.IllegalAttributeException;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureReader;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;

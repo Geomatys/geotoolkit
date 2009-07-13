@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotools.data.Query;
-import org.geotools.factory.Hints;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.factory.Hints;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

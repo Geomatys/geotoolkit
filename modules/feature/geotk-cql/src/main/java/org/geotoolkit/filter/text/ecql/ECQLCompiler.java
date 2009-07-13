@@ -20,7 +20,7 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.geotoolkit.filter.text.commons.ICompiler;
-import org.geotools.filter.IllegalFilterException;
+import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.filter.text.commons.IToken;
 import org.geotoolkit.filter.text.commons.Result;
 import org.geotoolkit.filter.text.commons.TokenAdapter;

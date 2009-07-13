@@ -18,7 +18,7 @@ package org.geotoolkit.data;
 
 import java.util.NoSuchElementException;
 
-import org.geotools.data.FeatureReader;
+import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

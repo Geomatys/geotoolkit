@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
@@ -37,6 +37,8 @@ import org.opengis.feature.type.Name;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.opengis.filter.identity.FeatureId;
 
 
@@ -465,7 +467,7 @@ public class SimpleFeatureBuilder {
             }
             return builder.buildFeature(original.getID());
         } catch (Exception e) {
-            throw (IllegalAttributeException) new IllegalAttributeException("illegal attribute").initCause(e);
+            throw (IllegalAttributeException) new SimpleIllegalAttributeException("illegal attribute").initCause(e);
         }
     }
 

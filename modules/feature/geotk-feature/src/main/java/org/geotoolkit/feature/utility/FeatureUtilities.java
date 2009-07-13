@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.geotoolkit.feature.DefaultFeatureCollection;
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;

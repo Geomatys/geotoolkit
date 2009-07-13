@@ -23,12 +23,13 @@ import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
-import org.geotools.filter.IllegalFilterException;
+import org.geotoolkit.filter.function.other.OtherFunctionFactory;
+import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
+
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureTypeFactory;
@@ -42,7 +43,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 
 
 /**

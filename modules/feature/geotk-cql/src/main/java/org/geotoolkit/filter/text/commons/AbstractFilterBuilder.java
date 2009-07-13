@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.geotools.filter.IllegalFilterException;
+import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

@@ -26,21 +26,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureEvent;
-import org.geotools.data.FeatureListener;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.Query;
-import org.geotools.feature.CollectionEvent;
-import org.geotools.feature.CollectionListener;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureListener;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.feature.collection.CollectionEvent;
+import org.geotoolkit.feature.collection.CollectionListener;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.feature.visitor.FeatureVisitor;
-import org.geotools.filter.SortBy;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.util.ProgressListener;
+import org.opengis.feature.FeatureVisitor;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.opengis.util.ProgressListener;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -49,6 +50,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.sort.SortBy;
 
 /**
  * A FeatureCollection that completly delegates to a backing FetaureSource.
@@ -132,13 +134,8 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
      * Accepts a visitor, which then visits each feature in the collection.
      * @throws IOException
      */
-    public void accepts(final FeatureVisitor visitor, final ProgressListener progress ) throws IOException {
-        accepts((org.opengis.feature.FeatureVisitor) visitor, (org.opengis.util.ProgressListener) progress);
-    }
-
     @Override
-    public void accepts(final org.opengis.feature.FeatureVisitor visitor,
-                        final org.opengis.util.ProgressListener progress) throws IOException {
+    public void accepts(final FeatureVisitor visitor, final ProgressListener progress) throws IOException {
         featureSource.accepts(query, visitor, progress);
     }
 
@@ -269,7 +266,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
     }
 
     @Override
-    public ReferencedEnvelope getBounds() {
+    public JTSEnvelope2D getBounds() {
         try {
             return featureSource.getBounds(query);
         } catch (IOException e) {
@@ -342,10 +339,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
     @Override
     public void purge() {
         //do nothing
-    }
-
-    public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy order) {
-        return sort((org.opengis.filter.sort.SortBy) order);
     }
 
     @Override

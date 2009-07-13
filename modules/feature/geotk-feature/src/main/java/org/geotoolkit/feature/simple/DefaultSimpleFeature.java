@@ -28,8 +28,7 @@ import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
@@ -44,7 +43,8 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.feature.IllegalAttributeException;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -213,7 +213,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
     public void setAttribute(final String name, final Object value) {
         final Integer idx = index.get(name);
         if (idx == null) {
-            throw new IllegalAttributeException("Unknown attribute " + name);
+            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
         }
         setAttribute(idx.intValue(), value);
     }
@@ -246,7 +246,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
     @Override
     public BoundingBox getBounds() {
         //TODO: cache this value
-        final ReferencedEnvelope bounds = new ReferencedEnvelope(featureType.getCoordinateReferenceSystem());
+        final JTSEnvelope2D bounds = new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
         for (Object o : values) {
             if (o instanceof Geometry) {
                 final Geometry g = (Geometry) o;

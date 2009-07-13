@@ -23,11 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.filter.AttributeExpression;
-import org.geotools.filter.Expression;
-import org.geotools.filter.GeometryFilter;
-import org.geotools.filter.LiteralExpression;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
@@ -42,8 +38,12 @@ import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureReader;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureReader;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 
 
 /**
@@ -258,26 +258,26 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
 
     protected List getIndexedFeatures() {
         // TODO: check geom is default geom.
-        final Envelope env = extractBboxForSpatialIndexQuery((GeometryFilter) filter);
+        final Envelope env = extractBboxForSpatialIndexQuery((BinarySpatialOperator)filter);
         return diff.queryIndex(env);
     }
 
-    protected Envelope extractBboxForSpatialIndexQuery(final GeometryFilter f) {
-        final GeometryFilter geomFilter = (GeometryFilter) f;
-        final Expression leftGeometry = geomFilter.getLeftGeometry();
-        final Expression rightGeometry = geomFilter.getRightGeometry();
+    protected Envelope extractBboxForSpatialIndexQuery(final BinarySpatialOperator f) {
+        final BinarySpatialOperator geomFilter = (BinarySpatialOperator) f;
+        final Expression leftGeometry = geomFilter.getExpression1();
+        final Expression rightGeometry = geomFilter.getExpression2();
 
         final Geometry g;
-        if (leftGeometry instanceof LiteralExpression) {
-            g = (Geometry) ((LiteralExpression) leftGeometry).getLiteral();
+        if (leftGeometry instanceof Literal) {
+            g = (Geometry) ((Literal) leftGeometry).getValue();
         } else {
-            g = (Geometry) ((LiteralExpression) rightGeometry).getLiteral();
+            g = (Geometry) ((Literal) rightGeometry).getValue();
         }
         return g.getEnvelopeInternal();
     }
 
-    protected boolean isDefaultGeometry(AttributeExpression ae) {
-        return reader.getFeatureType().getGeometryDescriptor().getLocalName().equals(ae.getAttributePath());
+    protected boolean isDefaultGeometry(PropertyName ae) {
+        return reader.getFeatureType().getGeometryDescriptor().getLocalName().equals(ae.getPropertyName());
     }
 
     protected boolean isSubsetOfBboxFilter(final Filter f) {

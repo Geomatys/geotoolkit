@@ -48,10 +48,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gtm-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-filter</artifactId>
       <version>${project.version}</version>

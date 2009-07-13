@@ -19,10 +19,10 @@ package org.geotoolkit.data.crs;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
+import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

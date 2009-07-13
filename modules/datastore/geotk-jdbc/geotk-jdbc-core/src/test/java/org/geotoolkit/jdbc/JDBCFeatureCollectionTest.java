@@ -19,9 +19,9 @@ package org.geotoolkit.jdbc;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -72,7 +72,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
     }
 
     public void testBounds() throws IOException {
-        ReferencedEnvelope bounds = collection.getBounds();
+        JTSEnvelope2D bounds = collection.getBounds();
         assertNotNull(bounds);
 
         assertEquals(0d, bounds.getMinX(), 0.1);
@@ -94,8 +94,8 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
 
         assertEquals(1, sub.size());
         
-        ReferencedEnvelope exp = new ReferencedEnvelope(1, 1, 1, 1, CRS.decode("EPSG:4326")); 
-        ReferencedEnvelope act = sub.getBounds();
+        JTSEnvelope2D exp = new JTSEnvelope2D(1, 1, 1, 1, CRS.decode("EPSG:4326"));
+        JTSEnvelope2D act = sub.getBounds();
         
         assertEquals(exp.getMinX(), act.getMinX(), 0.1);
         assertEquals(exp.getMinY(), act.getMinY(), 0.1);

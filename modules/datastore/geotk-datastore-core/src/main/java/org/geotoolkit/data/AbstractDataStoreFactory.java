@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.factory.Factory;
-import org.geotools.data.DataAccessFactory.Param;
+import org.geotoolkit.data.DataAccessFactory.Param;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.Parameter;
-import org.geotools.data.DataStoreFactorySpi;
+import org.geotoolkit.data.DataStoreFactorySpi;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 

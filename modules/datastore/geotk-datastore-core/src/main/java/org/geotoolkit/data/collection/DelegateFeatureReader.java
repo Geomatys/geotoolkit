@@ -19,11 +19,11 @@ package org.geotoolkit.data.collection;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-//import org.geotools.data.DataSourceException;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureReader;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.IllegalAttributeException;
+//import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

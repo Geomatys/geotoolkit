@@ -30,7 +30,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import org.geotools.data.FeatureSource;
+import org.geotoolkit.data.FeatureSource;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;

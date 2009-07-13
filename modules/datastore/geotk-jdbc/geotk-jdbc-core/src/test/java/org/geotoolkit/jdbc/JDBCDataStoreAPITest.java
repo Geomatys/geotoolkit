@@ -22,30 +22,30 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
-import org.geotools.data.DataSourceException;
+import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureLockException;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.FeatureWriter;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.InProcessLockingManager;
-import org.geotools.data.Query;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.IllegalAttributeException;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.filter.IllegalFilterException;
+import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.filter.function.math.CeilFunction;
 import org.geotoolkit.geometry.jts.LiteCoordinateSequence;
 import org.geotoolkit.geometry.jts.LiteCoordinateSequenceFactory;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -924,7 +924,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         int count = road.getCount(Query.ALL);
         assertTrue((count == 3) || (count == -1));
 
-        ReferencedEnvelope bounds = road.getBounds(Query.ALL);
+        JTSEnvelope2D bounds = road.getBounds(Query.ALL);
         assertTrue((bounds == null) || 
         		areReferencedEnvelopesEuqal(bounds,td.roadBounds));
 
@@ -942,7 +942,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         FeatureCollection<SimpleFeatureType, SimpleFeature> some = road.getFeatures(td.rd12Filter);
         assertEquals(2, some.size());
 
-        ReferencedEnvelope e = new ReferencedEnvelope(CRS.decode("EPSG:4326"));
+        JTSEnvelope2D e = new JTSEnvelope2D(CRS.decode("EPSG:4326"));
         e.include(td.roadFeatures[0].getBounds());
         e.include(td.roadFeatures[1].getBounds());
 //        assertEquals(e, some.getBounds());
@@ -973,8 +973,8 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         assertEquals(type.getGeometryDescriptor(), actual.getGeometryDescriptor());
         assertEquals(type, actual);
 
-        ReferencedEnvelope b = half.getBounds();
-        ReferencedEnvelope expectedBounds = td.roadBounds;
+        JTSEnvelope2D b = half.getBounds();
+        JTSEnvelope2D expectedBounds = td.roadBounds;
         //assertEquals(expectedBounds, b);
         assertTrue(areReferencedEnvelopesEuqal(expectedBounds,b));
     }

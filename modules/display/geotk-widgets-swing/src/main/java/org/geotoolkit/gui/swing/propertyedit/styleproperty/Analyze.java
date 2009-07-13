@@ -40,7 +40,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.data.DefaultQuery;
 
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureIterator;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;

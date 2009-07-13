@@ -29,21 +29,21 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureReader;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.collection.DefaultFeatureIterator;
 import org.geotoolkit.feature.collection.SubFeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.visitor.FeatureVisitor;
-import org.geotools.filter.SortBy2;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.feature.utility.NullProgressListener;
-import org.geotools.feature.CollectionEvent;
-import org.geotools.feature.CollectionListener;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.util.ProgressListener;
+import org.geotoolkit.feature.collection.CollectionEvent;
+import org.geotoolkit.feature.collection.CollectionListener;
+import org.geotoolkit.feature.collection.FeatureIterator;
+
+import org.opengis.feature.FeatureVisitor;
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.util.ProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -76,7 +76,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
     /** Internal listener storage list */
     //private List listeners = new ArrayList(2);
     /** Internal envelope of bounds. */
-    private ReferencedEnvelope bounds = null;
+    private JTSEnvelope2D bounds = null;
 
     //private String id; /// fid
     /**
@@ -121,9 +121,9 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      *         collection.
      */
     @Override
-    public ReferencedEnvelope getBounds() {
+    public JTSEnvelope2D getBounds() {
         if (bounds == null) {
-            bounds = new ReferencedEnvelope();
+            bounds = new JTSEnvelope2D();
 
             for (Iterator i = contents.values().iterator(); i.hasNext();) {
                 final BoundingBox geomBounds = ((SimpleFeature) i.next()).getBounds();
@@ -754,33 +754,12 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy order) {
         if (order == SortBy.NATURAL_ORDER) {
             return this;
-        }
-        if (order instanceof SortBy2) {
-            final SortBy2 advanced = (SortBy2) order;
-            return sort(advanced);
+        }else if (order == SortBy.REVERSE_ORDER) {
+            // backwards
         }
         return null;
     }
 
-    /**
-     * Allows for "Advanced" sort capabilities specific to the
-     * GeoTools platform!
-     * <p>
-     * Advanced in this case really means making use of a generic
-     * Expression, rather then being limited to PropertyName.
-     * </p>
-     * @param order GeoTools SortBy
-     * @return FeatureList sorted according to provided order
-     */
-    public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy2 order) {
-        if (order == SortBy.NATURAL_ORDER) {
-            return this;
-        } else if (order == SortBy.REVERSE_ORDER) {
-            // backwards
-        }
-        // custom
-        return null; // new OrderedFeatureList( order, compare );
-    }
 
     @Override
     public void purge() {
@@ -803,10 +782,6 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
     @Override
     public final void removeListener(final CollectionListener listener) throws NullPointerException {
         listeners.remove(listener);
-    }
-
-    public final void accepts(final FeatureVisitor visitor, final ProgressListener progress) throws IOException {
-        accepts((org.opengis.feature.FeatureVisitor) visitor, (org.opengis.util.ProgressListener) progress);
     }
 
     @Override

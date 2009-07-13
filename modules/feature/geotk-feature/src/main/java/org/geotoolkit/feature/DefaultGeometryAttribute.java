@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.feature;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -110,7 +110,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements
     @Override
     public synchronized BoundingBox getBounds() {
         if (bounds == null) {
-            final ReferencedEnvelope bbox = new ReferencedEnvelope(getType().getCoordinateReferenceSystem());
+            final JTSEnvelope2D bbox = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
             final Geometry geom = (Geometry) getValue();
             if (geom != null) {
                 bbox.expandToInclude(geom.getEnvelopeInternal());

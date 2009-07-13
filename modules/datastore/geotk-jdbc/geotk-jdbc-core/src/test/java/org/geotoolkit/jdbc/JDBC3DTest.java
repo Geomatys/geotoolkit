@@ -21,16 +21,16 @@ import java.util.List;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -195,7 +195,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
      * @throws Exception
      */
     public void testBounds() throws Exception {
-        ReferencedEnvelope env = dataStore.getFeatureSource(tname(LINE3D)).getBounds();
+        JTSEnvelope2D env = dataStore.getFeatureSource(tname(LINE3D)).getBounds();
 
         // check we got the right 2d component
         Envelope expected = new Envelope(1, 5, 0, 4);

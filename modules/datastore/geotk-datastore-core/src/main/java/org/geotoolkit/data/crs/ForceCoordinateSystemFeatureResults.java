@@ -19,11 +19,11 @@ package org.geotoolkit.data.crs;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.geotools.feature.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotools.feature.SchemaException;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -129,9 +129,9 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
      * @see org.geotools.data.FeatureResults#getBounds()
      */
     @Override
-    public ReferencedEnvelope getBounds() {
-        ReferencedEnvelope env = results.getBounds();
-        env = new ReferencedEnvelope(env, getSchema().getCoordinateReferenceSystem());
+    public JTSEnvelope2D getBounds() {
+        JTSEnvelope2D env = results.getBounds();
+        env = new JTSEnvelope2D(env, getSchema().getCoordinateReferenceSystem());
         return env;
     }
 

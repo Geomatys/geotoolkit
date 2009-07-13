@@ -23,11 +23,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotools.data.FeatureLock;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.LockingManager;
-import org.geotools.data.Transaction;
-import org.geotools.data.Transaction.State;
+import org.geotoolkit.data.FeatureLock;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.LockingManager;
+import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.Transaction.State;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

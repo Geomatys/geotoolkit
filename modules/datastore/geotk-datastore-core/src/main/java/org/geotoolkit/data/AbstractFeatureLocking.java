@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.geotools.data.DataSourceException;
-import org.geotools.data.FeatureLock;
-import org.geotools.data.FeatureLocking;
-import org.geotools.data.LockingManager;
-import org.geotools.data.Query;
-import org.geotools.feature.FeatureIterator;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureLock;
+import org.geotoolkit.data.FeatureLocking;
+import org.geotoolkit.data.LockingManager;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;

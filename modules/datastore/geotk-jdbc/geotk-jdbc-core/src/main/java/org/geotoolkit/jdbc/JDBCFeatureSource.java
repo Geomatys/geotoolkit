@@ -30,12 +30,12 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureReader;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FilteringFeatureReader;
-import org.geotools.data.Query;
-import org.geotools.data.QueryCapabilities;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.data.QueryCapabilities;
 import org.geotoolkit.data.ReTypeFeatureReader;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureSource;
 import static org.geotoolkit.factory.Hints.Key;
@@ -43,7 +43,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Association;
 import org.opengis.feature.simple.SimpleFeature;
@@ -397,7 +397,7 @@ public class JDBCFeatureSource extends ContentFeatureSource {
     }
     
     @Override
-    protected ReferencedEnvelope getBoundsInternal(final Query query) throws IOException {
+    protected JTSEnvelope2D getBoundsInternal(final Query query) throws IOException {
         final JDBCDataStore dataStore = getDataStore();
 
         //split the filter
@@ -413,7 +413,7 @@ public class JDBCFeatureSource extends ContentFeatureSource {
 
             // grab the 2d part of the crs
             final CoordinateReferenceSystem flatCRS = CRS.getHorizontalCRS(getSchema().getCoordinateReferenceSystem());
-            final ReferencedEnvelope bounds = new ReferencedEnvelope(flatCRS);
+            final JTSEnvelope2D bounds = new JTSEnvelope2D(flatCRS);
 
             // grab a reader
             final DefaultQuery q = new DefaultQuery(query);

@@ -17,8 +17,8 @@
 package org.geotoolkit.jdbc;
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotools.data.FeatureReader;
-import org.geotools.data.Transaction;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.Transaction;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.opengis.feature.Association;

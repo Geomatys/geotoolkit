@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 
 import org.geotoolkit.data.DelegatingFeatureWriter;
-import org.geotools.data.FeatureWriter;
+import org.geotoolkit.data.FeatureWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

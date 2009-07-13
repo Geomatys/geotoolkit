@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Query;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.Query;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 
 public abstract class JDBCEmptyTest extends JDBCTestSupport {
@@ -33,7 +33,7 @@ public abstract class JDBCEmptyTest extends JDBCTestSupport {
         FeatureSource fs = dataStore.getFeatureSource( tname("empty") );
         assertNotNull(fs);
         
-        ReferencedEnvelope bounds = fs.getBounds();
+        JTSEnvelope2D bounds = fs.getBounds();
         assertTrue( bounds.isNull() );
         
         int count = fs.getCount( Query.ALL );

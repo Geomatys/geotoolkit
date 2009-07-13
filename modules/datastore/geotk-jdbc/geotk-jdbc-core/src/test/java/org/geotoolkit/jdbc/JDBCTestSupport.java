@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestResult;
 
 import org.geotoolkit.feature.DefaultName;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -224,7 +224,7 @@ public abstract class JDBCTestSupport extends TestCase {
     	return crs1.equals(crs2); 
    	}
 
-	protected boolean areReferencedEnvelopesEuqal(ReferencedEnvelope e1, ReferencedEnvelope e2) {
+	protected boolean areReferencedEnvelopesEuqal(JTSEnvelope2D e1, JTSEnvelope2D e2) {
 		
 		if (e1==null && e2 ==null) return true;
 		if (e1==null || e2 == null) return false;
