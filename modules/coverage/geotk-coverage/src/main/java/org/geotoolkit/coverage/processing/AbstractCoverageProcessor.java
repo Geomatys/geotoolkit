@@ -103,14 +103,6 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
     public static final Level OPERATION = new LogLevel("OPERATION", 780);
 
     /**
-     * The hints to be used by {@link #getInstance}.
-     */
-    private static final Hints GP_HINTS = EMPTY_HINTS.clone();
-    static {
-        GP_HINTS.put(Hints.GRID_COVERAGE_PROCESSOR, AbstractCoverageProcessor.class);
-    }
-
-    /**
      * The grid coverage logging level type.
      */
     private static final class LogLevel extends Level {
@@ -135,7 +127,8 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      * @return The default processor instance.
      */
     public static AbstractCoverageProcessor getInstance() {
-        return (AbstractCoverageProcessor) CoverageFactoryFinder.getCoverageProcessor(GP_HINTS);
+        return (AbstractCoverageProcessor) CoverageFactoryFinder.getCoverageProcessor(
+                new Hints(Hints.GRID_COVERAGE_PROCESSOR, AbstractCoverageProcessor.class));
     }
 
     /**

@@ -219,8 +219,7 @@ public class Resample extends Operation2D {
                 (GridGeometry) parameters.parameter("GridGeometry").getValue());
         final GridCoverage2D target;
         try {
-            target = Resampler2D.reproject(source, targetCRS, targetGG, interpolation,
-                (hints instanceof Hints) ? hints : new Hints(hints));
+            target = Resampler2D.reproject(source, targetCRS, targetGG, interpolation, hints);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CANT_REPROJECT_$1, source.getName()), exception);

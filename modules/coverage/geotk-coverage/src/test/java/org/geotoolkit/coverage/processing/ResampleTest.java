@@ -32,6 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
@@ -48,6 +49,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.test.Commons.decodeQuotes;
 
 
 /**
@@ -90,7 +92,7 @@ public final class ResampleTest extends GridProcessingTestCase {
 
     /**
      * Projects the specified coverage to the same CRS without hints.
-     * The result will be displayed in a window if {@link #SHOW} is set to {@code true}.
+     * The result will be displayed in a window if {@link #show} is set to {@code true}.
      *
      * @param coverage  The coverage to project.
      * @return The operation name which was applied on the image, or {@code null} if none.
@@ -181,22 +183,12 @@ public final class ResampleTest extends GridProcessingTestCase {
     @Test
     public void testTranslation() throws NoninvertibleTransformException {
         loadSampleCoverage(SampleCoverage.SST);
-        doTranslation(coverage);
-    }
-
-    /**
-     * Performs a translation using the "Resample" operation.
-     *
-     * @param grid the {@link GridCoverage2D} to apply the translation on.
-     * @throws NoninvertibleTransformException If a "grid to CRS" transform is not invertible.
-     */
-    private void doTranslation(GridCoverage2D grid) throws NoninvertibleTransformException {
         final int    transX =  -253;
         final int    transY =  -456;
         final double scaleX =  0.04;
         final double scaleY = -0.04;
         final ParameterBlock block = new ParameterBlock().
-                addSource(grid.getRenderedImage()).
+                addSource(coverage.getRenderedImage()).
                 add((float) transX).
                 add((float) transY);
         RenderedImage image = JAI.create("Translate", block);
@@ -207,14 +199,14 @@ public final class ResampleTest extends GridProcessingTestCase {
          * Consequently, the 'gridToCoordinateSystem' should be translated by the same
          * amount, with the opposite sign.
          */
-        AffineTransform expected = getAffineTransform(grid);
+        AffineTransform expected = getAffineTransform(coverage);
         assertNotNull(expected);
         expected = new AffineTransform(expected); // Get a mutable instance.
-        grid = CoverageFactoryFinder.getGridCoverageFactory(null).create("Translated",
-                image, grid.getEnvelope(), grid.getSampleDimensions(),
-                new GridCoverage2D[]{grid}, grid.getProperties());
+        coverage = CoverageFactoryFinder.getGridCoverageFactory(null).create("Translated",
+                image, coverage.getEnvelope(), coverage.getSampleDimensions(),
+                new GridCoverage2D[]{coverage}, coverage.getProperties());
         expected.translate(-transX, -transY);
-        assertTransformEquals(expected, getAffineTransform(grid));
+        assertTransformEquals(expected, getAffineTransform(coverage));
         /*
          * Apply the "Resample" operation with a specific 'gridToCoordinateSystem' transform.
          * The envelope is left unchanged. The "Resample" operation should compute automatically
@@ -223,14 +215,78 @@ public final class ResampleTest extends GridProcessingTestCase {
         final AffineTransform at = AffineTransform.getScaleInstance(scaleX, scaleY);
         final MathTransform   tr = ProjectiveTransform.create(at);
         final GridGeometry2D geometry = new GridGeometry2D(null, tr, null);
-        grid = (GridCoverage2D) Operations.DEFAULT.resample(grid,
-                grid.getCoordinateReferenceSystem(), geometry, null);
-        assertEquals(at, getAffineTransform(grid));
-        image = grid.getRenderedImage();
+        coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage,
+                coverage.getCoordinateReferenceSystem(), geometry, null);
+        assertEquals(at, getAffineTransform(coverage));
+        image = coverage.getRenderedImage();
         expected.preConcatenate(at.createInverse());
         final Point point = new Point(transX, transY);
         assertSame(point, expected.transform(point, point)); // Round toward neareast integer
         assertEquals("Incorrect X translation", point.x, image.getMinX());
         assertEquals("Incorrect Y translation", point.y, image.getMinY());
+    }
+
+    /**
+     * Ensures that the resampling takes in account the system-wide "lenient datum shift" hint.
+     * The actual data doesn't matter for this test. We are interrested only in the exception.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @since 3.02
+     */
+    @Test
+    public void testLenientDatumShift() throws FactoryException {
+        final CoordinateReferenceSystem sourceCRS = CRS.parseWKT(
+                "PROJCS[\"Bessel_1841_Hotine_Oblique_Mercator_Azimuth_Natural_Origin\"," +
+                "GEOGCS[\"GCS_Bessel_1841\",DATUM[\"D_Bessel_1841\"," +
+                "SPHEROID[\"Bessel_1841\",6377397.155,299.1528128]]," +
+                "PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]," +
+                "PROJECTION[\"Hotine_Oblique_Mercator_Azimuth_Natural_Origin\"]," +
+                "PARAMETER[\"False_Easting\",-9419820.5907]," +
+                "PARAMETER[\"False_Northing\",200000.0]," +
+                "PARAMETER[\"Scale_Factor\",1.0]," +
+                "PARAMETER[\"Azimuth\",90.0]," +
+                "PARAMETER[\"Longitude_Of_Center\",7.439583333333333]," +
+                "PARAMETER[\"Latitude_Of_Center\",46.95240555555556]," +
+                "UNIT[\"Meter\",1.0]]");
+        final CoordinateReferenceSystem targetCRS = CRS.parseWKT(decodeQuotes(
+                "PROJCS[“ETRS89 / ETRS-LAEA”,\n" +
+                "  GEOGCS[“ETRS89”,\n" +
+                "    DATUM[“European Terrestrial Reference System 1989”,\n" +
+                "      SPHEROID[“GRS 1980”, 6378137.0, 298.257222101, AUTHORITY[“EPSG”,“7019”]],\n" +
+                "      TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],\n" +
+                "      AUTHORITY[“EPSG”,“6258”]],\n" +
+                "    PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]],\n" +
+                "    UNIT[“degree”, 0.017453292519943295],\n" +
+                "    AXIS[“Geodetic longitude”, EAST],\n" +
+                "    AXIS[“Geodetic latitude”, NORTH],\n" +
+                "    AUTHORITY[“EPSG”,“4258”]],\n" +
+                "  PROJECTION[“Lambert Azimuthal Equal Area”, AUTHORITY[“EPSG”,“9820”]],\n" +
+                "  PARAMETER[“latitude_of_center”, 52.0],\n" +
+                "  PARAMETER[“longitude_of_center”, 10.0],\n" +
+                "  PARAMETER[“false_easting”, 4321000.0],\n" +
+                "  PARAMETER[“false_northing”, 3210000.0],\n" +
+                "  UNIT[“metre”, 1.0],\n" +
+                "  AXIS[“Easting”, EAST],\n" +
+                "  AXIS[“Northing”, NORTH],\n" +
+                "  AUTHORITY[“EPSG”,“3035”]]"));
+        createRandomCoverage(sourceCRS);
+        final GridCoverage2D sample = coverage;
+        try {
+            resample(targetCRS, null, null, true);
+            fail("Projection without Bursa-Wolf parameters should fail.");
+        } catch (CannotReprojectException e) {
+            // This is the exepcted exception.
+            // Cause should be: "Missing Bursa-Wolf parameters".
+            assertTrue(e.getCause() instanceof OperationNotFoundException);
+        }
+        coverage = sample;
+        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+        try {
+            resample(targetCRS, null, null, true);
+            // Should not throw exception anymore.
+        } finally {
+            Hints.removeSystemDefault(Hints.LENIENT_DATUM_SHIFT);
+        }
     }
 }

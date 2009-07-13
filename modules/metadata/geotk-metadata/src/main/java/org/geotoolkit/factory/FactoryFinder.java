@@ -126,7 +126,7 @@ public class FactoryFinder {
      * <p>
      * In a previous Geotoolkit version, a somewhat convolved lookup was performed here.
      * Now that default hints are filled right at {@link Hints} creation time, this
-     * method just needs to ensure that the given hints are not-null.
+     * method just needs to ensure that the given hints are non-null.
      *
      * @param  hints The user hints, or {@code null} for the default ones.
      * @return The hints to use (never {@code null}).

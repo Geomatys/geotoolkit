@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 
 import java.util.Set;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.opengis.coverage.processing.GridCoverageProcessor;
 
@@ -41,7 +42,7 @@ import org.geotoolkit.internal.LazySet;
  * yet defined an interface abstract enough for {@code GridCoverageFactory}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
@@ -62,6 +63,25 @@ public final class CoverageFactoryFinder {
     }
 
     /**
+     * Returns new hints that combine user supplied hints with the default hints.
+     * If a hint is specified in both user and default hints, then user hints have
+     * precedence.
+     * <p>
+     * In a previous Geotoolkit version, a somewhat convolved lookup was performed here.
+     * Now that default hints are filled right at {@link Hints} creation time, this
+     * method just needs to ensure that the given hints are not-null.
+     *
+     * @param  hints The user hints, or {@code null} for the default ones.
+     * @return The hints to use (never {@code null}).
+     */
+    static Hints mergeSystemHints(Hints hints) {
+        if (hints == null) {
+            hints = new Hints();
+        }
+        return hints;
+    }
+
+    /**
      * Returns the service registry. The registry will be created the first
      * time this method is invoked.
      */
@@ -74,6 +94,41 @@ public final class CoverageFactoryFinder {
             }));
         }
         return registry;
+    }
+
+    /**
+     * Returns all providers of the specified category.
+     *
+     * @param  category The factory category.
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available factory implementations.
+     */
+    private static <T> Set<T> getFactories(final Class<T> category, Hints hints) {
+        hints = mergeSystemHints(hints);
+        final Iterator<T> iterator;
+        synchronized (FactoryFinder.class) {
+            iterator = getServiceRegistry().getServiceProviders(category, null, hints);
+        }
+        return new LazySet<T>(iterator);
+    }
+
+    /**
+     * Returns a provider of the specified category.
+     *
+     * @param  category The factory category.
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @param  key The hint key to use for searching an implementation.
+     * @return The first factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         specified interface.
+     */
+    private static <T> T getFactory(final Class<T> category, Hints hints, final Hints.Key key)
+            throws FactoryRegistryException
+    {
+        hints = mergeSystemHints(hints);
+        synchronized (FactoryFinder.class) {
+            return getServiceRegistry().getServiceProvider(category, null, hints, key);
+        }
     }
 
     /**
@@ -92,10 +147,7 @@ public final class CoverageFactoryFinder {
     public static synchronized GridCoverageFactory getGridCoverageFactory(Hints hints)
             throws FactoryRegistryException
     {
-        if (hints == null) {
-            hints = new Hints();
-        }
-        return getServiceRegistry().getServiceProvider(GridCoverageFactory.class, null, hints, null);
+        return getFactory(GridCoverageFactory.class, hints, null);
     }
 
     /**
@@ -107,11 +159,7 @@ public final class CoverageFactoryFinder {
      * @since 2.4
      */
     public static synchronized Set<GridCoverageFactory> getGridCoverageFactories(Hints hints) {
-        if (hints == null) {
-            hints = new Hints();
-        }
-        return new LazySet<GridCoverageFactory>(getServiceRegistry().getServiceProviders(
-                GridCoverageFactory.class, null, hints));
+        return getFactories(GridCoverageFactory.class, hints);
     }
 
     /**
@@ -131,11 +179,7 @@ public final class CoverageFactoryFinder {
     public static synchronized GridCoverageProcessor getCoverageProcessor(Hints hints)
             throws FactoryRegistryException
     {
-        if (hints == null) {
-            hints = new Hints();
-        }
-        return getServiceRegistry().getServiceProvider(GridCoverageProcessor.class,
-                null, hints, Hints.GRID_COVERAGE_PROCESSOR);
+        return getFactory(GridCoverageProcessor.class, hints, Hints.GRID_COVERAGE_PROCESSOR);
     }
 
     /**
@@ -147,11 +191,7 @@ public final class CoverageFactoryFinder {
      * @since 3.00
      */
     public static synchronized Set<GridCoverageProcessor> getCoverageProcessors(Hints hints) {
-        if (hints == null) {
-            hints = new Hints();
-        }
-        return new LazySet<GridCoverageProcessor>(getServiceRegistry().getServiceProviders(
-                GridCoverageProcessor.class, null, hints));
+        return getFactories(GridCoverageProcessor.class, hints);
     }
 
     /**

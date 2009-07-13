@@ -97,9 +97,7 @@ public final class OperationsTest extends GridProcessingTestCase {
                 }
             }
         }
-        if (SHOW) {
-            show(targetCoverage);
-        }
+        show(targetCoverage);
     }
 
     /**
@@ -140,9 +138,7 @@ public final class OperationsTest extends GridProcessingTestCase {
                 }
             }
         }
-        if (SHOW) {
-            show(targetCoverage);
-        }
+        show(targetCoverage);
     }
 
     /**
@@ -175,8 +171,6 @@ public final class OperationsTest extends GridProcessingTestCase {
         assertEquals(3.95f, targetRaster.getSampleFloat(304, 310, 0), 1E-2f);
         assertEquals(1.88f, targetRaster.getSampleFloat(262, 357, 0), 1E-2f);
 
-        if (SHOW) {
-            show(targetCoverage);
-        }
+        show(targetCoverage);
     }
 }

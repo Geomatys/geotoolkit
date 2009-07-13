@@ -29,7 +29,7 @@ import org.geotoolkit.util.Utilities;
  * A set of utilities for {@link org.geotoolkit.factory.FactoryRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -67,6 +67,35 @@ public final class FactoryUtilities {
      * Do not allow instantiation of this class.
      */
     private FactoryUtilities() {
+    }
+
+    /**
+     * Adds to the given hints only the valid entries from the given map. This method is similar
+     * to {@code target.putAll(source)} except that invalid keys are filtered. Such filtering is
+     * not always wanted since it may hide bugs.
+     *
+     * @param  source The map which contains the key to copy.
+     * @param  target The hints where to copy the hints.
+     * @param  filterOnlyNulls If {@code true}, only null values may be filtered.
+     * @return {@code true} if at least one value changed as a result of this call.
+     *
+     * @since 3.02
+     */
+    public static boolean addValidEntries(final Map<RenderingHints.Key, Object> source,
+            final RenderingHints target, final boolean filterOnlyNulls)
+    {
+        boolean changed = false;
+        for (final Map.Entry<RenderingHints.Key, Object> entry : source.entrySet()) {
+            final RenderingHints.Key key = entry.getKey();
+            final Object value = entry.getValue();
+            if ((filterOnlyNulls && value != null) || key.isCompatibleValue(value)) {
+                final Object old = target.put(key, value);
+                if (!changed && !Utilities.equals(old, value)) {
+                    changed = true;
+                }
+            }
+        }
+        return changed;
     }
 
     /**

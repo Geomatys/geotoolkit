@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  * Tests the {@link ViewsManager} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.5
  */
@@ -62,9 +62,7 @@ public final class ViewsManagerTest extends GridCoverageTestCase {
         // Tests...
         GridCoverage2D packed = builder.getGridCoverage2D();
         GridCoverage2D geophysics = packed.view(ViewType.GEOPHYSICS);
-        if (SHOW) {
-            show(geophysics);
-        }
+        show(geophysics);
         // TODO: complete the tests...
     }
 
@@ -94,9 +92,8 @@ public final class ViewsManagerTest extends GridCoverageTestCase {
         // Tests without "sample to geophysics" transform...
         GridCoverage2D packed = builder.getGridCoverage2D();
         GridCoverage2D geophysics = packed.view(ViewType.GEOPHYSICS);
-        if (SHOW) {
-            show(geophysics);
-        }
+        show(geophysics);
+
         variable.setLinearTransform(scale, offset);
         packed = builder.getGridCoverage2D();
     }

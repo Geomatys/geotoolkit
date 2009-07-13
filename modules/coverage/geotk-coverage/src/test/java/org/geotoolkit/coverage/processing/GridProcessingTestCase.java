@@ -105,7 +105,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
 
     /**
      * Resamples the {@linkplain #coverage current coverage} to the specified CRS using the specified
-     * hints. The result will be displayed in a window if {@link #SHOW} is set to {@code true}.
+     * hints. The result will be displayed in a window if {@link #show} is set to {@code true}.
      *
      * @param targetCRS The target CRS, or {@code null} if the same.
      * @param geometry  The target geometry, or {@code null} if the same.
@@ -126,7 +126,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
             AbstractCoverageProcessor.LOGGER.fine("Applied \"" + operation + "\" JAI operation.");
         }
         coverage = coverage.view(ViewType.PACKED);
-        if (SHOW) {
+        if (show) {
             /*
              * Note: In current Resample implementation, simple affine transforms like
              *       translations will not be visible with the simple viewer used here.
@@ -143,7 +143,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
     /**
      * Performs an affine transformation on the {@linkplain #coverage current coverage}.
      * The transformation is a translation by 5 units along x and y axes. The result will
-     * be displayed in a window if {@link #SHOW} is set to {@code true}.
+     * be displayed in a window if {@link #show} is set to {@code true}.
      *
      * @param hints
      *          An optional set of hints, or {@code null} if none.

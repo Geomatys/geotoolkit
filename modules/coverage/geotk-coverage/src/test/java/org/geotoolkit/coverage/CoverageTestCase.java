@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * and {@link AffineTransform} objects.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  */
@@ -53,7 +53,7 @@ public abstract class CoverageTestCase {
      * {@code true} if the result of coverage operations should be displayed.
      * This is sometime useful for debugging purpose.
      */
-    protected static boolean SHOW = false;
+    protected boolean show = false;
 
     /**
      * Small value for comparaison of sample values. Since most grid coverage implementations in
@@ -61,6 +61,12 @@ public abstract class CoverageTestCase {
      * be of the order of {@code float} relative precision, not {@code double}.
      */
     protected static final float EPS = 1E-5f;
+
+    /**
+     * Creates a new test case.
+     */
+    protected CoverageTestCase() {
+    }
 
     /**
      * Returns the "Sample to geophysics" transform as an affine transform, or {@code null}
@@ -199,19 +205,22 @@ public abstract class CoverageTestCase {
     }
 
     /**
-     * Show the default rendering of the specified coverage.
+     * Shows the default rendering of the specified coverage.
      * This is used for debugging only.
      *
      * @param coverage The coverage to display.
      */
-    protected static void show(Coverage coverage) {
+    protected final void show(Coverage coverage) {
+        if (!show) {
+            return;
+        }
         if (coverage instanceof GridCoverage2D) {
             coverage = ((GridCoverage2D) coverage).view(ViewType.PACKED);
         }
         final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
         try {
             Class.forName("org.geotoolkit.gui.swing.OperationTreeBrowser")
-                 .getMethod("show", new Class[]{RenderedImage.class})
+                 .getMethod("show", new Class<?>[]{RenderedImage.class})
                  .invoke(null, new Object[]{image});
         } catch (RuntimeException e) {
             throw e;

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.Map;
 import javax.media.jai.KernelJAI;
 import javax.media.jai.Interpolation;
 
@@ -49,7 +48,7 @@ import org.geotoolkit.coverage.processing.operation.Resample;
  * selected by users in some widget), use {@link AbstractCoverageProcessor} directly.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @see org.geotoolkit.coverage.processing.operation
  *
@@ -80,7 +79,7 @@ public class Operations {
             if (AbstractCoverageProcessor.class.isInstance(candidate)) {
                 processor = (AbstractCoverageProcessor) candidate;
             } else {
-                if (!(candidate instanceof Class) ||
+                if (!(candidate instanceof Class<?>) ||
                         !AbstractCoverageProcessor.class.isAssignableFrom((Class<?>) candidate))
                 {
                     hints = hints.clone();
@@ -342,27 +341,6 @@ public class Operations {
             throws CoverageProcessingException
     {
         return (GridCoverage) doOperation("Interpolate", source, "Type", types);
-    }
-
-    /**
-     * Recolors a coverage to the specified colormaps.
-     *
-     * @param  source    The source coverage.
-     * @param  colorMaps The color maps to apply.
-     * @return The result of the operation.
-     * @throws CoverageProcessingException if the operation can't be applied.
-     *
-     * @see org.geotoolkit.coverage.processing.operation.Recolor
-     *
-     * @since 2.3
-     *
-     * @deprecated Parameter of type {@link Map} is deprecated. Please use the parameter of
-     *             type {@link ColorMap} instead.
-     */
-    public GridCoverage recolor(final GridCoverage source, final Map[] colorMaps)
-            throws CoverageProcessingException
-    {
-        return (GridCoverage) doOperation("Recolor", source, "ColorMaps", colorMaps);
     }
 
     /**

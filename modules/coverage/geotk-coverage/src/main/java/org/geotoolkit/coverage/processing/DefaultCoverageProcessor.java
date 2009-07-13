@@ -67,7 +67,7 @@ import org.geotoolkit.resources.Errors;
  * instances in {@link CachingCoverageProcessor}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 1.2
  * @module
@@ -154,8 +154,18 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
         registry = new FactoryRegistry(Arrays.asList(new Class<?>[] {
             Operation.class
         }));
+        final Map<RenderingHints.Key, Object> hints = this.hints;
         hints.put(JAI.KEY_REPLACE_INDEX_COLOR_MODEL, Boolean.FALSE);
         hints.put(JAI.KEY_TRANSFORM_ON_COLORMAP,     Boolean.FALSE);
+        /*
+         * The following hints are relevant to some operations. We declare them explicitly,
+         * with null value (meaning "undefined"), in order to inform FactoryRegistry that if
+         * those hints are supplied by the user, then they should be taken in account. Next
+         * we override this default setting by the user-supplied one, if any.
+         */
+        hints.put(Hints.COORDINATE_OPERATION_FACTORY, null);
+        hints.put(Hints.LENIENT_DATUM_SHIFT, null);
+        hints.put(Hints.DATUM_SHIFT_METHOD, null);
         FactoryUtilities.addImplementationHints(userHints, hints);
         hints.remove(Hints.GRID_COVERAGE_PROCESSOR); // Must erase user setting.
         if (declaredProcessor == null) {
@@ -265,8 +275,8 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
         Interpolation[] interpolations = null;
         if (!operationName.equalsIgnoreCase("Interpolate")) {
             for (final GeneralParameterValue param : parameters.values()) {
-                if (param instanceof ParameterValue) {
-                    final Object value = ((ParameterValue) param).getValue();
+                if (param instanceof ParameterValue<?>) {
+                    final Object value = ((ParameterValue<?>) param).getValue();
                     if (value instanceof Interpolator2D) {
                         // If all sources use the same interpolation, preserves the
                         // interpolation for the resulting coverage. Otherwise, uses
@@ -284,10 +294,13 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             }
         }
         /*
-         * Gets the hints to be given to the operation.
+         * Gets the hints to be given to the operation. Note that the DefaultCoverageProcessor
+         * constructor has explicitly set to null a few hints considered relevant, while not
+         * necessarly specified by the user. If those hints were not overriden by the user,
+         * then the corresponding null value will not be put in the hints map below.
          */
         final Hints hints = EMPTY_HINTS.clone();
-        hints.putAll(this.hints);
+        FactoryUtilities.addValidEntries(this.hints, hints, true);
         hints.put(Hints.GRID_COVERAGE_PROCESSOR, declaredProcessor);
         /*
          * Applies the operation, applies the same interpolation and log a message.

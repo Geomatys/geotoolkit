@@ -37,7 +37,7 @@ import org.junit.*;
  * Tests the creation of a grid coverage using floating point value.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  */
@@ -70,7 +70,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale coverage", raster, envelope);
-        if (SHOW) {
+        if (show) {
             ((GridCoverage2D) gc).show(); // Convenience method specific to Geotoolkit.
         }
         /*
@@ -83,7 +83,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         Color[] colors = new Color[] {Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED};
         gc = factory.create("My colored coverage", raster, envelope,
                             null, null, null, new Color[][] {colors}, null);
-        if (SHOW) {
+        if (show) {
             ((GridCoverage2D) gc).view(ViewType.RENDERED).show();
         }
     }
@@ -105,7 +105,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale matrix", matrix, envelope);
-        if (SHOW) {
+        if (show) {
             ((GridCoverage2D) gc).show(); // Convenience method specific to Geotoolkit.
         }
     }
