@@ -217,6 +217,8 @@ public class Types {
 
         if (type.getRestrictions() != null && type.getRestrictions().size() > 0) {
             for (Filter filter : type.getRestrictions()) {
+                System.out.println("class : " + type.getClass());
+                System.out.println(">>>>>>>>>>>>>>>>> " + filter + " _____________ " + value);
                 if (!filter.evaluate(value)) {
                     throw new SimpleIllegalAttributeException(type.getName() + " restriction " + filter + " not met by: " + value);
                 }

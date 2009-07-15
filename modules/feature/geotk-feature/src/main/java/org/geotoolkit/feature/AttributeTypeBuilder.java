@@ -438,6 +438,7 @@ public class AttributeTypeBuilder {
     public AttributeType buildType() {
         if (length != null) {
             final Filter lengthRestriction = lengthRestriction(length);
+            System.out.println("---- " + lengthRestriction);
             restrictions().add(lengthRestriction);
         }
 

@@ -95,6 +95,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-datastore-core</module>
+    <module>geotk-shapefile</module>
     <module>geotk-jdbc</module>
   </modules>
 
