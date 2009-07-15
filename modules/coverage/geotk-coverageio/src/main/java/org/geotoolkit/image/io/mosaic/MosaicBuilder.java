@@ -63,7 +63,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  *     builder.setTileDirectory(new File("output"));
  *     builder.setTileSize(new Dimension(256, 256));
  *     builder.setSubsamplings(1, 2, 3, 4);
- *     TileManager newMosaic = builder.createTileManager(originalMosaic, TileWritingPolicy.OVERWRITE);
+ *     TileManager newMosaic = builder.writeFromInput(originalMosaic, null);
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -235,7 +235,7 @@ public class MosaicBuilder {
 
     /**
      * Returns the tile directory, or {@code null} for current directory. This is the directory
-     * where {@link #createTileManager(Object, TileWritingPolicy) createTileManager} methods will
+     * where {@link #writeFromInput(Object, MosaicImageWriteParam) writeFromInput} methods will
      * write the new tiles, if writting tiles is allowed. This is also the directory where the
      * {@code TileManager} created by the above methods will read the tiles back.
      * <p>
@@ -1206,63 +1206,6 @@ public class MosaicBuilder {
         final MosaicImageWriteParam param = new MosaicImageWriteParam();
         param.setTileWritingPolicy(TileWritingPolicy.NO_WRITE);
         return writeFromInput(input, 0, param, true); // Do not invoke the user-overrideable method.
-    }
-
-    /**
-     * Creates a tile manager from an untiled image. This is equivalent to
-     * <code>{@linkplain #createTileManager(Object,int,TileWritingPolicy) createTileManager}(input,
-     * <b>0</b>, policy)</code> except that this method ensures that the input contains only one
-     * image. If more than one image is found, then an exception is throw. This is often desireable
-     * when the input is a collection of {@link Tile}s, since having more than one "image" (where
-     * "image" in this context means different instances of {@code TileManager}) means that we
-     * failed to create a single mosaic from a set of source tiles.
-     *
-     * @param  input The image input, typically as a {@link File} or an other {@link TileManager}.
-     * @param  policy Sets whatever tiles are created and saved to disk.
-     * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
-     * @throws IOException if an error occured while reading the untiled image or (only if
-     *         {@code writeTiles} is {@code true}) while writting the tiles to disk.
-     *
-     * @deprecated Replaced by {@link #writeFromInput(Object, int, MosaicImageWriteParam)}.
-     */
-    @Deprecated
-    public synchronized TileManager createTileManager(final Object input,
-            final TileWritingPolicy policy) throws IOException
-    {
-        final MosaicImageWriteParam param = new MosaicImageWriteParam();
-        param.setTileWritingPolicy(policy);
-        return writeFromInput(input, param);
-    }
-
-    /**
-     * Creates a tile manager from an untiled image. The {@linkplain #getUntiledImageBounds
-     * untiled image bounds} and {@linkplain #getTileReaderSpi tile reader SPI} are inferred
-     * from the input, unless they were explicitly specified. The input may be a {@link File}
-     * if the mosaic should be created from a single input image, or may be a collection of
-     * {@link Tile}s or a {@link TileManager} if the new mosaic should be created from an
-     * existing one.
-     * <p>
-     * Optionnaly if the tile writing policy is anything else than
-     * {@link TileWritingPolicy#NO_WRITE NO_WRITE}, then pixel values are read from the untiled
-     * images, organized in tiles as specified by the {@link TileManager} to be returned and saved
-     * to disk. This work is done using a default {@link MosaicImageWriter}.
-     *
-     * @param  input The image input, typically as a {@link File} or an other {@link TileManager}.
-     * @param  inputIndex Index of image to read, typically 0.
-     * @param  policy Sets whatever tiles are created and saved to disk.
-     * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
-     * @throws IOException if an error occured while reading the untiled image or (only if
-     *         {@code writeTiles} is {@code true}) while writting the tiles to disk.
-     *
-     * @deprecated Replaced by {@link #writeFromInput(Object, int, MosaicImageWriteParam)}.
-     */
-    @Deprecated
-    public synchronized TileManager createTileManager(final Object input, final int inputIndex,
-            final TileWritingPolicy policy) throws IOException
-    {
-        final MosaicImageWriteParam param = new MosaicImageWriteParam();
-        param.setTileWritingPolicy(policy);
-        return writeFromInput(input, inputIndex, param);
     }
 
     /**

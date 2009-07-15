@@ -42,7 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.0
  * @module
  */
-public class DefaultConversion extends DefaultOperation implements Conversion {
+public class DefaultConversion extends DefaultSingleOperation implements Conversion {
     /**
      * Serial number for interoperability with different versions.
      */
