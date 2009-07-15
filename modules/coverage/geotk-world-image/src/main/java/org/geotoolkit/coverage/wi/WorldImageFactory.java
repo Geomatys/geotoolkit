@@ -34,6 +34,7 @@ import org.geotoolkit.coverage.io.DefaultCoverageReader;
 
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
+import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -134,8 +135,10 @@ public class WorldImageFactory {
         //let the builder build the best pyramid resolutions
         //builder.setSubsamplings(new int[]{1,2,4,6,8,12,16,20,30});
         builder.setTileDirectory(tileFolder);
-                
-        final TileManager manager = builder.createTileManager(input, 0, TileWritingPolicy.WRITE_NEWS_ONLY);
+
+        final MosaicImageWriteParam params = new MosaicImageWriteParam();
+        params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
+        final TileManager manager = builder.writeFromInput(input, params);
         final MosaicImageReader reader = new MosaicImageReader();
         reader.setInput(manager);
         return reader;

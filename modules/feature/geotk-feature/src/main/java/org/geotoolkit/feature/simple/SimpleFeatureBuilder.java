@@ -294,9 +294,7 @@ public class SimpleFeatureBuilder {
         if (value != null) {
 
             final Class target = descriptor.getType().getBinding();
-            System.out.println("------------->" +value +"   "+ value.getClass() + " to " + target);
             final Object converted = Converters.convert(value, target);
-            System.out.println("------->" + converted +"     " + ((converted != null) ? converted.getClass() : ""));
             if (converted != null) {
                 value = converted;
             }

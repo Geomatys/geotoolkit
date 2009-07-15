@@ -58,7 +58,7 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
 public class DiffFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 
     private FeatureReader<T, F> reader;
-    private final Diff diff;
+    private Diff diff;
     /** Next value as peeked by hasNext() */
     F next = null;
     private final Filter filter;
@@ -196,7 +196,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
         }
 
         if (diff != null) {
-            diff.clear();
+            diff = null;
             addedIterator = null;
         }
     }
