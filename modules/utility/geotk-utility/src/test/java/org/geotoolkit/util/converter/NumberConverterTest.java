@@ -18,6 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import java.awt.Color;
+import java.math.BigDecimal;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,7 +30,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.4
  */
@@ -62,6 +63,19 @@ public final class NumberConverterTest {
     }
 
     /**
+     * Tests conversions to big decimal.
+     *
+     * @throws NonconvertibleObjectException Should never happen.
+     */
+    @Test
+    public void testBigDecimal() throws NonconvertibleObjectException {
+        final ObjectConverter<Number,BigDecimal> c = NumberConverter.BigDecimal.INSTANCE;
+        assertEquals(BigDecimal.valueOf(2),   c.convert(Integer.valueOf(2)));
+        assertEquals(BigDecimal.valueOf(0.5), c.convert(Float.valueOf(0.5f)));
+        assertSame(c, serialize(c));
+    }
+
+    /**
      * Tests conversions to color values.
      * Adapted from Geotoolkit 2.5 {@code ColorConverterFactoryTest}.
      *
@@ -85,6 +99,7 @@ public final class NumberConverterTest {
      */
     @Test
     public void testComparable() throws NonconvertibleObjectException {
+        @SuppressWarnings("rawtypes")
         final ObjectConverter<Number,Comparable> c = NumberConverter.Comparable.INSTANCE;
         assertEquals(2,   c.convert(2  ));
         assertEquals(2.5, c.convert(2.5));

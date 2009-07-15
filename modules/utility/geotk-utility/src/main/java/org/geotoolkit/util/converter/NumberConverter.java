@@ -26,7 +26,7 @@ import java.io.ObjectStreamException;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.4
  * @module
@@ -62,6 +62,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.01
      */
+    @SuppressWarnings("rawtypes")
     static final class Comparable extends NumberConverter<java.lang.Comparable> {
         private static final long serialVersionUID = 3716134638218072176L;
         public static final Comparable INSTANCE = new Comparable();
@@ -322,6 +323,87 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         @Override
         public java.lang.Boolean convert(final Number source) throws NonconvertibleObjectException {
             return (source != null) ? java.lang.Boolean.valueOf(source.intValue() != 0) : null;
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+    /**
+     * Converter from numbers to {@link java.math.BigDecimal}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.02
+     */
+    static final class BigDecimal extends NumberConverter<java.math.BigDecimal> {
+        private static final long serialVersionUID = -6318144992861058878L;
+        public static final BigDecimal INSTANCE = new BigDecimal();
+        private BigDecimal() {
+        }
+
+        @Override
+        public Class<java.math.BigDecimal> getTargetClass() {
+            return java.math.BigDecimal.class;
+        }
+
+        @Override
+        public java.math.BigDecimal convert(final Number source) throws NonconvertibleObjectException {
+            if (source == null) {
+                return null;
+            }
+            if (source instanceof java.math.BigDecimal) {
+                return (java.math.BigDecimal) source;
+            }
+            if (source instanceof java.math.BigInteger) {
+                return new java.math.BigDecimal((java.math.BigInteger) source);
+            }
+            if (Classes.isInteger(source.getClass())) {
+                return java.math.BigDecimal.valueOf(source.longValue());
+            }
+            return java.math.BigDecimal.valueOf(source.doubleValue());
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+    /**
+     * Converter from numbers to {@link java.math.BigInteger}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.02
+     */
+    static final class BigInteger extends NumberConverter<java.math.BigInteger> {
+        private static final long serialVersionUID = 5940724099300523246L;
+        public static final BigInteger INSTANCE = new BigInteger();
+        private BigInteger() {
+        }
+
+        @Override
+        public Class<java.math.BigInteger> getTargetClass() {
+            return java.math.BigInteger.class;
+        }
+
+        @Override
+        public java.math.BigInteger convert(final Number source) throws NonconvertibleObjectException {
+            if (source == null) {
+                return null;
+            }
+            if (source instanceof java.math.BigInteger) {
+                return (java.math.BigInteger) source;
+            }
+            if (source instanceof java.math.BigDecimal) {
+                return ((java.math.BigDecimal) source).toBigInteger();
+            }
+            return java.math.BigInteger.valueOf(source.longValue());
         }
 
         /** Returns the singleton instance on deserialization. */

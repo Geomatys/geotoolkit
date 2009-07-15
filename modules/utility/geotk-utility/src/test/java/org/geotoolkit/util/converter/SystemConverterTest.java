@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.sql.Timestamp;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
@@ -34,7 +36,7 @@ import static org.junit.Assert.*;
  * Tests a few conversions using the system converter.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -76,6 +78,9 @@ public class SystemConverterTest {
         assertEquals(Float.valueOf(3.0f), system.converter(Number .class, Float.class).convert(3));
         assertEquals(Float.valueOf(0.5f), system.converter(Double .class, Float.class).convert(0.5));
         assertEquals(Float.valueOf(2.5f), system.converter(Number .class, Float.class).convert(2.5));
+
+        assertEquals(BigInteger.valueOf(2),   system.converter(Number.class, BigInteger.class).convert(2));
+        assertEquals(BigDecimal.valueOf(2.5), system.converter(Number.class, BigDecimal.class).convert(2.5));
     }
 
     /**

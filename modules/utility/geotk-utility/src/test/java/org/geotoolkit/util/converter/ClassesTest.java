@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests the {@link Classes} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.5
  */
@@ -99,7 +99,7 @@ public final class ClassesTest {
      * Tests {@link Classes#implementSameInterfaces}.
      */
     @Test
-    @SuppressWarnings("unchecked") // We break consistency on purpose for one test.
+    @SuppressWarnings({"unchecked", "rawtypes"}) // We break consistency on purpose for one test.
     public void testImplementSameInterfaces() {
         assertTrue (Classes.implementSameInterfaces(StringBuilder.class, String.class, CharSequence.class));
         assertTrue (Classes.implementSameInterfaces(StringBuilder.class, String.class, Serializable.class));
@@ -118,7 +118,7 @@ public final class ClassesTest {
             throws NoSuchFieldException, NoSuchMethodException
     {
         final Class<?>[] g = null;
-        final Class<?>[] s = new Class[] {Set.class};
+        final Class<?>[] s = new Class<?>[] {Set.class};
         final Class<ClassesTest> c = ClassesTest.class;
         assertNull(Classes.boundOfParameterizedAttribute(c.getMethod("getter0", g)));
         assertNull(Classes.boundOfParameterizedAttribute(c.getMethod("setter0", s)));
@@ -132,10 +132,12 @@ public final class ClassesTest {
     }
 
     public Set<? extends Long> attrib2 = null;
+    @SuppressWarnings("rawtypes")
     public Set                 getter0() {return null;} // Intentionnaly unparameterized.
     public Set<       Integer> getter1() {return null;}
     public Set<? extends Byte> getter2() {return null;}
     public Set<? super  Float> getter3() {return null;}
+    @SuppressWarnings("rawtypes")
     public void setter0(Set                  dummy) {}  // Intentionnaly unparameterized.
     public void setter1(Set<         String> dummy) {}
     public void setter2(Set<? extends Short> dummy) {}

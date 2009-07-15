@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * should be created.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -82,6 +82,8 @@ public class ConverterRegistry {
             s.register(NumberConverter.Short     .INSTANCE);
             s.register(NumberConverter.Byte      .INSTANCE);
             s.register(NumberConverter.Boolean   .INSTANCE);
+            s.register(NumberConverter.BigDecimal.INSTANCE);
+            s.register(NumberConverter.BigInteger.INSTANCE);
             s.register(NumberConverter.Color     .INSTANCE);
             s.register(NumberConverter.String    .INSTANCE); // Last choice for NumberConverter.
             s.register(DateConverter  .Timestamp .INSTANCE);
@@ -162,7 +164,7 @@ public class ConverterRegistry {
          * If the given converter is a FallbackConverter (maybe obtained from an other
          * ConverterRegistry), unwraps it and registers its component individually.
          */
-        if (converter instanceof FallbackConverter) {
+        if (converter instanceof FallbackConverter<?,?>) {
             final FallbackConverter<?,?> fc = (FallbackConverter<?,?>) converter;
             final ObjectConverter<?,?> primary, fallback;
             synchronized (fc) {
@@ -181,7 +183,7 @@ public class ConverterRegistry {
         final Class<?> stopAt = Classes.findCommonClass(source, target);
         synchronized (converters) {
             for (Class<?> i=target; i!=null && !i.equals(stopAt); i=i.getSuperclass()) {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings({"unchecked","rawtypes"})
                 final ClassPair<?,?> key = new ClassPair(source, i);
                 register(key, converter);
             }
@@ -218,7 +220,7 @@ public class ConverterRegistry {
                     continue;
                 }
                 if (!i.isAssignableFrom(source)) {
-                    @SuppressWarnings("unchecked")
+                    @SuppressWarnings({"unchecked","rawtypes"})
                     final ClassPair<?,?> key = new ClassPair(source, i);
                     register(key, converter);
                 }
@@ -352,7 +354,7 @@ public class ConverterRegistry {
          * base. The goal is to take in account (later) an eventual parent which is common to every
          * sources, if there is any. We ignore interfaces on intend.
          */
-        @SuppressWarnings("unchecked") // Generic array creation.
+        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         final Set<Class<?>>[] targets = new Set[sources.length];
         for (int i=0; i<sources.length; i++) {
             Class<?> source = sources[i];
@@ -422,8 +424,8 @@ public class ConverterRegistry {
              */
             if (c == countAssignables) {
                 if (Number.class.isAssignableFrom(candidate) && Number.class.isAssignableFrom(best)) {
-                    @SuppressWarnings("unchecked") final Class<? extends Number> n1 = (Class) candidate;
-                    @SuppressWarnings("unchecked") final Class<? extends Number> n2 = (Class) best;
+                    @SuppressWarnings({"unchecked","rawtypes"}) final Class<? extends Number> n1 = (Class) candidate;
+                    @SuppressWarnings({"unchecked","rawtypes"}) final Class<? extends Number> n2 = (Class) best;
                     try {
                         best = Classes.widestClass(n1, n2);
                         positionFirst = p;
@@ -458,7 +460,7 @@ public class ConverterRegistry {
             for (final Map.Entry<ClassPair<?,?>, ObjectConverter<?,?>> entry : converters.entrySet()) {
                 final DefaultMutableTreeNode node = new DefaultMutableTreeNode(entry.getKey());
                 final ObjectConverter<?,?> value = entry.getValue();
-                if (value instanceof FallbackConverter) {
+                if (value instanceof FallbackConverter<?,?>) {
                     ((FallbackConverter<?,?>) value).toTree(node);
                 }
                 root.add(node);

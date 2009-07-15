@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.lang.reflect.Type;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -38,8 +40,8 @@ import org.geotoolkit.resources.Errors;
  * on primitive types, sometime more specifically on numeric types and their {@link Number}
  * wrappers.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.5
  * @module
@@ -51,12 +53,15 @@ public final class Classes {
      */
     public static final byte
             DOUBLE=8, FLOAT=7, LONG=6, INTEGER=5, SHORT=4, BYTE=3, CHARACTER=2, BOOLEAN=1, OTHER=0;
+    // Note: This class assumes that DOUBLE is the greatest public constant.
 
     /**
      * Mapping between a primitive type and its wrapper, if any.
      */
     private static final Map<Class<?>,Classes> MAPPING = new HashMap<Class<?>,Classes>(16);
     static {
+        new Classes(BigDecimal.class, true, false, (byte) (DOUBLE+2)); // Undocumented enum.
+        new Classes(BigInteger.class, false, true, (byte) (DOUBLE+1));  // Undocumented enum.
         new Classes(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE   );
         new Classes(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT    );
         new Classes(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG     );
@@ -74,6 +79,20 @@ public final class Classes {
     /** {@code true} for integer number.        */ private final boolean  isInteger;
     /** The size in bytes.                      */ private final byte     size;
     /** Constant to be used in switch statement.*/ private final byte     ordinal;
+
+    /**
+     * Creates an entry for a type which is not a primitive type.
+     */
+    private Classes(final Class<?> type, final boolean isFloat, final boolean isInteger, final byte ordinal) {
+        primitive = wrapper = type;
+        this.isFloat   = isFloat;
+        this.isInteger = isInteger;
+        this.size      = -1;
+        this.ordinal   = ordinal;
+        if (MAPPING.put(type, this) != null) {
+            throw new AssertionError(); // Should never happen.
+        }
+    }
 
     /**
      * Creates a mapping between a primitive type and its wrapper.
@@ -159,7 +178,7 @@ public final class Classes {
             Type[] p = ((ParameterizedType) type).getActualTypeArguments();
             while (p != null && p.length == 1) {
                 type = p[0];
-                if (type instanceof Class) {
+                if (type instanceof Class<?>) {
                     return (Class<?>) type;
                 } else if (type instanceof WildcardType) {
                     p = ((WildcardType) type).getUpperBounds();
@@ -467,13 +486,16 @@ compare:for (int i=0; i<c1.length; i++) {
      * The given type must be a primitive type or its wrapper class.
      *
      * @param  type The primitive type (may be {@code null}).
-     * @return The number of bits, or 0 if {@code type} if null.
+     * @return The number of bits, or 0 if {@code type} is null.
      * @throws IllegalArgumentException if the given type is unknown.
      */
     public static int primitiveBitCount(final Class<?> type) throws IllegalArgumentException {
         final Classes mapping = MAPPING.get(type);
         if (mapping != null) {
-            return mapping.size;
+            final int size = mapping.size;
+            if (size >= 0) {
+                return size;
+            }
         }
         if (type == null) {
             return 0;
@@ -525,11 +547,11 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Returns the widest of the given types. Classes {@code c1} and {@code c2}
      * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
-     * {@link Float} or {@link Double} types. At most one of the arguments can be null.
+     * {@link Float}, {@link Double}, {@link BigInteger) or {@link BigDecimal} types.
      *
      * @param  c1 The first number type, or {@code null}.
      * @param  c2 The second number type, or {@code null}.
-     * @return The widest of the given types, or {@code null} if not {@code c1} and {@code c2} are null.
+     * @return The widest of the given types, or {@code null} if both {@code c1} and {@code c2} are null.
      * @throws IllegalArgumentException If one of the given type is unknown.
      */
     public static Class<? extends Number> widestClass(final Class<? extends Number> c1,
@@ -551,8 +573,8 @@ compare:for (int i=0; i<c1.length; i++) {
 
     /**
      * Returns the finest type of two numbers. Numbers {@code n1} and {@code n2} must be instance
-     * of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float} or
-     * {@link Double} types. At most one of the arguments can be null.
+     * of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float}
+     * {@link Double}, {@link BigInteger) or {@link BigDecimal} types.
      *
      * @param  n1 The first number.
      * @param  n2 The second number.
@@ -569,11 +591,11 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Returns the finest of the given types. Classes {@code c1} and {@code c2}
      * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
-     * {@link Float} or {@link Double} types. At most one of the arguments can be null.
+     * {@link Float}, {@link Double}, {@link BigInteger) or {@link BigDecimal} types.
      *
-     * @param  c1 The first number type.
-     * @param  c2 The second number type.
-     * @return The widest of the given types.
+     * @param  c1 The first number type, or {@code null}.
+     * @param  c2 The second number type, or {@code null}.
+     * @return The finest of the given types, or {@code null} if both {@code c1} and {@code c2} are null.
      * @throws IllegalArgumentException If one of the given type is unknown.
      */
     public static Class<? extends Number> finestClass(final Class<? extends Number> c1,
@@ -686,6 +708,10 @@ compare:for (int i=0; i<c1.length; i++) {
      * Casts a number to the specified class. The class must by one of {@link Byte},
      * {@link Short}, {@link Integer}, {@link Long}, {@link Float} or {@link Double}.
      *
+     * {@note This method is intentionnaly restricted to primitive types. Other types
+     *        like <code>BigDecimal</code> are not the purpose of this method. See the
+     *        <code>ConverterRegistry</code> class for a more generic method.}
+     *
      * @param <N> The class to cast to.
      * @param n The number to cast.
      * @param c The destination type.
@@ -711,10 +737,12 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Converts the specified string into a value object. The value object can be an instance of
      * {@link Double}, {@link Float}, {@link Long}, {@link Integer}, {@link Short}, {@link Byte},
-     * {@link Boolean}, {@link Character} or {@link String} according the specified type. This
-     * method is intentionnaly restricted to primitive types, with the addition of {@code String}
-     * which can be though as an identity operation. Other types like {@link java.io.File} are
-     * not the purpose of this method.
+     * {@link Boolean}, {@link Character} or {@link String} according the specified type.
+     *
+     * {@note This method is intentionnaly restricted to primitive types, with the addition of
+     *        <code>String</code> which can be though as an identity operation.. Other types
+     *        like <code>BigDecimal</code> are not the purpose of this method. See the
+     *        <code>ConverterRegistry</code> class for a more generic method.}
      *
      * @param  <T> The requested type.
      * @param  type The requested type.
@@ -764,7 +792,13 @@ compare:for (int i=0; i<c1.length; i++) {
      */
     public static byte getEnumConstant(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
-        return (mapping != null) ? mapping.ordinal : OTHER;
+        if (mapping != null) {
+            // Filter out the non-public enum for BigDecimal and BigInteger.
+            if (mapping.size >= 0) {
+                return mapping.ordinal;
+            }
+        }
+        return OTHER;
     }
 
     /**
