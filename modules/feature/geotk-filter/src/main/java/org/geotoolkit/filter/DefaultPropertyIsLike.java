@@ -395,4 +395,17 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "DefaultPropertyIsLike[" +
+               "attribute="+ this.attribute + ", " +
+               "pattern="+ this.pattern +", " +
+               "wildcardSingle="+ this.wildcardSingle +", "+
+               "wildcardMulti="+ this.wildcardMulti +", "+
+               "escape="+ this.escape + ", "+
+               "compPattern="+ this.compPattern +", "+
+               "match="+ this.match +", "+
+               "matchingCase="+ this.matchingCase +"]";
+    }
+
 }
