@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.legacy.array.ArrayData;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.collection.CanonicalSet;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -46,7 +46,7 @@ final class PolylineCache {
      * dans la machine virtuelle. <strong>Tous les objets plac�s dans cette cache devraient
      * �tre laiss�s constants (immutables).</strong>
      */
-    private static final CanonicalSet pool = CanonicalSet.newInstance(Object.class);
+    private static final WeakHashSet pool = WeakHashSet.newInstance(Object.class);
 
     /**
      * Transformation affine identit�. Cette transformation affine

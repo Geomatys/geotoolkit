@@ -150,6 +150,12 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public BBOX bbox(Expression e, double minx, double miny, double maxx, double maxy, String srs) {
 
         final DefaultBoundingBox env;
+
+        if (srs == null || srs.trim().isEmpty()) {
+            env = new DefaultBoundingBox(new double[]{minx, miny}, new double[]{maxx, maxy});
+            return bbox(e, env);
+        }
+
         CoordinateReferenceSystem crs = null;
         try {
             crs = CRS.decode(srs);

@@ -57,6 +57,24 @@
       <artifactId>geotk-feature</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-epsg</artifactId>
+      <scope>test</scope>
+      <version>${geotoolkit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.2.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 

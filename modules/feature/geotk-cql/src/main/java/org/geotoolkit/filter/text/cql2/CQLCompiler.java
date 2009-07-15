@@ -99,8 +99,6 @@ public class CQLCompiler extends CQLParser implements ICompiler{
             super.FilterCompilationUnit();
         } catch (TokenMgrError tokenError){
             throw new CQLException(tokenError.getMessage(),getTokenInPosition(0), this.source);
-        } catch (CQLException e) {
-            throw e;
         } catch (ParseException e) {
             throw new CQLException(e.getMessage(), getTokenInPosition(0), e.getCause(), this.source);
         }
@@ -115,8 +113,6 @@ public class CQLCompiler extends CQLParser implements ICompiler{
             super.ExpressionCompilationUnit();
         } catch (TokenMgrError tokenError){
             throw new CQLException(tokenError.getMessage(),getTokenInPosition(0), this.source);
-        } catch (CQLException e) {
-            throw e;
         } catch (ParseException e) {
             throw new CQLException(e.getMessage(), getTokenInPosition(0), e.getCause(), this.source);
         }
@@ -129,8 +125,6 @@ public class CQLCompiler extends CQLParser implements ICompiler{
             super.FilterListCompilationUnit();
         } catch (TokenMgrError tokenError){
             throw new CQLException(tokenError.getMessage(),getTokenInPosition(0), this.source);
-        } catch (CQLException e) {
-            throw e;
         } catch (ParseException e) {
             throw new CQLException(e.getMessage(), getTokenInPosition(0), e.getCause(), this.source);
         }
@@ -418,9 +412,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
         return null;
     }
 
-    private org.opengis.filter.expression.BinaryExpression buildBinaryExpression(int nodeType)
-            throws CQLException
-    {
+    private BinaryExpression buildBinaryExpression(int nodeType) throws CQLException {
 
         BinaryExpression expr = null;
 
@@ -582,7 +574,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -604,7 +596,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -640,7 +632,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -669,7 +661,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted period expression in temporal predicate.", node.getToken(), this.source);
+                        "unexpected period expression in temporal predicate.", node.getToken(), this.source);
         }
 
         return filter;
@@ -702,7 +694,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         result.getToken(), this.source);
         }
 
@@ -738,7 +730,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
                 return this.builder.buildLessOrEqual();
 
             default:
-                throw new CQLException("unexpeted filter type.");
+                throw new CQLException("unexpected filter type.");
         }
     }
 
