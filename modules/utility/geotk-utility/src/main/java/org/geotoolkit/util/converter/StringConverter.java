@@ -30,7 +30,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Justin Deoliveira (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
@@ -321,6 +321,82 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             }
             try {
                 return java.lang.Byte.parseByte(source);
+            } catch (NumberFormatException e) {
+                throw new NonconvertibleObjectException(e);
+            }
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+
+    /**
+     * Converter from {@link java.lang.String} to {@link java.math.BigDecimal}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.00
+     */
+    static final class BigDecimal extends StringConverter<java.math.BigDecimal> {
+        private static final long serialVersionUID = -8597497425876120213L;
+        public static final BigDecimal INSTANCE = new BigDecimal();
+        private BigDecimal() {
+        }
+
+        @Override
+        public Class<java.math.BigDecimal> getTargetClass() {
+            return java.math.BigDecimal.class;
+        }
+
+        @Override
+        public java.math.BigDecimal convert(String source) throws NonconvertibleObjectException {
+            if (source == null) {
+                return null;
+            }
+            try {
+                return new java.math.BigDecimal(source);
+            } catch (NumberFormatException e) {
+                throw new NonconvertibleObjectException(e);
+            }
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+
+    /**
+     * Converter from {@link java.lang.String} to {@link java.math.BigInteger}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.00
+     */
+    static final class BigInteger extends StringConverter<java.math.BigInteger> {
+        private static final long serialVersionUID = 8658903031519526466L;
+        public static final BigInteger INSTANCE = new BigInteger();
+        private BigInteger() {
+        }
+
+        @Override
+        public Class<java.math.BigInteger> getTargetClass() {
+            return java.math.BigInteger.class;
+        }
+
+        @Override
+        public java.math.BigInteger convert(String source) throws NonconvertibleObjectException {
+            if (source == null) {
+                return null;
+            }
+            try {
+                return new java.math.BigInteger(source);
             } catch (NumberFormatException e) {
                 throw new NonconvertibleObjectException(e);
             }

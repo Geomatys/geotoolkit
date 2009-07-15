@@ -68,6 +68,8 @@ public class ConverterRegistry {
             s.register(StringConverter.Short     .INSTANCE);
             s.register(StringConverter.Byte      .INSTANCE);
             s.register(StringConverter.Boolean   .INSTANCE);
+            s.register(StringConverter.BigDecimal.INSTANCE);
+            s.register(StringConverter.BigInteger.INSTANCE);
             s.register(StringConverter.Color     .INSTANCE);
             s.register(StringConverter.Locale    .INSTANCE);
             s.register(StringConverter.Charset   .INSTANCE);

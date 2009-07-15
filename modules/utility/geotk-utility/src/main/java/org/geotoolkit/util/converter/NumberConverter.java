@@ -53,6 +53,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         return false;
     }
 
+
     /**
      * Converter from numbers to comparables. This special case exists because {@link Number}
      * does not implement {@link java.lang.Comparable} directly, but all known subclasses do.
@@ -88,6 +89,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         }
     }
 
+
     /**
      * Converter from numbers to strings.
      *
@@ -119,6 +121,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         }
     }
 
+
     /**
      * Converter from numbers to doubles.
      *
@@ -148,6 +151,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
             return INSTANCE;
         }
     }
+
 
     /**
      * Converter from numbers to floats.
@@ -179,6 +183,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         }
     }
 
+
     /**
      * Converter from numbers to longs.
      *
@@ -208,6 +213,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
             return INSTANCE;
         }
     }
+
 
     /**
      * Converter from numbers to integers.
@@ -239,6 +245,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         }
     }
 
+
     /**
      * Converter from numbers to shorts.
      *
@@ -269,6 +276,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         }
     }
 
+
     /**
      * Converter from numbers to shorts.
      *
@@ -298,6 +306,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
             return INSTANCE;
         }
     }
+
 
     /**
      * Converter from numbers to booleans. Values in the range (-1..1) exclusive
@@ -330,6 +339,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
             return INSTANCE;
         }
     }
+
 
     /**
      * Converter from numbers to {@link java.math.BigDecimal}.
@@ -373,6 +383,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
         }
     }
 
+
     /**
      * Converter from numbers to {@link java.math.BigInteger}.
      *
@@ -411,6 +422,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
             return INSTANCE;
         }
     }
+
 
     /**
      * Converter from numbers to colors. Colors with an alpha of 0 (which would normally
