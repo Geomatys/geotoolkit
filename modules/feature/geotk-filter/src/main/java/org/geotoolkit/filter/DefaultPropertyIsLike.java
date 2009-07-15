@@ -345,4 +345,54 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         return visitor.visit(this, extraData);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.attribute != null ? this.attribute.hashCode() : 0);
+        hash = 59 * hash + (this.pattern != null ? this.pattern.hashCode() : 0);
+        hash = 59 * hash + (this.wildcardSingle != null ? this.wildcardSingle.hashCode() : 0);
+        hash = 59 * hash + (this.wildcardMulti != null ? this.wildcardMulti.hashCode() : 0);
+        hash = 59 * hash + (this.escape != null ? this.escape.hashCode() : 0);
+        hash = 59 * hash + (this.compPattern != null ? this.compPattern.hashCode() : 0);
+        hash = 59 * hash + (this.match != null ? this.match.hashCode() : 0);
+        hash = 59 * hash + (this.matchingCase ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultPropertyIsLike other = (DefaultPropertyIsLike) obj;
+        if (this.attribute != other.attribute && (this.attribute == null || !this.attribute.equals(other.attribute))) {
+            return false;
+        }
+        if ((this.pattern == null) ? (other.pattern != null) : !this.pattern.equals(other.pattern)) {
+            return false;
+        }
+        if ((this.wildcardSingle == null) ? (other.wildcardSingle != null) : !this.wildcardSingle.equals(other.wildcardSingle)) {
+            return false;
+        }
+        if ((this.wildcardMulti == null) ? (other.wildcardMulti != null) : !this.wildcardMulti.equals(other.wildcardMulti)) {
+            return false;
+        }
+        if ((this.escape == null) ? (other.escape != null) : !this.escape.equals(other.escape)) {
+            return false;
+        }
+        if (this.compPattern != other.compPattern && (this.compPattern == null || !this.compPattern.equals(other.compPattern))) {
+            return false;
+        }
+        if (this.match != other.match && (this.match == null || !this.match.equals(other.match))) {
+            return false;
+        }
+        if (this.matchingCase != other.matchingCase) {
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -66,4 +66,34 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
         return match;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + (this.left != null ? this.left.hashCode() : 0);
+        hash = 61 * hash + (this.right != null ? this.right.hashCode() : 0);
+        hash = 61 * hash + (this.match ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractBinaryComparisonOperator<E, F> other = (AbstractBinaryComparisonOperator<E, F>) obj;
+        if (this.left != other.left && (this.left == null || !this.left.equals(other.left))) {
+            return false;
+        }
+        if (this.right != other.right && (this.right == null || !this.right.equals(other.right))) {
+            return false;
+        }
+        if (this.match != other.match) {
+            return false;
+        }
+        return true;
+    }
+
 }

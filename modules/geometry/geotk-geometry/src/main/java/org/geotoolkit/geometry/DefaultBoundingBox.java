@@ -43,6 +43,10 @@ public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,E
         setBounds(bounds);
     }
 
+    public DefaultBoundingBox(double[] min, double[] max){
+        super(min,max);
+    }
+
     @Override
     public void setBounds(BoundingBox bounds) {
         for(int dim=0;dim<bounds.getDimension();dim++){

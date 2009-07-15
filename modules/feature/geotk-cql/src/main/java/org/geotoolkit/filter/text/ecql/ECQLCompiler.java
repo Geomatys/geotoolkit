@@ -60,7 +60,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
     private static final String ATTRIBUTE_PATH_SEPARATOR = "/";
 
     /** cql expression to compile */
-    private final String           source;
+    private final String source;
 
     private final ECQLFilterBuilder builder;
 
@@ -92,8 +92,6 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
             super.FilterCompilationUnit();
         } catch (TokenMgrError tokenError) {
             throw new CQLException(tokenError.getMessage(), getTokenInPosition(0), this.source);
-        } catch (CQLException e) {
-            throw e;
         } catch (ParseException e) {
             throw new CQLException(e.getMessage(), getTokenInPosition(0), e.getCause(), this.source);
         }
@@ -108,8 +106,6 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
             super.ExpressionCompilationUnit();
         } catch (TokenMgrError tokenError) {
             throw new CQLException(tokenError.getMessage(), getTokenInPosition(0), this.source);
-        } catch (CQLException e) {
-            throw e;
         } catch (ParseException e) {
             throw new CQLException(e.getMessage(), getTokenInPosition(0), e.getCause(), this.source);
         }
@@ -124,8 +120,6 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
             super.FilterListCompilationUnit();
         } catch (TokenMgrError tokenError) {
             throw new CQLException(tokenError.getMessage(), getTokenInPosition(0), this.source);
-        } catch (CQLException e) {
-            throw e;
         } catch (ParseException e) {
             throw new CQLException(e.getMessage(), getTokenInPosition(0), e.getCause(), this.source);
         }
@@ -194,9 +188,6 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
             IToken tokenAdapter = TokenAdapter.newAdapterFor(this.token);
             Result r = new Result(built, tokenAdapter, n.getType());
             builder.pushResult(r);
-
-        } catch (CQLException e) {
-            throw e;
 
         } finally {
             n.dispose();
@@ -658,7 +649,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -680,7 +671,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -716,7 +707,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -745,7 +736,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted period expression in temporal predicate.", node.getToken(), this.source);
+                        "unexpected period expression in temporal predicate.", node.getToken(), this.source);
         }
 
         return filter;
@@ -778,7 +769,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
 
             default:
                 throw new CQLException(
-                        "unexpeted date time expression in temporal predicate.",
+                        "unexpected date time expression in temporal predicate.",
                         node.getToken(), this.source);
         }
 
@@ -814,7 +805,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
                 return builder.buildLessOrEqual();
 
             default:
-                throw new CQLException("unexpeted filter type.");
+                throw new CQLException("unexpected filter type.");
         }
     }
 }

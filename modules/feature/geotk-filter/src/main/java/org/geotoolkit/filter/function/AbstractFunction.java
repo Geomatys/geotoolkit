@@ -77,4 +77,34 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
         return visitor.visit(this, extraData);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 89 * hash + (this.parameters != null ? this.parameters.hashCode() : 0);
+        hash = 89 * hash + (this.fallback != null ? this.fallback.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractFunction other = (AbstractFunction) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if (this.parameters != other.parameters && (this.parameters == null || !this.parameters.equals(other.parameters))) {
+            return false;
+        }
+        if (this.fallback != other.fallback && (this.fallback == null || !this.fallback.equals(other.fallback))) {
+            return false;
+        }
+        return true;
+    }
+
 }
