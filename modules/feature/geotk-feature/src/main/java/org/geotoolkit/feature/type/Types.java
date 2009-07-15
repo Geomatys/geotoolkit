@@ -210,6 +210,11 @@ public class Types {
             // dont.
             final Class clazz = value.getClass();
             final Class binding = type.getBinding();
+
+            System.out.println("value = " + clazz);
+            System.out.println("binding = " + binding);
+
+
             if (binding != null && !binding.isAssignableFrom(clazz)) {
                 throw new SimpleIllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
             }
@@ -217,8 +222,6 @@ public class Types {
 
         if (type.getRestrictions() != null && type.getRestrictions().size() > 0) {
             for (Filter filter : type.getRestrictions()) {
-                System.out.println("class : " + type.getClass());
-                System.out.println(">>>>>>>>>>>>>>>>> " + filter + " _____________ " + value);
                 if (!filter.evaluate(value)) {
                     throw new SimpleIllegalAttributeException(type.getName() + " restriction " + filter + " not met by: " + value);
                 }
