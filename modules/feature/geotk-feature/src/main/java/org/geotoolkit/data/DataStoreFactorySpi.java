@@ -52,7 +52,7 @@ import java.util.Map;
  * </p>
  *
  * <p>
- * <code>META-INF/services/org.geotools.data.DataStoreFactorySpi</code>
+ * <code>META-INF/services/org.geotoolkit.data.DataStoreFactorySpi</code>
  * </p>
  *
  * <p>
@@ -62,7 +62,7 @@ import java.util.Map;
  *
  * <p>
  * example:<br/><code>e.g.
- * org.geotools.data.mytype.MyTypeDataSourceFacotry</code>
+ * org.geotoolkit.data.mytype.MyTypeDataSourceFacotry</code>
  * </p>
  *
  * <p>

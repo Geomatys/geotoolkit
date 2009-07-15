@@ -30,6 +30,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.dummy.DummyDescriptor;
 import org.geotoolkit.feature.dummy.DummyGeometryDescriptor;
 import org.geotoolkit.feature.dummy.DummySimpleFeature;
@@ -54,7 +56,8 @@ public class FilterTestConstants {
 
     private static final Logger LOGGER = Logging.getLogger(FilterTestConstants.class);
 
-    public static final FilterFactory2 FF = new DefaultFilterFactory2();
+    public static final FilterFactory2 FF = (FilterFactory2)
+            FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final GeometryFactory GF = new GeometryFactory();
 
     public static Geometry RIGHT_GEOMETRY;

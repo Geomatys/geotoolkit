@@ -58,7 +58,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  *  //set global state
  *  builder.setName( "testType" );
- *  builder.setNamespaceURI( "http://www.geotools.org/" );
+ *  builder.setNamespaceURI( "http://www.geotoolkit.org/" );
  *  builder.setSRS( "EPSG:4326" );
  *
  *  //add attributes

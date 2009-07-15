@@ -299,7 +299,7 @@ public interface Query {
      *
      * <p>
      * At a technical level the interface SortBy2 is used to indicate the
-     * additional requirements of a GeoTools implementation. The pure
+     * additional requirements of a GeoToolkit implementation. The pure
      * WFS 1.1 specification itself is limited to SortBy.
      * </p>
      *

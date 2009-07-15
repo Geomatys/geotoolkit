@@ -37,7 +37,7 @@ class CurrentTransactionLock implements FeatureLock {
      *
      * @return <code>CURRENT_TRANSACTION</code> to aid in debugging.
      *
-     * @see org.geotools.data.FeatureLock#getAuthorization()
+     * @see org.geotoolkit.data.FeatureLock#getAuthorization()
      */
     public String getAuthorization() {
         return toString();
@@ -53,7 +53,7 @@ class CurrentTransactionLock implements FeatureLock {
      *
      * @return <code>-1</code> representing an invalid duration
      *
-     * @see org.geotools.data.FeatureLock#getDuration()
+     * @see org.geotoolkit.data.FeatureLock#getDuration()
      */
     public long getDuration() {
         return -1;

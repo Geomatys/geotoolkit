@@ -95,7 +95,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature>{
      * type the same, client code asking a
      * {@link DataAccess#getFeatureSource(Name)} shall use this name to request
      * for a FeatureSource, rather than the type name, as used in pre 2.5
-     * versions of GeoTools. For example, if we have a FeatureSource named
+     * versions of GeoToolkit. For example, if we have a FeatureSource named
      * {@code Roads} and its type is named {@code Roads_Type}, the
      * {@code DataAccess} shall be queried through {@code Roads}, not
      * {@code Roads_Type}.

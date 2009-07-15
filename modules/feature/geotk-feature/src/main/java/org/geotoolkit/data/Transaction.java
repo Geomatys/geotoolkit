@@ -329,9 +329,8 @@ public interface Transaction {
      * </p>
      *
      * @author jgarnett, Refractions Reasearch Inc.
-     * @version CVS Version
      *
-     * @see org.geotools.data
+     * @see org.geotoolkit.data
      */
     static public interface State {
         /**

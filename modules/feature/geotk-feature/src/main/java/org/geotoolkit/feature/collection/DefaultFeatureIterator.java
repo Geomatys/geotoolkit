@@ -25,7 +25,7 @@ import org.opengis.feature.type.FeatureType;
  * implement Iterator.
  * <p>
  * We are sorry but this does not implement Iteartor<Feature>, although it should
- * be a drop in replacement when Geotools is able to upgrade to Java 5.
+ * be a drop in replacement when Geotoolkit is able to upgrade to Java 5.
  * </p>
  * @author Ian Schneider
  * @source $URL$

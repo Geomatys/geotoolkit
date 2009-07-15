@@ -21,9 +21,9 @@ import org.opengis.feature.type.Name;
 
 /**
  * An adapter interface allowing a hosting application
- * to advertise DataStore instances to GeoTools.
+ * to advertise DataStore instances to GeoToolkit.
  * <p>
- * GeoTools includes a really simple RepositoryImpl which you can use to
+ * GeoToolkit includes a really simple RepositoryImpl which you can use to
  * manage DataStore in your own application; or if you have your own advanced
  * "catalog" you can make your own implementation.
  * </p>

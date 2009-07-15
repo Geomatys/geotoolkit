@@ -184,7 +184,7 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws UnsupportedOperationException
      *
-     * @see org.geotools.data.Transaction#addProperty(java.lang.Object,
+     * @see org.geotoolkit.data.Transaction#addProperty(java.lang.Object,
      *      java.lang.Object)
      */
     public void putProperty(Object key, Object value) {

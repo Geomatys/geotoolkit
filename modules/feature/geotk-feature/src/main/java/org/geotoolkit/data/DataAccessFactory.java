@@ -67,7 +67,7 @@ import org.opengis.util.InternationalString;
  * </p>
  *
  * <p>
- * <code>META-INF/services/org.geotools.data.DataAccessFactory</code>
+ * <code>META-INF/services/org.geotoolkit.data.DataAccessFactory</code>
  * </p>
  *
  * <p>
@@ -77,7 +77,7 @@ import org.opengis.util.InternationalString;
  *
  * <p>
  * Example:<br/><code>e.g.
- * org.geotools.data.mytype.MyTypeDataSourceFacotry</code>
+ * org.geotoolkit.data.mytype.MyTypeDataSourceFacotry</code>
  * </p>
  *
  * <p>

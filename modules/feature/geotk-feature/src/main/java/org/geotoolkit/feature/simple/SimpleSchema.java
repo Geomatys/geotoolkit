@@ -61,7 +61,7 @@ public class SimpleSchema extends DefaultSchema {
     //internal factory
     private static final FeatureTypeFactory FACTORY = new DefaultFeatureTypeFactory();
     //schema namespace
-    public static final String NAMESPACE = "http://www.geotools.org/simple";
+    public static final String NAMESPACE = "http://www.geotoolkit.org/simple";
     //
     // Builtin Java Types
     //

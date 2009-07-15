@@ -143,7 +143,7 @@ class ALLQuery implements Query {
      *
      * @return <code>null</code> as override is not required.
      *
-     * @see org.geotools.data.Query#getCoordinateSystem()
+     * @see org.geotoolkit.data.Query#getCoordinateSystem()
      */
     public CoordinateReferenceSystem getCoordinateSystem() {
         return null;
@@ -154,7 +154,7 @@ class ALLQuery implements Query {
      *
      * @return <code>null</code> as reprojection is not required.
      *
-     * @see org.geotools.data.Query#getCoordinateSystemReproject()
+     * @see org.geotoolkit.data.Query#getCoordinateSystemReproject()
      */
     public CoordinateReferenceSystem getCoordinateSystemReproject() {
         return null;

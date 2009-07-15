@@ -87,7 +87,7 @@ import org.opengis.util.ProgressListener;
  * level.
  * </p>
  *
- * @see java.util.Collection, org.geotools.Feature
+ * @see java.util.Collection, org.geotoolkit.Feature
  * @author Ian Turton, CCG
  * @author Rob Hranac, VFNY
  * @author Ian Schneider, USDA-ARS

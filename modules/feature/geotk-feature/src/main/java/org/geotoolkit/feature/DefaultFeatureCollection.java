@@ -93,7 +93,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * <p>
      * Opportunistic reuse is encouraged, but only for the purposes
      * of testing or other specialized uses. Normal creation should
-     * occur through <code>org.geotools.core.FeatureCollections.newCollection()</code>
+     * occur through <code>org.geotoolkit.core.FeatureCollections.newCollection()</code>
      * allowing applications to customize any generated collections.
      * </p>
      *
@@ -740,7 +740,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * with the Filter 1.1 specification.
      * </p>
      * <p>
-     * This method should also be able to handle GeoTools specific
+     * This method should also be able to handle GeoToolkit specific
      * sorting through detecting order as a SortBy2 instance.
      * </p>
      *
