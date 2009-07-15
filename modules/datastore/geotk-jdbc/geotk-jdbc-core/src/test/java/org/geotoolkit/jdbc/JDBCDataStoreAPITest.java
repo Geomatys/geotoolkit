@@ -60,7 +60,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.filter.function.other.GeometryTypeFunction;
+import org.geotoolkit.filter.function.geometry.GeometryTypeFunction;
 
 
 public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
