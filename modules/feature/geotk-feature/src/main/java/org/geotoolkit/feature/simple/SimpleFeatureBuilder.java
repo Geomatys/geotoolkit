@@ -292,8 +292,11 @@ public class SimpleFeatureBuilder {
     private Object convert(Object value, final AttributeDescriptor descriptor) {
         //make sure the type of the value and the binding of the type match up
         if (value != null) {
+
             final Class target = descriptor.getType().getBinding();
+            System.out.println("------------->" +value +"   "+ value.getClass() + " to " + target);
             final Object converted = Converters.convert(value, target);
+            System.out.println("------->" + converted +"     " + ((converted != null) ? converted.getClass() : ""));
             if (converted != null) {
                 value = converted;
             }

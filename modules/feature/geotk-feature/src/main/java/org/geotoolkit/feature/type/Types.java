@@ -211,10 +211,6 @@ public class Types {
             final Class clazz = value.getClass();
             final Class binding = type.getBinding();
 
-            System.out.println("value = " + clazz);
-            System.out.println("binding = " + binding);
-
-
             if (binding != null && !binding.isAssignableFrom(clazz)) {
                 throw new SimpleIllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
             }
