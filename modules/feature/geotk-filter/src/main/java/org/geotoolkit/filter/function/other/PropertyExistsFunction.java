@@ -75,6 +75,7 @@ public class PropertyExistsFunction extends AbstractFunction {
      *         this function argument, following the standard Java Beans naming
      *         conventions for getters. {@link Boolean#FALSE} otherwise.
      */
+    @Override
     public Object evaluate(Object bean) {
         if (bean instanceof SimpleFeature) {
             return evaluate((SimpleFeature) bean);
@@ -97,6 +98,7 @@ public class PropertyExistsFunction extends AbstractFunction {
         return propertyExists;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer("PropertyExists('");
         sb.append(getPropertyName());
@@ -107,6 +109,7 @@ public class PropertyExistsFunction extends AbstractFunction {
         return stringVal;
     }
 
+    @Override
     public boolean equals(Object obj) {
 
         if (obj == this)
