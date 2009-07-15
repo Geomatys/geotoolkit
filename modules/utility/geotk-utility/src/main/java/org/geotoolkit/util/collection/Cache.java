@@ -132,7 +132,7 @@ import org.geotoolkit.resources.Errors;
  * @param <V> The type of value objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -260,7 +260,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * used internally by this class.
      */
     static final boolean isReservedType(final Object value) {
-        return (value instanceof Handler || value instanceof Reference);
+        return (value instanceof Handler<?> || value instanceof Reference<?>);
     }
 
     /**
@@ -268,10 +268,10 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      */
     @SuppressWarnings("unchecked")
     private static <V> V valueOf(final Object value) {
-        if (value instanceof Reference) {
+        if (value instanceof Reference<?>) {
             return ((Reference<V>) value).get();
         }
-        if (value instanceof Handler) {
+        if (value instanceof Handler<?>) {
             final Handler<V> handler = (Handler<V>) value;
             final ReentrantLock lock = (ReentrantLock) value;
             /*
@@ -376,12 +376,12 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      */
     public V peek(final K key) {
         final Object value = map.get(key);
-        if (value instanceof Handler) {
+        if (value instanceof Handler<?>) {
             // The value is under computation. We will not wait for it since it is
             // not the purpose of this method (we should use lock(key) for that).
             return null;
         }
-        if (value instanceof Reference) {
+        if (value instanceof Reference<?>) {
             @SuppressWarnings("unchecked")
             final Reference<V> ref = (Reference<V>) value;
             final V result = ref.get();
@@ -470,7 +470,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                  * If the value is a valid reference (strong, soft or weak), stop the loop and
                  * release the lock. We will process that value after the finally block.
                  */
-                if (!(value instanceof Reference)) {
+                if (!(value instanceof Reference<?>)) {
                     break;
                 }
                 @SuppressWarnings("unchecked")
@@ -507,7 +507,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
         /*
          * From this point, we abandon our handler.
          */
-        if (value instanceof Handler) {
+        if (value instanceof Handler<?>) {
             /*
              * A value is already under computation. Returns a handler which will wait for the
              * completion of the worker thread and returns its result. Note that the handler
@@ -515,6 +515,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
              * in the map (see a few lines above in this method), so if we get a ClassCastException
              * here this is a bug in this class.
              */
+            @SuppressWarnings("unchecked")
             final Work work = (Work) value;
             if (work.isHeldByCurrentThread()) {
                 if (isKeyCollisionAllowed()) {
@@ -786,20 +787,25 @@ public class Cache<K,V> extends AbstractMap<K,V> {
         if ((totalCost += cost) > costLimit) {
             final Iterator<Map.Entry<K,Integer>> it = costs.entrySet().iterator();
             while (it.hasNext()) {
+                /*
+                 * Converts the current entry from strong reference to weak/soft reference.
+                 * We perform this conversion even if the entry is for the value just added
+                 * to the cache, if it happen that the cost is higher than the maximal one.
+                 * That entry should not be garbage collected to early anyway because the
+                 * caller should still have a strong reference to the value he just created.
+                 */
                 final Map.Entry<K,Integer> entry = it.next();
                 final K oldKey = entry.getKey();
-                if (!key.equals(oldKey)) {
-                    final Object oldValue = map.get(oldKey);
-                    if (oldValue != null && !isReservedType(oldValue)) {
-                        final Reference<Object> ref;
-                        if (soft) {
-                            ref = new Soft<K>(map, oldKey, oldValue);
-                        } else {
-                            ref = new Weak<K>(map, oldKey, oldValue);
-                        }
-                        if (!map.replace(oldKey, oldValue, ref)) {
-                            ref.clear(); // Prevents the reference to be enqueued.
-                        }
+                final Object oldValue = map.get(oldKey);
+                if (oldValue != null && !isReservedType(oldValue)) {
+                    final Reference<Object> ref;
+                    if (soft) {
+                        ref = new Soft<K>(map, oldKey, oldValue);
+                    } else {
+                        ref = new Weak<K>(map, oldKey, oldValue);
+                    }
+                    if (!map.replace(oldKey, oldValue, ref)) {
+                        ref.clear(); // Prevents the reference to be enqueued.
                     }
                 }
                 it.remove();

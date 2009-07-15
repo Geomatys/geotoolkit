@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.grid;
 
 import java.util.Map;
 import java.util.List;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Collections;
 import java.util.logging.Logger;
@@ -36,6 +35,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**
@@ -119,7 +119,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
             switch (sources.length) {
                 case 0:  this.sources = null; break;
                 case 1:  this.sources = Collections.singletonList(sources[0]); break;
-                default: this.sources = Collections.unmodifiableList(Arrays.asList(sources.clone())); break;
+                default: this.sources = UnmodifiableArrayList.wrap(sources.clone()); break;
             }
         } else {
             this.sources = null;
