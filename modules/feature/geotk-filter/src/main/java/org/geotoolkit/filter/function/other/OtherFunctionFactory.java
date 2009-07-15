@@ -30,14 +30,12 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class OtherFunctionFactory implements FunctionFactory{
 
-    public static final String GEOMETRY_TYPE            = "geometryType";
     public static final String EXPRESSION_VALUE_LENGHT  = "length";
     public static final String PROPERTY_EXISTS          = "PropertyExists";
     private static final String[] NAMES;
 
     static {
         NAMES = new String[] {
-                    GEOMETRY_TYPE,
                     EXPRESSION_VALUE_LENGHT,
                     PROPERTY_EXISTS};
     }
@@ -56,9 +54,8 @@ public class OtherFunctionFactory implements FunctionFactory{
     @Override
     public Function createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
 
-        if(name.equals(GEOMETRY_TYPE))                  return new GeometryTypeFunction(parameters[0]);
-        else if(name.equals(EXPRESSION_VALUE_LENGHT))   return new LengthFunction((PropertyName) parameters[0]);
-        else if(name.equals(PROPERTY_EXISTS))           return new PropertyExistsFunction(parameters[0]);
+        if(name.equals(EXPRESSION_VALUE_LENGHT))   return new LengthFunction((PropertyName) parameters[0]);
+        if(name.equals(PROPERTY_EXISTS))           return new PropertyExistsFunction(parameters[0]);
 
         throw new IllegalArgumentException("Unknowed function name : "+ name);
     }
