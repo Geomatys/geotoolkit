@@ -88,7 +88,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
             new NamedIdentifier(Citations.ESRI,     "Hotine_Oblique_Mercator_Azimuth_Natural_Origin"),
             new NamedIdentifier(Citations.ESRI,     "Rectified_Skew_Orthomorphic_Natural_Origin"),
             sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
@@ -172,7 +172,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                 sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
                 LAT_OF_1ST_POINT,    LONG_OF_1ST_POINT,
                 LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,

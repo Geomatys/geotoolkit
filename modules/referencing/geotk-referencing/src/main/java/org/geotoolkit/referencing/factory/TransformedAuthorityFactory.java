@@ -266,8 +266,8 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
         for (int i=0; i<dimension; i++) {
             orderedAxis[i] = replace(cs.getAxis(i));
         }
-        if (this instanceof Comparator) {
-            Arrays.sort(orderedAxis, (Comparator) this);
+        if (this instanceof Comparator<?>) {
+            Arrays.sort(orderedAxis, (Comparator<CoordinateSystemAxis>) this);
         }
         for (int i=0; i<dimension; i++) {
             if (!orderedAxis[i].equals(cs.getAxis(i))) {

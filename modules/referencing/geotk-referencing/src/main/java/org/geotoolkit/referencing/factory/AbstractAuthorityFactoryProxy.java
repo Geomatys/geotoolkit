@@ -210,6 +210,7 @@ abstract class AbstractAuthorityFactoryProxy<T> {
             }
     };
 
+    @SuppressWarnings("rawtypes")
     public static final AbstractAuthorityFactoryProxy<Unit> UNIT =
         new AbstractAuthorityFactoryProxy<Unit>(Unit.class) {
             @Override public Unit<?> create(AbstractAuthorityFactory factory, String code) throws FactoryException {
@@ -287,6 +288,7 @@ abstract class AbstractAuthorityFactoryProxy<T> {
             }
     };
 
+    @SuppressWarnings("rawtypes")
     public static final AbstractAuthorityFactoryProxy<ParameterDescriptor> PARAMETER =
         new AbstractAuthorityFactoryProxy<ParameterDescriptor>(ParameterDescriptor.class) {
             @Override public ParameterDescriptor<?> create(AbstractAuthorityFactory factory, String code) throws FactoryException {
@@ -323,7 +325,7 @@ abstract class AbstractAuthorityFactoryProxy<T> {
     {
         for (final AbstractAuthorityFactoryProxy<?> proxy : PROXIES) {
             if (proxy.type.isAssignableFrom(type)) {
-                return (AbstractAuthorityFactoryProxy) proxy;
+                return (AbstractAuthorityFactoryProxy<? super T>) proxy;
             }
         }
         throw new IllegalArgumentException(Errors.format(
@@ -334,7 +336,7 @@ abstract class AbstractAuthorityFactoryProxy<T> {
      * The types of proxies. The most specific types must appear first in this list.
      * Must be declared after all the above constants.
      */
-    static final AbstractAuthorityFactoryProxy<?>[] PROXIES = new AbstractAuthorityFactoryProxy[] {
+    static final AbstractAuthorityFactoryProxy<?>[] PROXIES = new AbstractAuthorityFactoryProxy<?>[] {
         OPERATION,
         METHOD,
         PARAMETER,

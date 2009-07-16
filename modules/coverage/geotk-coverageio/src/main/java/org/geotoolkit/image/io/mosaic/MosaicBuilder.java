@@ -1311,7 +1311,7 @@ public class MosaicBuilder {
      * applying.
      */
     private boolean canUsePattern() {
-        final Class<?>[] parameters = new Class[3];
+        final Class<?>[] parameters = new Class<?>[3];
         Arrays.fill(parameters, Integer.TYPE);
         Class<?> classe = getClass();
         Method method;

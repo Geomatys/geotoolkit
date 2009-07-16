@@ -1258,7 +1258,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * Compares two inputs for order. {@link String}, {@link File} and {@link URI} are comparable.
      * {@link URL} are not but can be converted to {@link URI} for comparison purpose.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private static int compareInputs(Object input1, Object input2) {
         if (Utilities.equals(input1, input2)) {
             return 0;
@@ -1267,10 +1267,10 @@ public class Tile implements Comparable<Tile>, Serializable {
         input2 = toComparable(input2); // Must be before 'toCompatible'.
         input1 = toCompatible(input1, input2);
         input2 = toCompatible(input2, input1);
-        if (input1 instanceof Comparable && input1.getClass().isInstance(input2)) {
+        if (input1 instanceof Comparable<?> && input1.getClass().isInstance(input2)) {
             return ((Comparable) input1).compareTo(input2);
         }
-        if (input2 instanceof Comparable && input2.getClass().isInstance(input1)) {
+        if (input2 instanceof Comparable<?> && input2.getClass().isInstance(input1)) {
             return -((Comparable) input2).compareTo(input1);
         }
         int c = input1.getClass().getName().compareTo(input2.getClass().getName());

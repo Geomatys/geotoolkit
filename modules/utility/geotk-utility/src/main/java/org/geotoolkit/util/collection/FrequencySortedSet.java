@@ -353,6 +353,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
         if (sorted != null) {
             return;
         }
+        @SuppressWarnings("rawtypes") // Generic array creation.
         final Map.Entry<E,Integer>[] entries = count.entrySet().toArray(new Map.Entry[count.size()]);
         Arrays.sort(entries, COMPARATOR);
         final int length = entries.length;

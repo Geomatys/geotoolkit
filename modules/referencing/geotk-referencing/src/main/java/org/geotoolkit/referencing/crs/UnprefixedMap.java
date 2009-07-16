@@ -58,7 +58,7 @@ final class UnprefixedMap extends DerivedMap<String,String,Object> {
      * @param base   The base map.
      * @param prefix The prefix to remove from the keys in the base map.
      */
-    @SuppressWarnings("unchecked") // Okay because values are Object.
+    @SuppressWarnings({"unchecked","rawtypes"}) // Okay because values are Object.
     public UnprefixedMap(final Map<String,?> base, final String prefix) {
         super((Map) base, String.class);
         this.prefix = prefix.trim();

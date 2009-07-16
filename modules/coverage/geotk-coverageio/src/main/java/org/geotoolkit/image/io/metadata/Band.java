@@ -86,7 +86,7 @@ public class Band extends MetadataAccessor {
      *
      * @return The range of valid values.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public NumberRange<? extends Number> getValidRange() {
         Number minimum, maximum;
         final boolean enabled = setWarningsEnabled(false);

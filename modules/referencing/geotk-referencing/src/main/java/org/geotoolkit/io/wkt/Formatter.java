@@ -95,7 +95,7 @@ public class Formatter {
      *
      * @see #isAuthorityAllowed
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private static final Class<? extends IdentifiedObject>[] AUTHORITY_EXCLUDES = new Class[] {
         CoordinateSystemAxis.class
     };
@@ -522,7 +522,7 @@ public class Formatter {
                 append(param);
             }
         }
-        if (parameter instanceof ParameterValue) {
+        if (parameter instanceof ParameterValue<?>) {
             final ParameterValue<?> param = (ParameterValue<?>) parameter;
             final ParameterDescriptor<?> descriptor = param.getDescriptor();
             final Unit<?> valueUnit = descriptor.getUnit();

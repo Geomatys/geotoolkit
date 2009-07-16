@@ -246,7 +246,7 @@ public abstract class DerivedMap<BK,K,V> extends AbstractMap<K,V> implements Ser
      * @return a set view of the mappings contained in this map.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Set<Map.Entry<K,V>> entrySet() {
         if (entrySet == null) {
             entrySet = (Set) new EntrySet(base.entrySet());
@@ -283,7 +283,7 @@ public abstract class DerivedMap<BK,K,V> extends AbstractMap<K,V> implements Ser
     private final class EntrySet extends DerivedSet<Map.Entry<BK,V>, Entry<BK,K,V>> {
         private static final long serialVersionUID = -2931806200277420177L;
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         public EntrySet(final Set<Map.Entry<BK,V>> base) {
             super(base, (Class) Entry.class);
         }

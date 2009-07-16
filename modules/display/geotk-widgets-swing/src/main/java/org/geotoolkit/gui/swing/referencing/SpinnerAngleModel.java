@@ -266,6 +266,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
          * Sets the minimum value.
          */
         @Override
+        @SuppressWarnings("rawtypes")
         public void setMinimum(final Comparable min) {
             SpinnerAngleModel.this.setMinimum(((Angle) min).degrees());
         }
@@ -282,6 +283,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
          * Sets the maximum value.
          */
         @Override
+        @SuppressWarnings("rawtypes")
         public void setMaximum(final Comparable max) {
             SpinnerAngleModel.this.setMaximum(((Angle) max).degrees());
         }

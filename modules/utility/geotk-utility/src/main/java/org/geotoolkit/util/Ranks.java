@@ -82,7 +82,7 @@ public class Ranks {
         if (source == null) {
             return null;
         }
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         final Any<T>[] entries = new Any[source.length];
         for (int i=0; i<entries.length; i++) {
             entries[i] = new Any<T>(i, source[i]);

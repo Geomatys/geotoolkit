@@ -55,7 +55,7 @@ public class GeocentricTranslation extends PositionVector7Param {
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Geocentric translations"),
                 new NamedIdentifier(Citations.EPSG, "9603")
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 DX, DY, DZ,
                 SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
                 TGT_SEMI_MAJOR, TGT_SEMI_MINOR,

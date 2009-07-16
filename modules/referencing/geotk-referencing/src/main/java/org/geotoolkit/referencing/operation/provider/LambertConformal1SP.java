@@ -121,7 +121,7 @@ public class LambertConformal1SP extends MapProjection {
             // Note: the GeoTIFF numerical code (9) is already used by the 2SP case.
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.LAMBERT_CONFORMAL_PROJECTION))
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR,
             ROLL_LONGITUDE,      CENTRAL_MERIDIAN,
             LATITUDE_OF_ORIGIN,  SCALE_FACTOR,

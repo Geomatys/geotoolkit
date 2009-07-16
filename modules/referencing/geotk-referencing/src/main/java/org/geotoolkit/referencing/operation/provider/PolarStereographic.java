@@ -89,7 +89,7 @@ public class PolarStereographic extends Stereographic {
             new NamedIdentifier(Citations.GEOTIFF,  "CT_PolarStereographic"),
             new NamedIdentifier(Citations.GEOTIFF,  "15"),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
@@ -170,7 +170,7 @@ public class PolarStereographic extends Stereographic {
                 new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
                 new NamedIdentifier(Citations.EPSG, "9829"),
                 sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, STANDARD_PARALLEL,
                 FALSE_EASTING, FALSE_NORTHING
@@ -221,7 +221,7 @@ public class PolarStereographic extends Stereographic {
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Stereographic_North_Pole"),
                 sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
                 FALSE_EASTING, FALSE_NORTHING
@@ -272,7 +272,7 @@ public class PolarStereographic extends Stereographic {
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Stereographic_South_Pole"),
                 sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
                 FALSE_EASTING, FALSE_NORTHING

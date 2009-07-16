@@ -187,7 +187,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * Returns an initially empty array of the given length. To be overriden by {@link NumberRange}
      * and subclasses in order to create arrays of more specific type.
      */
-    @SuppressWarnings("unchecked") // Generic array creation.
+    @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
     Range<T>[] newArray(final int length) {
         return new Range[length];
     }
@@ -575,7 +575,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
             return true;
         }
         if (object != null && object.getClass().equals(getClass())) {
-            final Range<?> other = (Range) object;
+            final Range<?> other = (Range<?>) object;
             if (Utilities.equals(elementClass, other.elementClass)) {
                 if (isEmpty()) {
                     return other.isEmpty();

@@ -171,9 +171,9 @@ public abstract class AbstractParameter extends FormattableObject
         if (!type.isInstance(value)) {
             error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, Classes.getClass(value));
         } else {
-            @SuppressWarnings("unchecked") // Type checked with the above "if" statement.
+            @SuppressWarnings({"unchecked","rawtypes"}) // Type checked with the above "if" statement.
             final Comparable<Object> minimum = (Comparable) descriptor.getMinimumValue();
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked","rawtypes"})
             final Comparable<Object> maximum = (Comparable) descriptor.getMaximumValue();
             if ((minimum != null && minimum.compareTo(value) > 0) ||
                 (maximum != null && maximum.compareTo(value) < 0))
@@ -304,7 +304,7 @@ public abstract class AbstractParameter extends FormattableObject
     protected void write(final TableWriter table) throws IOException {
         table.write(getName(descriptor));
         table.nextColumn();
-        if (this instanceof ParameterValue) {
+        if (this instanceof ParameterValue<?>) {
             /*
              * Provides a default implementation for parameter value. This implementation doesn't
              * need to be a Geotoolkit's one. Putting a default implementation here avoid duplication

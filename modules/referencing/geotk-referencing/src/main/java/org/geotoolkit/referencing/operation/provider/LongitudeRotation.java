@@ -70,7 +70,7 @@ public class LongitudeRotation extends MathTransformProvider {
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Longitude rotation"),
                 new NamedIdentifier(Citations.EPSG, "9601")
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 OFFSET
             });
 

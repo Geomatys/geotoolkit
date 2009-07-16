@@ -84,7 +84,7 @@ public class ObliqueStereographic extends Stereographic {
             new NamedIdentifier(Citations.GEOTIFF,  "16"),
             new NamedIdentifier(Citations.ESRI,     "Double_Stereographic"),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING

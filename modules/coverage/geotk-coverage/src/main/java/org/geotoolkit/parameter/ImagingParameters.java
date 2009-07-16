@@ -347,7 +347,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
     public synchronized ImagingParameters clone() {
         final ImagingParameters copy = (ImagingParameters) super.clone();
         try {
-            final Method cloneMethod = parameters.getClass().getMethod("clone", (Class[])null);
+            final Method cloneMethod = parameters.getClass().getMethod("clone", (Class<?>[]) null);
             final Field  paramField  = ImagingParameters.class.getField("parameters");
             paramField.setAccessible(true); // Will work only with J2SE 1.5 or above.
             paramField.set(copy, cloneMethod.invoke(parameters, (Object[]) null));
@@ -369,7 +369,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
             final GeneralParameterValue[] cloned = copy.createElements();
             assert values.size() == cloned.length : values;
             for (int i=0; i<cloned.length; i++) {
-                if (!(cloned[i] instanceof ImagingParameter)) {
+                if (!(cloned[i] instanceof ImagingParameter<?>)) {
                     cloned[i] = ((ParameterValue<?>) values.get(i)).clone();
                 }
             }

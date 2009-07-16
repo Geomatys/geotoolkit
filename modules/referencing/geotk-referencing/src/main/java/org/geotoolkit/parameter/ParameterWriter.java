@@ -318,10 +318,10 @@ header: for (int i=0; ; i++) {
              * values" list to be formatted in the same row.
              */
             Object value = null;
-            if (parameter instanceof ParameterValue) {
-                value = ((ParameterValue) parameter).getValue();
-            } else if (descriptor instanceof ParameterDescriptor) {
-                value = ((ParameterDescriptor) descriptor).getDefaultValue();
+            if (parameter instanceof ParameterValue<?>) {
+                value = ((ParameterValue<?>) parameter).getValue();
+            } else if (descriptor instanceof ParameterDescriptor<?>) {
+                value = ((ParameterDescriptor<?>) descriptor).getDefaultValue();
             }
             ParameterTableRow row = descriptorValues.get(descriptor);
             if (row == null) {
@@ -352,7 +352,7 @@ header: for (int i=0; ; i++) {
             row.write(table, false, colorEnabled, lineSeparator);
             table.nextColumn();
             final GeneralParameterDescriptor generalDescriptor = entry.getKey();
-            if (generalDescriptor instanceof ParameterDescriptor) {
+            if (generalDescriptor instanceof ParameterDescriptor<?>) {
                 /*
                  * Writes value type.
                  */

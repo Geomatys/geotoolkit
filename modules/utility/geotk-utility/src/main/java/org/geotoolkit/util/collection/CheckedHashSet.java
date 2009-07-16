@@ -352,7 +352,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     @SuppressWarnings("unchecked")
     public CheckedHashSet<E> clone() {
         synchronized (getLock()) {
-            return (CheckedHashSet) super.clone();
+            return (CheckedHashSet<E>) super.clone();
         }
     }
 }

@@ -153,7 +153,7 @@ public class ObliqueMercator extends MapProjection {
             new NamedIdentifier(Citations.ESRI,     "Rectified_Skew_Orthomorphic_Center"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH, RECTIFIED_GRID_ANGLE, SCALE_FACTOR,
@@ -248,7 +248,7 @@ public class ObliqueMercator extends MapProjection {
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Center"),
                 sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
                 LAT_OF_1ST_POINT,    LONG_OF_1ST_POINT,
                 LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,

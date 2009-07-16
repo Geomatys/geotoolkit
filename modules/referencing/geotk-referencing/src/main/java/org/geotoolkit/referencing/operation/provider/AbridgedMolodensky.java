@@ -65,7 +65,7 @@ public class AbridgedMolodensky extends Molodensky {
                 new NamedIdentifier(Citations.EPSG,     "9605"),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                     Vocabulary.Keys.ABRIDGED_MOLODENSKY_TRANSFORM))
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
                 SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
                 TGT_SEMI_MAJOR, TGT_SEMI_MINOR

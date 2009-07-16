@@ -170,7 +170,7 @@ public final class RMI {
              * Unwrap IOException only if it was executed on the same thread,
              * in order to make the stack trace shorter.
              */
-            if (result instanceof LocalFuture && !((LocalFuture) result).isThreaded()) {
+            if (result instanceof LocalFuture<?> && !((LocalFuture<?>) result).isThreaded()) {
                 if (cause instanceof IOException) {
                     throw (IOException) cause;
                 }

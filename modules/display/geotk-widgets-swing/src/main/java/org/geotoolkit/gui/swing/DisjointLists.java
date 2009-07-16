@@ -431,7 +431,7 @@ public class DisjointLists extends JPanel implements Dialog {
      *
      * @since 2.2
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public void addElements(final Object[] items) {
         Locale locale;
         try {

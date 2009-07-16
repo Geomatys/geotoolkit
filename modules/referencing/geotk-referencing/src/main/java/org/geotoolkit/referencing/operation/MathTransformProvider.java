@@ -242,7 +242,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
             /*
              * Single parameter - copy the value, with special care for value with units.
              */
-            final ParameterValue<?> source = (ParameterValue) value;
+            final ParameterValue<?> source = (ParameterValue<?>) value;
             final ParameterValue<?> target;
             try {
                 target = copy.parameter(name);

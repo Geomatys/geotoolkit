@@ -329,7 +329,7 @@ public abstract class TextImageReader extends StreamImageReader {
         /**
          * List of legal input types for {@link TextImageReader}.
          */
-        private static final Class<?>[] INPUT_TYPES = new Class[] {
+        private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
             File.class,
             URL.class,
             URLConnection.class,

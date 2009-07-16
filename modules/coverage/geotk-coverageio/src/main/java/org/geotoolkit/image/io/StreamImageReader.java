@@ -283,7 +283,7 @@ public abstract class StreamImageReader extends GeographicImageReader {
         /**
          * List of legal input types for {@link StreamImageReader}.
          */
-        private static final Class[] INPUT_TYPES = new Class[] {
+        private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
             File.class,
             URI.class,
             URL.class,

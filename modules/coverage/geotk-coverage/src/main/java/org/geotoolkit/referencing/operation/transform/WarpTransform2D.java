@@ -358,7 +358,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
     public ParameterValueGroup getParameterValues() {
         if (warp instanceof WarpPolynomial) {
             final WarpPolynomial poly = (WarpPolynomial) warp;
-            final ParameterValue<?>[] p = new ParameterValue[7];
+            final ParameterValue<?>[] p = new ParameterValue<?>[7];
             int c = 0;
             p[c++] = new Parameter<Integer>(DEGREE,   poly.getDegree());
             p[c++] = new Parameter<float[]>(X_COEFFS, poly.getXCoeffs());

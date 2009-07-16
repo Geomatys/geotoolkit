@@ -33,6 +33,12 @@ import org.geotoolkit.console.ReferencingCommands;
  */
 public final class Main {
     /**
+     * Do not allow instantiation of this class.
+     */
+    private Main() {
+    }
+
+    /**
      * Invoked from the command line for displaying the main menu, or
      * running the command line if at least one argument is provided.
      *

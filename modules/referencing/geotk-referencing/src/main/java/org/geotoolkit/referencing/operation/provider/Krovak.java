@@ -150,7 +150,7 @@ public class Krovak extends MapProjection {
             new NamedIdentifier(Citations.EPSG,    "Krovak Oblique Conformal Conic"),
             new NamedIdentifier(Citations.EPSG,    "Krovak Oblique Conic Conformal"),
             new NamedIdentifier(Citations.EPSG,    "9819"),
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             AZIMUTH, PSEUDO_STANDARD_PARALLEL, SCALE_FACTOR,

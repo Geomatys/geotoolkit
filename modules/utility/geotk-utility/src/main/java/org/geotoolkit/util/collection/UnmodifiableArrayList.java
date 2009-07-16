@@ -124,7 +124,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
     @Override
     @SuppressWarnings("unchecked") // Safe if this instance was created safely with wrap(E[]).
     public Class<E> getElementType() {
-        return (Class) array.getClass().getComponentType();
+        return (Class<E>) array.getClass().getComponentType();
     }
 
     /**
@@ -337,7 +337,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
     @Override
     public boolean equals(final Object object) {
         if (object != this) {
-            if (!(object instanceof UnmodifiableArrayList)) {
+            if (!(object instanceof UnmodifiableArrayList<?>)) {
                 return super.equals(object);
             }
             final UnmodifiableArrayList<?> that = (UnmodifiableArrayList<?>) object;

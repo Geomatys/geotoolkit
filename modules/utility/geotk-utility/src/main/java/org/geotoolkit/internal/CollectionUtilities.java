@@ -53,20 +53,20 @@ public final class CollectionUtilities {
      * @return A copy of the given object, or the object itself if its type has not been recognized.
      */
     public static Object cloneOrCopy(final Object collection) {
-        if (collection instanceof ArrayList) {
-            return ((ArrayList) collection).clone();
+        if (collection instanceof ArrayList<?>) {
+            return ((ArrayList<?>) collection).clone();
         }
-        if (collection instanceof HashSet) {
-            return ((HashSet) collection).clone();
+        if (collection instanceof HashSet<?>) {
+            return ((HashSet<?>) collection).clone();
         }
-        if (collection instanceof TreeSet) {
-            return ((TreeSet) collection).clone();
+        if (collection instanceof TreeSet<?>) {
+            return ((TreeSet<?>) collection).clone();
         }
-        if (collection instanceof HashMap) {
-            return ((HashMap) collection).clone();
+        if (collection instanceof HashMap<?,?>) {
+            return ((HashMap<?,?>) collection).clone();
         }
-        if (collection instanceof TreeMap) {
-            return ((TreeMap) collection).clone();
+        if (collection instanceof TreeMap<?,?>) {
+            return ((TreeMap<?,?>) collection).clone();
         }
         return copy(collection);
     }
@@ -78,22 +78,21 @@ public final class CollectionUtilities {
      * @param  collection The collection or map to copy.
      * @return A copy of the given object, or the object itself if its type has not been recognized.
      */
-    @SuppressWarnings("unchecked")
     public static Object copy(final Object collection) {
-        if (collection instanceof List) {
-            return new ArrayList((List) collection);
+        if (collection instanceof List<?>) {
+            return new ArrayList<Object>((List<?>) collection);
         }
-        if (collection instanceof SortedSet) {
-            return new TreeSet((SortedSet) collection);
+        if (collection instanceof SortedSet<?>) {
+            return new TreeSet<Object>((SortedSet<?>) collection);
         }
-        if (collection instanceof Set) {
-            return new LinkedHashSet((Set) collection);
+        if (collection instanceof Set<?>) {
+            return new LinkedHashSet<Object>((Set<?>) collection);
         }
-        if (collection instanceof SortedMap) {
-            return new TreeMap((SortedMap) collection);
+        if (collection instanceof SortedMap<?,?>) {
+            return new TreeMap<Object,Object>((SortedMap<?,?>) collection);
         }
-        if (collection instanceof Map) {
-            return new LinkedHashMap((Map) collection);
+        if (collection instanceof Map<?,?>) {
+            return new LinkedHashMap<Object,Object>((Map<?,?>) collection);
         }
         return collection;
     }

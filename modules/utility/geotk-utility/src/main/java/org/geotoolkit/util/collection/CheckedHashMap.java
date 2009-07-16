@@ -290,7 +290,7 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
     @SuppressWarnings("unchecked")
     public CheckedHashMap<K,V> clone() {
         synchronized (getLock()) {
-            return (CheckedHashMap) super.clone();
+            return (CheckedHashMap<K,V>) super.clone();
         }
     }
 }

@@ -267,7 +267,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         List<GeneralParameterDescriptor> parameters = descriptors();
         while (parameters != null) {
             for (final GeneralParameterDescriptor param : parameters) {
-                if (param instanceof ParameterDescriptor) {
+                if (param instanceof ParameterDescriptor<?>) {
                     if (nameMatches(param, name)) {
                         return (ParameterDescriptor<?>) param;
                     }

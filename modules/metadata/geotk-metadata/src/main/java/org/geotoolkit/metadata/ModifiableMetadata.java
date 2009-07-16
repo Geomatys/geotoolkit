@@ -192,7 +192,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * @param  object The object to convert in an immutable one.
      * @return A presumed immutable view of the specified object.
      */
-    @SuppressWarnings("unchecked") // We really don't know the collection types.
+    @SuppressWarnings({"unchecked","rawtypes"}) // We really don't know the collection types.
     static Object unmodifiable(final Object object) {
         /*
          * CASE 1 - The object is an implementation of ModifiableMetadata. It may have
@@ -206,10 +206,10 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
          *          unmodifiable variant and stored in a new collection of similar
          *          type.
          */
-        if (object instanceof Collection) {
-            Collection<?> collection = (Collection) object;
+        if (object instanceof Collection<?>) {
+            Collection<?> collection = (Collection<?>) object;
             if (collection.isEmpty()) {
-                if (collection instanceof List) {
+                if (collection instanceof List<?>) {
                     collection = Collections.EMPTY_LIST;
                 } else {
                     collection = Collections.EMPTY_SET;
@@ -222,7 +222,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 // Uses standard Java collections rather than Geotoolkit Checked* classes,
                 // since we don't need anymore synchronization or type checking.
                 collection = UnmodifiableArrayList.wrap(array);
-                if (collection instanceof Set) {
+                if (collection instanceof Set<?>) {
                     collection = Collections.unmodifiableSet(new LinkedHashSet<Object>(collection));
                 } else {
                     // Conservatively assumes a List if we are not sure to have a Set,
@@ -235,8 +235,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
          * CASE 3 - The object is a map. Copies all entries in a new map and replaces all values
          *          by their unmodifiable variant. The keys are assumed already immutable.
          */
-        if (object instanceof Map) {
-            Map map = (Map) object;
+        if (object instanceof Map<?,?>) {
+            Map map = (Map<?,?>) object;
             if (map.isEmpty()) {
                 return Collections.EMPTY_MAP;
             }
@@ -250,8 +250,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         /*
          * CASE 4 - The object is cloneable.
          */
-        if (object instanceof org.opengis.util.Cloneable) {
-            return ((org.opengis.util.Cloneable) object).clone();
+        if (object instanceof org.geotoolkit.util.Cloneable) {
+            return ((org.geotoolkit.util.Cloneable) object).clone();
         }
         /*
          * CASE 5 - Any other case. The object is assumed immutable and returned unchanged.
@@ -408,8 +408,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                     target.clear();
                 }
             } else {
-                final boolean isList = (source instanceof List);
-                if (target != null && (target instanceof List) == isList) {
+                final boolean isList = (source instanceof List<?>);
+                if (target != null && (target instanceof List<?>) == isList) {
                     target.clear();
                 } else {
                     int capacity = source.size();

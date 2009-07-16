@@ -55,7 +55,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     /**
      * The array of classes for searching the one-argument constructor.
      */
-    private static final Class[] HINTS_ARGUMENT = new Class[] {Hints.class};
+    private static final Class<?>[] HINTS_ARGUMENT = new Class<?>[] {Hints.class};
 
     /**
      * List of factories already created. Used as a cache.
@@ -115,7 +115,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             c = new LinkedList<Reference<?>>();
             cache.put(category, c);
         }
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final List<Reference<T>> cheat = (List) c;
         /*
          * Should be safe because we created an empty list, there is no other place where this
@@ -409,7 +409,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
              * implementation class.
              */
             if (super.getServiceProviderByClass(implementation) == null) try {
-                constructor = implementation.getConstructor((Class[]) null);
+                constructor = implementation.getConstructor((Class<?>[]) null);
                 return category.cast(constructor.newInstance((Object[]) null));
             } catch (NoSuchMethodException exception) {
                 /*

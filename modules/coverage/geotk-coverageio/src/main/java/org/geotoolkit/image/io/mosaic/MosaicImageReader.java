@@ -1534,7 +1534,7 @@ public class MosaicImageReader extends ImageReader {
         /**
          * The input types. This array is shared with {@link MosaicImageWriter.Spi}.
          */
-        static final Class<?>[] INPUT_TYPES = new Class[] {
+        static final Class<?>[] INPUT_TYPES = new Class<?>[] {
             TileManager[].class,
             TileManager.class,
             Tile[].class,

@@ -400,7 +400,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                     return false;
                 }
             }
-        } else if (candidate instanceof Map) {
+        } else if (candidate instanceof Map<?,?>) {
             final Map<?,?> map = (Map<?,?>) candidate;
             return map.entrySet().containsAll(localMap.entrySet());
         } else {
@@ -441,7 +441,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
         if (size == 0) {
             return;
         }
-        @SuppressWarnings("unchecked") // Generic array creation.
+        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         Map.Entry<Locale,String>[] entries = new Map.Entry[size];
         entries = localMap.entrySet().toArray(entries);
         if (size == 1) {

@@ -243,7 +243,7 @@ public class Category implements Serializable {
     /**
      * Constructs a qualitative category for sample value {@code sample}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private Category(final CharSequence name, final int[] ARGB, final Number sample) {
         this(name, ARGB, new NumberRange(sample.getClass(), sample, sample), null);
         assert Double.isNaN(inverse.minimum) : inverse.minimum;

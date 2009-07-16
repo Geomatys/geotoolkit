@@ -1390,7 +1390,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * @param values    The group of parameter where to set the value.
      * @param value     The value to set.
      */
-    static void setValue(ParameterDescriptor parameter, ParameterValueGroup values, double value) {
+    static void setValue(ParameterDescriptor<Double> parameter, ParameterValueGroup values, double value) {
         values.parameter(parameter.getName().getCode()).setValue(value);
     }
 

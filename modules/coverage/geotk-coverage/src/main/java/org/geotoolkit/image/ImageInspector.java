@@ -749,7 +749,7 @@ public class ImageInspector {
             throw e;
         }
         try {
-            c.getMethod("show", new Class[] {RenderedImage.class}).invoke(null, new Object[] {image});
+            c.getMethod("show", new Class<?>[] {RenderedImage.class}).invoke(null, new Object[] {image});
         } catch (InvocationTargetException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof RuntimeException) {

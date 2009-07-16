@@ -89,7 +89,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * on matrix element values. Consequently, the same descriptors can be reused for all
      * {@link MatrixParameters} instances.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private final ParameterDescriptor<Double>[] parameters =
             new ParameterDescriptor[CACHE_SIZE * CACHE_SIZE];
 
@@ -128,7 +128,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
          *       used in this implementation is inefficient  for large amount of matrix
          *       elements.
          */
-        this(properties, new ParameterDescriptor[] {
+        this(properties, new ParameterDescriptor<?>[] {
             DefaultParameterDescriptor.create("num_row", DEFAULT_MATRIX_SIZE, 2, 50),
             DefaultParameterDescriptor.create("num_col", DEFAULT_MATRIX_SIZE, 2, 50)
         }, "elt_", '_');

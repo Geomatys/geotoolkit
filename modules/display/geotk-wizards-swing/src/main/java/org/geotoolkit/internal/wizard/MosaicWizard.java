@@ -114,6 +114,7 @@ public final class MosaicWizard extends AbstractWizard {
      * @return The component that should be displayed in the center of the wizard.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
         JComponent component;
         if (id.equals(SELECT)) {
@@ -218,6 +219,7 @@ public final class MosaicWizard extends AbstractWizard {
      * @param panel      The panel being recycled.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     protected void recycleExistingPanel(final String id, final WizardController controller,
             final Map settings, final JComponent panel)
     {
@@ -246,6 +248,7 @@ public final class MosaicWizard extends AbstractWizard {
      * @return {@code true} in all cases, for allowing cancelation.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public boolean cancel(final Map settings) {
         final LoggingPanel logging = (LoggingPanel) settings.get(CONFIRM);
         if (logging != null) {
@@ -261,6 +264,7 @@ public final class MosaicWizard extends AbstractWizard {
      * @return The object which will create the mosaic.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     protected Object finish(final Map settings) {
         return new MosaicCreator();
     }

@@ -92,6 +92,7 @@ public final class Utilities {
      * The singleton instance to be returned by {@link #emptyQueue}.
      * This is not parameterized on intend.
      */
+    @SuppressWarnings("rawtypes")
     private static final Queue EMPTY_QUEUE = new EmptyQueue<Object>();
 
     /**

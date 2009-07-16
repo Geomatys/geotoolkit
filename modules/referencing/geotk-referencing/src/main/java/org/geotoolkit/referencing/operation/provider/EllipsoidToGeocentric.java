@@ -109,7 +109,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
                 new NamedIdentifier(Citations.EPSG,     epsgName),
                 new NamedIdentifier(Citations.EPSG,     epsgCode),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(geotoolkit))
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, DIM
             });
     }

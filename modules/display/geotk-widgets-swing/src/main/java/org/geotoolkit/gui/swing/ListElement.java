@@ -86,16 +86,16 @@ final class ListElement implements Comparable<Object>, Serializable {
      * Compares this element with the specified object for ordering.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public int compareTo(final Object other) {
         if (other instanceof ListElement) {
             final ListElement that = (ListElement) other;
-            if (element instanceof Comparable) {
+            if (element instanceof Comparable<?>) {
                 return ((Comparable) element).compareTo(that.element);
             } else {
                 return string.compareTo(that.string);
             }
-        } else if (element instanceof Comparable) {
+        } else if (element instanceof Comparable<?>) {
             return ((Comparable) element).compareTo(other);
         } else {
             return string.compareTo(String.valueOf(other));

@@ -113,7 +113,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * for wrapping a JAI operation in the
      * {@value javax.media.jai.registry.RenderedRegistryMode#MODE_NAME} registry mode.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public static final Map<Class<?>,Class<?>> DEFAULT_SOURCE_TYPE_MAP = (Map)
             Collections.singletonMap(RenderedImage.class, GridCoverage.class);
 
@@ -412,7 +412,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             final String[]   names = op.getSourceNames();
             final Class<?>[] types = op.getSourceClasses(registryMode);
             numSources = op.getNumSources();
-            desc = new ParameterDescriptor[numParameters + numSources];
+            desc = new ParameterDescriptor<?>[numParameters + numSources];
             for (int i=0; i<numSources; i++) {
                 Class<?> type = (Class<?>) sourceTypeMap.get(types[i]);
                 if (type == null) {
@@ -440,7 +440,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             }
         } else {
             numSources = 0;
-            desc = new ParameterDescriptor[numParameters];
+            desc = new ParameterDescriptor<?>[numParameters];
         }
         /*
          * Source parameters completed. Now get the ordinary parameters. We check for
@@ -505,7 +505,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * Creates a descriptor from the given untyped arguments. The argument types should have
      * been checked by the caller, and will be checked again by the descriptor constructor.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private static ParameterDescriptor<?> descriptor(final Map<String,?>         properties,
                                                      final Class<?>              valueClass,
                                                      final EnumeratedParameter[] validValues,

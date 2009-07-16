@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Locale;
-import java.util.TimeZone;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.geotoolkit.lang.Static;

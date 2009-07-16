@@ -241,8 +241,8 @@ final class ProjectionAnalyzer {
         String warning = null;
         for (final Iterator<GeneralParameterValue> it=parameters.iterator(); it.hasNext();) {
             final GeneralParameterValue parameter = it.next();
-            if (parameter instanceof ParameterValue) {
-                final ParameterValue<?> value = (ParameterValue) parameter;
+            if (parameter instanceof ParameterValue<?>) {
+                final ParameterValue<?> value = (ParameterValue<?>) parameter;
                 final ParameterDescriptor<?> descriptor = value.getDescriptor();
                 if (Number.class.isAssignableFrom(descriptor.getValueClass())) {
                     if (nameMatches(descriptor, "scale_factor")) {
@@ -301,7 +301,7 @@ search: for (final Iterator<GeneralParameterValue> targetIter=target.iterator();
                 if (!nameMatches(sourcePrm.getDescriptor(), targetPrm.getDescriptor())) {
                     continue;
                 }
-                if (sourcePrm instanceof ParameterValue && targetPrm instanceof ParameterValue) {
+                if (sourcePrm instanceof ParameterValue<?> && targetPrm instanceof ParameterValue<?>) {
                     final ParameterValue<?> sourceValue = (ParameterValue<?>) sourcePrm;
                     final ParameterValue<?> targetValue = (ParameterValue<?>) targetPrm;
                     if (Number.class.isAssignableFrom(targetValue.getDescriptor().getValueClass())) {

@@ -217,8 +217,8 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     MeasurementRange<N> convertAndCast(final Range<? extends Number> range, final Class<N> type)
             throws IllegalArgumentException
     {
-        if (range instanceof MeasurementRange) {
-            final MeasurementRange<?> casted = (MeasurementRange) range;
+        if (range instanceof MeasurementRange<?>) {
+            final MeasurementRange<?> casted = (MeasurementRange<?>) range;
             return casted.convertAndCast(type, units);
         }
         return new MeasurementRange<N>(type, range, units);
@@ -240,7 +240,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
         if (targetUnits == null || targetUnits.equals(units)) {
             if (type.equals(elementClass)) {
                 @SuppressWarnings("unchecked")
-                final MeasurementRange<N> result = (MeasurementRange) this;
+                final MeasurementRange<N> result = (MeasurementRange<N>) this;
                 return result;
             } else {
                 return new MeasurementRange<N>(type, this, units);
@@ -274,7 +274,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
      * Returns an initially empty array of the given length.
      */
     @Override
-    @SuppressWarnings("unchecked") // Generic array creation.
+    @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
     MeasurementRange<T>[] newArray(final int length) {
         return new MeasurementRange[length];
     }
@@ -284,7 +284,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
      */
     @Override
     public MeasurementRange<?> union(final Range<?> range) {
-        return (MeasurementRange) super.union(range);
+        return (MeasurementRange<?>) super.union(range);
         // Should never throw ClassCastException because super.union(Range) invokes create(...),
         // which is overriden in this class with MeasurementRange return type.
     }
@@ -294,7 +294,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
      */
     @Override
     public MeasurementRange<?> intersect(final Range<?> range) {
-        return (MeasurementRange) super.intersect(range);
+        return (MeasurementRange<?>) super.intersect(range);
         // Should never throw ClassCastException because super.intersect(Range) invokes
         // convertAndCast(...),  which is overriden in this class with MeasurementRange
         // return type.
@@ -305,7 +305,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
      */
     @Override
     public MeasurementRange<?>[] subtract(final Range<?> range) {
-        return (MeasurementRange[]) super.subtract(range);
+        return (MeasurementRange<?>[]) super.subtract(range);
         // Should never throw ClassCastException because super.subtract(Range) invokes newArray(int)
         // and create(...), which are overriden in this class with MeasurementRange return type.
     }
@@ -316,7 +316,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     @Override
     public boolean equals(final Object object) {
         if (super.equals(object)) {
-            if (object instanceof MeasurementRange) {
+            if (object instanceof MeasurementRange<?>) {
                 final MeasurementRange<?> that = (MeasurementRange<?>) object;
                 return Utilities.equals(this.units, that.units);
             }

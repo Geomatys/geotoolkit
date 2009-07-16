@@ -193,7 +193,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      */
     private String getClassTypeError() {
         return Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1,
-               ((ParameterDescriptor) descriptor).getValueClass());
+               ((ParameterDescriptor<?>) descriptor).getValueClass());
     }
 
     /**
@@ -494,7 +494,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     {
         ensureNonNull("unit", unit);
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         final Unit<?> targetUnit = descriptor.getUnit();
         if (targetUnit == null) {
             throw unitlessParameter(descriptor);
@@ -528,7 +528,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     public void setValue(final double value) throws InvalidParameterValueException {
         final Double check = value;
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         this.value = ensureValidValue(descriptor, check);
     }
 
@@ -544,7 +544,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     @Override
     public void setValue(final int value) throws InvalidParameterValueException {
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         final Class<T> type = descriptor.getValueClass();
         if (Double.class.equals(type) || Double.TYPE.equals(type)) {
             setValue((double) value);
@@ -565,7 +565,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     @Override
     public void setValue(final boolean value) throws InvalidParameterValueException {
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         final Boolean check = Boolean.valueOf(value);
         this.value = ensureValidValue(descriptor, check);
     }
@@ -585,7 +585,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     @Override
     public void setValue(final Object value) throws InvalidParameterValueException {
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         this.value = ensureValidValue(descriptor, value);
     }
 
@@ -604,7 +604,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     {
         ensureNonNull("unit", unit);
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         final Unit<?> targetUnit = descriptor.getUnit();
         if (targetUnit == null) {
             throw unitlessParameter(descriptor);

@@ -228,7 +228,7 @@ public abstract class StreamImageWriter extends GeographicImageWriter {
         /**
          * List of legal output types for {@link StreamImageWriter}.
          */
-        private static final Class[] OUTPUT_TYPES = new Class[] {
+        private static final Class<?>[] OUTPUT_TYPES = new Class<?>[] {
             File.class,
             URL.class,
             URLConnection.class,

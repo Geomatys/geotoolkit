@@ -139,7 +139,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
                     components[i] = tokens.nextToken();
                 }
             }
-            parsed = new Comparable[components.length];
+            parsed = new Comparable<?>[components.length];
         }
         if (index >= parsed.length) {
             return null;
@@ -213,7 +213,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
                  */
                 return dr;
             }
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked","rawtypes"})
             final int c = ((Comparable) v1).compareTo(v2);
             if (c != 0) {
                 return c;

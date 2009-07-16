@@ -174,7 +174,7 @@ public class Molodensky extends MathTransformProvider {
                 new NamedIdentifier(Citations.EPSG,     "9604"),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                     Vocabulary.Keys.MOLODENSKY_TRANSFORM))
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
                 SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
                 TGT_SEMI_MAJOR, TGT_SEMI_MINOR

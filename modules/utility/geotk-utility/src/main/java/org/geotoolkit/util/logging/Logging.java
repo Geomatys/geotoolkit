@@ -351,7 +351,7 @@ public final class Logging {
                         Errors.Keys.ILLEGAL_CLASS_$2, factoryClass, LoggerFactory.class));
             }
             try {
-                final Method method = factoryClass.getMethod("getInstance", (Class[]) null);
+                final Method method = factoryClass.getMethod("getInstance", (Class<?>[]) null);
                 factory = LoggerFactory.class.cast(method.invoke(null, (Object[]) null));
             } catch (Exception e) {
                 /*

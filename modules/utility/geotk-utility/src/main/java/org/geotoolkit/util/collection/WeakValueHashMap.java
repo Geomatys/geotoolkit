@@ -174,7 +174,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
          */
         @Override
         public boolean equals(final Object other) {
-            if (other instanceof Map.Entry) {
+            if (other instanceof Map.Entry<?,?>) {
                 final Map.Entry<?,?> that = (Map.Entry<?,?>) other;
                 return Utilities.equals(this.getKey(),   that.getKey()) &&
                        Utilities.equals(this.getValue(), that.getValue());

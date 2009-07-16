@@ -74,7 +74,7 @@ public class Logarithmic extends MathTransformProvider {
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.LOGARITHMIC))
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 BASE, OFFSET
             });
 

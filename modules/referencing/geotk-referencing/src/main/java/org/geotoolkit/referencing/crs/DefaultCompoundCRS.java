@@ -207,7 +207,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     @Override
     @SuppressWarnings("unchecked") // We are safe if the list is read-only.
     public List<CoordinateReferenceSystem> getComponents() {
-        return (List) crs;
+        return (List<CoordinateReferenceSystem>) crs;
     }
 
     /**
@@ -222,7 +222,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     @Deprecated
     @SuppressWarnings("unchecked") // We are safe if the list is read-only.
     public List<CoordinateReferenceSystem> getCoordinateReferenceSystems() {
-        return (List) crs;
+        return (List<CoordinateReferenceSystem>) crs;
     }
 
     /**
@@ -296,10 +296,10 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        if (crs instanceof CheckedCollection) {
-            final Class<?> type = ((CheckedCollection) crs).getElementType();
+        if (crs instanceof CheckedCollection<?>) {
+            final Class<?> type = ((CheckedCollection<?>) crs).getElementType();
             if (SingleCRS.class.isAssignableFrom(type)) {
-                singles = (List) crs;
+                singles = (List<SingleCRS>) crs;
                 return;
             }
         }

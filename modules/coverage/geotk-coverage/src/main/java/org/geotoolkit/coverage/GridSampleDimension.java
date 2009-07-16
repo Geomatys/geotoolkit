@@ -381,7 +381,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             if (name == null) {
                 name = value.toString();
             }
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked","rawtypes"})
             final NumberRange<?> range = new NumberRange(value.getClass(), value, value);
             final Color[] colors = ColorUtilities.subarray(palette, intValue, intValue + 1);
             categoryList.add(new Category(name, colors, range, (MathTransform1D) null));
@@ -419,7 +419,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                     min    = Classes.cast(min, classe);
                     max    = Classes.cast(max, classe);
                 }
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings({"unchecked","rawtypes"})
                 final NumberRange<?> range = new NumberRange(classe, min, max);
                 final Color[] colors = ColorUtilities.subarray(palette, lower, upper);
                 categoryList.add(new Category(name, colors, range, (MathTransform1D) null));
@@ -450,7 +450,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                     final NumberRange<?> range = category.getRange();
                     final Number min = range.getMinValue();
                     final Number max = range.getMaxValue();
-                    @SuppressWarnings("unchecked")
+                    @SuppressWarnings({"unchecked","rawtypes"})
                     final int c = ((Comparable) min).compareTo(max);
                     if (c != 0) {
                         final double xmin = min.doubleValue();
@@ -506,7 +506,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                 final Class<? extends Number> classe = Classes.widestClass(min, max);
                 min = Classes.cast(min, classe);
                 max = Classes.cast(max, classe);
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings({"unchecked","rawtypes"})
                 final NumberRange<?> range = new NumberRange(
                         classe, min, minIncluded, max, maxIncluded);
                 final Color[] colors = ColorUtilities.subarray(palette,

@@ -211,7 +211,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
          */
         @Override
         public boolean equals(final Object object) {
-            return (object instanceof Map.Entry) && equals((Map.Entry<?,?>) object);
+            return (object instanceof Map.Entry<?,?>) && equals((Map.Entry<?,?>) object);
         }
 
         /**
@@ -353,7 +353,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
          */
         @Override
         public boolean contains(final Object object) {
-            if (object instanceof Map.Entry) {
+            if (object instanceof Map.Entry<?,?>) {
                 final Map.Entry<?,?> entry = (Map.Entry<?,?>) object;
                 final Object key = entry.getKey();
                 if (key instanceof String) {

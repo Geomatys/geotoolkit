@@ -242,7 +242,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      *
      * @since 3.00
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     protected PropertyAuthorityFactory(final Hints userHints, final Citation... authorities) {
         super(userHints, (Map) new Properties(), authorities);
     }
@@ -260,7 +260,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
     protected synchronized void load(final Collection<URL> definitionFiles) throws IOException {
         ensureNonNull("definitionFiles", definitionFiles);
         @SuppressWarnings("unchecked")
-        final Properties definitions = (Properties) (Map) this.definitions;
+        final Properties definitions = (Properties) (Map<?,?>) this.definitions;
         Properties properties = definitions;
         boolean containsAxis = false;
         for (final URL url : definitionFiles) {

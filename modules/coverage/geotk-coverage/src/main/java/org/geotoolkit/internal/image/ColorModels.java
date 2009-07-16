@@ -45,6 +45,7 @@ public final class ColorModels<T extends ColorModel> {
     /**
      * Pool of shared color models.
      */
+    @SuppressWarnings("rawtypes")
     private static final WeakHashSet<ColorModels> POOL = WeakHashSet.newInstance(ColorModels.class);
 
     /**
@@ -119,7 +120,7 @@ public final class ColorModels<T extends ColorModel> {
      */
     @Override
     public boolean equals(final Object object) {
-        return (object instanceof ColorModels) && equals(cm, ((ColorModels) object).cm);
+        return (object instanceof ColorModels<?>) && equals(cm, ((ColorModels<?>) object).cm);
     }
 
     /**

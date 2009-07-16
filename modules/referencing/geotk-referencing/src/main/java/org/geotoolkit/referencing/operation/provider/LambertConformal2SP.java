@@ -147,7 +147,7 @@ public class LambertConformal2SP extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF,  "CT_LambertConfConic"),
             new NamedIdentifier(Citations.GEOTIFF,  "9"), // The same code is used for 1SP.
                      sameNameAs(Citations.GEOTOOLKIT, LambertConformal1SP.PARAMETERS)
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR,
             ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
@@ -224,7 +224,7 @@ public class LambertConformal2SP extends MapProjection {
                 new NamedIdentifier(Citations.EPSG,     "Lambert Conic Conformal (2SP Belgium)"),
                 new NamedIdentifier(Citations.EPSG,     "9803"),
                          sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,          SEMI_MINOR,
                 ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
@@ -276,7 +276,7 @@ public class LambertConformal2SP extends MapProjection {
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI,     "Lambert_Conformal_Conic"),
                          sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
-            }, new ParameterDescriptor[] {
+            }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,          SEMI_MINOR,
                 ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,

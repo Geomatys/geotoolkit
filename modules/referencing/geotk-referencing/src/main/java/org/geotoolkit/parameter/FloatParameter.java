@@ -101,7 +101,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     @Override
     @SuppressWarnings("unchecked") // Type should has been checked by the constructor.
     public ParameterDescriptor<Double> getDescriptor() {
-        return (ParameterDescriptor) descriptor;
+        return (ParameterDescriptor<Double>) descriptor;
     }
 
     /**
@@ -252,7 +252,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     public void setValue(double value, final Unit<?> unit) throws InvalidParameterValueException {
         ensureNonNull("unit", unit);
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor<Double>) this.descriptor;
         final Unit<?> thisUnit = descriptor.getUnit();
         if (thisUnit == null) {
             throw unitlessParameter(descriptor);
@@ -275,7 +275,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     @Override
     public void setValue(final double value) throws InvalidParameterValueException {
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor<Double>) this.descriptor;
         this.value = ensureValidValue(descriptor, Double.valueOf(value));
     }
 
@@ -313,7 +313,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     @Override
     public void setValue(final Object value) throws InvalidParameterValueException {
         @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor) this.descriptor;
+        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor<Double>) this.descriptor;
         this.value = ensureValidValue(descriptor, value);
     }
 

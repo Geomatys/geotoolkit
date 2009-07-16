@@ -120,7 +120,7 @@ public class Mercator2SP extends MapProjection {
             new NamedIdentifier(Citations.ESRI,     "Mercator"),
                      sameNameAs(Citations.GEOTIFF,  Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             STANDARD_PARALLEL, LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING

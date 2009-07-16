@@ -87,7 +87,7 @@ class ClassPair<S,T> {
     final ObjectConverter<S,T> cast(final ObjectConverter<?,?> converter) {
         assert converter.getSourceClass().isAssignableFrom(sourceClass) : sourceClass;
         assert targetClass.isAssignableFrom(converter.getTargetClass()) : targetClass;
-        return (ObjectConverter) converter;
+        return (ObjectConverter<S,T>) converter;
     }
 
     /**
@@ -122,7 +122,7 @@ class ClassPair<S,T> {
      */
     @Override
     public final boolean equals(final Object other) {
-        if (other instanceof ClassPair) {
+        if (other instanceof ClassPair<?,?>) {
             final ClassPair<?,?> that = (ClassPair<?,?>) other;
             return sourceClass.equals(that.sourceClass) &&
                    targetClass.equals(that.targetClass);

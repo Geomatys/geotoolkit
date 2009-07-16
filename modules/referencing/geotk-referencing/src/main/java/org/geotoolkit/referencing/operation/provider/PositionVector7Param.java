@@ -242,7 +242,7 @@ public class PositionVector7Param extends MathTransformProvider {
         return Identifiers.createDescriptorGroup(new NamedIdentifier[] {
             new NamedIdentifier(Citations.EPSG, name),
             new NamedIdentifier(Citations.EPSG, code)
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             DX, DY, DZ, EX, EY, EZ, PPM,
             SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
             TGT_SEMI_MAJOR, TGT_SEMI_MINOR,

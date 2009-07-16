@@ -147,9 +147,10 @@ public class ExponentialTransform1D extends AbstractMathTransform
     @Override
     public ParameterValueGroup getParameterValues() {
         return new ParameterGroup(getParameterDescriptors(),
-            new ParameterValue[] {
-            new FloatParameter(BASE,  base),
-            new FloatParameter(SCALE, scale)});
+            new ParameterValue<?>[] {
+                new FloatParameter(BASE,  base),
+                new FloatParameter(SCALE, scale)
+            });
     }
 
     /**

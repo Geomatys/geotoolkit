@@ -107,7 +107,7 @@ public class TransverseMercator extends MapProjection {
      * Returns a descriptor group for the specified parameters.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final NamedIdentifier[] identifiers) {
-        return Identifiers.createDescriptorGroup(identifiers, new ParameterDescriptor[] {
+        return Identifiers.createDescriptorGroup(identifiers, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING

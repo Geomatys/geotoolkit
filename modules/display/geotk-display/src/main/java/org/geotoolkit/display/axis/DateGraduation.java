@@ -122,7 +122,7 @@ public class DateGraduation extends AbstractGraduation {
     @Override
     @SuppressWarnings("unchecked") // Checked by constructor and setters.
     public Unit<Duration> getUnit() {
-        return (Unit) super.getUnit();
+        return (Unit<Duration>) super.getUnit();
     }
 
     /**

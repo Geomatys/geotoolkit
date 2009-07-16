@@ -216,7 +216,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * @return A copy of the parameter values for this math transform.
      */
     private ParameterValueGroup getParameterValues(final ParameterDescriptorGroup descriptor) {
-        final ParameterValue<?>[] parameters = new ParameterValue[hasHeight ? 2 : 3];
+        final ParameterValue<?>[] parameters = new ParameterValue<?>[hasHeight ? 2 : 3];
         int index = 0;
         if (!hasHeight) {
             final ParameterValue<Integer> p = new Parameter<Integer>(EllipsoidToGeocentric.DIM);

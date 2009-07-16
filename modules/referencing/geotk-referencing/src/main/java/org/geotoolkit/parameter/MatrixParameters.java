@@ -248,7 +248,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
      * @return The parameter value for the specified matrix element.
      * @throws IndexOutOfBoundsException if {@code row} or {@code column} is out of bounds.
      */
-    @SuppressWarnings("unchecked") // Because of array creation
+    @SuppressWarnings({"unchecked","rawtypes"}) // Because of array creation
     private ParameterValue<Double> parameter(final int row,    final int column,
                                              final int numRow, final int numCol)
             throws IndexOutOfBoundsException
@@ -297,7 +297,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
     public List<GeneralParameterValue> values() {
         final int numRow = this.numRow.intValue();
         final int numCol = this.numCol.intValue();
-        final ParameterValue<?>[] parameters = new ParameterValue[numRow*numCol + 2];
+        final ParameterValue<?>[] parameters = new ParameterValue<?>[numRow*numCol + 2];
         int k = 0;
         parameters[k++] = this.numRow;
         parameters[k++] = this.numCol;
@@ -360,7 +360,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
      *
      * @param matrix The matrix to copy in this group of parameters.
      */
-    @SuppressWarnings("unchecked") // Because of array creation
+    @SuppressWarnings({"unchecked","rawtypes"}) // Because of array creation
     public void setMatrix(final Matrix matrix) {
         final MatrixParameterDescriptors matrixDescriptor =
                 ((MatrixParameterDescriptors) this.descriptor);

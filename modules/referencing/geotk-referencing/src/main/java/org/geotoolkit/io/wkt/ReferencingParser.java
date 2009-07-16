@@ -704,7 +704,7 @@ public class ReferencingParser extends MathTransformParser {
         }
         element.close();
         if (toWGS84 != null) {
-            if (!(properties instanceof HashMap)) {
+            if (!(properties instanceof HashMap<?,?>)) {
                 properties = new HashMap<String,Object>(properties);
             }
             properties.put(BURSA_WOLF_KEY, toWGS84);

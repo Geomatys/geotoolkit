@@ -217,16 +217,16 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 "COORD_REF_SYS_CODE",
                 "COORD_REF_SYS_NAME",
                 "COORD_REF_SYS_KIND",
-                new Class[] { ProjectedCRS.class, GeographicCRS.class, GeocentricCRS.class},
-                new String[] {"projected",       "geographic",        "geocentric"}),
+                new Class<?>[] { ProjectedCRS.class, GeographicCRS.class, GeocentricCRS.class},
+                new String[]   {"projected",       "geographic",        "geocentric"}),
 
         new TableInfo(CoordinateSystem.class,
                 "[Coordinate System]",
                 "COORD_SYS_CODE",
                 "COORD_SYS_NAME",
                 "COORD_SYS_TYPE",
-                new Class[]  { CartesianCS.class, EllipsoidalCS.class, SphericalCS.class, VerticalCS.class},
-                new String[] {"Cartesian",       "ellipsoidal",       "spherical",       "vertical"}),
+                new Class<?>[] { CartesianCS.class, EllipsoidalCS.class, SphericalCS.class, VerticalCS.class},
+                new String[]   {"Cartesian",       "ellipsoidal",       "spherical",       "vertical"}),
 
         new TableInfo(CoordinateSystemAxis.class,
                 "[Coordinate Axis] AS CA INNER JOIN [Coordinate Axis Name] AS CAN" +
@@ -239,8 +239,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 "DATUM_CODE",
                 "DATUM_NAME",
                 "DATUM_TYPE",
-                new Class[] { GeodeticDatum.class, VerticalDatum.class, EngineeringDatum.class},
-                new String[]{"geodetic",          "vertical",          "engineering"}),
+                new Class<?>[] { GeodeticDatum.class, VerticalDatum.class, EngineeringDatum.class},
+                new String[]   {"geodetic",          "vertical",          "engineering"}),
 
         new TableInfo(Ellipsoid.class,
                 "[Ellipsoid]",
@@ -257,8 +257,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 "COORD_OP_CODE",
                 "COORD_OP_NAME",
                 "COORD_OP_TYPE",
-                new Class[] { Projection.class, Conversion.class, Transformation.class},
-                new String[]{"conversion",     "conversion",     "transformation"}),
+                new Class<?>[] { Projection.class, Conversion.class, Transformation.class},
+                new String[]   {"conversion",     "conversion",     "transformation"}),
                 // Note: Projection is handle in a special way.
 
         new TableInfo(OperationMethod.class,
@@ -652,7 +652,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     {
         final String primaryKey = trimAuthority(code);
         for (int i=0; i<TABLES_INFO.length; i++) {
-            final Set codes = getAuthorityCodes0(TABLES_INFO[i].type);
+            final Set<String> codes = getAuthorityCodes0(TABLES_INFO[i].type);
             if (codes instanceof AuthorityCodes) {
                 final String text = ((AuthorityCodes) codes).asMap().get(primaryKey);
                 if (text != null) {
@@ -2114,7 +2114,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  */
                 final ParameterDescriptor<?> descriptor;
                 final Map<String,Object> properties = createProperties(name, epsg, remarks);
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings({"unchecked","rawtypes"})
                 final ParameterDescriptor<?> tmp = new DefaultParameterDescriptor(
                         properties, type, null, null, null, null, unit, true);
                 descriptor = tmp;
@@ -2136,7 +2136,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @return The parameter descriptors.
      * @throws SQLException if a SQL statement failed.
      */
-    private ParameterDescriptor[] createParameterDescriptors(final String method)
+    private ParameterDescriptor<?>[] createParameterDescriptors(final String method)
             throws FactoryException, SQLException
     {
         final PreparedStatement stmt;
@@ -2146,13 +2146,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 " WHERE COORD_OP_METHOD_CODE = ?" +
              " ORDER BY SORT_ORDER");
         final ResultSet results = executeQuery(stmt, method);
-        final List<ParameterDescriptor> descriptors = new ArrayList<ParameterDescriptor>();
+        final List<ParameterDescriptor<?>> descriptors = new ArrayList<ParameterDescriptor<?>>();
         while (results.next()) {
             final String param = getString(results, 1, method);
             descriptors.add(buffered.createParameterDescriptor(param));
         }
         results.close();
-        return descriptors.toArray(new ParameterDescriptor[descriptors.size()]);
+        return descriptors.toArray(new ParameterDescriptor<?>[descriptors.size()]);
     }
 
     /**
@@ -2271,7 +2271,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final int encoded = getDimensionsForMethod(epsg);
                 final int sourceDimensions = encoded >>> 16;
                 final int targetDimensions = encoded & 0xFFFF;
-                final ParameterDescriptor[] descriptors = createParameterDescriptors(epsg);
+                final ParameterDescriptor<?>[] descriptors = createParameterDescriptors(epsg);
                 final Map<String,Object> properties = createProperties(name, epsg, remarks);
                 if (formula != null) {
                     properties.put(OperationMethod.FORMULA_KEY, formula);

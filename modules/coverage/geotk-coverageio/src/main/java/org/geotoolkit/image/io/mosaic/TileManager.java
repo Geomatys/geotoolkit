@@ -212,7 +212,7 @@ public abstract class TileManager implements Serializable {
                     new FrequencySortedSet<ImageReaderSpi>(4, true);
             final Collection<Tile> tiles = getInternalTiles();
             int[] frequencies = null;
-            if (tiles instanceof FrequencySortedSet) {
+            if (tiles instanceof FrequencySortedSet<?>) {
                 frequencies = ((FrequencySortedSet<Tile>) tiles).frequencies();
             }
             int i = 0;
@@ -475,7 +475,7 @@ public abstract class TileManager implements Serializable {
         long space = 0;
         final Collection<Tile> tiles = getInternalTiles();
         final FrequencySortedSet<Tile> ft;
-        if (tiles instanceof FrequencySortedSet) {
+        if (tiles instanceof FrequencySortedSet<?>) {
             ft = (FrequencySortedSet<Tile>) tiles;
         } else {
             ft = null;

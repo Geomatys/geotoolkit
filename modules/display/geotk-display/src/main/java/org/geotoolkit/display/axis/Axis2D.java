@@ -840,7 +840,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
          *        {@code null} if unknow. This object is usually given by
          *        {@link Graphics2D#getFontRenderContext}.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         public TickIterator(final FontRenderContext fontContext) {
             /*
              * The unsafe cast below is a workaround for the mismatch between the generic types

@@ -280,7 +280,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
         final ParameterValue<Integer> dim = new Parameter<Integer>(Molodensky.DIM);
         dim.setValue(getSourceDimensions());
         return new ParameterGroup(getParameterDescriptors(),
-               new ParameterValue[] {
+               new ParameterValue<?>[] {
                    dim,
                    new FloatParameter(Molodensky.DX,             dx),
                    new FloatParameter(Molodensky.DY,             dy),

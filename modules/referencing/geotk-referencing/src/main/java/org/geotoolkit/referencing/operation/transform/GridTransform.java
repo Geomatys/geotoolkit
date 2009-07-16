@@ -625,7 +625,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
         final Class<? extends DataBuffer> type = grid.getClass();
         final Object data; // Assigned to DataBuffer.getBankData(), which returns a clone.
         try {
-            data = type.getMethod("getBankData", (Class[]) null).invoke(grid, (Object[]) null);
+            data = type.getMethod("getBankData", (Class<?>[]) null).invoke(grid, (Object[]) null);
             for (int i=Array.getLength(data); --i>=0;) {
                 Object bank = Array.get(data, i);
                 final int offset = offsets[i];

@@ -69,7 +69,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      * @throws PropertyException If an error occured while restoring a property.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     protected void reset(final Object key, Object value) throws PropertyException {
         if (key instanceof String) {
             final String k = (String) key;
@@ -184,6 +184,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      * if it was not already done, for future restoration by {@link #reset()}.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public <A extends XmlAdapter> void setAdapter(final Class<A> type, final A adapter) {
         super.setAdapter(type, adapter);
         marshaller.setAdapter(type, adapter);
@@ -193,6 +194,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      * Delegates to the wrapped marshaller.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public <A extends XmlAdapter> A getAdapter(final Class<A> type) {
         return marshaller.getAdapter(type);
     }

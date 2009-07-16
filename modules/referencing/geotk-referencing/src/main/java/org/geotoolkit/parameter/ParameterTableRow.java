@@ -165,8 +165,8 @@ final class ParameterTableRow {
      */
     final Object values(final Object[] singleton) {
         Object array = value;
-        if (array instanceof Collection) {
-            array = ((Collection) array).toArray();
+        if (array instanceof Collection<?>) {
+            array = ((Collection<?>) array).toArray();
         } else if (array == null || !array.getClass().isArray()) {
             singleton[0] = array;
             array = singleton;

@@ -51,7 +51,7 @@ public class IIOListeners implements Serializable {
     /**
      * The listener categories for read operations.
      */
-    private static final Class[] READ = {
+    private static final Class<?>[] READ = {
         IIOReadProgressListener.class,
         IIOReadWarningListener .class
     };
@@ -116,7 +116,7 @@ public class IIOListeners implements Serializable {
     /**
      * Returns all listeners of the given classes.
      */
-    private EventListener[] getListeners(final Class[] categories) {
+    private EventListener[] getListeners(final Class<?>[] categories) {
         int   count = 0;
         final Object[] list = listeners.getListenerList();
         final EventListener[] listeners = new EventListener[list.length/2];
@@ -144,7 +144,9 @@ public class IIOListeners implements Serializable {
     }
 
     /**
-     * Add all listeners registered in this object to the specified image reader.
+     * Adds all listeners registered in this object to the specified image reader.
+     *
+     * @param reader The reader on which to register the listeners.
      */
     public void addListenersTo(final ImageReader reader) {
         final Object[] listeners = this.listeners.getListenerList();

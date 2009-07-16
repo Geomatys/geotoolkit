@@ -263,6 +263,7 @@ public abstract class Factory {
              * This behavior is not documented for now, so it may be revised in the future.
              */
             final Class<?> exclude = type.isInstance(factory) ? factory.getClass() : null;
+            @SuppressWarnings("rawtypes")
             final Class category = (Class) this.category; // Intentionnaly unchecked.
             final Iterator<?> it;
             if (subclasses) {

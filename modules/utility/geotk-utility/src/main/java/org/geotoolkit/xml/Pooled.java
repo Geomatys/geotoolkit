@@ -149,7 +149,7 @@ abstract class Pooled {
      * Delegates to {@code setAdapter(adapter.getClass(), adapter)} as specified
      * in {@code [Un]Marshaller} javadoc.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public final void setAdapter(final XmlAdapter adapter) {
         setAdapter((Class) adapter.getClass(), adapter);
     }
@@ -159,6 +159,7 @@ abstract class Pooled {
      * It saves the initial state if it was not already done, but subclasses will
      * need to complete the work.
      */
+    @SuppressWarnings("rawtypes")
     public <A extends XmlAdapter> void setAdapter(final Class<A> type, final A adapter) {
         if (!initial.containsKey(type)) {
             save(type, getAdapter(type));
@@ -168,6 +169,7 @@ abstract class Pooled {
     /**
      * A method which is common to both {@code Marshaller} and {@code Unmarshaller}.
      */
+    @SuppressWarnings("rawtypes")
     public abstract <A extends XmlAdapter> A getAdapter(final Class<A> type);
 
     /**

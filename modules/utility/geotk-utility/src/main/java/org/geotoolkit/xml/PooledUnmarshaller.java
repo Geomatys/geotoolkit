@@ -71,7 +71,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      * @throws PropertyException If an error occured while restoring a property.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     protected void reset(final Object key, final Object value) throws PropertyException {
         if (key instanceof String) {
             unmarshaller.setProperty((String) key, value);
@@ -222,6 +222,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      * if it was not already done, for future restoration by {@link #reset()}.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public <A extends XmlAdapter> void setAdapter(final Class<A> type, final A adapter) {
         super.setAdapter(type, adapter);
         unmarshaller.setAdapter(type, adapter);
@@ -231,6 +232,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      * Delegates to the wrapped unmarshaller.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public <A extends XmlAdapter> A getAdapter(final Class<A> type) {
         return unmarshaller.getAdapter(type);
     }

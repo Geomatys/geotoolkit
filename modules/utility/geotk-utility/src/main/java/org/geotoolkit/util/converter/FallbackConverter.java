@@ -132,7 +132,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
          * implemented by erasure), which is why we are doing all this stuff. If
          * there is no logical error in our algorithm, the cast should be correct.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final Class<? extends T> unsafe = (Class) type;
         return unsafe;
     }
@@ -146,7 +146,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      */
     private static <S> boolean swap(final ObjectConverter<S,?> primary, final ObjectConverter<S,?> fallback) {
         assert !primary.equals(fallback) : primary;
-        if (primary instanceof FallbackConverter) {
+        if (primary instanceof FallbackConverter<?,?>) {
             final FallbackConverter<S,?> candidate = (FallbackConverter<S,?>) primary;
             return swap(candidate.primary, fallback) && swap(candidate.fallback, fallback);
         } else {
@@ -188,7 +188,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      * @param asPrimary {@code true} for adding to the primary branch,
      *        or {@code false} for the fallback branch.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private void add(final ObjectConverter<S,?> converter, final boolean asPrimary) {
         assert Thread.holdsLock(this);
         assert targetClass.isAssignableFrom(converter.getTargetClass()) : converter;
@@ -226,7 +226,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
                  * The new converter could be inserted at this point. Checks if we can
                  * continue to scan down the tree, looking for a more specialized node.
                  */
-                if (candidate instanceof FallbackConverter) {
+                if (candidate instanceof FallbackConverter<?,?>) {
                     if (candidateClass.equals(targetClass)) {
                         /*
                          * Using Number for illustration purpose, but could be anything:
@@ -298,7 +298,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
     {
         if (converter == null) return existing;
         if (existing  == null) return converter;
-        if (existing instanceof FallbackConverter) {
+        if (existing instanceof FallbackConverter<?,?>) {
             @SuppressWarnings("unchecked")
             final FallbackConverter<S,? extends T> fallback = (FallbackConverter<S,? extends T>) existing;
             if (fallback.targetClass.isAssignableFrom(converter.getTargetClass())) {
@@ -318,7 +318,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      * @return A converter using the existing converter first and fallback next, or
      *         {@code existing} if the fallback has been appended to an existing chain.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     static ObjectConverter<?,?> createUnsafe(final ObjectConverter<?,?> existing,
                                              final ObjectConverter<?,?> converter)
     {
@@ -417,10 +417,10 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      * @param addTo The node in which to add the converter.
      */
     private void toTree(final ObjectConverter<?,?> converter, final MutableTreeNode addTo) {
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final ClassPair<?,?> name = new ClassPair(converter);
         MutableTreeNode node = new DefaultMutableTreeNode(name);
-        if (converter instanceof FallbackConverter) {
+        if (converter instanceof FallbackConverter<?,?>) {
             final FallbackConverter<?,?> fallback = (FallbackConverter<?,?>) converter;
             final boolean simplify = fallback.targetClass.equals(targetClass);
             if (simplify) {
@@ -456,7 +456,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      */
     @Override
     public String toString() {
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final ClassPair<?,?> name = new ClassPair(this);
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode(name);
         toTree(root);

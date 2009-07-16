@@ -129,7 +129,7 @@ public class Orthographic extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF,  "21"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ORTHOGRAPHIC_PROJECTION))
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING

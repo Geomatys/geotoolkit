@@ -126,7 +126,7 @@ public class EquidistantCylindrical extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF,  "17"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.EQUIDISTANT_CYLINDRICAL_PROJECTION))
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             FALSE_EASTING,    FALSE_NORTHING

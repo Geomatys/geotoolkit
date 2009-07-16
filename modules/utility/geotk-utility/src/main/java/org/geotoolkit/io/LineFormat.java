@@ -403,7 +403,7 @@ load:   while (true) {
                 final Class<?> type = getElementType(ClassFilter.NUMBER.negate());
                 toNumber = ConverterRegistry.system().converter(type, Number.class);
             }
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked","rawtypes"})
             final Number n = (Number) ((ObjectConverter) toNumber).convert(candidate);
             return n;
         } catch (NonconvertibleObjectException cause) {

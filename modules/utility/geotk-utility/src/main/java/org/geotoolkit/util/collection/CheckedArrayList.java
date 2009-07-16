@@ -486,7 +486,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedCollecti
     @SuppressWarnings("unchecked")
     public CheckedArrayList<E> clone() {
         synchronized (getLock()) {
-            return (CheckedArrayList) super.clone();
+            return (CheckedArrayList<E>) super.clone();
         }
     }
 }

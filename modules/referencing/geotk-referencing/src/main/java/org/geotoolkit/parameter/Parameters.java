@@ -124,7 +124,7 @@ public final class Parameters {
                         descriptor.getName().getCode(), actual));
             }
         }
-        return (ParameterDescriptor) descriptor;
+        return (ParameterDescriptor<T>) descriptor;
     }
 
     /**
@@ -152,7 +152,7 @@ public final class Parameters {
                         descriptor.getName().getCode(), actual));
             }
         }
-        return (ParameterValue) value;
+        return (ParameterValue<T>) value;
     }
 
     /**
@@ -194,9 +194,9 @@ public final class Parameters {
                     return false;
                 }
             }
-        } else if (value instanceof Collection) {
+        } else if (value instanceof Collection<?>) {
             // handle checking elements in a collection
-            for (final Object element : (Collection) value) {
+            for (final Object element : (Collection<?>) value) {
                 if (!isValidValue(element, descriptor)) {
                     return false;
                 }
@@ -228,12 +228,12 @@ public final class Parameters {
         if (validValues != null && !validValues.contains(value)) {
             return false;
         }
-        @SuppressWarnings("unchecked") // Type has been verified by the caller.
+        @SuppressWarnings({"unchecked","rawtypes"}) // Type has been verified by the caller.
         final Comparable<Object> min = (Comparable) descriptor.getMinimumValue();
         if (min!=null && min.compareTo(value) > 0) {
             return false;
         }
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final Comparable<Object> max = (Comparable) descriptor.getMaximumValue();
         if (max!=null && max.compareTo(value) < 0) {
             return false;
@@ -276,10 +276,10 @@ public final class Parameters {
          */
         final GeneralParameterDescriptor search;
         search = group.getDescriptor().descriptor(name);
-        if (search instanceof ParameterDescriptor) {
+        if (search instanceof ParameterDescriptor<?>) {
             for (final GeneralParameterValue candidate : group.values()) {
                 if (search.equals(candidate.getDescriptor())) {
-                    return cast((ParameterValue) candidate, param.getValueClass());
+                    return cast((ParameterValue<?>) candidate, param.getValueClass());
                 }
             }
         }
@@ -436,7 +436,7 @@ public final class Parameters {
             if (param instanceof ParameterValueGroup) {
                 copy((ParameterValueGroup) param, target.addGroup(name));
             } else {
-                target.parameter(name).setValue(((ParameterValue) param).getValue());
+                target.parameter(name).setValue(((ParameterValue<?>) param).getValue());
             }
         }
     }
@@ -458,7 +458,7 @@ public final class Parameters {
         if (destination == null) {
             destination = new LinkedHashMap<String,Object>();
         }
-        if (parameters instanceof ParameterValue) {
+        if (parameters instanceof ParameterValue<?>) {
             final ParameterValue<?> param = (ParameterValue<?>) parameters;
             final Object value = param.getValue();
             final Object old = destination.put(param.getDescriptor().getName().getCode(), value);

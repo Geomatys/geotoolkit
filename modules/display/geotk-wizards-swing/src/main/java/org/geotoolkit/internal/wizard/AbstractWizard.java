@@ -46,7 +46,7 @@ public abstract class AbstractWizard extends WizardPanelProvider {
      * {@note The <code>Map</code> argument is not parameterized because current
      *        <code>org.netbeans.api.wizard</code> is designed for Java 4.}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     static void addSetting(final Map settings, final String key, final Object value) {
         if (settings.put(key, value) != null) {
             throw new AssertionError(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, key));

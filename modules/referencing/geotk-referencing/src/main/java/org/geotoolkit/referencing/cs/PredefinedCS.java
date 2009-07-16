@@ -51,7 +51,7 @@ final class PredefinedCS implements Comparator<CoordinateSystem> {
     /**
      * Our ordering for coordinate system objects.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private final Class<? extends CoordinateSystem>[] types = new Class[] {
         CartesianCS  .class,
         AffineCS     .class,

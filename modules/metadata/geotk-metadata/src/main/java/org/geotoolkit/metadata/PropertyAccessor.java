@@ -183,7 +183,7 @@ final class PropertyAccessor {
         getters = getGetters(type);
         mapping = new HashMap<String,Integer>(Utilities.hashMapCapacity(getters.length));
         Method[] setters = null;
-        final Class<?>[] arguments = new Class[1];
+        final Class<?>[] arguments = new Class<?>[1];
         for (int i=0; i<getters.length; i++) {
             /*
              * Fetch the getter and remind its name. We do the same for
@@ -224,7 +224,7 @@ final class PropertyAccessor {
                  * be a subtype.
                  */
                 try {
-                    getter = implementation.getMethod(getter.getName(), (Class[]) null);
+                    getter = implementation.getMethod(getter.getName(), (Class<?>[]) null);
                 } catch (NoSuchMethodException error) {
                     // Should never happen, since the implementation class
                     // implements the the interface where the getter come from.
@@ -618,10 +618,10 @@ final class PropertyAccessor {
              */
             final Collection<?> addTo;
             final Class<?> elementType;
-            if (Collection.class.isAssignableFrom(paramType) && !(argument instanceof Collection)) {
+            if (Collection.class.isAssignableFrom(paramType) && !(argument instanceof Collection<?>)) {
                 // Expected a collection but got a singleton.
                 addTo = (Collection<?>) get(getter, metadata);
-                if (addTo instanceof CheckedCollection) {
+                if (addTo instanceof CheckedCollection<?>) {
                     elementType = ((CheckedCollection<?>) addTo).getElementType();
                 } else {
                     Class<?> c = Classes.boundOfParameterizedAttribute(setter);
@@ -726,7 +726,7 @@ final class PropertyAccessor {
      *         implementation of {@link CheckedCollection}) and {@code element} is not a valid
      *         type. If this exception occurs, it would be a programming error.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private static void addUnsafe(final Collection<?> addTo, final Object element)
             throws ClassCastException
     {
@@ -884,7 +884,7 @@ final class PropertyAccessor {
      */
     static boolean isEmpty(final Object value) {
         return value == null ||
-                ((value instanceof Collection) && ((Collection<?>) value).isEmpty()) ||
+                ((value instanceof Collection<?>) && ((Collection<?>) value).isEmpty()) ||
                 ((value instanceof CharSequence) && value.toString().trim().length() == 0) ||
                 (value.getClass().isArray() && Array.getLength(value) == 0);
     }

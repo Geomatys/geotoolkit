@@ -468,7 +468,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
                      * expected. Since we already checked the name, only the authorities need
                      * to be compared.
                      */
-                    if (candidate instanceof ParameterDescriptor) {
+                    if (candidate instanceof ParameterDescriptor<?>) {
                         return (ParameterDescriptor<?>) candidate;
                     }
                     // Name matches, but this is not an instance of parameter descriptor.

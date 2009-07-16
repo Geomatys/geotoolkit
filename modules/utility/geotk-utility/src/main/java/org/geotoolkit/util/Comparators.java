@@ -49,12 +49,14 @@ public final class Comparators {
      * public because of parameterized types - we need a method for casting to the expected type.
      * This is the same trick than {@link java.util.Collections#emptySet} for example.
      */
+    @SuppressWarnings("rawtypes")
     private static final Comparator<Collection<Comparable>> COLLECTIONS = new Collections();
 
     /**
      * The {@link #COLLECTIONS} classes explicitly named (rather than anonymous) for avoiding
      * serialization issues.
      */
+    @SuppressWarnings("rawtypes")
     private static final class Collections implements Comparator<Collection<Comparable>>, Serializable {
         /**
          * For cross-version compatibility.
@@ -98,7 +100,7 @@ public final class Comparators {
      * @param <T> The type of elements in both lists.
      * @return The ordering between two lists.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<List<T>> forLists() {
         return (Comparator) COLLECTIONS;
     }
@@ -110,7 +112,7 @@ public final class Comparators {
      * @param <T> The type of elements in both sets.
      * @return The ordering between two sets.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<SortedSet<T>> forSortedSets() {
         return (Comparator) COLLECTIONS;
     }
@@ -125,7 +127,7 @@ public final class Comparators {
      * @param <T> The type of elements in both collections.
      * @return The ordering between two collections.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<Collection<T>> forCollections() {
         return (Comparator) COLLECTIONS;
     }

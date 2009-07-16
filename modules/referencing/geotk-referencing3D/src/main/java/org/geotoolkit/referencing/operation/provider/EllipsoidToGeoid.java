@@ -79,7 +79,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
             new NamedIdentifier(Citations.GEOTOOLKIT, "Ellipsoid_To_Geoid")
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             DATUM, ORDER
         });
 

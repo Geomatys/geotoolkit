@@ -70,7 +70,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      */
     public static ParameterValueGroup EMPTY = new ParameterGroup(
             Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY, "Void"),
-            new ParameterValue[0]);
+            new ParameterValue<?>[0]);
 
     /**
      * The {@linkplain #values() parameter values} for this group.
@@ -285,7 +285,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         ensureNonNull("name", name);
         name = name.trim();
         for (final GeneralParameterValue value : values) {
-            if (value instanceof ParameterValue) {
+            if (value instanceof ParameterValue<?>) {
                 if (AbstractIdentifiedObject.nameMatches(value.getDescriptor(), name)) {
                     return (ParameterValue<?>) value;
                 }
@@ -297,7 +297,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
          * and returns it.
          */
         for (final GeneralParameterDescriptor descriptor : getDescriptor().descriptors()) {
-            if (descriptor instanceof ParameterDescriptor) {
+            if (descriptor instanceof ParameterDescriptor<?>) {
                 if (AbstractIdentifiedObject.nameMatches(descriptor, name)) {
                     final ParameterValue<?> value = ((ParameterDescriptor<?>) descriptor).createValue();
                     values.add(value);

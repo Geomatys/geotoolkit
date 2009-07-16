@@ -54,6 +54,7 @@ final class MosaicCreator extends DeferredWizardResult {
      * Performs the creation of the mosaic.
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public void start(final Map settings, final ResultProgressHandle progress) {
         progress.setBusy("Creating the mosaic"); // TODO: use setProgress(...) instead.
         final TileManager tiles;

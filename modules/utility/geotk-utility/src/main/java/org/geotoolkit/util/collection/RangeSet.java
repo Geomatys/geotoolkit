@@ -78,7 +78,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * The comparator for ranges. Defined only in order to comply to {@link #comparator}
      * contract, but not used for internal working in this class.
      */
-    private static final Comparator<Range> COMPARATOR = new Comparator<Range>() {
+    private static final Comparator<Range<?>> COMPARATOR = new Comparator<Range<?>>() {
         @Override @SuppressWarnings("unchecked")
         public int compare(final Range r1, final Range r2) {
             int cmin = r1.getMinValue().compareTo(r2.getMinValue());
@@ -229,7 +229,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * @since 3.00
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Class<? extends Range<T>> getElementType() {
         if (isNumeric) return (Class) NumberRange.class;
         if (isDate)    return (Class) DateRange.class;
@@ -266,8 +266,8 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
             return value;
         }
         try {
-            @SuppressWarnings("unchecked")
-            final Comparable<?> result = (Comparable) ((ObjectConverter) converter).convert(value);
+            @SuppressWarnings({"unchecked","rawtypes"})
+            final Comparable<?> result = (Comparable<?>) ((ObjectConverter) converter).convert(value);
             return result;
         } catch (ClassCastException cause) {
             throw new IllegalArgumentException(Errors.format(
@@ -281,7 +281,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     /**
      * Compares two object of unknown type.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private static int compare(final Comparable<?> lower, final Comparable<?> upper) {
         return ((Comparable) lower).compareTo((Comparable) upper);
     }
@@ -290,7 +290,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * Returns the comparator associated with this sorted set.
      */
     @Override
-    @SuppressWarnings("unchecked") // Because we share the same static COMPARATOR instance.
+    @SuppressWarnings({"unchecked","rawtypes"}) // Because we share the same static COMPARATOR instance.
     public Comparator<Range<T>> comparator() {
         return (Comparator) COMPARATOR;
     }
@@ -608,7 +608,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      */
     @Override
     public boolean remove(final Object object) {
-        if (!(object instanceof Range)) {
+        if (!(object instanceof Range<?>)) {
             return false;
         }
         final Range<?> range = (Range<?>) object;
@@ -847,7 +847,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * @param lower The lower value, inclusive.
      * @param upper The upper value, inclusive.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private Range<T> newRange(final T lower, final T upper) {
         if (isNumeric) {
             return new NumberRange(elementClass, (Number) lower, (Number) upper);
@@ -874,7 +874,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
          * work given the way generic types are implemented in Java (by erasure). If it fails, then
          * we have a programming error in this class or in ConverterRegistry.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final ObjectConverter<Object,T> inverseConverter = (ObjectConverter) this.inverseConverter;
         if (inverseConverter != null) {
             assert inverseConverter.getSourceClass().isInstance(value) : value;

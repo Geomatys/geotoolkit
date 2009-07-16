@@ -42,6 +42,7 @@ final class EmptyStream<E> implements ObjectStream<E>, Serializable {
     /**
      * The singleton instance
      */
+    @SuppressWarnings("rawtypes")
     private static final EmptyStream INSTANCE = new EmptyStream();
 
     /**

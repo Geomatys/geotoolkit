@@ -113,10 +113,10 @@ final class CacheEntries<K,V> extends AbstractSet<Map.Entry<K,V>> {
             while (it.hasNext()) {
                 final Map.Entry<K,Object> entry = it.next();
                 Object value = entry.getValue();
-                if (value == null || value instanceof Cache.Handler) {
+                if (value == null || value instanceof Cache.Handler<?>) {
                     continue;
                 }
-                if (value instanceof Reference) {
+                if (value instanceof Reference<?>) {
                     value = ((Reference<?>) value).get();
                     if (value == null) {
                         continue;

@@ -43,7 +43,7 @@ package org.geotoolkit.util;
  * @see <A HREF="http://developer.java.sun.com/developer/bugParade/bugs/4098033.html">&quot;<cite>Cloneable
  *      doesn't define <code>clone()</code></cite>&quot; on Sun's bug parade</A>
  */
-public interface Cloneable extends org.opengis.util.Cloneable {
+public interface Cloneable extends java.lang.Cloneable {
     /**
      * Creates and returns a copy of this object.
      * The precise meaning of "copy" may depend on the class of the object.

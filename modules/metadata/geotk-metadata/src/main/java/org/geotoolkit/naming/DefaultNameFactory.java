@@ -395,7 +395,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
          */
 jump:   while (true) {
             final Object[] values;
-            if (value instanceof Collection) {
+            if (value instanceof Collection<?>) {
                 values = ((Collection<?>) value).toArray();
             } else if (value instanceof Object[]) {
                 values = (Object[]) value;

@@ -154,7 +154,7 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.ESRI,     "Albers_Equal_Area_Conic"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))
-        }, new ParameterDescriptor[] {
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
             STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,

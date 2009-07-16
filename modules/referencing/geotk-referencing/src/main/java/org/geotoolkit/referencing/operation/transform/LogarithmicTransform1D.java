@@ -166,7 +166,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform
     @Override
     public ParameterValueGroup getParameterValues() {
         return new ParameterGroup(getParameterDescriptors(),
-            new ParameterValue[] {
+            new ParameterValue<?>[] {
             new FloatParameter(BASE,   base),
             new FloatParameter(OFFSET, offset)});
     }

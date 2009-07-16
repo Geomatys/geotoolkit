@@ -324,7 +324,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
         /**
          * List of legal output types for {@link TextImageWriter}.
          */
-        private static final Class<?>[] OUTPUT_TYPES = new Class[] {
+        private static final Class<?>[] OUTPUT_TYPES = new Class<?>[] {
             File.class,
             URL.class,
             URLConnection.class,

@@ -80,7 +80,7 @@ public class TileManagerFactory extends Factory {
             managers = new TileManager[] {(TileManager) tiles};
         } else if (tiles instanceof Tile[]) {
             managers = create((Tile[]) tiles);
-        } else if (tiles instanceof Collection) {
+        } else if (tiles instanceof Collection<?>) {
             @SuppressWarnings("unchecked") // create(Collection) will checks indirectly.
             final Collection<Tile> c = (Collection<Tile>) tiles;
             managers = create(c);

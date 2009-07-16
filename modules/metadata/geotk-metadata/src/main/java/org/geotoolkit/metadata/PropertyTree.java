@@ -180,8 +180,8 @@ final class PropertyTree {
             Object value = accessor.get(index, metadata);
             final Class<?> type;
             if (value != null) {
-                if (value instanceof CheckedCollection) {
-                    type = standard.getImplementation(((CheckedCollection) value).getElementType());
+                if (value instanceof CheckedCollection<?>) {
+                    type = standard.getImplementation(((CheckedCollection<?>) value).getElementType());
                 } else {
                     type = value.getClass();
                 }
@@ -200,9 +200,9 @@ final class PropertyTree {
              */
             final PropertyAccessor ca = standard.getAccessorOptional(type);
             if (ca != null) {
-                if (value instanceof Collection) {
+                if (value instanceof Collection<?>) {
                     final Collection<Object> childs;
-                    if (value instanceof List) {
+                    if (value instanceof List<?>) {
                         childs = new ArrayList<Object>(4);
                     } else {
                         childs = new LinkedHashSet<Object>(4);
@@ -301,7 +301,7 @@ final class PropertyTree {
      * property name, and the childs are the value(s) for that property.
      */
     private void append(final DefaultMutableTreeNode branch, final Object value) {
-        if (value instanceof Map) {
+        if (value instanceof Map<?,?>) {
             appendMap(branch, (Map<?,?>) value);
             return;
         }
@@ -316,7 +316,7 @@ final class PropertyTree {
                 return;
             }
         }
-        if (value instanceof Collection) {
+        if (value instanceof Collection<?>) {
             for (final Object element : (Collection<?>) value) {
                 if (!PropertyAccessor.isEmpty(element)) {
                     append(branch, element);
@@ -325,7 +325,7 @@ final class PropertyTree {
             return;
         }
         final String asText;
-        if (value instanceof CodeList) {
+        if (value instanceof CodeList<?>) {
             asText = localize((CodeList<?>) value);
         } else if (value instanceof Date) {
             asText = format((Date) value);

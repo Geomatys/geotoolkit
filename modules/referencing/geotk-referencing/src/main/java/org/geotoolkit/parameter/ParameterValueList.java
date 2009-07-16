@@ -137,8 +137,8 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
              * was invalid.
              */
             final Object value;
-            if (parameter instanceof ParameterValue) {
-                value = ((ParameterValue) parameter).getValue();
+            if (parameter instanceof ParameterValue<?>) {
+                value = ((ParameterValue<?>) parameter).getValue();
             } else {
                 value = "(group)";
             }

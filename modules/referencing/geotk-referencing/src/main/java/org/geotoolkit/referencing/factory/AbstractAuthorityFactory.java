@@ -524,7 +524,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     {
         final IdentifiedObject object = createObject(code);
         try {
-            return (Unit) object;
+            return (Unit<?>) object;
         } catch (ClassCastException exception) {
             throw noSuchAuthorityCode(Unit.class, code, exception);
         }
@@ -740,7 +740,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     {
         final IdentifiedObject operation = createObject(code);
         try {
-            return (ParameterDescriptor) operation;
+            return (ParameterDescriptor<?>) operation;
         } catch (ClassCastException exception) {
             throw noSuchAuthorityCode(ParameterDescriptor.class, code, exception);
         }

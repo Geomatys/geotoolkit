@@ -63,6 +63,8 @@ public final class ControlPanel extends JPanel implements ActionListener {
      * Invoked when the user press the "close" button.
      * This method is public as an implementation side effect
      * and should not be invoked directly.
+     *
+     * @param event The event provided by the clicked button.
      */
     @Override
     public void actionPerformed(ActionEvent event) {

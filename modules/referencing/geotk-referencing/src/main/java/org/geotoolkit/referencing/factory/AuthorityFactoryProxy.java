@@ -234,7 +234,7 @@ abstract class AuthorityFactoryProxy {
         /**
          * The argument types of {@code createFoo} methods.
          */
-        private static final Class<?>[] PARAMETERS = new Class[] {String.class};
+        private static final Class<?>[] PARAMETERS = new Class<?>[] {String.class};
 
         /**
          * The authority factory on which to delegates.
