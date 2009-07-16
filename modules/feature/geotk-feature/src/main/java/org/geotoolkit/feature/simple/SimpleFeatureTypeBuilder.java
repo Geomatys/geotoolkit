@@ -32,6 +32,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -113,7 +114,7 @@ public class SimpleFeatureTypeBuilder {
     /**
      * Map of java class bound to properties types.
      */
-    protected Map/* <Class,AttributeType> */ bindings;
+    protected Map<Class,AttributeType> bindings;
     // Global state for the feature type
     //
     /**

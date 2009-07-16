@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.feature.type.DefaultSchema;
 import org.geotoolkit.feature.DefaultName;
+
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryType;

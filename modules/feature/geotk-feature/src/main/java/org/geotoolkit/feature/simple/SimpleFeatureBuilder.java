@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature.simple;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import java.rmi.server.UID;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,22 +26,21 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.opengis.feature.IllegalAttributeException;
+
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
+
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
-
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.opengis.filter.identity.FeatureId;
-
 
 /**
  * A builder for features.
