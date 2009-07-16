@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @author Andrea Aime (TOPP)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  */
@@ -67,7 +67,6 @@ public final class FallbackAuthorityFactoryTest {
         assertNull(extra);
         extra = new ExtraEpsgFactory();
         AuthorityFactoryFinder.addAuthorityFactory(extra);
-        AuthorityFactoryFinder.scanForPlugins();
     }
 
     /**

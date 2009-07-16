@@ -55,7 +55,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * a set of names determined from all available authority factories.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
@@ -68,7 +68,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * constructors. Must be consistent with the types expected by the
      * {@link AllAuthoritiesFactory#fromFactoryRegistry(String, Class)} method.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static final Class<? extends AuthorityFactory>[] FACTORY_TYPES = new Class[] {
         CRSAuthorityFactory.class,
         DatumAuthorityFactory.class,
@@ -80,7 +80,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * The types created by {@link #FACTORY_TYPES}. For each type {@code OBJECT_TYPES[i]},
      * the factory to be used must be {@code FACTORY_TYPES[i]}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static final Class<? extends IdentifiedObject>[] OBJECT_TYPES = new Class[] {
         CoordinateReferenceSystem.class,
         Datum.class,
@@ -120,7 +120,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
          * formatting somme error messages), so remove the previous hints so we depend only on
          * the hints present in the factory given by the caller.
          */
-//        hints.clear();
+        hints.clear();
         if (factories!=null && !factories.isEmpty()) {
             for (final AuthorityFactory factory : factories) {
                 if (factory instanceof Factory) {
@@ -172,7 +172,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
          */
         int authorityCount = 0;
         final Citation[] authorities = new Citation[factories.size()];
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         final List<AuthorityFactory>[] factoriesByAuthority = new List[authorities.length];
         for (final AuthorityFactory factory : factories) {
             /*
@@ -903,7 +903,21 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
              */
             IdentifiedObject candidate = createFromIdentifiers(object);
             if (candidate != null) {
-                return candidate.getName().toString();
+                ReferenceIdentifier name = null;
+                final Set<ReferenceIdentifier> identifiers = candidate.getIdentifiers();
+                if (identifiers != null) {
+                    for (final Iterator<ReferenceIdentifier> it=identifiers.iterator(); it.hasNext();) {
+                        if ((name = it.next()) != null) {
+                            break;
+                        }
+                    }
+                }
+                if (name == null) {
+                    name = candidate.getName();
+                }
+                if (name != null) {
+                    return name.toString();
+                }
             }
             final Collection<AuthorityFactory> factories = getFactories();
             if (factories != null) {

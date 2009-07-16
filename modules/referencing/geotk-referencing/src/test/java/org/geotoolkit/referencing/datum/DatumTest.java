@@ -46,7 +46,7 @@ import org.geotoolkit.test.Depend;
  * Tests {@link AbstractDatum} and well-know text formatting.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.2
  */
@@ -93,13 +93,13 @@ public final class DatumTest extends ReferencingTestCase {
             assertNotNull("Collection should not contains null element.", name);
             assertTrue("Duplicated name in alias.", strings.add(name.toString()));
         }
-        assertTrue(strings.contains("WGS84"));
-        assertTrue(strings.contains("WGS 84"));
+        assertTrue(strings.contains("OGC:WGS84"));
+        assertTrue(strings.contains("Oracle:WGS 84"));
         assertTrue(strings.contains("WGS_84"));
         assertTrue(strings.contains("WGS 1984"));
         assertTrue(strings.contains("WGS_1984"));
-        assertTrue(strings.contains("D_WGS_1984"));
-        assertTrue(strings.contains("World Geodetic System 1984"));
+        assertTrue(strings.contains("ESRI:D_WGS_1984"));
+        assertTrue(strings.contains("EPSG:World Geodetic System 1984"));
     }
 
     /**

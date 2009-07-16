@@ -27,10 +27,8 @@
  *     in previous factory operations are retained by {@linkplain java.lang.ref.WeakReference
  *     weak references} for reuse.
  *   </p></li><li><p>
- *     {@link org.geotoolkit.util.collection.Cache},
- *     {@link org.geotoolkit.util.collection.WeakValueHashMap},
- *     {@link org.geotoolkit.util.collection.SoftValueHashMap} and
- *     {@link org.geotoolkit.util.collection.LRULinkedHashMap} are {@link java.util.Map java.util.Map}
+ *     {@link org.geotoolkit.util.collection.Cache} and
+ *     {@link org.geotoolkit.util.collection.WeakValueHashMap} are {@link java.util.Map java.util.Map}
  *     implementations that may be used for some caching or pseudo-caching functionalities. The
  *     {@link org.geotoolkit.util.collection.Cache} implementation is the most full-featured one
  *     and supports concurrency, while the other implementations are more lightweight, sometime

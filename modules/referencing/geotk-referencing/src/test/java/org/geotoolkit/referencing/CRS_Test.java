@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * service (WKT parsing, object comparisons, <cite>etc.</cite>).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -140,6 +140,8 @@ public final class CRS_Test {
                 "  AXIS[“x”, EAST], \n" +
                 "  AXIS[“y”, NORTH]]"));
 
+        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", CRS.toSRS(crs1));
+
         final CoordinateReferenceSystem crs2 = CRS.parseWKT(decodeQuotes(
                 "PROJCS[“NAD83 / Massachusetts Mainland”, \n" +
                 "  GEOGCS[“NAD83”, \n" +
@@ -163,6 +165,8 @@ public final class CRS_Test {
                 "  AXIS[“Easting”, EAST], \n" +
                 "  AXIS[“Northing”, NORTH], \n" +
                 "  AUTHORITY[“EPSG”,“26986”]]"));
+
+        assertEquals("EPSG:26986", CRS.toSRS(crs2));
 
         assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
     }

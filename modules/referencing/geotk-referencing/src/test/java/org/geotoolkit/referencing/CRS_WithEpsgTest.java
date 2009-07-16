@@ -46,7 +46,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  */
@@ -62,6 +62,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        assertEquals("EPSG:4326", CRS.toSRS(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
 
@@ -82,6 +83,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
+        assertEquals("EPSG:4326", CRS.toSRS(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
 
@@ -254,7 +256,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
     public void testCodes() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        final Set codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
+        final Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
         assertNotNull(codes);
         assertTrue(codes.size() >= 3000);
     }
@@ -270,6 +272,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
         assertNotNull(crs);
+        assertEquals("EPSG:26910", CRS.toSRS(crs));
         assertSame(crs, factory.createObject("EPSG:26910"));
     }
 
@@ -284,6 +287,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
         assertNotNull(crs);
+        assertEquals("EPSG:4326", CRS.toSRS(crs));
         assertSame(crs, factory.createObject("EPSG:4326"));
     }
 
@@ -298,6 +302,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
         assertNotNull(crs);
+        assertEquals("EPSG:4269", CRS.toSRS(crs));
         assertSame(crs, factory.createObject("EPSG:4269"));
     }
 
@@ -311,6 +316,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26910");
         assertNotNull(crs);
+        assertEquals("EPSG:26910", CRS.toSRS(crs));
     }
 
     /**
@@ -323,6 +329,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
         assertNotNull(crs);
+        assertEquals("EPSG:26986", CRS.toSRS(crs));
     }
 
     /**
@@ -335,6 +342,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:4326");
         assertNotNull(crs);
+        assertEquals("EPSG:4326", CRS.toSRS(crs));
     }
 
     /**
@@ -347,6 +355,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
         assertNotNull(crs);
+        assertEquals("EPSG:26742", CRS.toSRS(crs));
     }
 
     /**
@@ -359,6 +368,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:4269");
         assertNotNull(crs);
+        assertEquals("EPSG:4269", CRS.toSRS(crs));
     }
 
     /**

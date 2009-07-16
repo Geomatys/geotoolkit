@@ -81,7 +81,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**
      * List of authority factory types, in the same order than {@link #HINT_KEYS}.
      */
-    @SuppressWarnings("unchecked") // Generic array creation.
+    @SuppressWarnings({"unchecked", "rawtypes"}) // Generic array creation.
     private static final Class<? extends AuthorityFactory>[] TYPES = new Class[] {
         CRSAuthorityFactory.class,
         CSAuthorityFactory.class,
@@ -1402,7 +1402,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * Returns {@code true} if the {@link #toBackingFactoryCode} method is overriden.
      */
     final boolean isCodeMethodOverriden() {
-        final Class<?>[] arguments = new Class[] {String.class};
+        final Class<?>[] arguments = new Class<?>[] {String.class};
         Class<?> type = getClass();
         while (!AuthorityFactoryAdapter.class.equals(type)) {
             try {

@@ -127,7 +127,7 @@ public class FactoryRegistry extends ServiceRegistry {
      *
      * @since 2.4
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public FactoryRegistry(final Class<?> category) {
         this((Collection) Collections.singleton(category));
         // Safe because java.lang.Class is final.

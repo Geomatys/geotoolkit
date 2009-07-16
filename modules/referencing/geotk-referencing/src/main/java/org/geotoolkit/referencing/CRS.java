@@ -785,10 +785,12 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * <p>
      * Examples of Spatial Reference System (SRS) values:
      * <ul>
-     *   <li>{@code EPSG:4326} - this is the usual format understood to mean <cite>force XY axis
-     *       order</cite>. Note that the axis order is <em>not necessarly</em> (<var>longitude</var>,
-     *       <var>latitude</var>), but this is the common behavior we observe in practice.</li>
-     *   <li>{@code ogc:uri:.....} - understood to match the EPSG database axis order.</li>
+     *   <li>{@code EPSG:4326} - this was understood to mean <cite>force XY axis order</cite> in
+     *       old Web Map Services (WMS). Note that latest WMS specifications require the respect
+     *       of axis order as declared in the EPSG database, which is (<var>latitude</var>,
+     *       <var>longitude</var>).</li>
+     *   <li>{@code urn:ogc:def:crs:EPSG:4326} - understood to match the EPSG database axis order
+     *       in all cases, no matter the WMS version.</li>
      *   <li>{@code AUTO:43200} - without the parameters that are specific to AUTO codes.</li>
      * </ul>
      *

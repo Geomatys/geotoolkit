@@ -827,11 +827,11 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     {
         final CodePair key = new CodePair(trimAuthority(sourceCRS), trimAuthority(targetCRS));
         Object value = cache.peek(key);
-        if (!(value instanceof Set)) {
+        if (!(value instanceof Set<?>)) {
             final Cache.Handler<Object> handler = cache.lock(key);
             try {
                 value = handler.peek();
-                if (!(value instanceof Set)) {
+                if (!(value instanceof Set<?>)) {
                     final AbstractAuthorityFactory factory = getBackingStore();
                     try {
                         final Set<CoordinateOperation> result = Collections.unmodifiableSet(
@@ -846,7 +846,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 handler.putAndUnlock(value);
             }
         }
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         final Set<CoordinateOperation> result = (Set) value;
         return result;
     }

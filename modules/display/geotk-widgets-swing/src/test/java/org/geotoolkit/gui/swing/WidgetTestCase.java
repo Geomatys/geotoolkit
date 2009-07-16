@@ -28,6 +28,7 @@ import org.junit.*;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 
 /**
@@ -38,7 +39,7 @@ import static org.junit.Assert.*;
  * @param <T> The type of the widget to be tested.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.3
  */
@@ -70,8 +71,13 @@ public abstract class WidgetTestCase<T extends Component> {
     /**
      * Creates the widget. The widget is usually of type {@code T}, except if the
      * widget has been put in a scroll pane.
+     * <p>
+     * This method can return {@code null} if the widget can not be created for a
+     * raison which is not a test failure, for example if the widget relies on some
+     * resources which may not be available on the classpath.
      *
-     * @return The created widget.
+     * @return The created widget, or {@code null} if the widget can not be created for
+     *         an acceptable raison.
      * @throws Exception If an exception occured while creating the widget.
      */
     protected abstract Component create() throws Exception;
@@ -85,6 +91,7 @@ public abstract class WidgetTestCase<T extends Component> {
     @Test
     public void display() throws Exception {
         component = create();
+        assumeNotNull(component);
         show(Classes.getShortClassName(component));
     }
 
