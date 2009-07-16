@@ -198,19 +198,6 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     }
 
     /**
-     * Returns the language(s) used within the dataset.
-     *
-     * @return Language(s) used.
-     *
-     * @deprecated Renamed as {@link #getLanguages()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<Locale> getLanguage() {
-        return getLanguages();
-    }
-
-    /**
      * Sets the language(s) used within the dataset.
      *
      * @param newValues The new languages.
@@ -285,18 +272,6 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @XmlElement(name = "extent")
     public synchronized Collection<Extent> getExtents() {
         return xmlOptional(extents = nonNullCollection(extents, Extent.class));
-    }
-
-    /**
-     * Returns additional extent information including the bounding polygon, vertical, and temporal
-     * extent of the dataset.
-     *
-     * @deprecated Renamed as {@link #getExtents()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<Extent> getExtent() {
-        return getExtents();
     }
 
     /**

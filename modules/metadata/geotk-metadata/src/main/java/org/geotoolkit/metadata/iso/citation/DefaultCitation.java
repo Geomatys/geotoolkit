@@ -367,17 +367,6 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     }
 
     /**
-     * Returns the mode in which the resource is represented, or an empty string if none.
-     *
-     * @deprecated Renamed as {@link #getPresentationForms()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<PresentationForm> getPresentationForm() {
-        return getPresentationForms();
-    }
-
-    /**
      * Sets the mode in which the resource is represented, or an empty string if none.
      *
      * @param newValues The new presentation form.

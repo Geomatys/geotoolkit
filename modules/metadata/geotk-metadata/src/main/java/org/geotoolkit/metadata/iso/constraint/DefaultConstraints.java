@@ -89,18 +89,6 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
     }
 
     /**
-     * Returns the limitation affecting the fitness for use of the resource.
-     * Example: "not to be used for navigation".
-     *
-     * @deprecated Renamed as {@link #getUseLimitations()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<InternationalString> getUseLimitation() {
-        return getUseLimitations();
-    }
-
-    /**
      * Sets the limitation affecting the fitness for use of the resource.
      * Example: "not to be used for navigation".
      *

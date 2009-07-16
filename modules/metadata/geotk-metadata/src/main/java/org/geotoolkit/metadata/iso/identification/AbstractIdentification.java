@@ -284,17 +284,6 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     }
 
     /**
-     * Provides information about the frequency of resource updates, and the scope of those updates.
-     *
-     * @deprecated Renamed as {@link #getResourceMaintenances()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<MaintenanceInformation> getResourceMaintenance() {
-        return getResourceMaintenances();
-    }
-
-    /**
      * Sets information about the frequency of resource updates, and the scope of those updates.
      *
      * @param newValues The new resource maintenance info.
@@ -332,17 +321,6 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @XmlElement(name = "resourceFormat")
     public synchronized Collection<Format> getResourceFormats() {
         return xmlOptional(resourceFormats = nonNullCollection(resourceFormats, Format.class));
-    }
-
-    /**
-     * Provides a description of the format of the resource(s).
-     *
-     * @deprecated Renamed as {@link #getResourceFormats()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<Format> getResourceFormat() {
-        return getResourceFormats();
     }
 
     /**

@@ -220,17 +220,6 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
     }
 
     /**
-     * Returns a reference providing description of the parameters.
-     *
-     * @deprecated Renamed as {@link #getParameterCitations()} (with an "s").
-     */
-    @Override
-    @Deprecated
-    public Collection<Citation> getParameterCitation() {
-        return getParameterCitations();
-    }
-
-    /**
      * Sets a reference providing description of the parameters.
      *
      * @param newValues The new parameter citations.
