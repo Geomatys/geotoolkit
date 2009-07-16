@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,7 +23,12 @@ import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
 
-public class DefaultAssociation extends DefaultProperty implements Association {
+/**
+ * Default implementation of an association.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultAssociation extends DefaultProperty<Attribute,AssociationDescriptor> implements Association {
 
     protected DefaultAssociation(Attribute value, AssociationDescriptor descriptor) {
         super(value, descriptor);
@@ -33,15 +39,7 @@ public class DefaultAssociation extends DefaultProperty implements Association {
      */
     @Override
     public AttributeType getRelatedType() {
-        return getType().getRelatedType();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public AssociationDescriptor getDescriptor() {
-        return (AssociationDescriptor) super.getDescriptor();
+        return descriptor.getType().getRelatedType();
     }
 
     /**
@@ -49,15 +47,7 @@ public class DefaultAssociation extends DefaultProperty implements Association {
      */
     @Override
     public AssociationType getType() {
-        return (AssociationType) super.getType();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Attribute getValue() {
-        return (Attribute) super.getValue();
+        return descriptor.getType();
     }
     
 }

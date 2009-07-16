@@ -51,9 +51,9 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * </p>
  *
  * @author Leprosy
- * @since 0.3 TODO: test wkt geometry parse.
+ * @author Johann Sorel (Geomatys)
  */
-public class DefaultGeometryAttribute extends DefaultAttribute implements GeometryAttribute {
+public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDescriptor,Identifier> implements GeometryAttribute {
 
     /**
      * bounds, derived
@@ -70,35 +70,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements Geomet
      */
     @Override
     public GeometryType getType() {
-        return (GeometryType) super.getType();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GeometryDescriptor getDescriptor() {
-        return (GeometryDescriptor) super.getDescriptor();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Geometry getValue() {
-        return (Geometry) super.getValue();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setValue(final Object newValue) throws IllegalArgumentException, IllegalStateException{
-        setValue((Geometry) newValue);
-    }
-
-    public void setValue(final Geometry geometry) {
-        super.setValue(geometry);
+        return descriptor.getType();
     }
 
     /**
@@ -120,7 +92,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements Geomet
     public synchronized BoundingBox getBounds() {
         if (bounds == null) {
             final JTSEnvelope2D bbox = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
-            final Geometry geom = (Geometry) getValue();
+            final Geometry geom = (Geometry) value;
             if (geom != null) {
                 bbox.expandToInclude(geom.getEnvelopeInternal());
             } else {

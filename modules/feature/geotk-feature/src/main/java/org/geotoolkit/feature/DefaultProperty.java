@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,41 +30,46 @@ import org.opengis.feature.type.PropertyType;
 /**
  * Implementation of Property.
  *
+ * @author Johann Sorel (Geomatys)
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
-public class DefaultProperty implements Property {
-
-    /**
-     * content of the property
-     */
-    protected Object value;
+public class DefaultProperty<V extends Object, D extends PropertyDescriptor> implements Property {
 
     /**
      * descriptor of the property
      */
-    protected final PropertyDescriptor descriptor;
+    protected final D descriptor;
 
     /**
      * user data
      */
-    protected final Map<Object, Object> userData;
+    protected final Map<Object, Object> userData = new HashMap<Object, Object>();
 
-    protected DefaultProperty(final Object value, final PropertyDescriptor descriptor) {
+    /**
+     * content of the property
+     */
+    protected V value;
+
+
+    protected DefaultProperty(final D descriptor) {
+        this(null,descriptor);
+    }
+
+    protected DefaultProperty(final V value, final D descriptor) {
         this.value = value;
         this.descriptor = descriptor;
-        userData = new HashMap<Object, Object>();
 
         if (descriptor == null) {
             throw new NullPointerException("descriptor");
         }
     }
 
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public Object getValue() {
+    public V getValue() {
         return value;
     }
 
@@ -72,14 +78,14 @@ public class DefaultProperty implements Property {
      */
     @Override
     public void setValue(final Object value) {
-        this.value = value;
+        this.value = (V)value;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public PropertyDescriptor getDescriptor() {
+    public D getDescriptor() {
         return descriptor;
     }
 
@@ -88,7 +94,7 @@ public class DefaultProperty implements Property {
      */
     @Override
     public Name getName() {
-        return getDescriptor().getName();
+        return descriptor.getName();
     }
 
     /**
@@ -96,7 +102,7 @@ public class DefaultProperty implements Property {
      */
     @Override
     public PropertyType getType() {
-        return getDescriptor().getType();
+        return descriptor.getType();
     }
 
     /**
@@ -104,7 +110,7 @@ public class DefaultProperty implements Property {
      */
     @Override
     public boolean isNillable() {
-        return getDescriptor().isNillable();
+        return descriptor.isNillable();
     }
 
     /**
@@ -155,9 +161,9 @@ public class DefaultProperty implements Property {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
-        sb.append(getDescriptor().getName().getLocalPart());
+        sb.append(descriptor.getName().getLocalPart());
         sb.append("<");
-        sb.append(getDescriptor().getType().getName().getLocalPart());
+        sb.append(descriptor.getType().getName().getLocalPart());
         sb.append(">=");
         sb.append(value);
 

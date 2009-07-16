@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,37 +28,60 @@ import org.opengis.feature.type.AttributeType;
 import org.opengis.filter.identity.Identifier;
 
 /**
- * Simple, mutable class to store attributes.
+ * Default Attribut implementation.
  *
+ * @author Johann Sorel (Geomatys)
  * @author Rob Hranac, VFNY
  * @author Chris Holmes, TOPP
  * @author Ian Schneider
  * @author Jody Garnett
  * @author Gabriel Roldan
- * @version $Id$
  */
-public class DefaultAttribute extends DefaultProperty implements Attribute {
+public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I extends Identifier>
+        extends DefaultProperty<V,D> implements Attribute {
     
     /**
      * id of the attribute.
      */
-    protected final Identifier id;
+    protected final I id;
 
-    public DefaultAttribute(final Object content, final AttributeDescriptor descriptor, final Identifier id) {
+    /**
+     * Static constructor for the most commun use of Attribute classes type.
+     * @param content
+     * @param type
+     * @param id
+     * @return
+     */
+    public static DefaultAttribute<Object,AttributeDescriptor,Identifier> create(Object content, AttributeType type, Identifier id){
+        return new DefaultAttribute<Object,AttributeDescriptor,Identifier>(
+                content,
+                new DefaultAttributeDescriptor(type, type.getName(), 1, 1, true, null),
+                id);
+    }
+
+    /**
+     * Protected constructor, used by subclass which initialize the content after some
+     * processing.
+     * 
+     * @param descriptor
+     * @param id
+     */
+    protected DefaultAttribute(final D descriptor, final I id) {
+        super(descriptor);
+        this.id = id;
+    }
+
+    public DefaultAttribute(final V content, final D descriptor, final I id) {
         super(content, descriptor);
         this.id = id;
         Types.validate(this, getValue());
-    }
-
-    public DefaultAttribute(final Object content, final AttributeType type, final Identifier id) {
-        this(content, new DefaultAttributeDescriptor(type, type.getName(), 1, 1, true, null), id);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Identifier getIdentifier() {
+    public I getIdentifier() {
         return id;
     }
 
@@ -65,16 +89,8 @@ public class DefaultAttribute extends DefaultProperty implements Attribute {
      * {@inheritDoc }
      */
     @Override
-    public AttributeDescriptor getDescriptor() {
-        return (AttributeDescriptor) super.getDescriptor();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public AttributeType getType() {
-        return (AttributeType) super.getType();
+        return descriptor.getType();
     }
 
     /**
@@ -82,11 +98,7 @@ public class DefaultAttribute extends DefaultProperty implements Attribute {
      */
     @Override
     public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
-
-        newValue = parse(newValue);
-
-        //TODO: remove this validation
-        Types.validate(getType(), this, newValue);
+        newValue = checkType(newValue);
         super.setValue(newValue);
     }
 
@@ -141,11 +153,11 @@ public class DefaultAttribute extends DefaultProperty implements Attribute {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
-        sb.append(getDescriptor().getName().getLocalPart());
-        if (!getDescriptor().getName().getLocalPart().equals(getDescriptor().getType().getName().getLocalPart()) ||
+        sb.append(descriptor.getName().getLocalPart());
+        if (!descriptor.getName().getLocalPart().equals(descriptor.getType().getName().getLocalPart()) ||
                 id != null) {
             sb.append("<");
-            sb.append(getDescriptor().getType().getName().getLocalPart());
+            sb.append(descriptor.getType().getName().getLocalPart());
             if (id != null) {
                 sb.append(" id=");
                 sb.append(id);
@@ -174,9 +186,9 @@ public class DefaultAttribute extends DefaultProperty implements Attribute {
      * @throws IllegalArgumentException
      *             if parsing is attempted and is unsuccessful.
      */
-    protected Object parse(Object value) throws IllegalArgumentException {
+    protected Object checkType(Object value) throws IllegalArgumentException {
         if (value != null) {
-            final Class target = getType().getBinding();
+            final Class<?> target = getType().getBinding();
             if (!target.isAssignableFrom(value.getClass())) {
                 // attempt to convert
                 final Object converted = Converters.convert(value, target);

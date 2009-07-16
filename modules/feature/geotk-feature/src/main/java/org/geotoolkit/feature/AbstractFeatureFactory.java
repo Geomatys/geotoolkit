@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collection;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -28,6 +29,7 @@ import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
@@ -84,7 +86,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     public GeometryAttribute createGeometryAttribute(
             Object value, GeometryDescriptor descriptor, String id, CoordinateReferenceSystem crs) {
 
-        return new DefaultGeometryAttribute(value, descriptor, FF.gmlObjectId(id));
+        return new DefaultGeometryAttribute((Geometry)value,descriptor, FF.gmlObjectId(id));
     }
 
     /**
@@ -92,7 +94,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public ComplexAttribute createComplexAttribute(
-            Collection value, AttributeDescriptor descriptor, String id) {
+            Collection<Property> value, AttributeDescriptor descriptor, String id) {
         return new DefaultComplexAttribute(value, descriptor, FF.gmlObjectId(id));
     }
 
@@ -100,15 +102,15 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public ComplexAttribute createComplexAttribute(Collection value, ComplexType type, String id) {
-        return new DefaultComplexAttribute(value, type, FF.gmlObjectId(id));
+    public ComplexAttribute createComplexAttribute(Collection<Property> value, ComplexType type, String id) {
+        return DefaultComplexAttribute.create(value, type, FF.gmlObjectId(id));
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Feature createFeature(Collection value, AttributeDescriptor descriptor, String id) {
+    public Feature createFeature(Collection<Property> value, AttributeDescriptor descriptor, String id) {
         return new DefaultFeature(value, descriptor, FF.featureId(id));
     }
 
@@ -116,8 +118,8 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Feature createFeature(Collection value, FeatureType type, String id) {
-        return new DefaultFeature(value, type, FF.featureId(id));
+    public Feature createFeature(Collection<Property> value, FeatureType type, String id) {
+        return DefaultFeature.create(value, type, FF.featureId(id));
     }
 
     /**

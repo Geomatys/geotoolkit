@@ -18,19 +18,64 @@ package org.geotoolkit.feature;
 
 import java.util.Map;
 
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
-
 
 /**
  * Indicates client class has attempted to create an invalid feature.
  * @source $URL$
  */
-public class SimpleIllegalAttributeException extends org.opengis.feature.IllegalAttributeException {
-    
-    private static final AttributeDescriptor NULL_ATTRIBUTE_DESCRIPTOR = new NullAttributeDescriptor();
-    
+public class SimpleIllegalAttributeException extends IllegalAttributeException {
+
+    /**
+     * A descriptor for an attribute that does not exist.
+     */
+    private static final AttributeDescriptor NULL_ATTRIBUTE_DESCRIPTOR = new AttributeDescriptor(){
+
+        @Override
+        public int getMaxOccurs() {
+            return 0;
+        }
+
+        @Override
+        public int getMinOccurs() {
+            return 0;
+        }
+
+        @Override
+        public Name getName() {
+            return null;
+        }
+
+        @Override
+        public Map<Object, Object> getUserData() {
+            return null;
+        }
+
+        @Override
+        public boolean isNillable() {
+            return false;
+        }
+
+        @Override
+        public Object getDefaultValue() {
+            return null;
+        }
+
+        @Override
+        public String getLocalName() {
+            return null;
+        }
+
+        @Override
+        public AttributeType getType() {
+            return null;
+        }
+
+    };
+
     /**
      * Constructor with message argument.
      *
@@ -62,44 +107,4 @@ public class SimpleIllegalAttributeException extends org.opengis.feature.Illegal
         super( expected, invalid, cause );
     }
     
-    /**
-     * A descriptor for an attribute that does not exist. An ugly, ugly workaround for
-     * GEOT-2111/GEO-156.
-     */
-    private static class NullAttributeDescriptor implements AttributeDescriptor {
-
-        public int getMaxOccurs() {
-            return 0;
-        }
-
-        public int getMinOccurs() {
-            return 0;
-        }
-
-        public Name getName() {
-            return null;
-        }
-
-        public Map<Object, Object> getUserData() {
-            return null;
-        }
-
-        public boolean isNillable() {
-            return false;
-        }
-
-        public Object getDefaultValue() {
-            return null;
-        }
-
-        public String getLocalName() {
-            return null;
-        }
-
-        public AttributeType getType() {
-            return null;
-        }
-        
-    }
-
 }

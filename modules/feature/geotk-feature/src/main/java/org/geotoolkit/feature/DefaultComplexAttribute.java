@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,13 +19,10 @@ package org.geotoolkit.feature;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
 
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
@@ -33,14 +31,30 @@ import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.Identifier;
 
-public class DefaultComplexAttribute extends DefaultAttribute implements ComplexAttribute {
+/**
+ * Default implementation of a complexeAttribut.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultComplexAttribute<I extends Identifier> extends DefaultAttribute<Collection<Property>,AttributeDescriptor,I>
+        implements ComplexAttribute {
 
-    public DefaultComplexAttribute(Collection<Property> properties, AttributeDescriptor descriptor, Identifier id) {
-        super(cloneProperties( properties ), descriptor, id );
+    public static DefaultComplexAttribute<Identifier> create(
+            Collection<? extends Property> properties, ComplexType type, Identifier id) {
+        return new DefaultComplexAttribute(
+                properties,
+                new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),
+                id);
     }
-    
-    public DefaultComplexAttribute(Collection<Property> properties, ComplexType type, Identifier id) {
-        this(properties, new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null), id);
+
+    private final Property[] properties;
+
+    public DefaultComplexAttribute(Collection<? extends Property> properties, AttributeDescriptor descriptor, I id) {
+        super( null , descriptor, id );
+
+        //store the properties as an array and wrap it with an immutable list.
+        this.properties = properties.toArray(new Property[properties.size()]);
+        this.value = UnmodifiableArrayList.wrap(this.properties);
     }
 
     /**
@@ -48,15 +62,7 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      */
     @Override
     public ComplexType getType() {
-        return (ComplexType) super.getType();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<? extends Property> getValue() {
-       return unmodifiable((Collection) super.getValue());
+        return (ComplexType)descriptor.getType();
     }
 
     /**
@@ -64,15 +70,7 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      */
     @Override
     public Collection<Property> getProperties() {
-    	return unmodifiable((Collection) super.getValue());
-    }
-
-    /**
-     * Internal helper method for getting at the properties without wrapping
-     * in unmodifiable collection.
-     */
-    protected Collection properties() {
-        return (Collection) super.getValue();
+    	return value;
     }
 
     /**
@@ -80,14 +78,13 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      */
     @Override
     public Collection<Property> getProperties(Name name) {
-        List<Property> matches = new ArrayList<Property>();
-        for ( Iterator p = getValue().iterator(); p.hasNext(); ) {
-            Property property = (Property) p.next();
-            if ( property.getName().equals( name ) ) {
-                matches.add( property );
+        //we size it to 1, in most of the cases there is always a single property for a name.
+        final List<Property> matches = new ArrayList<Property>(1);
+        for(Property prop : properties){
+            if(prop.getName().equals(name)){
+                matches.add(prop);
             }
         }
-        
         return matches;
     }
 
@@ -96,14 +93,13 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      */
     @Override
     public Collection<Property> getProperties(String name) {
-        List<Property> matches = new ArrayList<Property>();
-        for ( Iterator p = properties().iterator(); p.hasNext(); ) {
-            Property property = (Property) p.next();
-            if ( property.getName().getLocalPart().equals( name ) ) {
-                matches.add( property );
+        //we size it to 1, in most of the cases there is always a single property for a name.
+        final List<Property> matches = new ArrayList<Property>(1);
+        for(Property prop : properties){
+            if(prop.getName().getLocalPart().equals(name)){
+                matches.add(prop);
             }
         }
-        
         return matches;
     }
 
@@ -112,13 +108,12 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      */
     @Override
     public Property getProperty(Name name) {
-        for ( Iterator p = properties().iterator(); p.hasNext(); ) {
-            Property property = (Property) p.next();
-            if ( property.getName().equals( name ) ) {
-                return property;
+        //TODO find a faster way, hashmap ?
+        for(Property prop : properties){
+            if(prop.getName().equals(name)){
+                return prop;
             }
         }
-        
         return null;
     }
 
@@ -127,13 +122,12 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      */
     @Override
     public Property getProperty(String name) {
-        for ( Iterator p = getValue().iterator(); p.hasNext(); ) {
-            Property property = (Property) p.next();
-            if ( property.getName().getLocalPart().equals( name ) ) {
-                return property;
+        //TODO find a faster way, hashmap ?
+        for(Property prop : properties){
+            if(prop.getName().getLocalPart().equals(name)){
+                return prop;
             }
         }
-        
         return null;
     }
 
@@ -150,53 +144,12 @@ public class DefaultComplexAttribute extends DefaultAttribute implements Complex
      * {@inheritDoc }
      */
     @Override
-    public void setValue(Collection<Property> newValue) {
-        super.setValue(cloneProperties(newValue));
-    }
-
-    /**
-     * helper method to clone the property collection.
-     */
-    private static Collection cloneProperties( Collection original ) {
-        if ( original == null ) {
-            return null;
+    public void setValue(Collection<Property> newValues) {
+        if(this.properties.length != newValues.size()){
+            throw new IllegalArgumentException("Expected size of the collection is " 
+                    + this.properties.length +" but the provided size is " +newValues.size());
         }
-        
-        Collection clone = null;
-        try {
-            clone = original.getClass().newInstance();
-        }
-        catch( Exception e ) {
-            clone = new ArrayList();
-        }
-        
-        clone.addAll( original );
-        return clone;
-    }
-    
-    /**
-     * Wraps a collection in an umodifiable collection based on the interface
-     * the collection implements.
-     * <p>
-     * A list will result in an umodifiable list, a set in an unmodifiable set,
-     * etc..
-     * </p>
-     *
-     */
-    public static Collection unmodifiable( Collection original ) {
-
-        if ( original instanceof Set ) {
-            if ( original instanceof SortedSet ) {
-                return Collections.unmodifiableSortedSet((SortedSet) original);
-            }
-
-            return Collections.unmodifiableSet((Set)original);
-        }
-        else if ( original instanceof List ) {
-            return Collections.unmodifiableList((List)original);
-        }
-
-        return Collections.unmodifiableCollection(original);
+        newValues.toArray(this.properties);
     }
 
 }

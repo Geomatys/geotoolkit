@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +20,8 @@ package org.geotoolkit.feature;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
@@ -37,13 +39,31 @@ import org.opengis.geometry.BoundingBox;
  * </p>
  * @author jdeolive
  * @author jgarnett
+ * @author Johann Sorel (Geomatys)
+ *
+ * TODO : Make this class thread safe or not ?
  */
-public class DefaultFeature extends DefaultComplexAttribute implements Feature {
+public class DefaultFeature extends DefaultComplexAttribute<FeatureId> implements Feature {
 
     /**
      * Default geometry attribute
      */
-    GeometryAttribute defaultGeometry;
+    protected GeometryAttribute defaultGeometry;
+    protected BoundingBox bounds;
+
+    /**
+     * Create a Feature with the following content.
+     *
+     * @param properties Collectio of Properties (aka Attributes and/or Associations)
+     * @param type Type of feature to be created
+     * @param id Feature ID
+     */
+    public static DefaultFeature create(Collection<Property> properties, FeatureType type, FeatureId id) {
+        return new DefaultFeature(
+                properties,
+                new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),
+                id);
+    }
 
     /**
      * Create a Feature with the following content.
@@ -54,17 +74,7 @@ public class DefaultFeature extends DefaultComplexAttribute implements Feature {
      */
     public DefaultFeature(Collection<Property> properties, AttributeDescriptor desc, FeatureId id) {
         super(properties, desc, id);
-    }
 
-    /**
-     * Create a Feature with the following content.
-     *
-     * @param properties Collectio of Properties (aka Attributes and/or Associations)
-     * @param type Type of feature to be created
-     * @param id Feature ID
-     */
-    public DefaultFeature(Collection<Property> properties, FeatureType type, FeatureId id) {
-        super(properties, type, id);
     }
 
     /**
@@ -72,15 +82,7 @@ public class DefaultFeature extends DefaultComplexAttribute implements Feature {
      */
     @Override
     public FeatureType getType() {
-        return (FeatureType) super.getType();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureId getIdentifier() {
-        return (FeatureId) this.id;
+        return (FeatureType) descriptor.getType();
     }
 
     /**
@@ -96,11 +98,13 @@ public class DefaultFeature extends DefaultComplexAttribute implements Feature {
     @Override
     public BoundingBox getBounds() {
 
-        JTSEnvelope2D bounds = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
-        for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-            Property property = (Property) itr.next();
-            if (property instanceof GeometryAttribute) {
-                bounds.include(((GeometryAttribute) property).getBounds());
+        if(bounds == null){
+            bounds = new DefaultBoundingBox(getType().getCoordinateReferenceSystem());
+            for (Iterator itr = getValue().iterator(); itr.hasNext();) {
+                Property property = (Property) itr.next();
+                if (property instanceof GeometryAttribute) {
+                    bounds.include(((GeometryAttribute) property).getBounds());
+                }
             }
         }
 
@@ -123,8 +127,7 @@ public class DefaultFeature extends DefaultComplexAttribute implements Feature {
                     return null;
                 }
 
-                GeometryType geometryType =
-                        (GeometryType) getType().getGeometryDescriptor().getType();
+                GeometryType geometryType = (GeometryType) getType().getGeometryDescriptor().getType();
 
                 if (geometryType != null) {
                     for (Iterator itr = getValue().iterator(); itr.hasNext();) {
