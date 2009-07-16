@@ -19,20 +19,24 @@ package org.geotoolkit.feature.type;
 import java.util.List;
 
 import org.geotoolkit.util.Utilities;
+
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
+/**
+ * Default implementation of a association type
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultAssociationType extends DefaultPropertyType<AssociationType> implements AssociationType {
 
-public class DefaultAssociationType extends DefaultPropertyType implements AssociationType {
-
-    final protected AttributeType relatedType;
+    protected final AttributeType relatedType;
 
     public DefaultAssociationType(final Name name, final AttributeType referenceType, final boolean isAbstract,
-            final List<Filter> restrictions, final AssociationType superType, final InternationalString description)
-    {
+            final List<Filter> restrictions, final AssociationType superType, final InternationalString description){
         super(name, referenceType.getBinding(), isAbstract, restrictions, superType, description);
         this.relatedType = referenceType;
 
@@ -41,21 +45,25 @@ public class DefaultAssociationType extends DefaultPropertyType implements Assoc
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType getRelatedType() {
         return relatedType;
     }
 
-    @Override
-    public AssociationType getSuper() {
-        return (AssociationType) super.getSuper();
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         return super.hashCode() ^ relatedType.hashCode();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof DefaultAssociationType)) {
@@ -67,6 +75,9 @@ public class DefaultAssociationType extends DefaultPropertyType implements Assoc
         return super.equals(ass) && Utilities.equals(relatedType, ass.getRelatedType());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         return new StringBuilder(super.toString()).append("; relatedType=[").append(relatedType).append("]").toString();

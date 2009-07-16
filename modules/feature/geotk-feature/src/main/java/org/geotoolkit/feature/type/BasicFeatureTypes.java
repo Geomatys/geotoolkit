@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 
 

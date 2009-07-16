@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
@@ -33,8 +34,6 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.Schema;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
@@ -52,124 +51,108 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
 
-    /** Used for spatial content */
-    private CRSFactory crsFactory;
-    /** Used for type restrictions */
-    private FilterFactory filterFactory;
-
-    /** Rely on setter injection */
     public DefaultFeatureTypeFactory() {
-        this.crsFactory = null;
-        this.filterFactory = null;
     }
 
-    /** Constructor injection */
-    public DefaultFeatureTypeFactory(final CRSFactory crsFactory, final FilterFactory filterFactory) {
-        this.crsFactory = crsFactory;
-        this.filterFactory = filterFactory;
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Schema createSchema(final String uri) {
         return new DefaultSchema(uri);
     }
 
-    public CRSFactory getCRSFactory() {
-        return crsFactory;
-    }
-
-    public void setCRSFactory(final CRSFactory crsFactory) {
-        this.crsFactory = crsFactory;
-    }
-
-    public FilterFactory getFilterFactory() {
-        return filterFactory;
-    }
-
-    public void setFilterFactory(final FilterFactory filterFactory) {
-        this.filterFactory = filterFactory;
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AssociationDescriptor createAssociationDescriptor(final AssociationType type,
-            final Name name, final int minOccurs, final int maxOccurs, final boolean isNillable)
-    {
-
+            final Name name, final int minOccurs, final int maxOccurs, final boolean isNillable){
         return new DefaultAssociationDescriptor(type, name, minOccurs, maxOccurs, isNillable);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeDescriptor createAttributeDescriptor(final AttributeType type, final Name name,
-            final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue)
-    {
-
+            final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue){
         return new DefaultAttributeDescriptor(type, name, minOccurs, maxOccurs, isNillable, defaultValue);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GeometryDescriptor createGeometryDescriptor(final GeometryType type, final Name name,
-            final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue)
-    {
+            final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue){
         return new DefaultGeometryDescriptor(type, name, minOccurs, maxOccurs, isNillable, defaultValue);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AssociationType createAssociationType(final Name name, final AttributeType relatedType,
             final boolean isAbstract, final List restrictions, final AssociationType superType,
-            final InternationalString description)
-    {
-
+            final InternationalString description){
         return new DefaultAssociationType(name, relatedType,
                 isAbstract, restrictions, superType, description);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType createAttributeType(final Name name, final Class binding,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
-            final AttributeType superType, final InternationalString description)
-    {
-
+            final AttributeType superType, final InternationalString description){
         return new DefaultAttributeType(name, binding, isIdentifiable, isAbstract,
                 restrictions, superType, description);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ComplexType createComplexType(final Name name, final Collection schema,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
-            final AttributeType superType, final InternationalString description)
-    {
+            final AttributeType superType, final InternationalString description){
         return new DefaultComplexType(name, schema, isIdentifiable, isAbstract,
                 restrictions, superType, description);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GeometryType createGeometryType(final Name name, final Class binding,
             final CoordinateReferenceSystem crs, final boolean isIdentifiable,
             final boolean isAbstract, final List restrictions, final AttributeType superType,
-            final InternationalString description)
-    {
-
+            final InternationalString description){
         return new DefaultGeometryType(name, binding, crs, isIdentifiable,
                 isAbstract, restrictions, superType, description);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureType createFeatureType(final Name name, final Collection schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
-            final List restrictions, final AttributeType superType, final InternationalString description)
-    {
-
+            final List restrictions, final AttributeType superType, final InternationalString description){
         return new DefaultFeatureType(name, schema, defaultGeometry,
                 isAbstract, restrictions, superType, description);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType createSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType,
-            final InternationalString description)
-    {
-
+            final InternationalString description){
         return new DefaultSimpleFeatureType(name, schema, defaultGeometry, isAbstract,
                 restrictions, superType, description);
     }

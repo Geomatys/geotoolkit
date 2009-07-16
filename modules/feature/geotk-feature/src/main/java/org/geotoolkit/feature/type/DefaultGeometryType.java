@@ -29,20 +29,23 @@ import org.opengis.util.InternationalString;
 /**
  * AttributeType for hold geometry implementations, maintains CRS information.
  */
-public class DefaultGeometryType extends DefaultAttributeType implements GeometryType {
+public class DefaultGeometryType extends DefaultAttributeType<AttributeType> implements GeometryType {
 
-    protected CoordinateReferenceSystem CRS;
+    protected final CoordinateReferenceSystem crs;
 
     public DefaultGeometryType(final Name name, final Class binding, final CoordinateReferenceSystem crs,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
-            final AttributeType superType, final InternationalString description)
-    {
+            final AttributeType superType, final InternationalString description){
         super(name, binding, identified, isAbstract, restrictions, superType, description);
-        CRS = crs;
+        this.crs = crs;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return CRS;
+        return crs;
     }
+    
 }

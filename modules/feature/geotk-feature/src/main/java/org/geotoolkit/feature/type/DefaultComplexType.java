@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.feature.type;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
+
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
@@ -39,12 +40,15 @@ import org.opengis.util.InternationalString;
  *
  * @author gabriel
  * @author Ben Caradoc-Davies, CSIRO Exploration and Mining
+ * @author Johann Sorel (Geomatys)
  */
-public class DefaultComplexType extends DefaultAttributeType implements ComplexType {
+public class DefaultComplexType extends DefaultAttributeType<AttributeType> implements ComplexType {
+
     /**
      * Immutable copy of the properties list with which we were constructed.
      */
-    private final Collection<PropertyDescriptor> properties;
+    protected final PropertyDescriptor[] properties;
+    protected final List<PropertyDescriptor> propertiesList;
 
     /**
      * Map to locate properties by name.
@@ -53,16 +57,17 @@ public class DefaultComplexType extends DefaultAttributeType implements ComplexT
 
     public DefaultComplexType(final Name name, final Collection<PropertyDescriptor> properties,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
-            final AttributeType superType, final InternationalString description)
-    {
+            final AttributeType superType, final InternationalString description){
         super(name, Collection.class, identified, isAbstract, restrictions, superType, description);
-        final List<PropertyDescriptor> localProperties;
+
         final Map<Name, PropertyDescriptor> localPropertyMap;
+
         if (properties == null) {
-            localProperties = Collections.emptyList();
+            this.properties = new PropertyDescriptor[0];
             localPropertyMap = Collections.emptyMap();
         } else {
-            localProperties = new ArrayList<PropertyDescriptor>(properties);
+            this.properties = properties.toArray(new PropertyDescriptor[properties.size()]);
+            
             localPropertyMap = new HashMap<Name, PropertyDescriptor>();
             for (PropertyDescriptor pd : properties) {
                 if (pd == null) {
@@ -73,30 +78,45 @@ public class DefaultComplexType extends DefaultAttributeType implements ComplexT
             }
 
         }
-        this.properties = Collections.unmodifiableList(localProperties);
+        this.propertiesList = UnmodifiableArrayList.wrap(this.properties);
         this.propertyMap = Collections.unmodifiableMap(localPropertyMap);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<Collection<Property>> getBinding() {
         return (Class<Collection<Property>>) super.getBinding();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<PropertyDescriptor> getDescriptors() {
-        return properties;
+        return propertiesList;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public PropertyDescriptor getDescriptor(final Name name) {
         return propertyMap.get(name);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public PropertyDescriptor getDescriptor(final String name) {
         return getDescriptor(new DefaultName(name));
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isInline() {
         //JD: at this point "inlining" is unused... we might want to kill it
@@ -104,6 +124,9 @@ public class DefaultComplexType extends DefaultAttributeType implements ComplexT
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -116,17 +139,23 @@ public class DefaultComplexType extends DefaultAttributeType implements ComplexT
             return false;
         }
         DefaultComplexType other = (DefaultComplexType) o;
-        if (!properties.equals(other.properties)) {
+        if (!propertiesList.equals(other.propertiesList)) {
             return false;
         }
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         return 59 * super.hashCode() + properties.hashCode();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));

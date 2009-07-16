@@ -20,16 +20,16 @@ import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.Name;
 
-
-public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor
+/**
+ * Default implementation of a asociation descriptor
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor<AssociationType>
         implements AssociationDescriptor {
 
     public DefaultAssociationDescriptor(AssociationType type, Name name, int min, int max, boolean isNillable) {
         super(type, name, min, max, isNillable);
     }
-
-    @Override
-    public AssociationType getType() {
-        return (AssociationType) super.getType();
-    }
+    
 }

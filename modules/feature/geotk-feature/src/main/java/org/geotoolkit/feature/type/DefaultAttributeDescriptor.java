@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,39 +21,56 @@ import java.util.Map;
 
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
+
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 
-
-public class DefaultAttributeDescriptor extends DefaultPropertyDescriptor implements AttributeDescriptor {
+/**
+ * Default implementation of a property descriptor
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultAttributeDescriptor<T extends AttributeType> extends DefaultPropertyDescriptor<T>
+        implements AttributeDescriptor {
 
     protected final Object defaultValue;
 
-    public DefaultAttributeDescriptor(final AttributeType type, final Name name, final int min,
-            final int max, final boolean isNillable, final Object defaultValue)
-    {
+    public DefaultAttributeDescriptor(final T type, final Name name, final int min,
+            final int max, final boolean isNillable, final Object defaultValue){
         super(type, name, min, max, isNillable);
 
         this.defaultValue = defaultValue;
     }
 
-    @Override
-    public AttributeType getType() {
-        return (AttributeType) super.getType();
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object getDefaultValue() {
         return defaultValue;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getLocalName() {
+        return getName().getLocalPart();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         return super.hashCode() ^
                 (defaultValue != null ? defaultValue.hashCode() : 0);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DefaultAttributeDescriptor)) {
@@ -64,6 +82,9 @@ public class DefaultAttributeDescriptor extends DefaultPropertyDescriptor implem
         return super.equals(o) && Utilities.deepEquals(defaultValue, d.defaultValue);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
@@ -104,8 +125,4 @@ public class DefaultAttributeDescriptor extends DefaultPropertyDescriptor implem
         return sb.toString();
     }
 
-    @Override
-    public String getLocalName() {
-        return getName().getLocalPart();
-    }
 }

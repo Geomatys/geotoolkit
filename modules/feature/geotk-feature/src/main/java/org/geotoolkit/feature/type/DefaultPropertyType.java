@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,25 +24,32 @@ import java.util.Map;
 
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
+
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
-public class DefaultPropertyType implements PropertyType {
+/**
+ * Default implementation of a property type
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultPropertyType<T extends PropertyType> implements PropertyType {
 
     private static final List<Filter> NO_RESTRICTIONS = Collections.emptyList();
+
     protected final Name name;
     protected final Class<?> binding;
     protected final boolean isAbstract;
-    protected final PropertyType superType;
+    protected final T superType;
     protected final List<Filter> restrictions;
     protected final InternationalString description;
     protected final Map<Object, Object> userData;
 
     public DefaultPropertyType(final Name name, final Class<?> binding, final boolean isAbstract,
-            final List<Filter> restrictions, final PropertyType superType, final InternationalString description)
-    {
+            final List<Filter> restrictions, final T superType, final InternationalString description){
         if (name == null) {
             throw new NullPointerException("Name is required for PropertyType");
         }
@@ -52,14 +60,15 @@ public class DefaultPropertyType implements PropertyType {
             }
             throw new NullPointerException("Binding to a Java class is required");
         }
+
         this.name = name;
         this.binding = binding;
         this.isAbstract = isAbstract;
 
-        if (restrictions == null) {
+        if (restrictions == null || restrictions.isEmpty()) {
             this.restrictions = NO_RESTRICTIONS;
         } else {
-            this.restrictions = Collections.unmodifiableList(restrictions);
+            this.restrictions = UnmodifiableArrayList.wrap(restrictions.toArray(new Filter[restrictions.size()]));
         }
 
         this.superType = superType;
@@ -67,41 +76,65 @@ public class DefaultPropertyType implements PropertyType {
         this.userData = new HashMap<Object, Object>();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Name getName() {
         return name;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Class<?> getBinding() {
         return binding;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isAbstract() {
         return isAbstract;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<Filter> getRestrictions() {
         return restrictions;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public PropertyType getSuper() {
+    public T getSuper() {
         return superType;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InternationalString getDescription() {
         return description;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         return getName().hashCode() ^ getBinding().hashCode() ^ (getDescription() != null ? getDescription().hashCode() : 17);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {

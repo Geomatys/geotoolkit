@@ -72,41 +72,65 @@ public class DefaultProfile implements Schema {
         this.profile = Collections.unmodifiableSet(profile);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Set<Name> keySet() {
         return profile;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getURI() {
         return parent.getURI();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Schema profile(final Set<Name> profile) {
         return parent.profile(profile);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int size() {
         return profile.size();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isEmpty() {
         return profile.isEmpty();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean containsKey(final Object key) {
         return profile.contains(key);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean containsValue(final Object value) {
         return values().contains(value);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType get(final Object key) {
         if (profile.contains(key)) {
@@ -115,26 +139,41 @@ public class DefaultProfile implements Schema {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType put(final Name key, final AttributeType value) {
         throw new UnsupportedOperationException("Profile not mutable");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType remove(final Object key) {
         throw new UnsupportedOperationException("Profile not mutable");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void putAll(final Map<? extends Name, ? extends AttributeType> t) {
         throw new UnsupportedOperationException("Profile not mutable");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void clear() {
         throw new UnsupportedOperationException("Profile not mutable");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void add(final AttributeType type) {
         throw new UnsupportedOperationException("Profile not mutable");

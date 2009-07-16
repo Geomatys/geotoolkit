@@ -41,8 +41,8 @@ import org.opengis.util.InternationalString;
 public class DefaultSimpleFeatureType extends DefaultFeatureType implements SimpleFeatureType {
 
     // list of types
-    List<AttributeType> types = null;
-    Map<String, Integer> index;
+    final List<AttributeType> types;
+    final Map<String, Integer> index;
 
     public DefaultSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
@@ -53,6 +53,12 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
         super(name, (List) schema, defaultGeometry, isAbstract, restrictions,
                 superType, description);
         index = buildIndex(this);
+
+        types = new ArrayList<AttributeType>();
+        for (AttributeDescriptor ad : getAttributeDescriptors()) {
+            types.add(ad.getType());
+        }
+
     }
 
     /**
@@ -68,16 +74,6 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
 
     @Override
     public List<AttributeType> getTypes() {
-        if (types == null) {
-            synchronized (this) {
-                if (types == null) {
-                    types = new ArrayList<AttributeType>();
-                    for (AttributeDescriptor ad : getAttributeDescriptors()) {
-                        types.add(ad.getType());
-                    }
-                }
-            }
-        }
         return types;
     }
 

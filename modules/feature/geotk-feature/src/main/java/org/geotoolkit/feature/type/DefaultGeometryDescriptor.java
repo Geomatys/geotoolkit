@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,29 +22,32 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
-public class DefaultGeometryDescriptor extends DefaultAttributeDescriptor
+/**
+ * Default implementation of a geometry descriptor.
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class DefaultGeometryDescriptor extends DefaultAttributeDescriptor<GeometryType>
         implements GeometryDescriptor {
 
     public DefaultGeometryDescriptor(final GeometryType type, final Name name, final int min,
-            final int max, final boolean isNillable, final Object defaultValue)
-    {
+            final int max, final boolean isNillable, final Object defaultValue){
         super(type, name, min, max, isNillable, defaultValue);
-
     }
 
-    @Override
-    public GeometryType getType() {
-        return (GeometryType) super.getType();
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return getType().getCoordinateReferenceSystem();
+        return type.getCoordinateReferenceSystem();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getLocalName() {
-        return getName().getLocalPart();
+        return name.getLocalPart();
     }
 }

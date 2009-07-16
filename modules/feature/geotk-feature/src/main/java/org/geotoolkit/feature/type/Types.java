@@ -21,6 +21,7 @@ import java.util.TreeSet;
 
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.util.Converters;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -74,7 +75,6 @@ public class Types {
      */
     public static void validate(final Attribute attribute, final Object attributeContent)
             throws IllegalAttributeException {
-
         validate(attribute.getType(), attribute, attributeContent, false);
     }
 
@@ -86,9 +86,7 @@ public class Types {
      * @throws IllegalAttributeException
      */
     public static void validate(final AttributeType type, final Attribute attribute,
-            final Object attributeContent) throws IllegalAttributeException
-    {
-
+            final Object attributeContent) throws IllegalAttributeException{
         validate(type, attribute, attributeContent, false);
     }
 
@@ -101,8 +99,7 @@ public class Types {
      * @throws IllegalAttributeException
      */
     protected static void validate(final AttributeType type, final Attribute attribute,
-            final Object attributeContent, final boolean isSuper) throws IllegalAttributeException
-    {
+            final Object attributeContent, final boolean isSuper) throws IllegalAttributeException{
 
         if (type == null) {
             throw new SimpleIllegalAttributeException("null type");
@@ -199,8 +196,7 @@ public class Types {
     }
 
     protected static void validate(final AttributeType type, final Object value, boolean isSuper)
-            throws IllegalAttributeException
-    {
+            throws IllegalAttributeException{
         if (!isSuper) {
             // JD: This is an issue with how the xml simpel type hierarchy
             // maps to our current Java Type hiearchy, the two are inconsitent.

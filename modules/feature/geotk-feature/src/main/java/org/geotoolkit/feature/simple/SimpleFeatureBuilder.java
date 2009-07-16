@@ -38,7 +38,6 @@ import org.opengis.feature.type.Name;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.opengis.filter.identity.FeatureId;
 
 

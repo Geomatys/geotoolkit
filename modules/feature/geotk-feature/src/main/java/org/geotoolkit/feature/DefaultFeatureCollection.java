@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.feature;
 
-// J2SE interfaces
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,8 +39,8 @@ import org.geotoolkit.feature.utility.NullProgressListener;
 import org.geotoolkit.feature.collection.CollectionEvent;
 import org.geotoolkit.feature.collection.CollectionListener;
 import org.geotoolkit.feature.collection.FeatureIterator;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -76,7 +75,18 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
     /** Internal envelope of bounds. */
     private JTSEnvelope2D bounds = null;
 
-    //private String id; /// fid
+    /**
+     * listeners
+     */
+    protected final List listeners = new ArrayList();
+    
+    /**
+     * id used when serialized to gml
+     */
+    protected final String id;
+    protected SimpleFeatureType schema;
+
+
     /**
      * This constructor should not be used by client code.
      * @param collection FeatureCollection<SimpleFeatureType, SimpleFeature> to copy into memory
@@ -102,15 +112,6 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
         this.id = (id == null) ? "featureCollection" : id;
         this.schema = memberType;
     }
-    /**
-     * listeners
-     */
-    protected final List listeners = new ArrayList();
-    /**
-     * id used when serialized to gml
-     */
-    protected final String id;
-    protected SimpleFeatureType schema;
 
     /**
      * Gets the bounding box for the features in this feature collection.

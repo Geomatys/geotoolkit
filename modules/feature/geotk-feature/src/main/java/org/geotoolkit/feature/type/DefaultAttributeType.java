@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,22 +29,23 @@ import org.opengis.util.InternationalString;
 /**
  * Base class for attribute types.
  *
- * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
- *
+ * @author Justin Deoliveira, The Open Planning Project
  */
-public class DefaultAttributeType extends DefaultPropertyType implements AttributeType {
+public class DefaultAttributeType<T extends AttributeType> extends DefaultPropertyType<T> implements AttributeType {
 
     protected final boolean identified;
 
     public DefaultAttributeType(final Name name, final Class<?> binding, final boolean identified,
-            final boolean isAbstract, final List<Filter> restrictions, final AttributeType superType,
-            final InternationalString description)
-    {
+            final boolean isAbstract, final List<Filter> restrictions, final T superType,
+            final InternationalString description){
         super(name, binding, isAbstract, restrictions, superType, description);
 
         this.identified = identified;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isIdentified() {
         return identified;
@@ -73,11 +75,6 @@ public class DefaultAttributeType extends DefaultPropertyType implements Attribu
 
     public Object createDefaultValue() {
         return null;
-    }
-
-    @Override
-    public AttributeType getSuper() {
-        return (AttributeType) super.getSuper();
     }
 
     /**

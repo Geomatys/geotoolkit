@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.util.Utilities;
+
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -35,7 +37,6 @@ import org.opengis.util.InternationalString;
  * Base implementation of FeatureType.
  * 
  * @author gabriel
- *
  */
 public class DefaultFeatureType extends DefaultComplexType implements FeatureType {
 
@@ -48,25 +49,29 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         super(name, schema, true, isAbstract, restrictions, superType, description);
         this.defaultGeometry = defaultGeometry;
 
-        if (defaultGeometry != null &&
-                !(defaultGeometry.getType() instanceof GeometryType)) {
+        if (defaultGeometry != null && !(defaultGeometry.getType() instanceof GeometryType)) {
             throw new IllegalArgumentException("defaultGeometry must have a GeometryType");
         }
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (crs == null) {
-            if (getGeometryDescriptor() != null && getGeometryDescriptor().getType().getCoordinateReferenceSystem() != null) {
-                crs = defaultGeometry.getType().getCoordinateReferenceSystem();
-            }
+            //try to affect crs by loading the geometry descriptor
+            getGeometryDescriptor();
+
+            //try to find other geometries to set the crs
             if (crs == null) {
-                for (PropertyDescriptor property : getDescriptors()) {
+                for (PropertyDescriptor property : properties) {
                     if (property instanceof GeometryDescriptor) {
                         GeometryDescriptor geometry = (GeometryDescriptor) property;
-                        if (geometry.getType().getCoordinateReferenceSystem() != null) {
-                            crs = geometry.getType().getCoordinateReferenceSystem();
+                        CoordinateReferenceSystem geomCRS = geometry.getType().getCoordinateReferenceSystem();
+                        if (geomCRS != null) {
+                            crs = geomCRS;
                             break;
                         }
                     }
@@ -77,12 +82,21 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         return crs;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GeometryDescriptor getGeometryDescriptor() {
         if (defaultGeometry == null) {
-            for (PropertyDescriptor property : getDescriptors()) {
+            for (PropertyDescriptor property : properties) {
                 if (property instanceof GeometryDescriptor) {
                     defaultGeometry = (GeometryDescriptor) property;
+
+                    //initialize crs if we can
+                    if(crs == null){
+                        //we know that the geom crs might be null, even if it's the case, that wont have any effect.
+                        crs = defaultGeometry.getType().getCoordinateReferenceSystem();
+                    }
                     break;
                 }
             }
@@ -90,6 +104,9 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         return defaultGeometry;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -108,6 +125,9 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hashCode = super.hashCode();
