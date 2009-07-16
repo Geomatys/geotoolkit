@@ -368,12 +368,15 @@ public class ImageGeometry extends MetadataAccessor {
      *
      * @see PixelOrientation
      */
-    public void setPixelOrientation(final String pixelOrientation) {
-        if (GeographicMetadataFormat.PIXEL_ORIENTATIONS.contains(pixelOrientation)) {
-            getPixelOrientationAccessor().setUserObject(pixelOrientation);
-        } else {
-            warning("setPixelOrientation", Errors.Keys.BAD_PARAMETER_$2, pixelOrientation);
+    public void setPixelOrientation(String pixelOrientation) {
+        pixelOrientation = pixelOrientation.replace('_', ' ').trim();
+        for (final String e : GeographicMetadataFormat.PIXEL_ORIENTATIONS) {
+            if (pixelOrientation.equalsIgnoreCase(e)) {
+                getPixelOrientationAccessor().setUserObject(e);
+                return;
+            }
         }
+        warning("setPixelOrientation", Errors.Keys.BAD_PARAMETER_$2, new Object[] {"pixelOrientation", pixelOrientation});
     }
 
     /**
