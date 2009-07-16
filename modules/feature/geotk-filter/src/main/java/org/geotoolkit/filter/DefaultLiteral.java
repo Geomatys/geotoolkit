@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import org.geotoolkit.util.Converters;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
@@ -77,7 +78,19 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
             return false;
         }
         final DefaultLiteral<T> other = (DefaultLiteral<T>) obj;
-        if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
+
+        if (this.value == null && other.value == null) {
+            return true;
+        }
+        if (this.value == null) {
+            return false;
+        }
+        if (other.value == null) {
+            return false;
+        }
+
+        final Object otherVal = Converters.convert(other.value, this.value.getClass());
+        if (!this.value.equals(otherVal)) {
             return false;
         }
         return true;
