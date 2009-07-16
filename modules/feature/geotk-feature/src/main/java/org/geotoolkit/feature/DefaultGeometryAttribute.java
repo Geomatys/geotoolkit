@@ -18,6 +18,7 @@ package org.geotoolkit.feature;
 
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.Utilities;
+
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
@@ -52,8 +53,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * @author Leprosy
  * @since 0.3 TODO: test wkt geometry parse.
  */
-public class DefaultGeometryAttribute extends DefaultAttribute implements
-        GeometryAttribute {
+public class DefaultGeometryAttribute extends DefaultAttribute implements GeometryAttribute {
 
     /**
      * bounds, derived
@@ -61,30 +61,39 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements
     protected BoundingBox bounds;
 
     public DefaultGeometryAttribute(final Object content, final GeometryDescriptor descriptor,
-            final Identifier id)
-    {
+            final Identifier id){
         super(content, descriptor, id);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GeometryType getType() {
         return (GeometryType) super.getType();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GeometryDescriptor getDescriptor() {
         return (GeometryDescriptor) super.getDescriptor();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Geometry getValue() {
         return (Geometry) super.getValue();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void setValue(final Object newValue) throws IllegalArgumentException,
-            IllegalStateException
-    {
+    public void setValue(final Object newValue) throws IllegalArgumentException, IllegalStateException{
         setValue((Geometry) newValue);
     }
 
@@ -122,6 +131,9 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements
         return bounds;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -188,6 +200,9 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = descriptor.hashCode();
@@ -199,6 +214,9 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements
         return hash;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(getClass().getSimpleName()).append(":");

@@ -41,9 +41,8 @@ import org.geotoolkit.feature.collection.CollectionEvent;
 import org.geotoolkit.feature.collection.CollectionListener;
 import org.geotoolkit.feature.collection.FeatureIterator;
 
-import org.opengis.feature.FeatureVisitor;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.IllegalAttributeException;
-import org.opengis.util.ProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -64,7 +63,7 @@ import org.opengis.geometry.BoundingBox;
  */
 public class DefaultFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {
 
-    protected static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.feature");
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
     /**
      * Contents of collection, referenced by FeatureID.
      * <p>
@@ -73,8 +72,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * </p>
      */
     private final SortedMap contents = new TreeMap();
-    /** Internal listener storage list */
-    //private List listeners = new ArrayList(2);
+
     /** Internal envelope of bounds. */
     private JTSEnvelope2D bounds = null;
 

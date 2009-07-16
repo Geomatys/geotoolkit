@@ -28,8 +28,10 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
+import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.Utilities;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -48,7 +50,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.filter.function.other.LengthFunction;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -72,6 +73,8 @@ public class FeatureTypes {
     //public static final URI = GMLSchema.NAMESPACE;
     public static final URI DEFAULT_NAMESPACE;
 
+    /** abstract base type for all feature types */
+    public final static SimpleFeatureType ABSTRACT_FEATURE_TYPE;
 
     static {
         URI uri;
@@ -81,12 +84,7 @@ public class FeatureTypes {
             uri = null;	//will never happen
         }
         DEFAULT_NAMESPACE = uri;
-    }
-    /** abstract base type for all feature types */
-    public final static SimpleFeatureType ABSTRACT_FEATURE_TYPE;
 
-
-    static {
         SimpleFeatureType featureType = null;
         try {
             featureType = FeatureTypes.newFeatureType(null, "Feature", new URI("http://www.opengis.net/gml"), true);
@@ -95,11 +93,14 @@ public class FeatureTypes {
         }
         ABSTRACT_FEATURE_TYPE = featureType;
     }
+
     /** default feature collection name */
     public static final DefaultName DEFAULT_TYPENAME =
             new DefaultName("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
+
     /** represent an unbounded field length */
     public static final int ANY_LENGTH = -1;
+
     /** An feature type with no attributes */
     public static final SimpleFeatureType EMPTY = new DefaultSimpleFeatureType(
             new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
@@ -152,8 +153,7 @@ public class FeatureTypes {
      * @throws SchemaException
      */
     public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs)
-            throws SchemaException
-    {
+            throws SchemaException{
         return transform(schema, crs, false);
     }
 
@@ -167,14 +167,13 @@ public class FeatureTypes {
      * @throws SchemaException
      */
     public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs,
-            boolean forceOnlyMissing) throws SchemaException
-    {
+            boolean forceOnlyMissing) throws SchemaException{
         final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
         tb.setName(schema.getTypeName());
         tb.setNamespaceURI(schema.getName().getNamespaceURI());
         tb.setAbstract(schema.isAbstract());
 
-        for (int i = 0; i < schema.getAttributeCount(); i++) {
+        for (int i=0,n= schema.getAttributeCount(); i<n; i++) {
             final AttributeDescriptor attributeType = schema.getDescriptor(i);
             if (attributeType instanceof GeometryDescriptor) {
                 final GeometryDescriptor geometryType = (GeometryDescriptor) attributeType;
@@ -210,8 +209,7 @@ public class FeatureTypes {
      * @throws IllegalAttributeException
      */
     public static SimpleFeature transform(SimpleFeature feature, final SimpleFeatureType schema, final MathTransform transform)
-            throws MismatchedDimensionException, TransformException, SimpleIllegalAttributeException
-    {
+            throws MismatchedDimensionException, TransformException, SimpleIllegalAttributeException{
         feature = SimpleFeatureBuilder.copy(feature);
 
         final GeometryDescriptor geomType = schema.getGeometryDescriptor();
@@ -239,8 +237,7 @@ public class FeatureTypes {
      */
     public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes)
-            throws FactoryRegistryException, SchemaException
-    {
+            throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, isAbstract, superTypes, null);
     }
 
@@ -259,8 +256,8 @@ public class FeatureTypes {
      */
     public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes,
-            final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException
-    {
+            final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
+
         final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 
         tb.setName(name);
@@ -310,8 +307,7 @@ public class FeatureTypes {
      */
     public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes,
-            final GeometryDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException
-    {
+            final GeometryDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, isAbstract, superTypes, (AttributeDescriptor) defaultGeometry);
     }
 
@@ -328,8 +324,7 @@ public class FeatureTypes {
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
     public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns, final boolean isAbstract) throws FactoryRegistryException, SchemaException
-    {
+            final URI ns, final boolean isAbstract) throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, isAbstract, null);
     }
 
@@ -345,8 +340,7 @@ public class FeatureTypes {
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
     public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns) throws FactoryRegistryException, SchemaException
-    {
+            final URI ns) throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, false);
     }
 
@@ -362,8 +356,7 @@ public class FeatureTypes {
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
     public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name)
-            throws FactoryRegistryException, SchemaException
-    {
+            throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, DEFAULT_NAMESPACE, false);
     }
 
@@ -405,8 +398,8 @@ public class FeatureTypes {
      * @return true if featureType is a decendent of the indicated namespace & typeName
      */
     public static boolean isDecendedFrom(final FeatureType featureType, final URI namespace,
-            final String typeName)
-    {
+            final String typeName){
+
         if (featureType == null) {
             return false;
         }
@@ -419,8 +412,7 @@ public class FeatureTypes {
                 }
             } else {
                 if (Utilities.equals(superType.getName().getNamespaceURI(), namespace.toString()) &&
-                    Utilities.equals(superType.getName().getLocalPart(), typeName))
-                {
+                    Utilities.equals(superType.getName().getLocalPart(), typeName)){
                     return true;
                 }
             }

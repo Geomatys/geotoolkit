@@ -16,21 +16,18 @@
  */
 package org.geotoolkit.feature;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
+
 import org.opengis.feature.Association;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
@@ -39,8 +36,6 @@ import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.geometry.coordinate.GeometryFactory;
-import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -53,85 +48,95 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @version $Id$
  */
 public abstract class AbstractFeatureFactory implements FeatureFactory {
- 
-	/**
-	 * Factory used to create CRS objects
-	 */
-    CRSFactory crsFactory;
-    /**
-     * Factory used to create geomtries
-     */
-    GeometryFactory  geometryFactory;
-    
-    FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
-    
+
+    protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+
     /**
      * Whether the features to be built should be self validating on construction and value setting, or not.
      * But default, not, subclasses do override this value
      */
-    boolean validating = false;
-    
-    public CRSFactory getCRSFactory() {
-        return crsFactory;
+    protected final boolean validating;
+
+    protected AbstractFeatureFactory(boolean validate) {
+        this.validating = validate;
     }
 
-    public void setCRSFactory(CRSFactory crsFactory) {
-        this.crsFactory = crsFactory;
-    }
-
-    public GeometryFactory getGeometryFactory() {
-        return geometryFactory;
-    }
-
-    public void setGeometryFactory(GeometryFactory geometryFactory) {
-        this.geometryFactory = geometryFactory;
-    }
-    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Association createAssociation(Attribute related, AssociationDescriptor descriptor) {
-        return new DefaultAssociation(related,descriptor);
+        return new DefaultAssociation(related, descriptor);
     }
-	
-	public Attribute createAttribute( Object value, AttributeDescriptor descriptor, String id ) {
-		return new DefaultAttribute(value,descriptor,ff.gmlObjectId(id));
-	}
-	
-	public GeometryAttribute createGeometryAttribute(
-		Object value, GeometryDescriptor descriptor, String id, CoordinateReferenceSystem crs
-	) {
-	
-		return new DefaultGeometryAttribute(value,descriptor,ff.gmlObjectId(id));
-	}
-	
-	public ComplexAttribute createComplexAttribute( 
-		Collection value, AttributeDescriptor descriptor, String id
-	) {
-		return new DefaultComplexAttribute(value, descriptor, ff.gmlObjectId(id) );
-	}
 
-	public ComplexAttribute createComplexAttribute( Collection value, ComplexType type, String id ) 
-	{
-		return new DefaultComplexAttribute(value, type, ff.gmlObjectId(id) );
-	}
-	
-	public Feature createFeature(Collection value, AttributeDescriptor descriptor, String id) {
-		return new DefaultFeature(value,descriptor,ff.featureId(id));
-	}
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Attribute createAttribute(Object value, AttributeDescriptor descriptor, String id) {
+        return new DefaultAttribute(value, descriptor, FF.gmlObjectId(id));
+    }
 
-	public Feature createFeature(Collection value, FeatureType type, String id) {
-		return new DefaultFeature(value,type,ff.featureId(id));
-	}
-	
-    public SimpleFeature createSimpleFeature(Object[] array,
-            SimpleFeatureType type, String id) {
-        if( type.isAbstract() ){
-            throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType "+type.getTypeName());
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public GeometryAttribute createGeometryAttribute(
+            Object value, GeometryDescriptor descriptor, String id, CoordinateReferenceSystem crs) {
+
+        return new DefaultGeometryAttribute(value, descriptor, FF.gmlObjectId(id));
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ComplexAttribute createComplexAttribute(
+            Collection value, AttributeDescriptor descriptor, String id) {
+        return new DefaultComplexAttribute(value, descriptor, FF.gmlObjectId(id));
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ComplexAttribute createComplexAttribute(Collection value, ComplexType type, String id) {
+        return new DefaultComplexAttribute(value, type, FF.gmlObjectId(id));
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Feature createFeature(Collection value, AttributeDescriptor descriptor, String id) {
+        return new DefaultFeature(value, descriptor, FF.featureId(id));
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Feature createFeature(Collection value, FeatureType type, String id) {
+        return new DefaultFeature(value, type, FF.featureId(id));
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public SimpleFeature createSimpleFeature(Object[] array, SimpleFeatureType type, String id) {
+        if (type.isAbstract()) {
+            throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + type.getTypeName());
         }
-        return new DefaultSimpleFeature(array, type, ff.featureId(id), validating);
+        return new DefaultSimpleFeature(array, type, FF.featureId(id), validating);
     }
 
-    public SimpleFeature createSimpleFeautre(Object[] array,
-            AttributeDescriptor descriptor, String id) {
-        return createSimpleFeature( array, (SimpleFeatureType) descriptor, id );
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public SimpleFeature createSimpleFeautre(Object[] array, AttributeDescriptor descriptor, String id) {
+        return createSimpleFeature(array, (SimpleFeatureType) descriptor, id);
     }
-   
+    
 }

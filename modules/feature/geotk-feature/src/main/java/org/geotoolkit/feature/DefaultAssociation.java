@@ -28,19 +28,36 @@ public class DefaultAssociation extends DefaultProperty implements Association {
         super(value, descriptor);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public AttributeType getRelatedType() {
         return getType().getRelatedType();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public AssociationDescriptor getDescriptor() {
         return (AssociationDescriptor) super.getDescriptor();
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public AssociationType getType() {
         return (AssociationType) super.getType();
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Attribute getValue() {
         return (Attribute) super.getValue();
     }
+    
 }

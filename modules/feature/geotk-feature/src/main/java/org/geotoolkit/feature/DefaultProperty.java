@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.util.Utilities;
+
 import org.opengis.feature.Property;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
-
 
 /**
  * Implementation of Property.
@@ -42,7 +42,7 @@ public class DefaultProperty implements Property {
     /**
      * descriptor of the property
      */
-    protected PropertyDescriptor descriptor;
+    protected final PropertyDescriptor descriptor;
 
     /**
      * user data
@@ -59,41 +59,65 @@ public class DefaultProperty implements Property {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object getValue() {
         return value;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setValue(final Object value) {
         this.value = value;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public PropertyDescriptor getDescriptor() {
         return descriptor;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Name getName() {
         return getDescriptor().getName();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public PropertyType getType() {
         return getDescriptor().getType();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isNillable() {
         return getDescriptor().isNillable();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Map<Object, Object> getUserData() {
         return userData;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -117,11 +141,17 @@ public class DefaultProperty implements Property {
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         return 37 * descriptor.hashCode() + (37 * (value == null ? 0 : value.hashCode()));
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(getClass().getSimpleName()).append(":");

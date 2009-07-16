@@ -17,26 +17,18 @@
 package org.geotoolkit.feature;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Temptative implementation of Feature.
@@ -48,107 +40,122 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultFeature extends DefaultComplexAttribute implements Feature {
 
-	/**
-	 * Default geometry attribute
-	 */
-	GeometryAttribute defaultGeometry;
+    /**
+     * Default geometry attribute
+     */
+    GeometryAttribute defaultGeometry;
 
-	/**
-	 * Create a Feature with the following content.
-	 * 
-	 * @param properties Collectio of Properties (aka Attributes and/or Associations)
-	 * @param desc Nested descriptor
-	 * @param id Feature ID
-	 */
-	public DefaultFeature(Collection<Property> properties, AttributeDescriptor desc, FeatureId id) {
-		super(properties, desc, id );
-	}
-	
-	/**
-	 * Create a Feature with the following content.
-	 * 
-	 * @param properties Collectio of Properties (aka Attributes and/or Associations)
-	 * @param type Type of feature to be created
-	 * @param id Feature ID
-	 */
-	public DefaultFeature(Collection<Property> properties, FeatureType type, FeatureId id ) {
-		super(properties, type, id );
-	}
+    /**
+     * Create a Feature with the following content.
+     *
+     * @param properties Collectio of Properties (aka Attributes and/or Associations)
+     * @param desc Nested descriptor
+     * @param id Feature ID
+     */
+    public DefaultFeature(Collection<Property> properties, AttributeDescriptor desc, FeatureId id) {
+        super(properties, desc, id);
+    }
 
-	public FeatureType getType() {
-	    return (FeatureType) super.getType();
-	}
-	public FeatureId getIdentifier() {
-		return (FeatureId) this.id;
-	}
-	/**
-	 * Get the total bounds of this feature which is calculated by doing a union
-	 * of the bounds of each geometry this feature is associated with.
-	 * 
-	 * @return An Envelope containing the total bounds of this Feature.
-	 * 
-	 * @task REVISIT: what to return if there are no geometries in the feature?
-	 *       For now we'll return a null envelope, make this part of interface?
-	 *       (IanS - by OGC standards, all Feature must have geom)
-	 */
-	public BoundingBox getBounds() {
+    /**
+     * Create a Feature with the following content.
+     *
+     * @param properties Collectio of Properties (aka Attributes and/or Associations)
+     * @param type Type of feature to be created
+     * @param id Feature ID
+     */
+    public DefaultFeature(Collection<Property> properties, FeatureType type, FeatureId id) {
+        super(properties, type, id);
+    }
 
-		JTSEnvelope2D bounds = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
-		for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-			Property property = (Property) itr.next();
-			if (property instanceof GeometryAttribute) {
-				 bounds.include(((GeometryAttribute)property).getBounds());
-			}
-		}
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureType getType() {
+        return (FeatureType) super.getType();
+    }
 
-		return bounds;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureId getIdentifier() {
+        return (FeatureId) this.id;
+    }
 
-	public GeometryAttribute getDefaultGeometryProperty() {
-		if ( defaultGeometry != null ) {
-			return defaultGeometry;
-		}
-		
-		synchronized ( this ) {
-			if ( defaultGeometry == null ) {
-				//look it up from the type
-				if (((FeatureType)getType()).getGeometryDescriptor() == null ) {
-					return null;
-				}
-				
-				GeometryType geometryType = 
-				 	(GeometryType) getType().getGeometryDescriptor().getType();
-				
-				 if (geometryType != null) {
-					 for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-						 Property property =  (Property) itr.next();
-						 if (property instanceof GeometryAttribute) {
-							 if (property.getType().equals(geometryType)) {
-								 defaultGeometry = (GeometryAttribute)property;	 
-								 break;
-							 }
-						 }
-					 }
-				 }
-		
-			}
-		}
-		
-		return defaultGeometry;
-	}
+    /**
+     * Get the total bounds of this feature which is calculated by doing a union
+     * of the bounds of each geometry this feature is associated with.
+     *
+     * @return An Envelope containing the total bounds of this Feature.
+     *
+     * @task REVISIT: what to return if there are no geometries in the feature?
+     *       For now we'll return a null envelope, make this part of interface?
+     *       (IanS - by OGC standards, all Feature must have geom)
+     */
+    @Override
+    public BoundingBox getBounds() {
 
-	//TODO: REVISIT
-	//this implementation seems really bad to me or I am missing something:
-	//1- getValue() shouldn't contain the passed in attribute, but the schema should contain its descriptor
-	//2- this.defaultGeometry = defaultGeometry means getValue() will  not contain the argument
-	public void setDefaultGeometryProperty(GeometryAttribute defaultGeometry) {
-	    if (!getValue().contains(defaultGeometry)) {
-	        throw new IllegalArgumentException("specified attribute is not one of: " + getValue());
-	    }
-	    
-	    synchronized (this) {
-            this.defaultGeometry = defaultGeometry; 
+        JTSEnvelope2D bounds = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
+        for (Iterator itr = getValue().iterator(); itr.hasNext();) {
+            Property property = (Property) itr.next();
+            if (property instanceof GeometryAttribute) {
+                bounds.include(((GeometryAttribute) property).getBounds());
+            }
         }
-	}	
-	
+
+        return bounds;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public GeometryAttribute getDefaultGeometryProperty() {
+        if (defaultGeometry != null) {
+            return defaultGeometry;
+        }
+
+        synchronized (this) {
+            if (defaultGeometry == null) {
+                //look it up from the type
+                if (((FeatureType) getType()).getGeometryDescriptor() == null) {
+                    return null;
+                }
+
+                GeometryType geometryType =
+                        (GeometryType) getType().getGeometryDescriptor().getType();
+
+                if (geometryType != null) {
+                    for (Iterator itr = getValue().iterator(); itr.hasNext();) {
+                        Property property = (Property) itr.next();
+                        if (property instanceof GeometryAttribute) {
+                            if (property.getType().equals(geometryType)) {
+                                defaultGeometry = (GeometryAttribute) property;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        return defaultGeometry;
+    }
+
+    //TODO: REVISIT
+    //this implementation seems really bad to me or I am missing something:
+    //1- getValue() shouldn't contain the passed in attribute, but the schema should contain its descriptor
+    //2- this.defaultGeometry = defaultGeometry means getValue() will  not contain the argument
+    @Override
+    public void setDefaultGeometryProperty(GeometryAttribute defaultGeometry) {
+        if (!getValue().contains(defaultGeometry)) {
+            throw new IllegalArgumentException("specified attribute is not one of: " + getValue());
+        }
+
+        synchronized (this) {
+            this.defaultGeometry = defaultGeometry;
+        }
+    }
 }

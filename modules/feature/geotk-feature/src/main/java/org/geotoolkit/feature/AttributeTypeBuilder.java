@@ -44,7 +44,6 @@ import org.opengis.util.InternationalString;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-
 /**
  * Builder for attribute types and descriptors.
  * <p>
@@ -93,6 +92,12 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 public class AttributeTypeBuilder {
+
+    /**
+     * filter factory
+     */
+    protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+
     /**
      * factory
      */
@@ -175,12 +180,7 @@ public class AttributeTypeBuilder {
      * User data for the attribute.
      */
     protected Map userData = null;
-    /**
-     * filter factory
-     */
-    protected final FilterFactory2 ff =
-            (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
-
+    
     /**
      * Constructs the builder.
      *
@@ -188,7 +188,6 @@ public class AttributeTypeBuilder {
     public AttributeTypeBuilder() {
         this(new DefaultFeatureTypeFactory());
         init();
-
     }
 
     /**
@@ -605,14 +604,13 @@ public class AttributeTypeBuilder {
         if (length < 0) {
             return null;
         }
-        final Expression lengthFunction = ff.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT,
-                new Expression[]{ff.property(".")});
+        final Expression lengthFunction = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT,FF.property("."));
         if (lengthFunction == null) {
             return null;
         }
         Filter cf = null;
         try {
-            cf = ff.lessOrEqual(lengthFunction, ff.literal(length));
+            cf = FF.lessOrEqual(lengthFunction, FF.literal(length));
         } catch (IllegalFilterException e) {
             // TODO something
         }

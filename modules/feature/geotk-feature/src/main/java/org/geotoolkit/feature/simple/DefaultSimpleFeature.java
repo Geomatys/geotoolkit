@@ -19,7 +19,6 @@ package org.geotoolkit.feature.simple;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +43,6 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
-
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -321,7 +319,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
         if (idx == null) {
             return null;
         } else {
-            int index = idx.intValue();
+            final int index = idx;
             AttributeDescriptor descriptor = featureType.getDescriptor(index);
             if (descriptor instanceof GeometryDescriptor) {
                 return new DefaultGeometryAttribute(values[index], (GeometryDescriptor) descriptor, null);

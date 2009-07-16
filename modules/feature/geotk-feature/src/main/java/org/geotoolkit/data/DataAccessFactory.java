@@ -562,8 +562,9 @@ public interface DataAccessFactory {
         /**
          * key=Type description
          */
+        @Override
         public String toString() {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append(key);
             buf.append('=');
             buf.append(type.getName());

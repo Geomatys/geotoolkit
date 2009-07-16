@@ -31,7 +31,6 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
-
 /**
  * Implementation fo SimpleFeatureType, subtypes must be atomic and are stored
  * in a list.
@@ -45,12 +44,10 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
     List<AttributeType> types = null;
     Map<String, Integer> index;
 
-    @SuppressWarnings("unchecked")
     public DefaultSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType,
-            final InternationalString description)
-    {
+            final InternationalString description){
         // Note intentional circumvention of generics type checking;
         // this is only valid if schema is not modified.
         super(name, (List) schema, defaultGeometry, isAbstract, restrictions,
@@ -61,7 +58,6 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
     /**
      * @see org.opengis.feature.simple.SimpleFeatureType#getAttributeDescriptors()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public final List<AttributeDescriptor> getAttributeDescriptors() {
         // Here we circumvent the generics type system. Because we provide the schema and know it is

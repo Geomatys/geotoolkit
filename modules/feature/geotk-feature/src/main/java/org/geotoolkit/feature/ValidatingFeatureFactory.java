@@ -18,7 +18,7 @@ package org.geotoolkit.feature;
 
 
 /**
- * Factory for creating instances of the Attribute family of classes.
+ * Feature Factory which create feature with validation process.
  * 
  * @author Andrea Aime
  * 
@@ -27,7 +27,8 @@ package org.geotoolkit.feature;
 public class ValidatingFeatureFactory extends AbstractFeatureFactory {
     
     public ValidatingFeatureFactory() {
-        validating = true;
+        super(true);
     }
+    
  }
 

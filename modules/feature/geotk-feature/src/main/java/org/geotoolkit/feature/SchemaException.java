@@ -22,9 +22,7 @@ package org.geotoolkit.feature;
  * @source $URL$
  */
 public class SchemaException extends Exception {
-    /**
-     *
-     */
+    
     private static final long serialVersionUID = 5453903672192802976L;
 
     public SchemaException(Throwable cause) {

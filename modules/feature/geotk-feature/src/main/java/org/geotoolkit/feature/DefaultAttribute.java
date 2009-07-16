@@ -20,11 +20,11 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Converters;
+
 import org.opengis.feature.Attribute;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.filter.identity.Identifier;
-
 
 /**
  * Simple, mutable class to store attributes.
@@ -37,10 +37,11 @@ import org.opengis.filter.identity.Identifier;
  * @version $Id$
  */
 public class DefaultAttribute extends DefaultProperty implements Attribute {
+    
     /**
      * id of the attribute.
      */
-    protected Identifier id = null;
+    protected final Identifier id;
 
     public DefaultAttribute(final Object content, final AttributeDescriptor descriptor, final Identifier id) {
         super(content, descriptor);
@@ -52,24 +53,32 @@ public class DefaultAttribute extends DefaultProperty implements Attribute {
         this(content, new DefaultAttributeDescriptor(type, type.getName(), 1, 1, true, null), id);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Identifier getIdentifier() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeDescriptor getDescriptor() {
         return (AttributeDescriptor) super.getDescriptor();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType getType() {
         return (AttributeType) super.getType();
     }
 
     /**
-     * Override of setValue to convert the newValue to specified type if need
-     * be.
+     * Override of setValue to convert the newValue to specified type if need be.
      */
     @Override
     public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
@@ -118,14 +127,20 @@ public class DefaultAttribute extends DefaultProperty implements Attribute {
         return Utilities.equals(id, att.id);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void validate() {
         Types.validate(this, this.getValue());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(getClass().getSimpleName()).append(":");
+        final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
         sb.append(getDescriptor().getName().getLocalPart());
         if (!getDescriptor().getName().getLocalPart().equals(getDescriptor().getType().getName().getLocalPart()) ||
                 id != null) {
