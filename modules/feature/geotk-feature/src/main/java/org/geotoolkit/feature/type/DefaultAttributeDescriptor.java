@@ -66,7 +66,7 @@ public class DefaultAttributeDescriptor extends DefaultPropertyDescriptor implem
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(Classes.getShortClassName(this));
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(" ");
         sb.append(getName());
         if (type != null) {

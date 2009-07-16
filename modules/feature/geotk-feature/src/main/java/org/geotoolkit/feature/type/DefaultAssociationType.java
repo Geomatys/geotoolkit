@@ -69,6 +69,6 @@ public class DefaultAssociationType extends DefaultPropertyType implements Assoc
 
     @Override
     public String toString() {
-        return new StringBuffer(super.toString()).append("; relatedType=[").append(relatedType).append("]").toString();
+        return new StringBuilder(super.toString()).append("; relatedType=[").append(relatedType).append("]").toString();
     }
 }

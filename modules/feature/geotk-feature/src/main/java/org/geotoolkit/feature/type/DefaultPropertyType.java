@@ -165,7 +165,7 @@ public class DefaultPropertyType implements PropertyType {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(Classes.getShortClassName(this));
+        StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(" ");
         sb.append(getName());
         if (isAbstract()) {

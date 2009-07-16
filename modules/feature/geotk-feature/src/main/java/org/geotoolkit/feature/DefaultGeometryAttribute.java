@@ -219,7 +219,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute implements Geomet
      */
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(getClass().getSimpleName()).append(":");
+        final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
         sb.append(getDescriptor().getName().getLocalPart());
         final CoordinateReferenceSystem crs = getDescriptor().getType().getCoordinateReferenceSystem();
         if (!getDescriptor().getName().getLocalPart().equals(getDescriptor().getType().getName().getLocalPart()) ||

@@ -154,7 +154,7 @@ public class DefaultProperty implements Property {
      */
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(getClass().getSimpleName()).append(":");
+        final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
         sb.append(getDescriptor().getName().getLocalPart());
         sb.append("<");
         sb.append(getDescriptor().getType().getName().getLocalPart());

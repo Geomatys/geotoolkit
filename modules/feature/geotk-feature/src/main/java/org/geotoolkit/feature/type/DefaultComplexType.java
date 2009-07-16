@@ -129,7 +129,7 @@ public class DefaultComplexType extends DefaultAttributeType implements ComplexT
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(Classes.getShortClassName(this));
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(" ");
         sb.append(getName());
         if (isAbstract()) {
