@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature.simple;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.DefaultGeometryAttribute;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -42,9 +45,6 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.opengis.feature.IllegalAttributeException;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -54,8 +54,9 @@ import org.opengis.feature.IllegalAttributeException;
  */
 public class DefaultSimpleFeature implements SimpleFeature {
 
-    protected FeatureId id;
-    protected SimpleFeatureType featureType;
+    protected final FeatureId id;
+
+    protected final SimpleFeatureType featureType;
     /**
      * The actual values held by this feature
      */
@@ -65,6 +66,10 @@ public class DefaultSimpleFeature implements SimpleFeature {
      */
     protected final Map<String, Integer> index;
     /**
+     * Wheter this feature is self validating or not
+     */
+    protected final boolean validating;
+    /**
      * The set of user data attached to the feature (lazily created)
      */
     protected Map<Object, Object> userData;
@@ -72,10 +77,6 @@ public class DefaultSimpleFeature implements SimpleFeature {
      * The set of user data attached to each attribute (lazily created)
      */
     protected Map<Object, Object>[] attributeUserData;
-    /**
-     * Wheter this feature is self validating or not
-     */
-    protected boolean validating;
 
     /**
      * Builds a new feature based on the provided values and feature type
@@ -164,7 +165,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
     @Override
     public Object getDefaultGeometry() {
         // should be specified in the index as the default key (null)
-        Object defaultGeometry = index.get(null) != null ? getAttribute(index.get(null)) : null;
+        final Integer indexGeom = index.get(null);
+
+        Object defaultGeometry = indexGeom != null ? values[indexGeom] : null;
 
         // not found? do we have a default geometry at all?
         if (defaultGeometry == null) {
@@ -215,7 +218,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
         if (idx == null) {
             throw new SimpleIllegalAttributeException("Unknown attribute " + name);
         }
-        setAttribute(idx.intValue(), value);
+        setAttribute(idx, value);
     }
 
     @Override
@@ -232,7 +235,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
 
     @Override
     public void setAttributes(final Object[] values) {
-        setAttributes(Arrays.asList(values));
+        for (int i = 0; i < this.values.length; i++) {
+            this.values[i] = values[i];
+        }
     }
 
     @Override
@@ -480,7 +485,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
      */
     class Attribute implements org.opengis.feature.Attribute {
 
-        int index;
+        private final int index;
 
         Attribute(int index) {
             this.index = index;
