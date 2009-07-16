@@ -23,7 +23,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 
-
 /**
  * Provides an implementation of Iterator that will filter
  * contents using the provided filter.
@@ -45,13 +44,17 @@ import org.opengis.filter.Filter;
 public class FilteredIterator<F extends Feature> implements Iterator<F> {
 
     /** Used to close the delgate, or null */
-    private FeatureCollection<? extends FeatureType, F> collection;
-    private Iterator<F> delegate;
-    private Filter filter;
+    private final FeatureCollection<? extends FeatureType, F> collection;
+    private final Iterator<F> delegate;
+    private final Filter filter;
     private F next;
 
     public FilteredIterator(final Iterator<F> iterator, final Filter filter) {
         this.collection = null;
+
+        if(iterator == null) throw new NullPointerException("Iterator can not be null");
+        if(filter == null) throw new NullPointerException("Filter can not be null");
+
         this.delegate = iterator;
         this.filter = filter;
     }
@@ -59,6 +62,10 @@ public class FilteredIterator<F extends Feature> implements Iterator<F> {
     public FilteredIterator(final FeatureCollection<? extends FeatureType, F> collection, final Filter filter) {
         this.collection = collection;
         this.delegate = collection.iterator();
+
+        if(delegate == null) throw new NullPointerException("Provided collection can not generate an Iterator");
+        if(filter == null) throw new NullPointerException("Filter can not be null");
+
         this.filter = filter;
         next = getNext();
     }
@@ -68,16 +75,12 @@ public class FilteredIterator<F extends Feature> implements Iterator<F> {
         if (collection != null) {
             collection.close(delegate);
         }
-        collection = null;
-        delegate = null;
-        filter = null;
         next = null;
     }
 
     private F getNext() {
-        F item = null;
         while (delegate.hasNext()) {
-            item = delegate.next();
+            final F item = delegate.next();
             if (filter.evaluate(item)) {
                 return item;
             }
@@ -85,11 +88,17 @@ public class FilteredIterator<F extends Feature> implements Iterator<F> {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hasNext() {
         return next != null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public F next() {
         if (next == null) {
@@ -100,12 +109,12 @@ public class FilteredIterator<F extends Feature> implements Iterator<F> {
         return current;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() {
-        if (delegate == null) {
-            throw new IllegalStateException();
-        }
-
         delegate.remove();
     }
+    
 }

@@ -25,12 +25,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
@@ -59,8 +56,7 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
      * @param filter
      */
     public SubFeatureList(final FeatureCollection<SimpleFeatureType, SimpleFeature> list, final Filter filter,
-            final SortBy subSort)
-    {
+            final SortBy subSort){
         super(list, filter);
 
         if (subSort == null || subSort.equals(SortBy.NATURAL_ORDER)) {
@@ -115,14 +111,12 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
     /** Lazy create a filter based on index */
     @Override
     protected Filter createFilter() {
-        FilterFactory ff = FactoryFinder.getFilterFactory(null);
         Set featureIds = new HashSet();
         for (Iterator it = index().iterator(); it.hasNext();) {
-            featureIds.add(ff.featureId((String) it.next()));
+            featureIds.add(FF.featureId((String) it.next()));
         }
-        Id fids = ff.id(featureIds);
 
-        return fids;
+        return FF.id(featureIds);
     }
 
     protected List<FeatureId> index() {
@@ -161,7 +155,6 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
                         return compare;
                     }
 
-                    @SuppressWarnings("unchecked")
                     protected int compare(SimpleFeature feature1, SimpleFeature feature2, SortBy order) {
                         PropertyName name = order.getPropertyName();
                         Comparable value1 = (Comparable) name.evaluate(feature1);
@@ -232,18 +225,21 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subList(final Filter subfilter) {
-        if (filter.equals(Filter.INCLUDE)) {
+        if (Filter.INCLUDE.equals(filter)) {
             return this;
-        }
-        if (filter.equals(Filter.EXCLUDE)) {
+        }else if (Filter.EXCLUDE.equals(filter)) {
             // TODO implement EmptyFeatureCollection( schema )
         }
-        return new SubFeatureList(collection, ff.and(filter, subfilter), sort.get(0));
+        return new SubFeatureList(collection, FF.and(filter, subfilter), sort.get(0));
     }
+
     //
     // RandomFeatureAccess
     //
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeature getFeatureMember(final String id) throws NoSuchElementException {
         int position = index.indexOf(id);
@@ -257,9 +253,12 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
         return (SimpleFeature) get(position);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeature removeFeatureMember(final String id) {
-        final int position = index.indexOf(ff.featureId(id));
+        final int position = index.indexOf(FF.featureId(id));
         if (position == -1) {
             throw new NoSuchElementException(id);
         }
@@ -311,8 +310,8 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
 
     private class SortedIteratory implements Iterator<SimpleFeature> {
 
-        Iterator<FeatureId> iterator = index().iterator();
-        String id;
+        private final Iterator<FeatureId> iterator = index().iterator();
+        private String id;
 
         @Override
         public boolean hasNext() {

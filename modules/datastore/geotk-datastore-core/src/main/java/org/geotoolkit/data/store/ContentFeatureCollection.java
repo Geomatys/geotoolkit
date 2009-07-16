@@ -337,11 +337,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
     }
 
     @Override
-    public void purge() {
-        //do nothing
-    }
-
-    @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final org.opengis.filter.sort.SortBy sort) {
         Query query = new DefaultQuery();
         ((DefaultQuery) query).setSortBy(new org.opengis.filter.sort.SortBy[]{sort});

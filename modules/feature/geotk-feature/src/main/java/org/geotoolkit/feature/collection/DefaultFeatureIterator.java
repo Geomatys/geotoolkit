@@ -19,7 +19,6 @@ package org.geotoolkit.feature.collection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
-
 /**
  * A convenience class for dealing with FeatureCollection Iterators. DOES NOT
  * implement Iterator.
@@ -33,8 +32,8 @@ import org.opengis.feature.type.FeatureType;
 public class DefaultFeatureIterator<F extends Feature> implements FeatureIterator<F> {
 
     /** The iterator from the FeatureCollection<SimpleFeatureType, SimpleFeature> to return features from. */
-    private java.util.Iterator<F> iterator;
-    private FeatureCollection<? extends FeatureType, F> collection;
+    private final java.util.Iterator<F> iterator;
+    private final FeatureCollection<? extends FeatureType, F> collection;
 
     /**
      * Create a new FeatureIterator<SimpleFeature> using the Iterator from the given
@@ -45,6 +44,11 @@ public class DefaultFeatureIterator<F extends Feature> implements FeatureIterato
     public DefaultFeatureIterator(final FeatureCollection<? extends FeatureType, F> collection) {
         this.collection = collection;
         this.iterator = collection.iterator();
+
+        if(iterator == null){
+            throw new NullPointerException("Provided collection can not generate an Iterator");
+        }
+
     }
 
     /**
@@ -76,10 +80,6 @@ public class DefaultFeatureIterator<F extends Feature> implements FeatureIterato
      */
     @Override
     public void close() {
-        if (iterator != null) {
-            collection.close(iterator);
-            iterator = null;
-            collection = null;
-        }
+        collection.close(iterator);
     }
 }

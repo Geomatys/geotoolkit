@@ -760,12 +760,6 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
         return null;
     }
 
-
-    @Override
-    public void purge() {
-        // no resources were harmed in the making of this FeatureCollection
-    }
-
     public void validate() {
     }
 

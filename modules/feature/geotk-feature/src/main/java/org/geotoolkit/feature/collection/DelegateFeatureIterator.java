@@ -35,29 +35,44 @@ import org.opengis.feature.type.FeatureType;
  * @source $URL$
  */
 public class DelegateFeatureIterator<F extends Feature> implements FeatureIterator<F> {
-	Iterator<F> delegate;
-	private FeatureCollection<? extends FeatureType, F> collection;
-	/**
-	 * Wrap the provided iterator up as a FeatureIterator.
-	 * 
-	 * @param iterator Iterator to be used as a delegate.
-	 */
-	public DelegateFeatureIterator( FeatureCollection<? extends FeatureType, F> collection, Iterator<F> iterator ){
-		delegate = iterator;
-		this.collection=collection;
-	}
-	public boolean hasNext() {
-		return delegate != null && delegate.hasNext();
-	}
-	public F next() throws NoSuchElementException {
-		if( delegate == null ) throw new NoSuchElementException();
-		return  delegate.next();
-	}
-	public void close() {
-		if( collection!=null && delegate!=null)
-			collection.close(delegate);
-		collection =null;
-		delegate = null;
-		
-	}
+
+    private final Iterator<F> delegate;
+    private final FeatureCollection<? extends FeatureType, F> collection;
+
+    /**
+     * Wrap the provided iterator up as a FeatureIterator.
+     *
+     * @param iterator Iterator to be used as a delegate.
+     */
+    public DelegateFeatureIterator(FeatureCollection<? extends FeatureType, F> collection, Iterator<F> iterator) {
+        if(collection == null) throw new NullPointerException("FeatureCollection can not be null");
+        if(iterator == null) throw new NullPointerException("Iterator can not be null");
+        this.delegate = iterator;
+        this.collection = collection;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean hasNext() {
+        return delegate.hasNext();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public F next() throws NoSuchElementException {
+        return delegate.next();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void close() {
+        collection.close(delegate);
+    }
+    
 }

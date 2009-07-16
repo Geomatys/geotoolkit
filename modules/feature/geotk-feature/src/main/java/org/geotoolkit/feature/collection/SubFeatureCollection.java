@@ -22,12 +22,12 @@ import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.utility.FeatureUtilities;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
-
 
 /**
  * Used as a reasonable default implementation for subCollection.
@@ -42,18 +42,20 @@ import org.opengis.filter.sort.SortBy;
  */
 public class SubFeatureCollection extends AbstractFeatureCollection {
 
-    /** Filter */
-    protected Filter filter;
+    protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+
     /** Original Collection */
     protected final FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
-    protected final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+    
+    /** Filter */
+    protected Filter filter;
 
     public SubFeatureCollection(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
         this(collection, Filter.INCLUDE);
     }
 
     public SubFeatureCollection(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection, Filter subfilter) {
-        super(collection.getSchema());
+        super(collection.getSchema(),null);
         if (subfilter == null) {
             subfilter = Filter.INCLUDE;
         }
@@ -67,7 +69,7 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
                 this.filter = filtered.filter();
             } else {
                 this.collection = filtered.collection;
-                this.filter = ff.and(filtered.filter(), subfilter);
+                this.filter = FF.and(filtered.filter(), subfilter);
             }
         } else {
             this.collection = collection;
@@ -75,11 +77,17 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Iterator openIterator() {
         return new FilteredIterator<SimpleFeature>(collection, filter());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void closeIterator(final Iterator iterator) {
         if (iterator == null) {
@@ -92,6 +100,9 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int size() {
         int count = 0;
@@ -118,11 +129,17 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         return Filter.INCLUDE;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureIterator<SimpleFeature> features() {
         return new DelegateFeatureIterator<SimpleFeature>(this, iterator());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close(final FeatureIterator<SimpleFeature> close) {
         if (close != null) {
@@ -130,9 +147,9 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         }
     }
 
-    //
-    //
-    //
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(final Filter filter) {
         if (filter.equals(Filter.INCLUDE)) {
@@ -144,6 +161,9 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         return new SubFeatureCollection(this, filter);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isEmpty() {
         Iterator iterator = iterator();
@@ -154,6 +174,9 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void accepts(final org.opengis.feature.FeatureVisitor visitor, final org.opengis.util.ProgressListener progress) {
         Iterator iterator = null;
@@ -176,36 +199,47 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(SortBy order) {
         return new SubFeatureList(collection, filter, order);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean add(SimpleFeature o) {
         return collection.add(o);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void clear() {
         final List toDelete = FeatureUtilities.list(this);
         removeAll(toDelete);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean remove(Object o) {
         return collection.remove(o);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         return collection.getID();
     }
 
-//    // extra methods
-//    public FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
-//        return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>( getSchema(), features() );
-//    }
     public int getCount() throws IOException {
         return size();
     }

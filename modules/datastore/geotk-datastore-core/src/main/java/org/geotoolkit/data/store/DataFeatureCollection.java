@@ -264,24 +264,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
     }
 
-    @Override
-    public void purge() {
-        for (Iterator i = open.iterator(); i.hasNext();) {
-            Object iterator = i.next();
-            try {
-                if (iterator instanceof Iterator) {
-                    closeIterator((Iterator) iterator);
-                }
-                if (iterator instanceof FeatureIterator) {
-                    ((FeatureIterator<SimpleFeature>) iterator).close();
-                }
-            } catch (Throwable e) {
-                // TODO: Log e = ln
-            } finally {
-                i.remove();
-            }
-        }
-    }
     //
     // Off into implementation land!
     //

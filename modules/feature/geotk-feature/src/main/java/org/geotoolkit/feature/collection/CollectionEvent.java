@@ -19,10 +19,10 @@ package org.geotoolkit.feature.collection;
 import java.util.EventObject;
 
 import org.geotoolkit.data.FeatureEvent;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * A simple event object to represent all events triggered by FeatureCollection
@@ -50,29 +50,26 @@ public class CollectionEvent extends EventObject {
     public static final int FEATURES_CHANGED = 2;
 
     /** Indicates one of FEATURES_ADDED, FEATURES_REMOVED, FEATURES_CHANGED */
-    private int type;
+    private final int type;
 
     /** Holds value of property features. */
-    private SimpleFeature[] features;
+    private final SimpleFeature[] features;
 
     public CollectionEvent(FeatureCollection<? extends FeatureType, ? extends Feature> collection, FeatureEvent event) {
         super(collection);
 
         switch ( event.getType() ) {
-        case ADDED:
-            this.type = CollectionEvent.FEATURES_ADDED;
-            break;
-
-        case CHANGED:
-            this.type = CollectionEvent.FEATURES_CHANGED;
-            break;
-
-        case REMOVED:
-            this.type = CollectionEvent.FEATURES_REMOVED;
-            break;
-
-        default:
-            this.type = CollectionEvent.FEATURES_REMOVED;
+            case ADDED:
+                this.type = CollectionEvent.FEATURES_ADDED;
+                break;
+            case CHANGED:
+                this.type = CollectionEvent.FEATURES_CHANGED;
+                break;
+            case REMOVED:
+                this.type = CollectionEvent.FEATURES_REMOVED;
+                break;
+            default:
+                this.type = CollectionEvent.FEATURES_REMOVED;
         }
         this.features = null;
     }

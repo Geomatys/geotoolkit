@@ -95,7 +95,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
             throws IOException, SchemaException, TransformException, OperationNotFoundException, NoSuchElementException, FactoryException
     {
 
-        super(forceType(origionalType(results), destinationCS));
+        super(forceType(origionalType(results), destinationCS),null);
         this.results = origionalCollection(results);
 
         final CoordinateReferenceSystem originalCs;

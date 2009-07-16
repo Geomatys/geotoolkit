@@ -21,13 +21,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.util.ProgressListener;
-
 
 /**
  * Represents a collection of features.
@@ -97,6 +97,7 @@ import org.opengis.util.ProgressListener;
  *
  */
 public interface FeatureCollection<T extends FeatureType, F extends Feature> {
+
     /**
      * Obtain a FeatureIterator<SimpleFeature> of the Features within this collection.
      * <p>
@@ -155,7 +156,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * </p>
      * @param close
      */
-    public void close(FeatureIterator<F> close);
+    void close(FeatureIterator<F> close);
     
     /**
      * Clean up after any resources associated with this itterator in a manner similar to JDO collections.
@@ -175,7 +176,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * </p>
      * @param close
      */
-    public void close(Iterator<F> close);
+    void close(Iterator<F> close);
     
     /**
      * Adds a listener for collection events.
@@ -185,9 +186,8 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * </p>
      *
      * @param listener The listener to add
-     * @throws NullPointerException If the listener is null.
      */
-    void addListener(CollectionListener listener) throws NullPointerException;
+    void addListener(CollectionListener listener);
 
     /**
      * Removes a listener for collection events.
@@ -195,7 +195,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * @param listener The listener to remove
      * @throws NullPointerException If the listener is null.
      */
-    void removeListener(CollectionListener listener) throws NullPointerException;
+    void removeListener(CollectionListener listener);
 
     /**
      * Gets a reference to the type of this feature collection.
@@ -314,7 +314,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * @param filter
      * @return FeatureCollection<SimpleFeatureType, SimpleFeature> identified as subset.
      */
-    public FeatureCollection<T, F> subCollection(Filter filter);
+    FeatureCollection<T, F> subCollection(Filter filter);
 
     /**
      * collection.subCollection( myFilter ).sort( {"foo","bar"} );
@@ -322,7 +322,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * @param order
      * @return FeatureCollection sorted in the indicated order
      */
-    public FeatureCollection<T, F> sort(SortBy order);
+    FeatureCollection<T, F> sort(SortBy order);
 
     /**
      * Get the total bounds of this collection which is calculated by doing a
@@ -362,23 +362,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * </p>
      * @return Iterator
      */
-    public Iterator<F> iterator();
-
-    /**
-     * Close any outstanding resources released by this resources.
-     * <p>
-     * This method should be used with great caution, it is however available
-     * to allow the use of the ResourceCollection with algorthims that are
-     * unaware of the need to close iterators after use.
-     * </p>
-     * <p>
-     * Example of using a normal Collections utility method:<pre><code>
-     * Collections.sort( collection );
-     * collection.purge();
-     * </code></pre>
-     * @deprecated No longer needed as iterator use by java for each construct not available
-     */
-    public void purge();
+    Iterator<F> iterator();
     
     /**
      * Add object to this collection. 
@@ -421,10 +405,10 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
     boolean remove(Object o);
     
     /** @see java.util.Collection#removeAll(Collection) */
-    public boolean removeAll(Collection<?> c);
+    boolean removeAll(Collection<?> c);
     
     /** @see java.util.Collection#retainAll(Collection) */   
-    public boolean retainAll(Collection<?> c);
+    boolean retainAll(Collection<?> c);
       
     /** @see java.util.Collection#size() */
     int size();

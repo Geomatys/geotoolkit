@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.feature.collection;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,18 +23,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
-import org.opengis.feature.FeatureVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.feature.utility.NullProgressListener;
-import org.opengis.util.ProgressListener;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
-
 
 /**
  * Implement a feature collection just based on provision of iterator.
@@ -47,21 +41,24 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
     /**
      * listeners
      */
-    protected final List listeners = new ArrayList();
+    protected final List<CollectionListener> listeners = new ArrayList<CollectionListener>();
     /**
      * id used when serialized to gml
      */
-    protected String id;
+    protected final String id;
     protected final SimpleFeatureType schema;
 
-    protected AbstractFeatureCollection(final SimpleFeatureType memberType) {
+    /** Set of open resource iterators */
+    protected final Set open = new HashSet();
+
+    protected AbstractFeatureCollection(final SimpleFeatureType memberType, String id) {
         this.id = (id == null) ? "featureCollection" : id;
         this.schema = memberType;
     }
 
-    //
-    // FeatureCollection<SimpleFeatureType, SimpleFeature> - Feature Access
-    //
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureIterator<SimpleFeature> features() {
         final FeatureIterator<SimpleFeature> iter = new DelegateFeatureIterator<SimpleFeature>(this, openIterator());
@@ -70,25 +67,10 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
     }
 
     /**
-     * Clean up after any resources associated with this iteartor in a manner similar to JDO collections.
-     * </p>
-     * Example (safe) use:<pre><code>
-     * Iterator iterator = collection.iterator();
-     * try {
-     *     for( Iterator i=collection.iterator(); i.hasNext();){
-     *          Feature feature = (Feature) i.hasNext();
-     *          System.out.println( feature.getID() );
-     *     }
-     * }
-     * finally {
-     *     collection.close( iterator );
-     * }
-     * </code></pre>
-     * </p>
-     * @param close
+     * {@inheritDoc }
      */
     @Override
-    final public void close(final Iterator close) {
+    public final void close(final Iterator close) {
         if (close == null) {
             return;
         }
@@ -101,6 +83,9 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close(final FeatureIterator<SimpleFeature> close) {
         if (close != null) {
@@ -117,7 +102,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      *
      * @return Iterator based on resource use
      */
-    abstract protected Iterator openIterator();
+    protected abstract Iterator openIterator();
 
     /**
      * Please override to cleanup after your own iterators, and
@@ -133,37 +118,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      *
      * @param close Iterator, will not be <code>null</code>
      */
-    abstract protected void closeIterator(Iterator close);
-
-    /**
-     * Close any outstanding resources released by this resources.
-     * <p>
-     * This method should be used with great caution, it is however available
-     * to allow the use of the ResourceCollection with algorthims that are
-     * unaware of the need to close iterators after use.
-     * </p>
-     * <p>
-     * Example of using a normal Collections utility method:<pre><code>
-     * Collections.sort( collection );
-     * collection.purge();
-     * </code></pre>
-     */
-    @Override
-    public void purge() {
-        for (Iterator i = open.iterator(); i.hasNext();) {
-            final Object resource = i.next();
-            if (resource instanceof Iterator) {
-                Iterator resourceIterator = (Iterator) resource;
-                try {
-                    closeIterator(resourceIterator);
-                } catch (Throwable e) {
-                    // TODO: Log e = ln
-                } finally {
-                    i.remove();
-                }
-            }
-        }
-    }
+    protected abstract void closeIterator(Iterator close);
 
     /**
      * Returns the number of elements in this collection.
@@ -229,6 +184,9 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         return modified;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean addAll(final FeatureCollection<? extends SimpleFeatureType, ? extends SimpleFeature> c) {
         boolean modified = false;
@@ -324,18 +282,17 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
             close(e);
         }
     }
+
     //
     // Contents
     //
     //
-    /** Set of open resource iterators */
-    protected final Set open = new HashSet();
 
     /**
      * Returns the set of open iterators.
      *
      */
-    final public Set getOpenIterators() {
+    public final Set getOpenIterators() {
         return open;
     }
 
@@ -347,7 +304,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      *
      */
     @Override
-    final public Iterator iterator() {
+    public final Iterator iterator() {
         final Iterator iterator = openIterator();
         open.add(iterator);
         return iterator;
@@ -416,7 +373,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      * @see #contains(Object)
      */
     @Override
-    final public boolean removeAll(final Collection<?> c) {
+    public final boolean removeAll(final Collection<?> c) {
         boolean modified = false;
         Iterator e = iterator();
         try {
@@ -450,7 +407,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      * @see #contains(Object)
      */
     @Override
-    final public boolean retainAll(Collection<?> c) {
+    public final boolean retainAll(Collection<?> c) {
         boolean modified = false;
         final Iterator e = iterator();
         try {
@@ -489,6 +446,9 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public <T> T[] toArray(T[] a) {
         int size = size();
@@ -512,6 +472,9 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void accepts(final org.opengis.feature.FeatureVisitor visitor, org.opengis.util.ProgressListener progress) {
         Iterator iterator = null;
@@ -546,6 +509,9 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         return new SubFeatureList(this, filter);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(final Filter filter) {
         if (filter == Filter.INCLUDE) {
@@ -554,26 +520,41 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
         return new SubFeatureCollection(this, filter);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy order) {
         return new SubFeatureList(this, order);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final void addListener(final CollectionListener listener) throws NullPointerException {
         listeners.add(listener);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final void removeListener(final CollectionListener listener) throws NullPointerException {
         listeners.remove(listener);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType getSchema() {
         return schema;

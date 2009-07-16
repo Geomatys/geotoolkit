@@ -17,9 +17,9 @@
 package org.geotoolkit.feature.collection;
 
 import java.util.NoSuchElementException;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * Access Feature content using Feature "Id".
@@ -46,8 +46,8 @@ public interface RandomAccessFeatureCollection extends FeatureCollection<SimpleF
      * @return Feature with the indicated or id
      * @throws NoSuchElementException if a Feature with the indicated id is not present
      */
-    public SimpleFeature getFeatureMember(String id) throws NoSuchElementException;
+    SimpleFeature getFeatureMember(String id) throws NoSuchElementException;
 
     /** Optional Method */
-    public SimpleFeature removeFeatureMember(String id);
+    SimpleFeature removeFeatureMember(String id);
 }

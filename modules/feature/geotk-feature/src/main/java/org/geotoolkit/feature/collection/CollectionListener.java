@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.feature.collection;
 
-
 /**
  * Interface to be implemented by all listeners of CollectionEvents.
  *
@@ -25,6 +24,7 @@ package org.geotoolkit.feature.collection;
  * @version $Id$
  */
 public interface CollectionListener {
+    
     /**
      * Gets called when a CollectionEvent is fired. Typically fired to signify
      * that a change has occurred in the collection.

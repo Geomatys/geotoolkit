@@ -32,7 +32,7 @@ public interface FeatureIterator<F extends Feature> {
      * </p>
      * @return true if more Features exist, false otherwise.
      */
-    public boolean hasNext();
+    boolean hasNext();
 
     /**
      * Get the next Feature in this iteration.
@@ -41,10 +41,10 @@ public interface FeatureIterator<F extends Feature> {
      *
      * @throws java.util.NoSuchElementException If no more Features exist.
      */
-    public F next() throws java.util.NoSuchElementException;
+    F next() throws java.util.NoSuchElementException;
 
     /**
      * Required so FeatureCollection<SimpleFeatureType, SimpleFeature> classes can implement close( FeatureIterator<SimpleFeature> ).
      */
-    public void close();
+    void close();
 }
