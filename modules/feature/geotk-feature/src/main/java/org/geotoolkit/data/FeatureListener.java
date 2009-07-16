@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-
 /**
  * Interface to be implemented by all listeners of FeatureEvents.
  *
@@ -30,6 +29,7 @@ package org.geotoolkit.data;
  * @source $URL$
  */
 public interface FeatureListener extends java.util.EventListener {
+
     /**
      * Gets called when a FeatureEvent is fired.
      *

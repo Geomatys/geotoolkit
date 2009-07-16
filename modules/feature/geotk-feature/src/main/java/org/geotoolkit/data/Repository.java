@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import org.opengis.feature.type.Name;
 
-
 /**
  * An adapter interface allowing a hosting application
  * to advertise DataStore instances to GeoToolkit.
@@ -32,22 +31,22 @@ import org.opengis.feature.type.Name;
  * @source $URL$
  */
 public interface Repository {
+
     /**
      * Search for the DataAccess (may be a DataStore) by name.
      * 
      * @param name The Name (namespace and name) to search for
      * @return DataAccess
      */
-    DataAccess<?,?> access( Name name );
-    
+    DataAccess<?, ?> access(Name name);
+
     /**
      * Search for the DataStore by name.
      * 
      * @param Name The typeName (namespace and name) to search for
      * @return DataAccess api providing access to the indicatedTypeName (or null if not found)
      */
-    DataStore dataStore( Name name );
-        
+    DataStore dataStore(Name name);
     /**
      * All FeatureSources by typeRef ( aka dataStoreId:typeName)
      */

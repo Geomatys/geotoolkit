@@ -21,8 +21,8 @@ import java.io.IOException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
-import org.geotoolkit.feature.SchemaException;
 
+import org.geotoolkit.feature.SchemaException;
 
 /**
  * Represents a Physical Store for FeatureTypes.
@@ -70,8 +70,8 @@ import org.geotoolkit.feature.SchemaException;
  * @source $URL$
  * @version $Id$
  */
-public interface DataStore extends DataAccess<SimpleFeatureType, SimpleFeature>{
-   
+public interface DataStore extends DataAccess<SimpleFeatureType, SimpleFeature> {
+
     /**
      * Used to force namespace and CS info into a persistent change.
      * <p>
@@ -90,7 +90,7 @@ public interface DataStore extends DataAccess<SimpleFeatureType, SimpleFeature>{
      * @throws IOException
      */
     void updateSchema(String typeName, SimpleFeatureType featureType)
-        throws IOException;
+            throws IOException;
 
     /**
      * Retrieves a list of of the available FeatureTypes.
@@ -115,7 +115,7 @@ public interface DataStore extends DataAccess<SimpleFeatureType, SimpleFeature>{
      * @return typeNames for available FeatureTypes.
      */
     String[] getTypeNames() throws IOException;
-    
+
     /**
      * Retrieve FeatureType metadata by <code>typeName</code>.
      *
@@ -416,5 +416,5 @@ public interface DataStore extends DataAccess<SimpleFeatureType, SimpleFeature>{
      *         in another fashion.
      */
     LockingManager getLockingManager();
-
+    
 }

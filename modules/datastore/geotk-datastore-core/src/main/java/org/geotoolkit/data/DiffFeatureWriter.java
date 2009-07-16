@@ -19,13 +19,10 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.FeatureEvent;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -136,7 +133,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
         if (live != null) {
             // mark live as removed
             diff.remove(live.getID());
-            fireNotification(FeatureEvent.FEATURES_REMOVED, JTSEnvelope2D.reference(live.getBounds()));
+            fireNotification(FeatureEvent.Type.REMOVED, JTSEnvelope2D.reference(live.getBounds()));
             live = null;
             current = null;
         } else if (current != null) {
@@ -164,14 +161,14 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
             final JTSEnvelope2D bounds = new JTSEnvelope2D((CoordinateReferenceSystem) null);
             bounds.include(live.getBounds());
             bounds.include(current.getBounds());
-            fireNotification(FeatureEvent.FEATURES_CHANGED, bounds);
+            fireNotification(FeatureEvent.Type.CHANGED, bounds);
             live = null;
             current = null;
         } else if ((live == null) && (current != null)) {
             // We have new content to record
             //
             diff.add(current.getID(), current);
-            fireNotification(FeatureEvent.FEATURES_ADDED, JTSEnvelope2D.reference(current.getBounds()));
+            fireNotification(FeatureEvent.Type.ADDED, JTSEnvelope2D.reference(current.getBounds()));
             current = null;
         } else {
             throw new IOException("No feature available to write");
@@ -249,5 +246,5 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
      *        FeatureType.FEATURES_REMOVED
      * @param bounds
      */
-    protected abstract void fireNotification(int eventType, JTSEnvelope2D bounds);
+    protected abstract void fireNotification(FeatureEvent.Type eventType, JTSEnvelope2D bounds);
 }

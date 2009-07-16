@@ -79,7 +79,7 @@ public class QueryCapabilities {
     public boolean supportsSorting(SortBy[] sortAttributes) {
         return (sortAttributes == null) || (sortAttributes.length == 0);
     }
-    
+
     /**
      * Returns whether the feature source is capable of producing "reliable" fids.
      * <p>

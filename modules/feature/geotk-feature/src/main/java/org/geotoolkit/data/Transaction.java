@@ -19,7 +19,6 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.Set;
 
-
 /**
  * The controller for Transaction with FeatureStore.
  *
@@ -119,6 +118,7 @@ import java.util.Set;
  * @version $Id$
  */
 public interface Transaction {
+
     /** Represents AUTO_COMMIT Mode */
     static final Transaction AUTO_COMMIT = new AutoCommitTransaction();
 
@@ -332,7 +332,7 @@ public interface Transaction {
      *
      * @see org.geotoolkit.data
      */
-    static public interface State {
+    public static interface State {
         /**
          * Provides configuration information for Transaction.State
          *

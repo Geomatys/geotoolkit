@@ -81,6 +81,7 @@ import org.opengis.feature.type.FeatureType;
  * @version $Id$
  */
 public interface FeatureReader<T extends FeatureType, F extends Feature> {
+
     /**
      * Return the FeatureType this reader has been configured to create.
      *

@@ -20,8 +20,8 @@ import java.net.URI;
 import java.util.Set;
 
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Information about a resource.
@@ -40,6 +40,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.5
  */
 public interface ResourceInfo {
+    
     /**
      * Resource's title.
      * <p>
@@ -144,17 +145,4 @@ public interface ResourceInfo {
      */
     CoordinateReferenceSystem getCRS();
     
-    /**
-     * This method was considered because some services maintain this
-     * information as metadata. If it was a bit more common (and axis order more consistent)
-     * it would be worth considering.
-     * <p>
-     * Known Mappings:
-     * <ul>
-     * <li>1st part of the Dublin Core Coverage
-     * <li>wfs LatLongBbox
-     * </ul>
-     * </p>
-     */
-    // ReferencedEnvelope getLatLongBbox();
 }

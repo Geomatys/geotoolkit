@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-
 /**
  * Used to lock features when used with LockingDataSource.
  *
@@ -50,6 +49,7 @@ package org.geotoolkit.data;
  * @see FeatureLockFactory
  */
 public interface FeatureLock {
+
     /**
      * FeatureLock representing Transaction duration locking
      *

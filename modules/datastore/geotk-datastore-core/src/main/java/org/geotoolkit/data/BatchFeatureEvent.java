@@ -23,8 +23,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.data.FeatureEvent;
-import org.geotoolkit.data.FeatureSource;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.And;

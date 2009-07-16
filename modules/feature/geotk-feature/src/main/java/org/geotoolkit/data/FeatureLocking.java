@@ -23,7 +23,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 
-
 /**
  * Provides Feature based locking.
  *
@@ -48,6 +47,7 @@ import org.opengis.filter.Filter;
  * @version $Id$
  */
 public interface FeatureLocking<T extends FeatureType, F extends Feature> extends FeatureStore<T, F> {
+
     /**
      * All locking operations will operate against the provided
      * <code>lock</code>.
@@ -190,9 +190,10 @@ public interface FeatureLocking<T extends FeatureType, F extends Feature> extend
      * Idea for a response from a high-level lock( Query ) function.
      */
     public static class Response {
-        String authID;
-        Set<String> locked;
-        Set<String> notLocked;
+
+        private final String authID;
+        private final Set<String> locked;
+        private final Set<String> notLocked;
 
         public Response(FeatureLock lock, Set<String> lockedFids, Set<String> notLockedFids) {
             authID = lock.getAuthorization();

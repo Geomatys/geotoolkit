@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 
-
 /**
  * This class describes a featureID based locking service.
  *
@@ -35,6 +34,7 @@ import java.io.IOException;
  * @source $URL$
  */
 public interface LockingManager {
+
     /**
      * Check if any locks exist held by the authorization <code>lockID</code>.
      *
@@ -62,8 +62,7 @@ public interface LockingManager {
      *
      * @throws IOException DOCUMENT ME!
      */
-    boolean release(String authID, Transaction transaction)
-        throws IOException;
+    boolean release(String authID, Transaction transaction) throws IOException;
 
     /**
      * Refresh locks held by the authorization <code>lockID</code>.
@@ -84,8 +83,7 @@ public interface LockingManager {
      *
      * @throws IOException DOCUMENT ME!
      */
-    boolean refresh(String authID, Transaction transaction)
-        throws IOException;
+    boolean refresh(String authID, Transaction transaction) throws IOException;
 
     /**
      * FeatureID based unlocking.
@@ -98,7 +96,7 @@ public interface LockingManager {
      * @throws IOException DOCUMENT ME!
      */
     void unLockFeatureID(String typeName, String authID, Transaction transaction,
-        FeatureLock featureLock) throws IOException;
+            FeatureLock featureLock) throws IOException;
 
     /**
      * FeatureID based locking.
@@ -111,5 +109,5 @@ public interface LockingManager {
      * @throws IOException DOCUMENT ME!
      */
     void lockFeatureID(String typeName, String authID, Transaction transaction,
-        FeatureLock featureLock) throws IOException;
+            FeatureLock featureLock) throws IOException;
 }

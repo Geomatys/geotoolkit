@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-
 /**
  * Thrown when there is an error in a datasource.
  * <p>
@@ -28,6 +27,7 @@ package org.geotoolkit.data;
  * @source $URL$
  */
 public class DataSourceException extends java.io.IOException {
+
     private static final long serialVersionUID = -602847953059978370L;
 
     /**

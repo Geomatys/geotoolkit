@@ -22,7 +22,6 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 
-
 /**
  * Encapsulates a data request.
  *
@@ -63,25 +62,26 @@ import org.geotoolkit.factory.Hints;
  * @version $Id$
  */
 public interface Query {
+
     /** TODO: should this be ANY_URI */
-    static final URI NO_NAMESPACE = null;
+    public static final URI NO_NAMESPACE = null;
 
     /** So getMaxFeatures does not return null we use a very large number. */
-    static final int DEFAULT_MAX = Integer.MAX_VALUE;
+    public static final int DEFAULT_MAX = Integer.MAX_VALUE;
 
     /**
      * Implements a query that will fetch all features from a datasource. This
      * query should retrieve all properties, with no maxFeatures, no
      * filtering, and the default featureType.
      */
-    final Query ALL = new ALLQuery();
+    public static final Query ALL = new ALLQuery();
 
     /**
      * Implements a query that will fetch all the FeatureIDs from a datasource.
      * This query should retrive no properties, with no maxFeatures, no
      * filtering, and the a featureType with no attribtues.
      */
-    final Query FIDS = new FIDSQuery();
+    public static final Query FIDS = new FIDSQuery();
 
     /**
      * Ask for no properties when used with setPropertyNames.
@@ -90,10 +90,10 @@ public interface Query {
      * Note the query will still return a result - limited to FeatureIDs.
      * </p>
      */
-    final String[] NO_NAMES = new String[0];
+    public static final String[] NO_NAMES = new String[0];
 
     /** Ask for all properties when used with setPropertyNames. */
-    final String[] ALL_NAMES = null;
+    public static final String[] ALL_NAMES = null;
 
     /**
      * The properties array is used to specify the attributes that should be

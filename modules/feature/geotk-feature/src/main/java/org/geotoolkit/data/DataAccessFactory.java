@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.geotoolkit.util.SimpleInternationalString;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.util.InternationalString;
-
 
 /**
  * Constructs a live DataAccess from a set of connection parameters.
@@ -89,6 +89,7 @@ import org.opengis.util.InternationalString;
  * @source $URL$
  */
 public interface DataAccessFactory {
+
     /**
      * Construct a live DataAccess using the connection parameters provided.
      * <p>
@@ -315,7 +316,7 @@ public interface DataAccessFactory {
          * @param sample Sample value as an example for user input
          */
         public Param(String key, Class<?> type, String description, boolean required, Object sample) {
-            this(key, type, description == null? null : new SimpleInternationalString(description),
+            this(key, type, description == null ? null : new SimpleInternationalString(description),
                     required, sample, null);
         }
 
@@ -330,10 +331,10 @@ public interface DataAccessFactory {
          * @param sample Sample value as an example for user input
          */
         public Param(String key,
-                     Class type,
-                     InternationalString description,
-                     boolean required,
-                     Object sample) {
+                Class type,
+                InternationalString description,
+                boolean required,
+                Object sample) {
             super(key, type, description, null, required, 1, 1, sample, null);
         }
 
@@ -350,11 +351,11 @@ public interface DataAccessFactory {
          * like {@link Parameter#IS_PASSWORD}
          */
         public Param(String key,
-                     Class type,
-                     InternationalString description,
-                     boolean required,
-                     Object sample,
-                     Map<String, ?> metadata) {
+                Class type,
+                InternationalString description,
+                boolean required,
+                Object sample,
+                Map<String, ?> metadata) {
             super(key, type, description, null, required, 1, 1, sample, metadata);
         }
 
@@ -362,10 +363,10 @@ public interface DataAccessFactory {
          * Provides for easy access to the {@link Parameter#IS_PASSWORD} metadata
          * @return true if {@code metadata.get(IS_PASSWORD) == Boolean.TRUE}
          */
-        public boolean isPassword(){
+        public boolean isPassword() {
             return metadata != null && Boolean.TRUE.equals(super.metadata.get(IS_PASSWORD));
         }
-        
+
         /**
          * Lookup Param in a user supplied map.
          *
@@ -409,8 +410,7 @@ public interface DataAccessFactory {
             }
 
             if (!type.isInstance(value)) {
-                throw new IOException(type.getName() + " required for parameter " + key + ": not "
-                    + value.getClass().getName());
+                throw new IOException(type.getName() + " required for parameter " + key + ": not " + value.getClass().getName());
             }
 
             return value;
@@ -489,8 +489,7 @@ public interface DataAccessFactory {
                     } catch (IOException ioException) {
                         throw ioException;
                     } catch (Throwable throwable) {
-                        throw new DataSourceException("Problem creating " + type.getName()
-                            + " from '" + text + "'", throwable);
+                        throw new DataSourceException("Problem creating " + type.getName() + " from '" + text + "'", throwable);
                     }
 
                     result.add(element);
@@ -510,8 +509,7 @@ public interface DataAccessFactory {
             } catch (IOException ioException) {
                 throw ioException;
             } catch (Throwable throwable) {
-                throw new DataSourceException("Problem creating " + type.getName() + " from '"
-                    + text + "'", throwable);
+                throw new DataSourceException("Problem creating " + type.getName() + " from '" + text + "'", throwable);
             }
         }
 
@@ -539,7 +537,7 @@ public interface DataAccessFactory {
             Constructor<?> constructor;
 
             try {
-                constructor = type.getConstructor(new Class[] { String.class });
+                constructor = type.getConstructor(new Class[]{String.class});
             } catch (SecurityException e) {
                 //  type( String ) constructor is not public
                 throw new IOException("Could not create " + type.getName() + " from text");
@@ -549,16 +547,13 @@ public interface DataAccessFactory {
             }
 
             try {
-                return constructor.newInstance(new Object[] { text, });
+                return constructor.newInstance(new Object[]{text,});
             } catch (IllegalArgumentException illegalArgumentException) {
-                throw new DataSourceException("Could not create " + type.getName() + ": from '"
-                    + text + "'", illegalArgumentException);
+                throw new DataSourceException("Could not create " + type.getName() + ": from '" + text + "'", illegalArgumentException);
             } catch (InstantiationException instantiaionException) {
-                throw new DataSourceException("Could not create " + type.getName() + ": from '"
-                    + text + "'", instantiaionException);
+                throw new DataSourceException("Could not create " + type.getName() + ": from '" + text + "'", instantiaionException);
             } catch (IllegalAccessException illegalAccessException) {
-                throw new DataSourceException("Could not create " + type.getName() + ": from '"
-                    + text + "'", illegalAccessException);
+                throw new DataSourceException("Could not create " + type.getName() + ": from '" + text + "'", illegalAccessException);
             } catch (InvocationTargetException targetException) {
                 throw targetException.getCause();
             }

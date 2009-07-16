@@ -23,13 +23,13 @@ import java.util.Set;
 
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-
 
 /**
  * Highlevel API for Features from a specific location.
@@ -67,8 +67,8 @@ import org.opengis.filter.Filter;
  * @source $URL$
  * @version $Id$
  */
-public interface FeatureSource<T extends FeatureType, F extends Feature>{
-    
+public interface FeatureSource<T extends FeatureType, F extends Feature> {
+
     /**
      * Returns the qualified name for the Features this FeatureSource serves.
      * <p>
@@ -106,7 +106,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature>{
      *         this FeatureSource
      */
     Name getName();
-    
+
     /**
      * Information describing the contents of this resoruce.
      * <p>
@@ -117,7 +117,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature>{
      * <ul>
      */
     ResourceInfo getInfo();
-    
+
     /**
      * Access to the DataStore implementing this FeatureStore.
      *
@@ -133,7 +133,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature>{
      * @since 2.5
      */
     QueryCapabilities getQueryCapabilities();
-    
+
     /**
      * Adds a listener to the list that's notified each time a change to the
      * FeatureStore occurs.
@@ -299,6 +299,5 @@ public interface FeatureSource<T extends FeatureType, F extends Feature>{
      * @return a set of {@link RenderingHints#Key} objects (eventually empty, never null).
      */
     public Set<RenderingHints.Key> getSupportedHints();
-    
     // FeatureReader getFeatureReader( Query query ); // ask justin for proposal
 }

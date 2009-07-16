@@ -25,15 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.FeatureEvent;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.Transaction;
 import org.geotoolkit.data.Transaction.State;
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -339,24 +334,16 @@ public class TransactionStateDiff implements State {
         return new DiffFeatureWriter(reader, diff, filter) {
 
             @Override
-            public void fireNotification(final int eventType, final JTSEnvelope2D bounds) {
+            public void fireNotification(final FeatureEvent.Type eventType, final JTSEnvelope2D bounds) {
                 switch (eventType) {
-                    case FeatureEvent.FEATURES_ADDED:
-                        store.listenerManager.fireFeaturesAdded(typeName,
-                                transaction, bounds, false);
-
+                    case ADDED:
+                        store.listenerManager.fireFeaturesAdded(typeName,transaction, bounds, false);
                         break;
-
-                    case FeatureEvent.FEATURES_CHANGED:
-                        store.listenerManager.fireFeaturesChanged(typeName,
-                                transaction, bounds, false);
-
+                    case CHANGED:
+                        store.listenerManager.fireFeaturesChanged(typeName,transaction, bounds, false);
                         break;
-
-                    case FeatureEvent.FEATURES_REMOVED:
-                        store.listenerManager.fireFeaturesRemoved(typeName,
-                                transaction, bounds, false);
-
+                    case REMOVED:
+                        store.listenerManager.fireFeaturesRemoved(typeName,transaction, bounds, false);
                         break;
                 }
             }

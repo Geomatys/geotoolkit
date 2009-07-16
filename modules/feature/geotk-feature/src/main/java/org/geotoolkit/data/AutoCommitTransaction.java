@@ -19,7 +19,6 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.Set;
 
-
 /**
  * This is used to represent the absense of a Transaction and the use of
  * AutoCommit.
@@ -31,6 +30,7 @@ import java.util.Set;
  * @source $URL$
  */
 class AutoCommitTransaction implements Transaction {
+
     /**
      * Authorization IDs are not stored by AutoCommit.
      *
@@ -42,9 +42,10 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws UnsupportedOperationException AUTO_COMMIT does not support this
      */
+    @Override
     public Set<String> getAuthorizations() {
         throw new UnsupportedOperationException(
-            "Authorization IDs are not valid for AutoCommit Transaction");
+                "Authorization IDs are not valid for AutoCommit Transaction");
     }
 
     /**
@@ -60,9 +61,10 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws UnsupportedOperationException AutoCommit does not support State
      */
+    @Override
     public void putState(Object key, State state) {
         throw new UnsupportedOperationException(
-            "AutoCommit does not support the putState opperations");
+                "AutoCommit does not support the putState opperations");
     }
 
     /**
@@ -77,9 +79,10 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws UnsupportedOperationException AutoCommit does not support State
      */
+    @Override
     public void removeState(Object key) {
         throw new UnsupportedOperationException(
-            "AutoCommit does not support the removeState opperations");
+                "AutoCommit does not support the removeState opperations");
     }
 
     /**
@@ -97,9 +100,10 @@ class AutoCommitTransaction implements Transaction {
      * @throws UnsupportedOperationException As Autocommit does not support
      *         State
      */
+    @Override
     public State getState(Object key) {
         throw new UnsupportedOperationException(
-            "AutoCommit does not support the getState opperations");
+                "AutoCommit does not support the getState opperations");
     }
 
     /**
@@ -122,6 +126,7 @@ class AutoCommitTransaction implements Transaction {
      * </code>
      * </pre>
      */
+    @Override
     public void commit() {
         // implement a NOP
     }
@@ -129,6 +134,7 @@ class AutoCommitTransaction implements Transaction {
     /**
      * Implements a NOP since AUTO_COMMIT does not maintain State.
      */
+    @Override
     public void close() {
         // no state to clean up after
     }
@@ -138,6 +144,7 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws IOException if Rollback fails
      */
+    @Override
     public void rollback() throws IOException {
         throw new IOException("AutoCommit cannot support the rollback opperation");
     }
@@ -153,6 +160,7 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws IOException If set authorization fails
      */
+    @Override
     public void addAuthorization(String authID) throws IOException {
         throw new IOException("Authorization IDs are not valid for AutoCommit Transaction");
     }
@@ -171,9 +179,10 @@ class AutoCommitTransaction implements Transaction {
      *
      * @throws UnsupportedOperationException AutoCommit does not support State
      */
+    @Override
     public Object getProperty(Object key) {
         throw new UnsupportedOperationException(
-            "AutoCommit does not support the getProperty opperations");
+                "AutoCommit does not support the getProperty opperations");
     }
 
     /**
@@ -187,8 +196,9 @@ class AutoCommitTransaction implements Transaction {
      * @see org.geotoolkit.data.Transaction#addProperty(java.lang.Object,
      *      java.lang.Object)
      */
+    @Override
     public void putProperty(Object key, Object value) {
         throw new UnsupportedOperationException(
-            "AutoCommit does not support the addProperty opperations");
+                "AutoCommit does not support the addProperty opperations");
     }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.geotoolkit.feature.collection.FeatureCollection;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -125,8 +126,8 @@ public interface DataAccess<T extends FeatureType, F extends Feature> {
      * @throws UnsupportedOperation if functionality is not available
      */
     void updateSchema(Name typeName, T featureType)
-        throws IOException;
-    
+            throws IOException;
+
     /**
      * Names of the available Resources.
      * <p>
@@ -136,7 +137,7 @@ public interface DataAccess<T extends FeatureType, F extends Feature> {
      * @throws IOException
      */
     List<Name> getNames() throws IOException;
-        
+
     /**
      * Description of the named resource.
      * <p>
@@ -148,7 +149,7 @@ public interface DataAccess<T extends FeatureType, F extends Feature> {
      * @throws IOException
      */
     T getSchema(Name name) throws IOException;
-    
+
     /**
      * Access to the named resource.
      * <p>
@@ -166,7 +167,7 @@ public interface DataAccess<T extends FeatureType, F extends Feature> {
      * @return Access to the named resource being made available
      * @throws IOException
      */
-    FeatureSource<T,F> getFeatureSource(Name typeName) throws IOException;
+    FeatureSource<T, F> getFeatureSource(Name typeName) throws IOException;
 
     /**
      * Disposes of this data store and releases any resource that it is using.
@@ -182,18 +183,14 @@ public interface DataAccess<T extends FeatureType, F extends Feature> {
      * from/to the storage, or be prepared for the consequences.
      */
     void dispose();
-
+    
     //FeatureSource<T,F> getView(Query query) throws IOException, SchemaException;
-
     //FeatureReader<T,F> getFeatureReader(Query query, Transaction transaction)
     //    throws IOException;
-    
     //FeatureWriter<T,F> getFeatureWriter(Name typeName, Filter filter, Transaction transaction)
     //    throws IOException;
-
     //FeatureWriter<T,F> getFeatureWriter(Name typeName, Transaction transaction)
     //    throws IOException;
-
     //FeatureWriter<T,F> getFeatureWriterAppend(Name typeName, Transaction transaction)
     //    throws IOException;
 }

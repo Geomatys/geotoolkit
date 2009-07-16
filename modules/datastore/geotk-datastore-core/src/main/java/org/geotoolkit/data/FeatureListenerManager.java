@@ -22,15 +22,10 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.data.FeatureEvent;
-import org.geotoolkit.data.FeatureListener;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Transaction;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -258,9 +253,9 @@ public class FeatureListenerManager {
             final JTSEnvelope2D bounds, final boolean commit)
     {
         if (commit) {
-            fireCommit(typeName, transaction, FeatureEvent.FEATURES_ADDED, bounds);
+            fireCommit(typeName, transaction, FeatureEvent.Type.ADDED, bounds);
         } else {
-            fireEvent(typeName, transaction, FeatureEvent.FEATURES_ADDED, bounds);
+            fireEvent(typeName, transaction, FeatureEvent.Type.ADDED, bounds);
         }
     }
 
@@ -333,9 +328,9 @@ public class FeatureListenerManager {
             final JTSEnvelope2D bounds, final boolean commit)
     {
         if (commit) {
-            fireCommit(typeName, transaction, FeatureEvent.FEATURES_CHANGED, bounds);
+            fireCommit(typeName, transaction, FeatureEvent.Type.CHANGED, bounds);
         } else {
-            fireEvent(typeName, transaction, FeatureEvent.FEATURES_CHANGED, bounds);
+            fireEvent(typeName, transaction, FeatureEvent.Type.CHANGED, bounds);
         }
 
     }
@@ -369,9 +364,9 @@ public class FeatureListenerManager {
      */
     public void fireChanged(final String typeName, final Transaction transaction, final boolean commit) {
         if (commit) {
-            fireCommit(typeName, transaction, FeatureEvent.FEATURES_CHANGED, null);
+            fireCommit(typeName, transaction, FeatureEvent.Type.CHANGED, null);
         } else {
-            fireEvent(typeName, transaction, FeatureEvent.FEATURES_CHANGED, null);
+            fireEvent(typeName, transaction, FeatureEvent.Type.CHANGED, null);
         }
     }
 
@@ -381,7 +376,7 @@ public class FeatureListenerManager {
      * @param typeName
      * @param transaction
      */
-    private void fireCommit(final String typeName, final Transaction transaction, final int type,
+    private void fireCommit(final String typeName, final Transaction transaction, final FeatureEvent.Type type,
             final JTSEnvelope2D bounds)
     {
         FeatureSource<? extends FeatureType, ? extends Feature> featureSource;
@@ -413,7 +408,7 @@ public class FeatureListenerManager {
      * @param type
      * @param bounds
      */
-    private void fireEvent(final String typeName, final Transaction transaction, final int type,
+    private void fireEvent(final String typeName, final Transaction transaction, final FeatureEvent.Type type,
             final JTSEnvelope2D bounds)
     {
         FeatureSource<? extends FeatureType, ? extends Feature> featureSource;
@@ -465,9 +460,9 @@ public class FeatureListenerManager {
             final JTSEnvelope2D bounds, final boolean commit)
     {
         if (commit) {
-            fireCommit(typeName, transaction, FeatureEvent.FEATURES_REMOVED, bounds);
+            fireCommit(typeName, transaction,FeatureEvent.Type.REMOVED, bounds);
         } else {
-            fireEvent(typeName, transaction, FeatureEvent.FEATURES_REMOVED, bounds);
+            fireEvent(typeName, transaction, FeatureEvent.Type.REMOVED, bounds);
         }
     }
 }

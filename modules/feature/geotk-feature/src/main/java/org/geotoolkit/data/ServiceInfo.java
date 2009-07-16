@@ -19,7 +19,6 @@ package org.geotoolkit.data;
 import java.net.URI;
 import java.util.Set;
 
-
 /**
  * Information about a service.
  * <p>

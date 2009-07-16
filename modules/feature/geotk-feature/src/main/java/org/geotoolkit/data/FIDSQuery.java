@@ -18,11 +18,12 @@ package org.geotoolkit.data;
 
 import java.net.URI;
 import java.util.Arrays;
+
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.factory.Hints;
 
+import org.geotoolkit.factory.Hints;
 
 /**
  * Implementation for Query.FIDS.
@@ -41,40 +42,77 @@ import org.geotoolkit.factory.Hints;
  * @source $URL$
  */
 class FIDSQuery implements Query {
-    static final String[] NO_PROPERTIES = new String[0];
 
+    private static final String[] NO_PROPERTIES = new String[0];
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getPropertyNames() {
         return NO_PROPERTIES;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean retrieveAllProperties() {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int getMaxFeatures() {
         return DEFAULT_MAX; // consider Integer.MAX_VALUE
     }
-    
-    public Integer getStartIndex(){
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Integer getStartIndex() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Filter getFilter() {
         return Filter.INCLUDE;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getTypeName() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getNamespace() {
         return NO_NAMESPACE;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getHandle() {
         return "Request Feature IDs";
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getVersion() {
         return null;
     }
@@ -84,15 +122,11 @@ class FIDSQuery implements Query {
      *
      * @return hascode for filter
      */
+    @Override
     public int hashCode() {
         String[] n = getPropertyNames();
 
-        return ((n == null) ? (-1) : ((n.length == 0) ? 0 : (n.length | n[0].hashCode())))
-        | getMaxFeatures() | ((getFilter() == null) ? 0 : getFilter().hashCode())
-        | ((getTypeName() == null) ? 0 : getTypeName().hashCode())
-        | ((getVersion() == null) ? 0 : getVersion().hashCode())
-        | ((getCoordinateSystem() == null) ? 0 : getCoordinateSystem().hashCode())
-        | ((getCoordinateSystemReproject() == null) ? 0 : getCoordinateSystemReproject().hashCode());
+        return ((n == null) ? (-1) : ((n.length == 0) ? 0 : (n.length | n[0].hashCode()))) | getMaxFeatures() | ((getFilter() == null) ? 0 : getFilter().hashCode()) | ((getTypeName() == null) ? 0 : getTypeName().hashCode()) | ((getVersion() == null) ? 0 : getVersion().hashCode()) | ((getCoordinateSystem() == null) ? 0 : getCoordinateSystem().hashCode()) | ((getCoordinateSystemReproject() == null) ? 0 : getCoordinateSystemReproject().hashCode());
     }
 
     /**
@@ -107,6 +141,7 @@ class FIDSQuery implements Query {
      *
      * @return <code>true</code> if <code>obj</code> retrieves only FIDS
      */
+    @Override
     public boolean equals(Object obj) {
         if ((obj == null) || !(obj instanceof Query)) {
             return false;
@@ -118,24 +153,15 @@ class FIDSQuery implements Query {
 
         Query other = (Query) obj;
 
-        return Arrays.equals(getPropertyNames(), other.getPropertyNames())
-        && (retrieveAllProperties() == other.retrieveAllProperties())
-        && (getMaxFeatures() == other.getMaxFeatures())
-        && ((getFilter() == null) ? (other.getFilter() == null)
-                                  : getFilter().equals(other.getFilter()))
-        && ((getTypeName() == null) ? (other.getTypeName() == null)
-                                    : getTypeName().equals(other.getTypeName()))
-        && ((getVersion() == null) ? (other.getVersion() == null)
-                                   : getVersion().equals(other.getVersion()))
-        && ((getCoordinateSystem() == null) ? (other.getCoordinateSystem() == null)
-                                            : getCoordinateSystem()
-                                                  .equals(other.getCoordinateSystem()))
-        && ((getCoordinateSystemReproject() == null) ? (other.getCoordinateSystemReproject() == null)
-                                                     : getCoordinateSystemReproject()
-                                                           .equals(other
-            .getCoordinateSystemReproject()));
+        return Arrays.equals(getPropertyNames(), other.getPropertyNames()) && (retrieveAllProperties() == other.retrieveAllProperties()) && (getMaxFeatures() == other.getMaxFeatures()) && ((getFilter() == null) ? (other.getFilter() == null)
+                : getFilter().equals(other.getFilter())) && ((getTypeName() == null) ? (other.getTypeName() == null)
+                : getTypeName().equals(other.getTypeName())) && ((getVersion() == null) ? (other.getVersion() == null)
+                : getVersion().equals(other.getVersion())) && ((getCoordinateSystem() == null) ? (other.getCoordinateSystem() == null)
+                : getCoordinateSystem().equals(other.getCoordinateSystem())) && ((getCoordinateSystemReproject() == null) ? (other.getCoordinateSystemReproject() == null)
+                : getCoordinateSystemReproject().equals(other.getCoordinateSystemReproject()));
     }
 
+    @Override
     public String toString() {
         return "Query.FIDS";
     }
@@ -147,6 +173,7 @@ class FIDSQuery implements Query {
      *
      * @see org.geotoolkit.data.Query#getCoordinateSystem()
      */
+    @Override
     public CoordinateReferenceSystem getCoordinateSystem() {
         return null;
     }
@@ -158,6 +185,7 @@ class FIDSQuery implements Query {
      *
      * @see org.geotoolkit.data.Query#getCoordinateSystemReproject()
      */
+    @Override
     public CoordinateReferenceSystem getCoordinateSystemReproject() {
         return null;
     }
@@ -165,6 +193,7 @@ class FIDSQuery implements Query {
     /**
      * @return {@link SortBy#UNSORTED}.
      */
+    @Override
     public SortBy[] getSortBy() {
         return SortBy.UNSORTED;
     }
@@ -172,6 +201,7 @@ class FIDSQuery implements Query {
     /**
      * Returns the GeoToolkit default hints {@link GeoToolkit#getDefaultHints()}
      */
+    @Override
     public Hints getHints() {
         return new Hints();
     }

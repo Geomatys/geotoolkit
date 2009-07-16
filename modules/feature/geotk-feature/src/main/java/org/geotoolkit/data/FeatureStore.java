@@ -24,8 +24,8 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
-import org.geotoolkit.feature.collection.FeatureCollection;
 
+import org.geotoolkit.feature.collection.FeatureCollection;
 
 /**
  * Provides storage of data for Features.
@@ -48,6 +48,7 @@ import org.geotoolkit.feature.collection.FeatureCollection;
  * @version $Id$
  */
 public interface FeatureStore<T extends FeatureType, F extends Feature> extends FeatureSource<T, F> {
+
     /**
      * Adds all features from the passed feature collection to the datasource.
      * <p>
@@ -84,11 +85,8 @@ public interface FeatureStore<T extends FeatureType, F extends Feature> extends 
      *         length, if the object types do not match the attribute types,
      *         or if there are backend errors.
      */
-
-    //void modifyFeatures(AttributeType[] type, Object[] value, Filter filter)
-    //    throws IOException;
     void modifyFeatures(AttributeDescriptor[] type, Object[] value, Filter filter)
-        throws IOException;
+            throws IOException;
 
     /**
      * Modifies the passed attribute types with the passed objects in all
@@ -102,11 +100,8 @@ public interface FeatureStore<T extends FeatureType, F extends Feature> extends 
      * @throws IOException If modificaton is not supported, if the object type
      *         do not match the attribute type.
      */
-
-    //void modifyFeatures(AttributeType type, Object value, Filter filter)
-    //    throws IOException;
     void modifyFeatures(AttributeDescriptor type, Object value, Filter filter)
-        throws IOException;
+            throws IOException;
 
     /**
      * Deletes the all the current Features of this datasource and adds the new

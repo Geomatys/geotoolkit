@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-
 /**
  * A request for a Lock that last the duration of a transaction.
  *
@@ -27,6 +26,7 @@ package org.geotoolkit.data;
  * @source $URL$
  */
 class CurrentTransactionLock implements FeatureLock {
+
     /**
      * Transaction locks do not require Authorization.
      *
@@ -39,6 +39,7 @@ class CurrentTransactionLock implements FeatureLock {
      *
      * @see org.geotoolkit.data.FeatureLock#getAuthorization()
      */
+    @Override
     public String getAuthorization() {
         return toString();
     }
@@ -55,10 +56,12 @@ class CurrentTransactionLock implements FeatureLock {
      *
      * @see org.geotoolkit.data.FeatureLock#getDuration()
      */
+    @Override
     public long getDuration() {
         return -1;
     }
 
+    @Override
     public String toString() {
         return "CURRENT_TRANSACTION";
     }

@@ -48,5 +48,5 @@ public interface GmlObjectStore {
      * 
      * @throws IOException Any I/O errors that occur.
      */
-    Object getGmlObject( GmlObjectId id, Hints hints ) throws IOException;
+    Object getGmlObject(GmlObjectId id, Hints hints) throws IOException;
 }

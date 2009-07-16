@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
-
 /**
  * Provides the ability to write Features information.
  *
@@ -62,6 +61,7 @@ import org.opengis.feature.type.FeatureType;
  * @version $Id$
  */
 public interface FeatureWriter<T extends FeatureType, F extends Feature> {
+
     /**
      * FeatureType this reader has been configured to create.
      *
@@ -175,6 +175,4 @@ public interface FeatureWriter<T extends FeatureType, F extends Feature> {
      */
     void close() throws IOException;
     
-    //FeatureWriter getFeatureWriter( Filter filter); // ask justin for proposal
-    //FeatureWriter getFeatureWriter( boolean append); // ask justin for proposal
 }
