@@ -146,7 +146,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
 
     @Override
     public String toString() {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         buf.append("ServiceInfo ");
         if (source != null) {
             buf.append(source);

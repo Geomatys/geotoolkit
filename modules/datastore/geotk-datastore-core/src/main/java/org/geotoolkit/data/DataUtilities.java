@@ -1289,7 +1289,7 @@ public final class DataUtilities extends FeatureUtilities {
     public static String spec(final SimpleFeatureType featureType) {
         final List types = featureType.getAttributeDescriptors();
 
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
 
         for (int i = 0; i < types.size(); i++) {
             final AttributeDescriptor type = (AttributeDescriptor) types.get(i);

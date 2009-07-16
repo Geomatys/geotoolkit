@@ -475,7 +475,7 @@ public class DefaultQuery implements Query {
      */
     @Override
     public String toString() {
-        StringBuffer returnString = new StringBuffer("Query:");
+        StringBuilder returnString = new StringBuilder("Query:");
 
         if (handle != null) {
             returnString.append(" [" + handle + "]");

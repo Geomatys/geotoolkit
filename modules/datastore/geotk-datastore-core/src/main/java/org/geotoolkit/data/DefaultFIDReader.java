@@ -30,15 +30,14 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @version $Id$
  */
 public class DefaultFIDReader implements FIDReader {
-    protected static final String CLOSE_MESG = "Close has already been called"
-        + " on this FIDReader";
+    protected static final String CLOSE_MESG = "Close has already been called on this FIDReader";
 
     private int len;
     protected int index = 0;
-    protected StringBuffer buffer;
+    protected StringBuilder buffer;
 
     public DefaultFIDReader(String typeName) {
-        buffer = new StringBuffer(typeName);
+        buffer = new StringBuilder(typeName);
         buffer.append('.');
         len = typeName.length() + 1;
     }
@@ -50,6 +49,7 @@ public class DefaultFIDReader implements FIDReader {
     /**
      * Release any resources associated with this reader
      */
+    @Override
     public void close() {
         index = -1;
     }
@@ -61,6 +61,7 @@ public class DefaultFIDReader implements FIDReader {
      *
      * @throws IOException If closed
      */
+    @Override
     public boolean hasNext() throws IOException {
         if (index < 0) {
             throw new IOException(CLOSE_MESG);
@@ -76,6 +77,7 @@ public class DefaultFIDReader implements FIDReader {
      *
      * @throws IOException If closed
      */
+    @Override
     public String next() throws IOException {
         if (index < 0) {
             throw new IOException(CLOSE_MESG);
