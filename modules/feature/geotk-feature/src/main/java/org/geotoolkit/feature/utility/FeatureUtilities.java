@@ -35,11 +35,11 @@ import java.util.List;
 
 import org.geotoolkit.feature.DefaultFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  *
@@ -146,7 +146,7 @@ public class FeatureUtilities {
      * @return List of features copied into memory
      */
     public static List<SimpleFeature> list(final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection) {
-        final ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
+        final List<SimpleFeature> list = new ArrayList<SimpleFeature>();
         try {
             featureCollection.accepts(new FeatureVisitor() {
 

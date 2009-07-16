@@ -19,7 +19,6 @@ package org.geotoolkit.feature.utility;
 import org.opengis.util.InternationalString;
 import org.opengis.util.ProgressListener;
 
-
 /**
  * A default progress listener implementation suitable for
  * subclassing.
@@ -33,6 +32,7 @@ import org.opengis.util.ProgressListener;
  * @version $Id$
  */
 public class NullProgressListener implements ProgressListener {
+
     /**
      * Description of the undergoing action.
      */
@@ -49,67 +49,106 @@ public class NullProgressListener implements ProgressListener {
     public NullProgressListener() {
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getDescription() {
         return description;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setDescription(final String description) {
         this.description = description;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void started() {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void progress(final float percent) {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public float getProgress() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void complete() {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void dispose() {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setCanceled(final boolean cancel) {
         this.canceled = cancel;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void warningOccurred(final String source, final String location, final String warning) {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void exceptionOccurred(final Throwable exception) {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InternationalString getTask() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setTask(final InternationalString task) {
         // do nothing
