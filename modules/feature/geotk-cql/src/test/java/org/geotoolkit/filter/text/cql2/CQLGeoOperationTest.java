@@ -155,7 +155,7 @@ public class CQLGeoOperationTest {
         resultFilter = CompilerUtil.parseFilter(language,"BBOX(ATTR1, 10.0,20.0,30.0,40.0, 'EPSG:4326')");
         Assert.assertTrue("BBox was expected", resultFilter instanceof BBOX);
         bboxFilter = (BBOX) resultFilter;
-        Assert.assertEquals("4326", bboxFilter.getSRS());
+        Assert.assertEquals("EPSG:4326", bboxFilter.getSRS());
 
     }
 
