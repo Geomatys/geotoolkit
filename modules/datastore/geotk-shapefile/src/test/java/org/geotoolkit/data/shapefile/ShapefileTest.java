@@ -30,12 +30,12 @@ import org.geotoolkit.data.Query;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureCollections;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.feature.utility.FeatureUtilities;
 
 /**
  * 
@@ -136,7 +136,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testHolyPolygons() throws Exception {
         SimpleFeatureType type = DataUtilities.createType("junk",
                 "a:MultiPolygon");
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollections.newCollection();
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureUtilities.createCollection();
 
         File tmpFile = getTempFile();
         tmpFile.delete();

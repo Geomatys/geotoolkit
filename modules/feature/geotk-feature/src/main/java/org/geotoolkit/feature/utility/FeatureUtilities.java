@@ -49,6 +49,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class FeatureUtilities {
 
+    protected FeatureUtilities(){}
+
     /**
      * Returns a non-null default value for the class that is passed in.  This is a helper class an can't create a
      * default class for any type but it does support:

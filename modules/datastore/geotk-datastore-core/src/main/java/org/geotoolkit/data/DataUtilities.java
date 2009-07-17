@@ -44,10 +44,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureCollections;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -56,13 +54,16 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.feature.type.DefaultGeometryType;
-//import org.geotoolkit.filter.FilterAttributeExtractor;
+import org.geotoolkit.feature.utility.FeatureUtilities;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Converters;
+
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;
@@ -86,12 +87,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.feature.utility.FeatureUtilities;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.Query;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -854,7 +849,7 @@ public final class DataUtilities extends FeatureUtilities {
      * @return FeatureCollection
      */
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> collection(final SimpleFeature[] features) {
-        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
         final int length = features.length;
         for (int i = 0; i < length; i++) {
             collection.add(features[i]);
@@ -905,7 +900,7 @@ public final class DataUtilities extends FeatureUtilities {
      * @return FeatureCollection
      */
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> collection(final List<SimpleFeature> list) {
-        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
         for (SimpleFeature feature : list) {
             collection.add(feature);
         }
@@ -923,7 +918,7 @@ public final class DataUtilities extends FeatureUtilities {
      * @return FeatureCollection
      */
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> collection(final SimpleFeature feature) {
-        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
         collection.add(feature);
         return collection;
     }
@@ -940,7 +935,7 @@ public final class DataUtilities extends FeatureUtilities {
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> collection(
             final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException
     {
-        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
         try {
             while (reader.hasNext()) {
                 try {
@@ -969,7 +964,7 @@ public final class DataUtilities extends FeatureUtilities {
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> collection(
             final FeatureIterator<SimpleFeature> reader) throws IOException
     {
-        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
         try {
             while (reader.hasNext()) {
                 try {

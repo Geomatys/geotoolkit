@@ -28,7 +28,6 @@ import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.collection.CollectionEvent;
 import org.geotoolkit.feature.collection.CollectionListener;
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureCollections;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -38,6 +37,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.feature.utility.FeatureUtilities;
 
 
 /**
@@ -55,7 +55,7 @@ public class CollectionDataStore extends AbstractDataStore {
      * @param collection
      */
     public CollectionDataStore(final SimpleFeatureType schema) {
-        this.collection = FeatureCollections.newCollection();
+        this.collection = FeatureUtilities.createCollection();
         this.featureType = schema;
         collection.addListener(new FeatureCollectionListener());
     }

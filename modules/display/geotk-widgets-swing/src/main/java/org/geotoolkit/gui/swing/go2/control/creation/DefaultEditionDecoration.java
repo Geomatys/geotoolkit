@@ -80,7 +80,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.data.DefaultTransaction;
-import org.geotoolkit.feature.FeatureCollections;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 
@@ -89,6 +88,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
 
+import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -476,7 +476,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
             for (Geometry geom : geoms) {
                 SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
                 Object[] values = new Object[featureType.getAttributeCount()];
 
                 AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();

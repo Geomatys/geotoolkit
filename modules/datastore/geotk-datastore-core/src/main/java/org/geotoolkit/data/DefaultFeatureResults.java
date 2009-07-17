@@ -25,19 +25,13 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.data.store.DataFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureCollections;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Query;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.feature.utility.FeatureUtilities;
+
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -354,7 +348,7 @@ public class DefaultFeatureResults extends DataFeatureCollection {
 
     public FeatureCollection<SimpleFeatureType, SimpleFeature> collection() throws IOException {
         try {
-            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
+            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
             //Feature feature;
             final FeatureReader<SimpleFeatureType, SimpleFeature> reader = reader();
             //SimpleFeatureType type = reader.getFeatureType();
