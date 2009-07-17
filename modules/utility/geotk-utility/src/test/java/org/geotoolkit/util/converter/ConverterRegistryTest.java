@@ -33,7 +33,7 @@ import static org.geotoolkit.test.Commons.*;
  * registry.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -71,7 +71,7 @@ public final class ConverterRegistryTest {
             fail(e.toString());
             return;
         }
-        assertFalse(actual instanceof IdentityConverter);
+        assertFalse(actual instanceof IdentityConverter<?>);
         assertSame(converter, actual);
     }
 
@@ -93,8 +93,8 @@ public final class ConverterRegistryTest {
     }
 
     /**
-     * Ensures that the current {@linkplain #converter} returns the {@linkplain IdentityConverter
-     * identity converter} for the given target.
+     * Ensures that the current {@linkplain #converter} returns the
+     * {@linkplain IdentityConverter identity converter} for the given target.
      *
      * @param target The target for which an identity converter should be obtained.
      */
@@ -107,7 +107,7 @@ public final class ConverterRegistryTest {
             fail(e.toString());
             return;
         }
-        assertTrue(actual instanceof IdentityConverter);
+        assertTrue(Classes.getShortClassName(actual), actual instanceof IdentityConverter<?>);
         assertSame(source, actual.getSourceClass());
         assertSame(source, actual.getTargetClass());
         assertTrue(target.isAssignableFrom(source));

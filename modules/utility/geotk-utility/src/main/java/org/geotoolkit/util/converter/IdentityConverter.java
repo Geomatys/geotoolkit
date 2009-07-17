@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @param <T> The base type of source and converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.01
  * @module
@@ -38,6 +38,38 @@ final class IdentityConverter<T> extends SimpleConverter<T,T> implements Seriali
     private static final long serialVersionUID = -7203549932226245206L;
 
     /**
+     * An identity converter for {@link CharSequence} objects.
+     *
+     * @since 3.02
+     */
+    static final IdentityConverter<CharSequence> CHAR_SEQUENCE =
+            new IdentityConverter<CharSequence>(CharSequence.class);
+
+    /**
+     * An identity converter for {@link String} objects.
+     *
+     * @since 3.02
+     */
+    static final IdentityConverter<String> STRING =
+            new IdentityConverter<String>(String.class);
+
+    /**
+     * Returns an identity converter for the given type.
+     *
+     * @since 3.02
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> IdentityConverter<T> create(final Class<T> type) {
+        if (String.class.equals(type)) {
+            return (IdentityConverter<T>) STRING;
+        }
+        if (CharSequence.class.equals(type)) {
+            return (IdentityConverter<T>) CHAR_SEQUENCE;
+        }
+        return new IdentityConverter<T>(type);
+    }
+
+    /**
      * The type of source and coverted objects.
      */
     private final Class<T> type;
@@ -47,7 +79,7 @@ final class IdentityConverter<T> extends SimpleConverter<T,T> implements Seriali
      *
      * @param type The type of source and coverted objects.
      */
-    IdentityConverter(final Class<T> type) {
+    private IdentityConverter(final Class<T> type) {
         this.type = type;
     }
 

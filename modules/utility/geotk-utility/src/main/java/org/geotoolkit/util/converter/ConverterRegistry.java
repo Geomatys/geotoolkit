@@ -30,13 +30,28 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 
 
 /**
- * A central place where to register converters. The {@linkplain #system system} register is
- * initialized automatically with conversions between some basic Java and Geotoolkit object, like
- * conversions between {@link java.util.Date} and {@link java.lang.Long}. Those conversions are
- * defined for the lifetime of the JVM.
+ * A collection of {@linkplain ObjectConverter Object Converters}. A converter from the given
+ * <var>source type</var> to the given <var>target type</var> can be obtained by a call to
+ * {@link #converters(Class, Class)}. If no converter exists for the given source and target
+ * types, then this registry searchs for a suitable converter accepting a parent class of the
+ * given source type, or returning a sub-class of the given target type.
  * <p>
- * If a temporary set of converters is desired, a new instance of {@code ConverterRegistry}
- * should be created.
+ * New instances of {@code ConverterRegistry} are initially empty. Custom converters must be
+ * explicitly {@linkplain #register registered}. However a system-wide registry initialized
+ * with default converters is provided by the {@link #system()} method.
+ *
+ * {@section Converting from interfaces}
+ * {@code ConverterRegistry} is primarily designed for handling converters from classes to
+ * other classes. It is not designed for handling conversions from interfaces. While usage
+ * of interfaces are not prohibited, it sometime produces unexpected results (while usually
+ * not wrong) because of multi-inheritance in interface hierarchy.
+ * <p>
+ * For example a registry may contain many converters from {@link String} to various objects
+ * ({@link Number}, {@link java.io.File}, <i>etc.</i>). If conversions from the {@link CharSequence}
+ * interface are wanted instead than {@code String}, then the {@code CharSequence} input should be
+ * converted to {@code String} before to search for a converter. The {@linkplain #system() system}
+ * converter perform this step automatically as a convenience, however this is not generally the
+ * case with arbitrary {@code ConverterRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.02
@@ -47,62 +62,71 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 @ThreadSafe
 public class ConverterRegistry {
     /**
-     * The default system-wide instance.
-     */
-    private static ConverterRegistry system;
-
-    /**
-     * Returns the default system-wide instance.
+     * Returns the default system-wide instance. This register is initialized automatically with
+     * conversions between some basic Java and Geotoolkit object, like conversions between
+     * {@link java.util.Date} and {@link java.lang.Long}. Those conversions are defined for
+     * the lifetime of the JVM.
+     * <p>
+     * If a temporary set of converters is desired, a new instance of {@code ConverterRegistry}
+     * should be created explicitly instead.
      *
      * @return The system-wide registry instance.
      */
-    public synchronized static ConverterRegistry system() {
-        ConverterRegistry s = system;
-        if (s == null) {
-            s = new ConverterRegistry();
-            s.register(StringConverter.Number    .INSTANCE); // Preferred choice for StringConverter.
-            s.register(StringConverter.Double    .INSTANCE);
-            s.register(StringConverter.Float     .INSTANCE);
-            s.register(StringConverter.Long      .INSTANCE);
-            s.register(StringConverter.Integer   .INSTANCE);
-            s.register(StringConverter.Short     .INSTANCE);
-            s.register(StringConverter.Byte      .INSTANCE);
-            s.register(StringConverter.Boolean   .INSTANCE);
-            s.register(StringConverter.BigDecimal.INSTANCE);
-            s.register(StringConverter.BigInteger.INSTANCE);
-            s.register(StringConverter.Color     .INSTANCE);
-            s.register(StringConverter.Locale    .INSTANCE);
-            s.register(StringConverter.Charset   .INSTANCE);
-            s.register(StringConverter.File      .INSTANCE); // Most specific first (File, URL, URI).
-            s.register(StringConverter.URL       .INSTANCE);
-            s.register(StringConverter.URI       .INSTANCE);
-            s.register(NumberConverter.Comparable.INSTANCE);
-            s.register(NumberConverter.Double    .INSTANCE);
-            s.register(NumberConverter.Float     .INSTANCE);
-            s.register(NumberConverter.Long      .INSTANCE);
-            s.register(NumberConverter.Integer   .INSTANCE);
-            s.register(NumberConverter.Short     .INSTANCE);
-            s.register(NumberConverter.Byte      .INSTANCE);
-            s.register(NumberConverter.Boolean   .INSTANCE);
-            s.register(NumberConverter.BigDecimal.INSTANCE);
-            s.register(NumberConverter.BigInteger.INSTANCE);
-            s.register(NumberConverter.Color     .INSTANCE);
-            s.register(NumberConverter.String    .INSTANCE); // Last choice for NumberConverter.
-            s.register(DateConverter  .Timestamp .INSTANCE);
-            s.register(DateConverter  .Long      .INSTANCE);
-            s.register(LongConverter  .Date      .INSTANCE);
-            s.register(FileConverter  .URI       .INSTANCE); // The preferred target for File.
-            s.register(FileConverter  .URL       .INSTANCE);
-            s.register(FileConverter  .String    .INSTANCE);
-            s.register(URLConverter   .URI       .INSTANCE); // The preferred target for URL.
-            s.register(URLConverter   .File      .INSTANCE);
-            s.register(URLConverter   .String    .INSTANCE);
-            s.register(URIConverter   .URL       .INSTANCE); // The preferred target for URI.
-            s.register(URIConverter   .File      .INSTANCE);
-            s.register(URIConverter   .String    .INSTANCE);
-            system = s; // Only on success.
+    public static ConverterRegistry system() {
+        return System.INSTANCE;
+    }
+
+    /**
+     * The default system-wide instance.
+     */
+    private static final class System extends HeuristicRegistry {
+        /** The singleton instance. */
+        static final System INSTANCE = new System();
+
+        /** Creates a new system-wide converter registry. */
+        private System() {
+            register(StringConverter.Number             .INSTANCE); // Preferred choice for StringConverter.
+            register(StringConverter.Double             .INSTANCE);
+            register(StringConverter.Float              .INSTANCE);
+            register(StringConverter.Long               .INSTANCE);
+            register(StringConverter.Integer            .INSTANCE);
+            register(StringConverter.Short              .INSTANCE);
+            register(StringConverter.Byte               .INSTANCE);
+            register(StringConverter.Boolean            .INSTANCE);
+            register(StringConverter.BigDecimal         .INSTANCE);
+            register(StringConverter.BigInteger         .INSTANCE);
+            register(StringConverter.Color              .INSTANCE);
+            register(StringConverter.Locale             .INSTANCE);
+            register(StringConverter.Charset            .INSTANCE);
+            register(StringConverter.InternationalString.INSTANCE);
+            register(StringConverter.File               .INSTANCE); // Most specific first (File, URL, URI).
+            register(StringConverter.URL                .INSTANCE);
+            register(StringConverter.URI                .INSTANCE);
+            register(NumberConverter.Comparable         .INSTANCE);
+            register(NumberConverter.Double             .INSTANCE);
+            register(NumberConverter.Float              .INSTANCE);
+            register(NumberConverter.Long               .INSTANCE);
+            register(NumberConverter.Integer            .INSTANCE);
+            register(NumberConverter.Short              .INSTANCE);
+            register(NumberConverter.Byte               .INSTANCE);
+            register(NumberConverter.Boolean            .INSTANCE);
+            register(NumberConverter.BigDecimal         .INSTANCE);
+            register(NumberConverter.BigInteger         .INSTANCE);
+            register(NumberConverter.Color              .INSTANCE);
+            register(NumberConverter.String             .INSTANCE); // Last choice for NumberConverter.
+            register(DateConverter  .Timestamp          .INSTANCE);
+            register(DateConverter  .Long               .INSTANCE);
+            register(LongConverter  .Date               .INSTANCE);
+            register(FileConverter  .URI                .INSTANCE); // The preferred target for File.
+            register(FileConverter  .URL                .INSTANCE);
+            register(FileConverter  .String             .INSTANCE);
+            register(URLConverter   .URI                .INSTANCE); // The preferred target for URL.
+            register(URLConverter   .File               .INSTANCE);
+            register(URLConverter   .String             .INSTANCE);
+            register(URIConverter   .URL                .INSTANCE); // The preferred target for URI.
+            register(URIConverter   .File               .INSTANCE);
+            register(URIConverter   .String             .INSTANCE);
         }
-        return s;
     }
 
     /**
@@ -246,6 +270,8 @@ public class ConverterRegistry {
      */
     private void register(final ClassPair<?,?> key, ObjectConverter<?,?> converter) {
         assert Thread.holdsLock(converters);
+        assert converter.getSourceClass().isAssignableFrom(key.sourceClass) : converter;
+        assert key.targetClass.isAssignableFrom(converter.getTargetClass()) : converter;
         final ObjectConverter<?,?> existing = converters.get(key);
         if (existing != null) {
             assert !existing.equals(converter) : key;
@@ -283,9 +309,9 @@ public class ConverterRegistry {
     {
         final ClassPair<S,T> key = new ClassPair<S,T>(source, target);
         synchronized (converters) {
-            ObjectConverter<?,?> converter = converters.get(key);
+            ObjectConverter<S,T> converter = key.cast(converters.get(key));
             if (converter != null) {
-                return key.cast(converter);
+                return converter;
             }
             /*
              * At this point, no converter were found explicitly for the given key. Searches a
@@ -296,11 +322,20 @@ public class ConverterRegistry {
              */
             ClassPair<? super S,T> candidate = key;
             while ((candidate = candidate.parentSource()) != null) {
-                converter = converters.get(candidate);
+                converter = key.cast(converters.get(candidate));
                 if (converter != null) {
                     register(key, converter);
-                    return key.cast(converter);
+                    return converter;
                 }
+            }
+            /*
+             * No converter found. Gives a chance to subclasses to provide dynamically-generated
+             * converter. The default implementation does not provide any.
+             */
+            converter = createConverter(source, target);
+            if (converter != null) {
+                register(key, converter);
+                return converter;
             }
         }
         /*
@@ -309,9 +344,32 @@ public class ConverterRegistry {
          * register an explicit converter if we need to.
          */
         if (target.isAssignableFrom(source)) {
-            return key.cast(new IdentityConverter<S>(source));
+            return key.cast(IdentityConverter.create(source));
         }
         throw new NonconvertibleObjectException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, key));
+    }
+
+    /**
+     * Creates a new converter for the given source and target types, or {@code null} if none.
+     * This method is invoked by <code>{@linkplain #converter converter}(source, target)</code>
+     * when no registered converter were found for the given types. The default implementation
+     * returns {@code null} if all cases. Subclasses can coverride this method in order to
+     * generate some converters dynamically.
+     * <p>
+     * Note that the source and target classes of the returned converter must match exactly
+     * the provided arguments. This method is not allowed to return a more generic converter.
+     *
+     * @param  <S> The source class.
+     * @param  <T> The target class.
+     * @param  source The source class.
+     * @param  target The target class, or {@code Object.class} for any.
+     * @return A newly generated converter from the specified source class to the target class,
+     *         or {@code null} if none.
+     *
+     * @since 3.02
+     */
+    <S,T> ObjectConverter<S,T> createConverter(final Class<S> source, final Class<T> target) {
+        return null;
     }
 
     /**

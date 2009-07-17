@@ -29,13 +29,27 @@
  *   <li>Use the obtained {@link org.geotoolkit.util.converter.ObjectConverter} instance
  *       for performing the conversions.</li>
  * </ul>
+ * <p>
+ * <b>Example:</b> Converting instances in a collection from type {@code S} to type {@code T},
+ * where the types are unknown at compile-time. Note that the converter is obtained only once
+ * before to be applied to every elements in the loop.
  *
- * @author Justin Deoliveira (TOPP)
+ * {@preformat java
+ *     Class<S> sourceType = ...
+ *     Class<T> targetType = ...
+ *     Collection<S> sources = ...;
+ *     Collection<T> targets = ...;
+ *     ObjectConverter<S,T> converter = ConverterRegistry.system().converter(sourceType, targetType);
+ *     for (S source : sources) {
+ *         targets.add(converter.convert(source));
+ *     }
+ * }
+ *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @author Justin Deoliveira (TOPP)
+ * @version 3.02
  *
  * @since 2.5
  * @module
  */
 package org.geotoolkit.util.converter;
-

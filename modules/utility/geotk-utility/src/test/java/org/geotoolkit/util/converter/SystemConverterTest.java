@@ -26,6 +26,12 @@ import java.util.Date;
 import java.sql.Timestamp;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import org.opengis.util.CodeList;
+import org.opengis.util.InternationalString;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.metadata.citation.PresentationForm;
+
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
@@ -42,6 +48,45 @@ import static org.junit.Assert.*;
  */
 @Depend(ConverterRegistryTest.class)
 public class SystemConverterTest {
+    /**
+     * Tests the conversion of {@linl String} to various code lists.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     */
+    @Test
+    public void testCodeList() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        ObjectConverter<String, ? extends CodeList<?>> converter;
+        converter = system.converter(String.class, PixelInCell.class);
+        assertSame(PixelInCell.CELL_CENTER, converter.convert("CELL_CENTER"));
+        assertSame("Previously fetched converters should be cached.",
+                converter, system.converter(String.class, PixelInCell.class));
+
+        converter = system.converter(String.class, PresentationForm.class);
+        assertSame(PresentationForm.MAP_DIGITAL, converter.convert("MAP_DIGITAL"));
+        assertSame("Previously fetched converters should be cached.",
+                converter, system.converter(String.class, PresentationForm.class));
+    }
+
+    /**
+     * Tests conversions from character sequences to various objects.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     */
+    @Test
+    public void testCharSequence() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        assertEquals("A string for test.", system.converter(CharSequence.class, String.class ).convert("A string for test."));
+        assertEquals(Integer.valueOf(300), system.converter(CharSequence.class, Integer.class).convert("300"));
+
+        ObjectConverter<CharSequence,InternationalString> converter = system.converter(CharSequence.class, InternationalString.class);
+        assertEquals(CharSequence       .class, converter.getSourceClass());
+        assertEquals(InternationalString.class, converter.getTargetClass());
+        InternationalString i18n = converter.convert("A localized string.");
+        assertEquals("A localized string.", i18n.toString());
+        assertSame("Should detect that the source is already of appropriate type.", i18n, converter.convert(i18n));
+    }
+
     /**
      * Tests conversions from strings to numbers.
      *

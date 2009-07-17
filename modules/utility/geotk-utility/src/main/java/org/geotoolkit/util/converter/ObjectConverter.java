@@ -123,7 +123,8 @@ public interface ObjectConverter<S,T> {
     boolean isOrderReversing();
 
     /**
-     * Converts an object to an object of the target type.
+     * Converts an object of the {@linkplain #getSourceClass() source type}
+     * to an object of the {@linkplain #getTargetClass() target type}.
      *
      * @param  source The original object, or {@code null}.
      * @return An instance of target, or {@code null} if the source was null.

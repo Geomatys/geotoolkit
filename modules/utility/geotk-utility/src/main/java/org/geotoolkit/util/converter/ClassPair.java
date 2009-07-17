@@ -28,7 +28,7 @@ package org.geotoolkit.util.converter;
  * @param <T> The base type of converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -85,8 +85,10 @@ class ClassPair<S,T> {
      */
     @SuppressWarnings("unchecked")
     final ObjectConverter<S,T> cast(final ObjectConverter<?,?> converter) {
-        assert converter.getSourceClass().isAssignableFrom(sourceClass) : sourceClass;
-        assert targetClass.isAssignableFrom(converter.getTargetClass()) : targetClass;
+        if (converter != null) {
+            assert converter.getSourceClass().isAssignableFrom(sourceClass) : sourceClass;
+            assert targetClass.isAssignableFrom(converter.getTargetClass()) : targetClass;
+        }
         return (ObjectConverter<S,T>) converter;
     }
 

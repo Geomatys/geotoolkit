@@ -41,7 +41,7 @@ public final class FallbackConverterTest {
      */
     @Test
     public void testChain() throws NonconvertibleObjectException {
-        @SuppressWarnings("unchecked") // Generic array creation.
+        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         final ObjectConverter<String,?>[] converters = new ObjectConverter[] {
             StringConverter.Short  .INSTANCE,
             StringConverter.Long   .INSTANCE,
@@ -85,7 +85,7 @@ public final class FallbackConverterTest {
                 expected[DOUBLE]  = converters[BOOLEAN];
                 // Boolean is expected to be last.
             }
-            assertEquals(targetClass,  c.getTargetClass());
+            assertEquals(targetClass, c.getTargetClass());
             assertEquals(String.class, c.getSourceClass());
             assertEquals(i+1, count(c, expected, 0));
             /*
@@ -106,7 +106,7 @@ public final class FallbackConverterTest {
          * This converter is expected to be registered before any other number
          * converter. Same tests than above will return different objects.
          */
-        @SuppressWarnings("unchecked") // Generic array creation.
+        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         final ObjectConverter<String,?>[] expected = new ObjectConverter[converters.length + 1];
         System.arraycopy(converters, 0, expected, 1, converters.length);
         expected[BOOLEAN + 1] = converters[DOUBLE];
@@ -179,7 +179,7 @@ public final class FallbackConverterTest {
     private static int count(final ObjectConverter<?,?> converter,
                              final ObjectConverter<?,?>[] expected, final int offset)
     {
-        if (converter instanceof FallbackConverter) {
+        if (converter instanceof FallbackConverter<?,?>) {
             final FallbackConverter<?,?> fallback = (FallbackConverter<?,?>) converter;
             synchronized (fallback) {
                 final int c = count(fallback.converter(true), expected, offset);

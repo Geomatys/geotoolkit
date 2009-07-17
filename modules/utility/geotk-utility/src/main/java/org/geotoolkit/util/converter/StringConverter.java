@@ -22,7 +22,9 @@ import java.io.ObjectStreamException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
@@ -71,7 +73,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * The finest suitable kind of number will be selected.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -91,6 +93,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return Classes.finestNumber(source);
             } catch (NumberFormatException e) {
@@ -109,7 +112,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Double}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -129,6 +132,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.lang.Double.parseDouble(source);
             } catch (NumberFormatException e) {
@@ -147,7 +151,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Float}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -167,6 +171,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.lang.Float.parseFloat(source);
             } catch (NumberFormatException e) {
@@ -185,7 +190,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Long}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -205,6 +210,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.lang.Long.parseLong(source);
             } catch (NumberFormatException e) {
@@ -223,7 +229,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Integer}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -243,6 +249,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.lang.Integer.parseInt(source);
             } catch (NumberFormatException e) {
@@ -261,7 +268,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Short}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -281,6 +288,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.lang.Short.parseShort(source);
             } catch (NumberFormatException e) {
@@ -299,7 +307,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Converter from {@link java.lang.String} to {@link java.lang.Byte}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 3.00
      */
@@ -319,6 +327,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.lang.Byte.parseByte(source);
             } catch (NumberFormatException e) {
@@ -339,7 +348,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.02
      *
-     * @since 3.00
+     * @since 3.02
      */
     static final class BigDecimal extends StringConverter<java.math.BigDecimal> {
         private static final long serialVersionUID = -8597497425876120213L;
@@ -357,6 +366,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return new java.math.BigDecimal(source);
             } catch (NumberFormatException e) {
@@ -377,7 +387,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.02
      *
-     * @since 3.00
+     * @since 3.02
      */
     static final class BigInteger extends StringConverter<java.math.BigInteger> {
         private static final long serialVersionUID = 8658903031519526466L;
@@ -395,6 +405,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return new java.math.BigInteger(source);
             } catch (NumberFormatException e) {
@@ -483,7 +494,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 2.4
      */
@@ -499,10 +510,11 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
         }
 
         @Override
-        public java.awt.Color convert(final String source) throws NonconvertibleObjectException {
+        public java.awt.Color convert(String source) throws NonconvertibleObjectException {
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.awt.Color.decode(source);
             } catch (NumberFormatException e) {
@@ -522,7 +534,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      * Examples of locale in string form: {@code "fr"}, {@code "fr_CA"}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 2.0
      */
@@ -545,13 +557,13 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             final String[] s = source.split("_");
             switch (s.length) {
                 case 1:  return new java.util.Locale(s[0]);
                 case 2:  return new java.util.Locale(s[0], s[1]);
                 case 3:  return new java.util.Locale(s[0], s[1], s[2]);
-                default: throw new NonconvertibleObjectException(Errors.format(
-                            Errors.Keys.BAD_LOCALE_$1, source));
+                default: throw new NonconvertibleObjectException(Errors.format(Errors.Keys.BAD_LOCALE_$1, source));
             }
         }
 
@@ -567,7 +579,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.02
      *
      * @since 2.4
      */
@@ -583,16 +595,56 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
         }
 
         @Override
-        public java.nio.charset.Charset convert(final String source) throws NonconvertibleObjectException {
+        public java.nio.charset.Charset convert(String source) throws NonconvertibleObjectException {
             if (source == null) {
                 return null;
             }
+            source = source.trim();
             try {
                 return java.nio.charset.Charset.forName(source);
             }
             catch (UnsupportedCharsetException e) {
                 throw new NonconvertibleObjectException(e);
             }
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+
+    /**
+     * Converter from {@link java.lang.String} to {@link org.opengis.util.InternationalString}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.02
+     */
+    static final class InternationalString extends StringConverter<org.opengis.util.InternationalString> {
+        private static final long serialVersionUID = 730809620191573819L;
+        public static final InternationalString INSTANCE = new InternationalString();
+        private InternationalString() {
+        }
+
+        @Override
+        public Class<org.opengis.util.InternationalString> getTargetClass() {
+            return org.opengis.util.InternationalString.class;
+        }
+
+        @Override
+        public org.opengis.util.InternationalString convert(final String source) {
+            if (source == null) {
+                return null;
+            }
+            return new SimpleInternationalString(source.toString());
+        }
+
+        @Override
+        public boolean hasRestrictions() {
+            return false;
         }
 
         /** Returns the singleton instance on deserialization. */
@@ -622,7 +674,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
         }
 
         @Override
-        public java.io.File convert(final String source) throws NonconvertibleObjectException {
+        public java.io.File convert(final String source) {
             if (source == null) {
                 return null;
             }
@@ -708,6 +760,46 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
         /** Returns the singleton instance on deserialization. */
         protected Object readResolve() throws ObjectStreamException {
             return INSTANCE;
+        }
+    }
+
+
+    /**
+     * Converter from {@link java.lang.String} to {@link org.opengis.util.CodeList}.
+     * This converter is particular in that it requires the target class in argument
+     * to the constructor.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.02
+     */
+    static final class CodeList<T extends org.opengis.util.CodeList<T>> extends StringConverter<T> {
+        private static final long serialVersionUID = 3289083947166861278L;
+
+        /** The type of the code list. */
+        private final Class<T> targetType;
+
+        /** Creates a new converter for the given code list. */
+        static <T extends org.opengis.util.CodeList<T>> CodeList<T> create(final Class<T> targetType) {
+            return new CodeList<T>(targetType);
+        }
+
+        private CodeList(final Class<T> targetType) {
+            this.targetType = targetType;
+        }
+
+        @Override
+        public Class<? extends T> getTargetClass() {
+            return targetType;
+        }
+
+        @Override
+        public T convert(final String source) {
+            if (source == null) {
+                return null;
+            }
+            return org.opengis.util.CodeList.valueOf(targetType, source.trim());
         }
     }
 }
