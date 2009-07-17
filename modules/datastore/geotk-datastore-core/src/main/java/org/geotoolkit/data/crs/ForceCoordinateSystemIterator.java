@@ -21,9 +21,10 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypes;
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -63,8 +64,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
 
-    protected FeatureIterator<SimpleFeature> reader;
-    protected SimpleFeatureBuilder builder;
+    protected final FeatureIterator<SimpleFeature> reader;
+    protected final SimpleFeatureBuilder builder;
 
     /**
      * Shortcut constructor that can be used if the new schema has already been computed
@@ -72,6 +73,9 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      * @param schema
      */
     ForceCoordinateSystemIterator(final FeatureIterator<SimpleFeature> reader, SimpleFeatureType schema) {
+        if(reader == null) throw new NullPointerException("Feature iterator can not be null");
+        if(schema == null) throw new NullPointerException("Feature type can not be null");
+
         this.reader = reader;
         this.builder = new SimpleFeatureBuilder(schema);
     }
@@ -87,8 +91,10 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public ForceCoordinateSystemIterator(final FeatureIterator<SimpleFeature> reader, SimpleFeatureType type,
-            final CoordinateReferenceSystem cs) throws SchemaException
-    {
+            final CoordinateReferenceSystem cs) throws SchemaException{
+
+        if(reader == null) throw new NullPointerException("Feature iterator can not be null");
+        
         if (cs == null) {
             throw new NullPointerException("CoordinateSystem required");
         }
@@ -106,9 +112,6 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      * @see org.geotools.data.FeatureReader#getFeatureType()
      */
     public SimpleFeatureType getFeatureType() {
-        if (reader == null || builder == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
         return builder.getFeatureType();
     }
 
@@ -117,9 +120,6 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      */
     @Override
     public SimpleFeature next() throws NoSuchElementException {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
 
         final SimpleFeature next = reader.next();
         if (builder == null) {
@@ -138,10 +138,6 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      */
     @Override
     public boolean hasNext() {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
-
         return reader.hasNext();
     }
 
@@ -154,11 +150,6 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      * @see org.geotools.data.FeatureReader#close()
      */
     public void close() {
-        if (reader == null) {
-            return;
-        }
         reader.close();
-        reader = null;
-        builder = null;
     }
 }

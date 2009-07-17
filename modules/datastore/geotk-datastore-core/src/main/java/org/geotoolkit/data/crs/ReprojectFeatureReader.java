@@ -23,11 +23,12 @@ import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DelegatingFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.FeatureTypes;
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.referencing.CRS;
+
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
@@ -75,13 +76,15 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {
 
-    private FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-    private SimpleFeatureType schema;
+    private final FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+    private final SimpleFeatureType schema;
     private final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
 
     public ReprojectFeatureReader(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-            final SimpleFeatureType schema, final MathTransform transform)
-    {
+            final SimpleFeatureType schema, final MathTransform transform){
+        if(schema == null) throw new NullPointerException("Feature type can not be null");
+        if(reader == null) throw new NullPointerException("Feature reader can not be null");
+
         this.reader = reader;
         this.schema = schema;
         transformer.setMathTransform((MathTransform2D) transform);
@@ -89,8 +92,7 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
 
     public ReprojectFeatureReader(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
             final CoordinateReferenceSystem cs)
-            throws SchemaException, OperationNotFoundException, NoSuchElementException, FactoryException
-    {
+            throws SchemaException, OperationNotFoundException, NoSuchElementException, FactoryException{
         if (cs == null) {
             throw new NullPointerException("CoordinateSystem required");
         }
@@ -107,54 +109,27 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
         transformer.setMathTransform(CRS.findMathTransform(original, cs, true));
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getDelegate() {
         return reader;
     }
 
     /**
-     * Implement getFeatureType.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     *
-     * @throws IllegalStateException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeatureType getFeatureType() {
-        if (schema == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
-
         return schema;
     }
 
     /**
-     * Implement next.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     *
-     * @throws IOException
-     * @throws IllegalAttributeException
-     * @throws NoSuchElementException
-     * @throws IllegalStateException DOCUMENT ME!
-     * @throws DataSourceException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#next()
+     * {@inheritDoc }
      */
     @Override
-    public SimpleFeature next()
-            throws IOException, IllegalAttributeException, NoSuchElementException {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
+    public SimpleFeature next() throws IOException, IllegalAttributeException, NoSuchElementException {
 
         SimpleFeature next = reader.next();
         Object[] attributes = next.getAttributes().toArray();
@@ -166,55 +141,25 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
                 }
             }
         } catch (TransformException e) {
-            throw new DataSourceException("A transformation exception occurred while reprojecting data on the fly",
-                    e);
+            throw new DataSourceException("A transformation exception occurred while reprojecting data on the fly", e);
         }
 
         return SimpleFeatureBuilder.build(schema, attributes, next.getID());
     }
 
     /**
-     * Implement hasNext.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     *
-     * @throws IOException
-     * @throws IllegalStateException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() throws IOException {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
-
         return reader.hasNext();
     }
 
     /**
-     * Implement close.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     * @throws IOException
-     * @throws IllegalStateException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#close()
+     * {@inheritDoc }
      */
     @Override
     public void close() throws IOException {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
-
         reader.close();
-        reader = null;
-        schema = null;
     }
 }

@@ -24,6 +24,7 @@ import org.geotoolkit.feature.FeatureTypes;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -64,37 +65,37 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
     private final FeatureCollection<SimpleFeatureType, SimpleFeature> results;
 
     public ForceCoordinateSystemFeatureResults(final FeatureCollection<SimpleFeatureType, SimpleFeature> results,
-            final CoordinateReferenceSystem forcedCS) throws IOException, SchemaException
-    {
+            final CoordinateReferenceSystem forcedCS) throws IOException, SchemaException{
         this(results, forcedCS, false);
     }
 
     public ForceCoordinateSystemFeatureResults(final FeatureCollection<SimpleFeatureType, SimpleFeature> results,
-            final CoordinateReferenceSystem forcedCS, final boolean forceOnlyMissing) throws IOException, SchemaException
-    {
+            final CoordinateReferenceSystem forcedCS, final boolean forceOnlyMissing) throws IOException, SchemaException{
         super(forceType(origionalType(results), forcedCS, forceOnlyMissing),null);
-
         this.results = results;
     }
 
     private static SimpleFeatureType origionalType(FeatureCollection<SimpleFeatureType, SimpleFeature> results) {
-        while (true) {
-            if (results instanceof ReprojectFeatureResults) {
-                results = ((ReprojectFeatureResults) results).getOrigin();
-            }
-            if (results instanceof ForceCoordinateSystemFeatureResults) {
-                results = ((ForceCoordinateSystemFeatureResults) results).getOrigin();
-            }
-            break;
+        if (results instanceof ReprojectFeatureResults) {
+            results = ((ReprojectFeatureResults) results).getOrigin();
+        }
+        if (results instanceof ForceCoordinateSystemFeatureResults) {
+            results = ((ForceCoordinateSystemFeatureResults) results).getOrigin();
         }
         return results.getSchema();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Iterator openIterator() {
         return new ForceCoordinateSystemIterator(results.features(), getSchema());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void closeIterator(final Iterator close) {
         if (close == null) {
@@ -106,6 +107,9 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int size() {
         return results.size();
@@ -131,8 +135,7 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
     @Override
     public JTSEnvelope2D getBounds() {
         JTSEnvelope2D env = results.getBounds();
-        env = new JTSEnvelope2D(env, getSchema().getCoordinateReferenceSystem());
-        return env;
+        return new JTSEnvelope2D(env, getSchema().getCoordinateReferenceSystem());
     }
 
     /**
@@ -158,7 +161,6 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
     /**
      * Returns the feature results wrapped by this
      * ForceCoordinateSystemFeatureResults
-     *
      */
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getOrigin() {
         return results;

@@ -19,7 +19,6 @@ package org.geotoolkit.data.collection;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.collection.FeatureIterator;
 

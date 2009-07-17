@@ -27,6 +27,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
@@ -107,11 +108,17 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
         this.transform = CRS.findMathTransform(originalCs, destinationCS, true);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Iterator openIterator() {
         return new ReprojectFeatureIterator(results.features(), getSchema(), transform);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void closeIterator(final Iterator close) {
         if (close == null) {
@@ -123,42 +130,37 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int size() {
         return results.size();
     }
 
     private static FeatureCollection<SimpleFeatureType, SimpleFeature> origionalCollection(
-            FeatureCollection<SimpleFeatureType, SimpleFeature> results)
-    {
-        while (true) {
-            if (results instanceof ReprojectFeatureResults) {
-                results = ((ReprojectFeatureResults) results).getOrigin();
-            }
-            if (results instanceof ForceCoordinateSystemFeatureResults) {
-                results = ((ForceCoordinateSystemFeatureResults) results).getOrigin();
-            }
-            break;
+        FeatureCollection<SimpleFeatureType, SimpleFeature> results){
+        if (results instanceof ReprojectFeatureResults) {
+            results = ((ReprojectFeatureResults) results).getOrigin();
+        }
+        if (results instanceof ForceCoordinateSystemFeatureResults) {
+            results = ((ForceCoordinateSystemFeatureResults) results).getOrigin();
         }
         return results;
     }
 
     private static SimpleFeatureType origionalType(FeatureCollection<SimpleFeatureType, SimpleFeature> results) {
-        while (true) {
-            if (results instanceof ReprojectFeatureResults) {
-                results = ((ReprojectFeatureResults) results).getOrigin();
-            }
-            if (results instanceof ForceCoordinateSystemFeatureResults) {
-                results = ((ForceCoordinateSystemFeatureResults) results).getOrigin();
-            }
-            break;
+        if (results instanceof ReprojectFeatureResults) {
+            results = ((ReprojectFeatureResults) results).getOrigin();
+        }
+        if (results instanceof ForceCoordinateSystemFeatureResults) {
+            results = ((ForceCoordinateSystemFeatureResults) results).getOrigin();
         }
         return results.getSchema();
     }
 
     private static SimpleFeatureType forceType(final SimpleFeatureType startingType,
-            final CoordinateReferenceSystem forcedCS) throws SchemaException
-    {
+            final CoordinateReferenceSystem forcedCS) throws SchemaException{
         if (forcedCS == null) {
             throw new NullPointerException("CoordinateSystem required");
         }
@@ -187,14 +189,12 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
         final FeatureIterator<SimpleFeature> r = features();
         try {
             final Envelope newBBox = new Envelope();
-            Envelope internal;
-            SimpleFeature feature;
 
             while (r.hasNext()) {
-                feature = r.next();
+                SimpleFeature feature = r.next();
                 final Geometry geometry = ((Geometry) feature.getDefaultGeometry());
                 if (geometry != null) {
-                    internal = geometry.getEnvelopeInternal();
+                    Envelope internal = geometry.getEnvelopeInternal();
                     newBBox.expandToInclude(internal);
                 }
             }

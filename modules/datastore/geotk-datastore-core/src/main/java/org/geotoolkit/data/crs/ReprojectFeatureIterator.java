@@ -20,11 +20,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.feature.collection.FeatureIterator;
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.operation.MathTransform;
@@ -69,13 +68,15 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class ReprojectFeatureIterator implements Iterator {
 
-    private FeatureIterator<SimpleFeature> reader;
-    private SimpleFeatureType schema;
+    private final FeatureIterator<SimpleFeature> reader;
+    private final SimpleFeatureType schema;
     private final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
 
     public ReprojectFeatureIterator(final FeatureIterator<SimpleFeature> reader, final SimpleFeatureType schema,
-            final MathTransform transform)
-    {
+            final MathTransform transform){
+        if(schema == null) throw new NullPointerException("Feature type can not be null");
+        if(reader == null) throw new NullPointerException("Feature iterator can not be null");
+
         this.reader = reader;
         this.schema = schema;
         transformer.setMathTransform((MathTransform2D) transform);
@@ -84,47 +85,15 @@ public class ReprojectFeatureIterator implements Iterator {
         transformer.setCoordinateReferenceSystem(schema.getCoordinateReferenceSystem());
     }
 
-    /**
-     * Implement getFeatureType.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     *
-     * @throws IllegalStateException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#getFeatureType()
-     */
     public SimpleFeatureType getFeatureType() {
-        if (schema == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
-
         return schema;
     }
 
     /**
-     * Implement next.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     *
-     * @throws IOException
-     * @throws IllegalAttributeException
-     * @throws NoSuchElementException
-     * @throws IllegalStateException DOCUMENT ME!
-     * @throws DataSourceException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#next()
+     * {@inheritDoc }
      */
     @Override
     public Object next() throws NoSuchElementException {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
 
         //grab the next feature
         SimpleFeature next = reader.next();
@@ -144,6 +113,9 @@ public class ReprojectFeatureIterator implements Iterator {
         return SimpleFeatureBuilder.build(schema, attributes, next.getID());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException("On the fly reprojection disables remove");
@@ -164,31 +136,10 @@ public class ReprojectFeatureIterator implements Iterator {
      */
     @Override
     public boolean hasNext() {
-        if (reader == null) {
-            throw new IllegalStateException("Reader has already been closed");
-        }
-
         return reader.hasNext();
     }
 
-    /**
-     * Implement close.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     * @throws IOException
-     * @throws IllegalStateException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#close()
-     */
     public void close() {
-        if (reader == null) {
-            return;
-        }
         reader.close();
-        reader = null;
-        schema = null;
     }
 }
