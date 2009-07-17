@@ -47,14 +47,14 @@ public class DefaultName implements Name {
     /**
      * Namespace / scope
      */
-    protected String namespace;
+    private  final String namespace;
 
     /**
      * Local part
      */
-    protected String local;
+    private  final String local;
 
-    private String separator;
+    private final String separator;
 
     /**
      * Constructs an instance with the local part set. Namespace / scope is

@@ -66,7 +66,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
 
             //try to find other geometries to set the crs
             if (crs == null) {
-                for (PropertyDescriptor property : properties) {
+                for (PropertyDescriptor property : descriptors) {
                     if (property instanceof GeometryDescriptor) {
                         GeometryDescriptor geometry = (GeometryDescriptor) property;
                         CoordinateReferenceSystem geomCRS = geometry.getType().getCoordinateReferenceSystem();
@@ -88,7 +88,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
     @Override
     public GeometryDescriptor getGeometryDescriptor() {
         if (defaultGeometry == null) {
-            for (PropertyDescriptor property : properties) {
+            for (PropertyDescriptor property : descriptors) {
                 if (property instanceof GeometryDescriptor) {
                     defaultGeometry = (GeometryDescriptor) property;
 

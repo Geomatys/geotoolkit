@@ -16,18 +16,19 @@
  */
 package org.geotoolkit.feature.simple;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.type.DefaultFeatureType;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
@@ -40,8 +41,8 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultSimpleFeatureType extends DefaultFeatureType implements SimpleFeatureType {
 
-    // list of types
-    final List<AttributeType> types;
+    final AttributeType[] types;
+    final List<AttributeType> typesList;
     final Map<String, Integer> index;
 
     public DefaultSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
@@ -54,11 +55,12 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
                 superType, description);
         index = buildIndex(this);
 
-        types = new ArrayList<AttributeType>();
-        for (AttributeDescriptor ad : getAttributeDescriptors()) {
-            types.add(ad.getType());
-        }
 
+        types = new AttributeType[descriptors.length];
+        for(int i=0; i<descriptors.length;i++){
+            types[i] = (AttributeType) descriptors[i].getType();
+        }
+        typesList = UnmodifiableArrayList.wrap(types);
     }
 
     /**
@@ -66,89 +68,116 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      */
     @Override
     public final List<AttributeDescriptor> getAttributeDescriptors() {
-        // Here we circumvent the generics type system. Because we provide the schema and know it is
-        // copied into an ArrayList in ComplexTypeImpl, this must work. Ugly, but then so are simple
-        // features.
+        // TODO we should find a way to use generic and avoid casts on this method
+        // and all getDescriptor methods.
         return (List) getDescriptors();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<AttributeType> getTypes() {
-        return types;
+        return typesList;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType getType(final Name name) {
-        final AttributeDescriptor attribute = (AttributeDescriptor) getDescriptor(name);
+        final AttributeDescriptor attribute = getDescriptor(name);
         if (attribute != null) {
             return attribute.getType();
         }
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType getType(final String name) {
-        final AttributeDescriptor attribute = (AttributeDescriptor) getDescriptor(name);
+        final AttributeDescriptor attribute = getDescriptor(name);
         if (attribute != null) {
             return attribute.getType();
         }
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeType getType(final int index) {
-        return getTypes().get(index);
+        return types[index];
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeDescriptor getDescriptor(final Name name) {
         return (AttributeDescriptor) super.getDescriptor(name);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeDescriptor getDescriptor(final String name) {
         return (AttributeDescriptor) super.getDescriptor(name);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeDescriptor getDescriptor(final int index) {
-        return getAttributeDescriptors().get(index);
+        return (AttributeDescriptor) descriptors[index];
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int indexOf(final Name name) {
         if (name.getNamespaceURI() == null) {
             return indexOf(name.getLocalPart());
         }
         // otherwise do a full scan
-        int index = 0;
-        for (AttributeDescriptor descriptor : getAttributeDescriptors()) {
+        for (int i=0; i<descriptors.length; i++){
+            PropertyDescriptor descriptor = descriptors[i];
             if (descriptor.getName().equals(name)) {
-                return index;
+                return i;
             }
-            index++;
         }
         return -1;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int indexOf(final String name) {
         Integer idx = index.get(name);
-        if (idx != null) {
-            return idx.intValue();
-        } else {
-            return -1;
-        }
+        return (idx != null) ? idx : -1;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getAttributeCount() {
-        return getAttributeDescriptors().size();
+        return descriptors.length;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getTypeName() {
-        return getName().getLocalPart();
+        return name.getLocalPart();
     }
 
     /**
@@ -157,14 +186,17 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      * @return
      */
     static Map<String, Integer> buildIndex(final SimpleFeatureType featureType) {
+
         // build an index of attribute name to index
         final Map<String, Integer> index = new HashMap<String, Integer>();
         int i = 0;
         for (AttributeDescriptor ad : featureType.getAttributeDescriptors()) {
             index.put(ad.getLocalName(), i++);
         }
-        if (featureType.getGeometryDescriptor() != null) {
-            index.put(null, index.get(featureType.getGeometryDescriptor().getLocalName()));
+
+        final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();
+        if (geomDesc != null) {
+            index.put(null, index.get(geomDesc.getLocalName()));
         }
         return index;
     }

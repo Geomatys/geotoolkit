@@ -108,6 +108,10 @@ import com.vividsolutions.jts.geom.Geometry;
 public class SimpleFeatureTypeBuilder {
 
     /**
+     * attribute builder
+     */
+    protected final AttributeTypeBuilder attributeBuilder;
+    /**
      * factories
      */
     protected FeatureTypeFactory factory;
@@ -153,10 +157,6 @@ public class SimpleFeatureTypeBuilder {
      * the parent type.
      */
     protected SimpleFeatureType superType;
-    /**
-     * attribute builder
-     */
-    protected AttributeTypeBuilder attributeBuilder;
 
     /**
      * Constructs the builder.
@@ -175,22 +175,6 @@ public class SimpleFeatureTypeBuilder {
         attributeBuilder = new AttributeTypeBuilder();
         setBindings(new SimpleSchema());
         reset();
-    }
-
-    // Dependency Injection
-    //
-    /**
-     * Sets the factory used to create feature and feature collection types.
-     */
-    public void setFeatureTypeFactory(final FeatureTypeFactory factory) {
-        this.factory = factory;
-    }
-
-    /**
-     * The factory used to create feature and feature collection types.
-     */
-    public FeatureTypeFactory getFeatureTypeFactory() {
-        return factory;
     }
 
     // Builder methods

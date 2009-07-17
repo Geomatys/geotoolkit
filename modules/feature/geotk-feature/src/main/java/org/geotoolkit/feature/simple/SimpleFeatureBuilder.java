@@ -19,13 +19,10 @@ package org.geotoolkit.feature.simple;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.rmi.server.UID;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import org.opengis.feature.IllegalAttributeException;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
@@ -33,7 +30,9 @@ import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.logging.Logging;
 
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -132,7 +131,7 @@ public class SimpleFeatureBuilder {
     /**
      * logger
      */
-    static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.feature");
+    static Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
     /** the feature type */
     private final SimpleFeatureType featureType;
     /** the feature factory */
@@ -214,8 +213,8 @@ public class SimpleFeatureBuilder {
      * Adds a list of attributes.
      */
     public void addAll(final List values) {
-        for (int i = 0; i < values.size(); i++) {
-            add(values.get(i));
+        for (Object value : values) {
+            add(value);
         }
     }
 
@@ -223,7 +222,9 @@ public class SimpleFeatureBuilder {
      * Adds an array of attributes.
      */
     public void addAll(final Object[] values) {
-        addAll(Arrays.asList(values));
+        for (Object value : values) {
+            add(value);
+        }
     }
 
     /**
@@ -402,8 +403,7 @@ public class SimpleFeatureBuilder {
      * </p>
      */
     public static SimpleFeature build(final SimpleFeatureType type, final Object[] values,
-            final String id)
-    {
+            final String id) {
         final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
         builder.addAll(values);
         return builder.buildFeature(id);

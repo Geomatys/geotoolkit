@@ -47,8 +47,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
     /**
      * Immutable copy of the properties list with which we were constructed.
      */
-    protected final PropertyDescriptor[] properties;
-    protected final List<PropertyDescriptor> propertiesList;
+    protected final PropertyDescriptor[] descriptors;
+    protected final List<PropertyDescriptor> descriptorsList;
 
     /**
      * Map to locate properties by name.
@@ -63,10 +63,10 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final Map<Name, PropertyDescriptor> localPropertyMap;
 
         if (properties == null) {
-            this.properties = new PropertyDescriptor[0];
+            this.descriptors = new PropertyDescriptor[0];
             localPropertyMap = Collections.emptyMap();
         } else {
-            this.properties = properties.toArray(new PropertyDescriptor[properties.size()]);
+            this.descriptors = properties.toArray(new PropertyDescriptor[properties.size()]);
             
             localPropertyMap = new HashMap<Name, PropertyDescriptor>();
             for (PropertyDescriptor pd : properties) {
@@ -78,7 +78,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             }
 
         }
-        this.propertiesList = UnmodifiableArrayList.wrap(this.properties);
+        this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
         this.propertyMap = Collections.unmodifiableMap(localPropertyMap);
     }
 
@@ -95,7 +95,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public Collection<PropertyDescriptor> getDescriptors() {
-        return propertiesList;
+        return descriptorsList;
     }
 
     /**
@@ -139,7 +139,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             return false;
         }
         DefaultComplexType other = (DefaultComplexType) o;
-        if (!propertiesList.equals(other.propertiesList)) {
+        if (!descriptorsList.equals(other.descriptorsList)) {
             return false;
         }
         return true;
@@ -150,7 +150,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public int hashCode() {
-        return 59 * super.hashCode() + properties.hashCode();
+        return 59 * super.hashCode() + descriptors.hashCode();
     }
 
     /**

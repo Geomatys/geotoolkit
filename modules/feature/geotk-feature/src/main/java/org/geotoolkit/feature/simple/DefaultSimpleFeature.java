@@ -116,25 +116,33 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureId getIdentifier() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         return id.getID();
     }
 
-    public int getNumberOfAttributes() {
-        return values.length;
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object getAttribute(final int index) throws IndexOutOfBoundsException {
         return values[index];
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object getAttribute(final String name) {
         Integer idx = index.get(name);
@@ -145,21 +153,33 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object getAttribute(final Name name) {
         return getAttribute(name.getLocalPart());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getAttributeCount() {
         return values.length;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<Object> getAttributes() {
         return UnmodifiableArrayList.wrap(values);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object getDefaultGeometry() {
         // should be specified in the index as the default key (null)
@@ -188,20 +208,29 @@ public class DefaultSimpleFeature implements SimpleFeature {
         return defaultGeometry;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType getFeatureType() {
         return featureType;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType getType() {
         return featureType;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setAttribute(final int index, final Object value) throws IndexOutOfBoundsException {
         // first do conversion
-        final Object converted = Converters.convert(value, getFeatureType().getDescriptor(index).getType().getBinding());
+        final Object converted = Converters.convert(value, featureType.getDescriptor(index).getType().getBinding());
         // if necessary, validation too
         if (validating) {
             Types.validate(featureType.getDescriptor(index), converted);
@@ -210,6 +239,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
         values[index] = converted;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setAttribute(final String name, final Object value) {
         final Integer idx = index.get(name);
@@ -219,11 +251,17 @@ public class DefaultSimpleFeature implements SimpleFeature {
         setAttribute(idx, value);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setAttribute(final Name name, final Object value) {
         setAttribute(name.getLocalPart(), value);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setAttributes(final List<Object> values) {
         for (int i = 0; i < this.values.length; i++) {
@@ -231,6 +269,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setAttributes(final Object[] values) {
         for (int i = 0; i < this.values.length; i++) {
@@ -238,6 +279,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setDefaultGeometry(final Object geometry) {
         Integer geometryIndex = index.get(null);
@@ -246,6 +290,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public BoundingBox getBounds() {
         //TODO: cache this value
@@ -266,6 +313,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
         return bounds;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GeometryAttribute getDefaultGeometryProperty() {
         final GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
@@ -277,6 +327,9 @@ public class DefaultSimpleFeature implements SimpleFeature {
         return geometryAttribute;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setDefaultGeometryProperty(final GeometryAttribute geometryAttribute) {
         if (geometryAttribute != null) {
@@ -286,16 +339,25 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<Property> getProperties() {
         return new AttributeList();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<Property> getProperties(final Name name) {
         return getProperties(name.getLocalPart());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<Property> getProperties(final String name) {
         final Integer idx = index.get(name);
@@ -308,11 +370,17 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Property getProperty(final Name name) {
         return getProperty(name.getLocalPart());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Property getProperty(final String name) {
         final Integer idx = index.get(name);
@@ -329,39 +397,61 @@ public class DefaultSimpleFeature implements SimpleFeature {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<? extends Property> getValue() {
         return getProperties();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setValue(final Collection<Property> values) {
         int i = 0;
         for (Property p : values) {
             this.values[i] = p.getValue();
+            i++;
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setValue(final Object newValue) {
         setValue((Collection<Property>) newValue);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public AttributeDescriptor getDescriptor() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Name getName() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isNillable() {
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Map<Object, Object> getUserData() {
         if (userData == null) {
@@ -448,10 +538,13 @@ public class DefaultSimpleFeature implements SimpleFeature {
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void validate() {
         for (int i = 0; i < values.length; i++) {
-            AttributeDescriptor descriptor = getType().getDescriptor(i);
+            AttributeDescriptor descriptor = featureType.getDescriptor(i);
             Types.validate(descriptor, values[i]);
         }
     }
@@ -481,7 +574,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
     /**
      * Attribute that delegates directly to the value array
      */
-    class Attribute implements org.opengis.feature.Attribute {
+    private class Attribute implements org.opengis.feature.Attribute {
 
         private final int index;
 

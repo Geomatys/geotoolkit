@@ -22,7 +22,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Collections;
-
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
