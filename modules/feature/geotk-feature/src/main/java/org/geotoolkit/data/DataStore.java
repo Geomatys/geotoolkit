@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.query.Query;
 import java.io.IOException;
 
 import org.opengis.feature.simple.SimpleFeature;

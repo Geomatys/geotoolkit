@@ -21,10 +21,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.FeatureLock;
-import org.geotoolkit.data.FeatureLocking;
-import org.geotoolkit.data.LockingManager;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.concurrent.FeatureLock;
+import org.geotoolkit.data.concurrent.FeatureLocking;
+import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

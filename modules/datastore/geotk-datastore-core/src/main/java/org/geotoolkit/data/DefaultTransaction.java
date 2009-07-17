@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 
 
 /**

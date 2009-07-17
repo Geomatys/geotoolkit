@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.query.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

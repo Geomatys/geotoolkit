@@ -18,7 +18,7 @@
 package org.geotoolkit.map;
 
 import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Id;

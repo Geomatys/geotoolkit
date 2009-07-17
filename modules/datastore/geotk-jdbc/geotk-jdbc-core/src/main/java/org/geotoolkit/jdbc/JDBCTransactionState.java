@@ -22,8 +22,8 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.data.Transaction;
-import org.geotoolkit.data.Transaction.State;
+import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.concurrent.Transaction.State;
 
 
 public final class JDBCTransactionState implements State {

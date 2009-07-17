@@ -28,7 +28,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;

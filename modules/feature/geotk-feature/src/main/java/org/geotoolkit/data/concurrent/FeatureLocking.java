@@ -14,10 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.concurrent;
 
 import java.io.IOException;
 import java.util.Set;
+
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.FeatureStore;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;

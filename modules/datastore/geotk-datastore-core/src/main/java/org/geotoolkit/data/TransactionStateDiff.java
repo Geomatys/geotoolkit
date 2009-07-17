@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.geotoolkit.data.Transaction.State;
+import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.concurrent.Transaction.State;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.IllegalAttributeException;

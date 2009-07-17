@@ -85,7 +85,7 @@ import org.geotoolkit.geometry.jts.JTS;
 
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
 
 import org.geotoolkit.feature.FeatureCollectionUtilities;

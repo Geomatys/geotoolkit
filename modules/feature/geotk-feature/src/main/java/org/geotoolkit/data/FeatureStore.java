@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.concurrent.Transaction;
 import java.io.IOException;
 import java.util.List;
 

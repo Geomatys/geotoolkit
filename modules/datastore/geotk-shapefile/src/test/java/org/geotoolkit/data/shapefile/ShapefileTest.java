@@ -26,7 +26,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.feature.collection.FeatureCollection;

@@ -19,7 +19,7 @@ package org.geotoolkit.data.shapefile.indexed;
 import java.io.IOException;
 
 import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

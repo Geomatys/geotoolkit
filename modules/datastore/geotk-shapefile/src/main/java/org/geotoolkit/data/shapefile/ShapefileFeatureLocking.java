@@ -22,7 +22,7 @@ import java.util.Set;
 import org.geotoolkit.data.AbstractFeatureLocking;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureListener;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeatureType;

@@ -40,10 +40,10 @@ import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.Query;
-import org.geotoolkit.data.QueryCapabilities;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.ResourceInfo;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 
 /**
  * This is a starting point for providing your own FeatureSource<SimpleFeatureType, SimpleFeature> implementation.

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;

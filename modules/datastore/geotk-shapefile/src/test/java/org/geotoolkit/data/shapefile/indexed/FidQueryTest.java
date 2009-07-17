@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;

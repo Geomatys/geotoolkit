@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.Query;
 import java.awt.RenderingHints;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;

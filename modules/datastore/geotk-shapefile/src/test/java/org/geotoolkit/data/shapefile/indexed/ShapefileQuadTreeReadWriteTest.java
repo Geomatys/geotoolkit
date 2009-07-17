@@ -31,7 +31,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.factory.FactoryFinder;

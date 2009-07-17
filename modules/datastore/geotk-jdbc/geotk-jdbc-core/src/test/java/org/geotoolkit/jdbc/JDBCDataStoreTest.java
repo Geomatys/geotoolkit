@@ -29,7 +29,7 @@ import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeature;

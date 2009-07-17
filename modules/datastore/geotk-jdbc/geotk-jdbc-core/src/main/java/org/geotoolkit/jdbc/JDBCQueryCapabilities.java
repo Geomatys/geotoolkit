@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.data.QueryCapabilities;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;

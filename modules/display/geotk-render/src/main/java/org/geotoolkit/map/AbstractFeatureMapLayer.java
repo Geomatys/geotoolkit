@@ -19,8 +19,8 @@ package org.geotoolkit.map;
 
 
 import org.geotoolkit.data.DefaultQuery;
-import org.geotoolkit.data.Query;
 
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.filter.Filter;

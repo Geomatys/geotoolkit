@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.query;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -26,11 +26,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 
 /**
- * Implementation of Query.ALL.
+ * Implementation for Query.FIDS.
  *
  * <p>
- * This query is used to retrive all Features. Query.ALL is the only instance
- * of this class.
+ * This query is used to retrive FeatureIds. Query.FIDS is the only instance of
+ * this class.
  * </p>
  *
  * <p>
@@ -41,29 +41,31 @@ import org.geotoolkit.factory.Hints;
  * </code></pre>
  * @source $URL$
  */
-class ALLQuery implements Query {
+class FIDSQuery implements Query {
+
+    private static final String[] NO_PROPERTIES = new String[0];
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public final String[] getPropertyNames() {
-        return null;
+    public String[] getPropertyNames() {
+        return NO_PROPERTIES;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public final boolean retrieveAllProperties() {
-        return true;
+    public boolean retrieveAllProperties() {
+        return false;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public final int getMaxFeatures() {
+    public int getMaxFeatures() {
         return DEFAULT_MAX; // consider Integer.MAX_VALUE
     }
 
@@ -79,7 +81,7 @@ class ALLQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public final Filter getFilter() {
+    public Filter getFilter() {
         return Filter.INCLUDE;
     }
 
@@ -87,7 +89,7 @@ class ALLQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public final String getTypeName() {
+    public String getTypeName() {
         return null;
     }
 
@@ -103,15 +105,15 @@ class ALLQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public final String getHandle() {
-        return "Request All Features";
+    public String getHandle() {
+        return "Request Feature IDs";
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public final String getVersion() {
+    public String getVersion() {
         return null;
     }
 
@@ -137,7 +139,7 @@ class ALLQuery implements Query {
      *
      * @param obj Other object to compare against
      *
-     * @return <code>true</code> if <code>obj</code> matches this filter
+     * @return <code>true</code> if <code>obj</code> retrieves only FIDS
      */
     @Override
     public boolean equals(Object obj) {
@@ -159,16 +161,13 @@ class ALLQuery implements Query {
                 : getCoordinateSystemReproject().equals(other.getCoordinateSystemReproject()));
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public String toString() {
-        return "Query.ALL";
+        return "Query.FIDS";
     }
 
     /**
-     * Return <code>null</code> as ALLQuery does not require a CS.
+     * Return <code>null</code> as FIDSQuery does not require a CS.
      *
      * @return <code>null</code> as override is not required.
      *
@@ -180,7 +179,7 @@ class ALLQuery implements Query {
     }
 
     /**
-     * Return <code>null</code> as ALLQuery does not require a CS.
+     * Return <code>null</code> as FIDSQuery does not require a CS.
      *
      * @return <code>null</code> as reprojection is not required.
      *
@@ -200,7 +199,7 @@ class ALLQuery implements Query {
     }
 
     /**
-     * Returns an empty Hints set
+     * Returns the GeoToolkit default hints {@link GeoToolkit#getDefaultHints()}
      */
     @Override
     public Hints getHints() {

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.concurrent.Transaction;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;

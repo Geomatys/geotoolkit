@@ -18,7 +18,7 @@ package org.geotoolkit.jdbc;
 
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

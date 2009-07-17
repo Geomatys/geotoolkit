@@ -27,7 +27,7 @@ import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.JXTable;
 
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.Query;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.collection.FeatureIterator;
 
 import org.geotoolkit.data.DefaultQuery;

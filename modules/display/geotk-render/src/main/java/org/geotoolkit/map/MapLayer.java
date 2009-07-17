@@ -20,11 +20,9 @@ package org.geotoolkit.map;
 import java.util.List;
 
 import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.Query;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Description;
 

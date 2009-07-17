@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;

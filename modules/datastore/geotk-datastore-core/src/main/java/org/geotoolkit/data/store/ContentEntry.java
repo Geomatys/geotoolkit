@@ -22,7 +22,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
-import org.geotoolkit.data.Transaction;
+import org.geotoolkit.data.concurrent.Transaction;
 
 import org.opengis.feature.type.Name;
 
