@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureListener;
@@ -39,6 +38,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotoolkit.data.crs.ReprojectFeatureResults;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -129,7 +129,7 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
         } else if (query.getCoordinateSystem() != null) {
             cs = query.getCoordinateSystem();
         }
-        schema = DataUtilities.createSubType(origionalType, query.getPropertyNames(), cs, query.getTypeName(), null);
+        schema = FeatureTypeUtilities.createSubType(origionalType, query.getPropertyNames(), cs, query.getTypeName(), null);
     }
 
     /**

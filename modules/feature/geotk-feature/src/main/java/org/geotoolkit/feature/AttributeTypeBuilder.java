@@ -603,7 +603,7 @@ public class AttributeTypeBuilder {
         if (length < 0) {
             return null;
         }
-        final Expression lengthFunction = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT,FF.property("."));
+        final Expression lengthFunction = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT,FF.property(name));
         if (lengthFunction == null) {
             return null;
         }

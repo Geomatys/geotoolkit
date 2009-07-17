@@ -25,9 +25,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
@@ -147,7 +149,7 @@ public class SimpleFeatureBuilder {
     boolean validating;
 
     public SimpleFeatureBuilder(final SimpleFeatureType featureType) {
-        this(featureType, FactoryFinder.getFeatureFactory(null));
+        this(featureType, FactoryFinder.getFeatureFactory(new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class)));
     }
 
     public SimpleFeatureBuilder(final SimpleFeatureType featureType, final FeatureFactory factory) {

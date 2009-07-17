@@ -44,7 +44,6 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractFileDataStore;
 import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFIDReader;
 import org.geotoolkit.data.EmptyFeatureReader;
 import org.geotoolkit.data.FeatureReader;
@@ -66,7 +65,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.data.shapefile.shp.xml.ShpXmlFileReader;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -74,7 +72,6 @@ import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -84,8 +81,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -364,7 +359,7 @@ public class ShapefileDataStore extends AbstractFileDataStore {
                 && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0]
                         .equals(defaultGeomName)))) {
             try {
-                SimpleFeatureType newSchema = DataUtilities.createSubType(
+                SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
 
                 return createFeatureReader(typeName,

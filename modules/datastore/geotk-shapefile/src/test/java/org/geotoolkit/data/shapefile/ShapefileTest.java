@@ -36,6 +36,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * 
@@ -134,7 +135,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     }
 
     public void testHolyPolygons() throws Exception {
-        SimpleFeatureType type = DataUtilities.createType("junk",
+        SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:MultiPolygon");
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollectionUtilities.createCollection();
 

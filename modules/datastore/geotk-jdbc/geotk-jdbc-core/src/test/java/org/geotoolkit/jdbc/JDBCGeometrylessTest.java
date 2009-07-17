@@ -17,6 +17,7 @@
 package org.geotoolkit.jdbc;
 
 import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -47,8 +48,8 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         
-        personSchema = DataUtilities.createType(dataStore.getNamespaceURI() + "." + PERSON, ID + ":0," + NAME+":String," + AGE + ":0");
-        zipCodeSchema = DataUtilities.createType(dataStore.getNamespaceURI() + "." + ZIPCODE, ID + ":0," + CODE + ":String");
+        personSchema = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + PERSON, ID + ":0," + NAME+":String," + AGE + ":0");
+        zipCodeSchema = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + ZIPCODE, ID + ":0," + CODE + ":String");
     }
 
     public void testPersonSchema() throws Exception {

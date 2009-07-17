@@ -20,6 +20,7 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -45,7 +46,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         
-        lakeSchema = DataUtilities.createType(dataStore.getNamespaceURI() + "." + LAKE, 
+        lakeSchema = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + LAKE,
                 ID + ":0," + GEOM + ":Polygon," + NAME +":String");
     }
     

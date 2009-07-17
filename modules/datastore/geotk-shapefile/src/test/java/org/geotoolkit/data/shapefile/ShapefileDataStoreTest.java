@@ -227,7 +227,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         File file = new File("test.shp");
         URL toURL = file.toURL();
         ShapefileDataStore ds = new ShapefileDataStore(toURL);
-        ds.createSchema(DataUtilities.createType("test", "geom:MultiPolygon"));
+        ds.createSchema(FeatureTypeUtilities.createType("test", "geom:MultiPolygon"));
 
         assertEquals("test", ds.getSchema().getTypeName());
 
@@ -251,7 +251,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         File file = new File("test.shp");
         URL toURL = file.toURL();
         ShapefileDataStore ds = new ShapefileDataStore(toURL);
-        SimpleFeatureType featureType = DataUtilities.createType("test", "geom:MultiPolygon:srid=32615");
+        SimpleFeatureType featureType = FeatureTypeUtilities.createType("test", "geom:MultiPolygon:srid=32615");
         CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem(); 
         assertNotNull( crs );
         
@@ -289,7 +289,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL toURL = file.toURL();
 
         ShapefileDataStore ds = new ShapefileDataStore(toURL);
-        ds.createSchema(DataUtilities.createType("test", "geom:MultiPolygon"));
+        ds.createSchema(FeatureTypeUtilities.createType("test", "geom:MultiPolygon"));
         FeatureType before = ds.getSchema();
 
         ds.forceSchemaCRS(CRS.decode("EPSG:3005"));
@@ -435,7 +435,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
     
     public void testWriteShapefileWithNoRecords() throws Exception {
-        SimpleFeatureType featureType = DataUtilities.createType("whatever",
+        SimpleFeatureType featureType = FeatureTypeUtilities.createType("whatever",
                 "a:Polygon,b:String");
 
         File tempFile = getTempFile();
@@ -466,7 +466,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     public void testWriteReadBigNumbers() throws Exception {
         // create feature type
-        SimpleFeatureType type = DataUtilities.createType("junk",
+        SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollectionUtilities.createCollection();
 
@@ -599,7 +599,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     
     public void testWrite() throws Exception {
         // create feature type
-        SimpleFeatureType type = DataUtilities.createType("junk","a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
+        SimpleFeatureType type = FeatureTypeUtilities.createType("junk","a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
 
         BigInteger bigInteger = new BigInteger("1234567890123456789");
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);

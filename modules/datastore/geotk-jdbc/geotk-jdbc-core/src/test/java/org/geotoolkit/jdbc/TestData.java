@@ -36,6 +36,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.junit.Ignore;
 
 
@@ -86,8 +87,8 @@ public class TestData {
     }
     
     void createRoadData() throws Exception {
-        roadType = DataUtilities.createType(namespace + "." + ROAD, ROAD_ID+":0," + ROAD_GEOM+":LineString," + ROAD_NAME+":String");
-        subRoadType = DataUtilities.createType(namespace + ROAD, ROAD_ID+":0,"+ ROAD_GEOM+":LineString");
+        roadType = FeatureTypeUtilities.createType(namespace + "." + ROAD, ROAD_ID+":0," + ROAD_GEOM+":LineString," + ROAD_NAME+":String");
+        subRoadType = FeatureTypeUtilities.createType(namespace + ROAD, ROAD_ID+":0,"+ ROAD_GEOM+":LineString");
         gf = new GeometryFactory();
 
         roadFeatures = new SimpleFeature[3];
@@ -140,9 +141,9 @@ public class TestData {
     }
 
     void createRiverData() throws Exception {
-        riverType = DataUtilities.createType(namespace + "." + RIVER,
+        riverType = FeatureTypeUtilities.createType(namespace + "." + RIVER,
                 RIVER_ID + ":0," + RIVER_GEOM + ":MultiLineString," + RIVER_RIVER + ":String," + RIVER_FLOW + ":0.0");
-        subRiverType = DataUtilities.createType(namespace + "." + RIVER, RIVER_RIVER + ":String," + RIVER_FLOW + ":0.0");
+        subRiverType = FeatureTypeUtilities.createType(namespace + "." + RIVER, RIVER_RIVER + ":String," + RIVER_FLOW + ":0.0");
         gf = new GeometryFactory();
         riverFeatures = new SimpleFeature[2];
 

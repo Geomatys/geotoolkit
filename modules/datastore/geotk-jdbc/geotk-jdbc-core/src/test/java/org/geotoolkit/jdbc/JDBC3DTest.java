@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * Tests the ability of the datastore to cope with 3D data
@@ -84,10 +85,10 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
         super.setUp();
 
         // we use 4359 because it's using degrees, 4327 uses dms
-        line3DType = DataUtilities.createType(dataStore.getNamespaceURI() + "." + tname(LINE3D),
+        line3DType = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + tname(LINE3D),
                 aname(ID) + ":0," + aname(GEOM) + ":LineString:srid=4359," + aname(NAME)
                         + ":String");
-        poly3DType = DataUtilities.createType(dataStore.getNamespaceURI() + "." + tname(POLY3D),
+        poly3DType = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + tname(POLY3D),
                 aname(ID) + ":0," + aname(GEOM) + ":Polygon:srid=4359," + aname(NAME) + ":String");
 
         // get the horizontal component of 4359

@@ -33,6 +33,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
 
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -150,11 +151,11 @@ public class DefaultFeatureResults extends DataFeatureCollection {
                 if (query.retrieveAllProperties()) { // we can use the origionalType as is
                     schema = featureSource.getSchema();
                 } else {
-                    schema = DataUtilities.createSubType(featureSource.getSchema(), query.getPropertyNames());
+                    schema = FeatureTypeUtilities.createSubType(featureSource.getSchema(), query.getPropertyNames());
                 }
             } else {
                 // we need to change the projection of the origional type
-                schema = DataUtilities.createSubType(origionalType, query.getPropertyNames(), cs, query.getTypeName(), null);
+                schema = FeatureTypeUtilities.createSubType(origionalType, query.getPropertyNames(), cs, query.getTypeName(), null);
             }
         } catch (SchemaException e) {
             // we were unable to create the schema requested!

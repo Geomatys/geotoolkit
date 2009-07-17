@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -190,7 +191,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
         for (int i = 0; i < types.length; i++) {
             xpath = types[i].getLocalName();
             if (clone) {
-                builder.add(DataUtilities.duplicate(next.getAttribute(xpath)));
+                builder.add(FeatureUtilities.duplicate(next.getAttribute(xpath)));
             } else {
                 builder.add(next.getAttribute(xpath));
             }

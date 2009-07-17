@@ -50,6 +50,28 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultAttributeType;
+import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
+import org.geotoolkit.feature.type.DefaultGeometryType;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.ReferenceIdentifier;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -76,7 +98,63 @@ public class FeatureTypeUtilities {
     /** abstract base type for all feature types */
     public final static SimpleFeatureType ABSTRACT_FEATURE_TYPE;
 
+    private static final Map<String, Class> typeMap = new HashMap<String, Class>();
+    private static final Map<Class, String> typeEncode = new HashMap<Class, String>();
+
     static {
+        typeEncode.put(String.class, "String");
+        typeMap.put("String", String.class);
+        typeMap.put("string", String.class);
+        typeMap.put("\"\"", String.class);
+
+        typeEncode.put(Integer.class, "Integer");
+        typeMap.put("Integer", Integer.class);
+        typeMap.put("int", Integer.class);
+        typeMap.put("0", Integer.class);
+
+        typeEncode.put(Double.class, "Double");
+        typeMap.put("Double", Double.class);
+        typeMap.put("double", Double.class);
+        typeMap.put("0.0", Double.class);
+
+        typeEncode.put(Float.class, "Float");
+        typeMap.put("Float", Float.class);
+        typeMap.put("float", Float.class);
+        typeMap.put("0.0f", Float.class);
+
+        typeEncode.put(Boolean.class, "Boolean");
+        typeMap.put("Boolean", Boolean.class);
+        typeMap.put("true", Boolean.class);
+        typeMap.put("false", Boolean.class);
+
+        typeEncode.put(Geometry.class, "Geometry");
+        typeMap.put("Geometry", Geometry.class);
+
+        typeEncode.put(Point.class, "Point");
+        typeMap.put("Point", Point.class);
+
+        typeEncode.put(LineString.class, "LineString");
+        typeMap.put("LineString", LineString.class);
+
+        typeEncode.put(Polygon.class, "Polygon");
+        typeMap.put("Polygon", Polygon.class);
+
+        typeEncode.put(MultiPoint.class, "MultiPoint");
+        typeMap.put("MultiPoint", MultiPoint.class);
+
+        typeEncode.put(MultiLineString.class, "MultiLineString");
+        typeMap.put("MultiLineString", MultiLineString.class);
+
+        typeEncode.put(MultiPolygon.class, "MultiPolygon");
+        typeMap.put("MultiPolygon", MultiPolygon.class);
+
+        typeEncode.put(GeometryCollection.class, "GeometryCollection");
+        typeMap.put("GeometryCollection", GeometryCollection.class);
+
+        typeEncode.put(Date.class, "Date");
+        typeMap.put("Date", Date.class);
+
+
         URI uri;
         try {
             uri = new URI("http://www.opengis.net/gml");
@@ -104,6 +182,430 @@ public class FeatureTypeUtilities {
     /** An feature type with no attributes */
     public static final SimpleFeatureType EMPTY = new DefaultSimpleFeatureType(
             new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
+
+
+
+    /**
+     * Create a derived FeatureType
+     *
+     * <p></p>
+     *
+     * @param featureType
+     * @param properties - if null, every property of the feature type in input will be used
+     * @param override
+     *
+     *
+     * @throws SchemaException
+     */
+    public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
+            final String[] properties, final CoordinateReferenceSystem override) throws SchemaException
+    {
+        URI namespaceURI = null;
+        if (featureType.getName().getNamespaceURI() != null) {
+            try {
+                namespaceURI = new URI(featureType.getName().getNamespaceURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return createSubType(featureType, properties, override, featureType.getTypeName(), namespaceURI);
+
+    }
+
+    public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
+            String[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
+            throws SchemaException
+    {
+
+        if ((properties == null) && (override == null)) {
+            return featureType;
+        }
+
+        if (properties == null) {
+            properties = new String[featureType.getAttributeCount()];
+            for (int i = 0; i < properties.length; i++) {
+                properties[i] = featureType.getDescriptor(i).getLocalName();
+            }
+        }
+
+        final String namespaceURI = namespace != null ? namespace.toString() : null;
+        boolean same = featureType.getAttributeCount() == properties.length &&
+                featureType.getTypeName().equals(typeName) &&
+                Utilities.equals(featureType.getName().getNamespaceURI(), namespaceURI);
+
+
+        for (int i = 0; (i < featureType.getAttributeCount()) && same; i++) {
+            final AttributeDescriptor type = featureType.getDescriptor(i);
+            same = type.getLocalName().equals(properties[i]) && (((override != null) && type instanceof GeometryDescriptor)
+                    ? assertEquals(override, ((GeometryDescriptor) type).getCoordinateReferenceSystem())
+                    : true);
+        }
+
+        if (same) {
+            return featureType;
+        }
+
+        final AttributeDescriptor[] types = new AttributeDescriptor[properties.length];
+
+        for (int i = 0; i < properties.length; i++) {
+            types[i] = featureType.getDescriptor(properties[i]);
+
+            if ((override != null) && types[i] instanceof GeometryDescriptor) {
+                final AttributeTypeBuilder ab = new AttributeTypeBuilder();
+                ab.init(types[i]);
+                ab.setCRS(override);
+                types[i] = ab.buildDescriptor(types[i].getLocalName());
+            }
+        }
+
+        if (typeName == null) {
+            typeName = featureType.getTypeName();
+        }
+        if (namespace == null && featureType.getName().getNamespaceURI() != null) {
+            try {
+                namespace = new URI(featureType.getName().getNamespaceURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
+        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        tb.setName(typeName);
+        tb.setNamespaceURI(namespace);
+        tb.addAll(types);
+
+        return tb.buildFeatureType();
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param featureType DOCUMENT ME!
+     * @param properties DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     *
+     * @throws SchemaException DOCUMENT ME!
+     */
+    public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
+            final String[] properties) throws SchemaException
+    {
+        if (properties == null) {
+            return featureType;
+        }
+
+        boolean same = featureType.getAttributeCount() == properties.length;
+
+        for (int i = 0; (i < featureType.getAttributeCount()) && same; i++) {
+            same = featureType.getDescriptor(i).getLocalName().equals(properties[i]);
+        }
+
+        if (same) {
+            return featureType;
+        }
+
+        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        tb.setName(featureType.getName());
+
+        for (int i = 0; i < properties.length; i++) {
+            tb.add(featureType.getDescriptor(properties[i]));
+        }
+        return tb.buildFeatureType();
+    }
+
+    /**
+     * Utility method for FeatureType construction.
+     * <p>
+     * Will parse a String of the form: <i>"name:Type,name2:Type2,..."</i>
+     * </p>
+     *
+     * <p>
+     * Where <i>Type</i> is defined by createAttribute.
+     * </p>
+     *
+     * <p>
+     * You may indicate the default Geometry with an astrix: "*geom:Geometry". You
+     * may also indicate the srid (used to look up a EPSG code).
+     * </p>
+     *
+     * <p>
+     * Examples:
+     * <ul>
+     * <li><code>name:"",age:0,geom:Geometry,centroid:Point,url:java.io.URL"</code>
+     * <li><code>id:String,polygonProperty:Polygon:srid=32615</code>
+     * </ul>
+     * </p>
+     *
+     * @param identification identification of FeatureType:
+     *        (<i>namesapce</i>).<i>typeName</i>
+     * @param typeSpec Specification for FeatureType
+     *
+     *
+     * @throws SchemaException
+     */
+    public static SimpleFeatureType createType(final String identification, final String typeSpec)
+            throws SchemaException
+    {
+        final int split = identification.lastIndexOf('.');
+        final String namespace = (split == -1) ? null
+                : identification.substring(0, split);
+        final String typeName = (split == -1) ? identification
+                : identification.substring(split + 1);
+
+        return createType(namespace, typeName, typeSpec);
+    }
+
+    /**
+     * Utility method for FeatureType construction.
+     * <p>
+     * Will parse a String of the form: <i>"name:Type,name2:Type2,..."</i>
+     * </p>
+     *
+     * <p>
+     * Where <i>Type</i> is defined by createAttribute.
+     * </p>
+     *
+     * <p>
+     * You may indicate the default Geometry with an astrix: "*geom:Geometry". You
+     * may also indicate the srid (used to look up a EPSG code).
+     * </p>
+     *
+     * <p>
+     * Examples:
+     * <ul>
+     * <li><code>name:"",age:0,geom:Geometry,centroid:Point,url:java.io.URL"</code>
+     * <li><code>id:String,polygonProperty:Polygon:srid=32615</code>
+     * </ul>
+     * </p>
+     *
+     * @param identification identification of FeatureType:
+     *        (<i>namesapce</i>).<i>typeName</i>
+     * @param typeSpec Specification for FeatureType
+     *
+     *
+     * @throws SchemaException
+     */
+    public static SimpleFeatureType createType(final String namespace, final String typeName,
+            final String typeSpec) throws SchemaException
+    {
+        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        tb.setName(typeName);
+        tb.setNamespaceURI(namespace);
+
+        final String[] types = typeSpec.split(",");
+
+        AttributeDescriptor attributeType;
+
+        for (int i = 0; i < types.length; i++) {
+            final boolean defaultGeometry = types[i].startsWith("*");
+            if (types[i].startsWith("*")) {
+                types[i] = types[i].substring(1);
+            }
+
+            attributeType = createAttribute(types[i]);
+            tb.add(attributeType);
+
+            if (defaultGeometry) {
+                tb.setDefaultGeometry(attributeType.getLocalName());
+            }
+        }
+
+        return tb.buildFeatureType();
+    }
+
+
+    /**
+     * Returns AttributeType based on String specification (based on UML).
+     *
+     * <p>
+     * Will parse a String of the form: <i>"name:Type:hint"</i>
+     * </p>
+     *
+     * <p>
+     * Where <i>Type</i> is:
+     * </p>
+     *
+     * <ul>
+     * <li>
+     * 0,Interger,int: represents Interger
+     * </li>
+     * <li>
+     * 0.0, Double, double: represents Double
+     * </li>
+     * <li>
+     * "",String,string: represents String
+     * </li>
+     * <li>
+     * Geometry: represents Geometry
+     * </li>
+     * <li>
+     * <i>full.class.path</i>: represents java type
+     * </li>
+     * </ul>
+     *
+     * <p>
+     * Where <i>hint</i> is "hint1;hint2;...;hintN", in which "hintN" is one
+     * of:
+     * <ul>
+     *  <li><code>nillable</code></li>
+     *  <li><code>srid=<#></code></li>
+     * </ul>
+     * </p>
+     *
+     * @param typeSpec
+     *
+     *
+     * @throws SchemaException If typeSpect could not be interpreted
+     */
+    static AttributeDescriptor createAttribute(final String typeSpec) throws SchemaException {
+        final int split = typeSpec.indexOf(":");
+
+        final String name;
+        final String type;
+        String hint = null;
+
+        if (split == -1) {
+            name = typeSpec;
+            type = "String";
+        } else {
+            name = typeSpec.substring(0, split);
+
+            final int split2 = typeSpec.indexOf(":", split + 1);
+
+            if (split2 == -1) {
+                type = typeSpec.substring(split + 1);
+            } else {
+                type = typeSpec.substring(split + 1, split2);
+                hint = typeSpec.substring(split2 + 1);
+            }
+        }
+
+        try {
+            boolean nillable = true;
+            CoordinateReferenceSystem crs = null;
+
+            if (hint != null) {
+                final StringTokenizer st = new StringTokenizer(hint, ";");
+                while (st.hasMoreTokens()) {
+                    String h = st.nextToken();
+                    h = h.trim();
+
+                    //nillable?
+                    //JD: i am pretty sure this hint is useless since the
+                    // default is to make attributes nillable
+                    if (h.equals("nillable")) {
+                        nillable = true;
+                    }
+                    //spatial reference identieger?
+                    if (h.startsWith("srid=")) {
+                        final String srid = h.split("=")[1];
+                        Integer.parseInt(srid);
+                        try {
+                            crs = CRS.decode("EPSG:" + srid);
+                        } catch (Exception e) {
+                            final String msg = "Error decoding srs: " + srid;
+                            throw new SchemaException(msg, e);
+                        }
+                    }
+                }
+            }
+
+            final Class clazz = type(type);
+            if (Geometry.class.isAssignableFrom(clazz)) {
+                final GeometryType at = new DefaultGeometryType(new DefaultName(name), clazz, crs, false, false,
+                                                                Collections.EMPTY_LIST, null, null);
+                return new DefaultGeometryDescriptor(at, new DefaultName(name), 0, 1, nillable, null);
+            } else {
+                final AttributeType at = new DefaultAttributeType(new DefaultName(name), clazz, false, false,
+                                                                  Collections.EMPTY_LIST, null, null);
+                return new DefaultAttributeDescriptor(at, new DefaultName(name), 0, 1, nillable, null);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new SchemaException("Could not type " + name + " as:" + type, e);
+        }
+    }
+
+
+    /**
+     * A "quick" String representation of a FeatureType.
+     * <p>
+     * This string representation may be used with createType( name, spec ).
+     * </p>
+     * @param featureType FeatureType to represent
+     *
+     * @return The string "specification" for the featureType
+     */
+    public static String spec(final SimpleFeatureType featureType) {
+        final List types = featureType.getAttributeDescriptors();
+
+        final StringBuilder buf = new StringBuilder();
+
+        for (int i = 0; i < types.size(); i++) {
+            final AttributeDescriptor type = (AttributeDescriptor) types.get(i);
+            buf.append(type.getLocalName());
+            buf.append(":");
+            buf.append(typeMap(type.getType().getBinding()));
+            if (type instanceof GeometryDescriptor) {
+                final GeometryDescriptor gd = (GeometryDescriptor) type;
+                if (gd.getCoordinateReferenceSystem() != null && gd.getCoordinateReferenceSystem().getIdentifiers() != null) {
+                    for (Iterator<ReferenceIdentifier> it = gd.getCoordinateReferenceSystem().getIdentifiers().iterator(); it.hasNext();) {
+                        final ReferenceIdentifier id = (ReferenceIdentifier) it.next();
+
+                        if ((id.getAuthority() != null) && id.getAuthority().getTitle().equals(Citations.EPSG.getTitle())) {
+                            buf.append(":srid=" + id.getCode());
+                            break;
+                        }
+
+                    }
+                }
+            }
+
+            if (i < (types.size() - 1)) {
+                buf.append(",");
+            }
+        }
+
+        return buf.toString();
+    }
+
+    static Class type(final String typeName) throws ClassNotFoundException {
+        if (typeMap.containsKey(typeName)) {
+            return (Class) typeMap.get(typeName);
+        }
+
+        return Class.forName(typeName);
+    }
+
+    static String typeMap(final Class type) {
+        if (typeEncode.containsKey(type)) {
+            return typeEncode.get(type);
+        }
+        /*
+        SortedSet<String> choose = new TreeSet<String>();
+        for (Iterator i = typeMap.entrySet().iterator(); i.hasNext();) {
+        Map.Entry entry = (Entry) i.next();
+
+        if (entry.getValue().equals(type)) {
+        choose.add( (String) entry.getKey() );
+        }
+        }
+        if( !choose.isEmpty() ){
+        return choose.last();
+        }
+         */
+        return type.getName();
+    }
+
+    private static boolean assertEquals(final Object o1, final Object o2) {
+        return o1 == null && o2 == null ? true : (o1 != null ? o1.equals(o2) : false);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // INFORMATIONS ABOUT ATTRIBUTS and TYPES //////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This is a 'suitable replacement for extracting the expected field length of an attribute

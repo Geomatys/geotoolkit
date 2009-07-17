@@ -38,6 +38,11 @@ public class LengthFunction extends AbstractFunction {
 
     @Override
     public Object evaluate(final Object feature) {
+
+        if(feature instanceof String){
+            return ((String)feature).length();
+        }
+
         final Expression ae = getParameters().get(0);
         final String value = ae.evaluate(feature, String.class);
         if (value == null) {

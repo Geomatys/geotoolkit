@@ -374,7 +374,7 @@ public abstract class AbstractDataStore implements DataStore {
 
         if (propertyNames != null || query.getCoordinateSystem() != null) {
             try {
-                featureType = DataUtilities.createSubType(featureType, propertyNames, query.getCoordinateSystem());
+                featureType = FeatureTypeUtilities.createSubType(featureType, propertyNames, query.getCoordinateSystem());
             } catch (SchemaException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
                 throw new DataSourceException("Could not create Feature Type for query", e);
