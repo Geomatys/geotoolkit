@@ -27,19 +27,10 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.view.DefaultView;
 import org.geotoolkit.feature.FeatureTypes;
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureListener;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.LockingManager;
-import org.geotoolkit.data.Query;
-import org.geotoolkit.data.ServiceInfo;
-import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
@@ -102,7 +93,7 @@ public abstract class AbstractDataStore implements DataStore {
     /**
      * Manages listener lists for FeatureSource<SimpleFeatureType, SimpleFeature> implementation
      */
-    public FeatureListenerManager listenerManager = new FeatureListenerManager();
+    protected final FeatureListenerManager listenerManager = new FeatureListenerManager();
     /**
      * Flags AbstractDataStore to allow Modification.
      * <p>
@@ -117,7 +108,7 @@ public abstract class AbstractDataStore implements DataStore {
      * May be null if subclass is providing real locking.
      * </p>
      */
-    private InProcessLockingManager lockingManager;
+    private final InProcessLockingManager lockingManager;
 
     /**
      * Default (Writeable) DataStore

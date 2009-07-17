@@ -122,8 +122,7 @@ public class CollectionDataStore extends AbstractDataStore {
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
-            throws IOException
-    {
+            throws IOException {
         return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(typeName), collection.features());
     }
 
@@ -158,10 +157,12 @@ public class CollectionDataStore extends AbstractDataStore {
         final JTSEnvelope2D envelope = new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
 
         if (iterator.hasNext()) {
-            int count = 1;
+            
             final Filter filter = query.getFilter();
 
-            while (iterator.hasNext() && (count < query.getMaxFeatures())) {
+            int count = 1;
+            final int maxFeatures = query.getMaxFeatures();
+            while (iterator.hasNext() && (count < maxFeatures)) {
                 final SimpleFeature feature = iterator.next();
 
                 if (filter.evaluate(feature)) {
@@ -183,12 +184,13 @@ public class CollectionDataStore extends AbstractDataStore {
         if (!featureType.getTypeName().equals(featureTypeName)) {
             throw new SchemaNotFoundException(featureTypeName);
         }
-        int count = 0;
+        
         final FeatureIterator<SimpleFeature> iterator = collection.features();
-
         final Filter filter = query.getFilter();
 
-        while (iterator.hasNext() && (count < query.getMaxFeatures())) {
+        int count = 0;
+        final int maxFeatures = query.getMaxFeatures();
+        while (iterator.hasNext() && (count < maxFeatures)) {
             if (filter.evaluate(iterator.next())) {
                 count++;
             }
@@ -212,17 +214,12 @@ public class CollectionDataStore extends AbstractDataStore {
             switch (tce.getEventType()) {
                 case CollectionEvent.FEATURES_ADDED:
                     listenerManager.fireFeaturesAdded(typeName, Transaction.AUTO_COMMIT, bounds, false);
-
                     break;
-
                 case CollectionEvent.FEATURES_CHANGED:
                     listenerManager.fireFeaturesChanged(typeName, Transaction.AUTO_COMMIT, bounds, false);
-
                     break;
-
                 case CollectionEvent.FEATURES_REMOVED:
                     listenerManager.fireFeaturesRemoved(typeName, Transaction.AUTO_COMMIT, bounds, false);
-
                     break;
             }
         }
