@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.Transaction;
+
 import org.opengis.feature.type.Name;
 
 
@@ -129,7 +130,6 @@ public final class ContentEntry {
             final ContentState copy = (ContentState) auto.copy();
             copy.setTransaction(transaction);
             state.put(transaction, copy);
-
             return copy;
         }
     }
@@ -151,7 +151,7 @@ public final class ContentEntry {
                     listener.changed(notification);
                 } catch (Throwable t) {
                     // problem issuing notification to an interested party
-                    dataStore.LOGGER.log(Level.WARNING, "Problem issuing feature event " + notification, t);
+                    dataStore.Logger.log(Level.WARNING, "Problem issuing feature event " + notification, t);
                 }
             }
         }
@@ -166,7 +166,10 @@ public final class ContentEntry {
             s.close();
         }
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         return getTypeName();

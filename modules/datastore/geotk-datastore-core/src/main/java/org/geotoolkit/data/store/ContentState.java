@@ -361,7 +361,7 @@ public class ContentState {
             try {
                 listener.changed(event);
             } catch (Throwable t){
-                this.entry.dataStore.LOGGER.log( Level.WARNING, "Problem issuing batch feature event "+event, t);
+                this.entry.dataStore.Logger.log( Level.WARNING, "Problem issuing batch feature event "+event, t);
             }
         }
     }
@@ -385,7 +385,7 @@ public class ContentState {
            try {
                listener.changed(batchFeatureEvent);
            } catch (Throwable t){
-               this.entry.dataStore.LOGGER.log(Level.WARNING, "Problem issuing batch feature event "+batchFeatureEvent, t);
+               this.entry.dataStore.Logger.log(Level.WARNING, "Problem issuing batch feature event "+batchFeatureEvent, t);
            }
        }
        // Let others know a modifications was made

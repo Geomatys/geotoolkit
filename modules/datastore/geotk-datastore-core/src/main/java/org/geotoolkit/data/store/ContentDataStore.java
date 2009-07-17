@@ -38,6 +38,7 @@ import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypes;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
+
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -47,6 +48,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -103,12 +105,17 @@ public abstract class ContentDataStore implements DataStore {
     /**
      * name, entry map
      */
-    final protected Map<Name,ContentEntry> entries;
+    protected final Map<Name,ContentEntry> entries = new HashMap<Name,ContentEntry>();
+
+    /**
+     * locking manager
+     */
+    protected final LockingManager lockingManager = new InProcessLockingManager();
 
     /**
      * logger
      */
-    final protected Logger LOGGER;
+    protected final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     /**
      * Factory used to create feature types
@@ -135,16 +142,7 @@ public abstract class ContentDataStore implements DataStore {
      */
     protected String namespaceURI;
 
-    /**
-     * locking manager
-     */
-    protected LockingManager lockingManager = new InProcessLockingManager();
-
     public ContentDataStore() {
-        this.entries = new HashMap<Name,ContentEntry>();
-        this.LOGGER = org.geotoolkit.util.logging.Logging.getLogger(
-            getClass().getPackage().getName()
-        );
     }
 
     //
@@ -164,7 +162,6 @@ public abstract class ContentDataStore implements DataStore {
     public void setFeatureTypeFactory(final FeatureTypeFactory typeFactory) {
         this.typeFactory = typeFactory;
     }
-
 
     /**
      * Sets the factory used to create features.
@@ -234,7 +231,7 @@ public abstract class ContentDataStore implements DataStore {
      * The logger for the datastore.
      */
     public Logger getLogger() {
-        return LOGGER;
+        return Logger;
     }
 
     //
@@ -326,8 +323,7 @@ public abstract class ContentDataStore implements DataStore {
      * @see DataStore#getFeatureSource(String)
      */
     public ContentFeatureSource getFeatureSource(final String typeName, final Transaction tx)
-                                                 throws IOException
-    {
+                                                 throws IOException{
         return getFeatureSource(name(typeName), tx);
     }
 
@@ -343,8 +339,7 @@ public abstract class ContentDataStore implements DataStore {
      * @see DataStore#getFeatureSource(String)
      */
     public ContentFeatureSource getFeatureSource(final Name typeName, final Transaction tx)
-                                                 throws IOException
-    {
+                                                 throws IOException{
         final ContentEntry entry = ensureEntry(typeName);
 
         final ContentFeatureSource featureSource = createFeatureSource(entry);
@@ -363,8 +358,7 @@ public abstract class ContentDataStore implements DataStore {
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query,
-            final Transaction tx) throws IOException
-    {
+            final Transaction tx) throws IOException{
         final String typeName = query.getTypeName();
         if (typeName == null) {
             throw new IllegalArgumentException("Query does not specify type.");
@@ -383,8 +377,7 @@ public abstract class ContentDataStore implements DataStore {
      */
     @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final String typeName,
-            final Filter filter, final Transaction tx) throws IOException
-    {
+            final Filter filter, final Transaction tx) throws IOException{
 
         final ContentFeatureStore featureStore = ensureFeatureStore(typeName,tx);
         return featureStore.getWriter( filter , WRITER_UPDATE | WRITER_ADD );
@@ -402,8 +395,7 @@ public abstract class ContentDataStore implements DataStore {
      *
      */
     protected final ContentFeatureStore ensureFeatureStore(final String typeName, final Transaction tx)
-                                                           throws IOException
-    {
+                                                           throws IOException{
 
         final ContentFeatureSource featureSource = getFeatureSource(typeName,tx);
         if (!(featureSource instanceof ContentFeatureStore)) {
@@ -421,8 +413,7 @@ public abstract class ContentDataStore implements DataStore {
      */
     @Override
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final String typeName,
-            final Transaction tx) throws IOException
-    {
+            final Transaction tx) throws IOException{
 
         return getFeatureWriter(typeName, Filter.INCLUDE, tx);
     }
@@ -438,31 +429,41 @@ public abstract class ContentDataStore implements DataStore {
      */
     @Override
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(final String typeName,
-            final Transaction tx) throws IOException
-    {
+            final Transaction tx) throws IOException{
 
         final ContentFeatureStore featureStore = ensureFeatureStore(typeName,tx);
         return featureStore.getWriter(Filter.INCLUDE , WRITER_ADD);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final LockingManager getLockingManager() {
         return lockingManager;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final ContentFeatureSource getView(final Query query) throws IOException, SchemaException {
         final ContentFeatureSource origional = getFeatureSource( query.getTypeName() );
         return origional.getView(query);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final void updateSchema(final String typeName, final SimpleFeatureType featureType)
-            throws IOException
-    {
+            throws IOException{
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void dispose() {
         for (ContentEntry entry : entries.values()) {
@@ -500,7 +501,7 @@ public abstract class ContentDataStore implements DataStore {
     /**
      * Helper method to wrap a non-qualified name.
      */
-    final protected Name name(final String typeName) {
+    protected final Name name(final String typeName) {
         return new DefaultName(namespaceURI,typeName);
     }
 
@@ -520,7 +521,7 @@ public abstract class ContentDataStore implements DataStore {
      *
      * @return The entry, or <code>null</code> if it does not exist.
      */
-    final protected ContentEntry entry(final Name name) throws IOException {
+    protected final ContentEntry entry(final Name name) throws IOException {
         ContentEntry entry = null;
 
         //do we already know about the entry
@@ -555,7 +556,7 @@ public abstract class ContentDataStore implements DataStore {
      * @throws IOException If the entry does not exist, or if there was an error
      * looking it up.
      */
-    final protected ContentEntry ensureEntry(final Name name) throws IOException {
+    protected final ContentEntry ensureEntry(final Name name) throws IOException {
         final ContentEntry entry = entry(name);
 
         if (entry == null) {

@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureEvent;
@@ -39,8 +37,9 @@ import org.geotoolkit.feature.collection.CollectionListener;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
-import org.opengis.feature.FeatureVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
+import org.opengis.feature.FeatureVisitor;
 import org.opengis.util.ProgressListener;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
@@ -50,7 +49,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.sort.SortBy;
 
 /**
  * A FeatureCollection that completly delegates to a backing FetaureSource.
@@ -75,7 +73,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
     protected ContentState state;
 
     /** Internal listener storage list */
-    protected List listeners = new ArrayList(2);
+    protected List<CollectionListener> listeners = new ArrayList<CollectionListener>(2);
 
     /** Set of open resource iterators */
     protected final Set open = new HashSet();
@@ -94,9 +92,8 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
             final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = ContentFeatureCollection.this;
             final CollectionEvent event = new CollectionEvent( collection, featureEvent );
 
-            final CollectionListener[] notify = (CollectionListener[]) listeners.toArray(new CollectionListener[listeners.size()]);
-            for (int i=0; i<notify.length; i++) {
-                final CollectionListener listener = notify[i];
+            final CollectionListener[] notify = listeners.toArray(new CollectionListener[listeners.size()]);
+            for (CollectionListener listener : notify) {
                 try {
                     listener.collectionChanged(event);
                 }
@@ -124,6 +121,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType getSchema() {
         return featureType;
@@ -170,6 +170,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
             this.delegate = delegate;
         }
 
+        /**
+         * {@inheritDoc }
+         */
         @Override
         public boolean hasNext() {
             try {
@@ -180,6 +183,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
 
         }
 
+        /**
+         * {@inheritDoc }
+         */
         @Override
         public SimpleFeature next() throws java.util.NoSuchElementException {
             try {
@@ -189,6 +195,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
             }
         }
 
+        /**
+         * {@inheritDoc }
+         */
         @Override
         public void close() {
             try {
@@ -200,6 +209,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureIterator<SimpleFeature> features() {
         try {
@@ -209,6 +221,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close(final FeatureIterator<SimpleFeature> iterator) {
         iterator.close();
@@ -247,6 +262,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Iterator iterator() {
         try {
@@ -256,6 +274,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close(final Iterator close) {
         try {
@@ -265,6 +286,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public JTSEnvelope2D getBounds() {
         try {
@@ -274,6 +298,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int size() {
         try {
@@ -283,11 +310,17 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean add(final SimpleFeature o) {
         return addAll(Collections.singletonList(o));
@@ -301,6 +334,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         throw new UnsupportedOperationException("read only");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean addAll(final Collection c) {
         final ContentFeatureStore featureStore = ensureFeatureStore();
@@ -313,6 +349,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean addAll(final FeatureCollection c) {
         ContentFeatureStore featureStore = ensureFeatureStore();
@@ -325,6 +364,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void clear() {
         final ContentFeatureStore featureStore = ensureFeatureStore();
@@ -336,6 +378,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final org.opengis.filter.sort.SortBy sort) {
         Query query = new DefaultQuery();
@@ -345,6 +390,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         return new ContentFeatureCollection(featureSource, query);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(final Filter filter) {
         Query query = new DefaultQuery();
@@ -354,37 +402,57 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         return new ContentFeatureCollection(featureSource, query);
     }
 
-    //Unsupported
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean contains(final Object o) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean containsAll(final Collection collection) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean remove(final Object o) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean removeAll(final Collection collection) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean retainAll(final Collection collection) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object[] toArray() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object[] toArray(final Object[] array) {
         throw new UnsupportedOperationException();
@@ -455,6 +523,9 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         throw new UnsupportedOperationException();
