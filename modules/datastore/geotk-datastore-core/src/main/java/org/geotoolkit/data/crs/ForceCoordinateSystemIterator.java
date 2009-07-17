@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
@@ -101,7 +101,7 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
         final CoordinateReferenceSystem originalCs = type.getGeometryDescriptor().getCoordinateReferenceSystem();
 
         if (!cs.equals(originalCs)) {
-            type = FeatureTypes.transform(type, cs);
+            type = FeatureTypeUtilities.transform(type, cs);
         }
         builder = new SimpleFeatureBuilder(type);
 

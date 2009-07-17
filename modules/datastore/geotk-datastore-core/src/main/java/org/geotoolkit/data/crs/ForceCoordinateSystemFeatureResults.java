@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -126,7 +126,7 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
         if (forcedCS.equals(originalCs)) {
             return startingType;
         }
-        return FeatureTypes.transform(startingType, forcedCS, forceOnlyMissing);
+        return FeatureTypeUtilities.transform(startingType, forcedCS, forceOnlyMissing);
     }
 
     /**

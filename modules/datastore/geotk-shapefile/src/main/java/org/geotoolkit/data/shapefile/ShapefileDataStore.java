@@ -68,7 +68,7 @@ import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.data.shapefile.shp.xml.ShpXmlFileReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
@@ -1029,8 +1029,8 @@ public class ShapefileDataStore extends AbstractFileDataStore {
             Class<?> colType = type.getType().getBinding();
             String colName = type.getLocalName();
 
-            int fieldLen = FeatureTypes.getFieldLength(type);
-            if (fieldLen == FeatureTypes.ANY_LENGTH)
+            int fieldLen = FeatureTypeUtilities.getFieldLength(type);
+            if (fieldLen == FeatureTypeUtilities.ANY_LENGTH)
                 fieldLen = 255;
             if ((colType == Integer.class) || (colType == Short.class)
                     || (colType == Byte.class)) {

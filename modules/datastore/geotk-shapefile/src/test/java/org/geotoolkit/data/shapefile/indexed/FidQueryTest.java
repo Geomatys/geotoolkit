@@ -43,7 +43,7 @@ import org.opengis.filter.spatial.BBOX;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.feature.utility.FeatureUtilities;
+import org.geotoolkit.feature.FeatureCollectionUtilities;
 
 public class FidQueryTest extends FIDTestCase {
     public  FidQueryTest(  ) throws IOException {
@@ -102,7 +102,7 @@ public class FidQueryTest extends FIDTestCase {
         build.add(new Long(0));
         build.add("Hey");
         SimpleFeature newFeature = build.buildFeature(null);
-        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
+        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
         collection.add(newFeature);
 
         List<FeatureId> newFids = featureStore.addFeatures(collection);

@@ -37,7 +37,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
@@ -61,9 +60,9 @@ import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.visitor.IdCollectorFilterVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
+import org.geotoolkit.filter.visitor.IdCollectorFilterVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
@@ -75,6 +74,7 @@ import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.utility;
+package org.geotoolkit.feature;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -33,7 +33,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotoolkit.feature.DefaultFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
 
 import org.opengis.feature.Feature;
@@ -160,18 +159,6 @@ public class FeatureUtilities {
         } catch (IOException ignore) {
         }
         return list;
-    }
-
-    public static FeatureCollection<SimpleFeatureType, SimpleFeature> createCollection() {
-        return new DefaultFeatureCollection(null, null);
-    }
-
-    public static FeatureCollection<SimpleFeatureType, SimpleFeature> createCollection(final String id) {
-        return new DefaultFeatureCollection(id, null);
-    }
-
-    public static FeatureCollection<SimpleFeatureType, SimpleFeature> createCollection(final String id, final SimpleFeatureType ft) {
-        return new DefaultFeatureCollection(id, ft);
     }
 
 }

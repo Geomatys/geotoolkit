@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.utility.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.geotoolkit.filter.IllegalFilterException;

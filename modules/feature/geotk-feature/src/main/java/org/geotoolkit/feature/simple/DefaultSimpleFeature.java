@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.geotoolkit.feature.type.Types;
+import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -233,7 +233,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
         final Object converted = Converters.convert(value, featureType.getDescriptor(index).getType().getBinding());
         // if necessary, validation too
         if (validating) {
-            Types.validate(featureType.getDescriptor(index), converted);
+            FeatureValidationUtilities.validate(featureType.getDescriptor(index), converted);
         }
         // finally set the value into the feature
         values[index] = converted;
@@ -545,7 +545,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
     public void validate() {
         for (int i = 0; i < values.length; i++) {
             AttributeDescriptor descriptor = featureType.getDescriptor(i);
-            Types.validate(descriptor, values[i]);
+            FeatureValidationUtilities.validate(descriptor, values[i]);
         }
     }
 
@@ -632,7 +632,7 @@ public class DefaultSimpleFeature implements SimpleFeature {
 
         @Override
         public void validate() {
-            Types.validate(getDescriptor(), values[index]);
+            FeatureValidationUtilities.validate(getDescriptor(), values[index]);
         }
     }
 }

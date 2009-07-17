@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.type;
+package org.geotoolkit.feature;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,7 +44,10 @@ import org.opengis.filter.Filter;
  * @author Jody Garnett, LISAsoft
  * @author Justin Deoliveira, The Open Planning Project
  */
-public class Types {
+public class FeatureValidationUtilities {
+
+    private FeatureValidationUtilities(){}
+
     /**
      * Ensures an attribute value is withing the restrictions of the AttributeDescriptor and
      * AttributeType.
@@ -328,4 +331,5 @@ public class Types {
             }
         }
     }
+    
 }

@@ -88,7 +88,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
 
-import org.geotoolkit.feature.utility.FeatureUtilities;
+import org.geotoolkit.feature.FeatureCollectionUtilities;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -476,7 +476,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
             for (Geometry geom : geoms) {
                 SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureUtilities.createCollection();
+                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
                 Object[] values = new Object[featureType.getAttributeCount()];
 
                 AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();

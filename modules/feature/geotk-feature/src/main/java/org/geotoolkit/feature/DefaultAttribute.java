@@ -18,7 +18,6 @@
 package org.geotoolkit.feature;
 
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.Types;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Converters;
 
@@ -74,7 +73,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
     public DefaultAttribute(final V content, final D descriptor, final I id) {
         super(content, descriptor);
         this.id = id;
-        Types.validate(this, getValue());
+        FeatureValidationUtilities.validate(this, getValue());
     }
 
     /**
@@ -144,7 +143,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      */
     @Override
     public void validate() {
-        Types.validate(this, this.getValue());
+        FeatureValidationUtilities.validate(this, this.getValue());
     }
 
     /**

@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.geotoolkit.feature.utility.FeatureUtilities;
-import org.geotoolkit.feature.type.Types;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
@@ -286,7 +286,7 @@ public class SimpleFeatureBuilder {
         final AttributeDescriptor descriptor = featureType.getDescriptor(index);
         values[index] = convert(value, descriptor);
         if (validating) {
-            Types.validate(descriptor, values[index]);
+            FeatureValidationUtilities.validate(descriptor, values[index]);
         }
     }
 

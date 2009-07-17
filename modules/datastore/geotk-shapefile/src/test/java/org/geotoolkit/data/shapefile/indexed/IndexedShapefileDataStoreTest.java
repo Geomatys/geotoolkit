@@ -76,7 +76,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.feature.utility.FeatureUtilities;
+import org.geotoolkit.feature.FeatureCollectionUtilities;
 
 /**
  * 
@@ -584,7 +584,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeatureType featureType = createExampleSchema();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
 
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureUtilities.createCollection();
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollectionUtilities.createCollection();
         for (int i = 0, ii = 20; i < ii; i++) {
 
             build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
@@ -672,7 +672,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         ftb.add("a", geom.getClass());
         SimpleFeatureType type = ftb.buildFeatureType();
 
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureUtilities.createCollection();
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollectionUtilities.createCollection();
 
         for (int i = 0, ii = 20; i < ii; i++) {
             SimpleFeature feature = SimpleFeatureBuilder.build(type,

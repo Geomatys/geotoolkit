@@ -67,7 +67,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 2.1.M3
  * @source $URL$
  */
-public class FeatureTypes {
+public class FeatureTypeUtilities {
 
     /** the default namespace for feature types */
     //public static final URI = GMLSchema.NAMESPACE;

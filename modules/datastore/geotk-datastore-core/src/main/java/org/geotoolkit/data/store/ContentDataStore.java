@@ -35,7 +35,7 @@ import org.geotoolkit.data.Query;
 import org.geotoolkit.data.ServiceInfo;
 import org.geotoolkit.data.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 
@@ -242,7 +242,7 @@ public abstract class ContentDataStore implements DataStore {
     public ServiceInfo getInfo() {
         final DefaultServiceInfo info = new DefaultServiceInfo();
         info.setDescription("Features from "+getClass().getSimpleName() );
-        info.setSchema( FeatureTypes.DEFAULT_NAMESPACE );
+        info.setSchema( FeatureTypeUtilities.DEFAULT_NAMESPACE );
         return info;
     }
 

@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -169,7 +169,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
         if (forcedCS.equals(originalCs)) {
             return startingType;
         } else {
-            return FeatureTypes.transform(startingType, forcedCS);
+            return FeatureTypeUtilities.transform(startingType, forcedCS);
         }
     }
 

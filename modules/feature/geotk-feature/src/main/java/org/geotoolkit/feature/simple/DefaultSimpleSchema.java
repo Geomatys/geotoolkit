@@ -56,7 +56,7 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
  */
-public class SimpleSchema extends DefaultSchema {
+public class DefaultSimpleSchema extends DefaultSchema {
 
     //internal factory
     private static final FeatureTypeFactory FACTORY = new DefaultFeatureTypeFactory();
@@ -188,7 +188,7 @@ public class SimpleSchema extends DefaultSchema {
             new DefaultName(NAMESPACE, "MultiPolytonPropertyType"), MultiPolygon.class, null, false,
             false, Collections.EMPTY_LIST, MULTIGEOMETRY, null);
 
-    public SimpleSchema() {
+    public DefaultSimpleSchema() {
         super(NAMESPACE);
 
         put(INTEGER.getName(), INTEGER);

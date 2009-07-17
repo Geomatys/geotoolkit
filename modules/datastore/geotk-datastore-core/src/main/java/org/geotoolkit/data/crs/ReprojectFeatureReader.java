@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DelegatingFeatureReader;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
@@ -104,7 +104,7 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
             throw new IllegalArgumentException("CoordinateSystem " + cs + " already used (check before using wrapper)");
         }
 
-        this.schema = FeatureTypes.transform(type, cs);
+        this.schema = FeatureTypeUtilities.transform(type, cs);
         this.reader = reader;
         transformer.setMathTransform(CRS.findMathTransform(original, cs, true));
     }

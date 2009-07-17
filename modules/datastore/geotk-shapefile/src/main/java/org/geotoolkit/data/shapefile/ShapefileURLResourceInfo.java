@@ -24,7 +24,7 @@ import javax.swing.Icon;
 
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.ResourceInfo;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -70,7 +70,7 @@ public class ShapefileURLResourceInfo implements ResourceInfo {
     }
 
     public URI getSchema() {
-        return FeatureTypes.DEFAULT_NAMESPACE; // we have features?
+        return FeatureTypeUtilities.DEFAULT_NAMESPACE; // we have features?
         // url to shp (as the header is our schema)
     }
 

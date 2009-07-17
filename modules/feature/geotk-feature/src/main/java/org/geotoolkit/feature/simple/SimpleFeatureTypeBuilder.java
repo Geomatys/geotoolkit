@@ -173,7 +173,7 @@ public class SimpleFeatureTypeBuilder {
         this.factory = factory;
 
         attributeBuilder = new AttributeTypeBuilder();
-        setBindings(new SimpleSchema());
+        setBindings(new DefaultSimpleSchema());
         reset();
     }
 

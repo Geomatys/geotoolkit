@@ -14,11 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.visitor;
+package org.geotoolkit.filter.visitor;
 
 import java.util.Set;
-
-import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 
 import org.opengis.filter.Id;
 
@@ -37,7 +35,10 @@ public class IdCollectorFilterVisitor extends DefaultFilterVisitor {
     private IdCollectorFilterVisitor(boolean collectStringIds){
         collectStrings = collectStringIds;
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object visit(Id filter, Object data) {
         final Set set = (Set) data;

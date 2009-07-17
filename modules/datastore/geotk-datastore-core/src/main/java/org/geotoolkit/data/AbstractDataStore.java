@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.view.DefaultView;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -177,7 +177,7 @@ public abstract class AbstractDataStore implements DataStore {
     public ServiceInfo getInfo() {
         final DefaultServiceInfo info = new DefaultServiceInfo();
         info.setDescription("Features from " + getClass().getSimpleName());
-        info.setSchema(FeatureTypes.DEFAULT_NAMESPACE);
+        info.setSchema(FeatureTypeUtilities.DEFAULT_NAMESPACE);
         return info;
     }
 

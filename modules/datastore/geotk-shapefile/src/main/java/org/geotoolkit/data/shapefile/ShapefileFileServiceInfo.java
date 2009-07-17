@@ -25,7 +25,7 @@ import javax.swing.Icon;
 
 import org.geotoolkit.data.ServiceInfo;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
-import org.geotoolkit.feature.FeatureTypes;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * ServiceInfo for ShapefileDataStore.
@@ -41,7 +41,7 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
 
     public URI getSchema() {
         // consider URI of the shapefile specification?
-        return FeatureTypes.DEFAULT_NAMESPACE;
+        return FeatureTypeUtilities.DEFAULT_NAMESPACE;
     }
     
     public Icon getIcon() {
