@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -33,9 +32,10 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FileDataStoreFactorySpi;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotoolkit.factory.Factory;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.factory.Factory;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Implementation of the DataStore service provider interface for Shapefiles.
@@ -59,13 +59,11 @@ import org.geotoolkit.factory.Factory;
  */
 public class ShapefileDataStoreFactory extends Factory implements FileDataStoreFactorySpi {
 
-    public static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
+    public static final Logger LOGGER = Logging.getLogger("org.geotools.data.shapefile");
     /**
      * url to the .shp file.
      */
-    public static final Param URLP = new Param("url", URL.class,
-            "url to a .shp file");
+    public static final Param URLP = new Param("url", URL.class,"url to a .shp file");
 
     /**
      * Optional - uri of the FeatureType's namespace
@@ -167,8 +165,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
         Boolean isMemoryMapped = (Boolean) MEMORY_MAPPED.lookUp(params);
         URI namespace = (URI) NAMESPACEP.lookUp(params);
         Charset dbfCharset = (Charset) DBFCHARSET.lookUp(params);
-        Boolean isCreateSpatialIndex = (Boolean) CREATE_SPATIAL_INDEX
-                .lookUp(params);
+        Boolean isCreateSpatialIndex = (Boolean) CREATE_SPATIAL_INDEX.lookUp(params);
 
         if (isCreateSpatialIndex == null) {
             // should not be needed as default is TRUE
@@ -187,8 +184,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
 
         boolean isLocal = shpFiles.isLocal();
         if (isLocal && !shpFiles.exists(ShpFileType.SHP)) {
-            throw new FileNotFoundException("Shapefile not found:"
-                    + shpFiles.get(ShpFileType.SHP));
+            throw new FileNotFoundException("Shapefile not found:" + shpFiles.get(ShpFileType.SHP));
         }
         boolean useMemoryMappedBuffer = isLocal
                 && shpFiles.exists(ShpFileType.SHP)

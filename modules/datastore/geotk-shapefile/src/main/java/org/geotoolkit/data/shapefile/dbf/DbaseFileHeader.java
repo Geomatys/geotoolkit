@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Class to represent the header of a Dbase III file. Creation date: (5/15/2001
@@ -67,8 +68,7 @@ public class DbaseFileHeader {
 
     private int largestFieldSize = 0;
 
-    private Logger logger = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
+    private Logger logger = Logging.getLogger("org.geotools.data.shapefile");
 
     /**
      * Class for holding the information assicated with a record.
@@ -128,37 +128,37 @@ public class DbaseFileHeader {
         Class typeClass = null;
 
         switch (fields[i].fieldType) {
-        case 'C':
-            typeClass = String.class;
-            break;
+            case 'C':
+                typeClass = String.class;
+                break;
 
-        case 'N':
-            if (fields[i].decimalCount == 0) {
-                if (fields[i].fieldLength < 10) {
-                    typeClass = Integer.class;
+            case 'N':
+                if (fields[i].decimalCount == 0) {
+                    if (fields[i].fieldLength < 10) {
+                        typeClass = Integer.class;
+                    } else {
+                        typeClass = Long.class;
+                    }
                 } else {
-                    typeClass = Long.class;
+                    typeClass = Double.class;
                 }
-            } else {
+                break;
+
+            case 'F':
                 typeClass = Double.class;
-            }
-            break;
+                break;
 
-        case 'F':
-            typeClass = Double.class;
-            break;
+            case 'L':
+                typeClass = Boolean.class;
+                break;
 
-        case 'L':
-            typeClass = Boolean.class;
-            break;
+            case 'D':
+                typeClass = Date.class;
+                break;
 
-        case 'D':
-            typeClass = Date.class;
-            break;
-
-        default:
-            typeClass = String.class;
-            break;
+            default:
+                typeClass = String.class;
+                break;
         }
 
         return typeClass;
@@ -237,8 +237,7 @@ public class DbaseFileHeader {
             tempFieldDescriptors[fields.length].fieldType = 'C';
             if (inFieldLength > 254) {
                 if (logger.isLoggable(Level.FINE)) {
-                    logger
-                            .fine("Field Length for "
+                    logger.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -248,15 +247,13 @@ public class DbaseFileHeader {
         } else if ((inFieldType == 'S') || (inFieldType == 's')) {
             tempFieldDescriptors[fields.length].fieldType = 'C';
             if (logger.isLoggable(Level.WARNING)) {
-                logger
-                        .warning("Field type for "
+                logger.warning("Field type for "
                                 + inFieldName
                                 + " set to S which is flat out wrong people!, I am setting this to C, in the hopes you meant character.");
             }
             if (inFieldLength > 254) {
                 if (logger.isLoggable(Level.FINE)) {
-                    logger
-                            .fine("Field Length for "
+                    logger.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -277,8 +274,7 @@ public class DbaseFileHeader {
             tempFieldDescriptors[fields.length].fieldType = 'F';
             if (inFieldLength > 20) {
                 if (logger.isLoggable(Level.FINE)) {
-                    logger
-                            .fine("Field Length for "
+                    logger.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -289,8 +285,7 @@ public class DbaseFileHeader {
             tempFieldDescriptors[fields.length].fieldType = 'N';
             if (inFieldLength > 18) {
                 if (logger.isLoggable(Level.FINE)) {
-                    logger
-                            .fine("Field Length for "
+                    logger.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -329,8 +324,7 @@ public class DbaseFileHeader {
                     + " For column " + inFieldName);
         }
         // the length of a record
-        tempLength = tempLength
-                + tempFieldDescriptors[fields.length].fieldLength;
+        tempLength = tempLength + tempFieldDescriptors[fields.length].fieldLength;
 
         // set the new fields.
         fields = tempFieldDescriptors;

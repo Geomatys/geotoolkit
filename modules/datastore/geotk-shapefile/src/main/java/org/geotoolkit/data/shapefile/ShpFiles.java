@@ -38,12 +38,9 @@ import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
@@ -233,8 +230,7 @@ public class ShpFiles {
         for (Collection<ShpFilesLocker> lockerList : lockers.values()) {
             for (ShpFilesLocker locker : lockerList) {
                 ShapefileDataStoreFactory.LOGGER
-                        .log(
-                                logLevel,
+                        .log(logLevel,
                                 "The following locker still has a lock� "
                                         + locker
                                         + "\n it was created with the following stack trace",
