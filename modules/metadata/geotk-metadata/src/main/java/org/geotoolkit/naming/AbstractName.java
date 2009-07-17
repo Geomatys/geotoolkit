@@ -110,7 +110,7 @@ public abstract class AbstractName implements GenericName, Serializable {
      * Returns the scope (name space) in which this name is local. For example if a {@linkplain
      * #toFullyQualifiedName fully qualified name} is {@code "org.opengis.util.Record"} and if
      * this instance is the {@code "util.Record"} part, then its scope is
-     * {@linkplain DefaultNameSpace#name named} {@code "org.opengis"}.
+     * {@linkplain DefaultNameSpace#name() named} {@code "org.opengis"}.
      * <p>
      * Continuing with the above example, the full {@code "org.opengis.util.Record"} name has no
      * scope. If this method is invoked on such name, then the Geotoolkit implementation returns
@@ -231,9 +231,9 @@ public abstract class AbstractName implements GenericName, Serializable {
      * that the result may or may not be fully qualified. Special cases:
      * <p>
      * <ul>
-     *   <li><code>{@linkplain #toFullyQualifiedName}.toString()</code> is garanteed to
+     *   <li><code>{@linkplain #toFullyQualifiedName()}.toString()</code> is garanteed to
      *       contains the {@linkplain #scope scope} (if any).</li>
-     *   <li><code>{@linkplain #name}.toString()</code> is garanteed to not contains
+     *   <li><code>{@linkplain #tip()}.toString()</code> is garanteed to not contains
      *       any scope.</li>
      * </ul>
      */

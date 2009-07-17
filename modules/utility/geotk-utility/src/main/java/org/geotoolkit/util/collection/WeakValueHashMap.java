@@ -77,7 +77,6 @@ import org.geotoolkit.resources.Errors;
  *
  * @see java.util.WeakHashMap
  * @see WeakHashSet
- * @see SoftValueHashMap
  * @see Cache
  *
  * @since 2.0

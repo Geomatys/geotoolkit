@@ -517,7 +517,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getCenter(int) middle ordinates}
+     * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
      * for each dimension for all points within the {@code Envelope}.
      *
      * @return The median coordinates.

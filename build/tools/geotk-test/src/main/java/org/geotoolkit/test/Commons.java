@@ -169,7 +169,7 @@ public final class Commons {
          * Compares with the original object and returns it.
          */
         @SuppressWarnings("unchecked")
-        final Class<? extends T> type = (Class) object.getClass();
+        final Class<? extends T> type = (Class<? extends T>) object.getClass();
         assertEquals("Deserialized object not equal to the original one.", object, deserialized);
         assertEquals("Deserialized object has a different hash code.",
                 object.hashCode(), deserialized.hashCode());

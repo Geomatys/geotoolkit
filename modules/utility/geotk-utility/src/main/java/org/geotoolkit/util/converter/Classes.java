@@ -547,7 +547,7 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Returns the widest of the given types. Classes {@code c1} and {@code c2}
      * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
-     * {@link Float}, {@link Double}, {@link BigInteger) or {@link BigDecimal} types.
+     * {@link Float}, {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
      *
      * @param  c1 The first number type, or {@code null}.
      * @param  c2 The second number type, or {@code null}.
@@ -574,7 +574,7 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Returns the finest type of two numbers. Numbers {@code n1} and {@code n2} must be instance
      * of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float}
-     * {@link Double}, {@link BigInteger) or {@link BigDecimal} types.
+     * {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
      *
      * @param  n1 The first number.
      * @param  n2 The second number.
@@ -591,7 +591,7 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Returns the finest of the given types. Classes {@code c1} and {@code c2}
      * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
-     * {@link Float}, {@link Double}, {@link BigInteger) or {@link BigDecimal} types.
+     * {@link Float}, {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
      *
      * @param  c1 The first number type, or {@code null}.
      * @param  c2 The second number type, or {@code null}.
