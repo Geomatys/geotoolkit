@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.feature.utility.NullProgressListener;
 
+import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;

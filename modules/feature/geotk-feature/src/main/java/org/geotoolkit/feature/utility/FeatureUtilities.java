@@ -173,4 +173,5 @@ public class FeatureUtilities {
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> createCollection(final String id, final SimpleFeatureType ft) {
         return new DefaultFeatureCollection(id, ft);
     }
+
 }

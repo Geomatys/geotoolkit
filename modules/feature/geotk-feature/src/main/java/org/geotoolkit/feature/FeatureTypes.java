@@ -87,7 +87,7 @@ public class FeatureTypes {
 
         SimpleFeatureType featureType = null;
         try {
-            featureType = FeatureTypes.newFeatureType(null, "Feature", new URI("http://www.opengis.net/gml"), true);
+            featureType = newFeatureType(null, "Feature", new URI("http://www.opengis.net/gml"), true);
         } catch (Exception e) {
             //shold not happen
         }

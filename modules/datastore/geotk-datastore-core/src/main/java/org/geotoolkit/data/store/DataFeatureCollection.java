@@ -34,15 +34,12 @@ import org.geotoolkit.feature.collection.CollectionEvent;
 import org.geotoolkit.feature.collection.CollectionListener;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
-
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.collection.DelegateFeatureIterator;
 import org.geotoolkit.feature.collection.SubFeatureCollection;
-import org.opengis.feature.FeatureVisitor;
-import org.opengis.filter.sort.SortBy;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.feature.utility.NullProgressListener;
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.util.NullProgressListener;
+
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

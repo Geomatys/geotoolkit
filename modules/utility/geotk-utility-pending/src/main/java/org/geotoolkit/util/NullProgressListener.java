@@ -1,9 +1,9 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -49,69 +49,108 @@ public class NullProgressListener implements ProgressListener {
     public NullProgressListener() {
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getDescription() {
         return description;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void started() {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void progress(float percent) {
+    public void progress(final float percent) {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public float getProgress() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void complete() {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void dispose() {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void setCanceled(boolean cancel) {
+    public void setCanceled(final boolean cancel) {
         this.canceled = cancel;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void warningOccurred(String source, String location, String warning) {
+    public void warningOccurred(final String source, final String location, final String warning) {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void exceptionOccurred(Throwable exception) {
+    public void exceptionOccurred(final Throwable exception) {
         //do nothing
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InternationalString getTask() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void setTask( InternationalString task ) {
-        // do nothing        
+    public void setTask(final InternationalString task) {
+        // do nothing
     }
 }
