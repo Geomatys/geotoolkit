@@ -74,6 +74,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
@@ -487,6 +488,14 @@ public class GO2Utilities {
         return value;
     }
 
+    public static Geometry getGeometry(final SimpleFeature feature, final String geomName){
+        if (geomName != null && !geomName.trim().isEmpty()) {
+            return (Geometry) feature.getAttribute(geomName);
+        } else {
+            return (Geometry) feature.getDefaultGeometry();
+        }
+    }
+
     public static Geometry getGeometry(final Feature feature, final String geomName){
         if (geomName != null && !geomName.trim().isEmpty()) {
             Property prop = feature.getProperty(geomName);
@@ -566,6 +575,14 @@ public class GO2Utilities {
     }
 
     public static Set<String> propertiesCachedNames(final Collection<CachedRule> rules){
+        final Set<String> atts = new HashSet<String>();
+        for(final CachedRule r : rules){
+            atts.addAll(r.getRequieredAttributsName());
+        }
+        return atts;
+    }
+
+    public static Set<String> propertiesCachedNames(final CachedRule[] rules){
         final Set<String> atts = new HashSet<String>();
         for(final CachedRule r : rules){
             atts.addAll(r.getRequieredAttributsName());
@@ -670,7 +687,7 @@ public class GO2Utilities {
         return validRules;
     }
 
-    public static List<CachedRule> getValidCachedRules(final Style style, final double scale, SimpleFeatureType type) {
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, SimpleFeatureType type) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -735,10 +752,10 @@ public class GO2Utilities {
             }
         }
 
-        return validRules;
+        return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
-    public static List<CachedRule> getValidCachedRules(final Style style, final double scale, final Name type) {
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final Name type) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -764,7 +781,7 @@ public class GO2Utilities {
             }
         }
 
-        return validRules;
+        return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
     ////////////////////////////////////////////////////////////////////////////

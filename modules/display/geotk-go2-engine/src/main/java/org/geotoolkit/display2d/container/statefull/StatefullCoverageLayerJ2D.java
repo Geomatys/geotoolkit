@@ -124,18 +124,18 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         if (!layer.isVisible()) return;        
              
         final Name coverageName = layer.getCoverageName();
-        final List<CachedRule> rules = GO2Utilities.getValidCachedRules(layer.getStyle(), renderingContext.getScale(), coverageName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), renderingContext.getScale(), coverageName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
-        if (rules.isEmpty()) {
-            return;   //----------------------------------------------------->CONTINUE
+        if (rules.length == 0) {
+            return;
         }
 
         paintRasterLayer(layer, rules, renderingContext);
     }
 
-    private void paintRasterLayer(final CoverageMapLayer layer, final List<CachedRule> rules, 
+    private void paintRasterLayer(final CoverageMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
 
@@ -180,11 +180,11 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
         final Name coverageName = layer.getCoverageName();
-        final List<CachedRule> rules = GO2Utilities.getValidCachedRules(layer.getStyle(), renderingContext.getScale(), coverageName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), renderingContext.getScale(), coverageName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
-        if (rules.isEmpty()) {
+        if (rules.length == 0) {
             return graphics;
         }
 
@@ -199,7 +199,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         return graphics;
     }
 
-    private List<Graphic> searchAt(final CoverageMapLayer layer, final List<CachedRule> rules,
+    private List<Graphic> searchAt(final CoverageMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter filter, List<Graphic> graphics) {
         updateCache(renderingContext);
 

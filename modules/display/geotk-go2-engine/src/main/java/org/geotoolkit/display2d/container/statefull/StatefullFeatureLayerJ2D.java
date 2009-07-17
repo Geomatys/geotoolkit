@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
-
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -142,7 +141,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
-    protected void paintVectorLayer(final List<CachedRule> rules, final RenderingContext2D context) {
+    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
         updateCache(context);
 
         //search for a special graphic renderer---------------------------------
@@ -242,13 +241,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     private void renderByFeatureOrder(FeatureCollection<SimpleFeatureType,SimpleFeature> features,
-            CanvasMonitor monitor, RenderingContext2D context, List<CachedRule> rules){
+            CanvasMonitor monitor, RenderingContext2D context, CachedRule[] rules){
         // read & paint in the same thread, all symbolizer for each feature
         final FeatureIterator<SimpleFeature> iterator = features.features();
 
         //sort the rules
-        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
-        final int elseRuleIndex = sortByElseRule(sortedRules);
+        final int elseRuleIndex = sortByElseRule(rules);
 
         try{
             while(iterator.hasNext()){
@@ -267,7 +265,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
                 boolean painted = false;
                 for(int i=0;i<elseRuleIndex;i++){
-                    final CachedRule rule = sortedRules[i];
+                    final CachedRule rule = rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -283,8 +281,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
                 //the feature hasn't been painted, paint it with the 'else' rules
                 if(!painted){
-                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
-                        final CachedRule rule = sortedRules[i];
+                    for(int i=elseRuleIndex; i<rules.length; i++){
+                        final CachedRule rule = rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -307,15 +305,14 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     private void renderBySymbolOrder(FeatureCollection<SimpleFeatureType,SimpleFeature> features,
-            CanvasMonitor monitor, RenderingContext2D context, List<CachedRule> rules){
+            CanvasMonitor monitor, RenderingContext2D context, CachedRule[] rules){
         // read & paint in the same thread, all symbolizer for each feature
         final FeatureIterator<SimpleFeature> iterator = features.features();
 
         List<StatefullProjectedFeature> cycle = new ArrayList<StatefullProjectedFeature>();
 
         //sort the rules
-        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
-        final int elseRuleIndex = sortByElseRule(sortedRules);
+        final int elseRuleIndex = sortByElseRule(rules);
 
         try{
             while(iterator.hasNext()){
@@ -342,7 +339,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         try{
            for(int i=0;i<elseRuleIndex;i++){
-                final CachedRule rule = sortedRules[i];
+                final CachedRule rule = rules[i];
                 final Filter rulefilter = rule.getFilter();
                 for (final CachedSymbolizer symbol : rule.symbolizers()) {
                     for(StatefullProjectedFeature feature : cycle){
@@ -358,8 +355,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                 }
             }
 
-            for(int i=elseRuleIndex;i<sortedRules.length;i++){
-                final CachedRule rule = sortedRules[i];
+            for(int i=elseRuleIndex;i<rules.length;i++){
+                final CachedRule rule = rules[i];
                 final Filter rulefilter = rule.getFilter();
                 for (final CachedSymbolizer symbol : rule.symbolizers()) {
                     for(StatefullProjectedFeature feature : unPainted){
@@ -382,7 +379,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
-    protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final List<CachedRule> rules,
+    protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D context, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
         updateCache(context);
 
@@ -472,8 +469,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
 
         //sort the rules
-        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
-        final int elseRuleIndex = sortByElseRule(sortedRules);
+        final int elseRuleIndex = sortByElseRule(rules);
 
         // read & paint in the same thread
         final FeatureIterator<SimpleFeature> iterator = features.features();
@@ -493,7 +489,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
                 boolean painted = false;
                 for(int i=0;i<elseRuleIndex;i++){
-                    final CachedRule rule = sortedRules[i];
+                    final CachedRule rule = rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -509,8 +505,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
                 //the feature hasn't been painted, paint it with the 'else' rules
                 if(!painted){
-                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
-                        final CachedRule rule = sortedRules[i];
+                    for(int i=elseRuleIndex; i<rules.length; i++){
+                        final CachedRule rule = rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {

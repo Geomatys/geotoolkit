@@ -97,7 +97,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if (!layer.isVisible()) return;  
 
         final SimpleFeatureType sft = layer.getFeatureSource().getSchema();
-        final List<CachedRule> rules;
+        final CachedRule[] rules;
 
         final Filter selectionFilter = layer.getSelectionFilter();
         if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
@@ -142,7 +142,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 mixedRules.add(GO2Utilities.getCached(mixedRule));
             }
 
-            rules = mixedRules;
+            rules = mixedRules.toArray(new CachedRule[mixedRules.size()]);;
 
         }else{
             rules = GO2Utilities.getValidCachedRules(
@@ -151,14 +151,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
-        if (rules.isEmpty()) {
+        if (rules.length == 0) {
             return;
         }
         
         paintVectorLayer(rules, renderingContext);
     }
     
-    protected void paintVectorLayer(final List<CachedRule> rules, final RenderingContext2D renderingContext) {
+    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D renderingContext) {
                 
         //search for a special graphic renderer
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
@@ -258,8 +258,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
         //sort the rules
-        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
-        final int elseRuleIndex = sortByElseRule(sortedRules);
+        final int elseRuleIndex = sortByElseRule(rules);
 
         // read & paint in the same thread
         final FeatureIterator<SimpleFeature> iterator = features.features();
@@ -271,7 +270,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
                 boolean painted = false;
                 for(int i=0;i<elseRuleIndex;i++){
-                    final CachedRule rule = sortedRules[i];
+                    final CachedRule rule = rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -287,8 +286,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
                 //the feature hasn't been painted, paint it with the 'else' rules
                 if(!painted){
-                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
-                        final CachedRule rule = sortedRules[i];
+                    for(int i=elseRuleIndex; i<rules.length; i++){
+                        final CachedRule rule = rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -311,7 +310,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 
     }
 
-    protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final List<CachedRule> rules,
+    protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
 
         final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();
@@ -411,8 +410,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
 
         //sort the rules
-        final CachedRule[] sortedRules = rules.toArray(new CachedRule[rules.size()]);
-        final int elseRuleIndex = sortByElseRule(sortedRules);
+        final int elseRuleIndex = sortByElseRule(rules);
 
 
         try{
@@ -422,7 +420,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
                 boolean painted = false;
                 for(int i=0;i<elseRuleIndex;i++){
-                    final CachedRule rule = sortedRules[i];
+                    final CachedRule rule = rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -438,8 +436,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
                 //the feature hasn't been painted, paint it with the 'else' rules
                 if(!painted){
-                    for(int i=elseRuleIndex; i<sortedRules.length; i++){
-                        final CachedRule rule = sortedRules[i];
+                    for(int i=elseRuleIndex; i<rules.length; i++){
+                        final CachedRule rule = rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
@@ -476,11 +474,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if (!layer.isVisible()) return graphics;
 
         final Name featureTypeName = layer.getFeatureSource().getSchema().getName();
-        final List<CachedRule> rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getScale(), featureTypeName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just return null.
-        if (rules.isEmpty()) {
+        if (rules.length == 0) {
             return graphics;
         }
 
