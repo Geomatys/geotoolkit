@@ -93,7 +93,7 @@ public abstract class AbstractDataStore implements DataStore {
     /**
      * Manages listener lists for FeatureSource<SimpleFeatureType, SimpleFeature> implementation
      */
-    protected final FeatureListenerManager listenerManager = new FeatureListenerManager();
+    public final FeatureListenerManager listenerManager = new FeatureListenerManager();
     /**
      * Flags AbstractDataStore to allow Modification.
      * <p>
