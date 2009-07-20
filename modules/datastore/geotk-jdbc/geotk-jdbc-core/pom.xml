@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-jdbc-core</artifactId>
   <packaging>jar</packaging>
-  <name>JDBC DataStore Core</name>
+  <name>DataStore JDBC Core</name>
 
   <description>
 	DataStore support for JDBC based data stores.
@@ -51,11 +51,6 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-datastore-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-lib</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.jdbc;
 
+import org.geotoolkit.data.jdbc.FilterToSQLException;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;

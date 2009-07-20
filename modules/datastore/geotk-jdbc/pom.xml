@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-jdbc</artifactId>
   <packaging>pom</packaging>
-  <name>JDBC DataStores</name>
+  <name>DataStore JDBC</name>
 
 
   <!-- =========================================================== -->
@@ -44,7 +44,6 @@
   </developers>
 
   <modules>
-    <module>geotk-jdbc-lib</module>
     <module>geotk-jdbc-core</module>
     <module>geotk-jdbc-postgis</module>
   </modules>

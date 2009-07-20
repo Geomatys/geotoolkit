@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-jdbc-postgis</artifactId>
   <packaging>jar</packaging>
-  <name>PostGIS DataStore</name>
+  <name>DataStore JDBC PostGIS</name>
 
   <description>
     DataStore for PostGIS database.
