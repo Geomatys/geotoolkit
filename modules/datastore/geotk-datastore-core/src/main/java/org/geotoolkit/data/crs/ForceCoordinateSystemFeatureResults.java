@@ -128,7 +128,7 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
     }
 
     /**
-     * @see org.geotools.data.FeatureResults#getBounds()
+     * {@inheritDoc }
      */
     @Override
     public JTSEnvelope2D getBounds() {
@@ -136,26 +136,6 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
         return new JTSEnvelope2D(env, getSchema().getCoordinateReferenceSystem());
     }
 
-    /**
-     * @see org.geotools.data.FeatureResults#collection()
-     */
-//    public FeatureCollection<SimpleFeatureType, SimpleFeature> collection() throws IOException {
-//        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
-//
-//        try {
-//             FeatureReader<SimpleFeatureType, SimpleFeature> reader = reader();
-//
-//            while (reader.hasNext()) {
-//                collection.add(reader.next());
-//            }
-//        } catch (NoSuchElementException e) {
-//            throw new DataSourceException("This should not happen", e);
-//        } catch (IllegalAttributeException e) {
-//            throw new DataSourceException("This should not happen", e);
-//        }
-//
-//        return collection;
-//    }
     /**
      * Returns the feature results wrapped by this
      * ForceCoordinateSystemFeatureResults

@@ -180,7 +180,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
      * The result would not a true representation of the new bounds, but it
      * would be guaranteed to be larger that the true representation.
      *
-     * @see org.geotools.data.FeatureResults#getBounds()
+     * @see org.geotoolkit.data.FeatureResults#getBounds()
      */
     @Override
     public JTSEnvelope2D getBounds() {
@@ -206,28 +206,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
     }
 
     /**
-     * @see org.geotools.data.FeatureResults#collection()
-     *
-    public FeatureCollection<SimpleFeatureType, SimpleFeature> collection() throws IOException {
-    FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection();
-
-    try {
-    FeatureReader<SimpleFeatureType, SimpleFeature> reader = reader();
-
-    while (reader.hasNext()) {
-    collection.add(reader.next());
-    }
-    } catch (NoSuchElementException e) {
-    throw new DataSourceException("This should not happen", e);
-    } catch (IllegalAttributeException e) {
-    throw new DataSourceException("This should not happen", e);
-    }
-
-    return collection;
-    }*/
-    /**
      * Returns the feature results wrapped by this reprojecting feature results
-     *
      */
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getOrigin() {
         return results;

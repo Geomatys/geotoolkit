@@ -109,14 +109,14 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#getFeatureType()
+     * @see org.geotoolkit.data.FeatureReader#getFeatureType()
      */
     public SimpleFeatureType getFeatureType() {
         return builder.getFeatureType();
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#next()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeature next() throws NoSuchElementException {
@@ -134,20 +134,23 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() {
         return reader.hasNext();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#close()
+     * @see org.geotoolkit.data.FeatureReader#close()
      */
     public void close() {
         reader.close();

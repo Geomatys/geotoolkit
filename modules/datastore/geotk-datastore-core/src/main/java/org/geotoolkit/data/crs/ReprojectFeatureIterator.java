@@ -125,17 +125,7 @@ public class ReprojectFeatureIterator implements Iterator {
     }
 
     /**
-     * Implement hasNext.
-     * 
-     * <p>
-     * Description ...
-     * </p>
-     *
-     *
-     * @throws IOException
-     * @throws IllegalStateException DOCUMENT ME!
-     *
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() {

@@ -49,20 +49,36 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection implement
         super(schema, null);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean add(SimpleFeature o) {
         SimpleFeature feature = (SimpleFeature) o;
         contents.put(feature.getID(), feature);
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int size() {
         return contents.size();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Iterator openIterator() {
         return new MemoryIterator(contents.values().iterator());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void closeIterator(Iterator close) {
         if (close == null) {
             return;
@@ -84,6 +100,7 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection implement
             it = null;
         }
 
+        @Override
         public boolean hasNext() {
             if (it == null) {
                 throw new IllegalStateException();
@@ -91,6 +108,7 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection implement
             return it.hasNext();
         }
 
+        @Override
         public Object next() {
             if (it == null) {
                 throw new IllegalStateException();
@@ -98,14 +116,16 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection implement
             return it.next();
         }
 
+        @Override
         public void remove() {
             it.remove();
         }
     }
 
-    //
-    // RandomFeatureAccess 
-    //
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeature getFeatureMember(String id) throws NoSuchElementException {
         if (contents.containsKey(id)) {
             return (SimpleFeature) contents.get(id);
@@ -113,6 +133,10 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection implement
         throw new NoSuchElementException(id);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeature removeFeatureMember(String id) {
         if (contents.containsKey(id)) {
             SimpleFeature old = (SimpleFeature) contents.get(id);
@@ -121,6 +145,4 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection implement
         }
         return null;
     }
-
-    ;
 }

@@ -85,7 +85,7 @@ public class CollectionDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.DataStore#getTypeNames()
+     * {@inheritDoc }
      */
     @Override
     public String[] getTypeNames() {
@@ -93,7 +93,7 @@ public class CollectionDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.DataStore#getSchema(java.lang.String)
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeatureType getSchema(final String typeName) throws IOException {
@@ -117,7 +117,7 @@ public class CollectionDataStore extends AbstractDataStore {
      * @throws IOException If typeName could not be found
      * @throws DataSourceException See IOException
      *
-     * @see org.geotools.data.AbstractDataStore#getFeatureSource(java.lang.String)
+     * @see org.geotoolkit.data.AbstractDataStore#getFeatureSource(java.lang.String)
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
@@ -127,16 +127,13 @@ public class CollectionDataStore extends AbstractDataStore {
 
     /**
      * Returns the feature collection held by this data store
-     *
      */
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getCollection() {
         return collection;
     }
 
     /**
-     * @throws SchemaNotFoundException 
-     * @see org.geotools.data.AbstractDataStore#getBounds(java.lang.String,
-     *      org.geotools.data.Query)
+     * {@inheritDoc }
      */
     @Override
     protected JTSEnvelope2D getBounds(final Query query) throws SchemaNotFoundException {
@@ -175,7 +172,7 @@ public class CollectionDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.AbstractDataStore#getCount(java.lang.String, org.geotools.data.Query)
+     * {@inheritDoc }
      */
     @Override
     protected int getCount(final Query query) throws IOException {
@@ -200,8 +197,6 @@ public class CollectionDataStore extends AbstractDataStore {
 
     /**
      * Simple listener that forwards collection events into data store events
-     *
-     * @author aaime
      */
     private class FeatureCollectionListener implements CollectionListener {
 

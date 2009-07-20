@@ -70,9 +70,9 @@ import com.vividsolutions.jts.geom.Geometry;
 public class MemoryDataStore extends AbstractDataStore {
 
     /** Memory holds Map of Feature by fid by typeName. */
-    protected Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
+    protected final Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
     /** Schema holds FeatureType by typeName */
-    protected Map<String, SimpleFeatureType> schema = new HashMap<String, SimpleFeatureType>();
+    protected final Map<String, SimpleFeatureType> schema = new HashMap<String, SimpleFeatureType>();
 
     public MemoryDataStore() {
         super(true);
@@ -217,6 +217,7 @@ public class MemoryDataStore extends AbstractDataStore {
             try {
                 collection.accepts(new FeatureVisitor() {
 
+                    @Override
                     public void visit(Feature feature) {
                         addFeatureInternal((SimpleFeature) feature);
                     }
@@ -312,12 +313,9 @@ public class MemoryDataStore extends AbstractDataStore {
     }
 
     /**
-     * List of available types provided by this DataStore.
-     *
-     * @return Array of type names
-     *
-     * @see org.geotools.data.AbstractDataStore#getFeatureTypes()
+     * {@inheritDoc }
      */
+    @Override
     public String[] getTypeNames() {
         synchronized (memory) {
             String[] types = new String[schema.size()];
@@ -332,17 +330,9 @@ public class MemoryDataStore extends AbstractDataStore {
     }
 
     /**
-     * SimpleFeatureType access by <code>typeName</code>.
-     *
-     * @param typeName
-     *
-     * @return SimpleFeatureType for <code>typeName</code>
-     *
-     * @throws IOException
-     * @throws SchemaNotFoundException DOCUMENT ME!
-     *
-     * @see org.geotools.data.AbstractDataStore#getSchema(java.lang.String)
+     * {@inheritDoc }
      */
+    @Override
     public SimpleFeatureType getSchema(String typeName) throws IOException {
         synchronized (memory) {
             if (schema.containsKey(typeName)) {
@@ -364,8 +354,9 @@ public class MemoryDataStore extends AbstractDataStore {
      *
      * @throws IOException If featureType already exists
      *
-     * @see org.geotools.data.DataStore#createSchema(org.geotools.feature.SimpleFeatureType)
+     * @see org.geotoolkit.data.DataStore#createSchema(org.geotoolkit.feature.SimpleFeatureType)
      */
+    @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
         String typeName = featureType.getTypeName();
 
@@ -380,7 +371,7 @@ public class MemoryDataStore extends AbstractDataStore {
     }
 
     /**
-     * Provides  FeatureReader<SimpleFeatureType, SimpleFeature> over the entire contents of <code>typeName</code>.
+     * Provides FeatureReader<SimpleFeatureType, SimpleFeature> over the entire contents of <code>typeName</code>.
      * 
      * <p>
      * Implements getFeatureReader contract for AbstractDataStore.
@@ -392,8 +383,9 @@ public class MemoryDataStore extends AbstractDataStore {
      * @throws IOException If typeName could not be found
      * @throws DataSourceException See IOException
      *
-     * @see org.geotools.data.AbstractDataStore#getFeatureSource(java.lang.String)
+     * @see org.geotoolkit.data.AbstractDataStore#getFeatureSource(java.lang.String)
      */
+    @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
             throws IOException {
         return new FeatureReader<SimpleFeatureType, SimpleFeature>() {
@@ -401,10 +393,12 @@ public class MemoryDataStore extends AbstractDataStore {
             SimpleFeatureType featureType = getSchema(typeName);
             Iterator iterator = features(typeName).values().iterator();
 
+            @Override
             public SimpleFeatureType getFeatureType() {
                 return featureType;
             }
 
+            @Override
             public SimpleFeature next()
                     throws IOException, IllegalAttributeException, NoSuchElementException {
                 if (iterator == null) {
@@ -418,10 +412,12 @@ public class MemoryDataStore extends AbstractDataStore {
                 }
             }
 
+            @Override
             public boolean hasNext() {
                 return (iterator != null) && iterator.hasNext();
             }
 
+            @Override
             public void close() {
                 if (iterator != null) {
                     iterator = null;
@@ -448,8 +444,9 @@ public class MemoryDataStore extends AbstractDataStore {
      * @throws IOException If writer cannot be obtained for typeName
      * @throws DataSourceException See IOException
      *
-     * @see org.geotools.data.AbstractDataStore#getFeatureSource(java.lang.String)
+     * @see org.geotoolkit.data.AbstractDataStore#getFeatureSource(java.lang.String)
      */
+    @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> createFeatureWriter(final String typeName, final Transaction transaction)
             throws IOException {
         return new FeatureWriter<SimpleFeatureType, SimpleFeature>() {
@@ -460,10 +457,12 @@ public class MemoryDataStore extends AbstractDataStore {
             SimpleFeature live = null;
             SimpleFeature current = null; // current Feature returned to user
 
+            @Override
             public SimpleFeatureType getFeatureType() {
                 return featureType;
             }
 
+            @Override
             public SimpleFeature next() throws IOException, NoSuchElementException {
                 if (hasNext()) {
                     // existing content
@@ -488,6 +487,7 @@ public class MemoryDataStore extends AbstractDataStore {
                 return current;
             }
 
+            @Override
             public void remove() throws IOException {
                 if (contents == null) {
                     throw new IOException("FeatureWriter has been closed");
@@ -510,6 +510,7 @@ public class MemoryDataStore extends AbstractDataStore {
                 }
             }
 
+            @Override
             public void write() throws IOException {
                 if (contents == null) {
                     throw new IOException("FeatureWriter has been closed");
@@ -552,6 +553,7 @@ public class MemoryDataStore extends AbstractDataStore {
                 }
             }
 
+            @Override
             public boolean hasNext() throws IOException {
                 if (contents == null) {
                     throw new IOException("FeatureWriter has been closed");
@@ -560,6 +562,7 @@ public class MemoryDataStore extends AbstractDataStore {
                 return (iterator != null) && iterator.hasNext();
             }
 
+            @Override
             public void close() {
                 if (iterator != null) {
                     iterator = null;
@@ -577,9 +580,9 @@ public class MemoryDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.AbstractDataStore#getBounds(java.lang.String,
-     *      org.geotools.data.Query)
+     * {@inheritDoc }
      */
+    @Override
     protected JTSEnvelope2D getBounds(Query query)
             throws IOException {
         String typeName = query.getTypeName();
@@ -609,8 +612,9 @@ public class MemoryDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.AbstractDataStore#getCount(java.lang.String, org.geotools.data.Query)
+     * {@inheritDoc }
      */
+    @Override
     protected int getCount(Query query)
             throws IOException {
         String typeName = query.getTypeName();
