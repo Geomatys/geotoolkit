@@ -32,7 +32,7 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
     /**
      * null bounds
      */
-    private final static JTSEnvelope2D bounds = new JTSEnvelope2D(new Envelope(), null);
+    private static final JTSEnvelope2D bounds = new JTSEnvelope2D(new Envelope(), null);
 
     static {
         bounds.setToNull();
@@ -42,37 +42,57 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
         super(null, schema);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public JTSEnvelope2D getBounds() {
         return bounds;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getCount() throws IOException {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected Iterator openIterator() {
         return new EmptyIterator();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected void closeIterator(final Iterator close) {
         //do nothing
     }
 
-    //read only access
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean add(SimpleFeature object) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean remove(Object object) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean removeAll(Collection collection) {
         return false;

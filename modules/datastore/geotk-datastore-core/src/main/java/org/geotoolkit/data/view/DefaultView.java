@@ -129,8 +129,7 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
     }
 
     /**
-     * @see FeatureSource#getName()
-     * @since 2.5
+     * {@inheritDoc }
      */
     @Override
     public Name getName() {
@@ -152,8 +151,8 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
      * @param source
      * @param query
      *
-     * @return @throws
-     *         SchemaException
+     * @return
+     * @throws SchemaException
      */
     public static FeatureSource<SimpleFeatureType, SimpleFeature> create(
             FeatureSource<SimpleFeatureType, SimpleFeature> source, Query query)

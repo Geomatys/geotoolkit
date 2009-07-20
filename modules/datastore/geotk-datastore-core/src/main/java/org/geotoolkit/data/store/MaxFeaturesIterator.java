@@ -27,9 +27,9 @@ import org.opengis.feature.Feature;
  */
 public class MaxFeaturesIterator<F extends Feature> implements Iterator<F> {
 
-    Iterator<F> delegate;
-    long max;
-    long counter;
+    private final Iterator<F> delegate;
+    private final long max;
+    private long counter;
 
     public MaxFeaturesIterator(Iterator<F> delegate, long max) {
         this.delegate = delegate;
@@ -41,14 +41,26 @@ public class MaxFeaturesIterator<F extends Feature> implements Iterator<F> {
         return delegate;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void remove() {
         delegate.remove();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean hasNext() {
         return delegate.hasNext() && counter < max;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public F next() {
         if (counter++ <= max) {
             return delegate.next();

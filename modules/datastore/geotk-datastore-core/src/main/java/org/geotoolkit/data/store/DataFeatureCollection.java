@@ -38,6 +38,7 @@ import org.geotoolkit.feature.collection.DelegateFeatureIterator;
 import org.geotoolkit.feature.collection.SubFeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.NullProgressListener;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
@@ -72,8 +73,8 @@ import org.opengis.filter.sort.SortBy;
 public abstract class DataFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {
 
     /** logger */
-    static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.store");
-    static private int unique = 0;
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.store");
+    private static int unique = 0;
 
     /**
      * Collection based on a generic collection
@@ -89,7 +90,9 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         this(id, null);
     }
 
-    /** Subclass must think about what consitructors it needs. */
+    /** 
+     * Subclass must think about what consitructors it needs.
+     */
     protected DataFeatureCollection(final String id, final SimpleFeatureType memberType) {
         this.id = (id == null) ? "featureCollection" : id;
         this.schema = memberType;
@@ -119,14 +122,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
     public FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
         return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
     }
-
-    //
-    // Feature Results methods
-    //
-    // To be implemented by subclass
-    //
-    @Override
-    public abstract JTSEnvelope2D getBounds();
 
     public abstract int getCount() throws IOException;
 
@@ -219,6 +214,9 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     final public void close(final Iterator<SimpleFeature> close) {
         try {
@@ -241,13 +239,18 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close(final FeatureIterator<SimpleFeature> iterator) {
         iterator.close();
         open.remove(iterator);
     }
 
-    /** Default implementation based on getCount() - this may be expensive */
+    /** 
+     * Default implementation based on getCount() - this may be expensive
+     */
     @Override
     public int size() {
         try {
@@ -292,6 +295,9 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean contains(final Object o) {
         if (!(o instanceof SimpleFeature)) {
@@ -334,11 +340,17 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object[] toArray() {
         return toArray(new SimpleFeature[size()]);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object[] toArray(final Object[] array) {
         List list = new ArrayList();
@@ -353,16 +365,25 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         return list.toArray(array);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean add(final SimpleFeature arg0) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean remove(final Object arg0) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean containsAll(final Collection<?> collection) {
         for (Object o : collection) {
@@ -382,7 +403,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
      * <li>Filter OR
      * <li>Removing an extact match of Filter AND
      * </ul>
-     *
      */
     @Override
     public boolean addAll(final Collection collection) {
@@ -416,25 +436,40 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean addAll(final FeatureCollection resource) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean removeAll(final Collection arg0) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean retainAll(final Collection arg0) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void clear() {
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void accepts(final org.opengis.feature.FeatureVisitor visitor, org.opengis.util.ProgressListener progress) {
         Iterator iterator = null;
@@ -476,7 +511,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
      * </code>
      * </p>
      * @param filter Filter used to determine sub collection.
-     * @since GeoTools 2.2, Filter 1.1
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(final Filter filter) {
@@ -492,14 +526,12 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
      * Sorts may be combined togther in a stable fashion, in congruence
      * with the Filter 1.1 specification.
      * </p>
-     * This method should also be able to handle GeoTools specific
+     * This method should also be able to handle GeoToolkit specific
      * sorting through detecting order as a SortBy2 instance.
      *
      * @param order
      *
-     * @since GeoTools 2.2, Filter 1.1
      * @return FeatureList sorted according to provided order
-
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final SortBy order) {
@@ -510,22 +542,34 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         return null; // new OrderedFeatureList( this, order );
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getID() {
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final void addListener(final CollectionListener listener) throws NullPointerException {
         listeners.add(listener);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public final void removeListener(final CollectionListener listener)
             throws NullPointerException {
         listeners.remove(listener);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType getSchema() {
         return schema;

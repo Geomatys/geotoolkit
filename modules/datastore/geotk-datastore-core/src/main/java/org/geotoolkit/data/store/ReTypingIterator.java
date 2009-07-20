@@ -37,16 +37,16 @@ public class ReTypingIterator implements Iterator {
     /**
      * The delegate iterator
      */
-    Iterator delegate;
+    private final Iterator delegate;
     /**
      * The target feature type
      */
-    SimpleFeatureType target;
+    private final SimpleFeatureType target;
     /**
      * The matching types from target
      */
-    AttributeDescriptor[] types;
-    SimpleFeatureBuilder builder;
+    private final AttributeDescriptor[] types;
+    private final SimpleFeatureBuilder builder;
 
     public ReTypingIterator(Iterator delegate, SimpleFeatureType source, SimpleFeatureType target) {
         this.delegate = delegate;
@@ -59,14 +59,26 @@ public class ReTypingIterator implements Iterator {
         return delegate;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void remove() {
         delegate.remove();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean hasNext() {
         return delegate.hasNext();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Object next() {
         SimpleFeature next = (SimpleFeature) delegate.next();
         String id = next.getID();

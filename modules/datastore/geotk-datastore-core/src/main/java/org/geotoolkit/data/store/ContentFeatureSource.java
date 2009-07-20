@@ -381,8 +381,6 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
          */
         return bounds;
     }
-    //    return filtered(entry.getState(transaction), query.getFilter()).getBounds();
-    //}
 
     /**
      * Calculates the bounds of a specified query. Subclasses must implement this
@@ -468,7 +466,6 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
 
     /**
      * Returns a reader for the features specified by a query.
-     * 
      */
     public final FeatureReader<SimpleFeatureType, SimpleFeature> getReader(Query query) throws IOException {
         query = joinQuery(query);

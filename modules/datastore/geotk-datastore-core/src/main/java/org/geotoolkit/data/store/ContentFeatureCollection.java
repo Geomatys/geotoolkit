@@ -125,7 +125,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         return featureType;
     }
 
-    //Visitors
     /**
      * Accepts a visitor, which then visits each feature in the collection.
      * @throws IOException
@@ -135,7 +134,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         featureSource.accepts(query, visitor, progress);
     }
 
-    //Listeners
     /**
      * Adds a listener for collection events.
      *
@@ -453,71 +451,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         throw new UnsupportedOperationException();
     }
 
-    public Object getAttribute(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Object getAttribute(final Name name) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Object getAttribute(final int indedx) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException();
-    }
-
-    public int getAttributeCount() {
-        throw new UnsupportedOperationException();
-    }
-
-    public List<Object> getAttributes() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Object getDefaultGeometry() {
-        throw new UnsupportedOperationException();
-    }
-
-    public SimpleFeatureType getFeatureType() {
-        throw new UnsupportedOperationException();
-    }
-
-    public SimpleFeatureType getType() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setAttribute(final String name, final Object value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setAttribute(final Name name, final Object value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setAttribute(final int index, final Object value)
-            throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setAttributes(final List<Object> attributes) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setAttributes(final Object[] attributes) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setDefaultGeometry(final Object defaultGeometry) {
-        throw new UnsupportedOperationException();
-    }
-
-    public GeometryAttribute getDefaultGeometryProperty() {
-        throw new UnsupportedOperationException();
-    }
-
-    public FeatureId getIdentifier() {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * {@inheritDoc }
      */
@@ -526,58 +459,4 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         throw new UnsupportedOperationException();
     }
 
-    public void setDefaultGeometryProperty(final GeometryAttribute defaultGeometryProperty) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Collection<Property> getProperties() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Collection<Property> getProperties(final Name name) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Collection<Property> getProperties(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Property getProperty(final Name name) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Property getProperty(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Collection<? extends Property> getValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setValue(final Collection<Property> value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public AttributeDescriptor getDescriptor() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Name getName() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Map<Object, Object> getUserData() {
-        throw new UnsupportedOperationException();
-    }
-
-    public boolean isNillable() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setValue(final Object value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void validate() {
-    }
 }

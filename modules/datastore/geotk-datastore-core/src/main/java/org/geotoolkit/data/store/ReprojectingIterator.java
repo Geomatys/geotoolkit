@@ -43,25 +43,25 @@ public class ReprojectingIterator implements Iterator {
     /**
      * decorated iterator
      */
-    Iterator delegate;
+    private final Iterator delegate;
     /**
      * The target coordinate reference system
      */
-    CoordinateReferenceSystem target;
+    private final CoordinateReferenceSystem target;
     /**
      * schema of reprojected features
      */
-    SimpleFeatureType schema;
+    private final SimpleFeatureType schema;
     /**
      * Transformer
      */
-    GeometryCoordinateSequenceTransformer tx;
+    private final GeometryCoordinateSequenceTransformer tx;
 
     public ReprojectingIterator(
             Iterator delegate, MathTransform transform, SimpleFeatureType schema,
             GeometryCoordinateSequenceTransformer transformer) throws OperationNotFoundException, FactoryRegistryException, FactoryException {
         this.delegate = delegate;
-
+        this.target = null;
         this.schema = schema;
 
         tx = transformer;
@@ -85,14 +85,26 @@ public class ReprojectingIterator implements Iterator {
         return delegate;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void remove() {
         delegate.remove();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean hasNext() {
         return delegate.hasNext();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Object next() {
         SimpleFeature feature = (SimpleFeature) delegate.next();
         try {

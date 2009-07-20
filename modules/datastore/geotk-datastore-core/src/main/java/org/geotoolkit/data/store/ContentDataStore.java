@@ -237,6 +237,9 @@ public abstract class ContentDataStore implements DataStore {
     // DataStore API
     //
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ServiceInfo getInfo() {
         final DefaultServiceInfo info = new DefaultServiceInfo();
@@ -590,19 +593,6 @@ public abstract class ContentDataStore implements DataStore {
      * @return An new instance of {@link ContentFeatureSource} for the entry.
      */
     protected abstract ContentFeatureSource createFeatureSource(final ContentEntry entry) throws IOException;
-
-    /**
-     * Instantiates a new transaction state object.
-     * <p>
-     * Subclasses should override method to return a specific instance of
-     * {@link Transaction.State}.
-     * </p>
-     * @param FeatureSource<SimpleFeatureType, SimpleFeature> The feature source / store for the new transaction
-     * state.
-     */
-//    protected abstract Transaction.State createTransactionState(ContentFeatureSource<SimpleFeatureType, SimpleFeature> featureSource)
-//        throws IOException;
-
 
     /**
      * Delegates to {@link #getFeatureSource(String)} with

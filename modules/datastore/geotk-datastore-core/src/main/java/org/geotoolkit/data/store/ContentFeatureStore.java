@@ -75,7 +75,6 @@ import org.opengis.filter.identity.FeatureId;
  * </p>
  *
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
 public abstract class ContentFeatureStore extends ContentFeatureSource implements
         FeatureStore<SimpleFeatureType, SimpleFeature>,
@@ -448,7 +447,6 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * <p>
      * This method calls through to {@link #unLockFeatures(Filter)}.
      * </p>
-     *
      */
     @Override
     public final void unLockFeatures() throws IOException {
@@ -460,7 +458,6 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * <p>
      * This method calls through to {@link #unLockFeatures(Filter)}.
      * </p>
-     *
      */
     @Override
     public final void unLockFeatures(final Query query) throws IOException {

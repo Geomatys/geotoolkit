@@ -37,13 +37,17 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class ReTypingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
 
-    SimpleFeatureType featureType;
+    private final SimpleFeatureType featureType;
 
     public ReTypingFeatureCollection(FeatureCollection<SimpleFeatureType, SimpleFeature> delegate, SimpleFeatureType featureType) {
         super(delegate);
         this.featureType = featureType;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeatureType getSchema() {
         return featureType;
     }
@@ -52,18 +56,34 @@ public class ReTypingFeatureCollection extends DecoratingFeatureCollection<Simpl
         return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureIterator<SimpleFeature> features() {
         return new DelegateFeatureIterator<SimpleFeature>(this, iterator());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void close(FeatureIterator<SimpleFeature> close) {
         close.close();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Iterator<SimpleFeature> iterator() {
         return new ReTypingIterator(delegate.iterator(), delegate.getSchema(), featureType);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void close(Iterator close) {
         ReTypingIterator reType = (ReTypingIterator) close;
         delegate.close(reType.getDelegate());

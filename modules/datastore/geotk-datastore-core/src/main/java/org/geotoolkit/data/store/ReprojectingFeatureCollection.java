@@ -54,19 +54,19 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
     /**
      * The transform to the target coordinate reference system
      */
-    MathTransform transform;
+    private final MathTransform transform;
     /**
      * The schema of reprojected features
      */
-    SimpleFeatureType schema;
+    private final SimpleFeatureType schema;
     /**
      * The target coordinate reference system
      */
-    CoordinateReferenceSystem target;
+    private final CoordinateReferenceSystem target;
     /**
      * Transformer used to transform geometries;
      */
-    GeometryCoordinateSequenceTransformer transformer;
+    private GeometryCoordinateSequenceTransformer transformer;
 
     public ReprojectingFeatureCollection(FeatureCollection<SimpleFeatureType, SimpleFeature> delegate,
             CoordinateReferenceSystem target) {
@@ -78,8 +78,7 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
             CoordinateReferenceSystem source, CoordinateReferenceSystem target) {
         super(delegate);
         this.target = target;
-        SimpleFeatureType schema = delegate.getSchema();
-        this.schema = reType(schema, target);
+        this.schema = reType(delegate.getSchema(), target);
 
         if (source == null) {
             throw new NullPointerException("source crs");
@@ -120,14 +119,26 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
         return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureIterator<SimpleFeature> features() {
         return new DelegateFeatureIterator<SimpleFeature>(this, iterator());
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void close(FeatureIterator<SimpleFeature> close) {
         close.close();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Iterator<SimpleFeature> iterator() {
         try {
             return new ReprojectingIterator(delegate.iterator(), transform, schema, transformer);
@@ -136,15 +147,27 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void close(Iterator close) {
         Iterator iterator = ((ReprojectingIterator) close).getDelegate();
         delegate.close(iterator);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeatureType getSchema() {
         return this.schema;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(Filter filter) {
         Filter unFilter = unFilter(filter);
         return new ReprojectingFeatureCollection(delegate.subCollection(unFilter), target);
@@ -167,15 +190,27 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
         return filter;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(SortBy order) {
         // return new ReprojectingFeatureList( delegate.sort( order ), target );
         throw new UnsupportedOperationException("Not yet");
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Object[] toArray() {
         return toArray(new Object[size()]);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Object[] toArray(Object[] a) {
         List list = new ArrayList();
         Iterator i = iterator();
@@ -190,6 +225,10 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean add(SimpleFeature o) {
         // must back project any geometry attributes
         throw new UnsupportedOperationException("Not yet");
@@ -204,8 +243,9 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
      * computing the minimum and maximum coordinates of that new shape. The
      * result would not a true representation of the new bounds.
      * 
-     * @see org.geotools.data.FeatureResults#getBounds()
+     * @see org.geotoolkit.data.FeatureResults#getBounds()
      */
+    @Override
     public JTSEnvelope2D getBounds() {
         FeatureIterator<SimpleFeature> r = features();
         try {

@@ -209,7 +209,6 @@ public class ContentState {
 
     /**
      * The cached number of features.
-     *
      */
     public final int getCount() {
         return count;
@@ -260,7 +259,7 @@ public class ContentState {
 
     /**
      * Used to quickly test if any listeners are available.
-     * @return
+     * @return boolean
      */
     public final boolean hasListener() {
         if (!listeners.isEmpty()) {

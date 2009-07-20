@@ -44,12 +44,15 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 final class FeatureWriterIterator implements Iterator<SimpleFeature> {
 
-    private FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
+    private final FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
 
     public FeatureWriterIterator(final FeatureWriter<SimpleFeatureType, SimpleFeature> writer) {
         this.writer = writer;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hasNext() {
         try {
@@ -71,6 +74,9 @@ final class FeatureWriterIterator implements Iterator<SimpleFeature> {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeature next() {
         if (writer == null) {
@@ -85,6 +91,9 @@ final class FeatureWriterIterator implements Iterator<SimpleFeature> {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() {
         try {
@@ -105,7 +114,6 @@ final class FeatureWriterIterator implements Iterator<SimpleFeature> {
             } catch (IOException e) {
                 // sorry but iterators die quitely in the night
             }
-            writer = null;
         }
     }
 }

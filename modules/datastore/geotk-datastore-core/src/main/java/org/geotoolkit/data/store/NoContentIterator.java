@@ -46,11 +46,17 @@ public class NoContentIterator implements Iterator<SimpleFeature> {
         origionalProblem = t;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hasNext() {
         return origionalProblem != null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeature next() {
         if (origionalProblem == null) {
@@ -65,6 +71,9 @@ public class NoContentIterator implements Iterator<SimpleFeature> {
         throw cantFind;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() {
         if (origionalProblem == null) {

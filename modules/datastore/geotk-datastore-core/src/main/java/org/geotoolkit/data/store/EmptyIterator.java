@@ -25,15 +25,24 @@ import java.util.Iterator;
  */
 public class EmptyIterator implements Iterator {
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() {
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hasNext() {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object next() {
         return null;

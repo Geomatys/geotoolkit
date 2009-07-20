@@ -39,18 +39,21 @@ import org.opengis.feature.type.FeatureType;
  */
 final class FeatureReaderIterator<F extends Feature> implements Iterator<F> {
 
-    FeatureReader<? extends FeatureType, F> reader;
+    private final FeatureReader<? extends FeatureType, F> reader;
 
     public FeatureReaderIterator(FeatureReader<? extends FeatureType, F> reader) {
+        if(reader == null){
+            throw new NullPointerException("Reader can not be null");
+        }
         this.reader = reader;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean hasNext() {
         try {
-            if (reader == null) {
-                return false;
-            }
             if (reader.hasNext()) {
                 return true;
             } else {
@@ -65,11 +68,11 @@ final class FeatureReaderIterator<F extends Feature> implements Iterator<F> {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public F next() {
-        if (reader == null) {
-            throw new NoSuchElementException("Iterator has been closed");
-        }
         try {
             return reader.next();
         } catch (IOException io) {
@@ -85,7 +88,9 @@ final class FeatureReaderIterator<F extends Feature> implements Iterator<F> {
         }
     }
 
-    /** If this is a problem, a different iterator can be made based on FeatureWriter */
+    /** 
+     * If this is a problem, a different iterator can be made based on FeatureWriter
+     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException("Modification of contents is not supported");
@@ -95,13 +100,10 @@ final class FeatureReaderIterator<F extends Feature> implements Iterator<F> {
      * Close the reader please.
      */
     public void close() {
-        if (reader != null) {
-            try {
-                reader.close();
-            } catch (Exception e) {
-                // sorry but iterators die quitely in the night
-            }
-            reader = null;
+        try {
+            reader.close();
+        } catch (Exception e) {
+            // sorry but iterators die quitely in the night
         }
     }
 }
