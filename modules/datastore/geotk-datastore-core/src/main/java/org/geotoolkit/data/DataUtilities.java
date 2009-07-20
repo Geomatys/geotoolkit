@@ -65,6 +65,8 @@ import org.opengis.filter.FilterFactory;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -142,56 +144,56 @@ public final class DataUtilities extends FeatureCollectionUtilities {
 
         return new File(path3);
     }
-//
-//    /**
-//     * Traverses the filter and returns any encoutered property names.
-//     * <p>
-//     * The feautre type is supplied as contexts used to lookup expressions in cases where the
-//     * attributeName does not match the actual name of the type.
-//     * </p>
-//     */
-//    public static String[] attributeNames(final Filter filter, final SimpleFeatureType featureType) {
-//        if (filter == null) {
-//            return new String[0];
-//        }
-//        final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
-//        filter.accept(attExtractor, null);
-//        final String[] attributeNames = attExtractor.getAttributeNames();
-//        return attributeNames;
-//    }
-//
-//    /**
-//     * Traverses the filter and returns any encoutered property names.
-//     * @deprecated use {@link #attributeNames(Filter, FeatureType)}/
-//     */
-//    public static String[] attributeNames(final Filter filter) {
-//        return attributeNames(filter, null);
-//    }
-//
-//    /**
-//     * Traverses the expression and returns any encoutered property names.
-//     * <p>
-//     * The feautre type is supplied as contexts used to lookup expressions in cases where the
-//     * attributeName does not match the actual name of the type.
-//     * </p>
-//     */
-//    public static String[] attributeNames(final Expression expression, final SimpleFeatureType featureType) {
-//        if (expression == null) {
-//            return new String[0];
-//        }
-//        final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
-//        expression.accept(attExtractor, null);
-//        final String[] attributeNames = attExtractor.getAttributeNames();
-//        return attributeNames;
-//    }
-//
-//    /**
-//     * Traverses the expression and returns any encoutered property names.
-//     * @deprecated use {@link #attributeNames(Expression, FeatureType)}/
-//     */
-//    public static String[] attributeNames(final Expression expression) {
-//        return attributeNames(expression, null);
-//    }
+
+    /**
+     * Traverses the filter and returns any encoutered property names.
+     * <p>
+     * The feautre type is supplied as contexts used to lookup expressions in cases where the
+     * attributeName does not match the actual name of the type.
+     * </p>
+     */
+    public static String[] attributeNames(final Filter filter, final SimpleFeatureType featureType) {
+        if (filter == null) {
+            return new String[0];
+        }
+        final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
+        filter.accept(attExtractor, null);
+        final String[] attributeNames = attExtractor.getAttributeNames();
+        return attributeNames;
+    }
+
+    /**
+     * Traverses the filter and returns any encoutered property names.
+     * @deprecated use {@link #attributeNames(Filter, FeatureType)}/
+     */
+    public static String[] attributeNames(final Filter filter) {
+        return attributeNames(filter, null);
+    }
+
+    /**
+     * Traverses the expression and returns any encoutered property names.
+     * <p>
+     * The feautre type is supplied as contexts used to lookup expressions in cases where the
+     * attributeName does not match the actual name of the type.
+     * </p>
+     */
+    public static String[] attributeNames(final Expression expression, final SimpleFeatureType featureType) {
+        if (expression == null) {
+            return new String[0];
+        }
+        final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
+        expression.accept(attExtractor, null);
+        final String[] attributeNames = attExtractor.getAttributeNames();
+        return attributeNames;
+    }
+
+    /**
+     * Traverses the expression and returns any encoutered property names.
+     * @deprecated use {@link #attributeNames(Expression, FeatureType)}/
+     */
+    public static String[] attributeNames(final Expression expression) {
+        return attributeNames(expression, null);
+    }
 
     /**
      * Compare operation for FeatureType.

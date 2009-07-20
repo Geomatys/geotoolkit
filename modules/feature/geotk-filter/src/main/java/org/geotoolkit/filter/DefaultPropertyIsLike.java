@@ -239,6 +239,8 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
 
     public DefaultPropertyIsLike(Expression expr, String pattern, String wildcardMulti,
             String wildcardSingle, String escape, boolean matchCase) {
+        if(expr == null) throw new NullPointerException("Expression can not be null");
+
         this.attribute = expr;
         this.pattern = pattern;
         this.wildcardMulti = wildcardMulti;

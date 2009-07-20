@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.data.crs;
 
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -62,22 +62,33 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @source $URL$
  * @version $Id$
  */
-public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
-
-    protected final FeatureIterator<SimpleFeature> reader;
-    final SimpleFeatureBuilder builder;
-
+public class ForceCoordinateSystemFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
+    protected  FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+    protected SimpleFeatureBuilder builder;
+    
     /**
      * Shortcut constructor that can be used if the new schema has already been computed
      * @param reader
      * @param schema
      */
-    ForceCoordinateSystemIterator(final FeatureIterator<SimpleFeature> reader, SimpleFeatureType schema) {
-        if(reader == null) throw new NullPointerException("Feature iterator can not be null");
-        if(schema == null) throw new NullPointerException("Feature type can not be null");
-
+    ForceCoordinateSystemFeatureReader(FeatureReader<SimpleFeatureType, SimpleFeature> reader, SimpleFeatureType schema) {
         this.reader = reader;
         this.builder = new SimpleFeatureBuilder(schema);
+    }
+    
+    /**
+     * Builds a new ForceCoordinateSystemFeatureReader
+     *
+     * @param reader
+     * @param cs
+     *
+     * @throws SchemaException
+     * @throws NullPointerException DOCUMENT ME!
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public ForceCoordinateSystemFeatureReader(FeatureReader<SimpleFeatureType, SimpleFeature> reader,
+        CoordinateReferenceSystem cs) throws SchemaException {
+        this(reader, cs, false);
     }
 
     /**
@@ -90,20 +101,19 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      * @throws NullPointerException DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public ForceCoordinateSystemIterator(final FeatureIterator<SimpleFeature> reader, SimpleFeatureType type,
-            final CoordinateReferenceSystem cs) throws SchemaException{
-
-        if(reader == null) throw new NullPointerException("Feature iterator can not be null");
-        
+    public ForceCoordinateSystemFeatureReader(FeatureReader<SimpleFeatureType, SimpleFeature> reader,
+        CoordinateReferenceSystem cs, boolean forceOnlyMissing) throws SchemaException {
         if (cs == null) {
             throw new NullPointerException("CoordinateSystem required");
         }
-        final CoordinateReferenceSystem originalCs = type.getGeometryDescriptor().getCoordinateReferenceSystem();
+
+        SimpleFeatureType type = reader.getFeatureType();
+        CoordinateReferenceSystem originalCs = type.getCoordinateReferenceSystem();
 
         if (!cs.equals(originalCs)) {
-            type = FeatureTypeUtilities.transform(type, cs);
+            type = FeatureTypeUtilities.transform(type, cs, forceOnlyMissing);
         }
-        builder = new SimpleFeatureBuilder(type);
+        this.builder = new SimpleFeatureBuilder(type);
 
         this.reader = reader;
     }
@@ -112,44 +122,54 @@ public class ForceCoordinateSystemIterator implements Iterator<SimpleFeature> {
      * @see org.geotools.data.FeatureReader#getFeatureType()
      */
     public SimpleFeatureType getFeatureType() {
+        if (reader == null) {
+            throw new IllegalStateException("Reader has already been closed");
+        }
+        
+        if( builder == null )
+            return reader.getFeatureType();
+
         return builder.getFeatureType();
     }
 
     /**
      * @see org.geotools.data.FeatureReader#next()
      */
-    @Override
-    public SimpleFeature next() throws NoSuchElementException {
+    public SimpleFeature next()
+        throws IOException, IllegalAttributeException, NoSuchElementException {
+        if (reader == null) {
+            throw new IllegalStateException("Reader has already been closed");
+        }
 
-        final SimpleFeature next = reader.next();
-        if (builder == null) {
+        SimpleFeature next = reader.next();
+        if( builder == null )
             return next;
-        }
-
-        try {
-            return SimpleFeatureBuilder.retype(next, builder);
-        } catch (IllegalAttributeException eep) {
-            throw (IllegalStateException) new IllegalStateException(eep.getMessage()).initCause(eep);
-        }
+        
+        
+        return SimpleFeatureBuilder.retype(next, builder);
     }
 
     /**
      * @see org.geotools.data.FeatureReader#hasNext()
      */
-    @Override
-    public boolean hasNext() {
-        return reader.hasNext();
-    }
+    public boolean hasNext() throws IOException {
+        if (reader == null) {
+            throw new IllegalStateException("Reader has already been closed");
+        }
 
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
+        return reader.hasNext();
     }
 
     /**
      * @see org.geotools.data.FeatureReader#close()
      */
-    public void close() {
+    public void close() throws IOException {
+        if (reader == null) {
+            throw new IllegalStateException("Reader has already been closed");
+        }
+
         reader.close();
+        reader = null;
+        builder = null;
     }
 }

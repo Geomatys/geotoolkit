@@ -25,12 +25,8 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
-import org.geotoolkit.data.DataAccess;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFactorySpi;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * Enable programs to find all available datastore implementations.
@@ -55,16 +51,16 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  */
 public final class DataStoreFinder {
-	/** The logger for the filter module. */
+
+    /** The logger for the filter module. */
     protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
+    /**
+     * The service registry for this manager. Will be initialized only when
+     * first needed.
+     */
+    private static FactoryRegistry registry;
 
-	/**
-	 * The service registry for this manager. Will be initialized only when
-	 * first needed.
-	 */
-	private static FactoryRegistry registry;
-
-	//Singleton pattern
+    //Singleton pattern
     private DataStoreFinder() {
     }
 
@@ -117,32 +113,31 @@ public final class DataStoreFinder {
         return availableDS.iterator();
     }
 
-	/**
-	 * Returns the service registry. The registry will be created the first time
-	 * this method is invoked.
-	 */
-	private static FactoryRegistry getServiceRegistry() {
-		assert Thread.holdsLock(DataStoreFinder.class);
-		if (registry == null) {
-			registry = new DynamicFactoryRegistry(Arrays
-					.asList(new Class<?>[] { DataStoreFactorySpi.class }));
-		}
-		return registry;
-	}
+    /**
+     * Returns the service registry. The registry will be created the first time
+     * this method is invoked.
+     */
+    private static FactoryRegistry getServiceRegistry() {
+        assert Thread.holdsLock(DataStoreFinder.class);
+        if (registry == null) {
+            registry = new DynamicFactoryRegistry(new Class<?>[]{DataStoreFactorySpi.class});
+        }
+        return registry;
+    }
 
-	/**
-	 * Scans for factory plug-ins on the application class path. This method is
-	 * needed because the application class path can theoretically change, or
-	 * additional plug-ins may become available. Rather than re-scanning the
-	 * classpath on every invocation of the API, the class path is scanned
-	 * automatically only on the first invocation. Clients can call this method
-	 * to prompt a re-scan. Thus this method need only be invoked by
-	 * sophisticated applications which dynamically make new plug-ins available
-	 * at runtime.
-	 */
-	public static synchronized void scanForPlugins() {
+    /**
+     * Scans for factory plug-ins on the application class path. This method is
+     * needed because the application class path can theoretically change, or
+     * additional plug-ins may become available. Rather than re-scanning the
+     * classpath on every invocation of the API, the class path is scanned
+     * automatically only on the first invocation. Clients can call this method
+     * to prompt a re-scan. Thus this method need only be invoked by
+     * sophisticated applications which dynamically make new plug-ins available
+     * at runtime.
+     */
+    public static synchronized void scanForPlugins() {
 
-		getServiceRegistry().scanForPlugins();
+        getServiceRegistry().scanForPlugins();
 
-	}
+    }
 }
