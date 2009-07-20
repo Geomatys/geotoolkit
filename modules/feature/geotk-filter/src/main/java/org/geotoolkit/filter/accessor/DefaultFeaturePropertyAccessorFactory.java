@@ -222,6 +222,10 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         public Object get(Object object, String xpath, Class target) {
             xpath = stripPrefix(xpath);
 
+            if(object instanceof SimpleFeature){
+                ((SimpleFeature) object).getAttribute(xpath);
+            }
+
             if (object instanceof Feature) {
                 return ((Feature) object).getProperty(xpath).getValue();
             }
@@ -237,6 +241,10 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         public void set(Object object, String xpath, Object value, Class target)
                 throws IllegalArgumentException {
             xpath = stripPrefix(xpath);
+
+            if(object instanceof SimpleFeature){
+                ((SimpleFeature) object).setAttribute(xpath, value);
+            }
 
             if (object instanceof Feature) {
                 ((Feature) object).getProperty(xpath).setValue(value);
