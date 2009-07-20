@@ -29,9 +29,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 class ATestReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
-    /**
-     * 
-     */
     private SimpleFeatureType type;
     private SimpleFeature feature;
 

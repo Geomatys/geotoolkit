@@ -26,12 +26,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.IllegalFilterException;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.factory.FactoryFinder;
+
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
@@ -47,16 +53,6 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultQuery;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.opengis.feature.IllegalAttributeException;
-
 
 /**
  * Tests cases for DataUtilities.
@@ -65,6 +61,7 @@ import org.opengis.feature.IllegalAttributeException;
  * @source $URL$
  */
 public class DataUtilitiesTest extends DataTestCase {
+
     /**
      * Constructor for DataUtilitiesTest.
      *
@@ -104,52 +101,54 @@ public class DataUtilitiesTest extends DataTestCase {
             handleFile(one);
             handleFile(slashoneTwoThree);
         }
-        
+
         String prefix = "file://";
-        assertURL(one, prefix+one);
-        assertURL(slashOne, prefix+slashOne);
-        assertURL(replaceSlashes(c), prefix+replaceSlashes(c));
-        assertURL(replaceSlashes(cOne), prefix+replaceSlashes(cOne));
-        assertURL(replaceSlashes(cOneTwo), prefix+replaceSlashes(cOneTwo));
-        assertURL(replaceSlashes(cOneTwoThreeSpace), prefix+replaceSlashes(cOneTwoThreeSpace));
-        
-        
+        assertURL(one, prefix + one);
+        assertURL(slashOne, prefix + slashOne);
+        assertURL(replaceSlashes(c), prefix + replaceSlashes(c));
+        assertURL(replaceSlashes(cOne), prefix + replaceSlashes(cOne));
+        assertURL(replaceSlashes(cOneTwo), prefix + replaceSlashes(cOneTwo));
+        assertURL(replaceSlashes(cOneTwoThreeSpace), prefix + replaceSlashes(cOneTwoThreeSpace));
+
+
     }
+
     private String replaceSlashes(String string) {
         return string.replaceAll("\\\\", "/");
     }
 
     private void assertURL(String expectedFilePath, String urlString) throws MalformedURLException {
         URL url = new URL(urlString);
-        
+
         File file = DataUtilities.urlToFile(url);
 
         String os = System.getProperty("os.name");
         if (os.toUpperCase().contains("WINDOWS")) {
-            assertEquals( expectedFilePath.replaceAll("/", "\\\\"), file.getPath());
-        }else {
-            if( expectedFilePath.endsWith("/") ){
-                expectedFilePath = expectedFilePath.substring(0,expectedFilePath.length()-1);
+            assertEquals(expectedFilePath.replaceAll("/", "\\\\"), file.getPath());
+        } else {
+            if (expectedFilePath.endsWith("/")) {
+                expectedFilePath = expectedFilePath.substring(0, expectedFilePath.length() - 1);
             }
-            assertEquals( expectedFilePath, file.getPath());
+            assertEquals(expectedFilePath, file.getPath());
         }
-        
+
     }
 
-    public void handleFile( String path ) throws Exception {
-        File file = new File( path );
+    public void handleFile(String path) throws Exception {
+        File file = new File(path);
         URI uri = file.toURI();
         URL url = file.toURL();
         URL url2 = file.toURI().toURL();
-        
-        assertEquals( "jdk contract", file.getAbsoluteFile(), new File( uri ));
 
-        File toFile = DataUtilities.urlToFile( url );        
-        assertEquals( path+":url", file.getAbsoluteFile(), toFile);
+        assertEquals("jdk contract", file.getAbsoluteFile(), new File(uri));
 
-        File toFile2 = DataUtilities.urlToFile( url2 );        
-        assertEquals( path+":url2", file.getAbsoluteFile(), toFile2 );
+        File toFile = DataUtilities.urlToFile(url);
+        assertEquals(path + ":url", file.getAbsoluteFile(), toFile);
+
+        File toFile2 = DataUtilities.urlToFile(url2);
+        assertEquals(path + ":url2", file.getAbsoluteFile(), toFile2);
     }
+
     /**
      * Test for {@link DataUtilities#attributeNames(FeatureType)}
      */
@@ -178,13 +177,13 @@ public class DataUtilitiesTest extends DataTestCase {
         Filter filter = null;
 
         // check null
-        names = DataUtilities.attributeNames(filter,null);
+        names = DataUtilities.attributeNames(filter, null);
         assertEquals(names.length, 0);
 
         Id fidFilter = factory.id(Collections.singleton(factory.featureId("fid")));
 
         // check fidFilter         
-        names = DataUtilities.attributeNames(fidFilter,null);
+        names = DataUtilities.attributeNames(fidFilter, null);
         assertEquals(0, names.length);
 
         PropertyName id = factory.property("id");
@@ -193,55 +192,55 @@ public class DataUtilitiesTest extends DataTestCase {
 
         // check nullFilter
         PropertyIsNull nullFilter = factory.isNull(id);
-        names = DataUtilities.attributeNames(nullFilter,null);
+        names = DataUtilities.attributeNames(nullFilter, null);
         assertEquals(1, names.length);
         assertEquals("id", names[0]);
 
         PropertyIsEqualTo equal = factory.equals(name, id);
-        names = DataUtilities.attributeNames(equal,null);
+        names = DataUtilities.attributeNames(equal, null);
         assertEquals(2, names.length);
         List list = Arrays.asList(names);
         assertTrue(list.contains("name"));
         assertTrue(list.contains("id"));
- 
-        Function fnCall = factory.function("max", new Expression[] { id, name });
+
+        Function fnCall = factory.function("max", new Expression[]{id, name});
         System.out.println(fnCall);
 
         PropertyIsLike fn = factory.like(fnCall, "does-not-matter");
-        names = DataUtilities.attributeNames(fn,null);
+        names = DataUtilities.attributeNames(fn, null);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
         assertTrue(list.contains("id"));
 
         PropertyIsBetween between = factory.between(name, id, geom);
-        names = DataUtilities.attributeNames(between,null);
+        names = DataUtilities.attributeNames(between, null);
         assertEquals(3, names.length);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
         assertTrue(list.contains("id"));
         assertTrue(list.contains("geom"));
-        
+
         // check logic filter
         PropertyIsNull geomNull = factory.isNull(geom);
-        names = DataUtilities.attributeNames(factory.and(geomNull, equal),null);
+        names = DataUtilities.attributeNames(factory.and(geomNull, equal), null);
         assertEquals(3, names.length);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
         assertTrue(list.contains("id"));
         assertTrue(list.contains("geom"));
-        
+
         // check not filter
-        names = DataUtilities.attributeNames(factory.not(geomNull),null);
+        names = DataUtilities.attributeNames(factory.not(geomNull), null);
         assertEquals(1, names.length);
         assertEquals("geom", names[0]);
-        
+
         //check with namespace qualified name
-        PropertyIsEqualTo equalToWithPrefix = factory.equals(factory.property("gml:name"),id);
-        names = DataUtilities.attributeNames(equalToWithPrefix,roadType);
+        PropertyIsEqualTo equalToWithPrefix = factory.equals(factory.property("gml:name"), id);
+        names = DataUtilities.attributeNames(equalToWithPrefix, roadType);
         assertEquals(2, names.length);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
-        assertTrue(list.contains("id"));     
+        assertTrue(list.contains("id"));
     }
 
     /**
@@ -267,7 +266,7 @@ public class DataUtilitiesTest extends DataTestCase {
      */
     public void testAttributeExpressionFilterFeatureType() {
         FilterFactory factory = FactoryFinder.getFilterFactory(null);
-        Expression expression = factory.add(factory.property("geom"), 
+        Expression expression = factory.add(factory.property("geom"),
                 factory.property("gml:name"));
 
         String[] names;
@@ -323,7 +322,7 @@ public class DataUtilitiesTest extends DataTestCase {
         assertEquals(rd1.getID(), rd3.getID());
         assertEquals(rd1.getAttribute("id"), rd3.getAttribute("id"));
         assertEquals((Geometry) rd1.getAttribute("geom"),
-            (Geometry) rd3.getAttribute("geom"));
+                (Geometry) rd3.getAttribute("geom"));
         assertNotNull(rd3.getDefaultGeometry());
 
         SimpleFeature rv1 = riverFeatures[0];
@@ -362,7 +361,7 @@ public class DataUtilitiesTest extends DataTestCase {
      * Test for Feature template(FeatureType, String)
      */
     public void testTemplateFeatureTypeString()
-        throws IllegalAttributeException {
+            throws IllegalAttributeException {
         SimpleFeature feature = DataUtilities.template(roadType, "Foo");
         assertNotNull(feature);
         assertEquals(roadType.getAttributeCount(), feature.getAttributeCount());
@@ -384,112 +383,110 @@ public class DataUtilitiesTest extends DataTestCase {
         assertNull(DataUtilities.defaultValue(roadType.getDescriptor("geom")));
     }
 
-    
-
     public void testCollection() {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = DataUtilities.collection( roadFeatures );
-        assertEquals( roadFeatures.length,  collection.size() );                
+        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = DataUtilities.collection(roadFeatures);
+        assertEquals(roadFeatures.length, collection.size());
     }
 
     public void testReaderFeatureArray() throws Exception {
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader( roadFeatures );
-        assertEquals( roadFeatures.length,  count( reader ) );
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader(roadFeatures);
+        assertEquals(roadFeatures.length, count(reader));
     }
+
     public void testReaderCollection() throws Exception {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = DataUtilities.collection( roadFeatures );
-        assertEquals( roadFeatures.length,  collection.size() );
-                
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader( collection );
-        assertEquals( roadFeatures.length,  count( reader ) );
-    }    
+        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = DataUtilities.collection(roadFeatures);
+        assertEquals(roadFeatures.length, collection.size());
+
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader(collection);
+        assertEquals(roadFeatures.length, count(reader));
+    }
+
     public void testCreateSubType() throws Exception {
-    	SimpleFeatureType before =
-    		FeatureTypeUtilities.createType("cities","the_geom:Point:srid=4326,name:String");
-    	SimpleFeatureType after = FeatureTypeUtilities.createSubType(before, new String[]{"the_geom"} );
-    	assertEquals( 1, after.getAttributeCount() );
-    	
-    	before = FeatureTypeUtilities.createType("cities","the_geom:Point:srid=4326,name:String,population:Integer");
+        SimpleFeatureType before =
+                FeatureTypeUtilities.createType("cities", "the_geom:Point:srid=4326,name:String");
+        SimpleFeatureType after = FeatureTypeUtilities.createSubType(before, new String[]{"the_geom"});
+        assertEquals(1, after.getAttributeCount());
+
+        before = FeatureTypeUtilities.createType("cities", "the_geom:Point:srid=4326,name:String,population:Integer");
         URI here = new URI("http://localhost/");
-        after = FeatureTypeUtilities.createSubType(before, new String[]{"the_geom"},DefaultGeographicCRS.WGS84, "now", here);
-        assertEquals( here.toString(), after.getName().getNamespaceURI());
-        assertEquals( "now", after.getName().getLocalPart());
-        assertEquals( DefaultGeographicCRS.WGS84, after.getCoordinateReferenceSystem() );
-        assertEquals( 1, after.getAttributeCount() );
-        assertEquals( "the_geom", after.getDescriptor(0).getLocalName() );
-        assertNotNull( after.getGeometryDescriptor() );
+        after = FeatureTypeUtilities.createSubType(before, new String[]{"the_geom"}, DefaultGeographicCRS.WGS84, "now", here);
+        assertEquals(here.toString(), after.getName().getNamespaceURI());
+        assertEquals("now", after.getName().getLocalPart());
+        assertEquals(DefaultGeographicCRS.WGS84, after.getCoordinateReferenceSystem());
+        assertEquals(1, after.getAttributeCount());
+        assertEquals("the_geom", after.getDescriptor(0).getLocalName());
+        assertNotNull(after.getGeometryDescriptor());
     }
 
     public void testSource() throws Exception {
-        FeatureSource<SimpleFeatureType, SimpleFeature> s = DataUtilities.source( roadFeatures );
-        assertEquals( -1, s.getCount( Query.ALL ) );
-        assertEquals( 3, s.getFeatures().size() );
-        assertEquals( 3, s.getFeatures( Query.ALL ).size() );
-        assertEquals( 3, s.getFeatures( Filter.INCLUDE ).size() );
-        assertEquals( 0, s.getFeatures( Filter.EXCLUDE ).size() );
-        assertEquals( 1, s.getFeatures( rd1Filter ).size() );
-        assertEquals( 2, s.getFeatures( rd12Filter ).size() );                             
+        FeatureSource<SimpleFeatureType, SimpleFeature> s = DataUtilities.source(roadFeatures);
+        assertEquals(-1, s.getCount(Query.ALL));
+        assertEquals(3, s.getFeatures().size());
+        assertEquals(3, s.getFeatures(Query.ALL).size());
+        assertEquals(3, s.getFeatures(Filter.INCLUDE).size());
+        assertEquals(0, s.getFeatures(Filter.EXCLUDE).size());
+        assertEquals(1, s.getFeatures(rd1Filter).size());
+        assertEquals(2, s.getFeatures(rd12Filter).size());
     }
 
     /**
      * tests the policy of DataUtilities.mixQueries
      * @throws Exception
      */
-    public void testMixQueries() throws Exception
-	{
-    	DefaultQuery firstQuery;
-    	DefaultQuery secondQuery;
+    public void testMixQueries() throws Exception {
+        DefaultQuery firstQuery;
+        DefaultQuery secondQuery;
 
-    	firstQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 100, new String[]{"att1", "att2", "att3"}, "handle");    	
-    	secondQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 20, new String[]{"att1", "att2", "att4"}, "handle2");
-    	secondQuery.setStartIndex( 4 );
-    	
-    	Query mixed = DataUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
-    	
-    	//the passed handle
-    	assertEquals("newhandle", mixed.getHandle());
-    	//the lower of both
-    	assertEquals(20, mixed.getMaxFeatures());
-    	//att1, 2, 3 and 4
-    	assertEquals(4, mixed.getPropertyNames().length);
-    	assertEquals(4, (int) mixed.getStartIndex() );
-    	
-    	//now use some filters
-    	Filter filter1 = null;
-    	Filter filter2 = null;
-    	FilterFactory ffac = FactoryFinder.getFilterFactory(null);
+        firstQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 100, new String[]{"att1", "att2", "att3"}, "handle");
+        secondQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 20, new String[]{"att1", "att2", "att4"}, "handle2");
+        secondQuery.setStartIndex(4);
 
-    	String typeSpec = "geom:Point,att1:String,att2:String,att3:String,att4:String";
-    	SimpleFeatureType testType = FeatureTypeUtilities.createType("testType", typeSpec);
-    	//System.err.println("created test type: " + testType);
-    	
-    	filter1 = ffac.equals(ffac.property("att1"), ffac.literal("val1"));
-    	filter2 = ffac.equals(ffac.property("att2"), ffac.literal("val2"));
+        Query mixed = DataUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 
-    	firstQuery = new DefaultQuery("typeName", filter1, 100, null, "handle");
-    	secondQuery = new DefaultQuery("typeName", filter2, 20, new String[]{"att1", "att2", "att4"}, "handle2");
-    	
-    	mixed = DataUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
-    	
-    	//the passed handle
-    	assertEquals("newhandle", mixed.getHandle());
-    	//the lower of both
-    	assertEquals(20, mixed.getMaxFeatures());
-    	//att1, 2 and 4
-    	assertEquals(3, mixed.getPropertyNames().length);
-    	
-    	Filter mixedFilter = mixed.getFilter();
-    	assertNotNull(mixedFilter);
-    	assertTrue(mixedFilter instanceof BinaryLogicOperator);
-    	BinaryLogicOperator f = (BinaryLogicOperator) mixedFilter;
-    	
-    	assertTrue(f instanceof And);
-    	for(Iterator fit = f.getChildren().iterator(); fit.hasNext(); )
-    	{
-    		Filter subFilter = (Filter)fit.next();
-    		assertTrue(filter1.equals(subFilter) || filter2.equals(subFilter));
-    	}
-	}
-    
+        //the passed handle
+        assertEquals("newhandle", mixed.getHandle());
+        //the lower of both
+        assertEquals(20, mixed.getMaxFeatures());
+        //att1, 2, 3 and 4
+        assertEquals(4, mixed.getPropertyNames().length);
+        assertEquals(4, (int) mixed.getStartIndex());
+
+        //now use some filters
+        Filter filter1 = null;
+        Filter filter2 = null;
+        FilterFactory ffac = FactoryFinder.getFilterFactory(null);
+
+        String typeSpec = "geom:Point,att1:String,att2:String,att3:String,att4:String";
+        SimpleFeatureType testType = FeatureTypeUtilities.createType("testType", typeSpec);
+        //System.err.println("created test type: " + testType);
+
+        filter1 = ffac.equals(ffac.property("att1"), ffac.literal("val1"));
+        filter2 = ffac.equals(ffac.property("att2"), ffac.literal("val2"));
+
+        firstQuery = new DefaultQuery("typeName", filter1, 100, null, "handle");
+        secondQuery = new DefaultQuery("typeName", filter2, 20, new String[]{"att1", "att2", "att4"}, "handle2");
+
+        mixed = DataUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
+
+        //the passed handle
+        assertEquals("newhandle", mixed.getHandle());
+        //the lower of both
+        assertEquals(20, mixed.getMaxFeatures());
+        //att1, 2 and 4
+        assertEquals(3, mixed.getPropertyNames().length);
+
+        Filter mixedFilter = mixed.getFilter();
+        assertNotNull(mixedFilter);
+        assertTrue(mixedFilter instanceof BinaryLogicOperator);
+        BinaryLogicOperator f = (BinaryLogicOperator) mixedFilter;
+
+        assertTrue(f instanceof And);
+        for (Iterator fit = f.getChildren().iterator(); fit.hasNext();) {
+            Filter subFilter = (Filter) fit.next();
+            assertTrue(filter1.equals(subFilter) || filter2.equals(subFilter));
+        }
+    }
+
     public void testSpecNoCRS() throws Exception {
         String spec = "id:String,polygonProperty:Polygon";
         SimpleFeatureType ft = FeatureTypeUtilities.createType("testType", spec);
@@ -498,7 +495,7 @@ public class DataUtilitiesTest extends DataTestCase {
         //System.out.println(" AFTER:"+spec2);        
         assertEquals(spec, spec2);
     }
-    
+
     public void testSpecCRS() throws Exception {
         String spec = "id:String,polygonProperty:Polygon:srid=32615";
         SimpleFeatureType ft = FeatureTypeUtilities.createType("testType", spec);
@@ -507,7 +504,7 @@ public class DataUtilitiesTest extends DataTestCase {
         //System.out.println(" AFTER:"+spec2);        
         assertEquals(spec, spec2);
     }
-    
+
     public void testSpecNotIdentifiable() throws Exception {
         String spec = "id:String,polygonProperty:Polygon:srid=32615";
         SimpleFeatureType ft = FeatureTypeUtilities.createType("testType", spec);
@@ -526,5 +523,4 @@ public class DataUtilitiesTest extends DataTestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(DataUtilitiesTest.class);
     }
-    
 }

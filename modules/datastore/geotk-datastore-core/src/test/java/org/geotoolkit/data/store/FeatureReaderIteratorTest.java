@@ -18,10 +18,10 @@ package org.geotoolkit.data.store;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
-
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.FeatureReader;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -52,6 +52,5 @@ public class FeatureReaderIteratorTest extends TestCase {
                 NoSuchElementException {
             return null;
         }
-
     }
 }

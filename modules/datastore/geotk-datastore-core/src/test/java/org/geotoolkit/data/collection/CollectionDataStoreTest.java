@@ -19,6 +19,7 @@ package org.geotoolkit.data.collection;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import org.geotoolkit.data.DataTestCase;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
@@ -29,19 +30,18 @@ import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.TransactionStateDiff;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.Filter;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.data.DataTestCase;
-import org.opengis.feature.IllegalAttributeException;
 
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.filter.Filter;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * DOCUMENT ME!
@@ -50,6 +50,7 @@ import org.opengis.feature.IllegalAttributeException;
  * @source $URL$
  */
 public class CollectionDataStoreTest extends DataTestCase {
+
     CollectionDataStore data;
 
     /**
@@ -176,7 +177,7 @@ public class CollectionDataStoreTest extends DataTestCase {
     }
 
     public void testGetFeatureReader() throws IOException, IllegalAttributeException {
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = data.getFeatureReader("road");
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = data.getFeatureReader("road");
         assertCovered(roadFeatures, reader);
         assertEquals(false, reader.hasNext());
     }
@@ -207,11 +208,10 @@ public class CollectionDataStoreTest extends DataTestCase {
 //        } catch (IOException expected) {
 //        }
 //    }
-
     public void testGetFeatureReaderConcurancy()
-        throws NoSuchElementException, IOException, IllegalAttributeException {
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader1 = data.getFeatureReader("road");
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader2 = data.getFeatureReader("road");
+            throws NoSuchElementException, IOException, IllegalAttributeException {
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader1 = data.getFeatureReader("road");
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader2 = data.getFeatureReader("road");
 
         SimpleFeature feature1;
         SimpleFeature feature2;
@@ -242,9 +242,9 @@ public class CollectionDataStoreTest extends DataTestCase {
     }
 
     public void testGetFeatureReaderFilterAutoCommit()
-        throws NoSuchElementException, IOException, IllegalAttributeException {
+            throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeatureType type = data.getSchema("road");
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
         reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
         assertFalse(reader instanceof FilteringFeatureReader);
@@ -264,10 +264,10 @@ public class CollectionDataStoreTest extends DataTestCase {
     }
 
     public void testGetFeatureReaderFilterTransaction()
-        throws NoSuchElementException, IOException, IllegalAttributeException {
+            throws NoSuchElementException, IOException, IllegalAttributeException {
         Transaction t = new DefaultTransaction();
         SimpleFeatureType type = data.getSchema("road");
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
         reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
         assertTrue(reader instanceof EmptyFeatureReader);
@@ -316,8 +316,8 @@ public class CollectionDataStoreTest extends DataTestCase {
         assertEquals(1, count(reader));
     }
 
-    void assertCovered(SimpleFeature[] features,  FeatureReader<SimpleFeatureType, SimpleFeature> reader)
-        throws NoSuchElementException, IOException, IllegalAttributeException {
+    void assertCovered(SimpleFeature[] features, FeatureReader<SimpleFeatureType, SimpleFeature> reader)
+            throws NoSuchElementException, IOException, IllegalAttributeException {
         int count = 0;
 
         try {
@@ -344,8 +344,8 @@ public class CollectionDataStoreTest extends DataTestCase {
      * @throws IOException DOCUMENT ME!
      * @throws IllegalAttributeException DOCUMENT ME!
      */
-    boolean covers(FeatureReader <SimpleFeatureType, SimpleFeature> reader, SimpleFeature[] array)
-        throws NoSuchElementException, IOException, IllegalAttributeException {
+    boolean covers(FeatureReader<SimpleFeatureType, SimpleFeature> reader, SimpleFeature[] array)
+            throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature feature;
         int count = 0;
 
@@ -366,8 +366,8 @@ public class CollectionDataStoreTest extends DataTestCase {
         return count == array.length;
     }
 
-    boolean coversLax(FeatureReader <SimpleFeatureType, SimpleFeature> reader, SimpleFeature[] array)
-        throws NoSuchElementException, IOException, IllegalAttributeException {
+    boolean coversLax(FeatureReader<SimpleFeatureType, SimpleFeature> reader, SimpleFeature[] array)
+            throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature feature;
         int count = 0;
 
@@ -388,8 +388,8 @@ public class CollectionDataStoreTest extends DataTestCase {
         return count == array.length;
     }
 
-    void dump(FeatureReader <SimpleFeatureType, SimpleFeature> reader)
-        throws NoSuchElementException, IOException, IllegalAttributeException {
+    void dump(FeatureReader<SimpleFeatureType, SimpleFeature> reader)
+            throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature feature;
         int count = 0;
 
@@ -433,8 +433,8 @@ public class CollectionDataStoreTest extends DataTestCase {
         assertEquals(rd12Bounds, some.getBounds());
         assertEquals(some.getSchema(), road.getSchema());
 
-        DefaultQuery query = new DefaultQuery( road.getSchema().getTypeName(), rd12Filter, new String[] { "name" });
-        
+        DefaultQuery query = new DefaultQuery(road.getSchema().getTypeName(), rd12Filter, new String[]{"name"});
+
         FeatureCollection<SimpleFeatureType, SimpleFeature> half = road.getFeatures(query);
         assertEquals(2, half.size());
         assertEquals(1, half.getSchema().getAttributeCount());
@@ -458,8 +458,6 @@ public class CollectionDataStoreTest extends DataTestCase {
         assertEquals(type, actual);
 
         Envelope b = half.getBounds();
-        assertEquals(new Envelope(1,5,0,4), b);        
+        assertEquals(new Envelope(1, 5, 0, 4), b);
     }
-
-    
 }

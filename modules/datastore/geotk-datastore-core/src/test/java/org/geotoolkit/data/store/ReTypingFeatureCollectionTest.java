@@ -17,6 +17,7 @@
 package org.geotoolkit.data.store;
 
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 
 public class ReTypingFeatureCollectionTest extends FeatureCollectionWrapperTestSupport {

@@ -18,11 +18,8 @@ package org.geotoolkit.data;
 
 import junit.framework.TestCase;
 
-
-
 //TODO this test use a strange dependency called esaymock, we don't won't this dependency
 //so we should write this test differently.
-
 public class DefaultFeatureResultsTest extends TestCase {
 
     public void testMaxFeatureOptimized() throws Exception {

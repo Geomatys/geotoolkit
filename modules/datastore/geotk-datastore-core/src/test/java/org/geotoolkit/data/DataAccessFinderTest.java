@@ -24,8 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.imageio.spi.ServiceRegistry;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.concurrent.LockingManager;
@@ -33,6 +31,7 @@ import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.SchemaException;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -113,7 +112,7 @@ public class DataAccessFinderTest extends TestCase {
         assertNotNull(dsf1);
 
         assertFalse(availableDataStores.hasNext());
-        
+
         assertTrue(dsf1 instanceof MockDataStoreFactory);
     }
 
@@ -199,6 +198,7 @@ public class DataAccessFinderTest extends TestCase {
      * @source $URL$
      */
     public static class MockDataAccessFactory extends Factory implements DataAccessFactory {
+
         public boolean isAvailable() {
             return true;
         }
@@ -243,6 +243,7 @@ public class DataAccessFinderTest extends TestCase {
      * @source $URL$
      */
     public static class MockDataStoreFactory extends Factory implements DataStoreFactorySpi {
+
         public boolean isAvailable() {
             return true;
         }
@@ -295,7 +296,6 @@ public class DataAccessFinderTest extends TestCase {
             return false;
         }
     }
-
     /**
      * Fake DataAccess returned by {@link MockDataAccessFactory}
      */
@@ -327,7 +327,6 @@ public class DataAccessFinderTest extends TestCase {
         public void updateSchema(Name typeName, FeatureType featureType) throws IOException {
         }
     };
-
     /**
      * Fake datastore returned by {@link MockDataStoreFactory}
      */

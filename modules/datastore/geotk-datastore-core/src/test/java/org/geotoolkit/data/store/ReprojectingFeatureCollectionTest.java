@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;

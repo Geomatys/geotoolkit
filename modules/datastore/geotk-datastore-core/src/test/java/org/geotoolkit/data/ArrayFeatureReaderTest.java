@@ -22,16 +22,14 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.data.CollectionFeatureReader;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * Tests the ArrayFeatureReader class
@@ -40,6 +38,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @source $URL$
  */
 public class ArrayFeatureReaderTest extends TestCase {
+
     private CollectionFeatureReader arrayReader;
     private CollectionFeatureReader collectionReader;
     private CollectionFeatureReader featureCollectionReader;
@@ -48,14 +47,14 @@ public class ArrayFeatureReaderTest extends TestCase {
 
     protected void setUp() throws Exception {
         type = FeatureTypeUtilities.createType("TestType", "geom:Geometry");
-        features = new SimpleFeature[] {
-            SimpleFeatureBuilder.build( type, new Object[] { null }, "f1" ), 
-            SimpleFeatureBuilder.build( type, new Object[] { null }, "f2" ),
-            SimpleFeatureBuilder.build( type, new Object[] { null }, "f3" ),
-            SimpleFeatureBuilder.build( type, new Object[] { null }, "f4" ),
-            SimpleFeatureBuilder.build( type, new Object[] { null }, "f5" ),
-            SimpleFeatureBuilder.build( type, new Object[] { null }, "f6" )
-        };
+        features = new SimpleFeature[]{
+                    SimpleFeatureBuilder.build(type, new Object[]{null}, "f1"),
+                    SimpleFeatureBuilder.build(type, new Object[]{null}, "f2"),
+                    SimpleFeatureBuilder.build(type, new Object[]{null}, "f3"),
+                    SimpleFeatureBuilder.build(type, new Object[]{null}, "f4"),
+                    SimpleFeatureBuilder.build(type, new Object[]{null}, "f5"),
+                    SimpleFeatureBuilder.build(type, new Object[]{null}, "f6")
+                };
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
         List list = Arrays.asList(features);
@@ -113,8 +112,8 @@ public class ArrayFeatureReaderTest extends TestCase {
         testHasNext(featureCollectionReader);
     }
 
-    private void testHasNext(FeatureReader <SimpleFeatureType, SimpleFeature> arrayReader)
-        throws IOException, IllegalAttributeException {
+    private void testHasNext(FeatureReader<SimpleFeatureType, SimpleFeature> arrayReader)
+            throws IOException, IllegalAttributeException {
         assertTrue(arrayReader.hasNext());
         arrayReader.next();
         assertTrue(arrayReader.hasNext());

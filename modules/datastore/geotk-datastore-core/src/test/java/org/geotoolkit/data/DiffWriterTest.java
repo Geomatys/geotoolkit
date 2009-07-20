@@ -18,23 +18,20 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.data.FeatureEvent.Type;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import junit.framework.TestCase;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.Diff;
-import org.geotoolkit.data.DiffFeatureWriter;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 
 public class DiffWriterTest extends TestCase {
 
