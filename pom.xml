@@ -379,16 +379,6 @@
 
       <!-- ======================================================= -->
       <!--     Javadoc generation.                                 -->
-      <!--                                                         -->
-      <!--     Notes:                                              -->
-      <!--       Do NOT enable deep copying of "doc-files"         -->
-      <!--       directories ("-docfilessubdirs" option), because  -->
-      <!--       it has the unwanted side effect to copy .hg       -->
-      <!--       directories as well.                              -->
-      <!--                                                         -->
-      <!--       <sourcepath/> and <subpackages/> elements do not  -->
-      <!--       seem to work with aggregated javadoc.             -->
-      <!--                                                         -->
       <!-- ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -441,8 +431,7 @@
             <link>http://geoapi.sourceforge.net/snapshot/pending</link>
           </links>
 
-          <!-- Separates packages on the overview page into the    -->
-          <!-- groups specified.                                   -->
+          <!-- Separates packages on the overview page into the groups specified. -->
           <groups>
             <group>
               <title>Geometry</title>

@@ -72,13 +72,33 @@
 
   <!-- =========================================================== -->
   <!--     Modules included in the build                           -->
+  <!--                                                             -->
+  <!--     Those modules will be excluded when generating the      -->
+  <!--     web site because aggregated javadoc cause failures      -->
+  <!--     during Maven plugins build.                             -->
+  <!--                                                             -->
+  <!--     See http://jira.codehaus.org/browse/MJAVADOC-145        -->
+  <!--                                                             -->
+  <!--     For testing if the bug has been fixed:                  -->
+  <!--                                                             -->
+  <!--     mvn site -Pno-site                                      -->
+  <!--                                                             -->
+  <!--     Check that the list of modules includes those below.    -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-resource-compiler</module>
-    <module>geotk-jar-collector</module>
-    <module>geotk-javadoc</module>
-    <module>geotk-site</module>
-  </modules>
+  <profiles>
+    <profile>
+      <id>no-site</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>geotk-resource-compiler</module>
+        <module>geotk-jar-collector</module>
+        <module>geotk-javadoc</module>
+        <module>geotk-site</module>
+      </modules>
+    </profile>
+  </profiles>
 
 
 </project>
