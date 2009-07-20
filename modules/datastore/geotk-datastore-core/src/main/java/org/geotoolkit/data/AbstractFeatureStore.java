@@ -207,7 +207,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
      * @throws IOException If we encounter a problem encounter writing content
      * @throws DataSourceException See IOException
      *
-     * @see org.geotools.data.FeatureStore#addFeatures(org.geotools.data.FeatureReader)
+     * @see org.geotoolkit.data.FeatureStore#addFeatures(org.geotoolkit.data.FeatureReader)
      */
     public Set<String> addFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
         final Set<String> addedFids = new HashSet<String>();
@@ -243,6 +243,9 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
         return addedFids;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<FeatureId> addFeatures(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection)
             throws IOException {
@@ -386,6 +389,9 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setTransaction(final Transaction transaction) {
         if (transaction == null) {

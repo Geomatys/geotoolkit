@@ -41,7 +41,7 @@ public abstract class AbstractFileDataStore extends AbstractDataStore {
     /**
      * Singular version, returns the FeatureType for the url being read.
      *
-     * @see org.geotools.data.DataStore#getSchema(java.lang.String)
+     * @see org.geotoolkit.data.DataStore#getSchema(java.lang.String)
      */
     public abstract SimpleFeatureType getSchema() throws IOException;
 
@@ -49,7 +49,7 @@ public abstract class AbstractFileDataStore extends AbstractDataStore {
      * Singular version, which must be implemented to represent a Reader  for
      * the url being read.
      *
-     * @see org.geotools.data.DataStore#getFeatureReader(java.lang.String)
+     * @see org.geotoolkit.data.DataStore#getFeatureReader(java.lang.String)
      */
     protected abstract FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader()
             throws IOException;
@@ -57,7 +57,7 @@ public abstract class AbstractFileDataStore extends AbstractDataStore {
     /**
      * Singular version, calls parent with getSchema().getTypeName()
      *
-     * @see org.geotools.data.DataStore#updateSchema(java.lang.String,SimpleFeatureType)
+     * @see org.geotoolkit.data.DataStore#updateSchema(java.lang.String,SimpleFeatureType)
      */
     public void updateSchema(SimpleFeatureType featureType) throws IOException {
         updateSchema(getSchema().getTypeName(), featureType);
@@ -66,7 +66,7 @@ public abstract class AbstractFileDataStore extends AbstractDataStore {
     /**
      * Singular version, calls parent with getSchema().getTypeName()
      *
-     * @see org.geotools.data.DataStore#getFeatureSource(java.lang.String)
+     * @see org.geotoolkit.data.DataStore#getFeatureSource(java.lang.String)
      */
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource() throws IOException {
         return getFeatureSource(getSchema().getTypeName());
@@ -81,8 +81,8 @@ public abstract class AbstractFileDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.DataStore#getFeatureWriter(java.lang.String,
-     *      org.geotools.data.Transaction)
+     * @see org.geotoolkit.data.DataStore#getFeatureWriter(java.lang.String,
+     *      org.geotoolkit.data.Transaction)
      */
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Transaction transaction)
             throws IOException {
@@ -90,8 +90,8 @@ public abstract class AbstractFileDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.DataStore#getFeatureWriterAppend(java.lang.String,
-     *      org.geotools.data.Transaction)
+     * @see org.geotoolkit.data.DataStore#getFeatureWriterAppend(java.lang.String,
+     *      org.geotoolkit.data.Transaction)
      */
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Transaction transaction)
             throws IOException {

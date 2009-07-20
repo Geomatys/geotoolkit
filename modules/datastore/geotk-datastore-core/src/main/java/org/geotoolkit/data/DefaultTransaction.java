@@ -80,8 +80,8 @@ public class DefaultTransaction implements Transaction {
      * @throws IllegalArgumentException
      *             When Transaction already using key
      *
-     * @see org.geotools.data.Transaction#putState(java.lang.Object,
-     *      org.geotools.data.Transaction.State)
+     * @see org.geotoolkit.data.Transaction#putState(java.lang.Object,
+     *      org.geotoolkit.data.Transaction.State)
      */
     @Override
     public void putState(Object key, State state) {
@@ -115,7 +115,7 @@ public class DefaultTransaction implements Transaction {
      * @throws IllegalArgumentException
      *             If no State was maintained for supplied <code>key</code>
      *
-     * @see org.geotools.data.Transaction#removeState(java.lang.Object)
+     * @see org.geotoolkit.data.Transaction#removeState(java.lang.Object)
      */
     @Override
     public void removeState(Object key) {
@@ -142,7 +142,7 @@ public class DefaultTransaction implements Transaction {
      *
      * @return Previously externalized State.
      *
-     * @see org.geotools.data.Transaction#getState(java.lang.Object)
+     * @see org.geotoolkit.data.Transaction#getState(java.lang.Object)
      */
     @Override
     public State getState(Object key) {
@@ -165,7 +165,7 @@ public class DefaultTransaction implements Transaction {
      * @throws DataSourceException
      *             See IOException
      *
-     * @see org.geotools.data.Transaction#commit()
+     * @see org.geotoolkit.data.Transaction#commit()
      */
     @Override
     public void commit() throws IOException {
@@ -207,7 +207,7 @@ public class DefaultTransaction implements Transaction {
      * @throws DataSourceException
      *             IOException
      *
-     * @see org.geotools.data.Transaction#rollback()
+     * @see org.geotoolkit.data.Transaction#rollback()
      */
     @Override
     public void rollback() throws IOException {
@@ -285,7 +285,7 @@ public class DefaultTransaction implements Transaction {
      * @throws DataSourceException
      *             See IOException
      *
-     * @see org.geotools.data.Transaction#setAuthorization(java.lang.String)
+     * @see org.geotoolkit.data.Transaction#setAuthorization(java.lang.String)
      */
     @Override
     public void addAuthorization(String authID) throws IOException {
@@ -316,10 +316,8 @@ public class DefaultTransaction implements Transaction {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
+    /**
+     * {@inheritDoc }
      */
     @Override
     public String toString() {
@@ -327,11 +325,7 @@ public class DefaultTransaction implements Transaction {
     }
 
     /**
-     * Implementation of getProperty.
-     *
-     * @see org.geotools.data.Transaction#getProperty(java.lang.Object)
-     *
-     * @param key
+     * {@inheritDoc }
      */
     @Override
     public Object getProperty(Object key) {
@@ -342,13 +336,7 @@ public class DefaultTransaction implements Transaction {
     }
 
     /**
-     * Implementation of addProperty.
-     *
-     * @see org.geotools.data.Transaction#addProperty(java.lang.Object, java.lang.Object)
-     *
-     * @param key
-     * @param value
-     * @throws IOException
+     * {@inheritDoc }
      */
     @Override
     public void putProperty(Object key, Object value) throws IOException {
@@ -358,6 +346,9 @@ public class DefaultTransaction implements Transaction {
         propertyLookup.put(key, value);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected void finalize() throws Throwable {
         if (stateLookup != null) {

@@ -65,13 +65,16 @@ public class FilteringFeatureReader<T extends FeatureType, F extends Feature> im
     }
 
     /**
-     * @return THe delegate reader.
+     * {@inheritDoc }
      */
     @Override
     public FeatureReader<T, F> getDelegate() {
         return featureReader;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public F next() throws IOException, IllegalAttributeException, NoSuchElementException {
         if (hasNext()) {
@@ -85,11 +88,17 @@ public class FilteringFeatureReader<T extends FeatureType, F extends Feature> im
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close() throws IOException {
         featureReader.close();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public T getFeatureType() {
         return featureReader.getFeatureType();

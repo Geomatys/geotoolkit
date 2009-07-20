@@ -58,12 +58,18 @@ public class DefaultFeatureLock implements FeatureLock {
         this.duration = duration;
     }
 
-    /** LockId used for transaction authorization. */
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getAuthorization() {
         return authorization;
     }
 
-    /** Time from now the lock will expire */
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long getDuration() {
         return duration;
     }

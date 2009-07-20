@@ -77,9 +77,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
     }
 
     /**
-     * Supplys FeatureTypeFrom reader
-     *
-     * @see org.geotools.data.FeatureWriter#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeatureType getFeatureType() {
@@ -87,9 +85,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
     }
 
     /**
-     * Next Feature from reader or new content.
-     *
-     * @see org.geotools.data.FeatureWriter#next()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeature next() throws IOException {
@@ -124,7 +120,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
     }
 
     /**
-     * @see org.geotools.data.FeatureWriter#remove()
+     * {@inheritDoc }
      */
     @Override
     public void remove() throws IOException {
@@ -141,11 +137,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
     }
 
     /**
-     * Writes out the current feature.
-     *
-     * @throws IOException
-     *
-     * @see org.geotools.data.FeatureWriter#write()
+     * {@inheritDoc }
      */
     @Override
     public void write() throws IOException {
@@ -174,9 +166,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
     }
 
     /**
-     * Query for more content.
-     *
-     * @see org.geotools.data.FeatureWriter#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() throws IOException {
@@ -211,7 +201,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
      * Transaction.State object and may yet be written out.
      * </p>
      *
-     * @see org.geotools.data.FeatureWriter#close()
+     * @see org.geotoolkit.data.FeatureWriter#close()
      */
     @Override
     public void close() throws IOException {

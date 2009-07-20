@@ -52,7 +52,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
     }
 
     /**
-     * @return the description
+     * {@inheritDoc }
      */
     @Override
     public String getDescription() {
@@ -67,7 +67,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
     }
 
     /**
-     * @return the keywords
+     * {@inheritDoc }
      */
     @Override
     public Set<String> getKeywords() {
@@ -82,7 +82,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
     }
 
     /**
-     * @return the publisher
+     * {@inheritDoc }
      */
     @Override
     public URI getPublisher() {
@@ -97,7 +97,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
     }
 
     /**
-     * @return the schema
+     * {@inheritDoc }
      */
     @Override
     public URI getSchema() {
@@ -112,7 +112,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
     }
 
     /**
-     * @return the title
+     * {@inheritDoc }
      */
     @Override
     public String getTitle() {
@@ -127,7 +127,7 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
     }
 
     /**
-     * @return the source
+     * {@inheritDoc }
      */
     @Override
     public URI getSource() {
@@ -141,6 +141,9 @@ public class DefaultServiceInfo implements ServiceInfo, Serializable {
         this.source = source;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         final StringBuilder buf = new StringBuilder();

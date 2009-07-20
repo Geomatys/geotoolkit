@@ -91,6 +91,10 @@ public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, Simple
         this(attributeReader, fidReader, null);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeature next()
             throws IOException, IllegalAttributeException, NoSuchElementException {
         if (attributeReader.hasNext()) {
@@ -131,15 +135,27 @@ public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, Simple
         return builder.buildFeature(fid);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void close() throws IOException {
         fidReader.close();
         attributeReader.close();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeatureType getFeatureType() {
         return schema;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean hasNext() throws IOException {
         return attributeReader.hasNext();
     }

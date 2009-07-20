@@ -41,7 +41,7 @@ public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implem
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public T getFeatureType() {
@@ -55,7 +55,7 @@ public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implem
      *
      * @throws NoSuchElementException
      *
-     * @see org.geotools.data.FeatureReader#next()
+     * @see org.geotoolkit.data.FeatureReader#next()
      */
     @Override
     public F next() throws NoSuchElementException {
@@ -67,7 +67,7 @@ public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implem
      *
      * @return <code>false</code>
      *
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * @see org.geotoolkit.data.FeatureReader#hasNext()
      */
     @Override
     public boolean hasNext() {
@@ -77,7 +77,7 @@ public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implem
     /**
      * Cleans up after Empty FeatureReader.
      *
-     * @see org.geotools.data.FeatureReader#close()
+     * @see org.geotoolkit.data.FeatureReader#close()
      */
     @Override
     public void close() {

@@ -242,15 +242,7 @@ public class DefaultQuery implements Query {
     }
 
     /**
-     * Convenience method to determine if the query should use the full schema
-     * (all properties) of the data source for the features returned.  This
-     * method is equivalent to if (query.getProperties() == null), but allows
-     * for more clarity on the part of datasource implementors, so they do not
-     * need to examine and use null values.  All Query implementations should
-     * return true for this function if getProperties returns null.
-     *
-     * @return if all datasource attributes should be included in the  schema
-     *         of the returned FeatureCollection.
+     * {@inheritDoc }
      */
     @Override
     public boolean retrieveAllProperties() {
@@ -258,24 +250,16 @@ public class DefaultQuery implements Query {
     }
 
     /**
-     * The optional maxFeatures can be used to limit the number of features
-     * that a query request retrieves.  If no maxFeatures is specified then
-     * all features should be returned.
-     *
-     * <p>
-     * This is the only method that is not directly out of the Query element in
-     * the WFS spec.  It is instead a part of a <code>getFeatures</code>
-     * request, which can hold one or more queries.  But each of those in turn
-     * will need a maxFeatures, so it is needed here.
-     * </p>
-     *
-     * @return the max features the getFeature call should return.
+     * {@inheritDoc }
      */
     @Override
     public int getMaxFeatures() {
         return this.maxFeatures;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Integer getStartIndex() {
         return this.startIndex;
@@ -299,11 +283,7 @@ public class DefaultQuery implements Query {
     }
 
     /**
-     * The Filter can be used to define constraints on a query.  If no Filter
-     * is present then the query is unconstrained and all feature instances
-     * should be retrieved.
-     *
-     * @return The filter that defines constraints on the query.
+     * {@inheritDoc }
      */
     @Override
     public Filter getFilter() {
@@ -336,6 +316,9 @@ public class DefaultQuery implements Query {
         return this.typeName;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URI getNamespace() {
         return namespace;
@@ -360,12 +343,7 @@ public class DefaultQuery implements Query {
     }
 
     /**
-     * The handle attribute is included to allow a client to associate  a
-     * mnemonic name to the Query request. The purpose of the handle attribute
-     * is to provide an error handling mechanism for locating  a statement
-     * that might fail.
-     *
-     * @return the mnemonic name of the query request.
+     * {@inheritDoc }
      */
     @Override
     public String getHandle() {
@@ -382,22 +360,7 @@ public class DefaultQuery implements Query {
     }
 
     /**
-     * From WFS Spec:  The version attribute is included in order to
-     * accommodate systems that  support feature versioning. A value of ALL
-     * indicates that all versions of a feature should be fetched. Otherwise
-     * an integer, n, can be specified  to return the n th version of a
-     * feature. The version numbers start at '1'  which is the oldest version.
-     * If a version value larger than the largest version is specified then
-     * the latest version is return. The default action shall be for the query
-     * to return the latest version. Systems that do not support versioning
-     * can ignore the parameter and return the only version  that they have.
-     *
-     * <p>
-     * This is ready for use, it will be up to data store implementors to
-     * support it.
-     * </p>
-     *
-     * @return the version of the feature to return, or null for latest.
+     * {@inheritDoc }
      */
     @Override
     public String getVersion() {

@@ -43,7 +43,7 @@ import org.opengis.feature.type.FeatureType;
  * 
  * <p>
  * In addition to implementing this interface datasouces should have a services
- * file:<br/><code>META-INF/services/org.geotools.data.DataAccessFactory</code>
+ * file:<br/><code>META-INF/services/org.geotoolkit.data.DataAccessFactory</code>
  * </p>
  * 
  * <p>
@@ -52,7 +52,7 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  * 
  * <p>
- * Example:<br/><code>org.geotools.data.mytype.MyTypeDataAccessFacotry</code>
+ * Example:<br/><code>org.geotoolkit.data.mytype.MyTypeDataAccessFacotry</code>
  * </p>
  */
 public final class DataAccessFinder {

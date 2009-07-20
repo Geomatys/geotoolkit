@@ -85,7 +85,7 @@ public class CollectionFeatureReader implements FeatureReader<SimpleFeatureType,
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeatureType getFeatureType() {
@@ -93,7 +93,7 @@ public class CollectionFeatureReader implements FeatureReader<SimpleFeatureType,
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#next()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeature next()
@@ -106,7 +106,7 @@ public class CollectionFeatureReader implements FeatureReader<SimpleFeatureType,
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() throws IOException {
@@ -114,7 +114,7 @@ public class CollectionFeatureReader implements FeatureReader<SimpleFeatureType,
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#close()
+     * {@inheritDoc }
      */
     @Override
     public void close() throws IOException {

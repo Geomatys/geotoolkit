@@ -75,6 +75,9 @@ public class TransactionStateDiff implements State {
         store = dataStore;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public synchronized void setTransaction(final Transaction transaction) {
         if (transaction != null) {
@@ -125,7 +128,7 @@ public class TransactionStateDiff implements State {
     }
 
     /**
-     * @see org.geotools.data.Transaction.State#addAuthorization(java.lang.String)
+     * {@inheritDoc }
      */
     @Override
     public synchronized void addAuthorization(final String AuthID)
@@ -136,7 +139,7 @@ public class TransactionStateDiff implements State {
     /**
      * Will apply differences to store.
      *
-     * @see org.geotools.data.Transaction.State#commit()
+     * @see org.geotoolkit.data.Transaction.State#commit()
      */
     @Override
     public synchronized void commit() throws IOException {
@@ -268,7 +271,7 @@ public class TransactionStateDiff implements State {
     }
 
     /**
-     * @see org.geotools.data.Transaction.State#rollback()
+     * {@inheritDoc }
      */
     @Override
     public synchronized void rollback() throws IOException {

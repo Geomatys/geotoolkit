@@ -58,7 +58,6 @@ public class BatchFeatureEvent extends FeatureEvent {
      * changes on FeatureIds that are not being used
      * by the client to track selection.
      */
-    @SuppressWarnings("unchecked")
     protected WeakHashSet<Identifier> fids;
 
     /**
@@ -143,7 +142,6 @@ public class BatchFeatureEvent extends FeatureEvent {
      * 
      * @return Set of Identifiers created during this commit
      */
-    @SuppressWarnings("unchecked")
     public WeakHashSet<Identifier> getCreatedFeatureIds() {
         return fids;
     }

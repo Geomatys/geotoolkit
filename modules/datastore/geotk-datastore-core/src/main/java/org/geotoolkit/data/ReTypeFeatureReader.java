@@ -105,6 +105,9 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
         builder = new SimpleFeatureBuilder(featureType);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureReader getDelegate() {
         return reader;
@@ -161,7 +164,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeatureType getFeatureType() {
@@ -169,7 +172,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#next()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeature next() throws IOException, IllegalAttributeException, NoSuchElementException {
@@ -195,7 +198,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() throws IOException {
@@ -203,7 +206,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#close()
+     * {@inheritDoc }
      */
     @Override
     public void close() throws IOException {

@@ -91,7 +91,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      *
      * @throws NullPointerException If lock was <code>null</code>
      *
-     * @see org.geotools.data.FeatureLocking#setFeatureLock(org.geotools.data.FeatureLock)
+     * @see org.geotoolkit.data.FeatureLocking#setFeatureLock(org.geotoolkit.data.FeatureLock)
      */
     @Override
     public void setFeatureLock(final FeatureLock lock) {
@@ -104,13 +104,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
     }
 
     /**
-     * Lock all Features
-     *
-     * @return Number of Locked features
-     *
-     * @throws IOException
-     *
-     * @see org.geotools.data.FeatureLocking#lockFeatures()
+     * {@inheritDoc }
      */
     @Override
     public int lockFeatures() throws IOException {
@@ -118,13 +112,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
     }
 
     /**
-     * Lock features matching <code>filter</code>.
-     *
-     * @param filter
-     *
-     * @return Number of locked Features
-     *
-     * @throws IOException
+     * {@inheritDoc }
      */
     @Override
     public int lockFeatures(final Filter filter) throws IOException {
@@ -149,7 +137,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      *         LockingManager
      * @throws DataSourceException If feature to be locked does not exist
      *
-     * @see org.geotools.data.FeatureLocking#lockFeatures(org.geotools.data.Query)
+     * @see org.geotoolkit.data.FeatureLocking#lockFeatures(org.geotoolkit.data.Query)
      */
     @Override
     public int lockFeatures(final Query query) throws IOException {
@@ -188,11 +176,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
     }
 
     /**
-     * Unlock all Features.
-     *
-     * @throws IOException
-     *
-     * @see org.geotools.data.FeatureLocking#unLockFeatures()
+     * {@inheritDoc }
      */
     @Override
     public void unLockFeatures() throws IOException {
@@ -200,11 +184,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
     }
 
     /**
-     * Unlock Features specified by <code>filter</code>.
-     *
-     * @param filter
-     *
-     * @throws IOException
+     * {@inheritDoc }
      */
     @Override
     public void unLockFeatures(final Filter filter) throws IOException {
@@ -227,7 +207,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      * @throws DataSourceException Filter describes an unlocked Feature, or
      *         authorization not held
      *
-     * @see org.geotools.data.FeatureLocking#unLockFeatures(org.geotools.data.Query)
+     * @see org.geotoolkit.data.FeatureLocking#unLockFeatures(org.geotoolkit.data.Query)
      */
     @Override
     public void unLockFeatures(final Query query) throws IOException {

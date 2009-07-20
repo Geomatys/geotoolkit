@@ -42,7 +42,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
     }
 
     /**
-     * @see org.geotools.data.FeatureWriter#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public SimpleFeatureType getFeatureType() {
@@ -56,7 +56,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
      *
      * @throws NoSuchElementException
      *
-     * @see org.geotools.data.FeatureWriter#next()
+     * @see org.geotoolkit.data.FeatureWriter#next()
      */
     @Override
     public SimpleFeature next() throws NoSuchElementException {
@@ -64,7 +64,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
     }
 
     /**
-     * @see org.geotools.data.FeatureWriter#remove()
+     * {@inheritDoc }
      */
     @Override
     public void remove() throws IOException {
@@ -73,7 +73,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
     }
 
     /**
-     * @see org.geotools.data.FeatureWriter#remove()
+     * {@inheritDoc }
      */
     @Override
     public void write() throws IOException {
@@ -86,7 +86,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
      *
      * @return <code>false</code>
      *
-     * @see org.geotools.data.FeatureWriter#hasNext()
+     * @see org.geotoolkit.data.FeatureWriter#hasNext()
      */
     @Override
     public boolean hasNext() {
@@ -96,7 +96,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
     /**
      * Cleans up after Empty FeatureWriter.
      *
-     * @see org.geotools.data.FeatureWriter#close()
+     * @see org.geotoolkit.data.FeatureWriter#close()
      */
     @Override
     public void close() {

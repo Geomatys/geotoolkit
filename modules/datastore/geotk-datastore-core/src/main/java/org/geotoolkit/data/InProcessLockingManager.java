@@ -508,7 +508,7 @@ public class InProcessLockingManager implements LockingManager {
      *
      * @return true if lock exists for authID
      *
-     * @see org.geotools.data.LockingManager#lockExists(java.lang.String)
+     * @see org.geotoolkit.data.LockingManager#lockExists(java.lang.String)
      */
     @Override
     public boolean exists(final String authID) {

@@ -38,6 +38,10 @@ public class DefaultFeatureLockFactory extends FeatureLockFactory {
     /** Count used to generate unique ID numbers */
     static long count = 0;
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     protected FeatureLock createLock(String name, long duration) {
         long number = nextIdNumber(duration);
 

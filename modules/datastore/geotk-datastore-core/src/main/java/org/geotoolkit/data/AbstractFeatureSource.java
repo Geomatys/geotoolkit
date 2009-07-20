@@ -112,6 +112,9 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
         this.hints = Collections.unmodifiableSet(new HashSet(hints));
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ResourceInfo getInfo() {
         return new ResourceInfo() {
@@ -171,6 +174,10 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
         };
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public QueryCapabilities getQueryCapabilities() {
         return queryCapabilities;
     }
@@ -198,7 +205,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      * @param query
      *
      *
-     * @see org.geotools.data.FeatureSource#getFeatures(org.geotools.data.Query)
+     * @see org.geotoolkit.data.FeatureSource#getFeatures(org.geotoolkit.data.Query)
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(final Query query) throws IOException {

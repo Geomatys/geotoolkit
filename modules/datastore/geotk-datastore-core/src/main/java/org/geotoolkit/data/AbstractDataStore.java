@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data;
 
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -173,11 +171,8 @@ public abstract class AbstractDataStore implements DataStore {
     }
 
     /**
-     * helper method for retrieving all the names.
+     * {@inheritDoc }
      */
-    @Override
-    public abstract String[] getTypeNames() throws IOException;
-
     @Override
     public ServiceInfo getInfo() {
         final DefaultServiceInfo info = new DefaultServiceInfo();
@@ -185,12 +180,6 @@ public abstract class AbstractDataStore implements DataStore {
         info.setSchema(FeatureTypeUtilities.DEFAULT_NAMESPACE);
         return info;
     }
-
-    /**
-     * Retrive schema information for typeName
-     */
-    @Override
-    public abstract SimpleFeatureType getSchema(final String typeName) throws IOException;
 
     /**
      * Subclass must implement.
@@ -252,11 +241,17 @@ public abstract class AbstractDataStore implements DataStore {
         throw new UnsupportedOperationException("Schema creation not supported");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void updateSchema(String typeName, SimpleFeatureType featureType) {
         throw new UnsupportedOperationException("Schema modification not supported");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureSource<SimpleFeatureType, SimpleFeature> getView(final Query query)
             throws IOException, SchemaException {
@@ -270,7 +265,7 @@ public abstract class AbstractDataStore implements DataStore {
      * We should be able to optimize this to only get the RowSet once
      * </p>
      *
-     * @see org.geotools.data.DataStore#getFeatureSource(java.lang.String)
+     * @see org.geotoolkit.data.DataStore#getFeatureSource(java.lang.String)
      */
     @Override
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
@@ -351,8 +346,9 @@ public abstract class AbstractDataStore implements DataStore {
         };
     }
 
-    // Jody - Recomend moving to the following
-    // When we are ready for CoordinateSystem support
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query,
             final Transaction transaction) throws IOException {
@@ -484,6 +480,9 @@ public abstract class AbstractDataStore implements DataStore {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName, Filter filter,
             Transaction transaction) throws IOException {
@@ -533,6 +532,9 @@ public abstract class AbstractDataStore implements DataStore {
         return writer;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName,
             Transaction transaction) throws IOException {
@@ -540,6 +542,9 @@ public abstract class AbstractDataStore implements DataStore {
         return getFeatureWriter(typeName, Filter.INCLUDE, transaction);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(String typeName,
             Transaction transaction) throws IOException {
@@ -560,7 +565,7 @@ public abstract class AbstractDataStore implements DataStore {
      * </p>
      *
      *
-     * @see org.geotools.data.DataStore#getLockingManager()
+     * @see org.geotoolkit.data.DataStore#getLockingManager()
      */
     @Override
     public LockingManager getLockingManager() {

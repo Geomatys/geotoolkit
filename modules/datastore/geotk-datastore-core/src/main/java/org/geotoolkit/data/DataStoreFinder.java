@@ -38,7 +38,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * <p>
  * In addition to implementing this interface datasouces should have a services
- * file:<br/><code>META-INF/services/org.geotools.data.DataStoreFactorySpi</code>
+ * file:<br/><code>META-INF/services/org.geotoolkit.data.DataStoreFactorySpi</code>
  * </p>
  *
  * <p>
@@ -47,7 +47,7 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  *
  * <p>
- * Example:<br/><code>org.geotools.data.mytype.MyTypeDataStoreFacotry</code>
+ * Example:<br/><code>org.geotoolkit.data.mytype.MyTypeDataStoreFacotry</code>
  * </p>
  */
 public final class DataStoreFinder {
@@ -136,8 +136,6 @@ public final class DataStoreFinder {
      * at runtime.
      */
     public static synchronized void scanForPlugins() {
-
         getServiceRegistry().scanForPlugins();
-
     }
 }

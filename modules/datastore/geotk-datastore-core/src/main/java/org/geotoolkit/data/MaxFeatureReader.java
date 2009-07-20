@@ -48,11 +48,17 @@ public class MaxFeatureReader<T extends FeatureType, F extends Feature> implemen
         this.maxFeatures = maxFeatures;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureReader<T, F> getDelegate() {
         return featureReader;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public F next() throws IOException, IllegalAttributeException, NoSuchElementException {
         if (hasNext()) {
@@ -64,11 +70,17 @@ public class MaxFeatureReader<T extends FeatureType, F extends Feature> implemen
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close() throws IOException {
         featureReader.close();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public T getFeatureType() {
         return featureReader.getFeatureType();

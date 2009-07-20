@@ -50,11 +50,17 @@ public class FilteringFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         this.filter = filter;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeatureType getFeatureType() {
         return writer.getFeatureType();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SimpleFeature next() throws IOException {
         if (hasNext()) {
@@ -71,6 +77,9 @@ public class FilteringFeatureWriter implements FeatureWriter<SimpleFeatureType, 
                 "FeatureWriter does not have additional content");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void remove() throws IOException {
         if (writer == null) {
@@ -91,6 +100,9 @@ public class FilteringFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         writer.remove();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void write() throws IOException {
         if (writer == null) {
@@ -147,6 +159,9 @@ public class FilteringFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close() throws IOException {
         if (writer != null) {

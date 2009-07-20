@@ -113,7 +113,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#getFeatureType()
+     * {@inheritDoc }
      */
     @Override
     public T getFeatureType() {
@@ -121,7 +121,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#next()
+     * {@inheritDoc }
      */
     @Override
     public F next() throws IOException, IllegalAttributeException, NoSuchElementException {
@@ -136,7 +136,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#hasNext()
+     * {@inheritDoc }
      */
     @Override
     public boolean hasNext() throws IOException {
@@ -183,7 +183,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     }
 
     /**
-     * @see org.geotools.data.FeatureReader#close()
+     * {@inheritDoc }
      */
     @Override
     public void close() throws IOException {

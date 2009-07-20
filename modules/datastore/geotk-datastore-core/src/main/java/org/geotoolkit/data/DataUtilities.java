@@ -64,15 +64,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public final class DataUtilities extends FeatureCollectionUtilities {
 
-    private static final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureType DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     public static String[] attributeNames(final SimpleFeatureType featureType) {
         final String[] names = new String[featureType.getAttributeCount()];
         final int count = featureType.getAttributeCount();
@@ -148,14 +141,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
     }
 
     /**
-     * Traverses the filter and returns any encoutered property names.
-     * @deprecated use {@link #attributeNames(Filter, FeatureType)}/
-     */
-    public static String[] attributeNames(final Filter filter) {
-        return attributeNames(filter, null);
-    }
-
-    /**
      * Traverses the expression and returns any encoutered property names.
      * <p>
      * The feautre type is supplied as contexts used to lookup expressions in cases where the
@@ -170,14 +155,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         expression.accept(attExtractor, null);
         final String[] attributeNames = attExtractor.getAttributeNames();
         return attributeNames;
-    }
-
-    /**
-     * Traverses the expression and returns any encoutered property names.
-     * @deprecated use {@link #attributeNames(Expression, FeatureType)}/
-     */
-    public static String[] attributeNames(final Expression expression) {
-        return attributeNames(expression, null);
     }
 
     /**
@@ -274,14 +251,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return 1;
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param a DOCUMENT ME!
-     * @param b DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     public static boolean isMatch(final AttributeDescriptor a, final AttributeDescriptor b) {
         if (a == b) {
             return true;
@@ -357,77 +326,26 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), null);
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureType DOCUMENT ME!
-     * @param featureID DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IllegalAttributeException DOCUMENT ME!
-     */
     public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID)
             throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), featureID);
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureType DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IllegalAttributeException DOCUMENT ME!
-     */
     public static Object[] defaultValues(final SimpleFeatureType featureType)
             throws IllegalAttributeException {
         return defaultValues(featureType, null);
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureType DOCUMENT ME!
-     * @param atts DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IllegalAttributeException DOCUMENT ME!
-     */
     public static SimpleFeature template(final SimpleFeatureType featureType, final Object[] atts)
             throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), null);
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureType DOCUMENT ME!
-     * @param featureID DOCUMENT ME!
-     * @param atts DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IllegalAttributeException DOCUMENT ME!
-     */
     public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID,
             Object[] atts) throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureType DOCUMENT ME!
-     * @param values DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IllegalAttributeException DOCUMENT ME!
-     * @throws ArrayIndexOutOfBoundsException DOCUMENT ME!
-     */
     public static Object[] defaultValues(final SimpleFeatureType featureType,
             Object[] values) throws IllegalAttributeException {
         if (values == null) {
@@ -517,16 +435,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         };
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param featureArray DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
-     */
     public static FeatureSource<SimpleFeatureType, SimpleFeature> source(final SimpleFeature[] featureArray) {
         final SimpleFeatureType featureType;
 
@@ -568,16 +476,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         }
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param collection DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws NullPointerException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
-     */
     public static FeatureSource<SimpleFeatureType, SimpleFeature> source(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
         if (collection == null) {
             throw new NullPointerException();
@@ -640,14 +538,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return reader((SimpleFeature[]) collection.toArray(new SimpleFeature[collection.size()]));
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param att DOCUMENT ME!
-     * @param otherAtt DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     public static boolean attributesEqual(final Object att, final Object otherAtt) {
         if (att == null) {
             if (otherAtt != null) {
@@ -674,17 +564,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return true;
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param type DOCUMENT ME!
-     * @param fid DOCUMENT ME!
-     * @param text DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IllegalAttributeException DOCUMENT ME!
-     */
     public static SimpleFeature parse(final SimpleFeatureType type, final String fid,
             final String[] text) throws IllegalAttributeException {
         final Object[] attributes = new Object[text.length];
@@ -793,7 +672,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         if ((filter == null) || filter.equals(Filter.INCLUDE)) {
             filter = filter2;
         } else if ((filter2 != null) && !filter2.equals(Filter.INCLUDE)) {
-            filter = ff.and(filter, filter2);
+            filter = FF.and(filter, filter2);
         }
         Integer start = 0;
         if (firstQuery.getStartIndex() != null) {
