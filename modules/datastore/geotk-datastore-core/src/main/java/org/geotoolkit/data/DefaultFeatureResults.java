@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.data.query.Query;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.data.store.DataFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
@@ -32,8 +32,8 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
-
 import org.geotoolkit.feature.FeatureTypeUtilities;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -41,7 +41,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-
 
 /**
  * Generic "results" of a query, class.
@@ -55,16 +54,15 @@ import org.opengis.referencing.operation.MathTransform;
  * @source $URL$
  */
 public class DefaultFeatureResults extends DataFeatureCollection {
+
     /**
      * Shared package logger
      */
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
-
     /**
      * Query used to define this subset of features from the feature source
      */
     protected final Query query;
-
     /**
      * Feature source used to aquire features, note we are only a
      * "view" of this FeatureSource, its contents, transaction and events
@@ -72,7 +70,6 @@ public class DefaultFeatureResults extends DataFeatureCollection {
      * such as renderers.
      */
     protected final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
-
     protected MathTransform transform;
 
     /**
@@ -90,8 +87,7 @@ public class DefaultFeatureResults extends DataFeatureCollection {
      * @param query
      */
     public DefaultFeatureResults(final FeatureSource<SimpleFeatureType, SimpleFeature> source,
-            final Query query) throws IOException
-    {
+            final Query query) throws IOException {
         super(null, getSchemaInternal(source, query));
         this.featureSource = source;
 
@@ -107,8 +103,8 @@ public class DefaultFeatureResults extends DataFeatureCollection {
             // option 3: restore exception code
             this.query = new DefaultQuery(query);
             ((DefaultQuery) this.query).setTypeName(typeName);
-        //((DefaultQuery) this.query).setCoordinateSystem(query.getCoordinateSystem());
-        //((DefaultQuery) this.query).setCoordinateSystemReproject(query.getCoordinateSystemReproject());
+            //((DefaultQuery) this.query).setCoordinateSystem(query.getCoordinateSystem());
+            //((DefaultQuery) this.query).setCoordinateSystemReproject(query.getCoordinateSystemReproject());
         }
 
         if (origionalType.getGeometryDescriptor() == null) {
@@ -135,8 +131,7 @@ public class DefaultFeatureResults extends DataFeatureCollection {
     }
 
     static SimpleFeatureType getSchemaInternal(
-            final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource, final Query query)
-    {
+            final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource, final Query query) {
         final SimpleFeatureType origionalType = featureSource.getSchema();
         SimpleFeatureType schema = null;
 

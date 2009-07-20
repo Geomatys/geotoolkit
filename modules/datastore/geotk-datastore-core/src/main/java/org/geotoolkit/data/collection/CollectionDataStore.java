@@ -25,6 +25,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.SchemaNotFoundException;
 import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.feature.FeatureCollectionUtilities;
 import org.geotoolkit.feature.collection.CollectionEvent;
 import org.geotoolkit.feature.collection.CollectionListener;
 import org.geotoolkit.feature.collection.FeatureCollection;
@@ -37,8 +38,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.feature.FeatureCollectionUtilities;
-
 
 /**
  * Simple data store wrapper for feature collections. Allows to use feature collections in the user
@@ -157,7 +156,7 @@ public class CollectionDataStore extends AbstractDataStore {
         final JTSEnvelope2D envelope = new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
 
         if (iterator.hasNext()) {
-            
+
             final Filter filter = query.getFilter();
 
             int count = 1;
@@ -184,7 +183,7 @@ public class CollectionDataStore extends AbstractDataStore {
         if (!featureType.getTypeName().equals(featureTypeName)) {
             throw new SchemaNotFoundException(featureTypeName);
         }
-        
+
         final FeatureIterator<SimpleFeature> iterator = collection.features();
         final Filter filter = query.getFilter();
 

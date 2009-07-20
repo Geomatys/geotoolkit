@@ -23,13 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

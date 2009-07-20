@@ -42,7 +42,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-
 /**
  * A Transaction.State that keeps a difference table for use with
  * AbstractDataStore.
@@ -51,18 +50,17 @@ import com.vividsolutions.jts.geom.Geometry;
  * @source $URL$
  */
 public class TransactionStateDiff implements State {
+
     /**
      * DataStore used to commit() results of this transaction.
      *
      * @see TransactionStateDiff.commit();
      */
     private AbstractDataStore store;
-
     /**
      * Tranasction this State is opperating against.
      */
     private Transaction transaction;
-
     /**
      * Map of differences by typeName.
      * 
@@ -113,7 +111,7 @@ public class TransactionStateDiff implements State {
             return diff;
         }
     }
-    
+
     boolean exists(final String typeName) {
         final String[] types;
         try {
@@ -131,7 +129,7 @@ public class TransactionStateDiff implements State {
      */
     @Override
     public synchronized void addAuthorization(final String AuthID)
-        throws IOException {
+            throws IOException {
         // not required for TransactionStateDiff
     }
 
@@ -302,8 +300,7 @@ public class TransactionStateDiff implements State {
      * @throws IOException If typeName is not Manged by this Tansaction State
      */
     public synchronized FeatureReader<SimpleFeatureType, SimpleFeature> reader(final String typeName)
-            throws IOException
-    {
+            throws IOException {
         final Diff diff = diff(typeName);
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader = store.getFeatureReader(typeName);
 
@@ -326,8 +323,7 @@ public class TransactionStateDiff implements State {
      *         differences against
      */
     public synchronized FeatureWriter<SimpleFeatureType, SimpleFeature> writer(final String typeName, final Filter filter)
-            throws IOException
-    {
+            throws IOException {
         final Diff diff = diff(typeName);
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader =
                 new FilteringFeatureReader<SimpleFeatureType, SimpleFeature>(store.getFeatureReader(typeName, new DefaultQuery(typeName, filter)), filter);
@@ -338,13 +334,13 @@ public class TransactionStateDiff implements State {
             public void fireNotification(final FeatureEvent.Type eventType, final JTSEnvelope2D bounds) {
                 switch (eventType) {
                     case ADDED:
-                        store.listenerManager.fireFeaturesAdded(typeName,transaction, bounds, false);
+                        store.listenerManager.fireFeaturesAdded(typeName, transaction, bounds, false);
                         break;
                     case CHANGED:
-                        store.listenerManager.fireFeaturesChanged(typeName,transaction, bounds, false);
+                        store.listenerManager.fireFeaturesChanged(typeName, transaction, bounds, false);
                         break;
                     case REMOVED:
-                        store.listenerManager.fireFeaturesRemoved(typeName,transaction, bounds, false);
+                        store.listenerManager.fireFeaturesRemoved(typeName, transaction, bounds, false);
                         break;
                 }
             }

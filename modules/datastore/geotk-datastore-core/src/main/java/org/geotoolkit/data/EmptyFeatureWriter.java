@@ -19,10 +19,8 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.FeatureWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * Represents an Empty, Typed, FeatureWriter.

@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 
-
 /**
  *  FeatureReader<SimpleFeatureType, SimpleFeature> customized for FeatureID handling.
  * 
@@ -42,6 +41,7 @@ import java.io.IOException;
  * @version $Id$
  */
 public interface FIDReader {
+
     /**
      * Release any resources associated with this reader
      */

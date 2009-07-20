@@ -34,6 +34,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  *       generation differently.
  */
 public class DefaultFeatureLockFactory extends FeatureLockFactory {
+
     /** Count used to generate unique ID numbers */
     static long count = 0;
 
@@ -41,7 +42,7 @@ public class DefaultFeatureLockFactory extends FeatureLockFactory {
         long number = nextIdNumber(duration);
 
         return new DefaultFeatureLock(name + "_" + Long.toString(number, 16),
-            duration);
+                duration);
     }
 
     /**

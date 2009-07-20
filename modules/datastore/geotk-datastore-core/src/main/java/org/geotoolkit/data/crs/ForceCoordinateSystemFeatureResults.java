@@ -29,7 +29,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
 /**
  * ForceCoordinateSystemFeatureResults provides a CoordinateReferenceSystem for
  * FeatureTypes.
@@ -65,13 +64,13 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
     private final FeatureCollection<SimpleFeatureType, SimpleFeature> results;
 
     public ForceCoordinateSystemFeatureResults(final FeatureCollection<SimpleFeatureType, SimpleFeature> results,
-            final CoordinateReferenceSystem forcedCS) throws IOException, SchemaException{
+            final CoordinateReferenceSystem forcedCS) throws IOException, SchemaException {
         this(results, forcedCS, false);
     }
 
     public ForceCoordinateSystemFeatureResults(final FeatureCollection<SimpleFeatureType, SimpleFeature> results,
-            final CoordinateReferenceSystem forcedCS, final boolean forceOnlyMissing) throws IOException, SchemaException{
-        super(forceType(origionalType(results), forcedCS, forceOnlyMissing),null);
+            final CoordinateReferenceSystem forcedCS, final boolean forceOnlyMissing) throws IOException, SchemaException {
+        super(forceType(origionalType(results), forcedCS, forceOnlyMissing), null);
         this.results = results;
     }
 
@@ -120,8 +119,7 @@ public class ForceCoordinateSystemFeatureResults extends AbstractFeatureCollecti
         if (forcedCS == null) {
             throw new NullPointerException("CoordinateSystem required");
         }
-        final CoordinateReferenceSystem originalCs = (startingType.getGeometryDescriptor() != null) ?
-            startingType.getGeometryDescriptor().getCoordinateReferenceSystem() : null;
+        final CoordinateReferenceSystem originalCs = (startingType.getGeometryDescriptor() != null) ? startingType.getGeometryDescriptor().getCoordinateReferenceSystem() : null;
 
         if (forcedCS.equals(originalCs)) {
             return startingType;

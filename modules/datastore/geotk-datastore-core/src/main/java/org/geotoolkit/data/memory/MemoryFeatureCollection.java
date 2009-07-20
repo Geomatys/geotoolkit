@@ -21,8 +21,8 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import org.geotoolkit.feature.collection.AbstractFeatureCollection;
-
 import org.geotoolkit.feature.collection.RandomAccessFeatureCollection;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -42,72 +42,85 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @source $URL$
  */
 public class MemoryFeatureCollection extends AbstractFeatureCollection implements RandomAccessFeatureCollection {
+
     TreeMap contents = new TreeMap();
-    
-    public MemoryFeatureCollection( SimpleFeatureType schema ){
-        super(schema,null);
+
+    public MemoryFeatureCollection(SimpleFeatureType schema) {
+        super(schema, null);
     }
+
     public boolean add(SimpleFeature o) {
         SimpleFeature feature = (SimpleFeature) o;
-        contents.put( feature.getID(), feature );
+        contents.put(feature.getID(), feature);
         return true;
-	}
-        
-      public int size() {
-            return contents.size();
-      }
-	  public Iterator openIterator() {
-	        return new MemoryIterator( contents.values().iterator() );
-	  }
+    }
 
-	  public void closeIterator( Iterator close ) {
-	        if( close == null ) return;
-	        
-	        MemoryIterator it = (MemoryIterator) close;
-	        it.close();
-	  }
-        
+    public int size() {
+        return contents.size();
+    }
+
+    public Iterator openIterator() {
+        return new MemoryIterator(contents.values().iterator());
+    }
+
+    public void closeIterator(Iterator close) {
+        if (close == null) {
+            return;
+        }
+
+        MemoryIterator it = (MemoryIterator) close;
+        it.close();
+    }
+
     class MemoryIterator implements Iterator {
+
         Iterator it;
-        MemoryIterator( Iterator iterator ){
+
+        MemoryIterator(Iterator iterator) {
             it = iterator;
         }
-        public void close(){
+
+        public void close() {
             it = null;
         }
+
         public boolean hasNext() {
-            if( it == null ){
-                throw new IllegalStateException();
-            }            
-            return it.hasNext();
-        }
-        public Object next() {
-            if( it == null ){
+            if (it == null) {
                 throw new IllegalStateException();
             }
-            return it.next(); 
+            return it.hasNext();
         }
+
+        public Object next() {
+            if (it == null) {
+                throw new IllegalStateException();
+            }
+            return it.next();
+        }
+
         public void remove() {
             it.remove();
-        }        
+        }
     }
 
     //
     // RandomFeatureAccess 
     //
-    public SimpleFeature getFeatureMember( String id ) throws NoSuchElementException {
-        if( contents.containsKey( id ) ){
-            return (SimpleFeature) contents.get( id );
+    public SimpleFeature getFeatureMember(String id) throws NoSuchElementException {
+        if (contents.containsKey(id)) {
+            return (SimpleFeature) contents.get(id);
         }
-        throw new NoSuchElementException( id );
+        throw new NoSuchElementException(id);
     }
 
-    public SimpleFeature removeFeatureMember( String id ) {
-        if( contents.containsKey( id ) ){
-            SimpleFeature old = (SimpleFeature) contents.get( id );
-            contents.remove( id );
+    public SimpleFeature removeFeatureMember(String id) {
+        if (contents.containsKey(id)) {
+            SimpleFeature old = (SimpleFeature) contents.get(id);
+            contents.remove(id);
             return old;
         }
         return null;
-    };
+    }
+
+    ;
 }

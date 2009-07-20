@@ -23,12 +23,11 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 
 /**
  * ForceCoordinateSystemFeatureReader provides a CoordinateReferenceSystem for
@@ -62,10 +61,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @source $URL$
  * @version $Id$
  */
-public class ForceCoordinateSystemFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+public class ForceCoordinateSystemFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> reader;
     protected SimpleFeatureBuilder builder;
-    
+
     /**
      * Shortcut constructor that can be used if the new schema has already been computed
      * @param reader
@@ -75,7 +75,7 @@ public class ForceCoordinateSystemFeatureReader implements  FeatureReader<Simple
         this.reader = reader;
         this.builder = new SimpleFeatureBuilder(schema);
     }
-    
+
     /**
      * Builds a new ForceCoordinateSystemFeatureReader
      *
@@ -87,7 +87,7 @@ public class ForceCoordinateSystemFeatureReader implements  FeatureReader<Simple
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public ForceCoordinateSystemFeatureReader(FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-        CoordinateReferenceSystem cs) throws SchemaException {
+            CoordinateReferenceSystem cs) throws SchemaException {
         this(reader, cs, false);
     }
 
@@ -102,7 +102,7 @@ public class ForceCoordinateSystemFeatureReader implements  FeatureReader<Simple
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public ForceCoordinateSystemFeatureReader(FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-        CoordinateReferenceSystem cs, boolean forceOnlyMissing) throws SchemaException {
+            CoordinateReferenceSystem cs, boolean forceOnlyMissing) throws SchemaException {
         if (cs == null) {
             throw new NullPointerException("CoordinateSystem required");
         }
@@ -125,9 +125,10 @@ public class ForceCoordinateSystemFeatureReader implements  FeatureReader<Simple
         if (reader == null) {
             throw new IllegalStateException("Reader has already been closed");
         }
-        
-        if( builder == null )
+
+        if (builder == null) {
             return reader.getFeatureType();
+        }
 
         return builder.getFeatureType();
     }
@@ -136,16 +137,17 @@ public class ForceCoordinateSystemFeatureReader implements  FeatureReader<Simple
      * @see org.geotools.data.FeatureReader#next()
      */
     public SimpleFeature next()
-        throws IOException, IllegalAttributeException, NoSuchElementException {
+            throws IOException, IllegalAttributeException, NoSuchElementException {
         if (reader == null) {
             throw new IllegalStateException("Reader has already been closed");
         }
 
         SimpleFeature next = reader.next();
-        if( builder == null )
+        if (builder == null) {
             return next;
-        
-        
+        }
+
+
         return SimpleFeatureBuilder.retype(next, builder);
     }
 

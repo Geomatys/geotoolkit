@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.data.concurrent.LockingManager;
-import org.geotoolkit.data.query.Query;
+
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +27,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.view.DefaultView;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
@@ -348,7 +350,6 @@ public abstract class AbstractDataStore implements DataStore {
             }
         };
     }
-
 
     // Jody - Recomend moving to the following
     // When we are ready for CoordinateSystem support

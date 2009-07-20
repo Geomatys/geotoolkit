@@ -40,7 +40,6 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-
 /**
  * ReprojectFeatureReader provides a reprojection for FeatureTypes.
  * 
@@ -81,9 +80,13 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
     private final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
 
     public ReprojectFeatureReader(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-            final SimpleFeatureType schema, final MathTransform transform){
-        if(schema == null) throw new NullPointerException("Feature type can not be null");
-        if(reader == null) throw new NullPointerException("Feature reader can not be null");
+            final SimpleFeatureType schema, final MathTransform transform) {
+        if (schema == null) {
+            throw new NullPointerException("Feature type can not be null");
+        }
+        if (reader == null) {
+            throw new NullPointerException("Feature reader can not be null");
+        }
 
         this.reader = reader;
         this.schema = schema;
@@ -92,7 +95,7 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
 
     public ReprojectFeatureReader(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
             final CoordinateReferenceSystem cs)
-            throws SchemaException, OperationNotFoundException, NoSuchElementException, FactoryException{
+            throws SchemaException, OperationNotFoundException, NoSuchElementException, FactoryException {
         if (cs == null) {
             throw new NullPointerException("CoordinateSystem required");
         }

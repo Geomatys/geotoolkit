@@ -24,13 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.concurrent.FeatureLock;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.Transaction.State;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * Provides In-Process FeatureLocking support for DataStore implementations.
@@ -79,8 +78,7 @@ public class InProcessLockingManager implements LockingManager {
      */
     @Override
     public synchronized void lockFeatureID(final String typeName, final String featureID,
-            final Transaction transaction, final FeatureLock featureLock) throws FeatureLockException
-    {
+            final Transaction transaction, final FeatureLock featureLock) throws FeatureLockException {
         Lock lock = getLock(typeName, featureID);
 
         // This is a loop so we can wait on Transaction Locks
@@ -179,8 +177,7 @@ public class InProcessLockingManager implements LockingManager {
      *         against Transaction.AUTO_COMMIT
      */
     protected synchronized Lock createLock(final Transaction transaction, final FeatureLock featureLock)
-            throws FeatureLockException
-    {
+            throws FeatureLockException {
         if (featureLock == FeatureLock.TRANSACTION) {
             // we need a Transacstion Lock
             if (transaction == Transaction.AUTO_COMMIT) {
@@ -277,8 +274,7 @@ public class InProcessLockingManager implements LockingManager {
      *         authroization
      */
     public void assertAccess(final String typeName, final String featureID, final Transaction transaction)
-            throws FeatureLockException
-    {
+            throws FeatureLockException {
         Lock lock = getLock(typeName, featureID);
 
         //LOGGER.info("asserting access on lock for " + typeName + ", fid: "
@@ -299,8 +295,7 @@ public class InProcessLockingManager implements LockingManager {
      * @return FeatureWriter with lock checking
      */
     public FeatureWriter<SimpleFeatureType, SimpleFeature> checkedWriter(final FeatureWriter<SimpleFeatureType, SimpleFeature> writer,
-            final Transaction transaction)
-    {
+            final Transaction transaction) {
         final SimpleFeatureType featureType = writer.getFeatureType();
         final String typeName = featureType.getTypeName();
 
@@ -374,8 +369,7 @@ public class InProcessLockingManager implements LockingManager {
      */
     @Override
     public synchronized void unLockFeatureID(final String typeName, final String featureID,
-            final Transaction transaction, final FeatureLock featureLock) throws IOException
-    {
+            final Transaction transaction, final FeatureLock featureLock) throws IOException {
         assertAccess(typeName, featureID, transaction);
         locks(typeName).remove(featureID);
     }
@@ -397,8 +391,7 @@ public class InProcessLockingManager implements LockingManager {
      */
     @Override
     public synchronized boolean refresh(final String authID, final Transaction transaction)
-            throws IOException
-    {
+            throws IOException {
         if (authID == null) {
             throw new IllegalArgumentException("lockID required");
         }
@@ -480,7 +473,7 @@ public class InProcessLockingManager implements LockingManager {
                 if (lock.isExpired()) {
                     unLockedFids.add(fid);
 
-                //fidMap.remove(fid); concurrent modification error.
+                    //fidMap.remove(fid); concurrent modification error.
                 } else if (lock.isMatch(authID)) {
                     //LOGGER.info("matches, is authorized: "
                     //    + lock.isAuthorized(transaction));

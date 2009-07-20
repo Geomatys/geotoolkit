@@ -39,7 +39,6 @@ import org.opengis.referencing.operation.TransformException;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-
 /**
  * ReprojectFeatureReader provides a reprojection for FeatureTypes.
  * 
@@ -93,10 +92,9 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
      */
     public ReprojectFeatureResults(final FeatureCollection<SimpleFeatureType, SimpleFeature> results,
             final CoordinateReferenceSystem destinationCS)
-            throws IOException, SchemaException, TransformException, OperationNotFoundException, NoSuchElementException, FactoryException
-    {
+            throws IOException, SchemaException, TransformException, OperationNotFoundException, NoSuchElementException, FactoryException {
 
-        super(forceType(origionalType(results), destinationCS),null);
+        super(forceType(origionalType(results), destinationCS), null);
         this.results = origionalCollection(results);
 
         final CoordinateReferenceSystem originalCs;
@@ -139,7 +137,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
     }
 
     private static FeatureCollection<SimpleFeatureType, SimpleFeature> origionalCollection(
-        FeatureCollection<SimpleFeatureType, SimpleFeature> results){
+            FeatureCollection<SimpleFeatureType, SimpleFeature> results) {
         if (results instanceof ReprojectFeatureResults) {
             results = ((ReprojectFeatureResults) results).getOrigin();
         }
@@ -160,7 +158,7 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
     }
 
     private static SimpleFeatureType forceType(final SimpleFeatureType startingType,
-            final CoordinateReferenceSystem forcedCS) throws SchemaException{
+            final CoordinateReferenceSystem forcedCS) throws SchemaException {
         if (forcedCS == null) {
             throw new NullPointerException("CoordinateSystem required");
         }

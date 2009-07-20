@@ -19,7 +19,6 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.net.URL;
 
-
 /**
  * DataAccessFactory for working with formats based on a single URL.
  * <p>
@@ -31,6 +30,7 @@ import java.net.URL;
  * @source $URL$
  */
 public interface FileDataStoreFactorySpi extends DataStoreFactorySpi {
+
     /**
      * The list of filename extentions handled by this factory.
      *

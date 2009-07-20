@@ -28,9 +28,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
-import org.geotoolkit.data.DataAccess;
-import org.geotoolkit.data.DataAccessFactory;
-import org.geotoolkit.data.DataStoreFactorySpi;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
@@ -58,10 +56,9 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  */
 public final class DataAccessFinder {
-    /** The logger for the filter module. */
-    protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.data");
 
+    /** The logger for the filter module. */
+    protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
     /**
      * The service registry for this manager. Will be initialized only when
      * first needed.
@@ -107,8 +104,7 @@ public final class DataAccessFinder {
             try {
                 canProcess = fac.canProcess(params);
             } catch (Throwable t) {
-                LOGGER.log(Level.WARNING, "Problem asking " + fac.getDisplayName()
-                        + " if it can process request:" + t, t);
+                LOGGER.log(Level.WARNING, "Problem asking " + fac.getDisplayName() + " if it can process request:" + t, t);
                 // Protect against DataStores that don't carefully code
                 // canProcess
                 continue;
@@ -118,8 +114,7 @@ public final class DataAccessFinder {
                 try {
                     isAvailable = fac.isAvailable();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName()
-                            + " is available:" + t, t);
+                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
                     // Protect against DataStores that don't carefully code
                     // isAvailable
                     continue;
@@ -129,15 +124,12 @@ public final class DataAccessFinder {
                         return fac.createDataStore(params);
                     } catch (IOException couldNotConnect) {
                         canProcessButNotAvailable = couldNotConnect;
-                        LOGGER.log(Level.WARNING, fac.getDisplayName()
-                                + " should be used, but could not connect", couldNotConnect);
+                        LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
                     }
                 } else {
                     canProcessButNotAvailable = new IOException(
-                            fac.getDisplayName()
-                                    + " should be used, but is not availble. Have you installed the required drivers or jar files?");
-                    LOGGER.log(Level.WARNING, fac.getDisplayName()
-                            + " should be used, but is not availble", canProcessButNotAvailable);
+                            fac.getDisplayName() + " should be used, but is not availble. Have you installed the required drivers or jar files?");
+                    LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but is not availble", canProcessButNotAvailable);
                 }
             }
         }
@@ -191,8 +183,7 @@ public final class DataAccessFinder {
         Set<DataAccessFactory> availableDS = getAvailableDataStores(serviceRegistry,
                 DataAccessFactory.class);
 
-        Iterator<DataStoreFactorySpi> availableDataStores = DataStoreFinder
-                .getAvailableDataStores();
+        Iterator<DataStoreFactorySpi> availableDataStores = DataStoreFinder.getAvailableDataStores();
         while (availableDataStores.hasNext()) {
             availableDS.add(availableDataStores.next());
         }
@@ -223,7 +214,7 @@ public final class DataAccessFinder {
     private static FactoryRegistry getServiceRegistry() {
         assert Thread.holdsLock(DataAccessFinder.class);
         if (registry == null) {
-            registry = new DynamicFactoryRegistry(Arrays.asList(new Class<?>[] { DataAccessFactory.class }));
+            registry = new DynamicFactoryRegistry(Arrays.asList(new Class<?>[]{DataAccessFactory.class}));
         }
         return registry;
     }

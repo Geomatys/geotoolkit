@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
+
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 
 /**
  * The query object is used by the {@link FeatureSource#getFeatures()} method of
@@ -44,58 +44,48 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @source $URL$
  */
 public class DefaultQuery implements Query {
+
     /**
      * The properties to fetch
      */
     private String[] properties;
-
     /**
      * The maximum numbers of features to fetch
      */
     private int maxFeatures = Query.DEFAULT_MAX;
-
     private Integer startIndex = null;
-
     /**
      * The filter to constrain the request.
      */
     private Filter filter = Filter.INCLUDE;
-
     /**
      * The typeName to get
      */
     private String typeName;
-
     /**
      * The namespace to get
      */
     private URI namespace = Query.NO_NAMESPACE;
-
     /**
      * The handle associated with this query.
      */
     private String handle;
-
     /**
      * Coordinate System associated with this query
      */
     private CoordinateReferenceSystem coordinateSystem;
-
     /**
      * Reprojection associated associated with this query
      */
     private CoordinateReferenceSystem coordinateSystemReproject;
-
     /**
      * Sorting for the query
      */
     private SortBy[] sortBy;
-
     /**
      * The version according to WFS 1.0 and 1.1 specs
      */
     private String version;
-
     /**
      * The hints to be used during query execution
      */
@@ -150,8 +140,7 @@ public class DefaultQuery implements Query {
      * @param handle the name to associate with the query.
      */
     public DefaultQuery(final String typeName, final Filter filter, final int maxFeatures,
-            final String[] propNames, final String handle)
-    {
+            final String[] propNames, final String handle) {
         this(typeName, null, filter, maxFeatures, propNames, handle);
     }
 
@@ -166,8 +155,7 @@ public class DefaultQuery implements Query {
      * @param handle the name to associate with the query.
      */
     public DefaultQuery(final String typeName, final URI namespace, final Filter filter,
-            final int maxFeatures, final String[] propNames, final String handle)
-    {
+            final int maxFeatures, final String[] propNames, final String handle) {
         this.typeName = typeName;
         this.filter = filter;
         this.namespace = namespace;

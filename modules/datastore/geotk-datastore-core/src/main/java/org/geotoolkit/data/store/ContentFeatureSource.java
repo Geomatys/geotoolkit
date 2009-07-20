@@ -51,7 +51,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
 /**
  * Abstract implementation of FeatureSource.
  * <p>
@@ -78,6 +77,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Justin Deoliveira, The Open Planning Project
  */
 public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatureType, SimpleFeature> {
+
     /**
      * The entry for the feature source.
      */
@@ -98,13 +98,11 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * cached feature type (only set if this instance is a view)
      */
     protected SimpleFeatureType schema;
-    
     /**
      * The query capabilities returned by this feature source
      */
     protected QueryCapabilities queryCapabilities;
-    
-  
+
     /**
      * Creates the new feature source from a query.
      * <p>
@@ -118,25 +116,26 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public ContentFeatureSource(final ContentEntry entry, final Query query) {
         this.entry = entry;
         this.query = query;
-        
+
         //set up hints
         hints = new HashSet<Hints.Key>();
 //        hints.add( Hints.JTS_GEOMETRY_FACTORY );
 //        hints.add( Hints.JTS_COORDINATE_SEQUENCE_FACTORY );
-        
+
         //add subclass specific hints
-        addHints( hints );
-        
+        addHints(hints);
+
         //make hints unmodifiable
-        hints = Collections.unmodifiableSet( hints );
+        hints = Collections.unmodifiableSet(hints);
     }
+
     /**
      * The entry for the feature source.
      */
     public ContentEntry getEntry() {
-    	return entry;
+        return entry;
     }
-    
+
     /**
      * The current transaction the feature source is working against.
      * <p>
@@ -149,7 +148,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public Transaction getTransaction() {
         return transaction;
     }
-    
+
     /**
      * Sets the current transaction the feature source is working against.
      * <p>
@@ -161,6 +160,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public void setTransaction(final Transaction transaction) {
         this.transaction = transaction;
     }
+
     /**
      * The current state for the feature source.
      * <p>
@@ -191,6 +191,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public final boolean isView() {
         return query != null && query != Query.ALL;
     }
+
     /**
      * A default ResourceInfo with a generic description.
      * <p>
@@ -203,6 +204,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
         return new ResourceInfo() {
 
             final Set<String> words = new HashSet<String>();
+
             {
                 words.add("features");
                 words.add(ContentFeatureSource.this.getSchema().getTypeName());
@@ -440,7 +442,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public final ContentFeatureCollection getFeatures() throws IOException {
         final Query query = joinQuery(Query.ALL);
         return new ContentFeatureCollection(this, query);
-    //return getFeatures(Query.ALL);
+        //return getFeatures(Query.ALL);
     }
 
     /**
@@ -575,8 +577,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * @throws IOException
      */
     public void accepts(final Query query, final org.opengis.feature.FeatureVisitor visitor,
-            org.opengis.util.ProgressListener progress) throws IOException
-    {
+            org.opengis.util.ProgressListener progress) throws IOException {
 
         if (progress == null) {
             progress = new NullProgressListener();
@@ -776,8 +777,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     @Override
     public final ContentFeatureCollection getFeatures(final Filter filter)
-            throws IOException
-    {
+            throws IOException {
         return getFeatures(new DefaultQuery(getSchema().getTypeName(), filter));
     }
 
@@ -788,8 +788,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * </p>
      */
     public final FeatureReader<SimpleFeatureType, SimpleFeature> getReader(final Filter filter)
-            throws IOException
-    {
+            throws IOException {
         return getReader(new DefaultQuery(getSchema().getTypeName(), filter));
     }
 
@@ -978,7 +977,6 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * @param order List<SortBy> used to determine sort order
      * @return subset of content
      */
-
     //protected abstract FeatureList sorted(ContentState state, Filter filter, List order);
     /**
      * FeatureCollection<SimpleFeatureType, SimpleFeature> optimized for read-only access.
@@ -996,7 +994,6 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * @param filter
      * @return readonly access
      */
-
     //protected abstract FeatureCollection<SimpleFeatureType, SimpleFeature> readonly(ContentState state, Filter filter);
     @Override
     public QueryCapabilities getQueryCapabilities() {

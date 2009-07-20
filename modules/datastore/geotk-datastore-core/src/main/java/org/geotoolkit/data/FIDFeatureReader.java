@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
-import org.opengis.feature.IllegalAttributeException;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * Experimental  FeatureReader<SimpleFeatureType, SimpleFeature> that always takes the first column of the
@@ -52,7 +52,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @source $URL$
  * @version $Id$
  */
-public class FIDFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
+public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+
     /** The logger for the data module. */
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.data");
     private final AttributeReader attributeReader;
@@ -72,7 +73,7 @@ public class FIDFeatureReader implements  FeatureReader<SimpleFeatureType, Simpl
      *         FeatureType
      */
     public FIDFeatureReader(AttributeReader attributeReader,
-        FIDReader fidReader, SimpleFeatureType schema) throws SchemaException {
+            FIDReader fidReader, SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
 
@@ -86,26 +87,26 @@ public class FIDFeatureReader implements  FeatureReader<SimpleFeatureType, Simpl
     }
 
     public FIDFeatureReader(AttributeReader attributeReader, FIDReader fidReader)
-        throws SchemaException {
+            throws SchemaException {
         this(attributeReader, fidReader, null);
     }
 
     public SimpleFeature next()
-        throws IOException, IllegalAttributeException, NoSuchElementException {
+            throws IOException, IllegalAttributeException, NoSuchElementException {
         if (attributeReader.hasNext()) {
             attributeReader.next();
 
             return readFeature(attributeReader);
         } else {
             throw new NoSuchElementException(
-                "There are no more Features to be read");
+                    "There are no more Features to be read");
         }
     }
 
     protected SimpleFeatureType createSchema() throws SchemaException {
         SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
-        b.setName( "xxx" );
-        
+        b.setName("xxx");
+
         for (int i = 0, ii = attributeReader.getAttributeCount(); i < ii;
                 i++) {
             b.add(attributeReader.getAttributeType(i));
@@ -115,7 +116,7 @@ public class FIDFeatureReader implements  FeatureReader<SimpleFeatureType, Simpl
     }
 
     protected SimpleFeature readFeature(AttributeReader atts)
-        throws IllegalAttributeException, IOException {
+            throws IllegalAttributeException, IOException {
 
         //Seems like doing it here could be a bit expensive.
         //The other option from this is to have this constructed with two

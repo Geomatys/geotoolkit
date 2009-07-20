@@ -33,12 +33,12 @@ import org.geotoolkit.data.concurrent.Transaction.State;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.identity.FeatureId;
-
 
 /**
  * The state of an entry in a datastore, maintained on a per-transaction basis.
@@ -91,53 +91,50 @@ public class ContentState {
      * Transaction the state works from.
      */
     protected Transaction tx;
-
-	/**
+    /**
      * cached feature type
      */
     protected SimpleFeatureType featureType;
-
     /**
      * cached number of features
      */
     protected int count = -1;
-
     /**
      * cached bounds of features
      */
     protected JTSEnvelope2D bounds;
-
     /**
      * entry maintaining the state
      */
     protected final ContentEntry entry;
-
     /**
      * Even used for batch notification; used to collect the bounds and feature ids generated
      * over the course of a transaction.
      */
     protected BatchFeatureEvent batchFeatureEvent;
-
     /**
      * observers
      */
     protected List<FeatureListener> listeners;
-
     /**
      * Callback used to issue batch feature events when commit/rollback issued
      * on the transaction.
      */
     protected State callback = new State() {
+
         @Override
         public void setTransaction(final Transaction transaction) {
         }
+
         @Override
         public void addAuthorization(String AuthID) throws IOException {
         }
+
         @Override
         public void commit() throws IOException {
             fireBatchFeatureEvent(true);
         }
+
         @Override
         public void rollback() throws IOException {
             fireBatchFeatureEvent(false);
@@ -164,14 +161,13 @@ public class ContentState {
      * @param state The existing state.
      */
     protected ContentState(final ContentState state) {
-		this( state.getEntry() );
+        this(state.getEntry());
 
         featureType = state.featureType;
         count = state.count;
-        bounds = state.bounds == null ?
-                null : new JTSEnvelope2D( state.bounds );
+        bounds = state.bounds == null ? null : new JTSEnvelope2D(state.bounds);
         batchFeatureEvent = null;
-   }
+    }
 
     /**
      * The entry which maintains the state.
@@ -193,7 +189,7 @@ public class ContentState {
     public void setTransaction(final Transaction tx) {
         this.tx = tx;
         if (tx != Transaction.AUTO_COMMIT) {
-            tx.putState( this.entry, callback );
+            tx.putState(this.entry, callback);
         }
     }
 
@@ -201,43 +197,43 @@ public class ContentState {
      * The cached feature type.
      */
     public final SimpleFeatureType getFeatureType() {
-    	return featureType;
+        return featureType;
     }
 
     /**
      * Sets the cached feature type.
      */
-    public final void setFeatureType(final SimpleFeatureType featureType ){
-    	this.featureType = featureType;
+    public final void setFeatureType(final SimpleFeatureType featureType) {
+        this.featureType = featureType;
     }
 
     /**
      * The cached number of features.
      *
      */
-    public final int getCount(){
-    	return count;
+    public final int getCount() {
+        return count;
     }
 
     /**
      * Sets the cached number of features.
      */
-    public final void setCount(final int count){
-    	this.count = count;
+    public final void setCount(final int count) {
+        this.count = count;
     }
 
     /**
      * The cached spatial extent.
      */
-    public final JTSEnvelope2D getBounds(){
-    	return bounds;
+    public final JTSEnvelope2D getBounds() {
+        return bounds;
     }
 
     /**
      * Sets the cached spatial extent.
      */
-    public final void setBounds(final JTSEnvelope2D bounds){
-    	this.bounds = bounds;
+    public final void setBounds(final JTSEnvelope2D bounds) {
+        this.bounds = bounds;
     }
 
     /**
@@ -261,11 +257,12 @@ public class ContentState {
     public BatchFeatureEvent getBatchFeatureEvent() {
         return batchFeatureEvent;
     }
+
     /**
      * Used to quickly test if any listeners are available.
      * @return
      */
-    public final boolean hasListener(){
+    public final boolean hasListener() {
         if (!listeners.isEmpty()) {
             return true;
         }
@@ -275,23 +272,23 @@ public class ContentState {
         }
         return false;
     }
-    public void fireFeatureUpdated(final FeatureSource<?,?> source, final Feature feature,
-            final JTSEnvelope2D before)
-    {
+
+    public void fireFeatureUpdated(final FeatureSource<?, ?> source, final Feature feature,
+            final JTSEnvelope2D before) {
         if (listeners.isEmpty() && tx != Transaction.AUTO_COMMIT) {
             return;
         }
 
-        final FilterFactory2 ff = 
+        final FilterFactory2 ff =
                 (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         final Set<FeatureId> fids = new HashSet<FeatureId>();
-        fids.add( feature.getIdentifier() );
-        final Filter filter = ff.id( fids );
-        final JTSEnvelope2D bounds = new JTSEnvelope2D( feature.getBounds() );
-        bounds.expandToInclude( before );
+        fids.add(feature.getIdentifier());
+        final Filter filter = ff.id(fids);
+        final JTSEnvelope2D bounds = new JTSEnvelope2D(feature.getBounds());
+        bounds.expandToInclude(before);
 
-        final FeatureEvent event = new FeatureEvent(source, Type.CHANGED, bounds, filter );
-        fireFeatureEvent( event );
+        final FeatureEvent event = new FeatureEvent(source, Type.CHANGED, bounds, filter);
+        fireFeatureEvent(event);
     }
 
     /**
@@ -299,7 +296,7 @@ public class ContentState {
      * @param source
      * @param feature
      */
-    public final void fireFeatureAdded(final FeatureSource<?,?> source, final Feature feature) {
+    public final void fireFeatureAdded(final FeatureSource<?, ?> source, final Feature feature) {
         if (listeners.isEmpty() && tx != Transaction.AUTO_COMMIT) {
             return;
         }
@@ -307,16 +304,16 @@ public class ContentState {
         final FilterFactory2 ff =
                 (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         final Set<FeatureId> fids = new HashSet<FeatureId>();
-        fids.add( feature.getIdentifier() );
-        final Filter filter = ff.id( fids );
-        final JTSEnvelope2D bounds = new JTSEnvelope2D( feature.getBounds() );
+        fids.add(feature.getIdentifier());
+        final Filter filter = ff.id(fids);
+        final JTSEnvelope2D bounds = new JTSEnvelope2D(feature.getBounds());
 
-        final FeatureEvent event = new FeatureEvent(source, Type.ADDED, bounds, filter );
+        final FeatureEvent event = new FeatureEvent(source, Type.ADDED, bounds, filter);
 
-        fireFeatureEvent( event );
+        fireFeatureEvent(event);
     }
 
-    public void fireFeatureRemoved(final FeatureSource<?,?> source, final Feature feature) {
+    public void fireFeatureRemoved(final FeatureSource<?, ?> source, final Feature feature) {
         if (listeners.isEmpty() && tx != Transaction.AUTO_COMMIT) {
             return;
         }
@@ -324,13 +321,13 @@ public class ContentState {
         final FilterFactory2 ff =
                 (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
         final Set<FeatureId> fids = new HashSet<FeatureId>();
-        fids.add( feature.getIdentifier() );
-        final Filter filter = ff.id( fids );
-        final JTSEnvelope2D bounds = new JTSEnvelope2D( feature.getBounds() );
+        fids.add(feature.getIdentifier());
+        final Filter filter = ff.id(fids);
+        final JTSEnvelope2D bounds = new JTSEnvelope2D(feature.getBounds());
 
-        final FeatureEvent event = new FeatureEvent(source, Type.REMOVED, bounds, filter );
+        final FeatureEvent event = new FeatureEvent(source, Type.REMOVED, bounds, filter);
 
-        fireFeatureEvent( event );
+        fireFeatureEvent(event);
     }
 
     /**
@@ -349,7 +346,7 @@ public class ContentState {
         } else {
             // we are not in auto-commit mode so we need to batch
             // up the changes for when the commit goes out
-            if (batchFeatureEvent == null){
+            if (batchFeatureEvent == null) {
                 batchFeatureEvent = new BatchFeatureEvent(event.getFeatureSource());
             }
             batchFeatureEvent.add(event);
@@ -360,38 +357,39 @@ public class ContentState {
         for (FeatureListener listener : listeners) {
             try {
                 listener.changed(event);
-            } catch (Throwable t){
-                this.entry.dataStore.Logger.log( Level.WARNING, "Problem issuing batch feature event "+event, t);
+            } catch (Throwable t) {
+                this.entry.dataStore.Logger.log(Level.WARNING, "Problem issuing batch feature event " + event, t);
             }
         }
     }
+
     /**
      * Notifies all waiting listeners that a commit has been issued;
      * this notification is also sent to our
      */
-    public final void fireBatchFeatureEvent(final boolean isCommit){
-       if (batchFeatureEvent == null) {
-           return;
-       }
-       if (listeners.isEmpty()) {
-           return;
-       }
-       if (isCommit) {
-           batchFeatureEvent.setType(Type.COMMIT);
-       } else {
-           batchFeatureEvent.setType(Type.ROLLBACK);
-       }
-       for (FeatureListener listener : listeners) {
-           try {
-               listener.changed(batchFeatureEvent);
-           } catch (Throwable t){
-               this.entry.dataStore.Logger.log(Level.WARNING, "Problem issuing batch feature event "+batchFeatureEvent, t);
-           }
-       }
-       // Let others know a modifications was made
-       this.entry.notifiyFeatureEvent(this, batchFeatureEvent );
+    public final void fireBatchFeatureEvent(final boolean isCommit) {
+        if (batchFeatureEvent == null) {
+            return;
+        }
+        if (listeners.isEmpty()) {
+            return;
+        }
+        if (isCommit) {
+            batchFeatureEvent.setType(Type.COMMIT);
+        } else {
+            batchFeatureEvent.setType(Type.ROLLBACK);
+        }
+        for (FeatureListener listener : listeners) {
+            try {
+                listener.changed(batchFeatureEvent);
+            } catch (Throwable t) {
+                this.entry.dataStore.Logger.log(Level.WARNING, "Problem issuing batch feature event " + batchFeatureEvent, t);
+            }
+        }
+        // Let others know a modifications was made
+        this.entry.notifiyFeatureEvent(this, batchFeatureEvent);
 
-       batchFeatureEvent = null;
+        batchFeatureEvent = null;
     }
 
     /**
@@ -417,7 +415,7 @@ public class ContentState {
      */
     public void close() {
         featureType = null;
-        if( listeners != null ){
+        if (listeners != null) {
             listeners.clear();
             listeners = null;
         }
@@ -433,7 +431,6 @@ public class ContentState {
      * @return A copy of the state.
      */
     public ContentState copy() {
-        return new ContentState( this );
+        return new ContentState(this);
     }
-
 }

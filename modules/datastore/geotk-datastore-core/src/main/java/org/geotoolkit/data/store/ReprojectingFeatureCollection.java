@@ -18,17 +18,21 @@ package org.geotoolkit.data.store;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.DelegateFeatureReader;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.collection.DecoratingFeatureCollection;
 import org.geotoolkit.feature.collection.DelegateFeatureIterator;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -39,43 +43,36 @@ import org.opengis.referencing.operation.MathTransform;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 /**
  * FeatureCollection<SimpleFeatureType, SimpleFeature> decorator that reprojects the default geometry.
  * 
  * @author Justin
  */
-public class ReprojectingFeatureCollection extends DecoratingFeatureCollection <SimpleFeatureType, SimpleFeature> {
+public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
 
     /**
      * The transform to the target coordinate reference system
      */
     MathTransform transform;
-
     /**
      * The schema of reprojected features
      */
     SimpleFeatureType schema;
-
     /**
      * The target coordinate reference system
      */
     CoordinateReferenceSystem target;
-    
     /**
      * Transformer used to transform geometries;
      */
     GeometryCoordinateSequenceTransformer transformer;
-    
+
     public ReprojectingFeatureCollection(FeatureCollection<SimpleFeatureType, SimpleFeature> delegate,
             CoordinateReferenceSystem target) {
-        this( delegate, delegate.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem(), target );
+        this(delegate, delegate.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem(), target);
     }
-    
+
     public ReprojectingFeatureCollection(
             FeatureCollection<SimpleFeatureType, SimpleFeature> delegate,
             CoordinateReferenceSystem source, CoordinateReferenceSystem target) {
@@ -83,21 +80,21 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection <
         this.target = target;
         SimpleFeatureType schema = delegate.getSchema();
         this.schema = reType(schema, target);
-       
+
         if (source == null) {
             throw new NullPointerException("source crs");
         }
-        if ( target == null ) {
-        	throw new NullPointerException("destination crs");
+        if (target == null) {
+            throw new NullPointerException("destination crs");
         }
-        
+
         this.transform = transform(source, target);
         transformer = new GeometryCoordinateSequenceTransformer();
     }
 
     public void setTransformer(GeometryCoordinateSequenceTransformer transformer) {
-		this.transformer = transformer;
-	}  
+        this.transformer = transformer;
+    }
 
     private MathTransform transform(CoordinateReferenceSystem source,
             CoordinateReferenceSystem target) {
@@ -119,7 +116,7 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection <
         }
     }
 
-    public  FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
+    public FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
         return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
     }
 
@@ -150,8 +147,7 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection <
 
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(Filter filter) {
         Filter unFilter = unFilter(filter);
-        return new ReprojectingFeatureCollection(delegate
-                .subCollection(unFilter), target);
+        return new ReprojectingFeatureCollection(delegate.subCollection(unFilter), target);
         // TODO: return new delegate.subCollection( filter ).reproject( target
         // );
     }
@@ -219,8 +215,8 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection <
 
             while (r.hasNext()) {
                 feature = r.next();
-                final Geometry geom = ((Geometry)feature.getDefaultGeometry());
-                if(geom != null) {
+                final Geometry geom = ((Geometry) feature.getDefaultGeometry());
+                if (geom != null) {
                     internal = geom.getEnvelopeInternal();
                     newBBox.expandToInclude(internal);
                 }
@@ -233,5 +229,4 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection <
             r.close();
         }
     }
-
 }

@@ -19,11 +19,9 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.FeatureWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
-
 
 /**
  * Filtering is performed on this hasNext() method.

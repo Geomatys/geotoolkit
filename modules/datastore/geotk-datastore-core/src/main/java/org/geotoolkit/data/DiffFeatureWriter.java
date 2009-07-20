@@ -28,7 +28,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
 /**
  * A FeatureWriter that captures modifications against a FeatureReader.
  * 
@@ -72,8 +71,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
      * @param filter
      */
     public DiffFeatureWriter(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-            final Diff diff, final Filter filter)
-    {
+            final Diff diff, final Filter filter) {
         this.reader = new DiffFeatureReader<SimpleFeatureType, SimpleFeature>(reader, diff, filter);
         this.diff = diff;
     }

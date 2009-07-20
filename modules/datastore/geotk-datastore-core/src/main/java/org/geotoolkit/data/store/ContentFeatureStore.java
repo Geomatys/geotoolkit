@@ -35,6 +35,7 @@ import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.collection.FeatureCollection;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -85,7 +86,6 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      */
     protected final int WRITER_ADD = ContentDataStore.WRITER_ADD;
     protected final int WRITER_UPDATE = ContentDataStore.WRITER_UPDATE;
-
     /**
      * current feature lock
      */
@@ -98,7 +98,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * @param query The defining query.
      */
     public ContentFeatureStore(final ContentEntry entry, final Query query) {
-        super(entry,query);
+        super(entry, query);
     }
 
     /**
@@ -107,8 +107,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * @param filter The filter
      */
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getWriter(final Filter filter)
-            throws IOException
-    {
+            throws IOException {
         return getWriter(filter, WRITER_ADD | WRITER_UPDATE);
     }
 
@@ -119,8 +118,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * @param flags flags specifying writing mode
      */
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getWriter(final Filter filter,
-            final int flags) throws IOException
-    {
+            final int flags) throws IOException {
         return getWriter(new DefaultQuery(getSchema().getTypeName(), filter), flags);
     }
 
@@ -130,8 +128,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * @param query The query
      */
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getWriter(final Query query)
-            throws IOException
-    {
+            throws IOException {
         return getWriter(query, WRITER_ADD | WRITER_UPDATE);
     }
 
@@ -142,18 +139,17 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * @param flags flags specifying writing mode
      */
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getWriter(Query query,
-            final int flags) throws IOException
-    {
-        query = joinQuery( query );
+            final int flags) throws IOException {
+        query = joinQuery(query);
         query = resolvePropertyNames(query);
 
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriterInternal( query, flags );
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriterInternal(query, flags);
 
         //TODO: apply wrappers
 
         //TODO: turn locking on / off
         final LockingManager lockingManager = getDataStore().getLockingManager();
-        return ((InProcessLockingManager)lockingManager).checkedWriter(writer, transaction);
+        return ((InProcessLockingManager) lockingManager).checkedWriter(writer, transaction);
 
     }
 
@@ -193,9 +189,9 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
     public final List<FeatureId> addFeatures(final Collection collection) throws IOException {
 
         //gather up id's
-    	final List<FeatureId> ids = new LinkedList<FeatureId>();
+        final List<FeatureId> ids = new LinkedList<FeatureId>();
 
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter( Filter.INCLUDE, WRITER_ADD );
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter(Filter.INCLUDE, WRITER_ADD);
         try {
             for (Iterator f = collection.iterator(); f.hasNext();) {
                 final SimpleFeature feature = (SimpleFeature) f.next();
@@ -205,16 +201,16 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
                 // because the raw schema we are inserting into may not match the
                 // schema of the features we are inserting
                 final SimpleFeature toWrite = writer.next();
-                for ( int i = 0; i < toWrite.getAttributeCount(); i++ ) {
+                for (int i = 0; i < toWrite.getAttributeCount(); i++) {
                     final String name = toWrite.getType().getDescriptor(i).getLocalName();
-                    toWrite.setAttribute( name, feature.getAttribute(name));
+                    toWrite.setAttribute(name, feature.getAttribute(name));
                 }
 
                 //perform the write
                 writer.write();
 
                 //add the id to the set of inserted
-                ids.add( toWrite.getIdentifier() );
+                ids.add(toWrite.getIdentifier());
             }
         } finally {
             writer.close();
@@ -231,12 +227,11 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      */
     @Override
     public final List<FeatureId> addFeatures(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection)
-            throws IOException
-    {
+            throws IOException {
         //gather up id's
         final List<FeatureId> ids = new LinkedList<FeatureId>();
 
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter( Filter.INCLUDE, WRITER_ADD );
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter(Filter.INCLUDE, WRITER_ADD);
         final Iterator f = collection.iterator();
         try {
             while (f.hasNext()) {
@@ -247,20 +242,20 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
                 // because the raw schema we are inserting into may not match the
                 // schema of the features we are inserting
                 final SimpleFeature toWrite = writer.next();
-                for ( int i = 0; i < toWrite.getAttributeCount(); i++ ) {
+                for (int i = 0; i < toWrite.getAttributeCount(); i++) {
                     String name = toWrite.getType().getDescriptor(i).getLocalName();
-                    toWrite.setAttribute( name, feature.getAttribute(name));
+                    toWrite.setAttribute(name, feature.getAttribute(name));
                 }
 
                 //perform the write
                 writer.write();
 
                 //add the id to the set of inserted
-                ids.add( toWrite.getIdentifier() );
+                ids.add(toWrite.getIdentifier());
             }
         } finally {
             writer.close();
-            collection.close( f );
+            collection.close(f);
         }
         return ids;
     }
@@ -274,14 +269,14 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * </p>
      */
     @Override
-    public final void setFeatures(final FeatureReader <SimpleFeatureType, SimpleFeature> reader) throws IOException {
+    public final void setFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
         //remove features
-        removeFeatures( Filter.INCLUDE );
+        removeFeatures(Filter.INCLUDE);
 
         //grab a feature writer for insert
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter( Filter.INCLUDE, WRITER_ADD );
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter(Filter.INCLUDE, WRITER_ADD);
         try {
-            while( reader.hasNext() ) {
+            while (reader.hasNext()) {
                 final SimpleFeature feature = reader.next();
 
                 // grab next feature and populate it
@@ -289,9 +284,9 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
                 // because the raw schema we are inserting into may not match the
                 // schema of the features we are inserting
                 final SimpleFeature toWrite = writer.next();
-                for ( int i = 0; i < toWrite.getAttributeCount(); i++ ) {
+                for (int i = 0; i < toWrite.getAttributeCount(); i++) {
                     final String name = toWrite.getType().getDescriptor(i).getLocalName();
-                    toWrite.setAttribute( name, feature.getAttribute(name));
+                    toWrite.setAttribute(name, feature.getAttribute(name));
                 }
 
                 //perform the write
@@ -315,8 +310,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      */
     @Override
     public void modifyFeatures(final AttributeDescriptor[] type, final Object[] value,
-            Filter filter) throws IOException
-    {
+            Filter filter) throws IOException {
         if (filter == null) {
             final String msg = "Must specify a filter, must not be null.";
             throw new IllegalArgumentException(msg);
@@ -324,9 +318,9 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
         filter = resolvePropertyNames(filter);
 
         //grab a feature writer
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter( filter, WRITER_UPDATE );
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter(filter, WRITER_UPDATE);
         try {
-            while(writer.hasNext()) {
+            while (writer.hasNext()) {
                 final SimpleFeature toWrite = writer.next();
 
                 for (int i = 0; i < type.length; i++) {
@@ -346,8 +340,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      */
     @Override
     public final void modifyFeatures(final AttributeDescriptor type, final Object value,
-            final Filter filter) throws IOException
-    {
+            final Filter filter) throws IOException {
 
         modifyFeatures(new AttributeDescriptor[]{type}, new Object[]{value}, filter);
     }
@@ -375,7 +368,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
         final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter(filter, WRITER_UPDATE);
         try {
             //remove everything
-            while(writer.hasNext()) {
+            while (writer.hasNext()) {
                 writer.next();
                 writer.remove();
                 writer.write();
@@ -428,18 +421,17 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader = getReader(filter);
         try {
             int locked = 0;
-            while(reader.hasNext()) {
+            while (reader.hasNext()) {
                 SimpleFeature feature = reader.next();
                 try {
-                    getDataStore().getLockingManager()
-                        .lockFeatureID(typeName, feature.getID(), transaction, lock);
+                    getDataStore().getLockingManager().lockFeatureID(typeName, feature.getID(), transaction, lock);
 
-                    logger.fine( "Locked feature: " + feature.getID() );
+                    logger.fine("Locked feature: " + feature.getID());
                     locked++;
-                } catch(FeatureLockException e) {
+                } catch (FeatureLockException e) {
                     //ignore
                     final String msg = "Unable to lock feature:" + feature.getID() + "." +
-                        " Change logging to FINEST for stack trace";
+                            " Change logging to FINEST for stack trace";
                     logger.fine(msg);
                     logger.log(Level.FINEST, "Unable to lock feature: " + feature.getID(), e);
                 }
@@ -485,10 +477,9 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
 
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader = getReader(filter);
         try {
-            while(reader.hasNext()) {
+            while (reader.hasNext()) {
                 final SimpleFeature feature = reader.next();
-                getDataStore().getLockingManager()
-                    .unLockFeatureID(typeName, feature.getID(), transaction, lock);
+                getDataStore().getLockingManager().unLockFeatureID(typeName, feature.getID(), transaction, lock);
             }
         } finally {
             reader.close();

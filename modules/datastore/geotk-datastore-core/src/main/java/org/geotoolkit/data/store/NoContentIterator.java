@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 
 import org.opengis.feature.simple.SimpleFeature;
 
-
 /**
  * This iterator is used to indicate that contents could not be aquired.
  * <p>

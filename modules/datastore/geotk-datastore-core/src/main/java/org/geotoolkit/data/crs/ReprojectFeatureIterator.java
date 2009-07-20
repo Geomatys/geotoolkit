@@ -32,7 +32,6 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-
 /**
  * ReprojectFeatureReader provides a reprojection for FeatureTypes.
  * 
@@ -73,9 +72,13 @@ public class ReprojectFeatureIterator implements Iterator {
     private final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
 
     public ReprojectFeatureIterator(final FeatureIterator<SimpleFeature> reader, final SimpleFeatureType schema,
-            final MathTransform transform){
-        if(schema == null) throw new NullPointerException("Feature type can not be null");
-        if(reader == null) throw new NullPointerException("Feature iterator can not be null");
+            final MathTransform transform) {
+        if (schema == null) {
+            throw new NullPointerException("Feature type can not be null");
+        }
+        if (reader == null) {
+            throw new NullPointerException("Feature iterator can not be null");
+        }
 
         this.reader = reader;
         this.schema = schema;

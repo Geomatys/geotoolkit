@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.concurrent.Transaction;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,13 +24,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * This class is used by DataStore implementations to provide FeatureListener
@@ -77,7 +76,6 @@ public class FeatureListenerManager {
             }
         }
     }
-
     /**
      * EvenListenerLists by FeatureSource, using a WeakHashMap to allow
      * listener lists to be cleaned up after their FeatureSource is no longer referenced.
@@ -92,8 +90,7 @@ public class FeatureListenerManager {
      * @param featureListener
      */
     public void addFeatureListener(final FeatureSource<? extends FeatureType, ? extends Feature> featureSource,
-            final FeatureListener featureListener)
-    {
+            final FeatureListener featureListener) {
         eventListenerList(featureSource).add(FeatureListener.class,
                 featureListener);
     }
@@ -117,8 +114,7 @@ public class FeatureListenerManager {
      * @param featureListener
      */
     public void removeFeatureListener(final FeatureSource<? extends FeatureType, ? extends Feature> featureSource,
-            final FeatureListener featureListener)
-    {
+            final FeatureListener featureListener) {
         final EventListenerList list = eventListenerList(featureSource);
         list.remove(FeatureListener.class, featureListener);
         // don't keep references to feature sources if we have no
@@ -168,8 +164,7 @@ public class FeatureListenerManager {
      *
      */
     Map<FeatureSource<SimpleFeatureType, SimpleFeature>, FeatureListener[]> getListeners(final String typeName,
-            final Transaction transaction)
-    {
+            final Transaction transaction) {
         final Map<FeatureSource<SimpleFeatureType, SimpleFeature>, FeatureListener[]> map =
                 new HashMap<FeatureSource<SimpleFeatureType, SimpleFeature>, FeatureListener[]>();
         //Map.Entry<FeatureSource<SimpleFeatureType, SimpleFeature>,FeatureListener[]> entry;
@@ -251,8 +246,7 @@ public class FeatureListenerManager {
      * @param commit true if
      */
     public void fireFeaturesAdded(final String typeName, final Transaction transaction,
-            final JTSEnvelope2D bounds, final boolean commit)
-    {
+            final JTSEnvelope2D bounds, final boolean commit) {
         if (commit) {
             fireCommit(typeName, transaction, FeatureEvent.Type.ADDED, bounds);
         } else {
@@ -270,8 +264,7 @@ public class FeatureListenerManager {
      */
     public void fireEvent(final String typeName, final Transaction transaction, final FeatureEvent event) {
         final Map<FeatureSource<SimpleFeatureType, SimpleFeature>, FeatureListener[]> map =
-                getListeners(typeName, (event.getType() == FeatureEvent.Type.COMMIT || event.getType() == FeatureEvent.Type.ROLLBACK) ?
-                                       Transaction.AUTO_COMMIT : transaction);
+                getListeners(typeName, (event.getType() == FeatureEvent.Type.COMMIT || event.getType() == FeatureEvent.Type.ROLLBACK) ? Transaction.AUTO_COMMIT : transaction);
 
         // This is a commit event; it needs to go out to everyone
         // Listeners on the Transaction need to be told about any feature ids that were changed
@@ -326,8 +319,7 @@ public class FeatureListenerManager {
      *        unknown)
      */
     public void fireFeaturesChanged(final String typeName, final Transaction transaction,
-            final JTSEnvelope2D bounds, final boolean commit)
-    {
+            final JTSEnvelope2D bounds, final boolean commit) {
         if (commit) {
             fireCommit(typeName, transaction, FeatureEvent.Type.CHANGED, bounds);
         } else {
@@ -378,8 +370,7 @@ public class FeatureListenerManager {
      * @param transaction
      */
     private void fireCommit(final String typeName, final Transaction transaction, final FeatureEvent.Type type,
-            final JTSEnvelope2D bounds)
-    {
+            final JTSEnvelope2D bounds) {
         FeatureSource<? extends FeatureType, ? extends Feature> featureSource;
         FeatureListener[] listeners;
         FeatureEvent event;
@@ -410,8 +401,7 @@ public class FeatureListenerManager {
      * @param bounds
      */
     private void fireEvent(final String typeName, final Transaction transaction, final FeatureEvent.Type type,
-            final JTSEnvelope2D bounds)
-    {
+            final JTSEnvelope2D bounds) {
         FeatureSource<? extends FeatureType, ? extends Feature> featureSource;
         FeatureListener[] listeners;
         FeatureEvent event;
@@ -458,10 +448,9 @@ public class FeatureListenerManager {
      *        unknown)
      */
     public void fireFeaturesRemoved(final String typeName, final Transaction transaction,
-            final JTSEnvelope2D bounds, final boolean commit)
-    {
+            final JTSEnvelope2D bounds, final boolean commit) {
         if (commit) {
-            fireCommit(typeName, transaction,FeatureEvent.Type.REMOVED, bounds);
+            fireCommit(typeName, transaction, FeatureEvent.Type.REMOVED, bounds);
         } else {
             fireEvent(typeName, transaction, FeatureEvent.Type.REMOVED, bounds);
         }

@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.FeatureWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * Interface for wrapping feature writers which delegate to another feature writer.
@@ -28,10 +26,10 @@ import org.opengis.feature.type.FeatureType;
  * @since 2.5
  *
  */
-public interface DelegatingFeatureWriter<T extends FeatureType,F extends Feature> extends FeatureWriter<T, F> {
+public interface DelegatingFeatureWriter<T extends FeatureType, F extends Feature> extends FeatureWriter<T, F> {
 
     /**
      * @return The delegate writer.
      */
-    FeatureWriter<T,F> getDelegate();
+    FeatureWriter<T, F> getDelegate();
 }

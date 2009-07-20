@@ -22,12 +22,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.collection.FeatureCollection;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  *  FeatureReader<SimpleFeatureType, SimpleFeature> that reads features from a java.util.collection of features,
@@ -36,7 +35,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author jones
  * @source $URL$
  */
-public class CollectionFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
+public class CollectionFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+
     private FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
     private final Iterator features;
     private final SimpleFeatureType type;
@@ -66,7 +66,7 @@ public class CollectionFeatureReader implements  FeatureReader<SimpleFeatureType
      * @param typeArg the Feature type of of the features.
      */
     public CollectionFeatureReader(FeatureCollection<SimpleFeatureType, SimpleFeature> featuresArg,
-        SimpleFeatureType typeArg) {
+            SimpleFeatureType typeArg) {
         assert !featuresArg.isEmpty();
         collection = featuresArg;
         this.features = featuresArg.iterator();
@@ -97,7 +97,7 @@ public class CollectionFeatureReader implements  FeatureReader<SimpleFeatureType
      */
     @Override
     public SimpleFeature next()
-        throws IOException, IllegalAttributeException, NoSuchElementException {
+            throws IOException, IllegalAttributeException, NoSuchElementException {
         if (closed) {
             throw new NoSuchElementException("Reader has been closed");
         }

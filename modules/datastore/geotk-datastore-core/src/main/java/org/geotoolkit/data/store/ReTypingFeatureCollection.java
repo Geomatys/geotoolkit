@@ -25,6 +25,7 @@ import org.geotoolkit.feature.collection.DecoratingFeatureCollection;
 import org.geotoolkit.feature.collection.DelegateFeatureIterator;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -33,39 +34,38 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * its schema based on attributes specified in a query.
  * 
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
 public class ReTypingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
 
-	SimpleFeatureType featureType;
-    
-	public ReTypingFeatureCollection ( FeatureCollection<SimpleFeatureType, SimpleFeature> delegate, SimpleFeatureType featureType ) {
-		super(delegate);
-		this.featureType = featureType;
-	}
-	
-	public SimpleFeatureType getSchema() {
-	    return featureType;
-	}
-	
-	public  FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
-		return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>( getSchema(), features() );
-	}
-	
-	public FeatureIterator<SimpleFeature> features() {
-		return new DelegateFeatureIterator<SimpleFeature>( this, iterator() );
-	}
+    SimpleFeatureType featureType;
 
-	public void close(FeatureIterator<SimpleFeature> close) {
-		close.close();
-	}
+    public ReTypingFeatureCollection(FeatureCollection<SimpleFeatureType, SimpleFeature> delegate, SimpleFeatureType featureType) {
+        super(delegate);
+        this.featureType = featureType;
+    }
 
-	public Iterator<SimpleFeature> iterator() {
-		return new ReTypingIterator( delegate.iterator(), delegate.getSchema(), featureType );
-	}
-	
-	public void close(Iterator close) {
-		ReTypingIterator reType = (ReTypingIterator) close;
-		delegate.close( reType.getDelegate() );
-	}
+    public SimpleFeatureType getSchema() {
+        return featureType;
+    }
+
+    public FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
+        return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
+    }
+
+    public FeatureIterator<SimpleFeature> features() {
+        return new DelegateFeatureIterator<SimpleFeature>(this, iterator());
+    }
+
+    public void close(FeatureIterator<SimpleFeature> close) {
+        close.close();
+    }
+
+    public Iterator<SimpleFeature> iterator() {
+        return new ReTypingIterator(delegate.iterator(), delegate.getSchema(), featureType);
+    }
+
+    public void close(Iterator close) {
+        ReTypingIterator reType = (ReTypingIterator) close;
+        delegate.close(reType.getDelegate());
+    }
 }

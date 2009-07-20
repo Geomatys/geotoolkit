@@ -38,6 +38,7 @@ import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
@@ -48,8 +49,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.util.logging.Logging;
-
 
 /**
  * Abstract base class for data stores.

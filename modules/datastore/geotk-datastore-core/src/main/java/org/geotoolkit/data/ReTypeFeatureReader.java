@@ -18,15 +18,15 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
+
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.FeatureUtilities;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-
 
 /**
  * Supports on the fly retyping of  FeatureReader<SimpleFeatureType, SimpleFeature> contents.
@@ -58,26 +58,23 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @source $URL$
  */
 public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {
+
     /**
      * The original reader we are grabbing content from
      */
     private FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-
     /**
      * This is the target feature type we are preparing data for
      */
     private SimpleFeatureType featureType;
-
     /**
      * The descriptors we are going to from the original reader
      */
     private AttributeDescriptor[] types;
-
     /**
      * Creates retyped features
      */
     private final SimpleFeatureBuilder builder;
-
     private final boolean clone;
 
     /**
@@ -87,8 +84,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
      * @param featureType Target FeatureType
      */
     public ReTypeFeatureReader(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-            final SimpleFeatureType featureType)
-    {
+            final SimpleFeatureType featureType) {
         this(reader, featureType, true);
     }
 
@@ -101,8 +97,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
      * @since 2.3
      */
     public ReTypeFeatureReader(final FeatureReader<SimpleFeatureType, SimpleFeature> reader,
-            final SimpleFeatureType featureType, final boolean clone)
-    {
+            final SimpleFeatureType featureType, final boolean clone) {
         this.reader = reader;
         this.featureType = featureType;
         this.clone = clone;
@@ -131,8 +126,7 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
      * @throws IllegalArgumentException if unable to provide a mapping
      */
     protected AttributeDescriptor[] typeAttributes(final SimpleFeatureType target,
-            final SimpleFeatureType origional)
-    {
+            final SimpleFeatureType origional) {
         if (target.equals(origional)) {
             throw new IllegalArgumentException(
                     "FeatureReader allready produces contents with the correct schema");

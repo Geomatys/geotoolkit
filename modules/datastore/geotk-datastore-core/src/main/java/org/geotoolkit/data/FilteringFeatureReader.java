@@ -19,13 +19,10 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
-
 
 /**
  * Basic support for a  FeatureReader<SimpleFeatureType, SimpleFeature> that does filtering.

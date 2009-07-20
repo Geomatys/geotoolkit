@@ -40,7 +40,6 @@ import org.opengis.filter.sort.SortBy;
  * FeatureCollection<SimpleFeatureType, SimpleFeature> wrapper which limits the number of features returned.
  * 
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
 public class MaxFeaturesFeatureCollection<T extends FeatureType, F extends Feature> extends DecoratingFeatureCollection<T, F> {
 

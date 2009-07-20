@@ -24,12 +24,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotoolkit.data.crs.ReprojectFeatureResults;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.store.EmptyFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
@@ -37,13 +41,6 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.ResourceInfo;
-import org.geotoolkit.data.concurrent.Transaction;
 
 /**
  * This is a starting point for providing your own FeatureSource<SimpleFeatureType, SimpleFeature> implementation.
@@ -80,8 +77,8 @@ import org.geotoolkit.data.concurrent.Transaction;
  * @source $URL$
  */
 public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatureType, SimpleFeature> {
-    protected Set hints = Collections.EMPTY_SET;
 
+    protected Set hints = Collections.EMPTY_SET;
     protected QueryCapabilities queryCapabilities = new QueryCapabilities();
 
     public AbstractFeatureSource() {
@@ -120,7 +117,6 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
         return new ResourceInfo() {
 
             final Set<String> words = new HashSet<String>();
-
 
             {
                 words.add("features");

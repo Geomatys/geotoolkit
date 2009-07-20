@@ -23,9 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.spi.ServiceRegistry;
-
 
 /**
  * <p>
@@ -47,19 +45,15 @@ public class FileDataStoreFinder {
 
     private static final Set<FileDataStoreFactorySpi> FILE_FACTORIES = new HashSet<FileDataStoreFactorySpi>();
 
-    static{
+    static {
         final Iterator<FileDataStoreFactorySpi> factories = ServiceRegistry.lookupProviders(FileDataStoreFactorySpi.class);
 
-        while(factories.hasNext()){
+        while (factories.hasNext()) {
             final FileDataStoreFactorySpi ff = factories.next();
             FILE_FACTORIES.add(ff);
         }
 
     }
-
-
-
-
     /** The logger for the filter module. */
     protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.data");
 
@@ -96,7 +90,7 @@ public class FileDataStoreFinder {
                  * The logger for the filter module.
                  */
                 LOGGER.log(Level.WARNING,
-                    "Could not aquire " + fac.getDescription() + ":" + t, t);
+                        "Could not aquire " + fac.getDescription() + ":" + t, t);
 
                 // Protect against DataStores that don't carefully
                 // code canProcess
@@ -117,10 +111,10 @@ public class FileDataStoreFinder {
      */
     public static Iterator<FileDataStoreFactorySpi> getAvailableDataStores() {
         Set availableDS = new HashSet();
-        
+
         Set<FileDataStoreFactorySpi> all = FILE_FACTORIES;
 
-        for(FileDataStoreFactorySpi dsFactory : all){
+        for (FileDataStoreFactorySpi dsFactory : all) {
             if (dsFactory.isAvailable()) {
                 availableDS.add(dsFactory);
             }
@@ -128,28 +122,28 @@ public class FileDataStoreFinder {
 
         return availableDS.iterator();
     }
-    
+
     /**
      * Go through each file DataStore and check what file extentions 
      * are supported.
      * @return Set of supported file extensions
      */
-    public static Set<String> getAvailableFileExtentions(){
+    public static Set<String> getAvailableFileExtentions() {
         Set<String> extentions = new HashSet<String>();
-        
+
         Iterator<FileDataStoreFactorySpi> ps = getAvailableDataStores();
         while (ps.hasNext()) {
             FileDataStoreFactorySpi fac = ps.next();
             try {
-                for( String fileExtention : fac.getFileExtensions() ){
-                    extentions.add( fileExtention );
+                for (String fileExtention : fac.getFileExtensions()) {
+                    extentions.add(fileExtention);
                 }
             } catch (Throwable t) {
                 /**
                  * The logger for the filter module.
                  */
                 LOGGER.log(Level.WARNING,
-                    "Could not aquire " + fac.getDescription() + ":" + t, t);
+                        "Could not aquire " + fac.getDescription() + ":" + t, t);
 
                 // Protect against DataStores that don't carefully
                 // code canProcess

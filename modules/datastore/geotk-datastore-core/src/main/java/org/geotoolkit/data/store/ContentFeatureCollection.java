@@ -62,7 +62,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
      */
     protected final ContentFeatureSource featureSource;
     protected final Query query;
-
     /**
      * feature (possibly retyped from feautre source original) type
      */
@@ -71,18 +70,16 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
      * state of the feature source
      */
     protected ContentState state;
-
     /** Internal listener storage list */
     protected List<CollectionListener> listeners = new ArrayList<CollectionListener>(2);
-
     /** Set of open resource iterators */
     protected final Set open = new HashSet();
-
     /**
      * feature listener which listens to the feautre source and
      * forwards events to its listeners.
      */
     FeatureListener listener = new FeatureListener() {
+
         @Override
         public void changed(final FeatureEvent featureEvent) {
             if (listeners.isEmpty()) {
@@ -90,14 +87,13 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
             }
 
             final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = ContentFeatureCollection.this;
-            final CollectionEvent event = new CollectionEvent( collection, featureEvent );
+            final CollectionEvent event = new CollectionEvent(collection, featureEvent);
 
             final CollectionListener[] notify = listeners.toArray(new CollectionListener[listeners.size()]);
             for (CollectionListener listener : notify) {
                 try {
                     listener.collectionChanged(event);
-                }
-                catch (Throwable t ){
+                } catch (Throwable t) {
                     //TODO: log this
                     //ContentDataStore.LOGGER.log( Level.WARNING, "Problem encountered during notification of "+event, t );
                 }
@@ -115,7 +111,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         //retype feature type if necessary
         if (query.getPropertyNames() != Query.ALL_NAMES) {
             this.featureType =
-                SimpleFeatureTypeBuilder.retype(featureSource.getSchema(), query.getPropertyNames());
+                    SimpleFeatureTypeBuilder.retype(featureSource.getSchema(), query.getPropertyNames());
         } else {
             this.featureType = featureSource.getSchema();
         }
@@ -138,7 +134,6 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
     public void accepts(final FeatureVisitor visitor, final ProgressListener progress) throws IOException {
         featureSource.accepts(query, visitor, progress);
     }
-
 
     //Listeners
     /**

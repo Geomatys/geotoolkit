@@ -126,8 +126,8 @@ public class BatchFeatureEvent extends FeatureEvent {
                     //DefaultFeatureId featureId = (DefaultFeatureId) id;
                     fids.remove(id);
                     fids.add(new DefaultFeatureId(actualFid));
-                // update internal structure!
-                //featureId.setID(actualFid);
+                    // update internal structure!
+                    //featureId.setID(actualFid);
                 }
             }
         }

@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.FeatureWriter;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * An iterator wrapper for a FeatureWriter - for use with
@@ -62,8 +62,8 @@ final class FeatureWriterIterator implements Iterator<SimpleFeature> {
             } else {
                 close();
                 return false;
-            // auto close because we don't trust client
-            // code to call close
+                // auto close because we don't trust client
+                // code to call close
             }
         } catch (IOException e) {
             close();

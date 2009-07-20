@@ -45,6 +45,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * @source $URL$
  */
 public class DefaultFeatureLock implements FeatureLock {
+
     private final String authorization;
     private final long duration;
 
@@ -52,16 +53,18 @@ public class DefaultFeatureLock implements FeatureLock {
      * Package private constructor - use DefaultFeatureLockFactory methods.
      * @see DefaultFeatureLockFactory.     
      */
-    DefaultFeatureLock(String id, long duration){
+    DefaultFeatureLock(String id, long duration) {
         this.authorization = id;
         this.duration = duration;
     }
-    /** LockId used for transaction authorization. */                
-    public String getAuthorization(){
+
+    /** LockId used for transaction authorization. */
+    public String getAuthorization() {
         return authorization;
     }
-    /** Time from now the lock will expire */    
-    public long getDuration(){        
+
+    /** Time from now the lock will expire */
+    public long getDuration() {
         return duration;
     }
 }

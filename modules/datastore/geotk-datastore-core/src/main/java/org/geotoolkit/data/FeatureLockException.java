@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 
-
 /**
  * Indicates a lock contention, and attempt was made to modify or aquire with
  * out Authroization.
@@ -27,6 +26,7 @@ import java.io.IOException;
  * @source $URL$
  */
 public class FeatureLockException extends IOException {
+
     private static final long serialVersionUID = 6257796552547874140L;
     String featureID;
 

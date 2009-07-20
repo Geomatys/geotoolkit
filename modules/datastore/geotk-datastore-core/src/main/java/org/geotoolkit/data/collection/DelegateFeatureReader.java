@@ -26,7 +26,6 @@ import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
-
 /**
  * A  FeatureReader that wraps up a normal FeatureIterator.
  * <p>
@@ -44,8 +43,12 @@ public class DelegateFeatureReader<T extends FeatureType, F extends Feature> imp
     private final T schema;
 
     public DelegateFeatureReader(final T featureType, final FeatureIterator<F> features) {
-        if(featureType == null) throw new NullPointerException("Feature type can not be null");
-        if(features == null) throw new NullPointerException("Feature iterator can not be null");
+        if (featureType == null) {
+            throw new NullPointerException("Feature type can not be null");
+        }
+        if (features == null) {
+            throw new NullPointerException("Feature iterator can not be null");
+        }
         this.schema = featureType;
         this.delegate = features;
     }

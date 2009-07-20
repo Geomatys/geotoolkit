@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.FeatureReader;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * An iterator wrapper for a  FeatureReader<SimpleFeatureType, SimpleFeature> - for use with

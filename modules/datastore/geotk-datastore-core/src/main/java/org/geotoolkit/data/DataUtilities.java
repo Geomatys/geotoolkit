@@ -16,57 +16,43 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.geotoolkit.data.collection.CollectionDataStore;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.DefaultFeatureCollection;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.Converters;
 
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
-import org.opengis.filter.expression.Expression;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -79,7 +65,6 @@ import org.opengis.filter.expression.Expression;
 public final class DataUtilities extends FeatureCollectionUtilities {
 
     private static final FilterFactory ff = FactoryFinder.getFilterFactory(null);
-
 
     /**
      * DOCUMENT ME!
@@ -353,7 +338,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return SimpleFeatureBuilder.build(featureType, attributes, id);
     }
 
-
     /**
      * Constructs an empty feature to use as a Template for new content.
      *
@@ -480,7 +464,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
 
         if (value == null && !attributeType.isNillable()) {
             return null; // sometimes there is no valid default value :-(
-        // throw new IllegalAttributeException("Got null default value for non-null type.");
+            // throw new IllegalAttributeException("Got null default value for non-null type.");
         }
         return value;
     }
@@ -656,7 +640,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return reader((SimpleFeature[]) collection.toArray(new SimpleFeature[collection.size()]));
     }
 
-
     /**
      * DOCUMENT ME!
      *
@@ -703,8 +686,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
      * @throws IllegalAttributeException DOCUMENT ME!
      */
     public static SimpleFeature parse(final SimpleFeatureType type, final String fid,
-            final String[] text) throws IllegalAttributeException
-    {
+            final String[] text) throws IllegalAttributeException {
         final Object[] attributes = new Object[text.length];
 
         for (int i = 0; i < text.length; i++) {

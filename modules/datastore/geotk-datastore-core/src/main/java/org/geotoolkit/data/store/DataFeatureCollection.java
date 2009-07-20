@@ -46,7 +46,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 
-
 /**
  * A starting point for implementing FeatureCollection's backed onto a FeatureReader.
  * <p>
@@ -71,6 +70,7 @@ import org.opengis.filter.sort.SortBy;
  * @source $URL$
  */
 public abstract class DataFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {
+
     /** logger */
     static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.store");
     static private int unique = 0;
@@ -131,7 +131,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
     public abstract int getCount() throws IOException;
 
     //public abstract FeatureCollection<SimpleFeatureType, SimpleFeature> collection() throws IOException;
-
     //
     // Additional Subclass "hooks"
     //
@@ -264,7 +263,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
     //
     // Off into implementation land!
     //
-
     /**
      * Default implementation based on creating an reader, testing hasNext, and closing.
      * <p>
@@ -511,7 +509,6 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
         }
         return null; // new OrderedFeatureList( this, order );
     }
-
 
     @Override
     public String getID() {

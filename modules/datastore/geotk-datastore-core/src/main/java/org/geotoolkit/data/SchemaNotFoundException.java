@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 
-
 /**
  * Indicates a FeatureType could not be found.
  *

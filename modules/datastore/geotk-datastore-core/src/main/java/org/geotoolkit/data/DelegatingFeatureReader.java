@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * Interface for wrapping feature readers which delegate to another feature reader.
@@ -28,10 +26,10 @@ import org.opengis.feature.type.FeatureType;
  * @since 2.5
  *
  */
-public interface DelegatingFeatureReader<T extends FeatureType,F extends Feature> extends FeatureReader<T, F> {
+public interface DelegatingFeatureReader<T extends FeatureType, F extends Feature> extends FeatureReader<T, F> {
 
     /**
      * @return The delegate feature reader.
      */
-    FeatureReader<T,F> getDelegate();
+    FeatureReader<T, F> getDelegate();
 }

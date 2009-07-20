@@ -21,9 +21,6 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.ServiceInfo;
-
-
 /**
  * Implementation of DefaultServiceInfo as a java bean.
  * 

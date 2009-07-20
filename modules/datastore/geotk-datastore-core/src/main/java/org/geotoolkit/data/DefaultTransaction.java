@@ -24,9 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.concurrent.Transaction;
 
+import org.geotoolkit.data.concurrent.Transaction;
 
 /**
  * Quick implementation of Transaction api.
@@ -37,18 +36,15 @@ import org.geotoolkit.data.concurrent.Transaction;
  * @author Jody Garnett, Refractions Research
  */
 public class DefaultTransaction implements Transaction {
+
     /** The logger for the data module. */
     protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
-
     /** Records State by key */
     private Map stateLookup = new HashMap();
-
     /** Records properties by key */
     private Map propertyLookup = new HashMap();
-
     /** Handle used to identify Transaction for the user */
     private final String handle;
-
     /** Records current Authorizations */
     private Set authorizations = new HashSet();
 
@@ -94,11 +90,9 @@ public class DefaultTransaction implements Transaction {
 
             if (state == current) {
                 throw new IllegalArgumentException(
-                        "Transaction already has an this State for key: " + key
-                                + ". Please check for existing State before creating your own.");
+                        "Transaction already has an this State for key: " + key + ". Please check for existing State before creating your own.");
             } else {
-                throw new IllegalArgumentException("Transaction already has an entry for key:"
-                        + key + ". Please check for existing State before creating your own.");
+                throw new IllegalArgumentException("Transaction already has an entry for key:" + key + ". Please check for existing State before creating your own.");
             }
         } else {
             stateLookup.put(key, state);
@@ -132,8 +126,7 @@ public class DefaultTransaction implements Transaction {
             State state = (State) stateLookup.remove(key);
             state.setTransaction(null);
         } else {
-            throw new IllegalArgumentException("Transaction does not no anything about key:" + key
-                    + ". Has this key already been removed?");
+            throw new IllegalArgumentException("Transaction does not no anything about key:" + key + ". Has this key already been removed?");
         }
     }
 
@@ -196,8 +189,7 @@ public class DefaultTransaction implements Transaction {
                 throw io;
             }
 
-            throw new DataSourceException("Commit encountered " + problemCount
-                    + " problems - the first was", io);
+            throw new DataSourceException("Commit encountered " + problemCount + " problems - the first was", io);
         }
         authorizations.clear();
     }
@@ -239,8 +231,7 @@ public class DefaultTransaction implements Transaction {
                 throw io;
             }
 
-            throw new DataSourceException("Rollback encountered " + problemCount
-                    + " problems - the first was", io);
+            throw new DataSourceException("Rollback encountered " + problemCount + " problems - the first was", io);
         }
         authorizations.clear();
     }
@@ -321,8 +312,7 @@ public class DefaultTransaction implements Transaction {
             if (problemCount == 1) {
                 throw io;
             }
-            throw new DataSourceException("setAuthorization encountered " + problemCount
-                    + " problems - the first was", io);
+            throw new DataSourceException("setAuthorization encountered " + problemCount + " problems - the first was", io);
         }
     }
 
@@ -371,9 +361,7 @@ public class DefaultTransaction implements Transaction {
     @Override
     protected void finalize() throws Throwable {
         if (stateLookup != null) {
-            LOGGER.severe("There's code leaving transaction unclosed. "
-                    + "Call Transaction.close() after using them to ensure they do not hold state "
-                    + "such as JDCB connections or file handles");
+            LOGGER.severe("There's code leaving transaction unclosed. " + "Call Transaction.close() after using them to ensure they do not hold state " + "such as JDCB connections or file handles");
             LOGGER.severe("Unclosed transaction handle is '" + handle + "'");
             close();
         }

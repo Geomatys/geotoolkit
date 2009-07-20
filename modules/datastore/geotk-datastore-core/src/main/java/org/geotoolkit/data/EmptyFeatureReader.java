@@ -18,10 +18,8 @@ package org.geotoolkit.data;
 
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 
 /**
  * Represents an Empty, Typed, FeatureReader.

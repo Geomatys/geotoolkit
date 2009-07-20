@@ -17,42 +17,35 @@
 package org.geotoolkit.data.memory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataAccess;
 import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.SchemaNotFoundException;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureVisitor;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.Name;
-import org.opengis.filter.Filter;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.opengis.feature.IllegalAttributeException;
 
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureVisitor;
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Filter;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This is an example implementation of a DataStore used for testing.
@@ -75,11 +68,11 @@ import org.opengis.feature.IllegalAttributeException;
  * @source $URL$
  */
 public class MemoryDataStore extends AbstractDataStore {
-    /** Memory holds Map of Feature by fid by typeName. */
-    protected Map<String,Map<String,SimpleFeature>> memory = new HashMap<String,Map<String,SimpleFeature>>();
 
+    /** Memory holds Map of Feature by fid by typeName. */
+    protected Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
     /** Schema holds FeatureType by typeName */
-    protected Map<String,SimpleFeatureType> schema = new HashMap<String,SimpleFeatureType>();
+    protected Map<String, SimpleFeatureType> schema = new HashMap<String, SimpleFeatureType>();
 
     public MemoryDataStore() {
         super(true);
@@ -90,22 +83,24 @@ public class MemoryDataStore extends AbstractDataStore {
      * @param schema An empty feature collection of this type will be made available
      */
     public MemoryDataStore(SimpleFeatureType featureType) {
-        Map<String,SimpleFeature> featureMap = new HashMap<String,SimpleFeature>();
+        Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
         String typeName = featureType.getTypeName();
         schema.put(typeName, featureType);
         memory.put(typeName, featureMap);
     }
+
     public MemoryDataStore(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
         addFeatures(collection);
     }
 
-    public MemoryDataStore(SimpleFeature[] array){
+    public MemoryDataStore(SimpleFeature[] array) {
         addFeatures(array);
     }
 
-    public MemoryDataStore(FeatureReader <SimpleFeatureType, SimpleFeature> reader) throws IOException {
+    public MemoryDataStore(FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
         addFeatures(reader);
     }
+
     public MemoryDataStore(FeatureIterator<SimpleFeature> reader) throws IOException {
         addFeatures(reader);
     }
@@ -118,13 +113,13 @@ public class MemoryDataStore extends AbstractDataStore {
      * @throws IOException If problems are encountered while adding
      * @throws DataSourceException See IOException
      */
-    public void addFeatures(FeatureReader <SimpleFeatureType, SimpleFeature> reader) throws IOException {
+    public void addFeatures(FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
         try {
             SimpleFeatureType featureType;
             // use an order preserving map, so that features are returned in the same
             // order as they were inserted. This is important for repeatable rendering
             // of overlapping features.
-            Map<String,SimpleFeature> featureMap = new LinkedHashMap<String,SimpleFeature>();
+            Map<String, SimpleFeature> featureMap = new LinkedHashMap<String, SimpleFeature>();
             String typeName;
             SimpleFeature feature;
 
@@ -148,9 +143,8 @@ public class MemoryDataStore extends AbstractDataStore {
             memory.put(typeName, featureMap);
         } catch (IllegalAttributeException e) {
             throw new DataSourceException("Problem using reader", e);
-        }
-        finally {
-        	reader.close();
+        } finally {
+            reader.close();
         }
     }
 
@@ -165,7 +159,7 @@ public class MemoryDataStore extends AbstractDataStore {
     public void addFeatures(FeatureIterator<SimpleFeature> reader) throws IOException {
         try {
             SimpleFeatureType featureType;
-            Map<String,SimpleFeature> featureMap = new HashMap<String,SimpleFeature>();
+            Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
             String typeName;
             SimpleFeature feature;
 
@@ -187,11 +181,11 @@ public class MemoryDataStore extends AbstractDataStore {
 
             schema.put(typeName, featureType);
             memory.put(typeName, featureMap);
-        }
-        finally {
+        } finally {
             reader.close();
         }
     }
+
     /**
      * Configures MemoryDataStore with Collection.
      * 
@@ -214,23 +208,25 @@ public class MemoryDataStore extends AbstractDataStore {
             }
         }
     }
+
     public void addFeatures(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
-        if ((collection == null) ) {
+        if ((collection == null)) {
             throw new IllegalArgumentException("Provided FeatureCollection<SimpleFeatureType, SimpleFeature> is empty");
         }
         synchronized (memory) {
             try {
-                collection.accepts( new FeatureVisitor(){
+                collection.accepts(new FeatureVisitor() {
+
                     public void visit(Feature feature) {
-                        addFeatureInternal( (SimpleFeature) feature );
-                    }                
-                }, null );
-            }
-            catch( IOException ignore){
-                LOGGER.log( Level.FINE, "Unable to add all features", ignore );
+                        addFeatureInternal((SimpleFeature) feature);
+                    }
+                }, null);
+            } catch (IOException ignore) {
+                LOGGER.log(Level.FINE, "Unable to add all features", ignore);
             }
         }
     }
+
     /**
      * Configures MemoryDataStore with feature array.
      *
@@ -352,7 +348,7 @@ public class MemoryDataStore extends AbstractDataStore {
             if (schema.containsKey(typeName)) {
                 return (SimpleFeatureType) schema.get(typeName);
             }
-                throw new SchemaNotFoundException(typeName);
+            throw new SchemaNotFoundException(typeName);
         }
     }
 
@@ -377,10 +373,10 @@ public class MemoryDataStore extends AbstractDataStore {
             // we have a conflict
             throw new IOException(typeName + " already exists");
         }
-            // insertion order preserving map
-            Map featuresMap = new LinkedHashMap();
-            schema.put(typeName, featureType);
-            memory.put(typeName, featuresMap);
+        // insertion order preserving map
+        Map featuresMap = new LinkedHashMap();
+        schema.put(typeName, featureType);
+        memory.put(typeName, featuresMap);
     }
 
     /**
@@ -398,43 +394,44 @@ public class MemoryDataStore extends AbstractDataStore {
      *
      * @see org.geotools.data.AbstractDataStore#getFeatureSource(java.lang.String)
      */
-    public  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
-        throws IOException {
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
+            throws IOException {
         return new FeatureReader<SimpleFeatureType, SimpleFeature>() {
-                SimpleFeatureType featureType = getSchema(typeName);
-                Iterator iterator = features(typeName).values().iterator();
 
-                public SimpleFeatureType getFeatureType() {
-                    return featureType;
-                }
+            SimpleFeatureType featureType = getSchema(typeName);
+            Iterator iterator = features(typeName).values().iterator();
 
-                public SimpleFeature next()
+            public SimpleFeatureType getFeatureType() {
+                return featureType;
+            }
+
+            public SimpleFeature next()
                     throws IOException, IllegalAttributeException, NoSuchElementException {
-                    if (iterator == null) {
-                        throw new IOException("Feature Reader has been closed");
-                    }
-
-                    try {
-                        return SimpleFeatureBuilder.copy((SimpleFeature) iterator.next());
-                    } catch (NoSuchElementException end) {
-                        throw new DataSourceException("There are no more Features", end);
-                    }
+                if (iterator == null) {
+                    throw new IOException("Feature Reader has been closed");
                 }
 
-                public boolean hasNext(){
-                    return (iterator != null) && iterator.hasNext();
+                try {
+                    return SimpleFeatureBuilder.copy((SimpleFeature) iterator.next());
+                } catch (NoSuchElementException end) {
+                    throw new DataSourceException("There are no more Features", end);
+                }
+            }
+
+            public boolean hasNext() {
+                return (iterator != null) && iterator.hasNext();
+            }
+
+            public void close() {
+                if (iterator != null) {
+                    iterator = null;
                 }
 
-                public void close(){
-                    if (iterator != null) {
-                        iterator = null;
-                    }
-
-                    if (featureType != null) {
-                        featureType = null;
-                    }
+                if (featureType != null) {
+                    featureType = null;
                 }
-            };
+            }
+        };
     }
 
     /**
@@ -454,132 +451,129 @@ public class MemoryDataStore extends AbstractDataStore {
      * @see org.geotools.data.AbstractDataStore#getFeatureSource(java.lang.String)
      */
     public FeatureWriter<SimpleFeatureType, SimpleFeature> createFeatureWriter(final String typeName, final Transaction transaction)
-        throws IOException {
+            throws IOException {
         return new FeatureWriter<SimpleFeatureType, SimpleFeature>() {
-                SimpleFeatureType featureType = getSchema(typeName);
-                Map contents = features(typeName);
-                Iterator iterator = contents.values().iterator();
-                SimpleFeature live = null;
 
-                SimpleFeature current = null; // current Feature returned to user        
+            SimpleFeatureType featureType = getSchema(typeName);
+            Map contents = features(typeName);
+            Iterator iterator = contents.values().iterator();
+            SimpleFeature live = null;
+            SimpleFeature current = null; // current Feature returned to user
 
-                public SimpleFeatureType getFeatureType() {
-                    return featureType;
-                }
+            public SimpleFeatureType getFeatureType() {
+                return featureType;
+            }
 
-                public SimpleFeature next() throws IOException, NoSuchElementException {
-                    if (hasNext()) {
-                        // existing content
-                        live = (SimpleFeature) iterator.next();
+            public SimpleFeature next() throws IOException, NoSuchElementException {
+                if (hasNext()) {
+                    // existing content
+                    live = (SimpleFeature) iterator.next();
 
-                        try {
-                            current = SimpleFeatureBuilder.copy(live);
-                        } catch (IllegalAttributeException e) {
-                            throw new DataSourceException("Unable to edit " + live.getID() + " of "
-                                + typeName);
-                        }
-                    } else {
-                        // new content
-                        live = null;
-
-                        try {
-                            current = SimpleFeatureBuilder.template(featureType, null);
-                        } catch (IllegalAttributeException e) {
-                            throw new DataSourceException("Unable to add additional Features of "
-                                + typeName);
-                        }
+                    try {
+                        current = SimpleFeatureBuilder.copy(live);
+                    } catch (IllegalAttributeException e) {
+                        throw new DataSourceException("Unable to edit " + live.getID() + " of " + typeName);
                     }
-
-                    return current;
-                }
-
-                public void remove() throws IOException {
-                    if (contents == null) {
-                        throw new IOException("FeatureWriter has been closed");
-                    }
-
-                    if (current == null) {
-                        throw new IOException("No feature available to remove");
-                    }
-
-                    if (live != null) {
-                        // remove existing content
-                        iterator.remove();
-                        listenerManager.fireFeaturesRemoved(typeName, transaction,
-                            new JTSEnvelope2D(live.getBounds()), true);
-                        live = null;
-                        current = null;
-                    } else {
-                        // cancel add new content
-                        current = null;
-                    }
-                }
-
-                public void write() throws IOException {
-                    if (contents == null) {
-                        throw new IOException("FeatureWriter has been closed");
-                    }
-
-                    if (current == null) {
-                        throw new IOException("No feature available to write");
-                    }
-
-                    if (live != null) {
-                        if (live.equals(current)) {
-                            // no modifications made to current
-                            //
-                            live = null;
-                            current = null;
-                        } else {
-                            // accept modifications
-                            //
-                            try {
-                                live.setAttributes(current.getAttributes());
-                            } catch (Exception e) {
-                                throw new DataSourceException("Unable to accept modifications to "
-                                    + live.getID() + " on " + typeName);
-                            }
-
-                            JTSEnvelope2D bounds = new JTSEnvelope2D();
-                            bounds.expandToInclude(new JTSEnvelope2D(live.getBounds()));
-                            bounds.expandToInclude(new JTSEnvelope2D(current.getBounds()));
-                            listenerManager.fireFeaturesChanged(typeName, transaction,
-                                bounds, true);
-                            live = null;
-                            current = null;
-                        }
-                    } else {
-                        // add new content
-                        //
-                        contents.put(current.getID(), current);
-                        listenerManager.fireFeaturesAdded(typeName, transaction,
-                        		new JTSEnvelope2D(current.getBounds()), true);
-                        current = null;
-                    }
-                }
-
-                public boolean hasNext() throws IOException {
-                    if (contents == null) {
-                        throw new IOException("FeatureWriter has been closed");
-                    }
-
-                    return (iterator != null) && iterator.hasNext();
-                }
-
-                public void close(){
-                    if (iterator != null) {
-                        iterator = null;
-                    }
-
-                    if (featureType != null) {
-                        featureType = null;
-                    }
-
-                    contents = null;
-                    current = null;
+                } else {
+                    // new content
                     live = null;
+
+                    try {
+                        current = SimpleFeatureBuilder.template(featureType, null);
+                    } catch (IllegalAttributeException e) {
+                        throw new DataSourceException("Unable to add additional Features of " + typeName);
+                    }
                 }
-            };
+
+                return current;
+            }
+
+            public void remove() throws IOException {
+                if (contents == null) {
+                    throw new IOException("FeatureWriter has been closed");
+                }
+
+                if (current == null) {
+                    throw new IOException("No feature available to remove");
+                }
+
+                if (live != null) {
+                    // remove existing content
+                    iterator.remove();
+                    listenerManager.fireFeaturesRemoved(typeName, transaction,
+                            new JTSEnvelope2D(live.getBounds()), true);
+                    live = null;
+                    current = null;
+                } else {
+                    // cancel add new content
+                    current = null;
+                }
+            }
+
+            public void write() throws IOException {
+                if (contents == null) {
+                    throw new IOException("FeatureWriter has been closed");
+                }
+
+                if (current == null) {
+                    throw new IOException("No feature available to write");
+                }
+
+                if (live != null) {
+                    if (live.equals(current)) {
+                        // no modifications made to current
+                        //
+                        live = null;
+                        current = null;
+                    } else {
+                        // accept modifications
+                        //
+                        try {
+                            live.setAttributes(current.getAttributes());
+                        } catch (Exception e) {
+                            throw new DataSourceException("Unable to accept modifications to " + live.getID() + " on " + typeName);
+                        }
+
+                        JTSEnvelope2D bounds = new JTSEnvelope2D();
+                        bounds.expandToInclude(new JTSEnvelope2D(live.getBounds()));
+                        bounds.expandToInclude(new JTSEnvelope2D(current.getBounds()));
+                        listenerManager.fireFeaturesChanged(typeName, transaction,
+                                bounds, true);
+                        live = null;
+                        current = null;
+                    }
+                } else {
+                    // add new content
+                    //
+                    contents.put(current.getID(), current);
+                    listenerManager.fireFeaturesAdded(typeName, transaction,
+                            new JTSEnvelope2D(current.getBounds()), true);
+                    current = null;
+                }
+            }
+
+            public boolean hasNext() throws IOException {
+                if (contents == null) {
+                    throw new IOException("FeatureWriter has been closed");
+                }
+
+                return (iterator != null) && iterator.hasNext();
+            }
+
+            public void close() {
+                if (iterator != null) {
+                    iterator = null;
+                }
+
+                if (featureType != null) {
+                    featureType = null;
+                }
+
+                contents = null;
+                current = null;
+                live = null;
+            }
+        };
     }
 
     /**
@@ -587,7 +581,7 @@ public class MemoryDataStore extends AbstractDataStore {
      *      org.geotools.data.Query)
      */
     protected JTSEnvelope2D getBounds(Query query)
-        throws IOException {
+            throws IOException {
         String typeName = query.getTypeName();
         Map contents = features(typeName);
         Iterator iterator = contents.values().iterator();
@@ -599,7 +593,7 @@ public class MemoryDataStore extends AbstractDataStore {
             Filter filter = query.getFilter();
             SimpleFeature first = (SimpleFeature) iterator.next();
             Envelope env = ((Geometry) first.getDefaultGeometry()).getEnvelopeInternal();
-			envelope = new JTSEnvelope2D(env, first.getType().getCoordinateReferenceSystem());
+            envelope = new JTSEnvelope2D(env, first.getType().getCoordinateReferenceSystem());
 
             while (iterator.hasNext() && (count < query.getMaxFeatures())) {
                 SimpleFeature feature = (SimpleFeature) iterator.next();
@@ -618,7 +612,7 @@ public class MemoryDataStore extends AbstractDataStore {
      * @see org.geotools.data.AbstractDataStore#getCount(java.lang.String, org.geotools.data.Query)
      */
     protected int getCount(Query query)
-        throws IOException {
+            throws IOException {
         String typeName = query.getTypeName();
         Map contents = features(typeName);
         Iterator iterator = contents.values().iterator();
@@ -635,5 +629,4 @@ public class MemoryDataStore extends AbstractDataStore {
 
         return count;
     }
-
 }

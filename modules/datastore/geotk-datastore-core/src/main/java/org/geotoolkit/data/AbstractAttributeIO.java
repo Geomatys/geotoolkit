@@ -26,20 +26,20 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @author  Ian Schneider
  */
 public abstract class AbstractAttributeIO {
-    
+
     protected AttributeDescriptor[] metaData;
-    
+
     protected AbstractAttributeIO(AttributeDescriptor[] metaData) {
         this.metaData = metaData;
     }
-    
+
     /**
      * Copy the meta-data from this reader, but don't use the reader!!
      */
     protected AbstractAttributeIO(AttributeReader defs) {
         this(copy(defs));
     }
-    
+
     public static AttributeDescriptor[] copy(AttributeReader defs) {
         AttributeDescriptor[] d = new AttributeDescriptor[defs.getAttributeCount()];
         for (int i = 0, ii = d.length; i < ii; i++) {
@@ -47,13 +47,12 @@ public abstract class AbstractAttributeIO {
         }
         return d;
     }
-    
+
     public final int getAttributeCount() {
         return metaData.length;
     }
-    
+
     public final AttributeDescriptor getAttributeType(int position) {
         return metaData[position];
     }
-    
 }

@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.opengis.feature.type.AttributeDescriptor;
 
-
 /**
  * The low-level attribute reading API.  An AttributeReader is responsible for
  * reading a finite set of attributes from an underlying storage format. It
@@ -34,6 +33,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @see AttributeAcceptor
  */
 public interface AttributeReader {
+
     /**
      * The number of attributes this reader can read, i.e the length of a row.
      *
@@ -47,7 +47,7 @@ public interface AttributeReader {
      * @return AttributeType at given index
      */
     AttributeDescriptor getAttributeType(int index)
-        throws ArrayIndexOutOfBoundsException;
+            throws ArrayIndexOutOfBoundsException;
 
     /**
      * Release any resources associated with this reader

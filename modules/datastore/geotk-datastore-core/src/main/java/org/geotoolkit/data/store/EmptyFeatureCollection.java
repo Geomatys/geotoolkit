@@ -21,13 +21,14 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-
 public class EmptyFeatureCollection extends DataFeatureCollection {
+
     /**
      * null bounds
      */

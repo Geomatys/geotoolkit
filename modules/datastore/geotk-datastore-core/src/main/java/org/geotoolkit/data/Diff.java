@@ -22,17 +22,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.BoundingBox;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.SpatialIndex;
 import com.vividsolutions.jts.index.quadtree.Quadtree;
-
 
 public class Diff {
 

@@ -29,7 +29,11 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Contains;
 import org.opengis.filter.spatial.Crosses;
 import org.opengis.filter.spatial.Overlaps;
@@ -38,13 +42,6 @@ import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.FeatureReader;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-
 
 /**
  * A  FeatureReader that considers differences.
@@ -258,7 +255,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
 
     protected List getIndexedFeatures() {
         // TODO: check geom is default geom.
-        final Envelope env = extractBboxForSpatialIndexQuery((BinarySpatialOperator)filter);
+        final Envelope env = extractBboxForSpatialIndexQuery((BinarySpatialOperator) filter);
         return diff.queryIndex(env);
     }
 
@@ -281,8 +278,8 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     }
 
     protected boolean isSubsetOfBboxFilter(final Filter f) {
-        return filter instanceof Contains || filter instanceof Crosses  ||
-               filter instanceof Overlaps || filter instanceof Touches  ||
-               filter instanceof Within   || filter instanceof BBOX;
+        return filter instanceof Contains || filter instanceof Crosses ||
+                filter instanceof Overlaps || filter instanceof Touches ||
+                filter instanceof Within || filter instanceof BBOX;
     }
 }

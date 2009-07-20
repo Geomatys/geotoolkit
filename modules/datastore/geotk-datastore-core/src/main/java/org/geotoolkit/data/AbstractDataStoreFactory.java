@@ -26,10 +26,9 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.Parameter;
-import org.geotoolkit.data.DataStoreFactorySpi;
+
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
-
 
 /**
  * A best of toolkit for DataStoreFactory implementors.
@@ -71,11 +70,11 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public String getDisplayName() {
         String name = this.getClass().getName();
 
-        name = name.substring( name.lastIndexOf('.') );
-        if( name.endsWith("Factory")){
-            name = name.substring(0, name.length()-7);
-        } else if( name.endsWith("FactorySpi")){
-            name = name.substring(0, name.length()-10);
+        name = name.substring(name.lastIndexOf('.'));
+        if (name.endsWith("Factory")) {
+            name = name.substring(0, name.length() - 7);
+        } else if (name.endsWith("FactorySpi")) {
+            name = name.substring(0, name.length() - 10);
         }
         return name;
     }
@@ -111,7 +110,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * @return true if params is in agreement with getParametersInfo, override for additional checks.
      */
     @Override
-    public boolean canProcess( Map params ) {
+    public boolean canProcess(Map params) {
         if (params == null) {
             return false;
         }
@@ -119,15 +118,15 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         for (int i = 0; i < arrayParameters.length; i++) {
             Param param = arrayParameters[i];
             Object value;
-            if( !params.containsKey( param.key ) ){
-                if( param.required ){
+            if (!params.containsKey(param.key)) {
+                if (param.required) {
                     return false; // missing required key!
                 } else {
                     continue;
                 }
             }
             try {
-                value = param.lookUp( params );
+                value = param.lookUp(params);
             } catch (IOException e) {
                 // could not upconvert/parse to expected type!
                 // even if this parameter is not required
@@ -135,12 +134,12 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
                 // these params
                 return false;
             }
-            if( value == null ){
+            if (value == null) {
                 if (param.required) {
                     return (false);
                 }
             } else {
-                if ( !param.type.isInstance( value )){
+                if (!param.type.isInstance(value)) {
                     return false; // value was not of the required type
                 }
             }
@@ -148,39 +147,44 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         return true;
     }
 
-    public ParameterDescriptorGroup getParameters(){
+    public ParameterDescriptorGroup getParameters() {
         Param params[] = getParametersInfo();
-        DefaultParameterDescriptor parameters[] = new DefaultParameterDescriptor[ params.length ];
-        for( int i=0; i<params.length; i++ ){
+        DefaultParameterDescriptor parameters[] = new DefaultParameterDescriptor[params.length];
+        for (int i = 0; i < params.length; i++) {
             Param param = params[i];
-            parameters[i] = new ParamDescriptor( params[i] );
+            parameters[i] = new ParamDescriptor(params[i]);
         }
         Map properties = new HashMap();
-        properties.put( "name", getDisplayName() );
-        properties.put( "remarks", getDescription() );
+        properties.put("name", getDisplayName());
+        properties.put("remarks", getDescription());
         return new DefaultParameterDescriptorGroup(properties, parameters);
     }
 }
 
 class ParamDescriptor extends DefaultParameterDescriptor {
+
     private static final long serialVersionUID = 1L;
     Param param;
+
     public ParamDescriptor(Param param) {
-        super( param.key, param.description, Object.class, param.sample, param.required );
+        super(param.key, param.description, Object.class, param.sample, param.required);
         this.param = param;
     }
+
     @Override
     public ParameterValue createValue() {
-        if (Double.TYPE.equals( getValueClass())) {
-            return new FloatParameter(this){
+        if (Double.TYPE.equals(getValueClass())) {
+            return new FloatParameter(this) {
+
                 protected Object valueOf(String text) throws IOException {
-                    return param.handle( text );
+                    return param.handle(text);
                 }
             };
         }
-        return new Parameter(this){
+        return new Parameter(this) {
+
             protected Object valueOf(String text) throws IOException {
-                return param.handle( text );
+                return param.handle(text);
             }
         };
     }

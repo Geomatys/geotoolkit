@@ -22,22 +22,20 @@ import java.util.Iterator;
  * An iterator that returns no content.
  *
  * @author Justin Deoliveira, The Open Planning Project
- *
  */
 public class EmptyIterator implements Iterator {
 
     @Override
-	public void remove() {
-	}
+    public void remove() {
+    }
 
     @Override
-	public boolean hasNext() {
-		return false;
-	}
+    public boolean hasNext() {
+        return false;
+    }
 
     @Override
-	public Object next() {
-		return null;
-	}
-
+    public Object next() {
+        return null;
+    }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.DefaultName;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.capability.FilterCapabilities;

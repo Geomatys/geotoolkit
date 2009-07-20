@@ -26,7 +26,6 @@ import org.geotoolkit.data.concurrent.Transaction;
 
 import org.opengis.feature.type.Name;
 
-
 /**
  * An entry for a type or feature source provided by a datastore.
  * <p>
@@ -55,16 +54,15 @@ import org.opengis.feature.type.Name;
  * @author Justin Deoliveira, The Open Planning Project
  */
 public final class ContentEntry {
+
     /**
      * Qualified name of the entry.
      */
     final Name typeName;
-
     /**
      * Map<Transaction,ContentState> state according to Transaction.
      */
-    final Map<Transaction,ContentState> state;
-
+    final Map<Transaction, ContentState> state;
     /**
      * backpointer to datastore
      */
@@ -156,7 +154,7 @@ public final class ContentEntry {
             }
         }
     }
-    
+
     /**
      * Disposes the entry by disposing all maintained state.
      */

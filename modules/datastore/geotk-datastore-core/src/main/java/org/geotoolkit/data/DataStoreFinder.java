@@ -17,7 +17,6 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +24,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

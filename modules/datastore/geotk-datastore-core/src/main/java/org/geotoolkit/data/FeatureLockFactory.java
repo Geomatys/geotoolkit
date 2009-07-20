@@ -32,8 +32,8 @@ import org.geotoolkit.factory.FactoryRegistryException;
  * @task REVISIT: Combine this with a factory to also make Query objects?
  * @author Chris Holmes, TOPP
  */
-
 public abstract class FeatureLockFactory extends Factory {
+
     /** A cached factory to create FeatureLocks. */
     private static FeatureLockFactory factory = null;
 
@@ -70,7 +70,7 @@ public abstract class FeatureLockFactory extends Factory {
      * @param duration FeatureLock duration in milliseconds
      */
     public static FeatureLock generate(long duration) {
-	   return generate("LockID", duration);
+        return generate("LockID", duration);
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class FeatureLockFactory extends Factory {
      * @param name     User supplied name used in lock generation.
      * @param duration Date lock expires on.
      */
-    public static FeatureLock generate(String name, long duration){
+    public static FeatureLock generate(String name, long duration) {
         return getInstance().createLock(name, duration);
     }
 
