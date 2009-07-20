@@ -42,8 +42,8 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     
     private Image buffer = null;
     private Map2D map = null;
-    private int startx =0;
-    private int starty =0;
+    private int startx = 0;
+    private int starty = 0;
     private int width = 0;
     private int height = 0;
     private boolean draw = false;

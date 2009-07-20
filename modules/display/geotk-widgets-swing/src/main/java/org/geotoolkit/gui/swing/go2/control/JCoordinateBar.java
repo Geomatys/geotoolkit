@@ -120,13 +120,13 @@ public class JCoordinateBar extends JToolBar {
         add(guiStatefull,constraints);
         add(guiAxis,constraints);
 
-        //a an empty component to fill space, like glue
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.weightx = 1.0;
-        JComponent glue = new JComponent() {};
-        glue.setOpaque(false);
-        add(glue,constraints);
+//        //a an empty component to fill space, like glue
+//        constraints.fill = GridBagConstraints.BOTH;
+//        constraints.anchor = GridBagConstraints.WEST;
+//        constraints.weightx = 1.0;
+//        JComponent glue = new JComponent() {};
+//        glue.setOpaque(false);
+//        add(glue,constraints);
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.EAST;

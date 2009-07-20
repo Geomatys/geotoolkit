@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.go2.decoration;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
@@ -27,14 +28,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -52,6 +56,10 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class JClassicNavigationDecoration extends JComponent implements MapDecoration {
 
+    public static enum THEME{
+        CLASSIC,
+        NEO
+    }
 
     private static final Logger LOGGER = Logging.getLogger(JClassicNavigationDecoration.class);
 
@@ -61,10 +69,14 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     private boolean minimized = false;
     private final Color TEINTE = Color.GRAY.brighter();
     private final Color NORTH = Color.RED;
-    private final Color TEINTE_B = Color.GRAY;
-    private final Color TEINTE_L = Color.LIGHT_GRAY;
+    private final Color TEINTE_B;
+    private final Color TEINTE_L;
+    private final Color TEXTE_1;
+    private final Color TEXTE_2;
     private final Color BLACK = Color.BLACK;
+    private final Color BASE;
     private final Color TRANS = new Color(1f, 1f, 1f, 0f);
+    private final boolean inBorder;
     private final int MIN_SIZE = 20;
     private final int CERCLE_WIDTH = 100;
     private final int MARGIN = CERCLE_WIDTH / 10;
@@ -94,8 +106,30 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
      */
     private short overButton = -1;
     
-    
-    public JClassicNavigationDecoration() {
+
+    public JClassicNavigationDecoration(){
+        this(THEME.CLASSIC);
+    }
+
+    public JClassicNavigationDecoration(THEME theme) {
+
+        if(theme == THEME.CLASSIC){
+            TEINTE_B = Color.GRAY;
+            TEINTE_L = Color.WHITE;
+            TEXTE_1 = Color.GRAY;
+            TEXTE_2 = Color.LIGHT_GRAY;
+            BASE = Color.WHITE;
+            inBorder = true;
+        }else{
+            TEINTE_B = TEINTE.darker();
+            TEINTE_L = TEINTE.brighter();
+            TEXTE_1 = TEINTE_B;
+            TEXTE_2 = TEINTE_L;
+            BASE = Color.BLACK;
+            inBorder = false;
+        }
+
+
         addMouseListener(mouseListener);
         addMouseMotionListener(mouseMotionListener);
         setOpaque(false);
@@ -105,10 +139,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         arrow = new Polygon(new int[]{0, MIN_SIZE / 2, MIN_SIZE / 4 }, new int[]{MIN_SIZE / 2 , MIN_SIZE / 2 , 0}, 3);
         
         int centerX = MARGIN+CERCLE_WIDTH/2;
-        int decalage = MARGIN+CERCLE_WIDTH/2 - 10;
         resetShape = new java.awt.geom.Ellipse2D.Float(centerX-10,centerX-10,20,20);
-//        northLosange = new Polygon(new int[]{centerX,centerX+7,centerX,centerX-7}, new int[]{decalage,decalage+15,decalage+20,decalage+15}, 4);
-        
     }
 
     @Override
@@ -134,12 +165,12 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             g2.rotate(rotation, MARGIN + CERCLE_WIDTH / 2, MARGIN + CERCLE_WIDTH / 2);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-//            Point2D center = new Point2D.Float(MARGIN + CERCLE_WIDTH / 2, MARGIN + CERCLE_WIDTH / 2);
-//            float radius = (float) CERCLE_WIDTH/2 ;
-//            float[] dist = {0.2f, 1f};
-//            Color[] colors = {TRANS, Color.WHITE};
-//            RadialGradientPaint paint = new RadialGradientPaint(center, radius, dist, colors);
-            g2.setPaint(new Color(1f, 1f, 1f, 0.9f));
+            Point2D center = new Point2D.Float(MARGIN + CERCLE_WIDTH / 2, MARGIN + CERCLE_WIDTH / 2);
+            float radius = (float) CERCLE_WIDTH/2 ;
+            float[] dist = {0.2f, 1f};
+            Color[] colors = {TEINTE_L, BASE};
+            RadialGradientPaint paint = new RadialGradientPaint(center, radius, dist, colors);
+            g2.setPaint(paint);
             g2.fillOval(MARGIN, MARGIN, CERCLE_WIDTH, CERCLE_WIDTH);
             g2.setPaint(TEINTE_B);
             g2.drawOval(MARGIN, MARGIN, CERCLE_WIDTH, CERCLE_WIDTH);
@@ -162,40 +193,40 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_B);
+            g2.setColor(TEXTE_2);
             g2.draw(line);
             text = "ne";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY+small);
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_1);
             text = "E";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY);
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_B);
+            g2.setColor(TEXTE_2);
             g2.draw(line);
             text = "se";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY+small);
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_1);
             text = "S";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY);
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_B);
+            g2.setColor(TEXTE_2);
             g2.draw(line);
             text = "sw";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY+small);
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_1);
             text = "W";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY);
 
             g2.rotate(Math.PI/4, rotCenter.x, rotCenter.y);
-            g2.setColor(TEINTE_B);
+            g2.setColor(TEXTE_2);
             g2.draw(line);
             text = "nw";
             g2.drawString(text, posX - metrics.stringWidth(text)/2, posY +small);
@@ -206,13 +237,11 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
             //draw inner buttons -----------------------------------------------
             Shape oldclip = g2.getClip();
-            g2.setClip(innerCercle);
+            Area area = new Area(innerCercle);
+            area.subtract(new Area(resetShape));
+            g2.setClip(area);
             int height = (int) ((CERCLE_WIDTH - 4 * MARGIN) / 3f);
             int width = (CERCLE_WIDTH - 4 * MARGIN);
-
-            GradientPaint fond = new GradientPaint(
-                    new Point(0, 3*MARGIN), BLACK,
-                    new Point(0, 3*MARGIN+height), new Color(0f,0f,0f,0f));
 
             g2.setPaint((overButton==0) ? TEINTE_B : TRANS);
             g2.fillRect(3*MARGIN, 3*MARGIN, width, height);
@@ -223,35 +252,37 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             g2.setPaint((overButton==2) ? TEINTE_B : TRANS);
             g2.fillRect(3*MARGIN, 3*MARGIN+2*height, width, height);
             g2.setColor(TEINTE_B);
-            g2.drawRect(3*MARGIN, 3*MARGIN, width, height);
-            g2.drawRect(3*MARGIN, 3*MARGIN+height, width/2, height);
-            g2.drawRect(3*MARGIN+width/2, 3*MARGIN+height, width/2, height);
-            g2.drawRect(3*MARGIN, 3*MARGIN+2*height, width, height);
+            if(inBorder){
+                g2.drawRect(3*MARGIN, 3*MARGIN, width, height);
+                g2.drawRect(3*MARGIN, 3*MARGIN+height, width/2, height);
+                g2.drawRect(3*MARGIN+width/2, 3*MARGIN+height, width/2, height);
+                g2.drawRect(3*MARGIN, 3*MARGIN+2*height, width, height);
+            }
 
             //draw arrows
             int TX = 3*MARGIN + width/2-arrow.getBounds().width/2;
             int TY = 3*MARGIN + height/6 +2;
 
             g2.translate(TX,TY);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_2);
             g2.fill(arrow);
             g2.translate( -TX, -TY);
 
             g2.rotate(Math.PI/2, rotCenter.x, rotCenter.y);
             g2.translate(TX, TY);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_2);
             g2.fill(arrow);
             g2.translate( -TX, -TY);
 
             g2.rotate(Math.PI/2, rotCenter.x, rotCenter.y);
             g2.translate(TX, TY);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_2);
             g2.fill(arrow);
             g2.translate( -TX, -TY);
 
             g2.rotate(Math.PI/2, rotCenter.x, rotCenter.y);
             g2.translate(TX, TY);
-            g2.setColor(TEINTE_L);
+            g2.setColor(TEXTE_2);
             g2.fill(arrow);
             g2.translate( -TX, -TY);
 
@@ -260,18 +291,21 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             g2.setClip(oldclip);
             g2.setColor(TEINTE_B);
             g2.setStroke(new BasicStroke(2));
-            g2.drawOval(3 * MARGIN, 3 * MARGIN, CERCLE_WIDTH - 4 * MARGIN -1, CERCLE_WIDTH - 4 * MARGIN -1);
+            if(inBorder){
+                g2.drawOval(3 * MARGIN, 3 * MARGIN, CERCLE_WIDTH - 4 * MARGIN -1, CERCLE_WIDTH - 4 * MARGIN -1);
+            }
             g2.setStroke(new BasicStroke(1));
 
-            //draww North losange ------------------------------------------------
-            g2.setComposite(AlphaComposite.Clear);
+            //draw reset button ------------------------------------------------
+
+            g2.setPaint((overButton==4) ? TEINTE_B : TRANS);
             g2.fill(resetShape);
-            g2.setComposite(AlphaComposite.SrcOver);
-            g2.setPaint(new Color(1f, 1f, 1f, 0.9f));
-            g2.fill(resetShape);
-            g2.setPaint(TEINTE_L);
-            g2.draw(resetShape);
+            if(inBorder){
+                g2.setPaint(TEINTE_B);
+                g2.draw(resetShape);
+            }
             int centerX = MARGIN+CERCLE_WIDTH/2;
+            g2.setPaint(TEXTE_1);
             g2.drawString("R", centerX - metrics.stringWidth("R")/2+1, centerX + metrics.getAscent()/2-1);
 
             mustUpdate = false;
@@ -460,11 +494,13 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             Point mouse = e.getPoint();
 
             //we repaint inner buttons
-            if(innerCercle.contains(mouse) && !resetShape.contains(mouse)){
+            if(innerCercle.contains(mouse) ){
                 final int center = (MARGIN + CERCLE_WIDTH / 2);
                 final int oldOver = overButton;
                 final int height = (int) ((CERCLE_WIDTH - 4 * MARGIN) / 3f);
-                if (mouse.y < 3 * MARGIN + height) {
+                if(resetShape.contains(mouse)){
+                    overButton = 4;
+                }else if (mouse.y < 3 * MARGIN + height) {
                     overButton = 0;
                 } else if (mouse.y > 3 * MARGIN + 2 * height) {
                     overButton = 2;
@@ -500,7 +536,27 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             }
         }
     };
-    
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(buffer.getWidth(),buffer.getHeight());
+    }
+
+    @Override
+    public Dimension getSize() {
+        return getPreferredSize();
+    }
+
+    @Override
+    public Dimension getSize(Dimension rv) {
+        if(rv != null){
+            rv.height = buffer.getHeight();
+            rv.width = buffer.getWidth();
+            return rv;
+        }else{
+            return getSize();
+        }
+    }
 
     @Override
     public void refresh() {

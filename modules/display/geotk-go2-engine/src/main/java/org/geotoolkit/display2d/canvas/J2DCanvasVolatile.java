@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -109,7 +110,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     private synchronized VolatileImage createBackBuffer() {
-        return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.OPAQUE);
+        return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.TRANSLUCENT);
     }
 
 
@@ -146,16 +147,21 @@ public class J2DCanvasVolatile extends J2DCanvas{
             buffer0.setAccelerationPriority(1);
 
             output = (Graphics2D) buffer0.getGraphics();
-            output.setBackground(Color.WHITE);
-            output.clearRect(0, 0, buffer0.getWidth(), buffer0.getHeight());
+            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+            output.fillRect(0,0,dim.width,dim.height);
+//            output.setBackground(Color.WHITE);
+//            output.clearRect(0, 0, buffer0.getWidth(), buffer0.getHeight());
 
         }else{
             //we clear the buffer part if it exists
             output = (Graphics2D) buffer0.getGraphics();
-            output.setColor(Color.WHITE);
+            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
             output.fill(paintingDisplayShape);
+//            output.setColor(Color.WHITE);
+//            output.fill(paintingDisplayShape);
         }
 
+        output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
         
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);

@@ -96,6 +96,7 @@
     <module>geotk-coverageio-netcdf</module>
     <module>geotk-wms</module>
     <module>geotk-world-image</module>
+    <module>geotk-geotiff</module>
   </modules>
 
 </project>
