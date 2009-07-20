@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -18,15 +18,6 @@ package org.geotoolkit.data;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultFeatureResults;
-import org.geotoolkit.data.DefaultQuery;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.concurrent.Transaction;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 
 //TODO this test use a strange dependency called esaymock, we don't won't this dependency
