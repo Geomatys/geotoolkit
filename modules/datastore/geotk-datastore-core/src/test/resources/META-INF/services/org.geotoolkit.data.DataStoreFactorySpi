@@ -1,0 +1,2 @@
+org.geotoolkit.data.DataAccessFinderTest$MockDataStoreFactory
+org.geotoolkit.data.DataAccessFinderTest$MockUnavailableDataStoreFactory
