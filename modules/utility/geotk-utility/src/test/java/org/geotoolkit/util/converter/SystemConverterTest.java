@@ -26,6 +26,10 @@ import java.util.Date;
 import java.sql.Timestamp;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Set;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
@@ -48,6 +52,23 @@ import static org.junit.Assert.*;
  */
 @Depend(ConverterRegistryTest.class)
 public class SystemConverterTest {
+    /**
+     * Tests the conversion of collections.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     */
+    @Test
+    public void testCollections() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        List<String> list = Arrays.asList("Test 1", "Test 2", "Test 3");
+        assertSame(list, system.converter(Collection.class, List.class).convert(list));
+
+        final Set<?> set = system.converter(List.class, Set.class).convert(list);
+        assertEquals(list.size(), set.size());
+        assertTrue(set.containsAll(list));
+        assertEquals(list, system.converter(Collection.class, List.class).convert(set));
+    }
+
     /**
      * Tests the conversion of {@linl String} to various code lists.
      *

@@ -40,18 +40,11 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * explicitly {@linkplain #register registered}. However a system-wide registry initialized
  * with default converters is provided by the {@link #system()} method.
  *
- * {@section Converting from interfaces}
+ * {@section Note about conversions from interfaces}
  * {@code ConverterRegistry} is primarily designed for handling converters from classes to
- * other classes. It is not designed for handling conversions from interfaces. While usage
- * of interfaces are not prohibited, it sometime produces unexpected results (while usually
- * not wrong) because of multi-inheritance in interface hierarchy.
- * <p>
- * For example a registry may contain many converters from {@link String} to various objects
- * ({@link Number}, {@link java.io.File}, <i>etc.</i>). If conversions from the {@link CharSequence}
- * interface are wanted instead than {@code String}, then the {@code CharSequence} input should be
- * converted to {@code String} before to search for a converter. The {@linkplain #system() system}
- * converter perform this step automatically as a convenience, however this is not generally the
- * case with arbitrary {@code ConverterRegistry}.
+ * other classes. Usage of interfaces are not prohibited (and actually sometime defined),
+ * but their behavior are less clear than in the case of classes because of multi-inheritance
+ * in interface hierarchy.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.02
@@ -126,6 +119,12 @@ public class ConverterRegistry {
             register(URIConverter   .URL                .INSTANCE); // The preferred target for URI.
             register(URIConverter   .File               .INSTANCE);
             register(URIConverter   .String             .INSTANCE);
+            /*
+             * Registration of converter working on interfaces
+             * (more tricky than class, see javadoc).
+             */
+            register(CollectionConverter.List.INSTANCE);
+            register(CollectionConverter.Set .INSTANCE);
         }
     }
 
@@ -157,7 +156,7 @@ public class ConverterRegistry {
      *
      * {@section Which super-classes of the target class are registered}
      * Consider a converter from class {@code S} to class {@code T} where the two classes
-     * area related in a hierarchy as below:
+     * are related in a hierarchy as below:
      *
      * {@preformat text
      *   C1
@@ -171,12 +170,12 @@ public class ConverterRegistry {
      * Invoking this method will register the given converter for all the following cases:
      * <p>
      * <ul>
-     *   <li>{@code S} to {@code T}</li>
-     *   <li>{@code S} to {@code C4}</li>
+     *   <li>{@code S} &rarr; {@code T}</li>
+     *   <li>{@code S} &rarr; {@code C4}</li>
      * </ul>
      * <p>
-     * No converter to {@code C2} or {@code C1} will be registered, because an identity converter
-     * would be suffisient for those cases.
+     * No {@code S} &rarr; {@code C2} or {@code S} &rarr; {@code C1} converter will be registered,
+     * because an identity converter would be suffisient for those cases.
      *
      * {@section Which sub-classes of the source class are registered}
      * Sub-classes of the source class will be registered on a case-by-case basis when the
@@ -346,7 +345,7 @@ public class ConverterRegistry {
         if (target.isAssignableFrom(source)) {
             return key.cast(IdentityConverter.create(source));
         }
-        throw new NonconvertibleObjectException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, key));
+        throw new NonconvertibleObjectException(Errors.format(Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, key.sourceClass));
     }
 
     /**

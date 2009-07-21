@@ -17,10 +17,6 @@
  */
 package org.geotoolkit.util.converter;
 
-import java.util.Set;
-import java.util.List;
-import java.util.Collection;
-
 import org.opengis.util.CodeList;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -70,19 +66,6 @@ class HeuristicRegistry extends ConverterRegistry {
             return key.cast(converter);
             // Do not register, because we want to keep the tree free of converters
             // having an interface as its source (to keep the system simplier).
-        } else if (Collection.class.isAssignableFrom(source)) {
-            /*
-             * Converts collections.
-             */
-            if (target.isAssignableFrom(source)) {
-                return (ObjectConverter<S,T>) IdentityConverter.create(target);
-            }
-            if (target.isAssignableFrom(List.class)) {
-                return (ObjectConverter<S,T>) CollectionConverter.List.INSTANCE;
-            }
-            if (target.isAssignableFrom(Set.class)) {
-                return (ObjectConverter<S,T>) CollectionConverter.Set.INSTANCE;
-            }
         }
         return super.converter(source, target);
     }

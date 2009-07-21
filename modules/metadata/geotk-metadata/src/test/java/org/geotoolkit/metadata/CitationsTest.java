@@ -20,6 +20,7 @@ package org.geotoolkit.metadata;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -37,8 +38,8 @@ import static org.geotoolkit.test.Commons.*;
 /**
  * Tests {@link Citations} and related constants.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.2
  */
@@ -79,6 +80,9 @@ public final class CitationsTest {
         } catch (UnsupportedOperationException e) {
             // This is the expected exception.
         }
+        assertSame("Empty attributes of an unmodifiable metadata should be " +
+                "set to the Collections.EMPTY_SET or EMPTY_LIST constant.",
+                Collections.EMPTY_LIST, Citations.EPSG.getDates());
     }
 
     /**

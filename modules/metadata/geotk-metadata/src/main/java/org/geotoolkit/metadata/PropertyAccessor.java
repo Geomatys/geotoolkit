@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.metadata;
 
-import java.io.File;
 import java.util.Set;
 import java.util.Map;
 import java.util.Arrays;
@@ -31,22 +30,19 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URISyntaxException;
-import java.net.MalformedURLException;
 
-import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
-import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.converter.ConverterRegistry;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.internal.CollectionUtilities;
 
 
@@ -55,11 +51,12 @@ import org.geotoolkit.internal.CollectionUtilities;
  * declared in the Geotoolkit implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
  */
+@ThreadSafe
 final class PropertyAccessor {
     /**
      * The locale to use for changing character case.
@@ -170,6 +167,14 @@ final class PropertyAccessor {
     private final Map<String,Integer> mapping;
 
     /**
+     * The last converter used. This is remembered on the assumption that the same converter
+     * will often be reused for the same attribute. This optimization can reduce the cost of
+     * looking for a converter, and also reduce thread contention since it reduce the number
+     * of calls to the synchronized {@link ConverterRegistry#converter} method.
+     */
+    private transient volatile ObjectConverter<?,?> converter;
+
+    /**
      * Creates a new property reader for the specified metadata implementation.
      *
      * @param  metadata The metadata implementation to wrap.
@@ -222,6 +227,10 @@ final class PropertyAccessor {
                  * argument returned by the GeoAPI method,  try again with the type returned by
                  * the implementation class. It is typically the same type, but sometime it may
                  * be a subtype.
+                 *
+                 * It is a necessary condition that the type returned by the getter is assignable
+                 * to the type expected by the setter.  This contract is required by the 'freeze'
+                 * method among others.
                  */
                 try {
                     getter = implementation.getMethod(getter.getName(), (Class<?>[]) null);
@@ -561,7 +570,7 @@ final class PropertyAccessor {
                 } else {
                     old = null;
                 }
-                set(getter, setter, metadata, new Object[] {value});
+                converter = set(getter, setter, metadata, new Object[] {value}, converter);
                 return old;
             } else {
                 key = getter.getName();
@@ -574,132 +583,156 @@ final class PropertyAccessor {
     }
 
     /**
-     * Sets a value for the specified metadata. We do not expect any checked exception to
-     * be thrown.
+     * Sets a value for the specified metadata. The type of {@code newValues} are converted to
+     * the type required by the setter method, if needed. The call to the setter method should
+     * not thrown any checked exception. However unchecked exceptions are allowed.
      *
-     * @param getter The method to use for fetching the previous value.
-     * @param setter The method to use for setting the new value.
-     * @param metadata The metadata object to query.
-     * @param arguments The argument to give to the method to be invoked.
-     * @throws ClassCastException if at least one element of the {@code arguments} array
-     *         is not of the expected type.
+     * @param getter
+     *          The method to use for fetching the previous value.
+     * @param setter
+     *          The method to use for setting the new value.
+     * @param metadata
+     *          The metadata object to query.
+     * @param newValues
+     *          The argument to give to the method to be invoked. There is usually only one argument,
+     *          however this method accepts an array of arbitrary length as a matter of principle.
+     *          The content of this array may be modified in-place.
+     * @param converter
+     *          The last converter used, or {@code null} if none. This converter is provided only
+     *          as a hint and doesn't need to be accurate.
+     * @return
+     *          The last converter used, or {@code null}.
+     * @throws ClassCastException
+     *          if at least one element of the {@code arguments} array is not of the expected type.
      */
-    private static void set(final Method getter, final Method setter,
-                            final Object metadata, final Object[] arguments)
+    private static ObjectConverter<?,?> set(final Method getter, final Method setter,
+            final Object metadata, final Object[] newValues, ObjectConverter<?,?> converter)
             throws ClassCastException
     {
         final Class<?>[] paramTypes = setter.getParameterTypes();
         for (int i=0; i<paramTypes.length; i++) {
-            final Object argument = arguments[i];
-            if (argument == null) {
+            Object newValue = newValues[i];
+            if (newValue == null) {
                 continue; // Null argument (which is valid): nothing to do.
             }
-            final Class<?> paramType = paramTypes[i];
-            if (Classes.primitiveToWrapper(paramType).isInstance(argument)) {
-                continue; // Argument is of the expected type: nothing to do.
-            }
-            /*
-             * If an argument is not of the expected type, tries to convert it.
-             * We handle two cases:
-             *
-             *   - Strings to be converted to Number, File, URL, etc.
-             *   - Singleton to be added into an existing collection.
-             *
-             * We check for the collection case first in order to extract the element
-             * type, which will be used for String conversions (if applicable) later.
-             * The collections are handled in one of the two ways below:
-             *
-             *   - If the user gives a collection, the user's collection replaces any
-             *     previous one. The content of the previous collection is discarted.
-             *
-             *   - If the user gives a singleton, the single value is added to existing
-             *     collection (if any). The previous values are not discarted. This
-             *     allow for incremental filling of an attribute.
-             */
-            final Collection<?> addTo;
-            final Class<?> elementType;
-            if (Collection.class.isAssignableFrom(paramType) && !(argument instanceof Collection<?>)) {
-                // Expected a collection but got a singleton.
-                addTo = (Collection<?>) get(getter, metadata);
-                if (addTo instanceof CheckedCollection<?>) {
-                    elementType = ((CheckedCollection<?>) addTo).getElementType();
-                } else {
-                    Class<?> c = Classes.boundOfParameterizedAttribute(setter);
-                    if (c == null) {
-                        c = Classes.boundOfParameterizedAttribute(getter);
-                        if (c == null) {
-                            c = Object.class;
-                        }
+            final Class<?> targetType = Classes.primitiveToWrapper(paramTypes[i]);
+            if (!Collection.class.isAssignableFrom(targetType)) {
+                /*
+                 * We do not expect a collection. The provided argument should not be a
+                 * collection neither. It should be some class convertible to targetType.
+                 *
+                 * If nevertheless the user provided a collection and this collection contains
+                 * no more than 1 element, then as a convenience we will extract the singleton
+                 * element and process it as if it had been directly provided in argument.
+                 */
+                if (newValue instanceof Collection<?>) {
+                    final Iterator<?> it = ((Collection<?>) newValue).iterator();
+                    if (!it.hasNext()) { // If empty, process like null argument.
+                        newValues[i] = null;
+                        continue; // No conversion to apply.
                     }
-                    elementType = c;
+                    final Object next = it.next();
+                    if (!it.hasNext()) { // Singleton
+                        newValue = next;
+                    }
+                    // Other cases: let the collection unchanged. It is likely to
+                    // cause an exception later. The message should be appropriate.
                 }
             } else {
-                addTo = null;
-                elementType = paramType;
-            }
-            /*
-             * Handles the strings in a special way (converting to URI, URL, File,
-             * Number, etc.). If there is no known way to parse the string, or if
-             * the parsing failed, an exception is thrown.
-             *
-             * TODO: We should use the converter package here. We need also to iterate
-             * over the elements in collections. When this is done, we need to remove
-             * the explicit use of converter in PropertyTree.parse(...) method.
-             */
-            Object parsed = null;
-            Exception failure = null;
-            if (elementType.isInstance(argument)) {
-                parsed = argument;
-            } else if (argument instanceof CharSequence) {
-                final String text = argument.toString();
-                if (InternationalString.class.isAssignableFrom(elementType)) {
-                    parsed = new SimpleInternationalString(text);
-                } else if (CodeList.class.isAssignableFrom(elementType)) {
-                    parsed = CodeList.valueOf(elementType.asSubclass(CodeList.class), text);
-                } else if (File.class.isAssignableFrom(elementType)) {
-                    parsed = new File(text);
-                } else if (URL.class.isAssignableFrom(elementType)) try {
-                    parsed = new URL(text);
-                } catch (MalformedURLException e) {
-                    failure = e;
-                } else if (URI.class.isAssignableFrom(elementType)) try {
-                    parsed = new URI(text);
-                } catch (URISyntaxException e) {
-                    failure = e;
-                } else try {
-                    parsed = Classes.valueOf(elementType, text);
-                } catch (RuntimeException e) {
-                    // Include IllegalArgumentException and NumberFormatException
-                    failure = e;
+                /*
+                 * We expect a collection. Collections are handled in one of the two ways below:
+                 *
+                 *   - If the user gives a collection, the user's collection replaces any
+                 *     previous one. The content of the previous collection is discarted.
+                 *
+                 *   - If the user gives a single value, it will be added to the existing
+                 *     collection (if any). The previous values are not discarted. This
+                 *     allow for incremental filling of an attribute.
+                 *
+                 * The code below prepares an array of elements to be converted and wraps that
+                 * array in a List (to be converted to a Set after this block if required). It
+                 * is okay to convert the elements after the List creation since the list is a
+                 * wrapper.
+                 */
+                final Collection<?> addTo;
+                Class<?> elementType = null;
+                final Object[] elements;
+                if (newValue instanceof Collection<?>) {
+                    elements = ((Collection<?>) newValue).toArray();
+                    newValue = Arrays.asList(elements); // Content will be converted later.
+                    addTo = null;
+                } else {
+                    elements = new Object[] {newValue};
+                    newValue = addTo = (Collection<?>) get(getter, metadata);
+                    if (addTo == null) {
+                        // No previous collection. Create one.
+                        newValue = Arrays.asList(elements);
+                    } else if (addTo instanceof CheckedCollection<?>) {
+                        // Get the explicitly-specified element type.
+                        elementType = ((CheckedCollection<?>) addTo).getElementType();
+                    }
+                }
+                /*
+                 * If the type of elements in the collection was not explicitly declared, or
+                 * if the user specified a collection which will replace the previous one,
+                 * fetch the type from the method signature.
+                 */
+                if (elementType == null) {
+                    elementType = Classes.boundOfParameterizedAttribute(setter);
+                    if (elementType == null) {
+                        elementType = Classes.boundOfParameterizedAttribute(getter);
+                        if (elementType == null) {
+                            elementType = Object.class;
+                        }
+                    }
+                }
+                converter = convert(elements, 0, elements.length, elementType, converter);
+                /*
+                 * We now have objects of the appropriate type. If we have a singleton to be added
+                 * in an existing collection, add it now. In that case the 'newValue' should refer
+                 * to the 'addTo' collection. We rely on ModifiableMetadata.copyCollection(...)
+                 * optimization for detecting that the new collection is the same instance than
+                 * the old one so there is nothing to do. We could exit from the method, but let
+                 * it continues in case the user override the 'setFoo(...)' method.
+                 */
+                if (addTo != null) {
+                    /*
+                     * Unsafe addition into a collection. In Geotoolkit implementation, the
+                     * collection is actually an instance of CheckedCollection, so the check
+                     * will be performed at runtime. However other implementations could use
+                     * unchecked collection. There is not much we can do.
+                     */
+                    @SuppressWarnings("unchecked")
+                    final Collection<Object> unsafe = (Collection<Object>) addTo;
+                    unsafe.add(elements[0]);
                 }
             }
             /*
-             * Checks if there is no known conversion, or if the conversion failed. In the later
-             * case the parse failure is saved as the cause. We still throw a ClassCastException
-             * since we get here because the argument was not of the expected type.
+             * If the expected type was not a collection, the conversion of user value happen
+             * here. Otherwise conversion from List to Set (if needed) happen here.
              */
-            if (parsed == null) {
-                final ClassCastException e = new ClassCastException(Errors.format(
-                        Errors.Keys.ILLEGAL_CLASS_$2, argument.getClass(), elementType));
-                e.initCause(failure);
-                throw e;
-            }
-            /*
-             * We now have an object of the appropriate type. If this is a singleton to be added in
-             * an existing collection, add it now and set the new value to the whole collection. In
-             * the later case, we rely on ModifiableMetadata.copyCollection(...) optimization for
-             * detecting that the new collection is the same instance than the old one so there is
-             * nothing to do. We could exit from the method, but let it goes in case the user define
-             * (or override) the 'setFoo(...)' method in an other way.
-             */
-            if (addTo != null) {
-                addUnsafe(addTo, parsed);
-                parsed = addTo;
-            }
-            arguments[i] = parsed;
+            newValues[i] = newValue;
+            converter = convert(newValues, i, i+1, targetType, converter);
         }
+        set(setter, metadata, newValues);
+        return converter;
+    }
+
+    /**
+     * Sets a value for the specified metadata. This method does not attempt any conversion of
+     * argument values. Conversion of type, if needed, must have been applied before to call
+     * this method.
+     * <p>
+     * The call to the setter method should not thrown any checked exception.
+     * However unchecked exceptions are allowed.
+     *
+     * @param setter    The method to use for setting the new value.
+     * @param metadata  The metadata object to query.
+     * @param newValues The argument to give to the method to be invoked.
+     */
+    private static void set(final Method setter, final Object metadata, final Object[] newValues) {
         try {
-            setter.invoke(metadata, arguments);
+            setter.invoke(metadata, newValues);
         } catch (IllegalAccessException e) {
             // Should never happen since 'setters' should contains only public methods.
             throw new AssertionError(e);
@@ -716,21 +749,42 @@ final class PropertyAccessor {
     }
 
     /**
-     * Unsafe addition into a collection. In Geotoolkit implementation, the collection is actually
-     * an instance of {@link CheckedCollection}, so the check will be performed at runtime.
-     * However other implementations could use unchecked collection. There is not much we can do.
+     * Converts values in the specified array to the given type. Only elements in the range
+     * {@code lower} inclusive to {@code upper} exclusive will be used. The given converter
+     * will be used if suitable, or a new one fetched otherwise.
      *
-     * @param  addTo The collection in which to add the given element.
-     * @param  element The element to add.
-     * @throws ClassCastException If the collection check the type (for exemple if it is an
-     *         implementation of {@link CheckedCollection}) and {@code element} is not a valid
-     *         type. If this exception occurs, it would be a programming error.
+     * @param elements   The array which contains element to convert.
+     * @param lower      Index of the first element to convert, inclusive.
+     * @param upper      Index of the last element to convert, exclusive.
+     * @param targetType The base type of target elements.
+     * @param converter  The proposed converter, or {@code null}.
+     * @return The last converter used, or {@code null}.
+     * @throws ClassCastException If an element can't be converted.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    private static void addUnsafe(final Collection<?> addTo, final Object element)
-            throws ClassCastException
+    private static ObjectConverter<?,?> convert(final Object[] elements, final int lower, final int upper,
+            final Class<?> targetType, ObjectConverter<?,?> converter) throws ClassCastException
     {
-        ((Collection) addTo).add(element);
+        for (int i=lower; i<upper; i++) {
+            final Object value = elements[i];
+            if (value != null) {
+                final Class<?> sourceType = value.getClass();
+                if (!targetType.isAssignableFrom(sourceType)) try {
+                    if (converter == null || !converter.getSourceClass().isAssignableFrom(sourceType)
+                                          || !targetType.isAssignableFrom(converter.getTargetClass()))
+                    {
+                        converter = ConverterRegistry.system().converter(sourceType, targetType);
+                    }
+                    elements[i] = ((ObjectConverter) converter).convert(value);
+                } catch (NonconvertibleObjectException cause) {
+                    final ClassCastException e = new ClassCastException(Errors.format(
+                            Errors.Keys.ILLEGAL_CLASS_$2, sourceType, targetType));
+                    e.initCause(cause);
+                    throw e;
+                }
+            }
+        }
+        return converter;
     }
 
     /**
@@ -782,6 +836,7 @@ final class PropertyAccessor {
     public boolean shallowCopy(final Object source, final Object target, final boolean skipNulls)
             throws UnmodifiableMetadataException
     {
+        ObjectConverter<?,?> converter = this.converter;
         boolean success = true;
         assert type.isInstance(source) : Classes.getClass(source);
         final Object[] arguments = new Object[1];
@@ -794,18 +849,19 @@ final class PropertyAccessor {
                 }
                 final Method setter = setters[i];
                 if (setter != null) {
-                    set(getter, setter, target, arguments);
+                    converter = set(getter, setter, target, arguments, converter);
                 } else {
                     success = false;
                 }
             }
         }
+        this.converter = converter;
         return success;
     }
 
     /**
      * Replaces every properties in the specified metadata by their
-     * {@linkplain ModifiableMetadata#unmodifiable unmodifiable variant.
+     * {@linkplain ModifiableMetadata#unmodifiable unmodifiable variant}.
      */
     final void freeze(final Object metadata) {
         assert implementation.isInstance(metadata) : metadata;
@@ -819,7 +875,15 @@ final class PropertyAccessor {
                     final Object target = ModifiableMetadata.unmodifiable(source);
                     if (source != target) {
                         arguments[0] = target;
-                        set(getter, setter, metadata, arguments);
+                        set(setter, metadata, arguments);
+                        /*
+                         * We invoke the set(...) method which do not perform type conversion
+                         * because we don't want it to replace the immutable collection created
+                         * by ModifiableMetadata.unmodifiable(source). Conversion should not be
+                         * required anyway because the getter method should have returned a value
+                         * compatible with the setter method - this contract is ensured by the
+                         * way the PropertyAccessor constructor selected the setter methods.
+                         */
                     }
                 }
             }

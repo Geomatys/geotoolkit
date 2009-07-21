@@ -70,8 +70,21 @@ class ClassPair<S,T> {
      * @return A key for the parent source, or {@code null}.
      */
     public final ClassPair<? super S,T> parentSource() {
-        final Class<? super S> source = sourceClass.getSuperclass();
-        return (source != null) ? new ClassPair<S,T>(source, targetClass) : null;
+        final Class<? super S> source;
+        if (sourceClass.isInterface()) {
+            @SuppressWarnings({"unchecked","rawtypes"})
+            final Class<? super S>[] interfaces = (Class[]) sourceClass.getInterfaces();
+            if (interfaces.length == 0) {
+                return null;
+            }
+            source = interfaces[0]; // Take only the first interface declaration; ignore others.
+        } else {
+            source = sourceClass.getSuperclass();
+            if (source == null) {
+                return null;
+            }
+        }
+        return new ClassPair<S,T>(source, targetClass);
     }
 
     /**
