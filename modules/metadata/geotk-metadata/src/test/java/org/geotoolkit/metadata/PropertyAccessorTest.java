@@ -19,6 +19,7 @@ package org.geotoolkit.metadata;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.opengis.metadata.Identifier;
@@ -38,7 +39,7 @@ import static org.junit.Assert.*;
  * Tests the {@link PropertyAccessor} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  */
@@ -98,9 +99,9 @@ public final class PropertyAccessorTest {
      * Returns {@code true} if the specified identifiers contains the {@code "EPSG"} code.
      */
     static boolean containsEPSG(final Object identifiers) {
-        assertTrue(identifiers instanceof Collection);
+        assertTrue(identifiers instanceof Collection<?>);
         @SuppressWarnings("unchecked")
-        final Collection<Identifier> collection = (Collection) identifiers;
+        final Collection<Identifier> collection = (Collection<Identifier>) identifiers;
         for (final Identifier id : collection) {
             if (id.getCode().equals("EPSG")) {
                 return true;
@@ -139,18 +140,18 @@ public final class PropertyAccessorTest {
         assertTrue(index >= 0);
 
         value = accessor.get(index, citation);
-        assertTrue(value instanceof Collection);
+        assertTrue(value instanceof Collection<?>);
         assertTrue(((Collection<?>) value).isEmpty());
 
         value = accessor.set(index, citation, "An other title", true);
-        assertTrue(value instanceof Collection);
+        assertTrue(value instanceof Collection<?>);
         assertTrue(((Collection<?>) value).isEmpty());
 
         value = accessor.set(index, citation, "Yet an other title", true);
-        assertTrue(value instanceof Collection);
+        assertTrue(value instanceof Collection<?>);
         assertEquals(1, ((Collection<?>) value).size());
 
-        final Set<Object> expected = new HashSet<Object>();
+        final Collection<Object> expected = new ArrayList<Object>();
         assertTrue(expected.add(new SimpleInternationalString("An other title")));
         assertTrue(expected.add(new SimpleInternationalString("Yet an other title")));
         assertEquals(expected, (Collection<?>) accessor.get(index, citation));
@@ -178,6 +179,8 @@ public final class PropertyAccessorTest {
         final Object target = accessor.get(index, citation);
         assertNotNull(source);
         assertNotNull(target);
+        assertTrue(source instanceof Collection<?>);
+        assertTrue(target instanceof Collection<?>);
         assertNotSame(source, target);
         assertEquals (source, target);
         assertTrue(containsEPSG(target));
@@ -185,7 +188,6 @@ public final class PropertyAccessorTest {
         assertEquals(CollectionUtilities.copy(target), accessor.set(index, citation, null, true));
         final Object value = accessor.get(index, citation);
         assertNotNull(value);
-        assertSame(target, value);
         assertTrue(((Collection<?>) value).isEmpty());
 
         try {

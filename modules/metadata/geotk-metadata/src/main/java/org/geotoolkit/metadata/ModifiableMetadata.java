@@ -26,7 +26,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
+import org.opengis.util.CodeList;
+
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
@@ -71,7 +74,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
@@ -208,11 +211,12 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
          */
         if (object instanceof Collection<?>) {
             Collection<?> collection = (Collection<?>) object;
+            final boolean isSet = (collection instanceof Set<?>);
             if (collection.isEmpty()) {
-                if (collection instanceof List<?>) {
-                    collection = Collections.EMPTY_LIST;
-                } else {
+                if (isSet) {
                     collection = Collections.EMPTY_SET;
+                } else {
+                    collection = Collections.EMPTY_LIST;
                 }
             } else {
                 final Object[] array = collection.toArray();
@@ -222,7 +226,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 // Uses standard Java collections rather than Geotoolkit Checked* classes,
                 // since we don't need anymore synchronization or type checking.
                 collection = UnmodifiableArrayList.wrap(array);
-                if (collection instanceof Set<?>) {
+                if (isSet) {
                     collection = Collections.unmodifiableSet(new LinkedHashSet<Object>(collection));
                 } else {
                     // Conservatively assumes a List if we are not sure to have a Set,
@@ -317,9 +321,9 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Copies the content of one list ({@code source}) into an other ({@code target}).
-     * If the target list is {@code null}, a new target list is created.
-     * <p>
-     * A call to {@link #checkWritePermission} is implicit before the copy is performed.
+     * First, the {@link #checkWritePermission()} method is invoked in order to ensure that
+     * this metadata is modifiable. Next the content of the given list is copied in the given
+     * target list. If the target list is {@code null}, a new one is created.
      *
      * @param  <E>         The type of elements in the list.
      * @param  source      The source list. {@code null} is synonymous to empty.
@@ -334,33 +338,64 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
             List<E> target, final Class<E> elementType)
             throws UnmodifiableMetadataException
     {
-        if (unmodifiable == FREEZING) {
-            /*
-             * freeze() method is under progress. The source list is already
-             * an unmodifiable instance created by unmodifiable(Object).
-             */
-            assert !isModifiable(source);
-            @SuppressWarnings("unchecked")
-            final List<E> unmodifiable = (List<E>) source;
-            return unmodifiable;
-        }
-        checkWritePermission();
-        /*
-         * It is not worth to copy the content if the current and the new instance are the
-         * same. This is safe only using the != operator, not the equals(Object) method.
-         * This optimization is required for efficient working of PropertyAccessor.set(...).
-         */
+        // See the comments in copyCollection(...) for implementation notes.
         if (source != target) {
+            if (unmodifiable == FREEZING) {
+                @SuppressWarnings("unchecked")
+                final List<E> unmodifiable = (List<E>) source;
+                assert !isModifiable(unmodifiable);
+                return unmodifiable;
+            }
+            checkWritePermission();
             if (source == null) {
-                if (target != null) {
-                    target.clear();
-                }
+                target = null;
             } else {
                 if (target != null) {
                     target.clear();
                 } else {
-                    int capacity = source.size();
-                    target = new MutableList<E>(elementType, capacity);
+                    target = new MutableList<E>(elementType, source.size());
+                }
+                target.addAll(source);
+            }
+        }
+        return target;
+    }
+
+    /**
+     * Copies the content of one Set ({@code source}) into an other ({@code target}).
+     * First, the {@link #checkWritePermission()} method is invoked in order to ensure that
+     * this metadata is modifiable. Next the content of the given collection is copied in
+     * the given target Set. If the target Set is {@code null}, a new one is created.
+     *
+     * @param  <E>         The type of elements in the Set.
+     * @param  source      The source Set. {@code null} is synonymous to empty.
+     * @param  target      The target Set, or {@code null} if not yet created.
+     * @param  elementType The base type of elements to put in the Set.
+     * @return {@code target}, or a newly created Set.
+     * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
+     *
+     * @since 3.02
+     */
+    protected final <E> Set<E> copySet(final Collection<? extends E> source,
+            Set<E> target, final Class<E> elementType)
+            throws UnmodifiableMetadataException
+    {
+        // See the comments in copyCollection(...) for implementation notes.
+        if (source != target) {
+            if (unmodifiable == FREEZING) {
+                @SuppressWarnings("unchecked")
+                final Set<E> unmodifiable = (Set<E>) source;
+                assert !isModifiable(unmodifiable);
+                return unmodifiable;
+            }
+            checkWritePermission();
+            if (source == null) {
+                target = null;
+            } else {
+                if (target != null) {
+                    target.clear();
+                } else {
+                    target = new MutableSet<E>(elementType, source.size());
                 }
                 target.addAll(source);
             }
@@ -370,10 +405,18 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Copies the content of one collection ({@code source}) into an other ({@code target}).
-     * If the target collection is {@code null}, or if its type ({@link List} vs {@link Set})
-     * doesn't matches the type of the source collection, a new target collection is created.
-     * <p>
-     * A call to {@link #checkWritePermission} is implicit before the copy is performed.
+     * First, the {@link #checkWritePermission()} method is invoked in order to ensure that
+     * this metadata is modifiable. Next the content of the given collection is copied in
+     * the given target collection. If the target collection is {@code null}, a new one is
+     * created.
+     *
+     * {@note It could be considered good practice to invoke <code>copyList</code> or
+     *        <code>copySet</code> instead than this method, since this method does not
+     *        specify which kind of collection is created. However this method provides
+     *        a central place where to decide the collection type. Current implementation
+     *        creates a <code>Set</code> for immutable elements like <code>CodeList</code>,
+     *        <code>Enum</code> or <code>String</code>, but this rule may evolve in future
+     *        Geotoolkit versions}.
      *
      * @param  <E>         The type of elements in the collection.
      * @param  source      The source collection. {@code null} is synonymous to empty.
@@ -386,38 +429,35 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
             Collection<E> target, final Class<E> elementType)
             throws UnmodifiableMetadataException
     {
-        if (unmodifiable == FREEZING) {
-            /*
-             * freeze() method is under progress. The source collection is already
-             * an unmodifiable instance created by unmodifiable(Object).
-             */
-            assert !isModifiable(source);
-            @SuppressWarnings("unchecked")
-            final Collection<E> unmodifiable = (Collection<E>) source;
-            return unmodifiable;
-        }
-        checkWritePermission();
         /*
          * It is not worth to copy the content if the current and the new instance are the
-         * same. This is safe only using the != operator, not the equals(Object) method.
+         * same. This is safe only using the != operator, not the !equals(Object) method.
          * This optimization is required for efficient working of PropertyAccessor.set(...).
          */
         if (source != target) {
+            if (unmodifiable == FREEZING) {
+                /*
+                 * freeze() method is under progress. The source collection is already
+                 * an unmodifiable instance created by unmodifiable(Object).
+                 */
+                @SuppressWarnings("unchecked")
+                final Collection<E> unmodifiable = (Collection<E>) source;
+                assert (unmodifiable instanceof Set<?>) == useSet(elementType) : elementType;
+                assert !isModifiable(unmodifiable);
+                return unmodifiable;
+            }
+            checkWritePermission();
             if (source == null) {
+                target = null;
+            } else {
                 if (target != null) {
                     target.clear();
-                }
-            } else {
-                final boolean isList = (source instanceof List<?>);
-                if (target != null && (target instanceof List<?>) == isList) {
-                    target.clear();
                 } else {
-                    int capacity = source.size();
-                    if (isList) {
-                        target = new MutableList<E>(elementType, capacity);
-                    } else {
-                        capacity = Math.round(capacity / 0.75f) + 1;
+                    final int capacity = source.size();
+                    if (useSet(elementType)) {
                         target = new MutableSet<E>(elementType, capacity);
+                    } else {
+                        target = new MutableList<E>(elementType, capacity);
                     }
                 }
                 target.addAll(source);
@@ -431,6 +471,14 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * This is a convenience method for implementation of {@code getFoo()}
      * methods.
      *
+     * {@note It could be considered good practice to invoke <code>nonNullList</code> or
+     *        <code>nonNullSet</code> instead than this method, since this method does not
+     *        specify which kind of collection is created. However this method provides
+     *        a central place where to decide the collection type. Current implementation
+     *        creates a <code>Set</code> for immutable elements like <code>CodeList</code>,
+     *        <code>Enum</code> or <code>String</code>, but this rule may evolve in future
+     *        Geotoolkit versions}.
+     *
      * @param  <E> The type of elements in the collection.
      * @param  c The collection to checks.
      * @param  elementType The element type (used only if {@code c} is null).
@@ -439,12 +487,23 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     protected final <E> Collection<E> nonNullCollection(final Collection<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
         if (c != null) {
+            assert (c instanceof Set<?>) == useSet(elementType) : elementType;
             return c;
         }
-        if (isModifiable()) {
-            return new MutableSet<E>(elementType);
+        final boolean isModifiable = isModifiable();
+        if (useSet(elementType)) {
+            if (isModifiable) {
+                return new MutableSet<E>(elementType);
+            } else {
+                return Collections.emptySet();
+            }
+        } else {
+            if (isModifiable) {
+                return new MutableList<E>(elementType);
+            } else {
+                return Collections.emptyList();
+            }
         }
-        return Collections.emptySet();
     }
 
     /**
@@ -504,7 +563,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         }
 
         public MutableSet(Class<E> type, int capacity) {
-            super(type, capacity);
+            super(type, Utilities.hashMapCapacity(capacity));
         }
 
         @Override
@@ -543,6 +602,17 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         protected void checkWritePermission() throws UnsupportedOperationException {
             ModifiableMetadata.this.checkWritePermission();
         }
+    }
+
+    /**
+     * Returns {@code true} if we should use a {@link Set} instead than a {@link List}
+     * for elements of the given type. We are allowed to return {@code true} only for
+     * a few selected immutable types.
+     */
+    private static boolean useSet(final Class<?> elementType) {
+        return CodeList.class.isAssignableFrom(elementType) ||
+                   Enum.class.isAssignableFrom(elementType) ||
+                 String.class.equals(elementType);
     }
 
     /**

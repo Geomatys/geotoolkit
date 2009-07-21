@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.metadata;
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
 
@@ -41,7 +41,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link PropertyTree}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -101,7 +101,7 @@ public final class PropertyTreeTest {
         assertEquals(5, root.getChildCount());
         TreeNode node = (TreeNode) root.getChildAt(2);
         assertEquals("Cited Responsible Parties", node.toString());
-        final Set<DefaultResponsibleParty> authors = new HashSet<DefaultResponsibleParty>();
+        final Collection<DefaultResponsibleParty> authors = new ArrayList<DefaultResponsibleParty>();
         authors.add(author);
         authors.add(duplicated);
         assertEquals(authors, node.getUserObject());

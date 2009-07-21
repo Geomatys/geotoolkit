@@ -39,7 +39,7 @@ import org.geotoolkit.test.Depend;
  * Tests the {@link MetadataStandard} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  */
@@ -105,7 +105,7 @@ public final class MetadataStandardTest {
         assertFalse(s.indexOf("ISBN")        >= 0);
 
         final Object identifiers = map.get("identifiers");
-        assertTrue(identifiers instanceof Collection);
+        assertTrue(identifiers instanceof Collection<?>);
         assertTrue(PropertyAccessorTest.containsEPSG(identifiers));
 
         final Map<String,Object> copy = new HashMap<String,Object>(map);

@@ -37,7 +37,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.1
  * @module
@@ -116,7 +116,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.5
      */
     public synchronized void setAttributes(final Set<? extends AttributeType> newValues) {
-        attributes = (Set<AttributeType>) copyCollection(newValues, attributes, AttributeType.class);
+        attributes = copySet(newValues, attributes, AttributeType.class);
     }
 
     /**
@@ -135,7 +135,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.5
      */
     public synchronized void setFeatures(final Set<? extends FeatureType> newValues) {
-        features = (Set<FeatureType>) copyCollection(newValues, features, FeatureType.class);
+        features = copySet(newValues, features, FeatureType.class);
     }
 
     /**
@@ -154,7 +154,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.5
      */
     public synchronized void setFeatureInstances(final Set<? extends FeatureType> newValues) {
-        featureInstances = (Set<FeatureType>) copyCollection(newValues, featureInstances, FeatureType.class);
+        featureInstances = copySet(newValues, featureInstances, FeatureType.class);
     }
 
     /**
@@ -175,7 +175,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.5
      */
     public synchronized void setAttributeInstances(final Set<? extends AttributeType> newValues) {
-        attributeInstances = (Set<AttributeType>) copyCollection(newValues, attributeInstances, AttributeType.class);
+        attributeInstances = copySet(newValues, attributeInstances, AttributeType.class);
     }
 
     /**

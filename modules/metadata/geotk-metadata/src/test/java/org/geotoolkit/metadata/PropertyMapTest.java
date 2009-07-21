@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Tests {@link PropertyMap}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -59,12 +59,12 @@ public final class PropertyMapTest {
         final Map<String,Object> map = citation.asMap();
         assertEquals("Undercurrent", map.get("title").toString());
         assertEquals("9782505004509", map.get("ISBN"));
-        assertEquals(Collections.singleton(author), map.get("citedResponsibleParties"));
+        assertEquals(Collections.singletonList(author), map.get("citedResponsibleParties"));
 
         final Map<String,Object> expected = new HashMap<String,Object>();
         assertNull(expected.put("title", title));
         assertNull(expected.put("ISBN", "9782505004509"));
-        assertNull(expected.put("citedResponsibleParties", Collections.singleton(author)));
+        assertNull(expected.put("citedResponsibleParties", Collections.singletonList(author)));
         assertEquals(expected, map);
         /*
          * Removes a value.

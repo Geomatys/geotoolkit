@@ -34,8 +34,8 @@
  *       which is why this package is not a sub-package of the ISO's one.</P></LI>
  * </UL>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.0
  * @module
