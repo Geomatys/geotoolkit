@@ -193,22 +193,6 @@ public abstract class AbstractDataStore implements DataStore {
             throws IOException;
 
     /**
-     * Subclass can implement this to provide writing support.
-     *
-     * @param typeName
-     *
-     * @return FeatureWriter over contents of typeName
-     * @throws IOException
-     *
-     * @throws IOException Subclass may throw IOException
-     * @throws UnsupportedOperationException Subclass may implement
-     * @deprecated
-     */
-    protected FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final String typeName) throws IOException {
-        throw new UnsupportedOperationException("Schema creation not supported");
-    }
-
-    /**
      * Subclass should implement this to provide writing support.
      * <p>A feature writer writes to the resource so it should considered to always be committing.
      * The transaction is passed in so that it can be known what FeatureListeners should be notified of the
@@ -507,8 +491,7 @@ public abstract class AbstractDataStore implements DataStore {
             try {
                 writer = createFeatureWriter(typeName, transaction);
             } catch (UnsupportedOperationException e) {
-                // This is for backward compatibility.
-                writer = getFeatureWriter(typeName);
+                throw e;
             }
         } else {
             TransactionStateDiff state = state(transaction);

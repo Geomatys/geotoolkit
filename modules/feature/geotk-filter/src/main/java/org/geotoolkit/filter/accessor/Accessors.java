@@ -20,7 +20,7 @@ package org.geotoolkit.filter.accessor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.imageio.spi.ServiceRegistry;
+import org.geotoolkit.factory.FactoryRegistry;
 
 /**
  * Utility class to obtain a propertyAccesor.
@@ -32,7 +32,8 @@ public class Accessors {
     private static final PropertyAccessorFactory[] ACCESSOR_FACTORIES;
 
     static{
-        final Iterator<PropertyAccessorFactory> factories = ServiceRegistry.lookupProviders(PropertyAccessorFactory.class);
+        final FactoryRegistry fr = new FactoryRegistry(PropertyAccessorFactory.class);
+        final Iterator<PropertyAccessorFactory> factories = fr.getServiceProviders(PropertyAccessorFactory.class, null, null);
 
         List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
         while(factories.hasNext()){

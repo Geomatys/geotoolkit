@@ -20,7 +20,8 @@ package org.geotoolkit.filter.function;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import javax.imageio.spi.ServiceRegistry;
+
+import org.geotoolkit.factory.FactoryRegistry;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -36,7 +37,8 @@ public class Functions {
     private static final Map<String,FunctionFactory> FACTORIES = new HashMap<String,FunctionFactory>();
 
     static{
-        final Iterator<FunctionFactory> factories = ServiceRegistry.lookupProviders(FunctionFactory.class);
+        final FactoryRegistry fr = new FactoryRegistry(FunctionFactory.class);
+        final Iterator<FunctionFactory> factories = fr.getServiceProviders(FunctionFactory.class, null, null);
 
         while(factories.hasNext()){
             final FunctionFactory ff = factories.next();

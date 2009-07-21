@@ -196,7 +196,7 @@ public class TransactionStateDiff implements State {
             writer = store.createFeatureWriter(typeName, transaction);
         } catch (UnsupportedOperationException e) {
             // backwards compatibility
-            writer = store.getFeatureWriter(typeName);
+            throw e;
         }
         SimpleFeature feature;
         SimpleFeature update;

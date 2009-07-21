@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.spi.ServiceRegistry;
+import org.geotoolkit.factory.FactoryRegistry;
 
 /**
  * <p>
@@ -46,7 +46,8 @@ public class FileDataStoreFinder {
     private static final Set<FileDataStoreFactorySpi> FILE_FACTORIES = new HashSet<FileDataStoreFactorySpi>();
 
     static {
-        final Iterator<FileDataStoreFactorySpi> factories = ServiceRegistry.lookupProviders(FileDataStoreFactorySpi.class);
+        final FactoryRegistry fr = new FactoryRegistry(FileDataStoreFactorySpi.class);
+        final Iterator<FileDataStoreFactorySpi> factories = fr.getServiceProviders(FileDataStoreFactorySpi.class, null, null);
 
         while (factories.hasNext()) {
             final FileDataStoreFactorySpi ff = factories.next();
