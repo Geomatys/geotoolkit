@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
@@ -37,8 +37,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
+
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -84,15 +86,16 @@ public class JExpressionDialog extends javax.swing.JDialog {
         setLayer(layer);
         setExpression(exp);
 
-        lst_field.addListSelectionListener(new ListSelectionListener() {
+        guiFields.addListSelectionListener(new ListSelectionListener() {
 
-                    public void valueChanged(ListSelectionEvent e) {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
 
-                        if (lst_field.getSelectedValue() != null) {
-                            append(lst_field.getSelectedValue().toString());
-                        }
-                    }
-                });
+                if (guiFields.getSelectedValue() != null) {
+                    append(guiFields.getSelectedValue().toString());
+                }
+            }
+        });
     }
 
     private void append(String val) {
@@ -110,20 +113,20 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * @param layer the layer to edit
      */
     public void setLayer(MapLayer layer) {
-        lst_field.removeAll();
+        guiFields.removeAll();
 
-        if (layer != null && layer instanceof FeatureMapLayer) {
+        if (layer instanceof FeatureMapLayer) {
 
-            lst_field.removeAll();
+            guiFields.removeAll();
 
             final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getFeatureSource().getSchema().getDescriptors();
-            final Vector<String> vec = new Vector<String>();
+            final List<String> vec = new ArrayList<String>();
             
-            for(PropertyDescriptor desc : col){
+            for(final PropertyDescriptor desc : col){
                 vec.add(desc.getName().toString());
             }
 
-            lst_field.setListData(vec);
+            guiFields.setListData(vec.toArray());
         }
 
     }
@@ -147,11 +150,9 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * @return Expression : New Expression
      */
     public Expression getExpression() {
+        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
 
-        FilterFactory ff = FactoryFinder.getFilterFactory(null);
-        Expression expr = ff.property(jta.getText());
-
-        return expr;
+        return ff.property(jta.getText());
     //        try {
 //            Expression expr = CQL.toExpression(jta.getText());           
 //            return expr;
@@ -171,19 +172,9 @@ public class JExpressionDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new JScrollPane();
-        lst_field = new JList();
-        jScrollPane1 = new JScrollPane();
-        jta = new JTextArea();
-        jButton2 = new JButton();
-        jButton3 = new JButton();
-        jButton4 = new JButton();
-        jButton5 = new JButton();
-        jButton6 = new JButton();
-
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        jScrollPane2.setViewportView(lst_field);
+        jScrollPane2.setViewportView(guiFields);
 
         jta.setColumns(20);
         jta.setRows(5);
@@ -254,7 +245,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                             .addComponent(jButton2)
@@ -291,14 +282,14 @@ public class JExpressionDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_actionClose
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton jButton2;
-    private JButton jButton3;
-    private JButton jButton4;
-    private JButton jButton5;
-    private JButton jButton6;
-    private JScrollPane jScrollPane1;
-    private JScrollPane jScrollPane2;
-    private JTextArea jta;
-    private JList lst_field;
+    private final JList guiFields = new JList();
+    private final JButton jButton2 = new JButton();
+    private final JButton jButton3 = new JButton();
+    private final JButton jButton4 = new JButton();
+    private final JButton jButton5 = new JButton();
+    private final JButton jButton6 = new JButton();
+    private final JScrollPane jScrollPane1 = new JScrollPane();
+    private final JScrollPane jScrollPane2 = new JScrollPane();
+    private final JTextArea jta = new JTextArea();
     // End of variables declaration//GEN-END:variables
 }

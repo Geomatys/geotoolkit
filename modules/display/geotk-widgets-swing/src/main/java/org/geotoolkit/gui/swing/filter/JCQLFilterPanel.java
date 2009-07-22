@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.gui.swing.filter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -47,26 +49,26 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     private Filter filter = null;
     private FeatureMapLayer layer;
 
-    private final ListSelectionListener listListener = new ListSelectionListener() {
+    private final transient ListSelectionListener listListener = new ListSelectionListener() {
 
         @Override
-            public void valueChanged(ListSelectionEvent e) {
+        public void valueChanged(ListSelectionEvent e) {
             final JList model = (JList) e.getSource();
-            Object value = model.getSelectedValue();
-            if(value != null){
+            final Object value = model.getSelectedValue();
+            if (value != null) {
                 append(value.toString());
             }
 
-            }
+        }
     };
 
     /** Creates new form JCQLPropertyPanel */
     public JCQLFilterPanel() {
         initComponents();
 
-        lst_basic.addListSelectionListener(listListener);
-        lst_gis.addListSelectionListener(listListener);
-        lst_field.addListSelectionListener(listListener);
+        guiBasic.addListSelectionListener(listListener);
+        guiGIS.addListSelectionListener(listListener);
+        guiFields.addListSelectionListener(listListener);
         
 //        lst_basic.addListSelectionListener(new ListSelectionListener() {
 //
@@ -95,19 +97,19 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     private void append(String val) {
-        if (!txt_cql.getText().endsWith(val)) {
+        if (!guiTxtCQL.getText().endsWith(val)) {
 
-            if (!txt_cql.getText().endsWith(" ") && txt_cql.getText().length() > 0) {
-                txt_cql.append(" ");
+            if (!guiTxtCQL.getText().endsWith(" ") && guiTxtCQL.getText().length() > 0) {
+                guiTxtCQL.append(" ");
             }
-            txt_cql.append(val);
+            guiTxtCQL.append(val);
         }
     }
 
     private Filter verifyQuery(String str) {
 
         try {
-            Filter flt = CQL.toFilter(str);
+            final Filter flt = CQL.toFilter(str);
             txt_error.setText(" ");
             return flt;
         } catch (CQLException e) {
@@ -117,31 +119,27 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     private void parse(Filter filter) {
-        txt_cql.setText(CQL.toCQL(filter));
+        guiTxtCQL.setText(CQL.toCQL(filter));
     }
 
-    private void parse(MapLayer ly) {
+    private void parse(FeatureMapLayer ly) {
         
-        if(layer instanceof FeatureMapLayer){
-            FeatureMapLayer layer = (FeatureMapLayer) ly;
-        lst_field.removeAll();
+        if (layer != null) {
+            guiFields.removeAll();
 
-        Collection<PropertyDescriptor> col = layer.getFeatureSource().getSchema().getDescriptors();
-        Iterator<PropertyDescriptor> it = col.iterator();
+            final Collection<PropertyDescriptor> col = layer.getFeatureSource().getSchema().getDescriptors();
+            final Iterator<PropertyDescriptor> it = col.iterator();
 
-        PropertyDescriptor desc;
-        Vector<String> vec = new Vector<String>();
-        while (it.hasNext()) {
-            desc = it.next();
-            vec.add(desc.getName().toString());
+            final List<String> vec = new ArrayList<String>();
+            while (it.hasNext()) {
+                vec.add(it.next().getName().toString());
+            }
+
+            guiFields.removeListSelectionListener(listListener);
+            guiFields.setListData(vec.toArray());
+            guiFields.addListSelectionListener(listListener);
         }
 
-
-            lst_field.removeListSelectionListener(listListener);
-        lst_field.setListData(vec);
-            lst_field.addListSelectionListener(listListener);
-        }
-        
     }
 
     /** This method is called from within the constructor to
@@ -152,41 +150,28 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane4 = new javax.swing.JScrollPane();
-        txt_cql = new javax.swing.JTextArea();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lst_field = new javax.swing.JList();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        lst_gis = new javax.swing.JList();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        lst_basic = new javax.swing.JList();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        txt_error = new javax.swing.JLabel();
+        guiTxtCQL.setColumns(20);
+        guiTxtCQL.setRows(5);
+        jScrollPane4.setViewportView(guiTxtCQL);
 
-        txt_cql.setColumns(20);
-        txt_cql.setRows(5);
-        jScrollPane4.setViewportView(txt_cql);
+        guiFields.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(guiFields);
 
-        lst_field.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(lst_field);
-
-        lst_gis.setModel(new javax.swing.AbstractListModel() {
+        guiGIS.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "CONTAINS(<ATTR1>,<POINT(1 2)>)", "CROSS(<ATTR1>,<LINESTRING(1 2, 10 15)>)", "INTERSECT(<ATTR1>,<GEOMETRYCOLLECTION (POINT (10 10),POINT (30 30),LINESTRING (15 15, 20 20))> )", "BBOX(<ATTR1>,<10>,<20>,<30>,<40>)", "DWITHIN(<ATTR1>, <POINT(1 2)>, <10>, <kilometers>)" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        lst_gis.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(lst_gis);
+        guiGIS.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(guiGIS);
 
-        lst_basic.setModel(new javax.swing.AbstractListModel() {
+        guiBasic.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "AND", "OR", "=", "<", "<=", ">", ">=", "BETWEEN", "LIKE", "NOT LIKE", "IS NULL", "IS NOT NULL", "EXISTS", "DOES-NOT-EXIST", "BEFORE", "AFTER", "DURING" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        lst_basic.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane3.setViewportView(lst_basic);
+        guiBasic.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane3.setViewportView(guiBasic);
 
         jLabel2.setText(MessageBundle.getString("property_cql_basic")); // NOI18N
 
@@ -210,7 +195,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 142, Short.MAX_VALUE)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,18 +225,18 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JList lst_basic;
-    private javax.swing.JList lst_field;
-    private javax.swing.JList lst_gis;
-    private javax.swing.JTextArea txt_cql;
-    private javax.swing.JLabel txt_error;
+    private final javax.swing.JList guiBasic = new javax.swing.JList();
+    private final javax.swing.JList guiFields = new javax.swing.JList();
+    private final javax.swing.JList guiGIS = new javax.swing.JList();
+    private final javax.swing.JTextArea guiTxtCQL = new javax.swing.JTextArea();
+    private final javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+    private final javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
+    private final javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
+    private final javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
+    private final javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
+    private final javax.swing.JScrollPane jScrollPane3 = new javax.swing.JScrollPane();
+    private final javax.swing.JScrollPane jScrollPane4 = new javax.swing.JScrollPane();
+    private final javax.swing.JLabel txt_error = new javax.swing.JLabel();
     // End of variables declaration//GEN-END:variables
     
     @Override
@@ -266,7 +251,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
 
     @Override
     public Filter getFilter() {
-        Filter flt = verifyQuery(txt_cql.getText());
+        Filter flt = verifyQuery(guiTxtCQL.getText());
 
         if (flt == null) {
             flt = Filter.INCLUDE;
