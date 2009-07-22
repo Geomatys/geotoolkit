@@ -43,7 +43,6 @@ public class StyleTreeModel extends DefaultTreeModel {
     }
     
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final RandomStyleFactory RANDOM_FACTORY = new RandomStyleFactory();
     private MutableStyle style = null;
 
     /**
@@ -173,7 +172,7 @@ public class StyleTreeModel extends DefaultTreeModel {
                         
             if (parentMovedNode == targetNode) {                
             } else if(parentMovedNode.getChildCount() == 1){
-                MutableRule rule = RANDOM_FACTORY.duplicate((MutableRule) movedObj);
+                MutableRule rule = (MutableRule) movedObj;
                 copy = insert(targetNode, rule);
             } else{
                 remove(parentMovedNode, (MutableRule) movedObj);
@@ -190,7 +189,7 @@ public class StyleTreeModel extends DefaultTreeModel {
             if (parentMovedNode == targetParentNode) {          
                 copy = moveAt(movedNode, (MutableRule)movedObj, targetIndex);
             } else if(parentMovedNode.getChildCount() == 1){
-                MutableRule rule = RANDOM_FACTORY.duplicate((MutableRule) movedObj);                                
+                MutableRule rule = (MutableRule) movedObj;                                
                 MutableFeatureTypeStyle parentfts = (MutableFeatureTypeStyle) targetParentNode.getUserObject();                
                 copy = insertAt(targetParentNode, rule, targetIndex );
             } else{
@@ -243,11 +242,11 @@ public class StyleTreeModel extends DefaultTreeModel {
         DefaultMutableTreeNode copy = null;
 
         if (obj instanceof MutableFeatureTypeStyle) {
-            MutableFeatureTypeStyle fts = RANDOM_FACTORY.duplicate((MutableFeatureTypeStyle) obj);
+            MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) obj;
             int index = indexof(style, (MutableFeatureTypeStyle) obj) + 1;
             copy = insertAt(fts, index);
         } else if (obj instanceof MutableRule) {
-            MutableRule rule = RANDOM_FACTORY.duplicate((MutableRule) obj);
+            MutableRule rule = (MutableRule) obj;
             int index = indexof((MutableFeatureTypeStyle) parentobj, (MutableRule) obj) + 1;
             copy = insertAt(parentnode, rule, index);
         } else if (obj instanceof Symbolizer) {
@@ -264,7 +263,7 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @return created node
      */
     public DefaultMutableTreeNode newFeatureTypeStyle() {
-        MutableFeatureTypeStyle fts = SF.featureTypeStyle(RANDOM_FACTORY.createPointSymbolizer());
+        MutableFeatureTypeStyle fts = SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer());
         return insert(fts);
     }
     /**
@@ -273,7 +272,7 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @return created node
      */
     public DefaultMutableTreeNode newRule(DefaultMutableTreeNode ftsnode) {
-        MutableRule rule = SF.rule(RANDOM_FACTORY.createPointSymbolizer());
+        MutableRule rule = SF.rule(RandomStyleFactory.createPointSymbolizer());
         return insert(ftsnode, rule);
     }
     /**
@@ -282,7 +281,7 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @return created node
      */
     public DefaultMutableTreeNode newPointSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RANDOM_FACTORY.createPointSymbolizer();
+        Symbolizer symbol = RandomStyleFactory.createPointSymbolizer();
         return insert(rulenode, symbol);
     }
     /**
@@ -291,7 +290,7 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @return created node
      */
     public DefaultMutableTreeNode newLineSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RANDOM_FACTORY.createLineSymbolizer();
+        Symbolizer symbol = RandomStyleFactory.createLineSymbolizer();
         return insert(rulenode, symbol);
     }
     /**
@@ -300,7 +299,7 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @return created node
      */
     public DefaultMutableTreeNode newPolygonSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RANDOM_FACTORY.createPolygonSymbolizer();
+        Symbolizer symbol = RandomStyleFactory.createPolygonSymbolizer();
         return insert(rulenode, symbol);
     }
     /**
@@ -309,7 +308,7 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @return created node
      */
     public DefaultMutableTreeNode newRasterSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RANDOM_FACTORY.createRasterSymbolizer();
+        Symbolizer symbol = RandomStyleFactory.createRasterSymbolizer();
         return insert(rulenode, symbol);
     }
     

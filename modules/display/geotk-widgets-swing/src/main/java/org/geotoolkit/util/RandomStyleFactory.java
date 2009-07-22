@@ -35,8 +35,6 @@ import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -49,7 +47,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
-import org.opengis.style.Description;
 import org.opengis.style.Displacement;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
@@ -70,197 +67,151 @@ import org.opengis.style.Symbolizer;
  */
 public class RandomStyleFactory extends Factory {
 
-    private MutableStyleFactory SF = new DefaultStyleFactory();
-    private FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    private final String[] POINT_SHAPES = {"square", "circle", "triangle", "star", "cross", "x"};
-    private final int[] SIZES = {8, 10, 12, 14, 16};
-    private final int[] WIDTHS = {1, 2};
-    private final Color[] COLORS = {
+    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final String[] POINT_SHAPES = {"square", "circle", "triangle", "star", "cross", "x"};
+    private static final int[] SIZES = {8, 10, 12, 14, 16};
+    private static final int[] WIDTHS = {1, 2};
+    private static final Color[] COLORS = {
         Color.BLACK, Color.BLUE, Color.CYAN, Color.DARK_GRAY,
         Color.GRAY, Color.GREEN.darker(), Color.LIGHT_GRAY,
         Color.ORANGE, Color.RED, Color.YELLOW.darker()
     };
 
-    public RandomStyleFactory() {
-        
-    }
-
-    //------------------duplicates----------------------------------------------
-    public MutableStyle duplicate(MutableStyle style) {
-        return style;
-//        DuplicatingStyleVisitor xerox = new DuplicatingStyleVisitor();
-//        style.accept(xerox);
-//        return (Style) xerox.getCopy();
-    }
-
-    public MutableFeatureTypeStyle duplicate(MutableFeatureTypeStyle fts) {
-        return fts;
-//        DuplicatingStyleVisitor xerox = new DuplicatingStyleVisitor();
-//        fts.accept(xerox);
-//        return (FeatureTypeStyle) xerox.getCopy();
-    }
-
-    public MutableRule duplicate(MutableRule rule) {
-        return rule;
-//        DuplicatingStyleVisitor xerox = new DuplicatingStyleVisitor();
-//        rule.accept(xerox);
-//        return (Rule) xerox.getCopy();
+    private RandomStyleFactory() {
     }
 
     //----------------------creation--------------------------------------------
-    public PointSymbolizer createPointSymbolizer() {
+    public static PointSymbolizer createPointSymbolizer() {
         
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
-        final Description desc = SF.description("title", "abs");
         
-        List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
         
-        Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
-        Stroke stroke = SF.stroke(randomColor(), 1);
-        Mark mark = SF.mark(FF.literal("square"), stroke, fill);
+        final Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
+        final Stroke stroke = SF.stroke(randomColor(), 1);
+        final Mark mark = SF.mark(FF.literal("square"), stroke, fill);
         symbols.add(mark);
         
-        Expression opa = FF.literal(1);
-        Expression size = FF.literal(randomPointSize());
-        Expression rotation = FF.literal(0);
-        AnchorPoint anchor = SF.anchorPoint(0, 0);
-        Displacement displacement = SF.displacement(0, 0);
+        final Expression opa = FF.literal(1);
+        final Expression size = FF.literal(randomPointSize());
+        final Expression rotation = FF.literal(0);
+        final AnchorPoint anchor = SF.anchorPoint(0, 0);
+        final Displacement displacement = SF.displacement(0, 0);
         
-        Graphic gra = SF.graphic(symbols,opa,size,rotation,anchor,displacement);
+        final Graphic gra = SF.graphic(symbols,opa,size,rotation,anchor,displacement);
         
-        return SF.pointSymbolizer(name,geom,desc,uom,gra);
+        return SF.pointSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,gra);
     }
 
-    public LineSymbolizer createLineSymbolizer() {
+    public static LineSymbolizer createLineSymbolizer() {
         
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
-        final Description desc = SF.description("title", "abs");
         
-        Stroke stroke = SF.stroke(randomColor(), 1);
-        Expression offset = FF.literal(0);
+        final Stroke stroke = SF.stroke(randomColor(), 1);
+        final Expression offset = FF.literal(0);
         
-        return SF.lineSymbolizer(name,geom,desc,uom,stroke,offset);
+        return SF.lineSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke,offset);
     }
 
-    public PolygonSymbolizer createPolygonSymbolizer() {
+    public static PolygonSymbolizer createPolygonSymbolizer() {
         
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
-        final Description desc = SF.description("title", "abs");
         
-        Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
-        Stroke stroke = SF.stroke(randomColor(), 1);
+        final Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
+        final Stroke stroke = SF.stroke(randomColor(), 1);
         
-        Displacement displacement = SF.displacement(0, 0);
-        Expression offset = FF.literal(0);
+        final Displacement displacement = SF.displacement(0, 0);
+        final Expression offset = FF.literal(0);
         
-        return SF.polygonSymbolizer(name,geom,desc,uom,stroke, fill,displacement,offset);
+        return SF.polygonSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke, fill,displacement,offset);
     }
 
-    public RasterSymbolizer createRasterSymbolizer() {
+    public static RasterSymbolizer createRasterSymbolizer() {
         return SF.rasterSymbolizer();
     }
 
-    public MutableStyle createPolygonStyle() {
-        
-        MutableStyle style = null;
-
-        PolygonSymbolizer ps = createPolygonSymbolizer();
-
-        style = SF.style();
+    public static MutableStyle createPolygonStyle() {
+        final PolygonSymbolizer ps = createPolygonSymbolizer();
+        final MutableStyle style = SF.style();
         style.featureTypeStyles().add(SF.featureTypeStyle(ps));
 
         return style;
     }
 
-    public MutableStyle createDefaultVectorStyle(FeatureSource<SimpleFeatureType, SimpleFeature> fs){
-        MutableStyle style = null;
+    public static MutableStyle createDefaultVectorStyle(FeatureSource<SimpleFeatureType, SimpleFeature> fs){
 
-        Symbolizer ps = SF.polygonSymbolizer();  //createPolygonSymbolizer(randomColor(), randomWidth());
+        final Symbolizer ps;
 
-        try {
-            FeatureType typ = fs.getSchema();
-            AttributeDescriptor att = typ.getGeometryDescriptor();
-            AttributeType type = att.getType();
+        final FeatureType typ = fs.getSchema();
+        final AttributeDescriptor att = typ.getGeometryDescriptor();
+        final AttributeType type = att.getType();
 
-            Class cla = type.getBinding();
+        final Class cla = type.getBinding();
 
-            if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
-                ps = SF.polygonSymbolizer();
-            } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
-                ps = SF.lineSymbolizer();
-            } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
-                ps = SF.pointSymbolizer();
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
+            ps = SF.polygonSymbolizer();
+        } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
+            ps = SF.lineSymbolizer();
+        } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
+            ps = SF.pointSymbolizer();
+        } else{
+            ps = SF.polygonSymbolizer();
         }
 
-        style = SF.style();
+        final MutableStyle style = SF.style();
         style.featureTypeStyles().add(SF.featureTypeStyle(ps));
-
         return style;
     }
     
-    public MutableStyle createRandomVectorStyle(FeatureSource<SimpleFeatureType, SimpleFeature> fs) {
-        MutableStyle style = null;
+    public static MutableStyle createRandomVectorStyle(FeatureSource<SimpleFeatureType, SimpleFeature> fs) {
+        
+        final Symbolizer ps;
+        final FeatureType typ = fs.getSchema();
+        final AttributeDescriptor att = typ.getGeometryDescriptor();
+        final AttributeType type = att.getType();
+        final Class cla = type.getBinding();
 
-        Symbolizer ps = SF.polygonSymbolizer();  //createPolygonSymbolizer(randomColor(), randomWidth());
-
-        try {
-            FeatureType typ = fs.getSchema();
-            AttributeDescriptor att = typ.getGeometryDescriptor();
-            AttributeType type = att.getType();
-
-            Class cla = type.getBinding();
-
-            if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
-                ps = createPolygonSymbolizer();
-            } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
-                ps = createLineSymbolizer();
-            } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
-                ps = createPointSymbolizer();
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
+            ps = createPolygonSymbolizer();
+        } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
+            ps = createLineSymbolizer();
+        } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
+            ps = createPointSymbolizer();
+        } else{
+            ps = SF.polygonSymbolizer();
         }
 
-        style = SF.style();
+        final MutableStyle style = SF.style();
         style.featureTypeStyles().add(SF.featureTypeStyle(ps));
-
         return style;
     }
 
-    public MutableStyle createRasterStyle() {
-        MutableStyle style = null;
-
-        RasterSymbolizer raster = SF.rasterSymbolizer();
-
-        style = SF.style(new Symbolizer[]{raster});
-        return style;
+    public static MutableStyle createRasterStyle() {
+        final RasterSymbolizer raster = SF.rasterSymbolizer();
+        return SF.style(new Symbolizer[]{raster});
     }
 
     //-----------------------random---------------------------------------------
-    private int randomPointSize() {
+    private static int randomPointSize() {
         return SIZES[((int) (Math.random() * SIZES.length))];
     }
 
-    private int randomWidth() {
+    private static int randomWidth() {
         return WIDTHS[((int) (Math.random() * WIDTHS.length))];
     }
 
-    private String randomPointShape() {
+    private static String randomPointShape() {
         return POINT_SHAPES[((int) (Math.random() * POINT_SHAPES.length))];
     }
 
-    private Color randomColor() {
+    private static Color randomColor() {
         return COLORS[((int) (Math.random() * COLORS.length))];
     }
 }

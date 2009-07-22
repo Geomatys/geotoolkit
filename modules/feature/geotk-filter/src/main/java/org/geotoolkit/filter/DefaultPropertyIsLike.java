@@ -35,7 +35,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class DefaultPropertyIsLike implements PropertyIsLike {
 
-    private final Logger LOGGER = Logging.getLogger(DefaultPropertyIsLike.class);
+    private static final Logger LOGGER = Logging.getLogger(DefaultPropertyIsLike.class);
 
     /** The attribute value, which must be an attribute expression. */
     private final Expression attribute;
@@ -96,9 +96,9 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
             throw new IllegalArgumentException("do not use single quote (') as special char!");
         }
 
-        StringBuffer result = new StringBuffer(pattern.length() + 5);
+        final StringBuffer result = new StringBuffer(pattern.length() + 5);
         for (int i = 0; i < pattern.length(); i++) {
-            char chr = pattern.charAt(i);
+            final char chr = pattern.charAt(i);
             if (chr == escape) {
                 // emit the next char and skip it
                 if (i != (pattern.length() - 1)) {
@@ -146,24 +146,21 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         if (match == null) {
             // protect the vars as this is moved code
 
-            String pattern1 = new String(this.pattern);
-            String wildcardMulti1 = new String(this.wildcardMulti);
-            String wildcardSingle1 = new String(this.wildcardSingle);
-            String escape1 = new String(this.escape);
+            String pattern1 = this.pattern;
 
 //          The following things happen for both wildcards:
             //  (1) If a user-defined wildcard exists, replace with Java wildcard
             //  (2) If a user-defined escape exists, Java wildcard + user-escape
             //  Then, test for matching pattern and return result.
-            char esc = escape1.charAt(0);
-            LOGGER.finer("wildcard " + wildcardMulti1 + " single " + wildcardSingle1);
-            LOGGER.finer("escape " + escape1 + " esc " + esc + " esc == \\ " + (esc == '\\'));
+            final char esc = escape.charAt(0);
+            LOGGER.finer("wildcard " + wildcardMulti + " single " + wildcardSingle);
+            LOGGER.finer("escape " + escape + " esc " + esc + " esc == \\ " + (esc == '\\'));
 
-            String escapedWildcardMulti = fixSpecials(wildcardMulti1);
-            String escapedWildcardSingle = fixSpecials(wildcardSingle1);
+            final String escapedWildcardMulti = fixSpecials(wildcardMulti);
+            final String escapedWildcardSingle = fixSpecials(wildcardSingle);
 
             // escape any special chars which are not our wildcards
-            StringBuffer tmp = new StringBuffer("");
+            final StringBuffer tmp = new StringBuffer("");
 
             boolean escapedMode = false;
 
@@ -171,17 +168,17 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
                 char chr = pattern1.charAt(i);
                 LOGGER.finer("tmp = " + tmp + " looking at " + chr);
 
-                if (pattern1.regionMatches(false, i, escape1, 0, escape1.length())) {
+                if (pattern1.regionMatches(false, i, escape, 0, escape.length())) {
                     // skip the escape string
                     LOGGER.finer("escape ");
                     escapedMode = true;
 
-                    i += escape1.length();
+                    i += escape.length();
                     chr = pattern1.charAt(i);
                 }
 
-                if (pattern1.regionMatches(false, i, wildcardMulti1, 0,
-                        wildcardMulti1.length())) { // replace with java wildcard
+                if (pattern1.regionMatches(false, i, wildcardMulti, 0,
+                        wildcardMulti.length())) { // replace with java wildcard
                     LOGGER.finer("multi wildcard");
 
                     if (escapedMode) {
@@ -191,14 +188,14 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
                         tmp.append(".*");
                     }
 
-                    i += (wildcardMulti1.length() - 1);
+                    i += wildcardMulti.length() - 1;
                     escapedMode = false;
 
                     continue;
                 }
 
-                if (pattern1.regionMatches(false, i, wildcardSingle1, 0,
-                        wildcardSingle1.length())) {
+                if (pattern1.regionMatches(false, i, wildcardSingle, 0,
+                        wildcardSingle.length())) {
                     // replace with java single wild card
                     LOGGER.finer("single wildcard");
 
@@ -211,7 +208,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
                         tmp.append(".{1}");
                     }
 
-                    i += (wildcardSingle1.length() - 1);
+                    i += wildcardSingle.length() - 1;
                     escapedMode = false;
 
                     continue;
@@ -219,7 +216,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
 
                 if (isSpecial(chr)) {
                     LOGGER.finer("special");
-                    tmp.append(this.escape + chr);
+                    tmp.append(this.escape).append(chr);
                     escapedMode = false;
 
                     continue;
@@ -274,13 +271,13 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         //LOGGER.finest("pattern: " + pattern);
         //LOGGER.finest("string: " + attribute.getValue(feature));
         //return attribute.getValue(feature).toString().matches(pattern);
-        Object value = attribute.evaluate(feature);
+        final Object value = attribute.evaluate(feature);
 
         if (null == value) {
             return false;
         }
 
-        Matcher matcher = getMatcher();
+        final Matcher matcher = getMatcher();
         matcher.reset(attribute.evaluate(feature).toString());
 
         return matcher.matches();
@@ -315,7 +312,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
      * @return is the character a special character.
      */
     private boolean isSpecial(final char chr) {
-        return ((chr == '.') || (chr == '?') || (chr == '*') || (chr == '^') || (chr == '$') || (chr == '+') || (chr == '[') || (chr == ']') || (chr == '(') || (chr == ')') || (chr == '|') || (chr == '\\') || (chr == '&'));
+        return chr == '.' || chr == '?' || chr == '*' || chr == '^' || chr == '$' || chr == '+' || chr == '[' || chr == ']' || chr == '(' || chr == ')' || chr == '|' || chr == '\\' || chr == '&';
     }
 
     /**
@@ -327,13 +324,13 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
      * @return the fixed string
      */
     private String fixSpecials(final String inString) {
-        StringBuffer tmp = new StringBuffer("");
+        final StringBuffer tmp = new StringBuffer("");
 
         for (int i = 0; i < inString.length(); i++) {
-            char chr = inString.charAt(i);
+            final char chr = inString.charAt(i);
 
             if (isSpecial(chr)) {
-                tmp.append(this.escape + chr);
+                tmp.append(this.escape).append(chr);
             } else {
                 tmp.append(chr);
             }

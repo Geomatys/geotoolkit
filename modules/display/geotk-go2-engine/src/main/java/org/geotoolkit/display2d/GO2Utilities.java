@@ -97,7 +97,7 @@ import org.opengis.style.Symbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GO2Utilities {
+public final class GO2Utilities {
 
     private static final GeometryFactory JTS_FACTORY = new GeometryFactory();
 
@@ -112,16 +112,16 @@ public class GO2Utilities {
     public static final int SELECTION_PIXEL_MARGIN = 2;
 
     static{
-        ServiceLoader<SymbolizerRenderer> loader = ServiceLoader.load(SymbolizerRenderer.class);
+        final ServiceLoader<SymbolizerRenderer> loader = ServiceLoader.load(SymbolizerRenderer.class);
         for(SymbolizerRenderer renderer : loader){
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }
 
         //Register the shadedrelief JAI operations
         //TODO this should be made automaticly using the META-INF/registryFile.jai
-        OperationRegistry or = JAI.getDefaultInstance().getOperationRegistry();
-        OperationDescriptor  fd = new ShadedReliefDescriptor();
-        RenderedImageFactory rifJava = new ShadedReliefCRIF();
+        final OperationRegistry or = JAI.getDefaultInstance().getOperationRegistry();
+        final OperationDescriptor  fd = new ShadedReliefDescriptor();
+        final RenderedImageFactory rifJava = new ShadedReliefCRIF();
         try{
             or.registerDescriptor(fd);
             RIFRegistry.register(or, fd.getName(), "org.geotoolkit", rifJava);
@@ -139,7 +139,7 @@ public class GO2Utilities {
 
     public static void portray(final ProjectedFeature feature, CachedSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
-        SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
             renderer.portray(feature, symbol, context);
         }
@@ -147,32 +147,27 @@ public class GO2Utilities {
 
     public static void portray(final ProjectedCoverage graphic, CachedSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException {
-
-        SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
             renderer.portray(graphic, symbol, context);
         }
-
     }
 
     public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter){
-
-        SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
             return renderer.hit(graphic, symbol, context, mask, filter);
         }
-
         return false;
     }
 
     public static boolean hit(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter) {
-        SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRenderer renderer = findRenderer(symbol);
         if(renderer != null){
             return renderer.hit(graphic, symbol, renderingContext, mask, filter);
         }
-
         return false;
     }
 
@@ -186,7 +181,7 @@ public class GO2Utilities {
 
     public static Shape toJava2D(org.opengis.geometry.Geometry geom){
         if(geom instanceof JTSGeometry){
-            JTSGeometry geo = (JTSGeometry) geom;
+            final JTSGeometry geo = (JTSGeometry) geom;
             return toJava2D(geo.getJTSGeometry());
         }else{
             return new ISOGeometryJ2D(geom);
@@ -194,8 +189,8 @@ public class GO2Utilities {
     }
 
     public static Geometry toJTS(Shape candidate){
-        PathIterator ite = candidate.getPathIterator(null);
-        List<Coordinate> coords = new ArrayList<Coordinate>();
+        final PathIterator ite = candidate.getPathIterator(null);
+        final List<Coordinate> coords = new ArrayList<Coordinate>();
 
         final float[] xy = new float[2];
         while(!ite.isDone()){
@@ -205,7 +200,7 @@ public class GO2Utilities {
         }
         coords.add(coords.get(0));
 
-        final LinearRing ring = JTS_FACTORY.createLinearRing(coords.toArray(new Coordinate[0]));
+        final LinearRing ring = JTS_FACTORY.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
         return JTS_FACTORY.createPolygon(ring, new LinearRing[0]);
     }
 
@@ -361,8 +356,8 @@ public class GO2Utilities {
     }
 
     private static Class findMostSpecialize(final Class a, final Class b){
-        boolean aisb = b.isAssignableFrom(a);
-        boolean bisa = a.isAssignableFrom(b);
+        final boolean aisb = b.isAssignableFrom(a);
+        final boolean bisa = a.isAssignableFrom(b);
 
         if(aisb && !bisa){
             return a;
@@ -381,7 +376,7 @@ public class GO2Utilities {
      * Calculate the coefficient between the objective unit and the given one.
      */
     public static float calculateScaleCoefficient(RenderingContext2D context, Unit<Length> symbolUnit){
-        CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
+        final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
         
         if(symbolUnit == null || objectiveCRS == null){
             throw new NullPointerException("symbol unit and objectiveCRS cant be null");
@@ -396,7 +391,7 @@ public class GO2Utilities {
         //go throw each dimension and append valid converters
         for (int i=0; i<dimension; i++){
             final CoordinateSystemAxis axis = cs.getAxis(i);
-            Unit axisUnit = axis.getUnit();
+            final Unit axisUnit = axis.getUnit();
             if (axisUnit.isCompatible(symbolUnit)){
                 final UnitConverter converter = axisUnit.getConverterTo(symbolUnit);
 
@@ -407,8 +402,8 @@ public class GO2Utilities {
                 }
             }else if(axisUnit == NonSI.DEGREE_ANGLE){
                 //calculate coefficient at center of the screen.
-                Rectangle rect = context.getCanvasDisplayBounds();
-                AffineTransform2D trs = context.getDisplayToObjective();
+                final Rectangle rect = context.getCanvasDisplayBounds();
+                final AffineTransform2D trs = context.getDisplayToObjective();
                 Point2D pt = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
                 pt = trs.transform(pt,pt);
 
@@ -416,25 +411,24 @@ public class GO2Utilities {
                 //axis for calculation
                 if(!axis.getDirection().equals(AxisDirection.NORTH)) continue;
 
-                GeographicCRS crs = (GeographicCRS) objectiveCRS;
+                final GeographicCRS crs = (GeographicCRS) objectiveCRS;
 
-                double a = crs.getDatum().getEllipsoid().getSemiMajorAxis();
-                double b = crs.getDatum().getEllipsoid().getSemiMinorAxis();
-                double e2 = 1 - Math.pow((b/a),2);
+                final double a = crs.getDatum().getEllipsoid().getSemiMajorAxis();
+                final double b = crs.getDatum().getEllipsoid().getSemiMinorAxis();
+                final double e2 = 1 - Math.pow((b/a),2);
 
                 //TODO not sure of this neither
 //                System.out.println(i);
-                double phi = Math.toRadians((i==0)? pt.getY() : pt.getX());
+                final double phi = Math.toRadians((i==0)? pt.getY() : pt.getX());
                 double s = a * (Math.cos(phi)) / Math.sqrt( 1 - e2 * Math.pow(Math.sin(phi),2) );
 
                 s = Math.toRadians(s);
 
-                Unit ellipsoidUnit = crs.getDatum().getEllipsoid().getAxisUnit();
+                final Unit ellipsoidUnit = crs.getDatum().getEllipsoid().getAxisUnit();
                 final UnitConverter converter = ellipsoidUnit.getConverterTo(symbolUnit);
                 s = converter.convert(s) - converter.convert(0);
 
                 converters.add(s);
-                
             }
         }
 
@@ -498,9 +492,9 @@ public class GO2Utilities {
 
     public static Geometry getGeometry(final Feature feature, final String geomName){
         if (geomName != null && !geomName.trim().isEmpty()) {
-            Property prop = feature.getProperty(geomName);
+            final Property prop = feature.getProperty(geomName);
             if(prop != null){
-                Object obj = prop.getValue();
+                final Object obj = prop.getValue();
                 if(obj == null || obj instanceof Geometry){
                     return (Geometry)obj;
                 }
@@ -524,33 +518,32 @@ public class GO2Utilities {
      * Returns the symbolizers that apply on the given feature.
      */
     public static List<CachedSymbolizer> getSymbolizer(Feature feature, Style style) {
-        List<CachedSymbolizer> symbols = new ArrayList<CachedSymbolizer>();
+        final List<CachedSymbolizer> symbols = new ArrayList<CachedSymbolizer>();
 
-        FeatureType ftype = feature.getType();
-        String typeName = ftype.getName().toString();
-        Collection<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
+        final FeatureType ftype = feature.getType();
+        final String typeName = ftype.getName().toString();
+        final Collection<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
 
         for (FeatureTypeStyle fts : ftss) {
 
             //store "else" rules
             boolean doElse = true;
-            List<Rule> elseRules = new ArrayList<Rule>();
+            final List<Rule> elseRules = new ArrayList<Rule>();
 
             //test if the featutetype is valid
             if (true) {
 //            if (typeName == null || (typeName.equalsIgnoreCase(fts.getFeatureTypeName())) ) {
 
-                Collection<? extends Rule> rules = fts.rules();
-                for (Rule rule : rules) {
+                final Collection<? extends Rule> rules = fts.rules();
+                for (final Rule rule : rules) {
 
                     //test if the rule is valid and is not a "else" rule
                     if (!rule.isElseFilter() && (rule.getFilter() == null || rule.getFilter().evaluate(feature))) {
                         doElse = false;
                         //append all the symbolizers
-                        Collection<? extends Symbolizer> syms = rule.symbolizers();
+                        final Collection<? extends Symbolizer> syms = rule.symbolizers();
                         for (Symbolizer sym : syms) {
-                            CachedSymbolizer cache = getCached(sym);
-                            symbols.add(cache);
+                            symbols.add(getCached(sym));
                         }
                     } else {
                         elseRules.add(rule);
@@ -560,12 +553,11 @@ public class GO2Utilities {
 
             //explore else rules if necessary
             if (doElse) {
-                for (Rule rule : elseRules) {
+                for (final Rule rule : elseRules) {
                     //append all the symbolizers
-                    Collection<? extends Symbolizer> syms = rule.symbolizers();
-                    for (Symbolizer sym : syms) {
-                        CachedSymbolizer cache = getCached(sym);
-                        symbols.add(cache);
+                    final Collection<? extends Symbolizer> syms = rule.symbolizers();
+                    for (final Symbolizer sym : syms) {
+                        symbols.add(getCached(sym));
                     }
                 }
             }
@@ -632,8 +624,8 @@ public class GO2Utilities {
             final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
 
             if(!semantics.isEmpty()){
-                GeometryType gtype = type.getGeometryDescriptor().getType();
-                Class ctype = gtype.getBinding();
+                final GeometryType gtype = type.getGeometryDescriptor().getType();
+                final Class ctype = gtype.getBinding();
 
                 boolean valid = false;
 
@@ -700,8 +692,8 @@ public class GO2Utilities {
             final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
 
             if(!semantics.isEmpty()){
-                GeometryType gtype = type.getGeometryDescriptor().getType();
-                Class ctype = gtype.getBinding();
+                final GeometryType gtype = type.getGeometryDescriptor().getType();
+                final Class ctype = gtype.getBinding();
 
                 boolean valid = false;
 
@@ -789,8 +781,7 @@ public class GO2Utilities {
     ////////////////////////////////////////////////////////////////////////////
 
     public static CachedRule getCached(Rule rule){
-        CachedRule cr = new CachedRule(rule);
-        return cr;
+        return new CachedRule(rule);
     }
 
     public static CachedSymbolizer getCached(Symbolizer symbol){
