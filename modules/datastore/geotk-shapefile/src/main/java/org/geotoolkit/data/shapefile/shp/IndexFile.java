@@ -193,8 +193,9 @@ public class IndexFile implements FileReader {
     }
 
     /**
-     * @see java.lang.Object#finalize()
+     * {@inheritDoc }
      */
+    @Override
     protected void finalize() throws Throwable {
         this.close();
         super.finalize();
@@ -269,6 +270,7 @@ public class IndexFile implements FileReader {
         return ret;
     }
 
+    @Override
     public String id() {
         return getClass().getName();
     }

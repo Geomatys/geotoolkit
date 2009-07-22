@@ -36,7 +36,7 @@ package org.geotoolkit.data.shapefile.shp.xml;
 public class Metadata {
 
     /** identification information */
-    IdInfo idinfo;
+    private IdInfo idinfo;
 
     /**
      * @return Returns the idinfo.
@@ -46,8 +46,7 @@ public class Metadata {
     }
 
     /**
-     * @param idinfo
-     *                The idinfo to set.
+     * @param idinfo The idinfo to set.
      */
     public void setIdinfo(IdInfo idinfo) {
         this.idinfo = idinfo;

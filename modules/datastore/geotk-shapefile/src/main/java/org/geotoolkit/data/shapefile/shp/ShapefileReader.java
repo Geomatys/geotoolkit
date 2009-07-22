@@ -107,6 +107,7 @@ public class ShapefileReader implements FileReader {
         }
 
         /** A summary of the record. */
+        @Override
         public String toString() {
             return "Record " + number + " length " + length + " bounds " + minX
                     + "," + minY + " " + maxX + "," + maxY;

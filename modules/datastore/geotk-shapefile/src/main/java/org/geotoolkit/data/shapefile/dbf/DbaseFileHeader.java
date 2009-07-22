@@ -696,7 +696,7 @@ public class DbaseFileHeader {
 
         int r = buffer.remaining();
         while ((r -= out.write(buffer)) > 0) {
-            ; // do nothing
+            // do nothing
         }
 
         NIOUtilities.clean(buffer);
@@ -707,6 +707,7 @@ public class DbaseFileHeader {
      * 
      * @return A String representing the state of the header.
      */
+    @Override
     public String toString() {
         StringBuffer fs = new StringBuffer();
         for (int i = 0, ii = fields.length; i < ii; i++) {

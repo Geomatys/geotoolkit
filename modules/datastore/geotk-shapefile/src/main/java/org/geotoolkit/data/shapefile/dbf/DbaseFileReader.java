@@ -73,6 +73,7 @@ public class DbaseFileReader implements FileReader {
             return readObject(offset, column);
         }
 
+        @Override
         public String toString() {
             StringBuffer ret = new StringBuffer("DBF Row - ");
             for (int i = 0; i < header.getNumFields(); i++) {
@@ -592,6 +593,10 @@ public class DbaseFileReader implements FileReader {
         reader.close();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String id() {
         return getClass().getName();
     }

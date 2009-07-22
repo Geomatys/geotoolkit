@@ -19,7 +19,6 @@ package org.geotoolkit.data.shapefile.shp;
 import java.nio.ByteBuffer;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -34,7 +33,6 @@ import com.vividsolutions.jts.geom.Point;
 public class PointHandler implements ShapeHandler {
 
     final ShapeType shapeType;
-    GeometryFactory geometryFactory = new GeometryFactory();
 
     public PointHandler(ShapeType type) throws ShapefileException {
         if ((type != ShapeType.POINT) && (type != ShapeType.POINTM)
@@ -55,10 +53,12 @@ public class PointHandler implements ShapeHandler {
      * 
      * @return int Shapefile.POINT
      */
+    @Override
     public ShapeType getShapeType() {
         return shapeType;
     }
 
+    @Override
     public int getLength(Object geometry) {
         int length;
         if (shapeType == ShapeType.POINT) {
@@ -74,6 +74,7 @@ public class PointHandler implements ShapeHandler {
         return length;
     }
 
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
@@ -91,14 +92,15 @@ public class PointHandler implements ShapeHandler {
             z = buffer.getDouble();
         }
 
-        return geometryFactory.createPoint(new Coordinate(x, y, z));
+        return GEOMETRY_FACTORY.createPoint(new Coordinate(x, y, z));
     }
 
     private Object createNull() {
-        return geometryFactory.createPoint(new Coordinate(Double.NaN,
+        return GEOMETRY_FACTORY.createPoint(new Coordinate(Double.NaN,
                 Double.NaN, Double.NaN));
     }
 
+    @Override
     public void write(ByteBuffer buffer, Object geometry) {
         Coordinate c = ((Point) geometry).getCoordinate();
 

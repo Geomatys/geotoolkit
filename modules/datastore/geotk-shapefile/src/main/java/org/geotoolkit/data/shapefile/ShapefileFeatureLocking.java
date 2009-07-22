@@ -38,22 +38,52 @@ public class ShapefileFeatureLocking extends AbstractFeatureLocking {
         shapefile = shapefileDataStore;
         this.featureType = featureType;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public DataStore getDataStore() {
         return shapefile;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void addFeatureListener(FeatureListener listener) {
         shapefile.listenerManager.addFeatureListener(this, listener);
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void removeFeatureListener(FeatureListener listener) {
         shapefile.listenerManager.removeFeatureListener(this, listener);
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeatureType getSchema() {
         return featureType;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public JTSEnvelope2D getBounds(Query query)
             throws IOException {
         return shapefile.getBounds(query);
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public ResourceInfo getInfo(){
         return shapefile.getInfo( featureType.getTypeName() );
     }

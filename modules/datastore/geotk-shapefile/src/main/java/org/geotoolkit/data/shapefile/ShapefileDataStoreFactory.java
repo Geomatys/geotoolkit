@@ -160,6 +160,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      *                 Thrown if the datastore which is created cannot be
      *                 attached to the restore specified in params.
      */
+    @Override
     public ShapefileDataStore createDataStore(Map params) throws IOException {
         URL url = (URL) URLP.lookUp(params);
         Boolean isMemoryMapped = (Boolean) MEMORY_MAPPED.lookUp(params);
@@ -231,6 +232,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      * yet.
      * 
      */
+    @Override
     public DataStore createNewDataStore(Map params) throws IOException {
         URL url = (URL) URLP.lookUp(params);
         Boolean isMemoryMapped = (Boolean) MEMORY_MAPPED.lookUp(params);
@@ -280,6 +282,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
         }
     }
 
+    @Override
     public String getDisplayName() {
         return "Shapefile";
     }
@@ -291,6 +294,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      * @return String a human readable description of the type of restore
      *         supported by this datastore.
      */
+    @Override
     public String getDescription() {
         return "ESRI(tm) Shapefiles (*.shp)";
     }
@@ -324,6 +328,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      * @return <tt>true</tt> if and only if this factory is available to
      *         create DataStores.
      */
+    @Override
     public boolean isAvailable() {
         try {
             ShapefileDataStore.class.getName();
@@ -337,26 +342,26 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
     }
 
     /**
-     * Describe parameters.
-     * 
-     * 
-     * @see org.geotools.data.DataStoreFactorySpi#getParametersInfo()
+     * {@inheritDoc }
      */
+    @Override
     public Param[] getParametersInfo() {
         return new Param[] { URLP, NAMESPACEP, CREATE_SPATIAL_INDEX,
                 DBFCHARSET, MEMORY_MAPPED };
     }
 
     /**
-     * @see org.geotools.data.dir.FileDataStoreFactorySpi#getFileExtensions()
+     * {@inheritDoc }
      */
+    @Override
     public String[] getFileExtensions() {
         return new String[] { ".shp", };
     }
 
     /**
-     * @see org.geotools.data.dir.FileDataStoreFactorySpi#canProcess(java.net.URL)
+     * {@inheritDoc }
      */
+    @Override
     public boolean canProcess(URL f) {
         return f.getFile().toUpperCase().endsWith("SHP");
     }
@@ -367,6 +372,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      * 
      * @see org.geotools.data.dir.FileDataStoreFactorySpi#createDataStore(java.net.URL)
      */
+    @Override
     public DataStore createDataStore(URL url) throws IOException {
         Map params = new HashMap();
         params.put(URLP.key, url);
@@ -391,8 +397,9 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
     }
 
     /**
-     * @see org.geotools.data.dir.FileDataStoreFactorySpi#getTypeName(java.net.URL)
+     * {@inheritDoc }
      */
+    @Override
     public String getTypeName(URL url) throws IOException {
         DataStore ds = createDataStore(url);
         String[] names = ds.getTypeNames(); // should be exactly one

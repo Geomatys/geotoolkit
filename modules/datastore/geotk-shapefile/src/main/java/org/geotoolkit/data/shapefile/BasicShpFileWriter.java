@@ -24,6 +24,10 @@ public final class BasicShpFileWriter implements FileWriter {
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String id() {
         return id;
     }

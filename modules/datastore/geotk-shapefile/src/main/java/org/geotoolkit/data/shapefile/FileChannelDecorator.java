@@ -61,77 +61,144 @@ public class FileChannelDecorator extends FileChannel implements
         reader = null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void force(boolean metaData) throws IOException {
         wrapped.force(metaData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FileLock lock(long position, long size, boolean shared)
             throws IOException {
         return wrapped.lock(position, size, shared);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public MappedByteBuffer map(MapMode mode, long position, long size)
             throws IOException {
         return wrapped.map(mode, position, size);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long position() throws IOException {
         return wrapped.position();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FileChannel position(long newPosition) throws IOException {
         return wrapped.position(newPosition);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int read(ByteBuffer dst, long position) throws IOException {
         return wrapped.read(dst, position);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int read(ByteBuffer dst) throws IOException {
         return wrapped.read(dst);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long read(ByteBuffer[] dsts, int offset, int length)
             throws IOException {
         return wrapped.read(dsts, offset, length);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long size() throws IOException {
         return wrapped.size();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long transferFrom(ReadableByteChannel src, long position, long count)
             throws IOException {
         return wrapped.transferFrom(src, position, count);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long transferTo(long position, long count, WritableByteChannel target)
             throws IOException {
         return wrapped.transferTo(position, count, target);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FileChannel truncate(long size) throws IOException {
         return wrapped.truncate(size);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FileLock tryLock(long position, long size, boolean shared)
             throws IOException {
         return wrapped.tryLock(position, size, shared);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int write(ByteBuffer src, long position) throws IOException {
         return wrapped.write(src, position);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int write(ByteBuffer src) throws IOException {
         return wrapped.write(src);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long write(ByteBuffer[] srcs, int offset, int length)
             throws IOException {
         return wrapped.write(srcs, offset, length);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected void implCloseChannel() throws IOException {
         try {

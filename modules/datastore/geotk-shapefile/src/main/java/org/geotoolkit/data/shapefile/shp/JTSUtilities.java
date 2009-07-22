@@ -17,7 +17,6 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.algorithm.RobustCGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
@@ -29,7 +28,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 /**
  * A collection of utility methods for use with JTS and the shapefile package.
@@ -41,24 +39,9 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  */
 public class JTSUtilities {
 
-    static final CGAlgorithms cga = new RobustCGAlgorithms();
     static final GeometryFactory factory = new GeometryFactory();
 
     private JTSUtilities() {
-    }
-
-    /**
-     * Determine the min and max "z" values in an array of Coordinates.
-     * 
-     * @param cs
-     *            The array to search.
-     * @return An array of size 2, index 0 is min, index 1 is max.
-     * @deprecated use zMinMax(CoordinateSequence)
-     */
-    public static final double[] zMinMax(final Coordinate[] cs) {
-        double []result = {Double.NaN, Double.NaN};
-        zMinMax(new CoordinateArraySequence(cs), result);
-        return result;
     }
 
     /**
@@ -109,7 +92,7 @@ public class JTSUtilities {
             target[0] = zmin;
         }
         if(!Double.isNaN(zmax)){
-            target[1] = (zmax);
+            target[1] = zmax;
         }
     }
 
@@ -121,41 +104,37 @@ public class JTSUtilities {
      * @return The best ShapeType for the Geometry.
      */
     public static final ShapeType findBestGeometryType(Geometry geom) {
-        ShapeType type = ShapeType.UNDEFINED;
-
         if (geom instanceof Point) {
-            type = ShapeType.POINT;
+            return ShapeType.POINT;
         } else if (geom instanceof MultiPoint) {
-            type = ShapeType.MULTIPOINT;
+            return ShapeType.MULTIPOINT;
         } else if (geom instanceof Polygon) {
-            type = ShapeType.POLYGON;
+            return ShapeType.POLYGON;
         } else if (geom instanceof MultiPolygon) {
-            type = ShapeType.POLYGON;
+            return ShapeType.POLYGON;
         } else if (geom instanceof LineString) {
-            type = ShapeType.ARC;
+            return ShapeType.ARC;
         } else if (geom instanceof MultiLineString) {
-            type = ShapeType.ARC;
+            return ShapeType.ARC;
+        } else {
+            return ShapeType.UNDEFINED;
         }
-        return type;
     }
 
     public static final Class findBestGeometryClass(ShapeType type) {
-        Class best;
         if (type == null || type == ShapeType.NULL) {
-            best = Geometry.class;
+            return Geometry.class;
         } else if (type.isLineType()) {
-            best = MultiLineString.class;
+            return MultiLineString.class;
         } else if (type.isMultiPointType()) {
-            best = MultiPoint.class;
+            return MultiPoint.class;
         } else if (type.isPointType()) {
-            best = Point.class;
+            return Point.class;
         } else if (type.isPolygonType()) {
-            best = MultiPolygon.class;
+            return MultiPolygon.class;
         } else {
-            throw new RuntimeException("Unknown ShapeType->GeometryClass : "
-                    + type);
+            throw new RuntimeException("Unknown ShapeType->GeometryClass : " + type);
         }
-        return best;
     }
 
     /**
@@ -166,10 +145,10 @@ public class JTSUtilities {
      * @return A new ring with the reversed Coordinates.
      */
     public static final LinearRing reverseRing(LinearRing lr) {
-        int numPoints = lr.getNumPoints() - 1;
-        Coordinate[] newCoords = new Coordinate[numPoints + 1];
+        int numPoints = lr.getNumPoints();
+        Coordinate[] newCoords = new Coordinate[numPoints];
 
-        for (int t = numPoints; t >= 0; t--) {
+        for (int t = numPoints-1; t >= 0; t--) {
             newCoords[t] = lr.getCoordinateN(numPoints - t);
         }
 

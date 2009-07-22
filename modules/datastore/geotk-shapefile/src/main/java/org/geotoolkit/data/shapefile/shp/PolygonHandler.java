@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.algorithm.RobustCGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
@@ -41,8 +39,6 @@ import com.vividsolutions.jts.geom.Polygon;
  * @version $Id$
  */
 public class PolygonHandler implements ShapeHandler {
-    GeometryFactory geometryFactory = new GeometryFactory();
-    RobustCGAlgorithms cga = new RobustCGAlgorithms();
 
     final ShapeType shapeType;
 
@@ -83,17 +79,19 @@ public class PolygonHandler implements ShapeHandler {
         return false;
     }
 
+    @Override
     public ShapeType getShapeType() {
         return shapeType;
     }
 
+    @Override
     public int getLength(Object geometry) {
         MultiPolygon multi;
 
         if (geometry instanceof MultiPolygon) {
             multi = (MultiPolygon) geometry;
         } else {
-            multi = geometryFactory
+            multi = GEOMETRY_FACTORY
                     .createMultiPolygon(new Polygon[] { (Polygon) geometry });
         }
 
@@ -122,6 +120,7 @@ public class PolygonHandler implements ShapeHandler {
         return length;
     }
 
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
@@ -186,7 +185,7 @@ public class PolygonHandler implements ShapeHandler {
             // REVISIT: polyons with only 1 or 2 points are not polygons -
             // geometryFactory will bomb so we skip if we find one.
             if (points.length == 0 || points.length > 3) {
-                LinearRing ring = geometryFactory.createLinearRing(points);
+                LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
 
                 if (CGAlgorithms.isCCW(points)) {
                     // counter-clockwise
@@ -256,7 +255,7 @@ public class PolygonHandler implements ShapeHandler {
 
         // this will do nothing for the "only holes case"
         for (int i = 0; i < shells.size(); i++) {
-            polygons[i] = geometryFactory.createPolygon((LinearRing) shells
+            polygons[i] = GEOMETRY_FACTORY.createPolygon((LinearRing) shells
                     .get(i), (LinearRing[]) ((ArrayList) holesForShells.get(i))
                     .toArray(new LinearRing[0]));
         }
@@ -266,12 +265,12 @@ public class PolygonHandler implements ShapeHandler {
         if (shells.size() == 0) {
             for (int i = 0, ii = holes.size(); i < ii; i++) {
                 LinearRing hole = (LinearRing) holes.get(i);
-                polygons[i] = geometryFactory.createPolygon(JTSUtilities
+                polygons[i] = GEOMETRY_FACTORY.createPolygon(JTSUtilities
                         .reverseRing(hole), new LinearRing[0]);
             }
         }
 
-        Geometry g = geometryFactory.createMultiPolygon(polygons);
+        Geometry g = GEOMETRY_FACTORY.createMultiPolygon(polygons);
 
         return g;
     }
@@ -344,14 +343,14 @@ public class PolygonHandler implements ShapeHandler {
     }
 
     private MultiPolygon createMulti(LinearRing single, List holes) {
-        return geometryFactory
-                .createMultiPolygon(new Polygon[] { geometryFactory
+        return GEOMETRY_FACTORY
+                .createMultiPolygon(new Polygon[] { GEOMETRY_FACTORY
                         .createPolygon(single, (LinearRing[]) holes
                                 .toArray(new LinearRing[holes.size()])) });
     }
 
     private MultiPolygon createNull() {
-        return geometryFactory.createMultiPolygon(null);
+        return GEOMETRY_FACTORY.createMultiPolygon(null);
     }
 
     public void write(ByteBuffer buffer, Object geometry) {
@@ -360,7 +359,7 @@ public class PolygonHandler implements ShapeHandler {
         if (geometry instanceof MultiPolygon) {
           multi = (MultiPolygon) geometry;
         } else {
-          multi = geometryFactory.createMultiPolygon(new Polygon[] { (Polygon) geometry });
+          multi = GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] { (Polygon) geometry });
         }
         
         Envelope box = multi.getEnvelopeInternal();

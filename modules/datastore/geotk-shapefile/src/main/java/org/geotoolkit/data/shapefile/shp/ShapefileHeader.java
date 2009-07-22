@@ -45,8 +45,7 @@ public class ShapefileHeader {
 
     private void checkMagic(boolean strict) throws java.io.IOException {
         if (fileCode != MAGIC) {
-            String message = "Wrong magic number, expected " + MAGIC + ", got "
-                    + fileCode;
+            String message = "Wrong magic number, expected " + MAGIC + ", got " + fileCode;
             if (!strict) {
                 System.err.println(message);
             } else {
@@ -57,8 +56,7 @@ public class ShapefileHeader {
 
     private void checkVersion(boolean strict) throws java.io.IOException {
         if (version != VERSION) {
-            String message = "Wrong version, expected " + MAGIC + ", got "
-                    + version;
+            String message = "Wrong version, expected " + MAGIC + ", got " + version;
             if (!strict) {
                 System.err.println(message);
             } else {
@@ -155,6 +153,7 @@ public class ShapefileHeader {
         return maxY;
     }
 
+    @Override
     public String toString() {
         String res = new String("ShapeFileHeader[ size " + fileLength
                 + " version " + version + " shapeType " + shapeType

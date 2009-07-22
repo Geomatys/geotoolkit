@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.nio.ByteBuffer;
 
 /**
@@ -29,6 +30,9 @@ import java.nio.ByteBuffer;
  * 
  */
 public interface ShapeHandler {
+
+    static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+
     /**
      * Get the ShapeType of this handler.
      * 

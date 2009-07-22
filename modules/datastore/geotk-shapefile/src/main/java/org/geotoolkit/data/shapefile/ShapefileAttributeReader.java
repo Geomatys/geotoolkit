@@ -63,6 +63,10 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
         this.dbf = dbf;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void close() throws IOException {
         try {
             if (shp != null) {
@@ -80,6 +84,10 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean hasNext() throws IOException {
         int n = shp.hasNext() ? 1 : 0;
 
@@ -98,6 +106,10 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
         throw new IOException(((n == 1) ? "Shp" : "Dbf") + " has extra record");
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void next() throws IOException {
         record = shp.nextRecord();
 
@@ -106,6 +118,10 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Object read(int param) throws IOException,
             java.lang.ArrayIndexOutOfBoundsException {
         switch (param) {

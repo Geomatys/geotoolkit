@@ -181,9 +181,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     /**
      * In case someone doesn't close me.
      * 
-     * @throws Throwable
-     *                 DOCUMENT ME!
+     * @throws Throwable DOCUMENT ME!
      */
+    @Override
     protected void finalize() throws Throwable {
         if (featureReader != null) {
             try {
@@ -208,9 +208,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     /**
      * Release resources and flush the header information.
      * 
-     * @throws IOException
-     *                 DOCUMENT ME!
+     * @throws IOException DOCUMENT ME!
      */
+    @Override
     public void close() throws IOException {
         if (featureReader == null) {
             throw new IOException("Writer closed");
@@ -273,10 +273,18 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeatureType getFeatureType() {
         return featureType;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean hasNext() throws IOException {
         if (featureReader == null) {
             throw new IOException("Writer closed");
@@ -285,6 +293,10 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         return featureReader.hasNext();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public SimpleFeature next() throws IOException {
         // closed already, error!
         if (featureReader == null) {
@@ -325,6 +337,10 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         return getFeatureType().getTypeName()+"."+(records+1);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void remove() throws IOException {
         if (featureReader == null) {
             throw new IOException("Writer closed");
@@ -339,6 +355,10 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         currentFeature = null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void write() throws IOException {
         if (currentFeature == null) {
             throw new IOException("Current feature is null");

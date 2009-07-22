@@ -27,10 +27,10 @@ import com.vividsolutions.jts.geom.Envelope;
 public class IdInfo {
 
     /** spdom/bounding represents */
-    Envelope bounding;
+    private Envelope bounding;
 
     /** spdom/lbounding represents */
-    Envelope lbounding;
+    private Envelope lbounding;
 
     /**
      * @return Returns the bounding.
@@ -40,8 +40,7 @@ public class IdInfo {
     }
 
     /**
-     * @param bounding
-     *                The bounding to set.
+     * @param bounding The bounding to set.
      */
     public void setBounding(Envelope bounding) {
         this.bounding = bounding;
@@ -55,8 +54,7 @@ public class IdInfo {
     }
 
     /**
-     * @param lbounding
-     *                The lbounding to set.
+     * @param lbounding The lbounding to set.
      */
     public void setLbounding(Envelope lbounding) {
         this.lbounding = lbounding;

@@ -39,17 +39,26 @@ public class ShapefileURLServiceInfo implements ServiceInfo {
         this. shapefile = shapefile;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getSchema() {
         return FeatureTypeUtilities.DEFAULT_NAMESPACE;
     }
-    
-    public Icon getIcon() {
-        return null; // talk to Eclesia there is something in render
-    }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getPublisher() {        
         return null; // current user? last person to modify the file
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getDescription() {
         StringBuffer buf = new StringBuffer();
         buf.append( shapefile.getCurrentTypeName() );
@@ -58,10 +67,18 @@ public class ShapefileURLServiceInfo implements ServiceInfo {
         return buf.toString();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getTitle() {
         return shapefile.getCurrentTypeName();
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getSource() {
         String url = shapefile.shpFiles.get( ShpFileType.SHP );
         try {
@@ -71,6 +88,10 @@ public class ShapefileURLServiceInfo implements ServiceInfo {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set<String> getKeywords() {
         Set<String> words = new HashSet<String>();
         words.add( shapefile.getCurrentTypeName() );

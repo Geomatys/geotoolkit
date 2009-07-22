@@ -21,8 +21,6 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 import org.geotoolkit.data.ServiceInfo;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -39,15 +37,19 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
         this. shapefile = shapefile;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getSchema() {
         // consider URI of the shapefile specification?
         return FeatureTypeUtilities.DEFAULT_NAMESPACE;
     }
-    
-    public Icon getIcon() {
-        return null; // talk to Eclesia there is something in render
-    }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getPublisher() {    
         String user = System.getProperty("user.name");
         try {
@@ -56,7 +58,11 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
             return null;
         }
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getDescription() {
         StringBuffer buf = new StringBuffer();
         buf.append( shapefile.getCurrentTypeName() );
@@ -65,10 +71,18 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
         return buf.toString();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getTitle() {
         return shapefile.getCurrentTypeName();
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getSource() {
         String url = shapefile.shpFiles.get( ShpFileType.SHP );
         try {
@@ -78,6 +92,10 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set<String> getKeywords() {
         Set<String> words = new HashSet<String>();
         words.add( shapefile.getCurrentTypeName() );

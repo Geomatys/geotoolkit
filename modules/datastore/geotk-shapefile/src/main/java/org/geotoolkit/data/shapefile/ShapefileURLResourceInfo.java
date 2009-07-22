@@ -20,8 +20,6 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -40,7 +38,11 @@ public class ShapefileURLResourceInfo implements ResourceInfo {
     public ShapefileURLResourceInfo( ShapefileDataStore shapefile ) {
         this.shapefile = shapefile;
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public JTSEnvelope2D getBounds() {
         try {
             return shapefile.getBounds();
@@ -49,14 +51,26 @@ public class ShapefileURLResourceInfo implements ResourceInfo {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public CoordinateReferenceSystem getCRS() {
         return shapefile.schema.getCoordinateReferenceSystem();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getDescription() {
         return "Contents of shapefile";
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set<String> getKeywords() {
         Set<String> words = new HashSet<String>();
         words.add( shapefile.getCurrentTypeName() );
@@ -65,15 +79,27 @@ public class ShapefileURLResourceInfo implements ResourceInfo {
         return words;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getName() {
         return shapefile.getCurrentTypeName();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URI getSchema() {
         return FeatureTypeUtilities.DEFAULT_NAMESPACE; // we have features?
         // url to shp (as the header is our schema)
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String getTitle() {
         return shapefile.getCurrentTypeName();
     }

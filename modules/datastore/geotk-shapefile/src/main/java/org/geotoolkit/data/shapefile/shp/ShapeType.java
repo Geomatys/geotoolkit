@@ -25,37 +25,36 @@ package org.geotoolkit.data.shapefile.shp;
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/ShapeType.java $
  */
-public final class ShapeType {
+public enum ShapeType {
 
     /** Represents a Null shape (id = 0). */
-    public static final ShapeType NULL = new ShapeType(0, "Null");
+    NULL(0, "Null"),
     /** Represents a Point shape (id = 1). */
-    public static final ShapeType POINT = new ShapeType(1, "Point");
+    POINT(1, "Point"),
     /** Represents a PointZ shape (id = 11). */
-    public static final ShapeType POINTZ = new ShapeType(11, "PointZ");
+    POINTZ(11, "PointZ"),
     /** Represents a PointM shape (id = 21). */
-    public static final ShapeType POINTM = new ShapeType(21, "PointM");
+    POINTM(21, "PointM"),
     /** Represents an Arc shape (id = 3). */
-    public static final ShapeType ARC = new ShapeType(3, "Arc");
+    ARC(3, "Arc"),
     /** Represents an ArcZ shape (id = 13). */
-    public static final ShapeType ARCZ = new ShapeType(13, "ArcZ");
+    ARCZ(13, "ArcZ"),
     /** Represents an ArcM shape (id = 23). */
-    public static final ShapeType ARCM = new ShapeType(23, "ArcM");
+    ARCM(23, "ArcM"),
     /** Represents a Polygon shape (id = 5). */
-    public static final ShapeType POLYGON = new ShapeType(5, "Polygon");
+    POLYGON(5, "Polygon"),
     /** Represents a PolygonZ shape (id = 15). */
-    public static final ShapeType POLYGONZ = new ShapeType(15, "PolygonZ");
+    POLYGONZ(15, "PolygonZ"),
     /** Represents a PolygonM shape (id = 25). */
-    public static final ShapeType POLYGONM = new ShapeType(25, "PolygonM");
+    POLYGONM(25, "PolygonM"),
     /** Represents a MultiPoint shape (id = 8). */
-    public static final ShapeType MULTIPOINT = new ShapeType(8, "MultiPoint");
+    MULTIPOINT(8, "MultiPoint"),
     /** Represents a MultiPointZ shape (id = 18). */
-    public static final ShapeType MULTIPOINTZ = new ShapeType(18, "MultiPointZ");
+    MULTIPOINTZ(18, "MultiPointZ"),
     /** Represents a MultiPointZ shape (id = 28). */
-    public static final ShapeType MULTIPOINTM = new ShapeType(28, "MultiPointM");
-
+    MULTIPOINTM(28, "MultiPointM"),
     /** Represents an Undefined shape (id = -1). */
-    public static final ShapeType UNDEFINED = new ShapeType(-1, "Undefined");
+    UNDEFINED(-1, "Undefined");
 
     /** The integer id of this ShapeType. */
     public final int id;
@@ -68,12 +67,10 @@ public final class ShapeType {
     /**
      * Creates a new instance of ShapeType. Hidden on purpose.
      * 
-     * @param id
-     *                The id.
-     * @param name
-     *                The name.
+     * @param id The id.
+     * @param name The name.
      */
-    protected ShapeType(int id, String name) {
+    ShapeType(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -83,6 +80,7 @@ public final class ShapeType {
      * 
      * @return The name.
      */
+    @Override
     public String toString() {
         return name;
     }

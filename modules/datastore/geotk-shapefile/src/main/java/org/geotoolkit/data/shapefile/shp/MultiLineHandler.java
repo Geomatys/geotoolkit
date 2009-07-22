@@ -21,10 +21,8 @@ import java.nio.ByteBuffer;
 import org.geotoolkit.geometry.jts.coordinatesequence.CSBuilder;
 import org.geotoolkit.geometry.jts.coordinatesequence.CSBuilderFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
@@ -40,17 +38,16 @@ import com.vividsolutions.jts.geom.MultiLineString;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/MultiLineHandler.java $
  */
 public class MultiLineHandler implements ShapeHandler {
-    final ShapeType shapeType;
 
-    GeometryFactory geometryFactory = new GeometryFactory();
+    private final ShapeType shapeType;
 
-    CSBuilder builder = CSBuilderFactory.getDefaultBuilder();
+    private static final CSBuilder builder = CSBuilderFactory.getDefaultBuilder();
 
-    double[] x;
+    private double[] x;
 
-    double[] y;
+    private double[] y;
 
-    double[] z;
+    private double[] z;
 
     /** Create a MultiLineHandler for ShapeType.ARC */
     public MultiLineHandler() {
@@ -67,8 +64,7 @@ public class MultiLineHandler implements ShapeHandler {
      *                 If the ShapeType is not correct (see constructor).
      */
     public MultiLineHandler(ShapeType type) throws ShapefileException {
-        if ((type != ShapeType.ARC) && (type != ShapeType.ARCM)
-                && (type != ShapeType.ARCZ)) {
+        if ((type != ShapeType.ARC) && (type != ShapeType.ARCM) && (type != ShapeType.ARCZ)) {
             throw new ShapefileException(
                     "MultiLineHandler constructor - expected type to be 3,13 or 23");
         }
@@ -80,11 +76,15 @@ public class MultiLineHandler implements ShapeHandler {
      * Get the type of shape stored
      * (ShapeType.ARC,ShapeType.ARCM,ShapeType.ARCZ)
      */
+    @Override
     public ShapeType getShapeType() {
         return shapeType;
     }
 
-    /** */
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public int getLength(Object geometry) {
         MultiLineString multi = (MultiLineString) geometry;
 
@@ -112,7 +112,7 @@ public class MultiLineHandler implements ShapeHandler {
     }
 
     private Object createNull() {
-        return geometryFactory.createMultiLineString((LineString[]) null);
+        return GEOMETRY_FACTORY.createMultiLineString((LineString[]) null);
     }
 
     public Object readOld(ByteBuffer buffer, ShapeType type) {
@@ -198,12 +198,13 @@ public class MultiLineHandler implements ShapeHandler {
                     builder.setOrdinate(z[offset - 1], 2, 1);
             }
 
-            lines[part] = geometryFactory.createLineString(builder.end());
+            lines[part] = GEOMETRY_FACTORY.createLineString(builder.end());
         }
 
-        return geometryFactory.createMultiLineString(lines);
+        return GEOMETRY_FACTORY.createMultiLineString(lines);
     }
 
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
@@ -290,10 +291,10 @@ public class MultiLineHandler implements ShapeHandler {
         // Prepare line strings and return the multilinestring
         LineString[] lineStrings = new LineString[numParts];
         for (int part = 0; part < numParts; part++) {
-            lineStrings[part] = geometryFactory.createLineString(lines[part]);
+            lineStrings[part] = GEOMETRY_FACTORY.createLineString(lines[part]);
         }
 
-        return geometryFactory.createMultiLineString(lineStrings);
+        return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
     }
 
     /**
@@ -307,6 +308,7 @@ public class MultiLineHandler implements ShapeHandler {
         }
     }
 
+    @Override
     public void write(ByteBuffer buffer, Object geometry) {
         MultiLineString multi = (MultiLineString) geometry;
 

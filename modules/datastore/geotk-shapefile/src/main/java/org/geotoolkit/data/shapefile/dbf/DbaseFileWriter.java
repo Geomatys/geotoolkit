@@ -111,7 +111,7 @@ public class DbaseFileWriter {
         buffer.position(0);
         int r = buffer.remaining();
         while ((r -= channel.write(buffer)) > 0) {
-            ; // do nothing
+            // do nothing
         }
     }
 

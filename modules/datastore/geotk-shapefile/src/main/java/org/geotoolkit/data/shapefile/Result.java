@@ -35,6 +35,9 @@ public class Result<V, S> {
         this.state = state;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         return "State: " + state + " value: " + value;

@@ -144,6 +144,7 @@ public class PrjFileReader implements FileReader {
         }
     }
 
+    @Override
     public String id() {
         return getClass().getName();
     }

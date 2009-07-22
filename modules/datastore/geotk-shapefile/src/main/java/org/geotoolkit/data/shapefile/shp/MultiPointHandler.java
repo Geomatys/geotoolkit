@@ -20,8 +20,8 @@ import java.nio.ByteBuffer;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 /**
  * 
@@ -33,7 +33,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
  */
 public class MultiPointHandler implements ShapeHandler {
     final ShapeType shapeType;
-    GeometryFactory geometryFactory = new GeometryFactory();
 
     /** Creates new MultiPointHandler */
     public MultiPointHandler() {
@@ -55,6 +54,7 @@ public class MultiPointHandler implements ShapeHandler {
      * 
      * @return int Shapefile.POINT
      */
+    @Override
     public ShapeType getShapeType() {
         return shapeType;
     }
@@ -65,6 +65,7 @@ public class MultiPointHandler implements ShapeHandler {
      * @return int The length of the record that this shapepoint will take up in
      *         a shapefile
      */
+    @Override
     public int getLength(Object geometry) {
         MultiPoint mp = (MultiPoint) geometry;
 
@@ -92,9 +93,10 @@ public class MultiPointHandler implements ShapeHandler {
 
     private Object createNull() {
         Coordinate[] c = null;
-        return geometryFactory.createMultiPoint(c);
+        return GEOMETRY_FACTORY.createMultiPoint(c);
     }
 
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
@@ -120,9 +122,10 @@ public class MultiPointHandler implements ShapeHandler {
             }
         }
 
-        return geometryFactory.createMultiPoint(coords);
+        return GEOMETRY_FACTORY.createMultiPoint(coords);
     }
 
+    @Override
     public void write(ByteBuffer buffer, Object geometry) {
         MultiPoint mp = (MultiPoint) geometry;
 
@@ -141,7 +144,8 @@ public class MultiPointHandler implements ShapeHandler {
         }
 
         if (shapeType == ShapeType.MULTIPOINTZ) {
-            double[] zExtreame = JTSUtilities.zMinMax(mp.getCoordinates());
+            double[] zExtreame = {Double.NaN, Double.NaN};
+            JTSUtilities.zMinMax(new CoordinateArraySequence(mp.getCoordinates()), zExtreame);
 
             if (Double.isNaN(zExtreame[0])) {
                 buffer.putDouble(0.0);
