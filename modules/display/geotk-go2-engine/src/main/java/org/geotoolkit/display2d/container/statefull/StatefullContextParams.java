@@ -41,6 +41,8 @@ public class StatefullContextParams {
     public final AffineTransform objectiveToDisplay = new AffineTransform();
     public final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
     public final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
+    public double[] resolutionObjective = new double[2];
+    public double[] resolutionDisplay = new double[2];
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
     public boolean decimate = false;
@@ -54,16 +56,18 @@ public class StatefullContextParams {
     }
 
     public void updateGeneralizationFactor(RenderingContext2D renderingContext, CoordinateReferenceSystem dataCRS){
+        resolutionObjective = renderingContext.getResolution();
+
         //check if needed generalization
         final Boolean generalize = (Boolean) renderingContext.getCanvas().getRenderingHint(GO2Hints.KEY_GENERALIZE);
         if(generalize != null && generalize.booleanValue() == true){
             decimate = true;
             try {
                 final MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), dataCRS);
-                DirectPosition vect = new DirectPosition2D(renderingContext.getResolution()[0], renderingContext.getResolution()[1]);
+                DirectPosition vect = new DirectPosition2D(resolutionObjective[0], resolutionObjective[1]);
                 vect = trs.transform(vect, vect);
-                double[] decim = vect.getCoordinate();
-                decimation = (decim[0]<decim[1]) ? decim[0] : decim[1] ;
+                resolutionDisplay = vect.getCoordinate();
+                decimation = (resolutionDisplay[0]<resolutionDisplay[1]) ? resolutionDisplay[0] : resolutionDisplay[1] ;
             } catch (Exception ex) {
                 ex.printStackTrace();
                 decimation = 0;

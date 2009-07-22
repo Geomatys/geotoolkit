@@ -42,10 +42,10 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class JTSGeometryJ2D implements Shape, Cloneable {
 
-    private JTSGeometryIterator<? extends Geometry> iterator = null;
+    protected JTSGeometryIterator<? extends Geometry> iterator = null;
 
     /** The wrapped JTS geometry */
-    private Geometry geometry;
+    protected Geometry geometry;
 
     /**
      * Creates a new GeometryJ2D object.

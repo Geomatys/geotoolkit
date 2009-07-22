@@ -61,6 +61,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
+import org.geotoolkit.display2d.primitive.jts.DecimateJTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
@@ -177,6 +178,10 @@ public final class GO2Utilities {
     
     public static Shape toJava2D(Geometry geom){
         return new JTSGeometryJ2D(geom);
+    }
+
+    public static Shape toJava2D(Geometry geom, double[] resolution){
+        return new DecimateJTSGeometryJ2D(geom,resolution);
     }
 
     public static Shape toJava2D(org.opengis.geometry.Geometry geom){

@@ -85,6 +85,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return decimatedGeometryJTS;
     }
 
+    @Override
     public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException{
         if(objectiveGeometryJTS == null){
             objectiveGeometryJTS = params.dataToObjectiveTransformer.transform(getGeometryJTS());
@@ -92,6 +93,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return objectiveGeometryJTS;
     }
 
+    @Override
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
         if(displayGeometryJTS == null){
             displayGeometryJTS = params.dataToDisplayTransformer.transform(getGeometryJTS());
@@ -117,6 +119,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null){
             displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS());
+//            displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS(),params.resolutionDisplay);
         }
         return displayShape;
     }

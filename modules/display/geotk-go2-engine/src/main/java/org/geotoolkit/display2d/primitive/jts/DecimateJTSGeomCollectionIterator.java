@@ -32,24 +32,14 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author Johann Sorel (Puzzle-GIS)
  * @since 2.9
  */
-public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryCollection> {
+public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIterator {
 
-    protected  int currentGeom;
-    protected  PathIterator currentIterator;
-    protected  boolean done = false;
+    private final double[] resolution;
 
-    public JTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs) {
+    public DecimateJTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs,double[] resolution) {
         super(gc,trs);
+        this.resolution = resolution;
         reset();
-    }
-
-    @Override
-    public void reset(){
-        currentGeom = 0;
-        done = false;
-        currentIterator = (geometry.isEmpty()) ?
-            new JTSEmptyIterator() :
-            getIterator(geometry.getGeometryN(0));
     }
 
     /**
@@ -59,6 +49,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      *
      * @return the specific iterator for the geometry passed.
      */
+    @Override
     protected JTSGeometryIterator getIterator(Geometry candidate) {
         JTSGeometryIterator iterator = null;
 
@@ -69,66 +60,12 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
         } else if (candidate instanceof Polygon) {
             iterator = new JTSPolygonIterator((Polygon)candidate, transform);
         } else if (candidate instanceof LineString) {
-            iterator = new JTSLineIterator((LineString)candidate, transform);
+            iterator = new DecimateJTSLineIterator((LineString)candidate, transform,resolution);
         } else if (candidate instanceof GeometryCollection) {
-            iterator = new JTSGeomCollectionIterator((GeometryCollection)candidate,transform);
+            iterator = new DecimateJTSGeomCollectionIterator((GeometryCollection)candidate,transform,resolution);
         }
 
         return iterator;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int currentSegment(double[] coords) {
-        return currentIterator.currentSegment(coords);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int currentSegment(float[] coords) {
-        return currentIterator.currentSegment(coords);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int getWindingRule() {
-        return WIND_NON_ZERO;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isDone() {
-        if(done){
-            reset();
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void next() {
-        if (currentIterator.isDone()) {
-            if (currentGeom < (geometry.getNumGeometries() - 1)) {
-                currentGeom++;
-                currentIterator = getIterator(geometry.getGeometryN(currentGeom));
-            } else {
-                done = true;
-            }
-        } else {
-            currentIterator.next();
-        }
     }
     
 }
