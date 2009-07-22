@@ -277,7 +277,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DISTANCE_OUT_OF_RANGE_$4 = 44;
 
         /**
-         * Duplicated values for code "{0}".
+         * Duplicated values for key "{0}".
          */
         public static final int DUPLICATED_VALUES_$1 = 45;
 

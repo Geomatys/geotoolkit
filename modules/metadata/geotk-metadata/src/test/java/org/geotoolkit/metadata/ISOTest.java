@@ -217,8 +217,7 @@ public final class ISOTest {
         if (done.add(accessor.type)) {
             /*
              * Tries to instantiate the implementation. Every implementation should have a
-             * no-args constructor, and their instantiation should never fail. Note that
-             * this dummy will also be of some help later in this test.
+             * no-args constructor, and their instantiation should never fail.
              */
             final Object dummyInstance;
             final boolean isImplemented = isImplemented(accessor.type);
@@ -250,18 +249,17 @@ public final class ISOTest {
                 assertTrue(fullname, accessor.isWritable(i));
                 /*
                  * Get the property type. In the special case where the property type
-                 * is a collection, get an empty collection from the implementation.
-                 * This is needed in order to get the element type in the collection.
+                 * is a collection, this is the type of elements in that collection.
                  */
-                Class<?> type = accessor.type(i);
-                if (Collection.class.isAssignableFrom(type)) {
-                    final Object example = accessor.get(i, dummyInstance);
-                    if (example instanceof CheckedCollection<?>) {
-                        type = ((CheckedCollection<?>) example).getElementType();
-                    }
-                }
+                final Class<?> type = accessor.type(i);
                 final Class<?> impl = getImplementation(type);
+                assertFalse(Collection.class.isAssignableFrom(type));
+                final Object example = accessor.get(i, dummyInstance);
+                if (example instanceof CheckedCollection<?>) {
+                    assertTrue(type.isAssignableFrom(((CheckedCollection<?>) example).getElementType()));
+                }
                 if (impl != null) {
+                    assertTrue(type.isAssignableFrom(impl));
                     assertSetters(new PropertyAccessor(impl, type), done);
                 }
             }

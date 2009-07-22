@@ -80,12 +80,14 @@ public final class PropertyTreeTest {
             "│   ├───Alt A\n" +
             "│   └───Alt B\n" +
             "├───Cited Responsible Parties\n" +
-            "│   ├───Role\n" +
-            "│   │   └───author\n" +
-            "│   ├───Individual Name\n" +
-            "│   │   └───Testsuya Toyoda\n" +
-            "│   └───Individual Name\n" +
-            "│       └───A japanese author\n" +
+            "│   ├───[1] Testsuya Toyoda\n" +
+            "│   │   ├───Role\n" +
+            "│   │   │   └───author\n" +
+            "│   │   └───Individual Name\n" +
+            "│   │       └───Testsuya Toyoda\n" +
+            "│   └───[2] A japanese author\n" +
+            "│       └───Individual Name\n" +
+            "│           └───A japanese author\n" +
             "├───ISBN\n" +
             "│   └───9782505004509\n" +
             "└───Presentation Forms\n" +
@@ -105,8 +107,10 @@ public final class PropertyTreeTest {
         authors.add(author);
         authors.add(duplicated);
         assertEquals(authors, node.getUserObject());
-
-        final DefaultCitation newCitation = new DefaultCitation();
+        /*
+         * Parses the tree and compare with the original citation.
+         */
+        DefaultCitation newCitation = new DefaultCitation();
         newCitation.parse(tree);
         assertEquals(authors, newCitation.getCitedResponsibleParties());
 

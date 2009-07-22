@@ -19,13 +19,13 @@ package org.geotoolkit.metadata;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -36,10 +36,10 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 
@@ -52,12 +52,22 @@ import org.geotoolkit.resources.Errors;
  * {@link javax.swing.tree.TreeModel} in some future Geotoolkit implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
+ *
+ * @todo It may make sense to refactor this class as a subclass of {@link java.text.Format}
+ *       and make it public.
  */
 final class PropertyTree {
+    /**
+     * {@code true} if we are allowed to use the object declared in {@link TreeNode}
+     * (when available) instead than parsing the character strings.
+     * This is a functionality that we may enable in a future version.
+     */
+    private static final boolean USER_OBJECT_ALLOWED = false;
+
     /**
      * The default number of significant digits (may or may not be fraction digits).
      */
@@ -114,6 +124,11 @@ final class PropertyTree {
      * Fetches values from every nodes of the given tree except the root, and puts them in
      * the given metadata object. The value of the root node is ignored (it is typically
      * just the name of the metadata class).
+     * <p>
+     * If the given metadata object already contains attribute values, then the parsing will be
+     * merged with the existing values: attributes not defined in the tree will be left unchanged,
+     * and collections will be augmented with new entries without change in the previously existing
+     * entries.
      *
      * @param  node     The node from which to fetch the values.
      * @param  metadata The metadata where to store the values.
@@ -125,7 +140,14 @@ final class PropertyTree {
         if (accessor == null) {
             throw new ParseException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type), 0);
         }
-        parse(node, metadata, accessor, null);
+        final int duplicated = parse(node, type, metadata, null, accessor);
+        if (duplicated != 0) {
+            final LogRecord record = Errors.getResources(locale).getLogRecord(
+                    Level.WARNING, Errors.Keys.DUPLICATED_VALUES_COUNT_$1, duplicated);
+            record.setSourceClassName("AbstractMetadata"); // This is the public API.
+            record.setSourceMethodName("parse");
+            AbstractMetadata.LOGGER.log(record);
+        }
     }
 
     /**
@@ -133,89 +155,91 @@ final class PropertyTree {
      * the given metadata object. This method invokes itself recursively.
      *
      * @param  node       The node from which to fetch the values.
-     * @param  metadata   The metadata where to store the values.
+     * @param  type       The implementation class of the given {@code metadata}.
+     * @param  metadata   The metadata where to store the values, or {@code null} if it should
+     *                    be created from the given {@code type} when first needed.
+     * @param  addTo      If non-null, then metadata objects (including the one provided to this
+     *                    method) are added to this collection after they have been parsed.
      * @param  accessor   The object to use for writing in the metadata object.
-     * @param  additional Non-null if multiple metadata instances are allowed, in which
-     *                    case additional instances will be added to that map.
+     * @return The number of duplicated elements, for logging purpose.
      * @throws ParseException If a value can not be stored in the given metadata object.
      */
-    private void parse(final TreeNode node, Object metadata, final PropertyAccessor accessor,
-            final Collection<Object> additional) throws ParseException
+    private <T> int parse(final TreeNode node, final Class<? extends T> type, T metadata,
+            final Collection<? super T> addTo, final PropertyAccessor accessor) throws ParseException
     {
+        int duplicated = 0;
         final Set<String> done = new HashSet<String>();
         final int childCount = node.getChildCount();
         for (int i=0; i<childCount; i++) {
             final TreeNode child = node.getChildAt(i);
-            final String name = child.toString();
+            final String name = child.toString().trim();
+            /*
+             * If the node label is something like "[2] A title", then the node should be the
+             * container of the element of a collection. This rule is based on the assumption
+             * that '[' and ']' are not valid characters for UML or Java identifiers.
+             */
+            if (addTo != null && isCollectionElement(name)) {
+                duplicated += parse(child, type, null, addTo, accessor);
+                continue;
+            }
             if (!done.add(name)) {
                 /*
                  * If a child of the same name occurs one more time, assume that it is starting
                  * a new metadata object. For example if "Individual Name" appears one more time
                  * inside a "Responsible Party" metadata, then what we are building is actually
                  * a collection of Responsible Parties instead than a single instance, and we
-                 * are starting a new sentence.
+                 * are starting a new instance.
                  *
                  * Note that this is not confused with the case where a single "Responsible Party"
                  * has many "Individual Name" (if it was allowed by ISO), since in such case every
                  * names would be childs under the same "Individual Name" child.
                  *
-                 * This work only if, for each "Responsible Party" instance, the first child in
-                 * the tree is a mandatory attribute (or some attribute garanteed to be in each
-                 * child). Otherwise this approach is actually ambiguous.
+                 * This approach is ambiguous (unless the first child is always a mandatory attribute)
+                 * and actually not needed for parsing the trees formatted by this class. However this
+                 * method applies this lenient approach anyway in order to still be able to parse trees
+                 * that are not properly formatted, but still understandable in some way.
                  */
+                if (addTo == null) {
+                    throw new ParseException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, name), 0);
+                }
+                // Something would be wrong with the 'done' map if the following assertion fails.
+                assert (metadata != null) : done;
+                if (!addTo.add(metadata)) {
+                    duplicated++;
+                }
                 done.clear();  // Starts a new cycle.
                 done.add(name);
-                metadata = newInstance(metadata.getClass());
-                additional.add(metadata);
+                metadata = null;
             }
+            /*
+             * Get the type of the child from the method signature. If the type is a collection,
+             * get the type of collection element instead than the type of the collection itself.
+             */
             final int index = accessor.indexOf(name);
             if (index < 0) {
                 throw new ParseException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, name), 0);
             }
-            /*
-             * If a value already exists in the metadata object for the current child,
-             * gets the old value. If no value is given, then an implementation type
-             * will be inferred from the return value type.
-             */
-            Object value = accessor.get(index, metadata);
-            final Class<?> type;
-            if (value != null) {
-                if (value instanceof CheckedCollection<?>) {
-                    type = standard.getImplementation(((CheckedCollection<?>) value).getElementType());
-                } else {
-                    type = value.getClass();
-                }
-            } else {
-                type = standard.getImplementation(accessor.type(index));
-                // Note: we could check if the type is assignable to Collection.class,
-                // and in such case fetch the parameterized type for the same raisons
-                // then we fetched CheckedCollection.getElementType() above. However
-                // this is not needed in Geotoolkit implementation since we never return
-                // a null collection (the collection can be empty but never null).
+            Class<?> childType = accessor.type(index);
+            if (childType == null) {
+                // The type of the parameter is unknow (actually the message is a bit
+                // misleading since it doesn't said that only the type is unknown).
+                throw new ParseException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_$1, name), 0);
             }
+            childType = standard.getImplementation(childType);
             /*
              * If the type is an other metadata implementation, invokes this method
-             * recursively for every childs of the current child, to be stored in
-             * the metadata object we just found (creating a new one if necessary).
+             * recursively for every childs of the metadata object we just found.
              */
-            final PropertyAccessor ca = standard.getAccessorOptional(type);
+            Object value;
+            final PropertyAccessor ca = standard.getAccessorOptional(childType);
             if (ca != null) {
+                value = accessor.get(index, metadata);
                 if (value instanceof Collection<?>) {
-                    final Collection<Object> childs;
-                    if (value instanceof List<?>) {
-                        childs = new ArrayList<Object>(4);
-                    } else {
-                        childs = new LinkedHashSet<Object>(4);
-                    }
-                    childs.add(value = newInstance(type));
-                    parse(child, value, ca, childs);
-                    value = childs;
+                    @SuppressWarnings("unchecked") // We will rely on CheckedCollection checks.
+                    final Collection<Object> childs = (Collection<Object>) value;
+                    duplicated += parse(child, childType, null, childs, ca);
                 } else {
-                    // Singleton: create the instance if necessary.
-                    if (value == null) {
-                        value = newInstance(type);
-                    }
-                    parse(child, value, ca, null);
+                    duplicated += parse(child, childType, value, null, ca);
                 }
             } else {
                 /*
@@ -226,38 +250,46 @@ final class PropertyTree {
                 value = getUserObject(child);
                 if (value == null) {
                     final int n = child.getChildCount();
-                    if (n == 0) {
-                        continue;
+                    final Object[] values = new Object[n];
+                    for (int j=0; j<n; j++) {
+                        final TreeNode c = child.getChildAt(j);
+                        Object v = getUserObject(c);
+                        if (v == null) {
+                            final String s = c.toString();
+                            if (Number.class.isAssignableFrom(childType)) {
+                                v = numberFormat.parse(s);
+                            } else if (Date.class.isAssignableFrom(childType)) {
+                                v = dateFormat.parse(s);
+                            } else {
+                                v = s;
+                            }
+                        }
+                        values[j] = v;
                     }
-                    final TreeNode cn = child.getChildAt(0);
-                    value = getUserObject(cn);
-                    if (value == null) {
-                        value = cn.toString();
-                    }
-                    // TODO: needs to build a collection with other elements.
-                    if (child.getChildCount() > 1) {
-                        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.metadata")
-                                .warning("The " + child.toString() + " node contains childs that " +
-                                "can not yet be parsed in current implementation.");
-                    }
+                    value = Arrays.asList(values);
                 }
-                if (value instanceof CharSequence) {
-                    if (Number.class.isAssignableFrom(type)) {
-                        value = numberFormat.parse(value.toString());
-                    } else if (Date.class.isAssignableFrom(type)) {
-                        value = dateFormat.parse(value.toString());
-                    }
-                }
+            }
+            /*
+             * Now create a new metadata instance if we need to.
+             */
+            if (metadata == null) {
+                metadata = newInstance(type);
             }
             accessor.set(index, metadata, value, false);
         }
+        if (addTo != null && metadata != null) {
+            if (!addTo.add(metadata)) {
+                duplicated++;
+            }
+        }
+        return duplicated;
     }
 
     /**
      * Returns the user object of the given node if possible, or {@code null} otherwise.
      */
     private static Object getUserObject(final TreeNode node) {
-        if (false && node instanceof org.geotoolkit.gui.swing.tree.TreeNode) {
+        if (USER_OBJECT_ALLOWED && node instanceof org.geotoolkit.gui.swing.tree.TreeNode) {
             return ((org.geotoolkit.gui.swing.tree.TreeNode) node).getUserObject();
         }
         return null;
@@ -267,7 +299,7 @@ final class PropertyTree {
      * Creates a new instance of the given type, wrapping the {@code java.lang.reflect}
      * exceptions in the exception using by our parsing API.
      */
-    private static <T> T newInstance(final Class<T> type) throws ParseException {
+    private static <T> T newInstance(final Class<? extends T> type) throws ParseException {
         try {
             return type.newInstance();
         } catch (Exception cause) { // InstantiationException & IllegalAccessException
@@ -288,7 +320,7 @@ final class PropertyTree {
     public MutableTreeNode asTree(final Object metadata) {
         final String name = Classes.getShortName(standard.getInterface(metadata.getClass()));
         final DefaultMutableTreeNode root = new NamedTreeNode(localize(name), metadata, true);
-        append(root, metadata);
+        append(root, metadata, 0);
         return root;
     }
 
@@ -299,62 +331,145 @@ final class PropertyTree {
      * <p>
      * Map or metadata are constructed as a sub tree where every nodes is a
      * property name, and the childs are the value(s) for that property.
+     *
+     * @param  branch The node where to add childs.
+     * @param  value the value to add as a child.
+     * @param  number Greater than 0 if metadata elements (not code list) should be numbered.
      */
-    private void append(final DefaultMutableTreeNode branch, final Object value) {
+    private void append(final DefaultMutableTreeNode branch, final Object value, final int number) {
+        if (value == null) {
+            return;
+        }
+        final Map<?,?> asMap;
+        final PropertyAccessor accessor;
         if (value instanceof Map<?,?>) {
-            appendMap(branch, (Map<?,?>) value);
-            return;
-        }
-        if (value instanceof AbstractMetadata) {
-            appendMap(branch, ((AbstractMetadata) value).asMap());
-            return;
-        }
-        if (value != null) {
-            final PropertyAccessor accessor = standard.getAccessorOptional(value.getClass());
-            if (accessor != null) {
-                appendMap(branch, new PropertyMap(value, accessor));
-                return;
-            }
-        }
-        if (value instanceof Collection<?>) {
-            for (final Object element : (Collection<?>) value) {
+            /*
+             * The value is a Map derived from a metadata object (usually).
+             */
+            asMap = (Map<?,?>) value;
+        } else if (value instanceof AbstractMetadata) {
+            /*
+             * The value is a metadata object (Geotoolkit implementation).
+             */
+            asMap = ((AbstractMetadata) value).asMap();
+        } else if ((accessor = standard.getAccessorOptional(value.getClass())) != null) {
+            /*
+             * The value is a metadata object (unknown implementation).
+             */
+            asMap = new PropertyMap(value, accessor);
+        } else if (value instanceof Collection<?>) {
+            /*
+             * The value is a collection of any other cases. Add all the childs recursively,
+             * putting them in a numbered element if this is needed for avoiding ambiguity.
+             */
+            final Collection<?> values = (Collection<?>) value;
+            int n = (values.size() > 1) ? 1 : 0;
+            for (final Object element : values) {
                 if (!PropertyAccessor.isEmpty(element)) {
-                    append(branch, element);
+                    append(branch, element, n);
+                    if (n != 0) n++;
                 }
             }
             return;
-        }
-        final String asText;
-        if (value instanceof CodeList<?>) {
-            asText = localize((CodeList<?>) value);
-        } else if (value instanceof Date) {
-            asText = format((Date) value);
-        } else if (value instanceof Number) {
-            asText = format((Number) value);
-        } else if (value instanceof InternationalString) {
-            asText = ((InternationalString) value).toString(locale);
         } else {
-            asText = String.valueOf(value);
+            /*
+             * The value is anything else, to be converted to String.
+             */
+            final String asText;
+            if (value instanceof CodeList<?>) {
+                asText = localize((CodeList<?>) value);
+            } else if (value instanceof Date) {
+                asText = format((Date) value);
+            } else if (value instanceof Number) {
+                asText = format((Number) value);
+            } else if (value instanceof InternationalString) {
+                asText = ((InternationalString) value).toString(locale);
+            } else {
+                asText = String.valueOf(value);
+            }
+            assert !isCollectionElement(asText) : asText;
+            branch.add(new NamedTreeNode(asText, value, false));
+            return;
         }
-        branch.add(new NamedTreeNode(asText, value, false));
+        /*
+         * Appends the specified map (usually a metadata) to a branch. Each map keys
+         * is a child in the specified {@code branch}, and each value is a child of
+         * the map key. There is often only one value for a map key, but not always;
+         * some are collections, which are formatted as many childs for the same key.
+         */
+        DefaultMutableTreeNode addTo = branch;
+        if (number != 0) {
+            // String formatted below must comply with the isCollectionElement(...) condition.
+            final String title = appendTitle(asMap.values(),
+                    new StringBuilder("[").append(format(number)).append("] ")).toString();
+            assert isCollectionElement(title) : title;
+            addTo = new NamedTreeNode(title, value, true);
+            branch.add(addTo);
+        }
+        for (final Map.Entry<?,?> entry : asMap.entrySet()) {
+            final Object element = entry.getValue();
+            if (!PropertyAccessor.isEmpty(element)) {
+                final String name = localize((String) entry.getKey());
+                assert !isCollectionElement(name) : name;
+                final DefaultMutableTreeNode child = new NamedTreeNode(name, element, true);
+                append(child, element, 0);
+                addTo.add(child);
+            }
+        }
     }
 
     /**
-     * Appends the specified map (usually a metadata) to a branch. Each map keys
-     * is a child in the specified {@code branch}, and each value is a child of
-     * the map key. There is often only one value for a map key, but not always;
-     * some are collections, which are formatted as many childs for the same key.
+     * Returns {@code true} if a node having the given label is the container of an element
+     * of a collection. The rule is to return {@code true} if the label contains a pattern
+     * like {@code "[any characters]"}, and if the characters before that pattern are not
+     * valid identifier part.
+     * <p>
+     * The search for {@code '['} and {@code ']'} characters are okay if we assume that
+     * those characters are not allowed in a UML or Java identifiers.
+     *
+     * @param  label The label of the node to test.
+     * @return {@code true} if a node having the given label is an element of a collection.
      */
-    private void appendMap(final DefaultMutableTreeNode branch, final Map<?,?> asMap) {
-        for (final Map.Entry<?,?> entry : asMap.entrySet()) {
-            final Object value = entry.getValue();
-            if (!PropertyAccessor.isEmpty(value)) {
-                final String name = localize((String) entry.getKey());
-                final DefaultMutableTreeNode child = new NamedTreeNode(name, value, true);
-                append(child, value);
-                branch.add(child);
+    private static boolean isCollectionElement(final String label) {
+        int start = label.indexOf('[');
+        if (start >= 0) {
+            final int end = label.indexOf(']', start);
+            if (end > start) {
+                while (--start >= 0) {
+                    if (Character.isJavaIdentifierPart(label.charAt(start))) {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Tries to figure out a title for the given metadata (represented as a the values
+     * of a Map) and appends that title to the given buffer. If no title can be found,
+     * a <cite>"(untitled)"</cite> text is appended.
+     *
+     * @param  values The values of the metadata for which to append a title.
+     * @param  appendTo The buffer where to append the title.
+     * @return The buffer, returned for method invocation chaining.
+     */
+    private StringBuilder appendTitle(final Collection<?> values, final StringBuilder appendTo) {
+        for (final Object element : values) {
+            if (element instanceof CharSequence) {
+                String name;
+                if (element instanceof InternationalString) {
+                    name = ((InternationalString) element).toString(locale);
+                } else {
+                    name = element.toString();
+                }
+                if ((name = name.trim()).length() != 0) {
+                    return appendTo.append(name);
+                }
+            }
+        }
+        return appendTo.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
     }
 
     /**

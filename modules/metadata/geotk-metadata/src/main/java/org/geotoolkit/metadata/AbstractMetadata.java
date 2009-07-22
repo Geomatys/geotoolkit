@@ -162,10 +162,15 @@ public abstract class AbstractMetadata {
      * this metadata object. The value of the root node is ignored (it is typically just the
      * name of this metadata class).
      * <p>
-     * This method can parse the tree created by {@link #asTree()}.
+     * If the given metadata object already contains attribute values, then the parsing will be
+     * merged with the existing values: attributes not defined in the tree will be left unchanged,
+     * and collections will be augmented with new entries without change in the previously existing
+     * entries.
      * <p>
-     * The current implementation expects the {@linkplain TreeModel#getRoot tree root}
-     * to be an instance of {@link javax.swing.tree.TreeNode}.
+     * This method can parse the tree created by {@link #asTree()}.
+     *
+     * {@note The current implementation expects the tree root to be an instance of
+     *        <code>javax.swing.tree.TreeNode</code>.}
      *
      * @param  tree The tree from which to fetch the values.
      * @throws ParseException If a value can not be stored in this metadata object.
