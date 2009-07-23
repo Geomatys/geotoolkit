@@ -49,7 +49,16 @@ public final class Namespaces {
     /**
      * The {@value} URL.
      */
+    public static final String CSW_202 = "http://www.opengis.net/cat/csw/2.0.2";
+    /**
+     * The {@value} URL.
+     */
     public static final String GMD = "http://www.isotc211.org/2005/gmd";
+
+    /**
+     * The {@value} URL.
+     */
+    public static final String GFC = "http://www.isotc211.org/2005/gfc";
 
     /**
      * The {@value} URL.
