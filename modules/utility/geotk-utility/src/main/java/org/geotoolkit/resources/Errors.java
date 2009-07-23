@@ -603,6 +603,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NEGATIVE_COLUMN_$2 = 108;
 
         /**
+         * Node "{0}" has no parent.
+         */
+        public static final int NODE_HAS_NO_PARENT_$1 = 218;
+
+        /**
          * Scaling affine transform is not invertible.
          */
         public static final int NONINVERTIBLE_SCALING_TRANSFORM = 109;

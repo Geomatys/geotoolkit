@@ -94,7 +94,7 @@ public final class PropertyTreeTest {
             "    ├───document hardcopy\n" +
             "    └───image hardcopy\n", Trees.toString(tree));
 
-        final TreeNode root = (TreeNode) tree.getRoot();
+        TreeNode root = (TreeNode) tree.getRoot();
         assertSame(citation, root.getUserObject());
         assertEquals("Citation", root.toString());
         /*
@@ -116,6 +116,33 @@ public final class PropertyTreeTest {
 
         // Following test fails until we fix the parsing of multi-occurences of CodeList.
 //      System.out.println(Trees.toString(newCitation.asTree()));
+//      assertEquals(citation, newCitation);
+
+        /*
+         * Parses a somewhat malformed (but still understandable) tree
+         * and compares with the original citation.
+         */
+        root = Trees.parse(
+            "Citation\n" +
+            "├───Title\n" +
+            "│   └───Undercurrent\n" +
+            "├───Alternate Titles\n" +
+            "│   ├───Alt A\n" +
+            "│   └───Alt B\n" +
+            "├───Cited Responsible Parties\n" +
+            "│   ├───Role\n" +
+            "│   │   └───author\n" +
+            "│   ├───Individual Name\n" +
+            "│   │   └───Testsuya Toyoda\n" +
+            "│   └───Individual Name\n" +
+            "│       └───A japanese author\n" +
+            "├───ISBN\n" +
+            "│   └───9782505004509\n" +
+            "└───Presentation Forms\n" +
+            "    ├───document hardcopy\n" +
+            "    └───image hardcopy\n");
+        newCitation = new DefaultCitation();
+        newCitation.parse(tree);
 //      assertEquals(citation, newCitation);
     }
 }

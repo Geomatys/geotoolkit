@@ -36,13 +36,27 @@ import org.w3c.dom.Node;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.io.LineReader;
+import org.geotoolkit.io.LineReaders;
+import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.resources.Errors;
 
 
 /**
- * Convenience static methods for trees operations.
+ * Convenience static methods for trees operations. This class provides methods for performing
+ * a {@linkplain #copy copy} of a tree and for {@linkplain #xmlToSwing converting from XML}.
+ * It can also {@linkplain #parse parse} and {@linkplain #format format} a tree in {@link String}
+ * form, where the text format looks like the example below:
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * {@preformat text
+ *   Node #1
+ *   ├───Node #2
+ *   │   └───Node #4
+ *   └───Node #3
+ * }
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.0
  * @module
@@ -189,6 +203,121 @@ public final class Trees {
             }
         }
         return target;
+    }
+
+    /**
+     * Creates a tree from the given string representation. This method can parse the trees
+     * created by the {@code format(...)} methods defined in this class. This convenience
+     * method delegates the work to {@link #parse(LineReader)}.
+     *
+     * @param text The string representation of the tree to parse.
+     * @return The root of the parsed tree.
+     * @throws IllegalArgumentException If an error occured while parsing the tree.
+     *
+     * @since 3.02
+     */
+    public static MutableTreeNode parse(final String text) throws IllegalArgumentException {
+        try {
+            return parse(LineReaders.wrap(text));
+        } catch (IOException e) {
+            // Only ContentFormatException should occur here.
+            throw new IllegalArgumentException(e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Creates a tree from the lines read from the given input. This method can parse the trees
+     * created by the {@code format(...)} methods defined in this class. Each node must have at
+     * least one {@code '─'} character (unicode 2500) in front of it. The number of spaces and
+     * drawing characters ({@code '│'}, {@code '├'} or {@code '└'}) before the node determines
+     * its indentation, and the indentation determines the parent of each node.
+     *
+     * @param  input A {@code LineReader} for reading the lines.
+     * @return The root of the parsed tree.
+     * @throws IOException If an error occured while parsing the tree.
+     *
+     * @since 3.02
+     */
+    public static MutableTreeNode parse(final LineReader input) throws IOException {
+        /*
+         * 'indentation' is the number of spaces (ignoring drawing characters) for each level.
+         * 'level' is the current indentation level. 'lastNode' is the last node parsed up to
+         * date. It has 'indentation[level]' spaces or drawing characters before its content.
+         */
+        int level = 0;
+        int indentation[] = new int[16];
+        DefaultMutableTreeNode root = null;
+        DefaultMutableTreeNode lastNode = null;
+        String line;
+        while ((line = input.readLine()) != null) {
+            boolean hasChar = false;
+            final int length = line.length();
+            int i; // The indentation of current line.
+            for (i=0; i<length; i++) {
+                char c = line.charAt(i);
+                if (!Character.isSpaceChar(c)) {
+                    hasChar = true;
+                    if ("\u2500\u2502\u2514\u251C".indexOf(c) < 0) {
+                        break;
+                    }
+                }
+            }
+            if (!hasChar) {
+                continue; // The line contains only whitespaces.
+            }
+            /*
+             * Go back to the fist non-space character (should be '─'). This is in case the
+             * user puts some spaces in the node text, since we don't want those user-spaces
+             * to interfer with the calculation of indentation.
+             */
+            while (i != 0 && Character.isSpaceChar(line.charAt(i-1))) i--;
+            /*
+             * Found the first character which is not part of the indentation.
+             * If this is the first node created so far, it will be the root.
+             */
+            final DefaultMutableTreeNode node = new DefaultMutableTreeNode(line.substring(i).trim());
+            if (root == null) {
+                indentation[0] = i;
+                root = node;
+            } else {
+                int p;
+                while (i < (p = indentation[level])) {
+                    /*
+                     * Lower indentation level: go up in the tree until we found the new parent.
+                     * Note that lastNode.getParent() should never return null, since only the
+                     * node at 'level == 0' has a null parent and we checked this case.
+                     */
+                    if (--level < 0) {
+                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_$1, node));
+                    }
+                    lastNode = (DefaultMutableTreeNode) lastNode.getParent();
+                }
+                if (i == p) {
+                    /*
+                     * The node we just created is a sibling of the previous node. This is
+                     * illegal if level==0, in which case we have no parent. Otherwise adds
+                     * the sibling to the common parent and let the indentation level unchanged.
+                     */
+                    final DefaultMutableTreeNode parent = (DefaultMutableTreeNode) lastNode.getParent();
+                    if (parent == null) {
+                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_$1, node));
+                    }
+                    parent.add(node);
+                } else if (i > p) {
+                    /*
+                     * The node we just created is a child of the previous node.
+                     * Add a new indentation level.
+                     */
+                    lastNode.add(node);
+                    if (++level == indentation.length) {
+                        indentation = Arrays.copyOf(indentation, level*2);
+                    }
+                    indentation[level] = i;
+                }
+            }
+            lastNode = node;
+        }
+        return root;
     }
 
     /**

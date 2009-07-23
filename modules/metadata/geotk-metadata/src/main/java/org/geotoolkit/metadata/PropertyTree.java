@@ -39,6 +39,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
@@ -61,13 +62,6 @@ import org.geotoolkit.resources.Errors;
  *       and make it public.
  */
 final class PropertyTree {
-    /**
-     * {@code true} if we are allowed to use the object declared in {@link TreeNode}
-     * (when available) instead than parsing the character strings.
-     * This is a functionality that we may enable in a future version.
-     */
-    private static final boolean USER_OBJECT_ALLOWED = false;
-
     /**
      * The default number of significant digits (may or may not be fraction digits).
      */
@@ -247,13 +241,13 @@ final class PropertyTree {
                  * this is some primitive (numbers, etc.), a date or a string. Stores them in the
                  * current metadata object using the accessor.
                  */
-                value = getUserObject(child);
+                value = Trees.getUserObject(child);
                 if (value == null) {
                     final int n = child.getChildCount();
                     final Object[] values = new Object[n];
                     for (int j=0; j<n; j++) {
                         final TreeNode c = child.getChildAt(j);
-                        Object v = getUserObject(c);
+                        Object v = Trees.getUserObject(c);
                         if (v == null) {
                             final String s = c.toString();
                             if (Number.class.isAssignableFrom(childType)) {
@@ -283,16 +277,6 @@ final class PropertyTree {
             }
         }
         return duplicated;
-    }
-
-    /**
-     * Returns the user object of the given node if possible, or {@code null} otherwise.
-     */
-    private static Object getUserObject(final TreeNode node) {
-        if (USER_OBJECT_ALLOWED && node instanceof org.geotoolkit.gui.swing.tree.TreeNode) {
-            return ((org.geotoolkit.gui.swing.tree.TreeNode) node).getUserObject();
-        }
-        return null;
     }
 
     /**

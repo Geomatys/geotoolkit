@@ -28,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * List some namespaces URLs used by JAXB when (un)marshalling.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -43,45 +43,66 @@ public final class Namespaces {
 
     /**
      * The {@value} URL.
+     *
+     * @category ISO
      */
     public static final String GCO = "http://www.isotc211.org/2005/gco";
 
     /**
      * The {@value} URL.
-     */
-    public static final String CSW_202 = "http://www.opengis.net/cat/csw/2.0.2";
-    /**
-     * The {@value} URL.
-     */
-    public static final String GMD = "http://www.isotc211.org/2005/gmd";
-
-    /**
-     * The {@value} URL.
+     *
+     * @category ISO
+     * @since 3.02
      */
     public static final String GFC = "http://www.isotc211.org/2005/gfc";
 
     /**
      * The {@value} URL.
+     *
+     * @category ISO
+     */
+    public static final String GMD = "http://www.isotc211.org/2005/gmd";
+
+    /**
+     * The {@value} URL.
+     *
+     * @category ISO
      */
     public static final String GMX = "http://www.isotc211.org/2005/gmx";
 
     /**
      * The {@value} URL.
+     *
+     * @category OGC
      */
     public static final String GML = "http://www.opengis.net/gml";
 
     /**
      * The {@value} URL.
+     *
+     * @category OGC
+     * @since 3.02
+     */
+    public static final String CSW_202 = "http://www.opengis.net/cat/csw/2.0.2";
+
+    /**
+     * The {@value} URL.
+     *
+     * @category W3C
      */
     public static final String XSI = "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
      * The {@value} URL.
+     *
+     * @category W3C
      */
     public static final String XLINK = "http://www.w3.org/1999/xlink";
 
     /**
      * The {@value} URL.
+     *
+     * @category Profiles
      */
     public static final String FRA = "http://www.cnig.gouv.fr/2005/fra";
 

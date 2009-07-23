@@ -26,7 +26,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * Tests the {@link Trees} implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -49,5 +49,23 @@ public final class TreesTest {
                 "├───Node #2\n" +
                 "│   └───Node #4\n" +
                 "└───Node #3\n", Trees.toString(root));
+    }
+
+    /**
+     * Tests the parsing of a tree. This method parses and reformats a tree,
+     * and perform its check on the assumption that the tree formatting is
+     * accurate.
+     *
+     * @since 3.02
+     */
+    @Test
+    public void testParsing() {
+        final String text =
+                "Node #1\n" +
+                "├───Node #2\n" +
+                "│   └───Node #4\n" +
+                "└───Node #3\n";
+        final TreeNode root = Trees.parse(text);
+        assertMultilinesEquals(text, Trees.toString(root));
     }
 }

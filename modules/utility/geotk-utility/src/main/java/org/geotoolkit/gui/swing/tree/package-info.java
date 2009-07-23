@@ -22,9 +22,14 @@
  * draft. Unfortunately, since {@link javax.swing.tree.TreeNode} is an interface,
  * Sun can't fix it without breaking compatibility. We have to fix it ourselves,
  * which is the main purpose of this package.
+ * <p>
+ * This package provides also a set of static methods in the {@link org.geotoolkit.gui.swing.tree.Trees}
+ * class. Those methods work on Swing tree models. Despite the fact that they are defined in a
+ * <cite>Swing</cite> package, the tree model can be used as a generic model for arbitrary
+ * applications (not limited to <cite>Swing</cite> widgets).
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.0
  * @module
