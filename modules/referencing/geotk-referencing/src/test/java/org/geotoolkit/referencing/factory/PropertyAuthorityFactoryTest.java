@@ -37,6 +37,7 @@ import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
+import org.geotoolkit.referencing.CRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,7 +49,7 @@ import static org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory.FILENA
  * Tests {@link PropertyAuthorityFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  */
@@ -100,6 +101,8 @@ public final class PropertyAuthorityFactoryTest {
          * Tests a CRS sample.
          */
         crs = factory.createCoordinateReferenceSystem("42101");
+        assertEquals("WGS 84 / LCC Canada", crs.getName().getCode());
+        assertEquals("EPSG:42101", CRS.toSRS(crs));
         assertMultilinesEquals(WKT.PROJCS_LAMBERT_CONIC, crs.toWKT());
         factory.dispose(false);
     }
@@ -121,7 +124,6 @@ public final class PropertyAuthorityFactoryTest {
         PropertyAuthorityFactory factory = new PropertyAuthorityFactory(null, resources, Citations.EPSG);
         /*
          * Tests the factory when we didn't asked for any hint.
-         * First tests the ProjectedCRS axis...
          */
         Map<RenderingHints.Key, ?> hints = factory.getImplementationHints();
         assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
@@ -129,13 +131,17 @@ public final class PropertyAuthorityFactoryTest {
         assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_UNITS));
         assertEquals(3, factory.getAuthorityCodes(null).size());
         CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("3035");
+        assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());
+        assertEquals("EPSG:3035", CRS.toSRS(crs));
         CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
         /*
-         * ... then tests the inner GeographicCRS axis...
+         * ... Tests again with an other CRS ...
          */
         crs = factory.createCoordinateReferenceSystem("27572");
+        assertEquals("NTF (Paris) / Lambert zone II", crs.getName().getCode());
+        assertEquals("EPSG:27572", CRS.toSRS(crs));
         cs = ((ProjectedCRS) crs).getBaseCRS().getCoordinateSystem();
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
@@ -154,6 +160,8 @@ public final class PropertyAuthorityFactoryTest {
         assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_UNITS));
         assertEquals(3, factory.getAuthorityCodes(null).size());
         crs = factory.createCoordinateReferenceSystem("3035");
+        assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());
+        assertEquals("EPSG:3035", CRS.toSRS(crs));
         cs = crs.getCoordinateSystem();
         assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
@@ -161,6 +169,8 @@ public final class PropertyAuthorityFactoryTest {
          * ... then tests the inner GeographicCRS axis...
          */
         crs = factory.createCoordinateReferenceSystem("27572");
+        assertEquals("NTF (Paris) / Lambert zone II", crs.getName().getCode());
+        assertEquals("EPSG:27572", CRS.toSRS(crs));
         cs = ((ProjectedCRS) crs).getBaseCRS().getCoordinateSystem();
         assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());

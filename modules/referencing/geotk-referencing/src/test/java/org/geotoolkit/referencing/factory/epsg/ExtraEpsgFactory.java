@@ -23,7 +23,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * Extra class used to make sure we have {@link PropertyEpsgFactory} among the fallbacks
- * (used to check the fallback mechanism).
+ * (used to check the fallback mechanism). This factory is registered programmatically by
+ * {@link FallbackAuthorityFactoryTest}.
  *
  * @author Andrea Aime (TOPP)
  * @author Martin Desruisseaux (Geomatys)
