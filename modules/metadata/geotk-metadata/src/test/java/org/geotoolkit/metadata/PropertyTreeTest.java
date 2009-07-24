@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.DefaultTreeModel;
 
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.PresentationForm;
@@ -71,7 +72,7 @@ public final class PropertyTreeTest {
         duplicated.setIndividualName("A japanese author");
         citation.getCitedResponsibleParties().add(duplicated);
 
-        final TreeModel tree = citation.asTree();
+        TreeModel tree = citation.asTree();
         assertMultilinesEquals(
             "Citation\n" +
             "├───Title\n" +
@@ -113,11 +114,17 @@ public final class PropertyTreeTest {
         DefaultCitation newCitation = new DefaultCitation();
         newCitation.parse(tree);
         assertEquals(authors, newCitation.getCitedResponsibleParties());
-
-        // Following test fails until we fix the parsing of multi-occurences of CodeList.
-//      System.out.println(Trees.toString(newCitation.asTree()));
-//      assertEquals(citation, newCitation);
-
+        assertEquals(citation, newCitation);
+        /*
+         * Formats and parse again the tree. The values stored in TreeNode.getUserObject()
+         * should be lost in this process, so we are testing the capability to parse code
+         * list string here (the previous test took the code directly from the user object).
+         */
+        root = Trees.parse(Trees.toString(tree));
+        tree = new DefaultTreeModel(root);
+        newCitation = new DefaultCitation();
+        newCitation.parse(tree);
+        assertEquals(citation, newCitation);
         /*
          * Parses a somewhat malformed (but still understandable) tree
          * and compares with the original citation.
@@ -141,8 +148,9 @@ public final class PropertyTreeTest {
             "└───Presentation Forms\n" +
             "    ├───document hardcopy\n" +
             "    └───image hardcopy\n");
+        tree = new DefaultTreeModel(root);
         newCitation = new DefaultCitation();
         newCitation.parse(tree);
-//      assertEquals(citation, newCitation);
+        assertEquals(citation, newCitation);
     }
 }

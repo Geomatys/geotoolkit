@@ -24,8 +24,8 @@
  * This package is for internal use only. Classes in this package may change
  * in incompatible ways in any future version.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.0
  * @module

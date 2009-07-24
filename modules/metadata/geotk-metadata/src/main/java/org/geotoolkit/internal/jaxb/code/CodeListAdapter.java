@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.util.CodeList;
+import org.geotoolkit.internal.CodeLists;
 
 
 /**
@@ -101,7 +102,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         if (adapter == null) {
             return null;
         }
-        return CodeList.valueOf(getCodeListClass(), adapter.proxy.codeListValue);
+        return CodeLists.valueOf(getCodeListClass(), adapter.proxy.codeListValue);
     }
 
     /**

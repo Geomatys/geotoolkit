@@ -241,27 +241,24 @@ final class PropertyTree {
                  * this is some primitive (numbers, etc.), a date or a string. Stores them in the
                  * current metadata object using the accessor.
                  */
-                value = Trees.getUserObject(child);
-                if (value == null) {
-                    final int n = child.getChildCount();
-                    final Object[] values = new Object[n];
-                    for (int j=0; j<n; j++) {
-                        final TreeNode c = child.getChildAt(j);
-                        Object v = Trees.getUserObject(c);
-                        if (v == null) {
-                            final String s = c.toString();
-                            if (Number.class.isAssignableFrom(childType)) {
-                                v = numberFormat.parse(s);
-                            } else if (Date.class.isAssignableFrom(childType)) {
-                                v = dateFormat.parse(s);
-                            } else {
-                                v = s;
-                            }
+                final int n = child.getChildCount();
+                final Object[] values = new Object[n];
+                for (int j=0; j<n; j++) {
+                    final TreeNode c = child.getChildAt(j);
+                    value = getUserObject(c, childType);
+                    if (value == null) {
+                        final String s = c.toString();
+                        if (Number.class.isAssignableFrom(childType)) {
+                            value = numberFormat.parse(s);
+                        } else if (Date.class.isAssignableFrom(childType)) {
+                            value = dateFormat.parse(s);
+                        } else {
+                            value = s;
                         }
-                        values[j] = v;
                     }
-                    value = Arrays.asList(values);
+                    values[j] = value;
                 }
+                value = Arrays.asList(values);
             }
             /*
              * Now create a new metadata instance if we need to.
@@ -277,6 +274,19 @@ final class PropertyTree {
             }
         }
         return duplicated;
+    }
+
+    /**
+     * Returns the user object of the given node if applicable, or {@code null} otherwise. This method
+     * returns the user object only if it is of the expected type. We intentionally don't allow object
+     * conversion. This is necessary because the user object of a node is often its {@code String} label
+     * ({@link DefaultMutableTreeNode#toString()} is implemented as {@code return userObject.toString()}).
+     * Consequently this user object is often <strong>not</strong> an object encapsulating the information
+     * provided in child nodes. We want to distinguish those cases.
+     */
+    private static Object getUserObject(final TreeNode node, final Class<?> childType) {
+        final Object value = Trees.getUserObject(node);
+        return childType.isInstance(value) ? value : null;
     }
 
     /**

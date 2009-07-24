@@ -80,6 +80,7 @@ public class SystemConverterTest {
         ObjectConverter<String, ? extends CodeList<?>> converter;
         converter = system.converter(String.class, PixelInCell.class);
         assertSame(PixelInCell.CELL_CENTER, converter.convert("CELL_CENTER"));
+        assertSame(PixelInCell.CELL_CENTER, converter.convert("cell center"));
         assertSame("Previously fetched converters should be cached.",
                 converter, system.converter(String.class, PixelInCell.class));
 

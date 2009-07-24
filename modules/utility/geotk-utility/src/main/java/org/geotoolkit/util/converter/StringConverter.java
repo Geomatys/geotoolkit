@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -799,7 +800,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
-            return org.opengis.util.CodeList.valueOf(targetType, source.trim());
+            return CodeLists.valueOf(targetType, source);
         }
     }
 }
