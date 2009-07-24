@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.TimePositionType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 
 
 /**

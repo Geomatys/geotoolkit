@@ -19,7 +19,7 @@ package org.geotoolkit.sml.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 import org.geotoolkit.sml.xml.AbstractSML;
 
 

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -111,4 +112,37 @@ public class GeometryArrayPropertyType {
         return this.abstractGeometry;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof GeometryArrayPropertyType) {
+            final GeometryArrayPropertyType that = (GeometryArrayPropertyType) object;
+
+            if (this.abstractGeometry != null && that.abstractGeometry != null) {
+                for (int i = 0; i < abstractGeometry.size(); i++) {
+                    AbstractGeometryType thisGeom = this.abstractGeometry.get(i).getValue();
+                    AbstractGeometryType thatGeom = that.abstractGeometry.get(i).getValue();
+
+                    if (!Utilities.equals(thisGeom,   thatGeom))
+                        return false;
+                }
+                return true;
+            } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
+        return hash;
+    }
 }

@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractCurveType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
+import org.geotoolkit.gml.xml.v311.AbstractCurveType;
+import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.sml.xml.AbstractLocation;
 import org.geotoolkit.util.Utilities;
 

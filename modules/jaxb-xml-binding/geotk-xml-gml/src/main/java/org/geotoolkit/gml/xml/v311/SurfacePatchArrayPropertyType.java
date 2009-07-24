@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurfacePatchArrayPropertyType", propOrder = {
-    "surfacePatch"
+    "abstractSurfacePatch"
 })
 @XmlSeeAlso({
     TrianglePatchArrayPropertyType.class,
@@ -57,8 +57,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class SurfacePatchArrayPropertyType {
 
-    @XmlElementRef(name = "_SurfacePatch", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractSurfacePatchType>> surfacePatch;
+    @XmlElementRef(name = "AbstractSurfacePatch", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    protected List<JAXBElement<? extends AbstractSurfacePatchType>> abstractSurfacePatch;
 
     /**
      * Gets the value of the surfacePatch property.
@@ -91,10 +91,10 @@ public class SurfacePatchArrayPropertyType {
      * 
      */
     public List<JAXBElement<? extends AbstractSurfacePatchType>> getSurfacePatch() {
-        if (surfacePatch == null) {
-            surfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
+        if (abstractSurfacePatch == null) {
+            abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
         }
-        return this.surfacePatch;
+        return this.abstractSurfacePatch;
     }
 
 }

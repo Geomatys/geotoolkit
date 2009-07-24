@@ -16,8 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -45,9 +49,39 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolygonPatchArrayPropertyType")
-public class PolygonPatchArrayPropertyType
-    extends SurfacePatchArrayPropertyType
-{
+public class PolygonPatchArrayPropertyType extends SurfacePatchArrayPropertyType {
 
+    @XmlElementRef(name = "PolygonPatch", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    private List<JAXBElement<? extends PolygonPatchType>> polygonPatch;
+
+    PolygonPatchArrayPropertyType() {}
+
+    public PolygonPatchArrayPropertyType(List<? extends PolygonPatchType> polygonPatch) {
+        this.polygonPatch = new ArrayList<JAXBElement<? extends PolygonPatchType>>();
+
+        if (polygonPatch != null) {
+            ObjectFactory factory = new ObjectFactory();
+            for (PolygonPatchType patch : polygonPatch) {
+                this.polygonPatch.add(factory.createPolygonPatch(patch));
+            }
+        }
+    }
+
+    /**
+     * @return the polygonPatch
+     */
+    public List<JAXBElement<? extends PolygonPatchType>> getPolygonPatch() {
+        if (polygonPatch == null) {
+            polygonPatch = new ArrayList<JAXBElement<? extends PolygonPatchType>>();
+        }
+        return polygonPatch;
+    }
+
+    /**
+     * @param polygonPatch the polygonPatch to set
+     */
+    public void setPolygonPatch(List<JAXBElement<? extends PolygonPatchType>> polygonPatch) {
+        this.polygonPatch = polygonPatch;
+    }
 
 }

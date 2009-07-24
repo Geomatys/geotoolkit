@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -50,45 +48,31 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeWithTimePeriodType", propOrder = {
-    "timePosition"
+    "beginPosition",
+    "endPosition"
 })
-public class EnvelopeWithTimePeriodType
-    extends EnvelopeType
-{
+public class EnvelopeWithTimePeriodType extends EnvelopeEntry {
 
     @XmlElement(required = true)
-    protected List<TimePositionType> timePosition;
+    private TimePositionType beginPosition;
+    @XmlElement(required = true)
+    private TimePositionType endPosition;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     protected String frame;
 
     /**
-     * Gets the value of the timePosition property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the timePosition property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTimePosition().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link TimePositionType }
-     * 
-     * 
+     * Gets the value of the beginPosition property.
      */
-    public List<TimePositionType> getTimePosition() {
-        if (timePosition == null) {
-            timePosition = new ArrayList<TimePositionType>();
-        }
-        return this.timePosition;
+    public TimePositionType getBeginPosition() {
+        return beginPosition;
+    }
+
+    /**
+     * Gets the value of the endPosition property.
+     */
+    public TimePositionType getEndPosition() {
+        return endPosition;
     }
 
     /**
@@ -117,6 +101,52 @@ public class EnvelopeWithTimePeriodType
      */
     public void setFrame(String value) {
         this.frame = value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EnvelopeWithTimePeriodType other = (EnvelopeWithTimePeriodType) obj;
+        if (this.beginPosition != other.beginPosition && (this.beginPosition == null || !this.beginPosition.equals(other.beginPosition))) {
+            return false;
+        }
+        if (this.endPosition != other.endPosition && (this.endPosition == null || !this.endPosition.equals(other.endPosition))) {
+            return false;
+        }
+        if ((this.frame == null) ? (other.frame != null) : !this.frame.equals(other.frame)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.beginPosition != null ? this.beginPosition.hashCode() : 0);
+        hash = 23 * hash + (this.endPosition != null ? this.endPosition.hashCode() : 0);
+        hash = 23 * hash + (this.frame != null ? this.frame.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(super.toString());
+        if (beginPosition != null) {
+            s.append("beginPosition:").append(beginPosition).append('\n');
+        }
+        if (endPosition != null) {
+            s.append("endPosition:").append(endPosition).append('\n');
+        }
+        if (frame != null) {
+            s.append("frame:").append(frame).append('\n');
+        }
+        return s.toString();
     }
 
 }

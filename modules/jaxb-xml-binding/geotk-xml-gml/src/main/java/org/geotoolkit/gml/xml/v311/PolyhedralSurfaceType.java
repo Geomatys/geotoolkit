@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -48,9 +50,32 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolyhedralSurfaceType")
-public class PolyhedralSurfaceType
-    extends SurfaceType
-{
+public class PolyhedralSurfaceType extends SurfaceType {
 
+    @XmlElementRef(name = "polygonPatches", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    private JAXBElement<? extends PolygonPatchArrayPropertyType> polygonPatches;
+
+    PolyhedralSurfaceType() {}
+
+    public PolyhedralSurfaceType(PolygonPatchArrayPropertyType polygonPatches) {
+        if (polygonPatches != null) {
+            ObjectFactory factory = new ObjectFactory();
+            this.polygonPatches = factory.createPolygonPatches(polygonPatches);
+        }
+    }
+
+    /**
+     * @return the polygonPatches
+     */
+    public JAXBElement<? extends PolygonPatchArrayPropertyType> getPolygonPatches() {
+        return polygonPatches;
+    }
+
+    /**
+     * @param polygonPatches the polygonPatches to set
+     */
+    public void setPolygonPatches(JAXBElement<? extends PolygonPatchArrayPropertyType> polygonPatches) {
+        this.polygonPatches = polygonPatches;
+    }
 
 }

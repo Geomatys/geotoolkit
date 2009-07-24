@@ -22,8 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.EnvelopeType;
-import org.geotoolkit.gml.xml.v311.EnvelopeWithTimePeriodType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 
 
 /**
@@ -58,7 +57,7 @@ public class BBOXType
     @XmlElement(name = "PropertyName", required = true)
     protected PropertyNameType propertyName;
     @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends EnvelopeType> envelope;
+    protected JAXBElement<? extends EnvelopeEntry> envelope;
 
     /**
      * Gets the value of the propertyName property.
@@ -93,7 +92,7 @@ public class BBOXType
      *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
      *     
      */
-    public JAXBElement<? extends EnvelopeType> getEnvelope() {
+    public JAXBElement<? extends EnvelopeEntry> getEnvelope() {
         return envelope;
     }
 
@@ -106,8 +105,8 @@ public class BBOXType
      *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
      *     
      */
-    public void setEnvelope(JAXBElement<? extends EnvelopeType> value) {
-        this.envelope = ((JAXBElement<? extends EnvelopeType> ) value);
+    public void setEnvelope(JAXBElement<? extends EnvelopeEntry> value) {
+        this.envelope = ((JAXBElement<? extends EnvelopeEntry> ) value);
     }
 
 }

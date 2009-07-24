@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeComplexType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeGeometricPrimitiveType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeObjectType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimePrimitiveType;
-import org.geotoolkit.gml.xml.v311modified.TimeInstantType;
-import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeComplexType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeObjectType;
+import org.geotoolkit.gml.xml.v311.AbstractTimePrimitiveType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
 
 
 /**

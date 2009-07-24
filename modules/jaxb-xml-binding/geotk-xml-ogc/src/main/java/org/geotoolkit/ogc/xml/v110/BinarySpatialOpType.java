@@ -22,35 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractCurveType;
-import org.geotoolkit.gml.xml.v311.AbstractGeometricAggregateType;
-import org.geotoolkit.gml.xml.v311.AbstractGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.geotoolkit.gml.xml.v311.AbstractRingType;
-import org.geotoolkit.gml.xml.v311.AbstractSolidType;
-import org.geotoolkit.gml.xml.v311.AbstractSurfaceType;
-import org.geotoolkit.gml.xml.v311.CurveType;
-import org.geotoolkit.gml.xml.v311.EnvelopeType;
-import org.geotoolkit.gml.xml.v311.EnvelopeWithTimePeriodType;
-import org.geotoolkit.gml.xml.v311.LineStringType;
-import org.geotoolkit.gml.xml.v311.LinearRingType;
-import org.geotoolkit.gml.xml.v311.MultiCurveType;
-import org.geotoolkit.gml.xml.v311.MultiGeometryType;
-import org.geotoolkit.gml.xml.v311.MultiLineStringType;
-import org.geotoolkit.gml.xml.v311.MultiPointType;
-import org.geotoolkit.gml.xml.v311.MultiPolygonType;
-import org.geotoolkit.gml.xml.v311.MultiSolidType;
-import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
-import org.geotoolkit.gml.xml.v311.OrientableCurveType;
-import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
-import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
-import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
-import org.geotoolkit.gml.xml.v311.RingType;
-import org.geotoolkit.gml.xml.v311.SolidType;
-import org.geotoolkit.gml.xml.v311.SurfaceType;
-import org.geotoolkit.gml.xml.v311.TinType;
-import org.geotoolkit.gml.xml.v311.TriangulatedSurfaceType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 
 
 /**
@@ -91,7 +64,7 @@ public class BinarySpatialOpType
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     protected JAXBElement<? extends AbstractGeometryType> abstractGeometry;
     @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends EnvelopeType> envelope;
+    protected JAXBElement<? extends EnvelopeEntry> envelope;
 
     /**
      * Gets the value of the propertyName property.
@@ -202,7 +175,7 @@ public class BinarySpatialOpType
      *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
      *     
      */
-    public JAXBElement<? extends EnvelopeType> getEnvelope() {
+    public JAXBElement<? extends EnvelopeEntry> getEnvelope() {
         return envelope;
     }
 
@@ -215,8 +188,8 @@ public class BinarySpatialOpType
      *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
      *     
      */
-    public void setEnvelope(JAXBElement<? extends EnvelopeType> value) {
-        this.envelope = ((JAXBElement<? extends EnvelopeType> ) value);
+    public void setEnvelope(JAXBElement<? extends EnvelopeEntry> value) {
+        this.envelope = ((JAXBElement<? extends EnvelopeEntry> ) value);
     }
 
 }

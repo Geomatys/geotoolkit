@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.util.Utilities;
 
@@ -83,6 +83,7 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
     /**
      * Gets the value of the fixed property.
      */
+    @Override
     public boolean isFixed() {
         if (fixed == null) {
             return false;
@@ -101,6 +102,7 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
     /**
      * Gets the value of the definition property.
      */
+    @Override
     public String getDefinition() {
         return definition;
     }

@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -56,6 +58,12 @@ public class CurveType
     @XmlElement(required = true)
     protected CurveSegmentArrayPropertyType segments;
 
+    CurveType() {}
+
+    public CurveType(List<? extends AbstractCurveSegmentType> segments) {
+        this.segments = new CurveSegmentArrayPropertyType(segments);
+    }
+
     /**
      * This element encapsulates the segments of the curve.
      * 
@@ -80,4 +88,25 @@ public class CurveType
         this.segments = value;
     }
 
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CurveType && super.equals(object)) {
+            final CurveType that = (CurveType) object;
+            return  Utilities.equals(this.segments, that.segments);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.segments != null ? this.segments.hashCode() : 0);
+        return hash;
+    }
 }

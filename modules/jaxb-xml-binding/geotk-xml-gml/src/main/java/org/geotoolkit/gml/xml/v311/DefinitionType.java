@@ -18,8 +18,8 @@ package org.geotoolkit.gml.xml.v311;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -49,14 +49,69 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DefinitionType")
-@XmlSeeAlso({
-    DictionaryType.class,
-    DefinitionProxyType.class,
-    UnitDefinitionType.class
-})
-public class DefinitionType
-    extends AbstractGMLType
-{
+//@XmlSeeAlso({
+//    DictionaryType.class,
+//    DefinitionProxyType.class,
+//    UnitDefinitionType.class
+//})
+public class DefinitionType extends DefinitionBaseType {
 
+    private String remarks;
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    protected DefinitionType() {}
+
+    /**
+     * super constructor to access to Entry constructor
+     */
+    public DefinitionType(final String id)  {
+        super(id);
+    }
+
+    /**
+     * super constructor to access to Entry constructor
+     */
+    public DefinitionType(final String id, final String name, final String description )  {
+        super(id, name, description);
+    }
+
+    /**
+     * Gets the value of the remarks property.
+     */
+    public String getRemarks() {
+        return remarks;
+    }
+
+     /**
+     * Vérifie si cette entré est identique à l'objet spécifié.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DefinitionType && super.equals(object)) {
+            final DefinitionType that = (DefinitionType) object;
+            return Utilities.equals(this.remarks, that.remarks);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.remarks != null ? this.remarks.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (remarks != null)
+            s.append("remarks:").append(remarks);
+        return  s.toString();
+    }
 
 }

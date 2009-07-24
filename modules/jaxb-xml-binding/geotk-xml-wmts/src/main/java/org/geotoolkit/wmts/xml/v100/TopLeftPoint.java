@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
-import org.geotoolkit.gml.xml.v311modified.ObjectFactory;
+import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -91,6 +91,15 @@ public class TopLeftPoint {
         int hash = 7;
         hash = 47 * hash + (this.topLeftPoint != null ? this.topLeftPoint.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("TopLeftPoint[ ").append('\n');
+        if (topLeftPoint != null) {
+            s.append(topLeftPoint.getValue()).append('\n');
+        }
+        return s.append(']').toString();
     }
 
 }

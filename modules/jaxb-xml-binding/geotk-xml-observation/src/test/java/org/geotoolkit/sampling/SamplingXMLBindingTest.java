@@ -24,8 +24,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.PointType;
 
 //Junit dependencies
 import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
@@ -50,7 +50,7 @@ public class SamplingXMLBindingTest {
         pool = new MarshallerPool(
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.observation.xml.v100:" +
-                "org.geotoolkit.gml.xml.v311modified");
+                "org.geotoolkit.gml.xml.v311");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

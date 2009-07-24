@@ -134,4 +134,50 @@ public class CoordType {
         this.z = value;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CoordType other = (CoordType) obj;
+        if (this.x != other.x && (this.x == null || !this.x.equals(other.x))) {
+            return false;
+        }
+        if (this.y != other.y && (this.y == null || !this.y.equals(other.y))) {
+            return false;
+        }
+        if (this.z != other.z && (this.z == null || !this.z.equals(other.z))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (this.x != null ? this.x.hashCode() : 0);
+        hash = 47 * hash + (this.y != null ? this.y.hashCode() : 0);
+        hash = 47 * hash + (this.z != null ? this.z.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("CoordType[").append('\n');
+        if (x != null) {
+            s.append("x : ").append(x.toString()).append('\n');
+        }
+        if (y != null) {
+            s.append("x : ").append(y.toString()).append('\n');
+        }
+        if (z != null) {
+            s.append("x : ").append(z.toString()).append('\n');
+        }
+        s.append("]");
+        return s.toString();
+    }
+
 }

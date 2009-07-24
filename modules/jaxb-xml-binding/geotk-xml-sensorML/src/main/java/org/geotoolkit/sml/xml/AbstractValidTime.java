@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.sml.xml;
 
-import org.geotoolkit.gml.xml.v311modified.TimeInstantType;
-import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
 
 /**
  *

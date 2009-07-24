@@ -22,9 +22,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeGeometricPrimitiveType;
-import org.geotoolkit.gml.xml.v311modified.TimeInstantType;
-import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -199,7 +199,9 @@ public class TimeGeometricPrimitivePropertyType {
         if (object == this) {
             return true;
         }
-        boolean time = false;
+        if (!(object instanceof TimeGeometricPrimitivePropertyType)) {
+            return false;
+        }
         final TimeGeometricPrimitivePropertyType that = (TimeGeometricPrimitivePropertyType) object;
         return Utilities.equals(this.timeGeometricPrimitive, that.timeGeometricPrimitive) &&
                Utilities.equals(this.timeInstant,            that.timeInstant)            &&

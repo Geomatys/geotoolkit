@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import org.geotoolkit.citygml.xml.v100.AddressPropertyType;
-import org.geotoolkit.gml.xml.v311modified.LengthType;
-import org.geotoolkit.gml.xml.v311modified.MeasureOrNullListType;
-import org.geotoolkit.gml.xml.v311modified.MultiCurvePropertyType;
-import org.geotoolkit.gml.xml.v311modified.MultiSurfacePropertyType;
-import org.geotoolkit.gml.xml.v311modified.SolidPropertyType;
+import org.geotoolkit.gml.xml.v311.LengthType;
+import org.geotoolkit.gml.xml.v311.MeasureOrNullListType;
+import org.geotoolkit.gml.xml.v311.MultiCurvePropertyType;
+import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
+import org.geotoolkit.gml.xml.v311.SolidPropertyType;
 
 
 /**

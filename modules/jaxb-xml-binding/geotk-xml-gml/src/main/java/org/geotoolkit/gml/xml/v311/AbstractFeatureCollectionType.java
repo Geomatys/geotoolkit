@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     FeatureCollectionType.class
 })
 public abstract class AbstractFeatureCollectionType
-    extends AbstractFeatureType
+    extends AbstractFeatureEntry
 {
 
     protected List<FeaturePropertyType> featureMember;

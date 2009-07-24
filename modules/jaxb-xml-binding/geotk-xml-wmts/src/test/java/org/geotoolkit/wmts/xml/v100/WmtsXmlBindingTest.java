@@ -23,8 +23,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 
 import org.geotoolkit.xml.MarshallerPool;
@@ -44,7 +44,7 @@ public class WmtsXmlBindingTest {
     @Before
     public void setUp() throws JAXBException {
         pool = new MarshallerPool("http://www.opengis.net/wmts/1.0", "org.geotoolkit.wmts.xml.v100:" +
-                                                                     "org.geotoolkit.gml.xml.v311modified:" +
+                                                                     "org.geotoolkit.gml.xml.v311:" +
                                                                      "org.geotoolkit.ows.xml.v110");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();

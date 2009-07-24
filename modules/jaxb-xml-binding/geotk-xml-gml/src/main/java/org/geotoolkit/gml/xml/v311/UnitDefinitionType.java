@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -48,19 +49,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnitDefinitionType", propOrder = {
     "quantityType",
+    "quantityTypeReference",
     "catalogSymbol"
 })
 @XmlSeeAlso({
-    DerivedUnitType.class,
-    BaseUnitType.class,
-    ConventionalUnitType.class
+    //DerivedUnitType.class,
+    BaseUnitType.class//,
+    //ConventionalUnitType.class
 })
-public class UnitDefinitionType
-    extends DefinitionType
-{
+public class UnitDefinitionType extends DefinitionType {
 
     @XmlElement(required = true)
     protected StringOrRefType quantityType;
+    private ReferenceEntry quantityTypeReference;
     protected CodeType catalogSymbol;
 
     /**
@@ -88,6 +89,20 @@ public class UnitDefinitionType
     }
 
     /**
+     * Gets the value of the quantityTypeReference property.
+     */
+    public ReferenceEntry getQuantityTypeReference() {
+        return quantityTypeReference;
+    }
+
+    /**
+     * Sets the value of the quantityTypeReference property.
+     */
+    public void getQuantityTypeReference(ReferenceEntry quantityTypeReference) {
+        this.quantityTypeReference = quantityTypeReference;
+    }
+
+    /**
      * Gets the value of the catalogSymbol property.
      * 
      * @return
@@ -111,4 +126,42 @@ public class UnitDefinitionType
         this.catalogSymbol = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof UnitDefinitionType && super.equals(object)) {
+            final UnitDefinitionType that = (UnitDefinitionType) object;
+            return Utilities.equals(this.catalogSymbol,        that.catalogSymbol)        &&
+                   Utilities.equals(this.quantityType,        that.quantityType)        &&
+                   Utilities.equals(this.quantityTypeReference,       that.quantityTypeReference);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + (this.quantityType != null ? this.quantityType.hashCode() : 0);
+        hash = 43 * hash + (this.quantityTypeReference != null ? this.quantityTypeReference.hashCode() : 0);
+        hash = 43 * hash + (this.catalogSymbol != null ? this.catalogSymbol.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("[UnitDefinitionType]");
+        if (catalogSymbol != null)
+            s.append("CatalogSymbol=").append(catalogSymbol.toString()).append('\n');
+        if (quantityType != null)
+            s.append("quantityType=").append(quantityType.toString()).append('\n');
+        if (quantityTypeReference != null)
+            s.append("quantityTypeReference=").append(quantityTypeReference).append('\n');
+        return s.toString();
+    }
 }

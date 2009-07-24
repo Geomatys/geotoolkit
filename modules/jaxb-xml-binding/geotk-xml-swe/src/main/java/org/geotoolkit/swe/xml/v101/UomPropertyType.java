@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.BaseUnitType;
-import org.geotoolkit.gml.xml.v311modified.UnitDefinitionType;
+import org.geotoolkit.gml.xml.v311.BaseUnitType;
+import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.util.Utilities;
 

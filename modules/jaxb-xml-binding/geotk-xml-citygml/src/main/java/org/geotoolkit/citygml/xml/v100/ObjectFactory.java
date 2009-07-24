@@ -20,7 +20,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
-import org.geotoolkit.gml.xml.v311modified.FeaturePropertyType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 
 
 /**

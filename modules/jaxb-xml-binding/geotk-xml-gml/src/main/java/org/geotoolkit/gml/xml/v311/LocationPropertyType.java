@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -78,6 +79,8 @@ public class LocationPropertyType {
     @XmlList
     @XmlElement(name = "Null")
     protected List<String> _null;
+    @XmlAttribute
+    private List<String> nilReason;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     protected String remoteSchema;
@@ -221,6 +224,16 @@ public class LocationPropertyType {
      */
     public void setLocationString(StringOrRefType value) {
         this.locationString = value;
+    }
+
+    /**
+     * Gets the value of the nilReason property.
+     */
+    public List<String> getNilReason() {
+        if (nilReason == null) {
+            nilReason = new ArrayList<String>();
+        }
+        return nilReason;
     }
 
     /**
@@ -446,6 +459,60 @@ public class LocationPropertyType {
      */
     public void setActuate(String value) {
         this.actuate = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LocationPropertyType) {
+            final LocationPropertyType that = (LocationPropertyType) object;
+
+            boolean geom = false;
+            if (this.abstractGeometry != null && that.abstractGeometry != null) {
+                geom = Utilities.equals(this.abstractGeometry.getValue(),   that.abstractGeometry.getValue());
+            } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
+                geom = true;
+            }
+
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this._null,              that._null)            &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.locationKeyWord,    that.locationKeyWord)  &&
+                   Utilities.equals(this.locationString,     that.locationString)   &&
+                   Utilities.equals(this.nilReason,          that.nilReason)        &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title)            &&
+                   geom;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
+        hash = 79 * hash + (this.locationKeyWord != null ? this.locationKeyWord.hashCode() : 0);
+        hash = 79 * hash + (this.locationString != null ? this.locationString.hashCode() : 0);
+        hash = 79 * hash + (this._null != null ? this._null.hashCode() : 0);
+        hash = 79 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        hash = 79 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 79 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 79 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 79 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 79 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 79 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
     }
 
 }

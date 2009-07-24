@@ -47,12 +47,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeGeometricPrimitivePropertyType", propOrder = {
-    "timeGeometricPrimitive"
+    "abstractTimeGeometricPrimitive"
 })
 public class TimeGeometricPrimitivePropertyType {
 
-    @XmlElementRef(name = "_TimeGeometricPrimitive", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractTimeGeometricPrimitiveType> timeGeometricPrimitive;
+    @XmlElementRef(name = "AbstractTimeGeometricPrimitive", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    protected JAXBElement<? extends AbstractTimeGeometricPrimitiveType> abstractTimeGeometricPrimitive;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     protected String remoteSchema;
@@ -85,7 +85,7 @@ public class TimeGeometricPrimitivePropertyType {
      *     
      */
     public JAXBElement<? extends AbstractTimeGeometricPrimitiveType> getTimeGeometricPrimitive() {
-        return timeGeometricPrimitive;
+        return abstractTimeGeometricPrimitive;
     }
 
     /**
@@ -99,7 +99,7 @@ public class TimeGeometricPrimitivePropertyType {
      *     
      */
     public void setTimeGeometricPrimitive(JAXBElement<? extends AbstractTimeGeometricPrimitiveType> value) {
-        this.timeGeometricPrimitive = ((JAXBElement<? extends AbstractTimeGeometricPrimitiveType> ) value);
+        this.abstractTimeGeometricPrimitive = ((JAXBElement<? extends AbstractTimeGeometricPrimitiveType> ) value);
     }
 
     /**

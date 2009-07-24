@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.util.Utilities;
 
 /**

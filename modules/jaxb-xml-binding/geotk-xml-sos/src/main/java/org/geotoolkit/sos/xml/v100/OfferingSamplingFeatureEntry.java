@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
-import org.geotoolkit.gml.xml.v311modified.ReferenceEntry;
+import org.geotoolkit.gml.xml.v311.ReferenceEntry;
 import org.geotoolkit.util.Utilities;
 
 /**

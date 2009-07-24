@@ -20,13 +20,12 @@ package org.geotoolkit.observation.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.UnitOfMeasureEntry;
+import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
 // GeoTools dependencies
 import org.geotoolkit.util.Utilities;
 
-// OpenGis dependencies
-import org.opengis.observation.Measure;
+
 /**
  * Resultat d'une observation de type {linkplain Measurement measurement}.
  *
@@ -108,6 +107,9 @@ public class MeasureEntry { //implements Measure{
     public boolean equals(final Object object) {
         if (object == this) {
             return true;
+        }
+        if (!(object instanceof MeasureEntry)) {
+            return false;
         }
         if (super.equals(object)) {
             final MeasureEntry that = (MeasureEntry) object;

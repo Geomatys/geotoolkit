@@ -42,10 +42,67 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _AbstractGML_QNAME = new QName("http://www.opengis.net/gml", "AbstractGML");
+    private final static QName _CoordinateReferenceSystem_QNAME = new QName("http://www.opengis.net/gml", "AbstractCoordinateReferenceSystem");
+    private final static QName _DatumID_QNAME = new QName("http://www.opengis.net/gml", "datumID");
+    private final static QName _PositionalAccuracy_QNAME = new QName("http://www.opengis.net/gml", "AbstractpositionalAccuracy");
     private final static QName _UnitDefinition_QNAME = new QName("http://www.opengis.net/gml", "UnitDefinition");
+    private final static QName _ReferenceSystem_QNAME = new QName("http://www.opengis.net/gml", "AbstractReferenceSystem");
+    private final static QName _AxisID_QNAME = new QName("http://www.opengis.net/gml", "axisID");
+    private final static QName _ParameterID_QNAME = new QName("http://www.opengis.net/gml", "parameterID");
+    private final static QName _UsesCartesianCS_QNAME = new QName("http://www.opengis.net/gml", "usesCartesianCS");
+    private final static QName _CompositeCurve_QNAME = new QName("http://www.opengis.net/gml", "CompositeCurve");
+    private final static QName _CompositeSolid_QNAME = new QName("http://www.opengis.net/gml", "CompositeSolid");
+    private final static QName _CompositeSurface_QNAME = new QName("http://www.opengis.net/gml", "CompositeSurface");
+    private final static QName _CoordinateSystemAxisRef_QNAME = new QName("http://www.opengis.net/gml", "coordinateSystemAxisRef");
+    private final static QName _CoordinateSystemAxis_QNAME = new QName("http://www.opengis.net/gml", "CoordinateSystemAxis");
+    private final static QName _Direction_QNAME = new QName("http://www.opengis.net/gml", "direction");
+    private final static QName _ImageCRS_QNAME = new QName("http://www.opengis.net/gml", "ImageCRS");
+    private final static QName _DirectionVector_QNAME = new QName("http://www.opengis.net/gml", "DirectionVector");
+    private final static QName _UsesAxis_QNAME = new QName("http://www.opengis.net/gml", "usesAxis");
+    private final static QName _EngineeringCRS_QNAME = new QName("http://www.opengis.net/gml", "EngineeringCRS");
+    private final static QName _CountExtent_QNAME = new QName("http://www.opengis.net/gml", "CountExtent");
+    private final static QName _EngineeringDatumRef_QNAME = new QName("http://www.opengis.net/gml", "engineeringDatumRef");
+    private final static QName _UsesEngineeringDatum_QNAME = new QName("http://www.opengis.net/gml", "usesEngineeringDatum");
+    private final static QName _EngineeringDatum_QNAME = new QName("http://www.opengis.net/gml", "EngineeringDatum");
+    private final static QName _ValidArea_QNAME = new QName("http://www.opengis.net/gml", "validArea");
+    private final static QName _GeometricComplex_QNAME = new QName("http://www.opengis.net/gml", "GeometricComplex");
+    private final static QName _CoordinateSystemRef_QNAME = new QName("http://www.opengis.net/gml", "coordinateSystemRef");
+    private final static QName _UsesCS_QNAME = new QName("http://www.opengis.net/gml", "usesCS");
+    private final static QName _MethodID_QNAME = new QName("http://www.opengis.net/gml", "methodID");
+    private final static QName _TemporalExtent_QNAME = new QName("http://www.opengis.net/gml", "temporalExtent");
+    private final static QName _TemporalCRS_QNAME = new QName("http://www.opengis.net/gml", "TemporalCRS");
+    private final static QName _TemporalCSRef_QNAME = new QName("http://www.opengis.net/gml", "temporalCSRef");
+    private final static QName _UsesTemporalCS_QNAME = new QName("http://www.opengis.net/gml", "usesTemporalCS");
+    private final static QName _TemporalCS_QNAME = new QName("http://www.opengis.net/gml", "TemporalCS");
+    private final static QName _TemporalDatumRef_QNAME = new QName("http://www.opengis.net/gml", "temporalDatumRef");
+    private final static QName _UsesTemporalDatum_QNAME = new QName("http://www.opengis.net/gml", "usesTemporalDatum");
+    private final static QName _TemporalDatum_QNAME = new QName("http://www.opengis.net/gml", "TemporalDatum");
+    private final static QName _ImageDatumRef_QNAME = new QName("http://www.opengis.net/gml", "imageDatumRef");
+    private final static QName _ImageDatum_QNAME = new QName("http://www.opengis.net/gml", "ImageDatum");
+    private final static QName _UsesImageDatum_QNAME = new QName("http://www.opengis.net/gml", "usesImageDatum");
+    private final static QName _MovingObjectStatus_QNAME = new QName("http://www.opengis.net/gml", "MovingObjectStatus");
+    private final static QName _UsesObliqueCartesianCS_QNAME = new QName("http://www.opengis.net/gml", "usesObliqueCartesianCS");
+    private final static QName _ObliqueCartesianCS_QNAME = new QName("http://www.opengis.net/gml", "ObliqueCartesianCS");
+    private final static QName _ObliqueCartesianCSRef_QNAME = new QName("http://www.opengis.net/gml", "obliqueCartesianCSRef");
+    private final static QName _Quantity_QNAME = new QName("http://www.opengis.net/gml", "Quantity");
+    private final static QName _QuantityList_QNAME = new QName("http://www.opengis.net/gml", "QuantityList");
+    private final static QName _QuantityExtent_QNAME = new QName("http://www.opengis.net/gml", "QuantityExtent");
+    private final static QName _RectifiedGrid_QNAME = new QName("http://www.opengis.net/gml", "RectifiedGrid");
+    private final static QName _PixelInCell_QNAME = new QName("http://www.opengis.net/gml", "pixelInCell");
+    private final static QName _Track_QNAME = new QName("http://www.opengis.net/gml", "track");
+    private final static QName _CoordinateOperationID_QNAME = new QName("http://www.opengis.net/gml", "coordinateOperationID");
     private final static QName _OuterBoundaryIs_QNAME = new QName("http://www.opengis.net/gml", "outerBoundaryIs");
     private final static QName _MultiLineString_QNAME = new QName("http://www.opengis.net/gml", "MultiLineString");
     private final static QName _GeometricAggregate_QNAME = new QName("http://www.opengis.net/gml", "_GeometricAggregate");
+    private final static QName _CRS_QNAME = new QName("http://www.opengis.net/gml", "AbstractCRS");
+    private final static QName _SrsID_QNAME = new QName("http://www.opengis.net/gml", "srsID");
+    private final static QName _GroupID_QNAME = new QName("http://www.opengis.net/gml", "groupID");
+    private final static QName _SourceCRS_QNAME = new QName("http://www.opengis.net/gml", "sourceCRS");
+    private final static QName _TargetCRS_QNAME = new QName("http://www.opengis.net/gml", "targetCRS");
+    private final static QName _TimeSlice_QNAME = new QName("http://www.opengis.net/gml", "AbstractTimeSlice");
+    private final static QName _CartesianCSRef_QNAME = new QName("http://www.opengis.net/gml", "cartesianCSRef");
+    private final static QName _Geometry_QNAME = new QName("http://www.opengis.net/gml", "AbstractGeometry");
     private final static QName _BSpline_QNAME = new QName("http://www.opengis.net/gml", "BSpline");
     private final static QName _ValidTime_QNAME = new QName("http://www.opengis.net/gml", "validTime");
     private final static QName _SolidProperty_QNAME = new QName("http://www.opengis.net/gml", "solidProperty");
@@ -54,15 +111,25 @@ public class ObjectFactory {
     private final static QName _LineStringSegment_QNAME = new QName("http://www.opengis.net/gml", "LineStringSegment");
     private final static QName _DefinitionCollection_QNAME = new QName("http://www.opengis.net/gml", "DefinitionCollection");
     private final static QName _InnerBoundaryIs_QNAME = new QName("http://www.opengis.net/gml", "innerBoundaryIs");
-    private final static QName _TimePrimitive_QNAME = new QName("http://www.opengis.net/gml", "_TimePrimitive");
+    private final static QName AbstractTimePrimitive_QNAME = new QName("http://www.opengis.net/gml", "AbstractTimePrimitive");
     private final static QName _Reference_QNAME = new QName("http://www.opengis.net/gml", "_reference");
     private final static QName _MultiSolidProperty_QNAME = new QName("http://www.opengis.net/gml", "multiSolidProperty");
     private final static QName _GriddedSurface_QNAME = new QName("http://www.opengis.net/gml", "_GriddedSurface");
+    private final static QName _Grid_QNAME = new QName("http://www.opengis.net/gml", "Grid");
+    private final static QName _EllipsoidID_QNAME = new QName("http://www.opengis.net/gml", "ellipsoidID");
+    private final static QName _History_QNAME = new QName("http://www.opengis.net/gml", "history");
     private final static QName _SolidMembers_QNAME = new QName("http://www.opengis.net/gml", "solidMembers");
     private final static QName _UnitOfMeasure_QNAME = new QName("http://www.opengis.net/gml", "unitOfMeasure");
     private final static QName _Circle_QNAME = new QName("http://www.opengis.net/gml", "Circle");
     private final static QName _CurveProperty_QNAME = new QName("http://www.opengis.net/gml", "curveProperty");
     private final static QName _ConventionalUnit_QNAME = new QName("http://www.opengis.net/gml", "ConventionalUnit");
+    private final static QName _CoordinateOperation_QNAME = new QName("http://www.opengis.net/gml", "AbstractCoordinateOperation");
+    private final static QName _CsID_QNAME = new QName("http://www.opengis.net/gml", "csID");
+    private final static QName _MeridianID_QNAME = new QName("http://www.opengis.net/gml", "meridianID");
+    private final static QName _SingleOperation_QNAME = new QName("http://www.opengis.net/gml", "AbstractSingleOperation");
+    private final static QName _Operation_QNAME = new QName("http://www.opengis.net/gml", "AbstractOperation");
+    private final static QName _Datum_QNAME = new QName("http://www.opengis.net/gml", "AbstractDatum");
+    private final static QName AbstractCoordinateSystem_QNAME = new QName("http://www.opengis.net/gml", "AbstractCoordinateSystem");
     private final static QName _Description_QNAME = new QName("http://www.opengis.net/gml", "description");
     private final static QName _SurfaceMembers_QNAME = new QName("http://www.opengis.net/gml", "surfaceMembers");
     private final static QName _PolygonPatch_QNAME = new QName("http://www.opengis.net/gml", "PolygonPatch");
@@ -116,7 +183,7 @@ public class ObjectFactory {
     private final static QName _SolidMember_QNAME = new QName("http://www.opengis.net/gml", "solidMember");
     private final static QName _Geodesic_QNAME = new QName("http://www.opengis.net/gml", "Geodesic");
     private final static QName _OrientableSurface_QNAME = new QName("http://www.opengis.net/gml", "OrientableSurface");
-    private final static QName _Object_QNAME = new QName("http://www.opengis.net/gml", "_Object");
+    private final static QName AbstractObject_QNAME = new QName("http://www.opengis.net/gml", "AbstractObject");
     private final static QName _Member_QNAME = new QName("http://www.opengis.net/gml", "member");
     private final static QName _CurveMember_QNAME = new QName("http://www.opengis.net/gml", "curveMember");
     private final static QName _DecimalMinutes_QNAME = new QName("http://www.opengis.net/gml", "decimalMinutes");
@@ -133,12 +200,12 @@ public class ObjectFactory {
     private final static QName _ExtentOf_QNAME = new QName("http://www.opengis.net/gml", "extentOf");
     private final static QName _DerivedUnit_QNAME = new QName("http://www.opengis.net/gml", "DerivedUnit");
     private final static QName _ArcString_QNAME = new QName("http://www.opengis.net/gml", "ArcString");
-    private final static QName _SurfacePatch_QNAME = new QName("http://www.opengis.net/gml", "_SurfacePatch");
+    private final static QName AbstractSurfacePatch_QNAME = new QName("http://www.opengis.net/gml", "AbstractSurfacePatch");
     private final static QName _MultiExtentOf_QNAME = new QName("http://www.opengis.net/gml", "multiExtentOf");
     private final static QName _MultiGeometryProperty_QNAME = new QName("http://www.opengis.net/gml", "multiGeometryProperty");
     private final static QName _MultiCenterOf_QNAME = new QName("http://www.opengis.net/gml", "multiCenterOf");
     private final static QName _BoundedBy_QNAME = new QName("http://www.opengis.net/gml", "boundedBy");
-    private final static QName _CurveSegment_QNAME = new QName("http://www.opengis.net/gml", "_CurveSegment");
+    private final static QName AbstractCurveSegment_QNAME = new QName("http://www.opengis.net/gml", "AbstractCurveSegment");
     private final static QName _FeatureCollection_QNAME = new QName("http://www.opengis.net/gml", "FeatureCollection");
     private final static QName _Interior_QNAME = new QName("http://www.opengis.net/gml", "interior");
     private final static QName _Location_QNAME = new QName("http://www.opengis.net/gml", "location");
@@ -155,7 +222,7 @@ public class ObjectFactory {
     private final static QName _ArcByBulge_QNAME = new QName("http://www.opengis.net/gml", "ArcByBulge");
     private final static QName _CurveArrayProperty_QNAME = new QName("http://www.opengis.net/gml", "curveArrayProperty");
     private final static QName _Duration_QNAME = new QName("http://www.opengis.net/gml", "duration");
-    private final static QName _TimeObject_QNAME = new QName("http://www.opengis.net/gml", "_TimeObject");
+    private final static QName AbstractTimeObject_QNAME = new QName("http://www.opengis.net/gml", "AbstractTimeObject");
     private final static QName _PointRep_QNAME = new QName("http://www.opengis.net/gml", "pointRep");
     private final static QName _CenterOf_QNAME = new QName("http://www.opengis.net/gml", "centerOf");
     private final static QName _PointArrayProperty_QNAME = new QName("http://www.opengis.net/gml", "pointArrayProperty");
@@ -173,7 +240,6 @@ public class ObjectFactory {
     private final static QName _GeometryMembers_QNAME = new QName("http://www.opengis.net/gml", "geometryMembers");
     private final static QName _LocationKeyWord_QNAME = new QName("http://www.opengis.net/gml", "LocationKeyWord");
     private final static QName _DictionaryEntry_QNAME = new QName("http://www.opengis.net/gml", "dictionaryEntry");
-    private final static QName _GML_QNAME = new QName("http://www.opengis.net/gml", "_GML");
     private final static QName _IndirectEntry_QNAME = new QName("http://www.opengis.net/gml", "indirectEntry");
     private final static QName _Bezier_QNAME = new QName("http://www.opengis.net/gml", "Bezier");
     private final static QName _MultiPointProperty_QNAME = new QName("http://www.opengis.net/gml", "multiPointProperty");
@@ -203,7 +269,7 @@ public class ObjectFactory {
     private final static QName _GeodesicString_QNAME = new QName("http://www.opengis.net/gml", "GeodesicString");
     private final static QName _BaseSurface_QNAME = new QName("http://www.opengis.net/gml", "baseSurface");
     private final static QName _PointMember_QNAME = new QName("http://www.opengis.net/gml", "pointMember");
-    private final static QName _TimeGeometricPrimitive_QNAME = new QName("http://www.opengis.net/gml", "_TimeGeometricPrimitive");
+    private final static QName AbstractTimeGeometricPrimitive_QNAME = new QName("http://www.opengis.net/gml", "AbstractTimeGeometricPrimitive");
     private final static QName _Cylinder_QNAME = new QName("http://www.opengis.net/gml", "Cylinder");
     private final static QName _Position_QNAME = new QName("http://www.opengis.net/gml", "position");
     private final static QName _Segments_QNAME = new QName("http://www.opengis.net/gml", "segments");
@@ -681,8 +747,8 @@ public class ObjectFactory {
      * Create an instance of {@link BoundingShapeType }
      * 
      */
-    public BoundingShapeType createBoundingShapeType() {
-        return new BoundingShapeType();
+    public BoundingShapeEntry createBoundingShapeType() {
+        return new BoundingShapeEntry();
     }
 
     /**
@@ -897,8 +963,8 @@ public class ObjectFactory {
      * Create an instance of {@link EnvelopeType }
      * 
      */
-    public EnvelopeType createEnvelopeType() {
-        return new EnvelopeType();
+    public EnvelopeEntry createEnvelopeType() {
+        return new EnvelopeEntry();
     }
 
     /**
@@ -1025,8 +1091,8 @@ public class ObjectFactory {
      * Create an instance of {@link ReferenceType }
      * 
      */
-    public ReferenceType createReferenceType() {
-        return new ReferenceType();
+    public ReferenceEntry createReferenceType() {
+        return new ReferenceEntry();
     }
 
     /**
@@ -1094,6 +1160,142 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CRSRefType }
+     *
+     */
+    public CRSRefType createCRSRefType() {
+        return new CRSRefType();
+    }
+
+    /**
+     * Create an instance of {@link CartesianCSRefType }
+     *
+     */
+    public CartesianCSRefType createCartesianCSRefType() {
+        return new CartesianCSRefType();
+    }
+
+    /**
+     * Create an instance of {@link ImageDatumType }
+     *
+     */
+    public ImageDatumType createImageDatumType() {
+        return new ImageDatumType();
+    }
+
+    /**
+     * Create an instance of {@link ImageDatumRefType }
+     *
+     */
+    public ImageDatumRefType createImageDatumRefType() {
+        return new ImageDatumRefType();
+    }
+
+    /**
+     * Create an instance of {@link CompositeCurveType }
+     *
+     */
+    public CompositeCurveType createCompositeCurveType() {
+        return new CompositeCurveType();
+    }
+
+    /**
+     * Create an instance of {@link CompositeSurfaceType }
+     *
+     */
+    public CompositeSurfaceType createCompositeSurfaceType() {
+        return new CompositeSurfaceType();
+    }
+
+    /**
+     * Create an instance of {@link CoordinateSystemAxisType }
+     *
+     */
+    public CoordinateSystemAxisType createCoordinateSystemAxisType() {
+        return new CoordinateSystemAxisType();
+    }
+
+    /**
+     * Create an instance of {@link CoordinateSystemAxisRefType }
+     *
+     */
+    public CoordinateSystemAxisRefType createCoordinateSystemAxisRefType() {
+        return new CoordinateSystemAxisRefType();
+    }
+
+    /**
+     * Create an instance of {@link CoordinateSystemRefType }
+     *
+     */
+    public CoordinateSystemRefType createCoordinateSystemRefType() {
+        return new CoordinateSystemRefType();
+    }
+
+    /**
+     * Create an instance of {@link DynamicFeatureCollectionType }
+     *
+     */
+    public DynamicFeatureCollectionType createDynamicFeatureCollectionType() {
+        return new DynamicFeatureCollectionType();
+    }
+
+    /**
+     * Create an instance of {@link EngineeringCRSType }
+     *
+     */
+    public EngineeringCRSType createEngineeringCRSType() {
+        return new EngineeringCRSType();
+    }
+
+    /**
+     * Create an instance of {@link DynamicFeatureType }
+     *
+     */
+    public DynamicFeatureType createDynamicFeatureType() {
+        return new DynamicFeatureType();
+    }
+
+    /**
+     * Create an instance of {@link EngineeringDatumRefType }
+     *
+     */
+    public EngineeringDatumRefType createEngineeringDatumRefType() {
+        return new EngineeringDatumRefType();
+    }
+
+    /**
+     * Create an instance of {@link EngineeringDatumType }
+     *
+     */
+    public EngineeringDatumType createEngineeringDatumType() {
+        return new EngineeringDatumType();
+    }
+
+    /**
+     * Create an instance of {@link GeometricComplexPropertyType }
+     *
+     */
+    public GeometricComplexPropertyType createGeometricComplexPropertyType() {
+        return new GeometricComplexPropertyType();
+    }
+
+    /**
+     * Create an instance of {@link GeometricComplexType }
+     *
+     */
+    public GeometricComplexType createGeometricComplexType() {
+        return new GeometricComplexType();
+    }
+
+    /**
+     * Create an instance of {@link IdentifierType }
+     *
+     */
+    public IdentifierType createIdentifierType() {
+        return new IdentifierType();
+    }
+
+    /**
      * Create an instance of {@link MultiSolidPropertyType }
      * 
      */
@@ -1115,6 +1317,158 @@ public class ObjectFactory {
      */
     public MultiPointPropertyType createMultiPointPropertyType() {
         return new MultiPointPropertyType();
+    }
+
+    /**
+     * Create an instance of {@link TrackType }
+     *
+     */
+    public TrackType createTrackType() {
+        return new TrackType();
+    }
+
+    /**
+     * Create an instance of {@link RectifiedGridType }
+     *
+     */
+    public RectifiedGridType createRectifiedGridType() {
+        return new RectifiedGridType();
+    }
+
+    /**
+     * Create an instance of {@link CompositeSolidType }
+     *
+     */
+    public CompositeSolidType createCompositeSolidType() {
+        return new CompositeSolidType();
+    }
+
+    /**
+     * Create an instance of {@link GridType }
+     *
+     */
+    public GridType createGridType() {
+        return new GridType();
+    }
+
+    /**
+     * Create an instance of {@link GridLimitsType }
+     *
+     */
+    public GridLimitsType createGridLimitsType() {
+        return new GridLimitsType();
+    }
+
+    /**
+     * Create an instance of {@link PixelInCellType }
+     *
+     */
+    public PixelInCellType createPixelInCellType() {
+        return new PixelInCellType();
+    }
+
+    /**
+     * Create an instance of {@link ImageCRSType }
+     *
+     */
+    public ImageCRSType createImageCRSType() {
+        return new ImageCRSType();
+    }
+
+    /**
+     * Create an instance of {@link HistoryPropertyType }
+     *
+     */
+    public HistoryPropertyType createHistoryPropertyType() {
+        return new HistoryPropertyType();
+    }
+
+    /**
+     * Create an instance of {@link TemporalCRSType }
+     *
+     */
+    public TemporalCRSType createTemporalCRSType() {
+        return new TemporalCRSType();
+    }
+
+    /**
+     * Create an instance of {@link TemporalCSRefType }
+     *
+     */
+    public TemporalCSRefType createTemporalCSRefType() {
+        return new TemporalCSRefType();
+    }
+
+    /**
+     * Create an instance of {@link TemporalCSType }
+     *
+     */
+    public TemporalCSType createTemporalCSType() {
+        return new TemporalCSType();
+    }
+
+    /**
+     * Create an instance of {@link TemporalDatumRefType }
+     *
+     */
+    public TemporalDatumRefType createTemporalDatumRefType() {
+        return new TemporalDatumRefType();
+    }
+
+    /**
+     * Create an instance of {@link TemporalDatumType }
+     *
+     */
+    public TemporalDatumType createTemporalDatumType() {
+        return new TemporalDatumType();
+    }
+
+    /**
+     * Create an instance of {@link GridEnvelopeType }
+     *
+     */
+    public GridEnvelopeType createGridEnvelopeType() {
+        return new GridEnvelopeType();
+    }
+
+    /**
+     * Create an instance of {@link DirectionPropertyType }
+     *
+     */
+    public DirectionPropertyType createDirectionPropertyType() {
+        return new DirectionPropertyType();
+    }
+
+    /**
+     * Create an instance of {@link DirectionVectorType }
+     *
+     */
+    public DirectionVectorType createDirectionVectorType() {
+        return new DirectionVectorType();
+    }
+
+    /**
+     * Create an instance of {@link MovingObjectStatusType }
+     *
+     */
+    public MovingObjectStatusType createMovingObjectStatusType() {
+        return new MovingObjectStatusType();
+    }
+
+    /**
+     * Create an instance of {@link ObliqueCartesianCSRefType }
+     *
+     */
+    public ObliqueCartesianCSRefType createObliqueCartesianCSRefType() {
+        return new ObliqueCartesianCSRefType();
+    }
+
+    /**
+     * Create an instance of {@link ObliqueCartesianCSType }
+     *
+     */
+    public ObliqueCartesianCSType createObliqueCartesianCSType() {
+        return new ObliqueCartesianCSType();
     }
 
     /**
@@ -1373,7 +1727,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link BSplineType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "BSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "BSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<BSplineType> createBSpline(BSplineType value) {
         return new JAXBElement<BSplineType>(_BSpline_QNAME, BSplineType.class, null, value);
     }
@@ -1418,7 +1772,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringSegmentType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineStringSegment", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineStringSegment", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<LineStringSegmentType> createLineStringSegment(LineStringSegmentType value) {
         return new JAXBElement<LineStringSegmentType>(_LineStringSegment_QNAME, LineStringSegmentType.class, null, value);
     }
@@ -1445,9 +1799,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimePrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_TimeObject")
-    public JAXBElement<AbstractTimePrimitiveType> createTimePrimitive(AbstractTimePrimitiveType value) {
-        return new JAXBElement<AbstractTimePrimitiveType>(_TimePrimitive_QNAME, AbstractTimePrimitiveType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimePrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeObject")
+    public JAXBElement<AbstractTimePrimitiveType> createAbstractTimePrimitive(AbstractTimePrimitiveType value) {
+        return new JAXBElement<AbstractTimePrimitiveType>(AbstractTimePrimitive_QNAME, AbstractTimePrimitiveType.class, null, value);
     }
 
     /**
@@ -1455,8 +1809,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_reference")
-    public JAXBElement<ReferenceType> createReference(ReferenceType value) {
-        return new JAXBElement<ReferenceType>(_Reference_QNAME, ReferenceType.class, null, value);
+    public JAXBElement<ReferenceEntry> createReference(ReferenceEntry value) {
+        return new JAXBElement<ReferenceEntry>(_Reference_QNAME, ReferenceEntry.class, null, value);
     }
 
     /**
@@ -1544,7 +1898,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPatchType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolygonPatch", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_SurfacePatch")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolygonPatch", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<PolygonPatchType> createPolygonPatch(PolygonPatchType value) {
         return new JAXBElement<PolygonPatchType>(_PolygonPatch_QNAME, PolygonPatchType.class, null, value);
     }
@@ -1571,7 +1925,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcByCenterPointType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcByCenterPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcByCenterPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ArcByCenterPointType> createArcByCenterPoint(ArcByCenterPointType value) {
         return new JAXBElement<ArcByCenterPointType>(_ArcByCenterPoint_QNAME, ArcByCenterPointType.class, null, value);
     }
@@ -1653,8 +2007,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "definitionRef")
-    public JAXBElement<ReferenceType> createDefinitionRef(ReferenceType value) {
-        return new JAXBElement<ReferenceType>(_DefinitionRef_QNAME, ReferenceType.class, null, value);
+    public JAXBElement<ReferenceEntry> createDefinitionRef(ReferenceEntry value) {
+        return new JAXBElement<ReferenceEntry>(_DefinitionRef_QNAME, ReferenceEntry.class, null, value);
     }
 
     /**
@@ -1760,7 +2114,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimePeriod", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_TimeGeometricPrimitive")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimePeriod", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeGeometricPrimitive")
     public JAXBElement<TimePeriodType> createTimePeriod(TimePeriodType value) {
         return new JAXBElement<TimePeriodType>(_TimePeriod_QNAME, TimePeriodType.class, null, value);
     }
@@ -1787,7 +2141,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ClothoidType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Clothoid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Clothoid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ClothoidType> createClothoid(ClothoidType value) {
         return new JAXBElement<ClothoidType>(_Clothoid_QNAME, ClothoidType.class, null, value);
     }
@@ -1868,7 +2222,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Array", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GML")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Array", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<ArrayType> createArray(ArrayType value) {
         return new JAXBElement<ArrayType>(_Array_QNAME, ArrayType.class, null, value);
     }
@@ -2003,9 +2357,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_Object")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractObject")
     public JAXBElement<Object> createObject(Object value) {
-        return new JAXBElement<Object>(_Object_QNAME, Object.class, null, value);
+        return new JAXBElement<Object>(AbstractObject_QNAME, Object.class, null, value);
     }
 
     /**
@@ -2048,7 +2402,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link RectangleType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Rectangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_SurfacePatch")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Rectangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<RectangleType> createRectangle(RectangleType value) {
         return new JAXBElement<RectangleType>(_Rectangle_QNAME, RectangleType.class, null, value);
     }
@@ -2093,7 +2447,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link CubicSplineType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CubicSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CubicSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<CubicSplineType> createCubicSpline(CubicSplineType value) {
         return new JAXBElement<CubicSplineType>(_CubicSpline_QNAME, CubicSplineType.class, null, value);
     }
@@ -2147,7 +2501,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcStringType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ArcStringType> createArcString(ArcStringType value) {
         return new JAXBElement<ArcStringType>(_ArcString_QNAME, ArcStringType.class, null, value);
     }
@@ -2156,9 +2510,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSurfacePatchType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_SurfacePatch")
-    public JAXBElement<AbstractSurfacePatchType> createSurfacePatch(AbstractSurfacePatchType value) {
-        return new JAXBElement<AbstractSurfacePatchType>(_SurfacePatch_QNAME, AbstractSurfacePatchType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSurfacePatch")
+    public JAXBElement<AbstractSurfacePatchType> createAbstractSurfacePatch(AbstractSurfacePatchType value) {
+        return new JAXBElement<AbstractSurfacePatchType>(AbstractSurfacePatch_QNAME, AbstractSurfacePatchType.class, null, value);
     }
 
     /**
@@ -2193,17 +2547,17 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "boundedBy")
-    public JAXBElement<BoundingShapeType> createBoundedBy(BoundingShapeType value) {
-        return new JAXBElement<BoundingShapeType>(_BoundedBy_QNAME, BoundingShapeType.class, null, value);
+    public JAXBElement<BoundingShapeEntry> createBoundedBy(BoundingShapeEntry value) {
+        return new JAXBElement<BoundingShapeEntry>(_BoundedBy_QNAME, BoundingShapeEntry.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCurveSegmentType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_CurveSegment")
-    public JAXBElement<AbstractCurveSegmentType> createCurveSegment(AbstractCurveSegmentType value) {
-        return new JAXBElement<AbstractCurveSegmentType>(_CurveSegment_QNAME, AbstractCurveSegmentType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCurveSegment")
+    public JAXBElement<AbstractCurveSegmentType> createAbstractCurveSegment(AbstractCurveSegmentType value) {
+        return new JAXBElement<AbstractCurveSegmentType>(AbstractCurveSegment_QNAME, AbstractCurveSegmentType.class, null, value);
     }
 
     /**
@@ -2291,7 +2645,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractMetaDataType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_MetaData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_Object")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_MetaData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
     public JAXBElement<AbstractMetaDataType> createMetaData(AbstractMetaDataType value) {
         return new JAXBElement<AbstractMetaDataType>(_MetaData_QNAME, AbstractMetaDataType.class, null, value);
     }
@@ -2354,9 +2708,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeObjectType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimeObject", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GML")
-    public JAXBElement<AbstractTimeObjectType> createTimeObject(AbstractTimeObjectType value) {
-        return new JAXBElement<AbstractTimeObjectType>(_TimeObject_QNAME, AbstractTimeObjectType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeObject", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
+    public JAXBElement<AbstractTimeObjectType> createAbstractTimeObject(AbstractTimeObjectType value) {
+        return new JAXBElement<AbstractTimeObjectType>(AbstractTimeObject_QNAME, AbstractTimeObjectType.class, null, value);
     }
 
     /**
@@ -2408,7 +2762,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link BagType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Bag", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GML")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Bag", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<BagType> createBag(BagType value) {
         return new JAXBElement<BagType>(_Bag_QNAME, BagType.class, null, value);
     }
@@ -2417,7 +2771,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link OffsetCurveType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OffsetCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OffsetCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<OffsetCurveType> createOffsetCurve(OffsetCurveType value) {
         return new JAXBElement<OffsetCurveType>(_OffsetCurve_QNAME, OffsetCurveType.class, null, value);
     }
@@ -2513,15 +2867,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGMLType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_GML", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_Object")
-    public JAXBElement<AbstractGMLType> createGML(AbstractGMLType value) {
-        return new JAXBElement<AbstractGMLType>(_GML_QNAME, AbstractGMLType.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IndirectEntryType }{@code >}}
      * 
      */
@@ -2561,7 +2906,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcStringByBulgeType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcStringByBulge", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcStringByBulge", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ArcStringByBulgeType> createArcStringByBulge(ArcStringByBulgeType value) {
         return new JAXBElement<ArcStringByBulgeType>(_ArcStringByBulge_QNAME, ArcStringByBulgeType.class, null, value);
     }
@@ -2570,9 +2915,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GML")
-    public JAXBElement<AbstractFeatureType> createAbstractFeature(AbstractFeatureType value) {
-        return new JAXBElement<AbstractFeatureType>(_AbstractFeature_QNAME, AbstractFeatureType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
+    public JAXBElement<AbstractFeatureEntry> createAbstractFeature(AbstractFeatureEntry value) {
+        return new JAXBElement<AbstractFeatureEntry>(_AbstractFeature_QNAME, AbstractFeatureEntry.class, null, value);
     }
 
     /**
@@ -2660,7 +3005,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link TriangleType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Triangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_SurfacePatch")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Triangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<TriangleType> createTriangle(TriangleType value) {
         return new JAXBElement<TriangleType>(_Triangle_QNAME, TriangleType.class, null, value);
     }
@@ -2724,8 +3069,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Envelope")
-    public JAXBElement<EnvelopeType> createEnvelope(EnvelopeType value) {
-        return new JAXBElement<EnvelopeType>(_Envelope_QNAME, EnvelopeType.class, null, value);
+    public JAXBElement<EnvelopeEntry> createEnvelope(EnvelopeEntry value) {
+        return new JAXBElement<EnvelopeEntry>(_Envelope_QNAME, EnvelopeEntry.class, null, value);
     }
 
     /**
@@ -2741,7 +3086,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link DefinitionType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Definition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GML")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Definition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<DefinitionType> createDefinition(DefinitionType value) {
         return new JAXBElement<DefinitionType>(_Definition_QNAME, DefinitionType.class, null, value);
     }
@@ -2759,7 +3104,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link GeodesicStringType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GeodesicString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_CurveSegment")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GeodesicString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<GeodesicStringType> createGeodesicString(GeodesicStringType value) {
         return new JAXBElement<GeodesicStringType>(_GeodesicString_QNAME, GeodesicStringType.class, null, value);
     }
@@ -2786,9 +3131,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimeGeometricPrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_TimePrimitive")
-    public JAXBElement<AbstractTimeGeometricPrimitiveType> createTimeGeometricPrimitive(AbstractTimeGeometricPrimitiveType value) {
-        return new JAXBElement<AbstractTimeGeometricPrimitiveType>(_TimeGeometricPrimitive_QNAME, AbstractTimeGeometricPrimitiveType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeGeometricPrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimePrimitive")
+    public JAXBElement<AbstractTimeGeometricPrimitiveType> createAbstractTimeGeometricPrimitive(AbstractTimeGeometricPrimitiveType value) {
+        return new JAXBElement<AbstractTimeGeometricPrimitiveType>(AbstractTimeGeometricPrimitive_QNAME, AbstractTimeGeometricPrimitiveType.class, null, value);
     }
 
     /**
@@ -2822,7 +3167,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractParametricCurveSurfaceType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_ParametricCurveSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_SurfacePatch")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_ParametricCurveSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<AbstractParametricCurveSurfaceType> createParametricCurveSurface(AbstractParametricCurveSurfaceType value) {
         return new JAXBElement<AbstractParametricCurveSurfaceType>(_ParametricCurveSurface_QNAME, AbstractParametricCurveSurfaceType.class, null, value);
     }
@@ -2831,7 +3176,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeComplexType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimeComplex", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_TimeObject")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimeComplex", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeObject")
     public JAXBElement<AbstractTimeComplexType> createTimeComplex(AbstractTimeComplexType value) {
         return new JAXBElement<AbstractTimeComplexType>(_TimeComplex_QNAME, AbstractTimeComplexType.class, null, value);
     }
@@ -2858,7 +3203,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimeInstant", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_TimeGeometricPrimitive")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimeInstant", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeGeometricPrimitive")
     public JAXBElement<TimeInstantType> createTimeInstant(TimeInstantType value) {
         return new JAXBElement<TimeInstantType>(_TimeInstant_QNAME, TimeInstantType.class, null, value);
     }
@@ -2867,9 +3212,604 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GML")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<AbstractGeometryType> createAbstractGeometry(AbstractGeometryType value) {
         return new JAXBElement<AbstractGeometryType>(_AbstractGeometry_QNAME, AbstractGeometryType.class, null, value);
     }
 
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCoordinateOperationType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCoordinateOperation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
+    public JAXBElement<AbstractCoordinateOperationType> createAbstractCoordinateOperation(AbstractCoordinateOperationType value) {
+        return new JAXBElement<AbstractCoordinateOperationType>(_CoordinateOperation_QNAME, AbstractCoordinateOperationType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCoordinateSystemType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCoordinateSystem", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
+    public JAXBElement<AbstractCoordinateSystemType> createAbstractCoordinateSystem(AbstractCoordinateSystemType value) {
+        return new JAXBElement<AbstractCoordinateSystemType>(AbstractCoordinateSystem_QNAME, AbstractCoordinateSystemType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ImageDatumRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "imageDatumRef")
+    public JAXBElement<ImageDatumRefType> createImageDatumRef(ImageDatumRefType value) {
+        return new JAXBElement<ImageDatumRefType>(_ImageDatumRef_QNAME, ImageDatumRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ImageDatumType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ImageDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractDatum")
+    public JAXBElement<ImageDatumType> createImageDatum(ImageDatumType value) {
+        return new JAXBElement<ImageDatumType>(_ImageDatum_QNAME, ImageDatumType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ImageDatumRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesImageDatum")
+    public JAXBElement<ImageDatumRefType> createUsesImageDatum(ImageDatumRefType value) {
+        return new JAXBElement<ImageDatumRefType>(_UsesImageDatum_QNAME, ImageDatumRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDatumType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
+    public JAXBElement<AbstractDatumType> createDatum(AbstractDatumType value) {
+        return new JAXBElement<AbstractDatumType>(_Datum_QNAME, AbstractDatumType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGMLType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGML", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
+    public JAXBElement<AbstractGMLEntry> createAbstractGML(AbstractGMLEntry value) {
+        return new JAXBElement<AbstractGMLEntry>(_AbstractGML_QNAME, AbstractGMLEntry.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractPositionalAccuracyType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractpositionalAccuracy")
+    public JAXBElement<AbstractPositionalAccuracyType> createPositionalAccuracy(AbstractPositionalAccuracyType value) {
+        return new JAXBElement<AbstractPositionalAccuracyType>(_PositionalAccuracy_QNAME, AbstractPositionalAccuracyType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractReferenceSystemType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractReferenceSystem", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
+    public JAXBElement<AbstractReferenceSystemType> createReferenceSystem(AbstractReferenceSystemType value) {
+        return new JAXBElement<AbstractReferenceSystemType>(_ReferenceSystem_QNAME, AbstractReferenceSystemType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCoordinateOperationType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSingleOperation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateOperation")
+    public JAXBElement<AbstractCoordinateOperationType> createSingleOperation(AbstractCoordinateOperationType value) {
+        return new JAXBElement<AbstractCoordinateOperationType>(_SingleOperation_QNAME, AbstractCoordinateOperationType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCoordinateOperationType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractOperation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSingleOperation")
+    public JAXBElement<AbstractCoordinateOperationType> createOperation(AbstractCoordinateOperationType value) {
+        return new JAXBElement<AbstractCoordinateOperationType>(_Operation_QNAME, AbstractCoordinateOperationType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractReferenceSystemType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractReferenceSystem")
+    public JAXBElement<AbstractReferenceSystemType> createCRS(AbstractReferenceSystemType value) {
+        return new JAXBElement<AbstractReferenceSystemType>(_CRS_QNAME, AbstractReferenceSystemType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeSliceType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeSlice", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
+    public JAXBElement<AbstractTimeSliceType> createTimeSlice(AbstractTimeSliceType value) {
+        return new JAXBElement<AbstractTimeSliceType>(_TimeSlice_QNAME, AbstractTimeSliceType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CRSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "sourceCRS")
+    public JAXBElement<CRSRefType> createSourceCRS(CRSRefType value) {
+        return new JAXBElement<CRSRefType>(_SourceCRS_QNAME, CRSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CRSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "targetCRS")
+    public JAXBElement<CRSRefType> createTargetCRS(CRSRefType value) {
+        return new JAXBElement<CRSRefType>(_TargetCRS_QNAME, CRSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CartesianCSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "cartesianCSRef")
+    public JAXBElement<CartesianCSRefType> createCartesianCSRef(CartesianCSRefType value) {
+        return new JAXBElement<CartesianCSRefType>(_CartesianCSRef_QNAME, CartesianCSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CartesianCSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesCartesianCS")
+    public JAXBElement<CartesianCSRefType> createUsesCartesianCS(CartesianCSRefType value) {
+        return new JAXBElement<CartesianCSRefType>(_UsesCartesianCS_QNAME, CartesianCSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CompositeCurveType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
+    public JAXBElement<CompositeCurveType> createCompositeCurve(CompositeCurveType value) {
+        return new JAXBElement<CompositeCurveType>(_CompositeCurve_QNAME, CompositeCurveType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CompositeSolidType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeSolid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSolid")
+    public JAXBElement<CompositeSolidType> createCompositeSolid(CompositeSolidType value) {
+        return new JAXBElement<CompositeSolidType>(_CompositeSolid_QNAME, CompositeSolidType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CompositeSurfaceType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
+    public JAXBElement<CompositeSurfaceType> createCompositeSurface(CompositeSurfaceType value) {
+        return new JAXBElement<CompositeSurfaceType>(_CompositeSurface_QNAME, CompositeSurfaceType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CoordinateSystemAxisRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinateSystemAxisRef")
+    public JAXBElement<CoordinateSystemAxisRefType> createCoordinateSystemAxisRef(CoordinateSystemAxisRefType value) {
+        return new JAXBElement<CoordinateSystemAxisRefType>(_CoordinateSystemAxisRef_QNAME, CoordinateSystemAxisRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CoordinateSystemAxisType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CoordinateSystemAxis", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
+    public JAXBElement<CoordinateSystemAxisType> createCoordinateSystemAxis(CoordinateSystemAxisType value) {
+        return new JAXBElement<CoordinateSystemAxisType>(_CoordinateSystemAxis_QNAME, CoordinateSystemAxisType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CoordinateSystemAxisRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesAxis")
+    public JAXBElement<CoordinateSystemAxisRefType> createUsesAxis(CoordinateSystemAxisRefType value) {
+        return new JAXBElement<CoordinateSystemAxisRefType>(_UsesAxis_QNAME, CoordinateSystemAxisRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CoordinateSystemRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinateSystemRef")
+    public JAXBElement<CoordinateSystemRefType> createCoordinateSystemRef(CoordinateSystemRefType value) {
+        return new JAXBElement<CoordinateSystemRefType>(_CoordinateSystemRef_QNAME, CoordinateSystemRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CoordinateSystemRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesCS")
+    public JAXBElement<CoordinateSystemRefType> createUsesCS(CoordinateSystemRefType value) {
+        return new JAXBElement<CoordinateSystemRefType>(_UsesCS_QNAME, CoordinateSystemRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DirectionPropertyType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "direction")
+    public JAXBElement<DirectionPropertyType> createDirection(DirectionPropertyType value) {
+        return new JAXBElement<DirectionPropertyType>(_Direction_QNAME, DirectionPropertyType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DirectionVectorType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DirectionVector")
+    public JAXBElement<DirectionVectorType> createDirectionVector(DirectionVectorType value) {
+        return new JAXBElement<DirectionVectorType>(_DirectionVector_QNAME, DirectionVectorType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ImageCRSType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ImageCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateReferenceSystem")
+    public JAXBElement<ImageCRSType> createImageCRS(ImageCRSType value) {
+        return new JAXBElement<ImageCRSType>(_ImageCRS_QNAME, ImageCRSType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link EngineeringCRSType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "EngineeringCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateReferenceSystem")
+    public JAXBElement<EngineeringCRSType> createEngineeringCRS(EngineeringCRSType value) {
+        return new JAXBElement<EngineeringCRSType>(_EngineeringCRS_QNAME, EngineeringCRSType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link EngineeringDatumType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "EngineeringDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractDatum")
+    public JAXBElement<EngineeringDatumType> createEngineeringDatum(EngineeringDatumType value) {
+        return new JAXBElement<EngineeringDatumType>(_EngineeringDatum_QNAME, EngineeringDatumType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link EngineeringDatumRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "engineeringDatumRef")
+    public JAXBElement<EngineeringDatumRefType> createEngineeringDatumRef(EngineeringDatumRefType value) {
+        return new JAXBElement<EngineeringDatumRefType>(_EngineeringDatumRef_QNAME, EngineeringDatumRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link EngineeringDatumRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesEngineeringDatum")
+    public JAXBElement<EngineeringDatumRefType> createUsesEngineeringDatum(EngineeringDatumRefType value) {
+        return new JAXBElement<EngineeringDatumRefType>(_UsesEngineeringDatum_QNAME, EngineeringDatumRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ExtentType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "validArea")
+    public JAXBElement<ExtentType> createValidArea(ExtentType value) {
+        return new JAXBElement<ExtentType>(_ValidArea_QNAME, ExtentType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CountExtent")
+    public JAXBElement<List<String>> createCountExtent(List<String> value) {
+        return new JAXBElement<List<String>>(_CountExtent_QNAME, ((Class) List.class), null, ((List<String> ) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GeometricComplexType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GeometricComplex", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
+    public JAXBElement<GeometricComplexType> createGeometricComplex(GeometricComplexType value) {
+        return new JAXBElement<GeometricComplexType>(_GeometricComplex_QNAME, GeometricComplexType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GridType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Grid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
+    public JAXBElement<GridType> createGrid(GridType value) {
+        return new JAXBElement<GridType>(_Grid_QNAME, GridType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "history")
+    public JAXBElement<HistoryPropertyType> createHistory(HistoryPropertyType value) {
+        return new JAXBElement<HistoryPropertyType>(_History_QNAME, HistoryPropertyType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "datumID")
+    public JAXBElement<IdentifierType> createDatumID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_DatumID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ellipsoidID")
+    public JAXBElement<IdentifierType> createEllipsoidID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_EllipsoidID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "axisID")
+    public JAXBElement<IdentifierType> createAxisID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_AxisID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "meridianID")
+    public JAXBElement<IdentifierType> createMeridianID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_MeridianID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "methodID")
+    public JAXBElement<IdentifierType> createMethodID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_MethodID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinateOperationID")
+    public JAXBElement<IdentifierType> createCoordinateOperationID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_CoordinateOperationID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "csID")
+    public JAXBElement<IdentifierType> createCsID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_CsID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "parameterID")
+    public JAXBElement<IdentifierType> createParameterID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_ParameterID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "srsID")
+    public JAXBElement<IdentifierType> createSrsID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_SrsID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "groupID")
+    public JAXBElement<IdentifierType> createGroupID(IdentifierType value) {
+        return new JAXBElement<IdentifierType>(_GroupID_QNAME, IdentifierType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MovingObjectStatusType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MovingObjectStatus", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeSlice")
+    public JAXBElement<MovingObjectStatusType> createMovingObjectStatus(MovingObjectStatusType value) {
+        return new JAXBElement<MovingObjectStatusType>(_MovingObjectStatus_QNAME, MovingObjectStatusType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObliqueCartesianCSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesObliqueCartesianCS")
+    public JAXBElement<ObliqueCartesianCSRefType> createUsesObliqueCartesianCS(ObliqueCartesianCSRefType value) {
+        return new JAXBElement<ObliqueCartesianCSRefType>(_UsesObliqueCartesianCS_QNAME, ObliqueCartesianCSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObliqueCartesianCSType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ObliqueCartesianCS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateSystem")
+    public JAXBElement<ObliqueCartesianCSType> createObliqueCartesianCS(ObliqueCartesianCSType value) {
+        return new JAXBElement<ObliqueCartesianCSType>(_ObliqueCartesianCS_QNAME, ObliqueCartesianCSType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObliqueCartesianCSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "obliqueCartesianCSRef")
+    public JAXBElement<ObliqueCartesianCSRefType> createObliqueCartesianCSRef(ObliqueCartesianCSRefType value) {
+        return new JAXBElement<ObliqueCartesianCSRefType>(_ObliqueCartesianCSRef_QNAME, ObliqueCartesianCSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link PixelInCellType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pixelInCell")
+    public JAXBElement<PixelInCellType> createPixelInCell(PixelInCellType value) {
+        return new JAXBElement<PixelInCellType>(_PixelInCell_QNAME, PixelInCellType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link QuantityExtentType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "QuantityExtent")
+    public JAXBElement<QuantityExtentType> createQuantityExtent(QuantityExtentType value) {
+        return new JAXBElement<QuantityExtentType>(_QuantityExtent_QNAME, QuantityExtentType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MeasureOrNullListType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "QuantityList")
+    public JAXBElement<MeasureOrNullListType> createQuantityList(MeasureOrNullListType value) {
+        return new JAXBElement<MeasureOrNullListType>(_QuantityList_QNAME, MeasureOrNullListType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MeasureType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Quantity")
+    public JAXBElement<MeasureType> createQuantity(MeasureType value) {
+        return new JAXBElement<MeasureType>(_Quantity_QNAME, MeasureType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RectifiedGridType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "RectifiedGrid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Grid")
+    public JAXBElement<RectifiedGridType> createRectifiedGrid(RectifiedGridType value) {
+        return new JAXBElement<RectifiedGridType>(_RectifiedGrid_QNAME, RectifiedGridType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalDatumType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TemporalDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractDatum")
+    public JAXBElement<TemporalDatumType> createTemporalDatum(TemporalDatumType value) {
+        return new JAXBElement<TemporalDatumType>(_TemporalDatum_QNAME, TemporalDatumType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalDatumRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesTemporalDatum")
+    public JAXBElement<TemporalDatumRefType> createUsesTemporalDatum(TemporalDatumRefType value) {
+        return new JAXBElement<TemporalDatumRefType>(_UsesTemporalDatum_QNAME, TemporalDatumRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalDatumRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "temporalDatumRef")
+    public JAXBElement<TemporalDatumRefType> createTemporalDatumRef(TemporalDatumRefType value) {
+        return new JAXBElement<TemporalDatumRefType>(_TemporalDatumRef_QNAME, TemporalDatumRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalCSType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TemporalCS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateSystem")
+    public JAXBElement<TemporalCSType> createTemporalCS(TemporalCSType value) {
+        return new JAXBElement<TemporalCSType>(_TemporalCS_QNAME, TemporalCSType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalCSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesTemporalCS")
+    public JAXBElement<TemporalCSRefType> createUsesTemporalCS(TemporalCSRefType value) {
+        return new JAXBElement<TemporalCSRefType>(_UsesTemporalCS_QNAME, TemporalCSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalCSRefType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "temporalCSRef")
+    public JAXBElement<TemporalCSRefType> createTemporalCSRef(TemporalCSRefType value) {
+        return new JAXBElement<TemporalCSRefType>(_TemporalCSRef_QNAME, TemporalCSRefType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TemporalCRSType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TemporalCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateReferenceSystem")
+    public JAXBElement<TemporalCRSType> createTemporalCRS(TemporalCRSType value) {
+        return new JAXBElement<TemporalCRSType>(_TemporalCRS_QNAME, TemporalCRSType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "temporalExtent")
+    public JAXBElement<TimePeriodType> createTemporalExtent(TimePeriodType value) {
+        return new JAXBElement<TimePeriodType>(_TemporalExtent_QNAME, TimePeriodType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TrackType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "track", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "history")
+    public JAXBElement<TrackType> createTrack(TrackType value) {
+        return new JAXBElement<TrackType>(_Track_QNAME, TrackType.class, null, value);
+    }
+
+ 
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractReferenceSystemType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCoordinateReferenceSystem", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCRS")
+    public JAXBElement<AbstractReferenceSystemType> createCoordinateReferenceSystem(AbstractReferenceSystemType value) {
+        return new JAXBElement<AbstractReferenceSystemType>(_CoordinateReferenceSystem_QNAME, AbstractReferenceSystemType.class, null, value);
+    }
 }

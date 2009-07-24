@@ -19,12 +19,20 @@ package org.geotoolkit.gml.xml.v311;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.Logging;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -53,20 +61,118 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "DirectPositionType", propOrder = {
     "value"
 })
-public class DirectPositionType {
+public class DirectPositionType implements DirectPosition {
 
     @XmlValue
     protected List<Double> value;
     @XmlAttribute
-    @XmlSchemaType(name = "anyURI")
-    protected String srsName;
-    @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger srsDimension;
+    @XmlAttribute
+    @XmlSchemaType(name = "anyURI")
+    protected String srsName;
     @XmlAttribute
     protected List<String> axisLabels;
     @XmlAttribute
     protected List<String> uomLabels;
+
+    /**
+     * Empty constructor used by JAXB.
+     */
+    DirectPositionType() {}
+
+    /**
+     * Build a full Direct position.
+     * @param srsName
+     * @param srsDimension
+     * @param axisLabels
+     * @param value
+     * @param uomLabels
+     */
+    public DirectPositionType(String srsName, int srsDimension, List<String> axisLabels,
+            List<Double> value, List<String> uomLabels)
+    {
+        this.srsName      = srsName;
+        this.srsDimension = BigInteger.valueOf(srsDimension);
+        this.axisLabels   = axisLabels;
+        this.value        = value;
+        this.uomLabels    = uomLabels;
+    }
+
+    /**
+     * Build a full Direct position.
+     * @param srsName
+     * @param srsDimension
+     * @param axisLabels
+     * @param value
+     */
+    public DirectPositionType(String srsName, int srsDimension, List<String> axisLabels,
+            List<Double> value)
+    {
+        this.srsName      = srsName;
+        this.srsDimension = BigInteger.valueOf(srsDimension);
+        this.axisLabels   = axisLabels;
+        this.value        = value;
+    }
+
+    /**
+     * Build a full Direct position.
+     * @param srsName
+     * @param srsDimension
+     * @param value
+     */
+    public DirectPositionType(String srsName, int srsDimension, List<Double> value) {
+        this.srsName      = srsName;
+        this.srsDimension = BigInteger.valueOf(srsDimension);
+        this.value        = value;
+    }
+
+    /**
+     * Build a light direct position.
+     *
+     * @param
+     * @param value a List of coordinates.
+     */
+    public DirectPositionType(List<Double> value) {
+        this.value        = value;
+        this.srsDimension = null;
+    }
+
+    /**
+     * Build a light direct position.
+     *
+     * @param values a List of coordinates.
+     */
+    public DirectPositionType(Double... values) {
+        this.value = new ArrayList<Double>();
+        for (Double pt: values) {
+            this.value.add(pt);
+        }
+        this.srsDimension = null;
+    }
+
+    /**
+     * Build a light direct position.
+     *
+     * @param values a List of coordinates.
+     */
+    public DirectPositionType(DirectPosition position) {
+        if (position != null) {
+            this.value = new ArrayList<Double>();
+            for (double d : position.getCoordinate()) {
+                value.add(d);
+            }
+            CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
+            if ( crs != null) {
+                try {
+                    this.srsName = CRS.lookupIdentifier(crs, true);
+                } catch (FactoryException ex) {
+                    Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+                }
+            }
+            this.srsDimension = null;
+        }
+    }
 
     /**
      * XML List based on XML Schema double type.  An element of this type contains a space-separated list of double values Gets the value of the value property.
@@ -203,4 +309,95 @@ public class DirectPositionType {
         return this.uomLabels;
     }
 
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        try {
+            return CRS.decode(srsName);
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public int getDimension() {
+        return getSrsDimension().intValue();
+    }
+
+    @Override
+    public double[] getCoordinate() {
+        double[] coords = new double[value.size()];
+        for(int i=0,n=value.size(); i<n; i++){
+            coords[i] = value.get(i);
+        }
+        return coords;
+    }
+
+    @Override
+    public double getOrdinate(int dimension) throws IndexOutOfBoundsException {
+        return value.get(dimension);
+    }
+
+    @Override
+    public void setOrdinate(int dimension, double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+        this.value.remove(dimension);
+        this.value.add(dimension, value);
+    }
+
+    @Override
+    public DirectPosition getDirectPosition() {
+        return this;
+    }
+
+
+    /**
+     * Return a description of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[DirectPositionType]:");
+        if (srsName != null) {
+            s.append("srsName = ").append(srsName).append('\n');
+            s.append(" srsDimension = ").append(srsDimension).append('\n');
+        }
+        if (value != null) {
+            s.append(" value: ").append('\n');
+            for(double v :value) {
+                s.append(v).append(", ");
+            }
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DirectPositionType) {
+            final DirectPositionType that = (DirectPositionType) object;
+            return  Utilities.equals(this.axisLabels, that.axisLabels)     &&
+                    Utilities.equals(this.srsDimension, that.srsDimension) &&
+                    Utilities.equals(this.srsName, that.srsName)           &&
+                    Utilities.equals(this.uomLabels, that.uomLabels)       &&
+                    Utilities.equals(this.value, that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 71 * hash + this.srsDimension.intValue();
+        hash = 71 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 71 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
+        hash = 71 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
+        return hash;
+    }
 }

@@ -22,7 +22,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -54,7 +56,14 @@ import javax.xml.bind.annotation.XmlType;
 public class FeaturePropertyType {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractFeatureType> abstractFeature;
+    protected JAXBElement<? extends AbstractFeatureEntry> abstractFeature;
+
+    /**
+     * Allow to record the feature when its in href mode
+     */
+    @XmlTransient
+    AbstractFeatureEntry  hiddenFeature;
+
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     protected String remoteSchema;
@@ -77,6 +86,29 @@ public class FeaturePropertyType {
     protected String actuate;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    FeaturePropertyType() {}
+
+    /**
+     * Build a new feature.
+     */
+    public FeaturePropertyType(JAXBElement<? extends AbstractFeatureEntry> feature) {
+        this.abstractFeature = feature;
+    }
+
+    /**
+     * Set the feature into href mode.
+     */
+    public void setToHref() {
+        if (abstractFeature != null && abstractFeature.getValue() != null) {
+            this.href       = abstractFeature.getValue().getName();
+            hiddenFeature   = abstractFeature.getValue();
+            abstractFeature = null;
+        }
+    }
+
+    /**
      * Gets the value of the abstractFeature property.
      * 
      * @return
@@ -86,8 +118,13 @@ public class FeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractFeatureType> getAbstractFeature() {
-        return abstractFeature;
+    public AbstractFeatureEntry getAbstractFeature() {
+        if (abstractFeature != null) {
+            return abstractFeature.getValue();
+        }  else if (hiddenFeature != null) {
+            return hiddenFeature;
+        }
+        return null;
     }
 
     /**
@@ -100,8 +137,8 @@ public class FeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
      *     
      */
-    public void setAbstractFeature(JAXBElement<? extends AbstractFeatureType> value) {
-        this.abstractFeature = ((JAXBElement<? extends AbstractFeatureType> ) value);
+    public void setAbstractFeature(JAXBElement<? extends AbstractFeatureEntry> value) {
+        this.abstractFeature = ((JAXBElement<? extends AbstractFeatureEntry> ) value);
     }
 
     /**
@@ -298,6 +335,86 @@ public class FeaturePropertyType {
      */
     public void setActuate(String value) {
         this.actuate = value;
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FeaturePropertyType) {
+            final FeaturePropertyType that = (FeaturePropertyType) object;
+
+            boolean feat = false;
+            if (this.abstractFeature == null && that.abstractFeature == null) {
+                feat = true;
+            } else if (this.abstractFeature != null && that.abstractFeature != null) {
+                feat = Utilities.equals(this.abstractFeature.getValue(),    that.abstractFeature.getValue());
+            }
+            return feat                                                             &&
+                   Utilities.equals(this.hiddenFeature,      that.hiddenFeature)    &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.abstractFeature != null ? this.abstractFeature.hashCode() : 0);
+        hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[featurePropertyType]");
+        if (abstractFeature != null && abstractFeature.getValue() != null)
+            s.append(abstractFeature.getValue().toString()).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        return s.toString();
     }
 
 }

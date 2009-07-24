@@ -27,10 +27,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
-import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
-import org.geotoolkit.gml.xml.v311modified.GridEnvelopeType;
-import org.geotoolkit.gml.xml.v311modified.TimePositionType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.GridEnvelopeType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.wcs.xml.GetCoverage;
 
 import org.geotoolkit.wcs.xml.StringUtilities;

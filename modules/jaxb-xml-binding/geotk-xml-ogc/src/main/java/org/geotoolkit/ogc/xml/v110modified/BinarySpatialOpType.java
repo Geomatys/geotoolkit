@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractGeometryType;
-import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
-import org.geotoolkit.gml.xml.v311modified.LineStringType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
-import org.geotoolkit.gml.xml.v311modified.PolygonType;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.LineStringType;
+import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -82,7 +82,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
     private ObjectFactory ogcFactory = new ObjectFactory();
     
     @XmlTransient
-    private org.geotoolkit.gml.xml.v311modified.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v311modified.ObjectFactory();
+    private org.geotoolkit.gml.xml.v311.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
     
     /**
      * An empty constructor used by JAXB
@@ -108,7 +108,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
             abstractGeometry = gmlFactory.createPolygon((PolygonType)geometry);
         
         } else {
-            abstractGeometry = gmlFactory.createGeometry(geometry);
+            abstractGeometry = gmlFactory.createAbstractGeometry(geometry);
         }
         
     }
@@ -134,7 +134,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
             this.envelope = gmlFactory.createEnvelope((EnvelopeEntry)geometry);
         
         } else if (geometry instanceof AbstractGeometryType) {
-            abstractGeometry = gmlFactory.createGeometry((AbstractGeometryType)geometry);
+            abstractGeometry = gmlFactory.createAbstractGeometry((AbstractGeometryType)geometry);
         }
         
     }
@@ -208,10 +208,12 @@ public class BinarySpatialOpType extends SpatialOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    @Override
     public boolean evaluate(Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(FilterVisitor visitor, Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

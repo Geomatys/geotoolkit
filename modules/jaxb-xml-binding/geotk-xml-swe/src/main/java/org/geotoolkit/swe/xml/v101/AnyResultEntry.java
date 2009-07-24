@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.ReferenceEntry;
+import org.geotoolkit.gml.xml.v311.ReferenceEntry;
 import org.geotoolkit.swe.xml.AnyResult;
 import org.geotoolkit.util.Utilities;
 
@@ -82,6 +82,7 @@ public class AnyResultEntry implements AnyResult {
     /**
      * Return the result identifier.
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -100,6 +101,7 @@ public class AnyResultEntry implements AnyResult {
     /**
      * return a result of type dataArray if it is, {@code null} else.
      */
+    @Override
     public DataArrayEntry getArray() {
         if (array != null) {
             return array.getDataArray();
@@ -110,6 +112,7 @@ public class AnyResultEntry implements AnyResult {
     /**
      * return a result of type dataArray if it is, {@code null} else.
      */
+    @Override
     public DataArrayPropertyType getPropertyArray() {
         return array;
     }

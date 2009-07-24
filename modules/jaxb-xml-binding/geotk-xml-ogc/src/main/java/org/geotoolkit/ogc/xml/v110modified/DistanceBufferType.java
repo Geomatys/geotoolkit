@@ -23,12 +23,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
-import org.geotoolkit.gml.xml.v311modified.ObjectFactory;
-import org.geotoolkit.gml.xml.v311modified.PointType;
-import org.geotoolkit.gml.xml.v311modified.PolygonType;
+import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.v311.PolygonType;
 
 
 /**
@@ -89,7 +89,7 @@ public class DistanceBufferType extends SpatialOpsType {
         } else if (geometry instanceof PolygonType) {
             this.abstractGeometry = factory.createPolygon((PolygonType)geometry);
         } else {
-            this.abstractGeometry = factory.createGeometry(geometry);
+            this.abstractGeometry = factory.createAbstractGeometry(geometry);
         }
     }
     
@@ -156,10 +156,12 @@ public class DistanceBufferType extends SpatialOpsType {
         return s.toString();
     }
 
+    @Override
     public boolean evaluate(Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(FilterVisitor visitor, Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

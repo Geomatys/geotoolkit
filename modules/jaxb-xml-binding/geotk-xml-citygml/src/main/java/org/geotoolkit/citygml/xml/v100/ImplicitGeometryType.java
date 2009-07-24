@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractGMLEntry;
-import org.geotoolkit.gml.xml.v311modified.GeometryPropertyType;
-import org.geotoolkit.gml.xml.v311modified.PointPropertyType;
+import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
+import org.geotoolkit.gml.xml.v311.PointPropertyType;
 
 
 /**

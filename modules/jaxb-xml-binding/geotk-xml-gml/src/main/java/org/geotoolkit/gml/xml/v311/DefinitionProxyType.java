@@ -47,12 +47,22 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DefinitionProxyType", propOrder = {
     "definitionRef"
 })
-public class DefinitionProxyType
-    extends DefinitionType
-{
+public class DefinitionProxyType extends DefinitionType {
 
     @XmlElement(required = true)
-    protected ReferenceType definitionRef;
+    private ReferenceEntry definitionRef;
+
+    DefinitionProxyType() {}
+
+    public DefinitionProxyType(String id, ReferenceEntry definiReferenceType) {
+        super(id);
+        this.definitionRef = definiReferenceType;
+    }
+
+    public DefinitionProxyType(String id, String name, String description, ReferenceEntry definiReferenceType) {
+        super(id, name, description);
+        this.definitionRef = definiReferenceType;
+    }
 
     /**
      * A reference to a remote entry in this dictionary, used when this dictionary entry is identified to allow external references to this specific entry. The remote entry referenced can be in a dictionary in the same or different XML document. 
@@ -62,7 +72,7 @@ public class DefinitionProxyType
      *     {@link ReferenceType }
      *     
      */
-    public ReferenceType getDefinitionRef() {
+    public ReferenceEntry getDefinitionRef() {
         return definitionRef;
     }
 
@@ -74,7 +84,7 @@ public class DefinitionProxyType
      *     {@link ReferenceType }
      *     
      */
-    public void setDefinitionRef(ReferenceType value) {
+    public void setDefinitionRef(ReferenceEntry value) {
         this.definitionRef = value;
     }
 

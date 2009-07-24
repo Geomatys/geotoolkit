@@ -19,6 +19,13 @@ package org.geotoolkit.gml.xml.v311;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.UnmodifiableGeometryException;
+import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.primitive.Bearing;
+import org.opengis.geometry.primitive.OrientablePrimitive;
+import org.opengis.geometry.primitive.Point;
 
 
 /**
@@ -49,16 +56,37 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PointType", propOrder = {
     "pos",
-    "coordinates",
-    "coord"
+    "coordinates"
 })
-public class PointType
-    extends AbstractGeometricPrimitiveType
-{
+public class PointType extends AbstractGeometricPrimitiveType implements Point {
 
     protected DirectPositionType pos;
     protected CoordinatesType coordinates;
-    protected CoordType coord;
+
+    /**
+     * An empty constructor used by JAXB.
+     */
+    PointType() {}
+
+    /**
+     * Build a new Point with the specified identifier and DirectPositionType
+     *
+     * @param id The identifier of the point.
+     * @param pos A direcPosition locating the point.
+     */
+    public PointType(String id, DirectPosition pos) {
+        super.setId(id);
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos);
+    }
+
+    /**
+     * Build a point Type with the specified coordinates.
+     *
+     * @param coordinates a list of coordinates.
+     */
+    public PointType(CoordinatesType coordinates) {
+        this.coordinates = coordinates;
+    }
 
     /**
      * Gets the value of the pos property.
@@ -112,30 +140,74 @@ public class PointType
         this.coordinates = value;
     }
 
-    /**
-     * Deprecated with GML version 3.0. Use "pos" instead. The "coord" element is included for 
-     * 								backwards compatibility with GML 2.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CoordType }
-     *     
-     */
-    public CoordType getCoord() {
-        return coord;
+    @Override
+    public DirectPosition getDirectPosition() {
+        return pos;
+    }
+
+    @Override
+    public void setDirectPosition(DirectPosition position) throws UnmodifiableGeometryException {
+        this.pos = new DirectPositionType(position);
+    }
+
+    @Override
+    public void setPosition(DirectPosition position) throws UnmodifiableGeometryException {
+        pos = new DirectPositionType(position);
+    }
+
+    @Override
+    public OrientablePrimitive[] getProxy() {
+        return null;
+    }
+
+    @Override
+    public PointType clone() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Bearing getBearing(Position toPoint) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
-     * Deprecated with GML version 3.0. Use "pos" instead. The "coord" element is included for 
-     * 								backwards compatibility with GML 2.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CoordType }
-     *     
+     * Return a String description of the object.
      */
-    public void setCoord(CoordType value) {
-        this.coord = value;
+    @Override
+    public String toString() {
+        StringBuilder s =new StringBuilder("id = ").append(this.getId()).append('\n');
+        if (pos != null) {
+            s.append("position : ").append(pos.toString()).append('\n');
+        }
+
+        if (coordinates != null) {
+            s.append(" coordinates : ").append(coordinates.toString()).append('\n');
+        }
+
+        return s.toString();
     }
 
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (super.equals(object)) {
+            final PointType that = (PointType) object;
+            return  Utilities.equals(this.pos, that.pos) &&
+                    Utilities.equals(this.coordinates, that.coordinates);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + (this.pos != null ? this.pos.hashCode() : 0);
+        hash = 17 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        return hash;
+    }
 }

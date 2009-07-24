@@ -19,8 +19,8 @@ package org.geotoolkit.wcs.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
-import org.geotoolkit.gml.xml.v311modified.GridType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.GridType;
 
 
 /**

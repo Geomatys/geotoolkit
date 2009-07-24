@@ -23,11 +23,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
+import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationEntry;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
-import org.opengis.observation.sampling.SamplingFeatureRelation;
 import org.opengis.observation.sampling.SamplingPoint;
 
 /**
@@ -37,11 +36,7 @@ import org.opengis.observation.sampling.SamplingPoint;
  */
 @XmlRootElement( name="SamplingPoint" )
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", namespace="http://www.opengis.net/sa/1.0",
-    propOrder = {
-    "position"
-    }
-)
+@XmlType(name = "", namespace="http://www.opengis.net/sa/1.0")
 @XmlSeeAlso({PointType.class})
 public class SamplingPointEntry extends SamplingFeatureEntry implements SamplingPoint{
     
@@ -91,6 +86,7 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
     /**
      * Return the station position.
      */
+    @Override
     public PointType getPosition(){
         return position;
     }

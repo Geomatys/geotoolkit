@@ -17,7 +17,7 @@
 package org.geotoolkit.ogc.xml.v110modified;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.gml.xml.v311modified.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.opengis.filter.spatial.Overlaps;
 
 /**

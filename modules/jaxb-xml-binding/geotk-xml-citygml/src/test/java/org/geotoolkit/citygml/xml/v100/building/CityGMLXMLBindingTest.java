@@ -16,15 +16,17 @@
  */
 package org.geotoolkit.citygml.xml.v100.building;
 
-import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 
 /**
  *
@@ -32,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class CityGMLXMLBindingTest {
 
-    private Logger         logger = Logging.getLogger("org.geotoolkit.filter");
     private Unmarshaller   Unmarshaller;
     private Marshaller     Marshaller;
     private MarshallerPool pool;
@@ -49,7 +50,7 @@ public class CityGMLXMLBindingTest {
     public void setUp() throws Exception {
         pool         = new MarshallerPool(
                 "org.geotoolkit.citygml.xml.v100:" +
-                "org.geotoolkit.gml.xml.v311modified:" +
+                "org.geotoolkit.gml.xml.v311:" +
                 "org.geotoolkit.citygml.xml.v100.building");
         Unmarshaller = pool.acquireUnmarshaller();
         Marshaller   = pool.acquireMarshaller();

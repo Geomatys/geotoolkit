@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -51,9 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "RingType", propOrder = {
     "curveMember"
 })
-public class RingType
-    extends AbstractRingType
-{
+public class RingType extends AbstractRingType {
 
     @XmlElement(required = true)
     protected List<CurvePropertyType> curveMember;
@@ -86,6 +85,21 @@ public class RingType
             curveMember = new ArrayList<CurvePropertyType>();
         }
         return this.curveMember;
+    }
+
+    @Override
+    public Object evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(Object object, Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(ExpressionVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

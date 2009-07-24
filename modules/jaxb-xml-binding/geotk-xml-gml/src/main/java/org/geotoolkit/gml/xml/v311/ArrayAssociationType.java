@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ArrayAssociationType {
 
-    @XmlElementRef(name = "_Object", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    @XmlElementRef(name = "AbstractObject", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     protected List<JAXBElement<?>> object;
 
     /**

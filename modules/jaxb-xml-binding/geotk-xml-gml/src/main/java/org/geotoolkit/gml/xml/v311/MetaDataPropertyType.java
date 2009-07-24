@@ -18,8 +18,8 @@ package org.geotoolkit.gml.xml.v311;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.w3c.dom.Element;
@@ -50,12 +50,12 @@ import org.w3c.dom.Element;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetaDataPropertyType", propOrder = {
-    "any"
+    "metaData"
 })
 public class MetaDataPropertyType {
 
-    @XmlAnyElement(lax = true)
-    protected Object any;
+    @XmlElement(name = "_MetaData")
+    private AbstractMetaDataType metaData;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     protected String about;
@@ -81,16 +81,24 @@ public class MetaDataPropertyType {
     protected String actuate;
 
     /**
-     * Gets the value of the any property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Element }
-     *     {@link Object }
-     *     
+     * empty constructor used by JAXB
      */
-    public Object getAny() {
-        return any;
+    MetaDataPropertyType() {
+
+    }
+
+    /**
+     * empty constructor used by JAXB
+     */
+    public MetaDataPropertyType(String href) {
+        this.href = href;
+    }
+
+    /**
+     * Gets the value of the metaData property.
+     */
+    public AbstractMetaDataType getMetaData() {
+        return metaData;
     }
 
     /**
@@ -102,8 +110,8 @@ public class MetaDataPropertyType {
      *     {@link Object }
      *     
      */
-    public void setAny(Object value) {
-        this.any = value;
+    public void setMetaData(AbstractMetaDataType value) {
+        this.metaData = value;
     }
 
     /**

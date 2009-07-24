@@ -41,9 +41,5 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VolumeType")
-public class VolumeType
-    extends MeasureType
-{
-
-
+public class VolumeType extends MeasureType {
 }

@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 
 //constellation
 import org.geotoolkit.sml.xml.v101.Classification.ClassifierList.Classifier;
-import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
-import org.geotoolkit.gml.xml.v311modified.TimePositionType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 
 import org.geotoolkit.sml.xml.v101.Identification.IdentifierList;
 import org.geotoolkit.sml.xml.v101.Identification.IdentifierList.Identifier;
@@ -55,16 +55,13 @@ import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+
 /**
  *
  * @author guilhem
  */
 public class SmlXMLBindingTest {
-
-    private Logger       logger = Logging.getLogger("org.geotoolkit.sml");
     private MarshallerPool  pool;
-    private ObjectFactory sml100Factory = new ObjectFactory();
-    private org.geotoolkit.swe.xml.v101.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
 
 
     @BeforeClass

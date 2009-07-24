@@ -78,6 +78,25 @@ public class CurvePropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
 
+    CurvePropertyType() {}
+
+    public CurvePropertyType(AbstractCurveType curve) {
+        if (curve != null) {
+            ObjectFactory factory = new ObjectFactory();
+            if (curve instanceof CurveType) {
+                abstractCurve = factory.createCurve((CurveType) curve);
+            } else if (curve instanceof OrientableCurveType) {
+                abstractCurve = factory.createOrientableCurve((OrientableCurveType) curve);
+            } else if (curve instanceof CompositeCurveType) {
+                abstractCurve = factory.createCompositeCurve((CompositeCurveType) curve);
+            } else if (curve instanceof LineStringType) {
+                abstractCurve = factory.createLineString((LineStringType) curve);
+            } else {
+                throw new IllegalArgumentException("unexpected subclasse of abstractCurveType");
+            }
+        }
+    }
+
     /**
      * Gets the value of the abstractCurve property.
      * 

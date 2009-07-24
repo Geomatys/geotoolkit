@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundedFeatureType")
 public abstract class BoundedFeatureType
-    extends AbstractFeatureType
+    extends AbstractFeatureEntry
 {
 
 

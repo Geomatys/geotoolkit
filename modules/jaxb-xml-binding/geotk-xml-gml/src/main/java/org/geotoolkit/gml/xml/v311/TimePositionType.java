@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlValue;
 public class TimePositionType {
 
     @XmlValue
-    protected List<String> value;
+    protected String value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     protected String frame;
@@ -69,44 +69,50 @@ public class TimePositionType {
     protected TimeIndeterminateValueType indeterminatePosition;
 
     /**
-     * The ISO 19108:2002 hierarchy of subtypes for temporal position are collapsed 
-     *       by defining a union of XML Schema simple types for indicating temporal position relative 
-     *       to a specific reference system. 
-     *       
-     *       Dates and dateTime may be indicated with varying degrees of precision.  
-     *       dateTime by itself does not allow right-truncation, except for fractions of seconds. 
-     *       When used with non-Gregorian calendars based on years, months, days, 
-     *       the same lexical representation should still be used, with leading zeros added if the 
-     *       year value would otherwise have fewer than four digits.  
-     *       
-     *       An ordinal position may be referenced via URI identifying the definition of an ordinal era.  
-     *       
-     *       A time coordinate value is indicated as a decimal (e.g. UNIX time, GPS calendar).Gets the value of the value property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
+     * empty constructor used by JAXB.
      */
-    public List<String> getValue() {
-        if (value == null) {
-            value = new ArrayList<String>();
-        }
-        return this.value;
+    TimePositionType() {}
+
+    /**
+     * build a simple Timposition with only a value.
+     *
+     * @param value a date.
+     */
+    public TimePositionType(String value){
+        this.value = value;
+    }
+
+    /**
+     * build a simple Timposition with an indeterminate value.
+     *
+     */
+    public TimePositionType(TimeIndeterminateValueType indeterminatePosition){
+        this.indeterminatePosition = indeterminatePosition;
+        value = "";
+    }
+
+    /**
+     * build a simple Timposition with only a value from a timestamp.
+     *
+     * @param value a date.
+     */
+    public TimePositionType(Timestamp time){
+        this.value = time.toString();
+    }
+
+    /**
+     * The simple type gml:TimePositionUnion is a union of XML Schema simple types
+     * which instantiate the subtypes for temporal position described in ISO 19108.
+     * An ordinal era may be referenced via URI.
+     * A decimal value may be used to indicate the distance from the scale origin .
+     * time is used for a position that recurs daily (see ISO 19108:2002 5.4.4.2).
+     * Finally, calendar and clock forms that support the representation of time in systems based on years,
+     * months, days, hours, minutes and seconds, in a notation following ISO 8601,
+     * are assembled by gml:CalDate Gets the value of the value property.
+     *
+     */
+    public String getValue() {
+        return value;
     }
 
     /**
@@ -183,6 +189,51 @@ public class TimePositionType {
      */
     public void setIndeterminatePosition(TimeIndeterminateValueType value) {
         this.indeterminatePosition = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimePositionType) {
+            final TimePositionType that = (TimePositionType) object;
+            return Utilities.equals(this.calendarEraName,       that.calendarEraName)       &&
+                   Utilities.equals(this.frame,                 that.frame)                 &&
+                   Utilities.equals(this.indeterminatePosition, that.indeterminatePosition) &&
+                   Utilities.equals(this.value,                 that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 97 * hash + (this.calendarEraName != null ? this.calendarEraName.hashCode() : 0);
+        hash = 97 * hash + (this.frame != null ? this.frame.hashCode() : 0);
+        hash = 97 * hash + (this.indeterminatePosition != null ? this.indeterminatePosition.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[TimePositionType] ");
+        if (calendarEraName != null) {
+            s.append("calendarEraName:").append(calendarEraName).append('\n');
+        }
+        if (frame != null) {
+            s.append("frame:").append(frame).append('\n');
+        }
+        if (indeterminatePosition != null) {
+            s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
+        }
+        s.append("value = " + value);
+
+        return s.toString();
     }
 
 }

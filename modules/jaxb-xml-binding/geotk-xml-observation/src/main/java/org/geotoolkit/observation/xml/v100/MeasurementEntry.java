@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
 import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
@@ -115,11 +115,13 @@ public class MeasurementEntry extends ObservationEntry implements Measurement {
         if (object == this) {
             return true;
         }
+        if (!(object instanceof MeasurementEntry)) {
+            return false;
+        }
         if (object instanceof MeasurementEntry && super.equals(object)) {
             final MeasurementEntry that = (MeasurementEntry) object;
             return this.getResult().equals(that.getResult());
         }
         return false;
     }
-
 }

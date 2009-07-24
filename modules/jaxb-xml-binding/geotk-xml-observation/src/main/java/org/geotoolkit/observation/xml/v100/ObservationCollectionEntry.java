@@ -17,14 +17,13 @@
 package org.geotoolkit.observation.xml.v100;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 import org.geotoolkit.util.Utilities;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
@@ -71,6 +70,7 @@ public class ObservationCollectionEntry extends AbstractFeatureEntry implements 
     /**
      * Return a collection of Observation
      */
+    @Override
     public List<Observation> getMember() {
         List result = new ArrayList<Observation>();
         

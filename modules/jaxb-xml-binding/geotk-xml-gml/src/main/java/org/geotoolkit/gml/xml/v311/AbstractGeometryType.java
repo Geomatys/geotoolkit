@@ -19,12 +19,25 @@ package org.geotoolkit.gml.xml.v311;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.Precision;
+import org.opengis.geometry.TransfiniteSet;
+import org.opengis.geometry.complex.Complex;
+import org.opengis.geometry.primitive.PrimitiveBoundary;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -58,9 +71,7 @@ import javax.xml.bind.annotation.XmlType;
     AbstractGeometricPrimitiveType.class,
     AbstractGeometricAggregateType.class
 })
-public abstract class AbstractGeometryType
-    extends AbstractGMLType
-{
+public abstract class AbstractGeometryType extends AbstractGMLEntry implements Geometry, Expression {
 
     @XmlAttribute
     protected String gid;
@@ -74,6 +85,18 @@ public abstract class AbstractGeometryType
     protected List<String> axisLabels;
     @XmlAttribute
     protected List<String> uomLabels;
+
+    /**
+     * empty constructor used by JAXB
+     */
+    AbstractGeometryType(){}
+
+    public AbstractGeometryType(BigInteger srsDimension, String srsName, List<String> axisLabels, List<String> uomLabels){
+        this.axisLabels   = axisLabels;
+        this.srsDimension = srsDimension;
+        this.srsName      = srsName;
+        this.uomLabels    = uomLabels;
+    }
 
     /**
      * Gets the value of the gid property.
@@ -205,4 +228,174 @@ public abstract class AbstractGeometryType
         return this.uomLabels;
     }
 
+    @Override
+    public PrimitiveBoundary getBoundary() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Precision getPrecision() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Geometry getMbRegion() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DirectPosition getRepresentativePoint() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Complex getClosure() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isSimple() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isCycle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double distance(Geometry geometry) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getDimension(DirectPosition point) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getCoordinateDimension() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Set<? extends Complex> getMaximalComplex() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Geometry transform(CoordinateReferenceSystem newCRS) throws TransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Geometry transform(CoordinateReferenceSystem newCRS, MathTransform transform) throws TransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DirectPosition getCentroid() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Geometry getConvexHull() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Geometry getBuffer(double distance) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isMutable() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Geometry toImmutable() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean contains(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean contains(DirectPosition point) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean intersects(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean equals(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public TransfiniteSet union(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public TransfiniteSet intersection(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public TransfiniteSet difference(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public TransfiniteSet symmetricDifference(TransfiniteSet pointSet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object != null && getClass().equals(object.getClass())) {
+            final AbstractGeometryType that = (AbstractGeometryType) object;
+
+            return Utilities.equals(this.axisLabels,   that.axisLabels)   &&
+                   Utilities.equals(this.srsDimension, that.srsDimension) &&
+                   Utilities.equals(this.srsName,      that.srsName)      &&
+                   Utilities.equals(this.uomLabels,    that.uomLabels);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.srsDimension != null ? this.srsDimension.hashCode() : 0);
+        hash = 37 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 37 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
+        hash = 37 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public AbstractGeometryType clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
 }

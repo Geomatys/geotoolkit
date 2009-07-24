@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 // Constellation dependencies
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.DefinitionType;
+import org.geotoolkit.gml.xml.v311.DefinitionType;
 import org.opengis.observation.Phenomenon;
 
 

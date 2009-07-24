@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
     "members"
 })
 public class ArrayType
-    extends AbstractGMLType
+    extends AbstractGMLEntry
 {
 
     protected ArrayAssociationType members;

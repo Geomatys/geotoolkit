@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -68,6 +69,51 @@ public class TimePeriodType
     protected TimeInstantPropertyType end;
     protected Duration duration;
     protected TimeIntervalLengthType timeInterval;
+
+    /**
+     * Empty constructor used by JAXB.
+     */
+    TimePeriodType(){}
+
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(TimePositionType beginPosition, TimePositionType endPosition){
+        this.beginPosition = beginPosition;
+        this.endPosition   = endPosition;
+    }
+
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(String beginValue, String endValue){
+        this.beginPosition = new TimePositionType(beginValue);
+        this.endPosition   = new TimePositionType(endValue);
+    }
+
+    /**
+     * Build a new Time period bounded by the begin and with the end position "now".
+     */
+    public TimePeriodType(TimePositionType beginPosition){
+        this.beginPosition = beginPosition;
+        this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
+    }
+
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(String beginValue){
+        this.beginPosition = new TimePositionType(beginValue);
+        this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
+    }
+
+    /**
+     * Build a new Time period bounded by an indeterminate time at begin.
+     */
+    public TimePeriodType(TimeIndeterminateValueType indeterminateBegin, TimePositionType endPosition){
+        this.beginPosition = new TimePositionType(indeterminateBegin);
+        this.endPosition   = endPosition;
+    }
 
     /**
      * Gets the value of the beginPosition property.
@@ -213,4 +259,62 @@ public class TimePeriodType
         this.timeInterval = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof TimePeriodType)) {
+            return false;
+        }
+        final TimePeriodType that = (TimePeriodType) object;
+
+        return Utilities.equals(this.begin,         that.begin)         &&
+               Utilities.equals(this.beginPosition, that.beginPosition) &&
+               Utilities.equals(this.duration,      that.duration)      &&
+               Utilities.equals(this.endPosition,   that.endPosition)   &&
+               Utilities.equals(this.timeInterval,  that.timeInterval)  &&
+               Utilities.equals(this.end,           that.end);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.beginPosition != null ? this.beginPosition.hashCode() : 0);
+        hash = 37 * hash + (this.begin != null ? this.begin.hashCode() : 0);
+        hash = 37 * hash + (this.endPosition != null ? this.endPosition.hashCode() : 0);
+        hash = 37 * hash + (this.end != null ? this.end.hashCode() : 0);
+        hash = 37 * hash + (this.duration != null ? this.duration.hashCode() : 0);
+        hash = 37 * hash + (this.timeInterval != null ? this.timeInterval.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        char lineSeparator = '\n';
+        StringBuilder s = new StringBuilder("TimePeriod:").append(lineSeparator);
+        if (begin != null) {
+            s.append("begin:").append(begin).append(lineSeparator);
+        }
+        if (end != null) {
+            s.append("end  :").append(end).append(lineSeparator);
+        }
+        if (beginPosition != null) {
+            s.append("beginPosition :").append(beginPosition).append(lineSeparator);
+        }
+        if (endPosition != null) {
+            s.append("endPosition   :").append(endPosition);
+        }
+        if (duration != null) {
+            s.append(lineSeparator).append("duration:").append(duration);
+        }
+        if (timeInterval != null) {
+            s.append(lineSeparator).append("timeInterval:").append(timeInterval).append(lineSeparator);
+        }
+
+        return s.toString();
+    }
 }

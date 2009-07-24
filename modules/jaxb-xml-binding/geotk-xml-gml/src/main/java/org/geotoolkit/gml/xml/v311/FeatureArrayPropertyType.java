@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 public class FeatureArrayPropertyType {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractFeatureType>> abstractFeature;
+    protected List<JAXBElement<? extends AbstractFeatureEntry>> abstractFeature;
 
     /**
      * Gets the value of the abstractFeature property.
@@ -79,9 +79,9 @@ public class FeatureArrayPropertyType {
      * 
      * 
      */
-    public List<JAXBElement<? extends AbstractFeatureType>> getAbstractFeature() {
+    public List<JAXBElement<? extends AbstractFeatureEntry>> getAbstractFeature() {
         if (abstractFeature == null) {
-            abstractFeature = new ArrayList<JAXBElement<? extends AbstractFeatureType>>();
+            abstractFeature = new ArrayList<JAXBElement<? extends AbstractFeatureEntry>>();
         }
         return this.abstractFeature;
     }

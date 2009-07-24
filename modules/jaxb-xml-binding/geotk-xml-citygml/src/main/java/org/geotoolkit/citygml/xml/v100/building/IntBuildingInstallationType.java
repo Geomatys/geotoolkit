@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
-import org.geotoolkit.gml.xml.v311modified.GeometryPropertyType;
+import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 
 
 /**

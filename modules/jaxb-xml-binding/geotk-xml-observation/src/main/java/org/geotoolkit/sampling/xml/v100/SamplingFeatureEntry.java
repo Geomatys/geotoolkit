@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 // Geotools dependencies
-import org.geotoolkit.gml.xml.v311modified.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 import org.geotoolkit.observation.xml.v100.ObservationEntry;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
@@ -132,6 +132,7 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized List<Observation> getRelatedObservation() {       
         return new ArrayList<Observation>(relatedObservation);
     }
@@ -144,17 +145,9 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
         return sampledFeature;
     }
 
+    @Override
     public SurveyProcedureEntry getSurveyDetail() {
         return this.surveyDetail;
-    }
-    
-
-    /**
-     * Retourne le code numérique identifiant cette entrée.
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 
     /**
@@ -177,6 +170,16 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
         }
         return false;
         
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.relatedSamplingFeature != null ? this.relatedSamplingFeature.hashCode() : 0);
+        hash = 23 * hash + (this.relatedObservation != null ? this.relatedObservation.hashCode() : 0);
+        hash = 23 * hash + (this.sampledFeature != null ? this.sampledFeature.hashCode() : 0);
+        hash = 23 * hash + (this.surveyDetail != null ? this.surveyDetail.hashCode() : 0);
+        return hash;
     }
 
    /**

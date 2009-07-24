@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.ResponsibleParty;
@@ -140,7 +140,7 @@ public class SurveyProcedureEntry implements SurveyProcedure {
     }
     
     public TemporalObject getSurveyTime() {
-        return surveyTime;
+        return (TemporalObject) surveyTime;
     }
     
      /**

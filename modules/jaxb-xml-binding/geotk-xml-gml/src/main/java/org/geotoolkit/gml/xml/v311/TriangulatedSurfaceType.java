@@ -51,9 +51,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     TinType.class
 })
-public class TriangulatedSurfaceType
-    extends SurfaceType
-{
-
-
+public class TriangulatedSurfaceType extends SurfaceType {
 }

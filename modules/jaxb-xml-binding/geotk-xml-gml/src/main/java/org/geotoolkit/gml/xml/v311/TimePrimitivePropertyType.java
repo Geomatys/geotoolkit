@@ -48,15 +48,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePrimitivePropertyType", propOrder = {
-    "timePrimitive"
+    "abstractTimePrimitive"
 })
 @XmlSeeAlso({
     RelatedTimeType.class
 })
 public class TimePrimitivePropertyType {
 
-    @XmlElementRef(name = "_TimePrimitive", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractTimePrimitiveType> timePrimitive;
+    @XmlElementRef(name = "AbstractTimePrimitive", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    protected JAXBElement<? extends AbstractTimePrimitiveType> abstractTimePrimitive;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     protected String remoteSchema;
@@ -89,8 +89,8 @@ public class TimePrimitivePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractTimePrimitiveType> getTimePrimitive() {
-        return timePrimitive;
+    public JAXBElement<? extends AbstractTimePrimitiveType> getAbstractTimePrimitive() {
+        return abstractTimePrimitive;
     }
 
     /**
@@ -104,8 +104,8 @@ public class TimePrimitivePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}
      *     
      */
-    public void setTimePrimitive(JAXBElement<? extends AbstractTimePrimitiveType> value) {
-        this.timePrimitive = ((JAXBElement<? extends AbstractTimePrimitiveType> ) value);
+    public void setAbstractTimePrimitive(JAXBElement<? extends AbstractTimePrimitiveType> value) {
+        this.abstractTimePrimitive = ((JAXBElement<? extends AbstractTimePrimitiveType> ) value);
     }
 
     /**

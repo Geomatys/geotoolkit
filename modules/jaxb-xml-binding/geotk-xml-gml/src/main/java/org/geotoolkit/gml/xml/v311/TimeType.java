@@ -41,9 +41,5 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeType")
-public class TimeType
-    extends MeasureType
-{
-
-
+public class TimeType extends MeasureType {
 }

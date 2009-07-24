@@ -47,12 +47,22 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeInstantType", propOrder = {
     "timePosition"
 })
-public class TimeInstantType
-    extends AbstractTimeGeometricPrimitiveType
-{
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType {
 
     @XmlElement(required = true)
     protected TimePositionType timePosition;
+
+    /**
+     * Empty constructor used by JAXB.
+     */
+    TimeInstantType(){}
+
+    /**
+     * Build a new time instant with the specified timeposition.
+     */
+    public TimeInstantType(TimePositionType timePosition) {
+        this.timePosition = timePosition;
+    }
 
     /**
      * Gets the value of the timePosition property.

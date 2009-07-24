@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
     "members"
 })
 public class BagType
-    extends AbstractGMLType
+    extends AbstractGMLEntry
 {
 
     protected List<AssociationType> member;

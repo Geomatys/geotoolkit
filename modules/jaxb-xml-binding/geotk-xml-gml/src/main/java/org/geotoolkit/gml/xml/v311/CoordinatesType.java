@@ -67,6 +67,35 @@ public class CoordinatesType {
     protected String ts;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    CoordinatesType() {}
+
+    /**
+     * build a new coordinate with the specified values.
+     *
+     * @param value   A list of coordinates coma space separated.
+     * @param cs      Symbol used to separate components within a tuple or coordinate string (default="," a comma)
+     * @param decimal Symbol used for a decimal point (default="." a stop or period)
+     * @param ts      symbol used to separate tuples or coordinate strings (default=" " a space)
+     */
+    public CoordinatesType(String value, String cs, String decimal, String ts) {
+        this.value   = value;
+        this.cs      = cs;
+        this.ts      = ts;
+        this.decimal = decimal;
+    }
+
+    /**
+     * build a new coordinate with the specified values.
+     *
+     * @param value a list of coordinates coma space separated.
+     */
+    public CoordinatesType(String value) {
+        this.value = value;
+    }
+
+    /**
      * Gets the value of the value property.
      * 
      * @return
@@ -172,6 +201,59 @@ public class CoordinatesType {
      */
     public void setTs(String value) {
         this.ts = value;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 47 * hash + (this.decimal != null ? this.decimal.hashCode() : 0);
+        hash = 47 * hash + (this.cs != null ? this.cs.hashCode() : 0);
+        hash = 47 * hash + (this.ts != null ? this.ts.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CoordinatesType other = (CoordinatesType) obj;
+        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+            return false;
+        }
+        if ((this.decimal == null) ? (other.decimal != null) : !this.decimal.equals(other.decimal)) {
+            return false;
+        }
+        if ((this.cs == null) ? (other.cs != null) : !this.cs.equals(other.cs)) {
+            return false;
+        }
+        if ((this.ts == null) ? (other.ts != null) : !this.ts.equals(other.ts)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("CoordinatesType[").append('\n');
+        if (value != null) {
+            s.append("value : ").append(value.toString()).append('\n');
+        }
+        if (decimal != null) {
+            s.append("decimal : ").append(decimal.toString()).append('\n');
+        }
+        if (cs != null) {
+            s.append("cs : ").append(cs.toString()).append('\n');
+        }
+        if (ts != null) {
+            s.append("ts : ").append(ts.toString()).append('\n');
+        }
+        s.append("]");
+        return s.toString();
     }
 
 }

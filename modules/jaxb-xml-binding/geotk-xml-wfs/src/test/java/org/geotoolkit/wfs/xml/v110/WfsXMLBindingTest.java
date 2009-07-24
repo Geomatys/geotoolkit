@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
-import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
-import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringWriter;

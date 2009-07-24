@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.gml.xml.v311modified.AbstractFeatureCollectionType;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureCollectionType;
 
 
 /**

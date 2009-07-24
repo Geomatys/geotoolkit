@@ -52,7 +52,7 @@ public class BaseUnitType
 {
 
     @XmlElement(required = true)
-    protected ReferenceType unitsSystem;
+    protected ReferenceEntry unitsSystem;
 
     /**
      * Gets the value of the unitsSystem property.
@@ -62,7 +62,7 @@ public class BaseUnitType
      *     {@link ReferenceType }
      *     
      */
-    public ReferenceType getUnitsSystem() {
+    public ReferenceEntry getUnitsSystem() {
         return unitsSystem;
     }
 
@@ -74,7 +74,7 @@ public class BaseUnitType
      *     {@link ReferenceType }
      *     
      */
-    public void setUnitsSystem(ReferenceType value) {
+    public void setUnitsSystem(ReferenceEntry value) {
         this.unitsSystem = value;
     }
 

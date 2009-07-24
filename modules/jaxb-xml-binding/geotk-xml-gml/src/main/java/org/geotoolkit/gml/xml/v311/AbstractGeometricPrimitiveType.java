@@ -16,10 +16,16 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.geometry.complex.Complex;
+import org.opengis.geometry.complex.Composite;
+import org.opengis.geometry.primitive.OrientablePrimitive;
+import org.opengis.geometry.primitive.Primitive;
 
 
 /**
@@ -50,9 +56,50 @@ import javax.xml.bind.annotation.XmlType;
     AbstractCurveType.class,
     AbstractSurfaceType.class
 })
-public abstract class AbstractGeometricPrimitiveType
-    extends AbstractGeometryType
-{
+public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryType implements Primitive {
 
+    @Override
+    public Object evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
+    @Override
+    public <T> T evaluate(Object object, Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(ExpressionVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Set<Primitive> getContainedPrimitives() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Set<Primitive> getContainingPrimitives() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Set<Complex> getComplexes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Composite getComposite() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public OrientablePrimitive[] getProxy() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public AbstractGeometricPrimitiveType clone() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

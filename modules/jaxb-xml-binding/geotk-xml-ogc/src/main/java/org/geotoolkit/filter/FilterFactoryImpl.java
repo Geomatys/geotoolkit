@@ -32,12 +32,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 // constellation dependencies
-import org.geotoolkit.gml.xml.v311modified.AbstractGeometryType;
-import org.geotoolkit.gml.xml.v311modified.CoordinatesType;
-import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
-import org.geotoolkit.gml.xml.v311modified.EnvelopeEntry;
-import org.geotoolkit.gml.xml.v311modified.LineStringType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.CoordinatesType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.LineStringType;
+import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.ogc.xml.v110modified.AndType;
 import org.geotoolkit.ogc.xml.v110modified.ArithmeticOperatorsType;
 import org.geotoolkit.ogc.xml.v110modified.BBOXType;

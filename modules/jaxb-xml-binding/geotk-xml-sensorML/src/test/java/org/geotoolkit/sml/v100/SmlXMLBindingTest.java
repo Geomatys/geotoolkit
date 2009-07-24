@@ -72,11 +72,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 //constellation
-import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
-import org.geotoolkit.gml.xml.v311modified.TimePositionType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v100.CodeSpacePropertyType;
 import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
@@ -92,16 +91,16 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
 // Constellation dependencies
-import org.geotoolkit.gml.xml.v311modified.CodeType;
-import org.geotoolkit.gml.xml.v311modified.CoordinateSystemRefType;
-import org.geotoolkit.gml.xml.v311modified.DirectPositionType;
-import org.geotoolkit.gml.xml.v311modified.EngineeringCRSType;
-import org.geotoolkit.gml.xml.v311modified.EngineeringDatumRefType;
-import org.geotoolkit.gml.xml.v311modified.EngineeringDatumType;
-import org.geotoolkit.gml.xml.v311modified.PointType;
-import org.geotoolkit.gml.xml.v311modified.TemporalCRSType;
-import org.geotoolkit.gml.xml.v311modified.TemporalCSRefType;
-import org.geotoolkit.gml.xml.v311modified.TemporalDatumRefType;
+import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.gml.xml.v311.CoordinateSystemRefType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.EngineeringCRSType;
+import org.geotoolkit.gml.xml.v311.EngineeringDatumRefType;
+import org.geotoolkit.gml.xml.v311.EngineeringDatumType;
+import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.v311.TemporalCRSType;
+import org.geotoolkit.gml.xml.v311.TemporalCSRefType;
+import org.geotoolkit.gml.xml.v311.TemporalDatumRefType;
 import org.geotoolkit.swe.xml.v100.BooleanType;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.CoordinateType;
@@ -111,7 +110,6 @@ import org.geotoolkit.swe.xml.v100.VectorPropertyType;
 import org.geotoolkit.swe.xml.v100.VectorType;
 
 //Junit dependencies
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -122,7 +120,6 @@ import static org.junit.Assert.*;
  */
 public class SmlXMLBindingTest {
 
-    private Logger       logger = Logging.getLogger("org.geotoolkit.sml");
     private MarshallerPool marshallerPool;
     private ObjectFactory sml100Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v100.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
@@ -350,7 +347,7 @@ public class SmlXMLBindingTest {
 
         CodeSpacePropertyType cs = new CodeSpacePropertyType("urn:x-brgm:def:GeoPoint:bss");
         Classifier cl2 = new Classifier("sensorType", new Term(cs, "piezometer", "urn:sensor:classifier:sensorType"));
-        
+
         CodeSpacePropertyType cs3 = new CodeSpacePropertyType("urn:x-sandre:def:mdo:identifier");
         Classifier cl3 = new Classifier("waterBody", new Term(cs3, "FR6221", "urn:sensor:classifier:references"));
 
@@ -388,7 +385,7 @@ public class SmlXMLBindingTest {
 
         cs = new CodeSpacePropertyType("urn:x-brgm:def:samplingStation:bss");
         Identifier id1 = new Identifier("bssCode", new Term(cs, "10972X0137/PONT", "urn:x-ogc:def:identifier:OGC:modelNumber"));
-        
+
         cs = new CodeSpacePropertyType("urn:x-brgm:def:sensorSystem:hydras");
         Identifier id2 = new Identifier("supervisorCode", new Term(cs, "00ARGLELES", "urn:x-ogc:def:identifier:OGC:modelNumber"));
         Identifier id3 = new Identifier("longName", new Term("ARGELES", "urn:x-ogc:def:identifier:OGC:longname"));
@@ -466,7 +463,7 @@ public class SmlXMLBindingTest {
         Characteristics characteristics = new Characteristics();
         characteristics.setAbstractDataRecord(swe100Factory.createDataRecord(ccharRecord));
         system.setCharacteristics(characteristics);
-        
+
 
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:EPSG:27582", 2, Arrays.asList(65400.0, 1731368.0));
@@ -476,7 +473,7 @@ public class SmlXMLBindingTest {
 
         EngineeringDatumType engineeringDatum = new EngineeringDatumType("datum", "Sensor Datum", new CodeType("X, Y et Z sont orthogonal au regard d'un point de reference."));
         EngineeringDatumRefType usesEngineeringDatum = new EngineeringDatumRefType(engineeringDatum);
-        EngineeringCRSType engineeringCRS = new EngineeringCRSType("STATION_FRAME", "Position absolue du capteur", 
+        EngineeringCRSType engineeringCRS = new EngineeringCRSType("STATION_FRAME", "Position absolue du capteur",
                 new CoordinateSystemRefType("urn:ogc:def:crs:ogc:1.0:xyzFrame"), usesEngineeringDatum);
         SpatialReferenceFrame spatialReferenceFrame = new SpatialReferenceFrame(engineeringCRS);
         system.setSpatialReferenceFrame(spatialReferenceFrame);
@@ -517,7 +514,7 @@ public class SmlXMLBindingTest {
         Positions positions = new Positions(positionList);
         system.setPositions(positions);
 
-        TemporalReferenceFrame temporalReferenceFrame = new TemporalReferenceFrame(new TemporalCRSType("temporalReference", 
+        TemporalReferenceFrame temporalReferenceFrame = new TemporalReferenceFrame(new TemporalCRSType("temporalReference",
                                                                                                         null, null,
                                                                                                         "calendrier gregorien en heure d'ete",
                                                                                                         new TemporalCSRefType("urn:x-brgm:temporalCS:gregorian"),
@@ -531,7 +528,7 @@ public class SmlXMLBindingTest {
         Connections connections = new Connections(connectionList);
         system.setConnections(connections);
 
-        
+
         LayerPropertyType applicationLayer = new LayerPropertyType(new Category("urn:ogc:def:protocol:applicationLink", "urn:x-brgm:def:protocol:hydrasIRIS"));
         LayerPropertyType dataLinkLayer    = new LayerPropertyType(new Category("urn:ogc:def:protocol:dataLink", "urn:x-brgm:def:dataLink:RTC"));
         InterfaceDefinition definition = new InterfaceDefinition(null, applicationLayer, dataLinkLayer);

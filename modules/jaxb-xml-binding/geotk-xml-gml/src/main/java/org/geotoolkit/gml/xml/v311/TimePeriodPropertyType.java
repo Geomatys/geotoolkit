@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -52,6 +54,10 @@ public class TimePeriodPropertyType {
 
     @XmlElement(name = "TimePeriod")
     protected TimePeriodType timePeriod;
+    @XmlAttribute
+    private Boolean owns;
+    @XmlAttribute
+    private List<String> nilReason;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     protected String remoteSchema;
@@ -72,6 +78,34 @@ public class TimePeriodPropertyType {
     protected String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
+
+    /**
+     * Gets the value of the owns property.
+     */
+    public boolean isOwns() {
+        if (owns == null) {
+            return false;
+        } else {
+            return owns;
+        }
+    }
+
+    /**
+     * Sets the value of owns property.
+     */
+    public void setOwns(Boolean value) {
+        this.owns = value;
+    }
+
+    /**
+     * Gets the value of the nilReason property.
+     */
+    public List<String> getNilReason() {
+        if (nilReason == null) {
+            nilReason = new ArrayList<String>();
+        }
+        return nilReason;
+    }
 
     /**
      * Gets the value of the timePeriod property.
@@ -293,4 +327,36 @@ public class TimePeriodPropertyType {
         this.actuate = value;
     }
 
+    /**
+     * Return an object representation.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        if (timePeriod != null)
+            s.append(timePeriod).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        return s.toString();
+    }
 }

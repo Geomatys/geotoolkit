@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sml.xml;
 
-import org.geotoolkit.gml.xml.v311modified.PointType;
+import org.geotoolkit.gml.xml.v311.PointType;
 
 /**
  *

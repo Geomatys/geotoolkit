@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.geotoolkit.gml.xml.v311.EnvelopeType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.FeatureIdType;
@@ -133,14 +133,14 @@ public class OGC110toGTTransformer {
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v110.BBOXType) {
             org.geotoolkit.ogc.xml.v110.BBOXType binary = (org.geotoolkit.ogc.xml.v110.BBOXType) ops;
-            JAXBElement<? extends EnvelopeType> box = binary.getEnvelope();
+            JAXBElement<? extends EnvelopeEntry> box = binary.getEnvelope();
             org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = binary.getPropertyName();
             
             Expression geom = filterFactory.property(pnt.getContent());
-            double minx = box.getValue().getCoord().get(0).getX().doubleValue();
-            double maxx = box.getValue().getCoord().get(1).getX().doubleValue();
-            double miny = box.getValue().getCoord().get(0).getY().doubleValue();
-            double maxy = box.getValue().getCoord().get(1).getY().doubleValue();
+            double minx = box.getValue().getPos().get(0).getOrdinate(0);
+            double maxx = box.getValue().getPos().get(0).getOrdinate(1);
+            double miny = box.getValue().getPos().get(1).getOrdinate(0);
+            double maxy = box.getValue().getPos().get(1).getOrdinate(1);
             String srs =  box.getValue().getSrsName();
             
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {

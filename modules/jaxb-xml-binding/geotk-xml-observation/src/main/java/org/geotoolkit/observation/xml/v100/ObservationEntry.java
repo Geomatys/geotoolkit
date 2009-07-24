@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 // Constellation dependencies 
-import org.geotoolkit.gml.xml.v311modified.AbstractTimeGeometricPrimitiveType;
-import org.geotoolkit.gml.xml.v311modified.FeaturePropertyType;
-import org.geotoolkit.gml.xml.v311modified.ReferenceEntry;
-import org.geotoolkit.gml.xml.v311modified.TimePeriodType;
-import org.geotoolkit.gml.xml.v311modified.TimePositionType;
+import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
+import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
 import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
 import org.geotoolkit.swe.xml.v101.AnyResultEntry;
@@ -249,7 +249,7 @@ public class ObservationEntry implements Observation {
         }
         SamplingFeatureEntry foi = null;
         if (this.featureOfInterest != null) {
-            foi = (SamplingFeatureEntry) this.featureOfInterest.getFeature();
+            foi = (SamplingFeatureEntry) this.featureOfInterest.getAbstractFeature();
         }
         //debugging purpose
         if (this.result instanceof DataArrayPropertyType) {
@@ -281,9 +281,10 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SamplingFeature getFeatureOfInterest() {
         if (featureOfInterest != null) {
-            return (SamplingFeature)featureOfInterest.getFeature();
+            return (SamplingFeature)featureOfInterest.getAbstractFeature();
         }
         return null;
     }
@@ -295,6 +296,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Phenomenon getObservedProperty() {
         if (observedProperty != null) {
             return observedProperty.getPhenomenon();
@@ -310,6 +312,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Process getProcedure() {
         return procedure;
     }
@@ -324,6 +327,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Element getQuality() {
         return resultQuality;
     }
@@ -331,6 +335,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getResult() {
         return result;
     }
@@ -349,6 +354,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbstractTimeGeometricPrimitiveType getSamplingTime() {
         if (samplingTime != null)
             return samplingTime.getTimeGeometricPrimitive();
@@ -369,6 +375,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MetaData getObservationMetadata() {
         return observationMetadata;
     }
@@ -376,6 +383,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbstractTimeGeometricPrimitiveType getProcedureTime() {
         if (procedureTime != null)
             return procedureTime.getTimeGeometricPrimitive();
@@ -386,6 +394,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */ 
+    @Override
     public Object getProcedureParameter() {
         return procedureParameter;
     }
@@ -394,6 +403,7 @@ public class ObservationEntry implements Observation {
     /**
      * {@inheritDoc}
      */ 
+    @Override
     public String getDefinition() {
         return definition;
     }
@@ -415,9 +425,9 @@ public class ObservationEntry implements Observation {
         
         boolean obsFoi = false;
         if (this.featureOfInterest != null && template.featureOfInterest != null) {
-            obsFoi = Utilities.equals(this.featureOfInterest.getFeature(),    template.featureOfInterest.getFeature());
+            obsFoi = Utilities.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
             if (!obsFoi) {
-                System.out.println('\n' + "comparing feature of interest:" + '\n' + "THIS    => "+  this.featureOfInterest.getFeature() + '\n' + "TEMPLATE => " + template.featureOfInterest.getFeature() + '\n');
+                System.out.println('\n' + "comparing feature of interest:" + '\n' + "THIS    => "+  this.featureOfInterest.getAbstractFeature() + '\n' + "TEMPLATE => " + template.featureOfInterest.getAbstractFeature() + '\n');
             }
         } else {
             obsFoi = this.featureOfInterest == null && template.featureOfInterest == null;

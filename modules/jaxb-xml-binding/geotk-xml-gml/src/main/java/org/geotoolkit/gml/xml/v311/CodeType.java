@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -58,6 +59,26 @@ public class CodeType {
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     protected String codeSpace;
+
+    /**
+     * An empty constructor used by JAXB.
+     */
+    CodeType(){}
+
+    /**
+     * build a full CodeType.
+     */
+    public CodeType(String value, String codeSpace) {
+        this.codeSpace = codeSpace;
+        this.value     = value;
+    }
+
+    /**
+     * build a CodeType with no codespace.
+     */
+    public CodeType(String value) {
+        this.value     = value;
+    }
 
     /**
      * Gets the value of the value property.
@@ -107,4 +128,39 @@ public class CodeType {
         this.codeSpace = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[CodeType]").append("\n");
+        if (codeSpace != null) {
+            sb.append("codespace: ").append(codeSpace).append('\n');
+        }
+        if (value != null) {
+            sb.append("value: ").append(value).append('\n');
+        }
+        return sb.toString();
+    }
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CodeType) {
+            final CodeType that = (CodeType) object;
+
+            return Utilities.equals(this.codeSpace, that.codeSpace) &&
+                   Utilities.equals(this.value,     that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 97 * hash + (this.codeSpace != null ? this.codeSpace.hashCode() : 0);
+        return hash;
+    }
 }

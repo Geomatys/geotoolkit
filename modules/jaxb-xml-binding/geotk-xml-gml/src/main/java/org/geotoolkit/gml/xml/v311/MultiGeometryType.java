@@ -21,6 +21,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -57,6 +59,12 @@ public class MultiGeometryType
     protected List<GeometryPropertyType> geometryMember;
     protected GeometryArrayPropertyType geometryMembers;
 
+    MultiGeometryType() {}
+
+    public MultiGeometryType(List<GeometryPropertyType> geometryMember) {
+        this.geometryMember = geometryMember;
+    }
+
     /**
      * Gets the value of the geometryMember property.
      * 
@@ -87,6 +95,13 @@ public class MultiGeometryType
     }
 
     /**
+     * Sets the value of the geometryMember property.
+     */
+    public void setGeometryMember(List<GeometryPropertyType> geometryMember) {
+        this.geometryMember = geometryMember;
+    }
+
+    /**
      * Gets the value of the geometryMembers property.
      * 
      * @return
@@ -110,4 +125,62 @@ public class MultiGeometryType
         this.geometryMembers = value;
     }
 
+    @Override
+    public Object evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(Object object, Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(ExpressionVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Return a String description of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
+        if (geometryMember != null) {
+            s.append("geometryMember: ").append('\n');
+            for (GeometryPropertyType geoProp : geometryMember)  {
+                s.append(geoProp).append('\n');
+            }
+        }
+
+        if (geometryMembers != null) {
+            s.append("geometryMembers: ").append(geometryMembers).append('\n');
+        }
+
+        return s.toString();
+    }
+
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiGeometryType && super.equals(object)) {
+            final MultiGeometryType that = (MultiGeometryType) object;
+            return  Utilities.equals(this.geometryMember,  that.geometryMember) &&
+                    Utilities.equals(this.geometryMembers, that.geometryMembers);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 61 * hash + (this.geometryMember != null ? this.geometryMember.hashCode() : 0);
+        hash = 61 * hash + (this.geometryMembers != null ? this.geometryMembers.hashCode() : 0);
+        return hash;
+    }
 }

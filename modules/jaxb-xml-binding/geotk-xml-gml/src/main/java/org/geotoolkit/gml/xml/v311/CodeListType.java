@@ -61,6 +61,37 @@ public class CodeListType {
     protected String codeSpace;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    CodeListType(){}
+
+    /**
+     * Build a new List of code (without namespace).
+     */
+    public CodeListType(List<String> value) {
+        this.value = value;
+    }
+
+    /**
+     * Build a new List of code with the specified namespace.
+     */
+    public CodeListType(List<String> value, String codeSpace) {
+        this.value     = value;
+        this.codeSpace = codeSpace;
+    }
+
+    /**
+     * Build a new List of code (without namespace),
+     * with all the element of the list in the parameters.
+     */
+    public CodeListType(String... values) {
+        this.value = new ArrayList<String>();
+        for (String element:values) {
+            this.value.add(element);
+        }
+    }
+
+    /**
      * XML List based on XML Schema Name type.  An element of this type contains a space-separated list of Name values Gets the value of the value property.
      * 
      * <p>

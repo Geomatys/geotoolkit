@@ -79,6 +79,18 @@ public class LineStringType
     protected CoordinatesType coordinates;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    LineStringType() {}
+
+    /**
+     * Build a new LineString with the specified coordinates
+     */
+    public LineStringType(CoordinatesType coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
      * <p>
