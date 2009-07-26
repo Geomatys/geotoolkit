@@ -37,12 +37,16 @@ public class ZoomOutAction extends AbstractAction {
 
     private static final Logger LOGGER = Logging.getLogger(ZoomOutAction.class);
 
-    private static final ImageIcon ICON_ZOOM_OUT = IconBundle.getInstance().getIcon("16_zoom_out");
+    private static final ImageIcon ICON_ZOOM_OUT_16 = IconBundle.getInstance().getIcon("16_zoom_out");
+    private static final ImageIcon ICON_ZOOM_OUT_24 = IconBundle.getInstance().getIcon("24_zoom_out");
 
     private Map2D map = null;
 
     public ZoomOutAction() {
-        super("",ICON_ZOOM_OUT);
+        this(false);
+    }
+    public ZoomOutAction(boolean big) {
+        super("",(big)? ICON_ZOOM_OUT_24 : ICON_ZOOM_OUT_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_out"));
     }
 

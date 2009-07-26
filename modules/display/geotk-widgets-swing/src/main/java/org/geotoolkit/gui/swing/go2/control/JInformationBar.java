@@ -33,9 +33,9 @@ import org.geotoolkit.gui.swing.go2.control.information.MesureLenghtAction;
  */
 public class JInformationBar extends JToolBar implements MapControlBar{
 
-    private final MesureLenghtAction actionLenght = new MesureLenghtAction();
-    private final MesureAreaAction actionArea = new MesureAreaAction();
-    private final InformationAction actionInfo = new InformationAction();
+    private final MesureLenghtAction actionLenght;
+    private final MesureAreaAction actionArea;
+    private final InformationAction actionInfo;
     private Map2D map = null;
 
     public JInformationBar() {
@@ -47,6 +47,15 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * @param pane : related Map2D or null
      */
     public JInformationBar(Map2D pane) {
+        this(pane,false);
+    }
+
+    public JInformationBar(Map2D pane,boolean bigIcons) {
+
+        actionLenght = new MesureLenghtAction(bigIcons);
+        actionArea = new MesureAreaAction(bigIcons);
+        actionInfo = new InformationAction(bigIcons);
+
         add(actionLenght);
         add(actionArea);
         add(actionInfo);

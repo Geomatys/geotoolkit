@@ -124,13 +124,17 @@ public class ZoomInHandler extends AbstractNavigationHandler {
                 if(startX != endX && startY != endY){
                     zoom(startX,startY,endX,endY);
                 }
-                
-                int width = map.getComponent().getWidth() / 2;
-                int height = map.getComponent().getHeight() / 2;
-                int left = e.getX() - (width / 2);
-                int bottom = e.getY() - (height / 2);
+
+                decorationPane.setBuffer(null);
                 decorationPane.setFill(false);
-                decorationPane.setCoord(left, bottom, width, height, true);
+                decorationPane.setCoord(0, 0, 0, 0, false);
+                
+//                int width = map.getComponent().getWidth() / 2;
+//                int height = map.getComponent().getHeight() / 2;
+//                int left = e.getX() - (width / 2);
+//                int bottom = e.getY() - (height / 2);
+//                decorationPane.setFill(false);
+//                decorationPane.setCoord(left, bottom, width, height, true);
 
             } //right mouse button : pan action
             else if (mousebutton == MouseEvent.BUTTON3) {
@@ -190,14 +194,14 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         @Override
         public void mouseMoved(MouseEvent e) {
 
-            int width = map.getComponent().getWidth() / 2;
-            int height = map.getComponent().getHeight() / 2;
-
-            int left = e.getX() - (width / 2);
-            int bottom = e.getY() - (height / 2);
-
-            decorationPane.setFill(false);
-            decorationPane.setCoord(left, bottom, width, height, true);
+//            int width = map.getComponent().getWidth() / 2;
+//            int height = map.getComponent().getHeight() / 2;
+//
+//            int left = e.getX() - (width / 2);
+//            int bottom = e.getY() - (height / 2);
+//
+//            decorationPane.setFill(false);
+//            decorationPane.setCoord(left, bottom, width, height, true);
 
         }
 

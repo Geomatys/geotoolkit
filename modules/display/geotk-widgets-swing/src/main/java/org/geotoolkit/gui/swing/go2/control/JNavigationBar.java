@@ -35,11 +35,11 @@ import org.geotoolkit.gui.swing.go2.control.navigation.RefreshAction;
  */
 public class JNavigationBar extends JToolBar implements MapControlBar{
 
-    private final ZoomAllAction actionZoomAll = new ZoomAllAction();
-    private final ZoomInAction actionZoomIn = new ZoomInAction();
-    private final ZoomOutAction actionZoomOut = new ZoomOutAction();
-    private final PanAction actionZoomPan = new PanAction();
-    private final RefreshAction actionRefresh = new RefreshAction();
+    private final ZoomAllAction actionZoomAll;
+    private final ZoomInAction actionZoomIn;
+    private final ZoomOutAction actionZoomOut;
+    private final PanAction actionZoomPan;
+    private final RefreshAction actionRefresh;
 
     private Map2D map = null;
 
@@ -55,6 +55,16 @@ public class JNavigationBar extends JToolBar implements MapControlBar{
      * @param pane : related Map2D or null
      */
     public JNavigationBar(Map2D pane) {
+        this(pane,false);
+    }
+
+    public JNavigationBar(Map2D pane, boolean bigIcons) {
+        actionZoomAll = new ZoomAllAction(bigIcons);
+        actionZoomIn = new ZoomInAction(bigIcons);
+        actionZoomOut = new ZoomOutAction(bigIcons);
+        actionZoomPan = new PanAction(bigIcons);
+        actionRefresh = new RefreshAction(bigIcons);
+
         add(actionZoomAll);
         add(actionRefresh);
         add(actionZoomIn);

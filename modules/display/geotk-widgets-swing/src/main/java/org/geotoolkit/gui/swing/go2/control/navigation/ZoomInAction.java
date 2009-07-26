@@ -32,12 +32,17 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class ZoomInAction extends AbstractAction {
 
-    private static final ImageIcon ICON_ZOOM_IN = IconBundle.getInstance().getIcon("16_zoom_in");
+    private static final ImageIcon ICON_ZOOM_IN_16 = IconBundle.getInstance().getIcon("16_zoom_in");
+    private static final ImageIcon ICON_ZOOM_IN_24 = IconBundle.getInstance().getIcon("24_zoom_in");
 
     private Map2D map = null;
 
     public ZoomInAction() {
-        super("",ICON_ZOOM_IN);
+        this(false);
+    }
+
+    public ZoomInAction(boolean big) {
+        super("",(big)?ICON_ZOOM_IN_24 : ICON_ZOOM_IN_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_in"));
     }
 

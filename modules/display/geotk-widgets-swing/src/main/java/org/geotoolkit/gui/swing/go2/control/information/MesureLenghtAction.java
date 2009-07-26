@@ -32,12 +32,17 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class MesureLenghtAction extends AbstractAction {
 
-    private static final ImageIcon ICON_LENGHT = IconBundle.getInstance().getIcon("16_mesure_lenght");
+    private static final ImageIcon ICON_LENGHT_16 = IconBundle.getInstance().getIcon("16_mesure_lenght");
+    private static final ImageIcon ICON_LENGHT_24 = IconBundle.getInstance().getIcon("24_mesure_lenght");
 
     private Map2D map = null;
 
     public MesureLenghtAction(){
-        super("",ICON_LENGHT);
+        this(false);
+    }
+
+    public MesureLenghtAction(boolean big){
+        super("",(big)?ICON_LENGHT_24 :ICON_LENGHT_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_lenght"));
     }
 

@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -34,7 +33,6 @@ import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -107,10 +105,15 @@ public class J2DCanvasVolatile extends J2DCanvas{
         this.dim = dim;
         setDisplayBounds(new Rectangle(dim));
         buffer0 = null;
+
+        if(getController().isAutoRepaint()){
+            repaint();
+        }
+
     }
 
     private synchronized VolatileImage createBackBuffer() {
-        return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.TRANSLUCENT);
+        return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.OPAQUE);
     }
 
 
@@ -143,14 +146,14 @@ public class J2DCanvasVolatile extends J2DCanvas{
             //create the buffer at the last possible moment
             //or create a new one if we are already rendering
             //TODO : find a way to stop previous thread
-            buffer0 = createBackBuffer();
-            buffer0.setAccelerationPriority(1);
+            VolatileImage buffer = createBackBuffer();
+            buffer.setAccelerationPriority(1);
 
-            output = (Graphics2D) buffer0.getGraphics();
+            output = (Graphics2D) buffer.getGraphics();
             output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
             output.fillRect(0,0,dim.width,dim.height);
-//            output.setBackground(Color.WHITE);
-//            output.clearRect(0, 0, buffer0.getWidth(), buffer0.getHeight());
+
+            buffer0 = buffer;
 
         }else{
             //we clear the buffer part if it exists
@@ -162,7 +165,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         }
 
         output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
-        
+
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
 
@@ -189,6 +192,12 @@ public class J2DCanvasVolatile extends J2DCanvas{
         output.setClip(paintingDisplayShape);
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output, paintingDisplayShape);
+
+        //paint background if there is one.
+        if(painter != null){
+            painter.paint(context2D);
+        }
+
         final AbstractContainer renderer         = getContainer();
         if(renderer != null && renderer instanceof AbstractContainer2D){
             final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
@@ -215,7 +224,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     public VolatileImage getVolatile(){
-       return buffer0;
+        return buffer0;
     }
 
     @Override

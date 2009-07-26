@@ -134,6 +134,14 @@ public class JContextTree extends JScrollPane {
 
     }
 
+    public void setRootVisible(boolean visible){
+        tree.setRootVisible(visible);
+    }
+
+    public boolean isRootVisible(){
+        return tree.isRootVisible();
+    }
+
     public void setContext(MapContext context) {
         if(this.context != null){
             context.removeContextListener(listener);

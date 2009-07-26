@@ -31,12 +31,17 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class RefreshAction extends AbstractAction {
 
-    private static final ImageIcon ICON_REFRESH = IconBundle.getInstance().getIcon("16_data_reload");
+    private static final ImageIcon ICON_REFRESH_16 = IconBundle.getInstance().getIcon("16_data_reload");
+    private static final ImageIcon ICON_REFRESH_24 = IconBundle.getInstance().getIcon("24_data_reload");
 
     private Map2D map = null;
 
     public RefreshAction() {
-        super("",ICON_REFRESH);
+        this(false);
+    }
+
+    public RefreshAction(boolean big) {
+        super("",(big)?ICON_REFRESH_24 : ICON_REFRESH_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_refresh"));
     }
 

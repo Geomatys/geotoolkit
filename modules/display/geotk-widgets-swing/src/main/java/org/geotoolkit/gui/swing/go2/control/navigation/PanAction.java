@@ -30,12 +30,17 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class PanAction extends AbstractAction {
 
-    private static final ImageIcon ICON_ZOOM_PAN = IconBundle.getInstance().getIcon("16_zoom_pan");
+    private static final ImageIcon ICON_ZOOM_PAN_16 = IconBundle.getInstance().getIcon("16_zoom_pan");
+    private static final ImageIcon ICON_ZOOM_PAN_24 = IconBundle.getInstance().getIcon("24_zoom_pan");
 
     private Map2D map = null;
 
     public PanAction() {
-        super("",ICON_ZOOM_PAN);
+        this(false);
+    }
+
+    public PanAction(boolean big) {
+        super("",(big) ? ICON_ZOOM_PAN_24 : ICON_ZOOM_PAN_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_pan"));
     }
 

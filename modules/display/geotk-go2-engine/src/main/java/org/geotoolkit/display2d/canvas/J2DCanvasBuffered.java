@@ -48,7 +48,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
     private final CanvasController2D controller = new DefaultController2D(this);
     private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private BufferedImage buffer;
-    private Color background = null;
     private Dimension dim;
 
 
@@ -65,10 +64,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
         }
         setDisplayBounds(new Rectangle(dim));
         this.dim = dim;
-    }
-
-    public void setBackground(final Color color){
-        this.background = color;
     }
 
     public void setSize(final Dimension dim){
@@ -145,12 +140,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
         final Graphics2D output = (Graphics2D) buffer.getGraphics();
 
-        //paint background if there is one.
-        if(background != null){
-            output.setColor(background);
-            output.fillRect(0,0,dim.width,dim.height);
-        }
-
         Rectangle clipBounds = output.getClipBounds();
         /*
          * Sets a flag for avoiding some "refresh()" events while we are actually painting.
@@ -173,6 +162,12 @@ public class J2DCanvasBuffered extends J2DCanvas{
         output.addRenderingHints(hints);
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
+
+        //paint background if there is one.
+        if(painter != null){
+            painter.paint(context2D);
+        }
+
         final AbstractContainer renderer = getContainer();
         if(renderer != null && renderer instanceof AbstractContainer2D){
             final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;

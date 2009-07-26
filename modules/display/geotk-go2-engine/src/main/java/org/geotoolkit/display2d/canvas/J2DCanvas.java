@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
@@ -60,9 +61,18 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class J2DCanvas extends ReferencedCanvas2D{
 
+    protected BackgroundPainter painter = null;
     
     protected J2DCanvas(CoordinateReferenceSystem crs,Hints hints){
         super(crs,hints);
+    }
+
+    public void setBackgroundPainter(BackgroundPainter painter) {
+        this.painter = painter;
+    }
+
+    public BackgroundPainter getBackgroundPainter() {
+        return painter;
     }
 
     /**

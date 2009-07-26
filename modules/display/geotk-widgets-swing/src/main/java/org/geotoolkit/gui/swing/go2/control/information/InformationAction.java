@@ -31,12 +31,17 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class InformationAction extends AbstractAction {
 
-    private static final ImageIcon ICON_INFO = IconBundle.getInstance().getIcon("16_deco_info");
+    private static final ImageIcon ICON_INFO_16 = IconBundle.getInstance().getIcon("16_deco_info");
+    private static final ImageIcon ICON_INFO_24 = IconBundle.getInstance().getIcon("24_deco_info");
 
     private Map2D map = null;
 
     public InformationAction(){
-        super("",ICON_INFO);
+        this(false);
+    }
+
+    public InformationAction(boolean big){
+        super("",(big) ? ICON_INFO_24 : ICON_INFO_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
     }
 

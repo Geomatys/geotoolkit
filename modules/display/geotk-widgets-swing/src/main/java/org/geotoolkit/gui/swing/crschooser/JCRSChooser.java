@@ -152,8 +152,6 @@ public class JCRSChooser extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
         jTabbedPane1 = new JTabbedPane();
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();
@@ -166,7 +164,9 @@ public class JCRSChooser extends javax.swing.JDialog {
         but_fermer = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(MessageBundle.getString("crschooser_title")); // NOI18N
+        setTitle("null");
+
+
         jLabel1.setText(MessageBundle.getString("crschooser_crs")); // NOI18N
         gui_jtf_crs.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -189,8 +189,8 @@ public class JCRSChooser extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
-                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(21, 21, 21)))
@@ -204,7 +204,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(gui_jtf_crs, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -221,14 +221,14 @@ public class JCRSChooser extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -252,17 +252,17 @@ public class JCRSChooser extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(645, Short.MAX_VALUE)
+                .addContainerGap(341, Short.MAX_VALUE)
                 .addComponent(but_valider)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(but_fermer)
                 .addContainerGap())
-            .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 773, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(but_fermer)

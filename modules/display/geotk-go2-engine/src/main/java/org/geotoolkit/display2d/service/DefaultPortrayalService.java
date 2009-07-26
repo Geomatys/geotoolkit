@@ -44,6 +44,7 @@ import org.geotoolkit.display.canvas.HintKey;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.factory.Hints;
@@ -108,7 +109,7 @@ public class DefaultPortrayalService implements PortrayalService{
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
-        canvas.setBackground(background);
+        canvas.setBackgroundPainter(new SolidColorPainter(background));
 
         renderer.setContext(context);
         try {
@@ -180,7 +181,7 @@ public class DefaultPortrayalService implements PortrayalService{
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
-        canvas.setBackground(background);
+        canvas.setBackgroundPainter(new SolidColorPainter(background));
 
         if(monitor != null){
             canvas.setMonitor(monitor);
