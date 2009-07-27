@@ -38,7 +38,7 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
  * The object that create a mosaic once {@link MosaicWizard} finished to collect all information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -63,6 +63,7 @@ final class MosaicCreator extends DeferredWizardResult {
             final MosaicBuilder builder = ((MosaicBuilderEditor) settings.get(MosaicWizard.LAYOUT)).getMosaicBuilder();
             final Color[]       colors  = ((MultiColorChooser)   settings.get(MosaicWizard.COLORS)).getSelectedColors();
             Logging.getLogger(MosaicBuilder.class).setLevel(Level.FINE);
+            builder.setLogLevel(Level.INFO);
             final MosaicImageWriteParam param = new MosaicImageWriteParam();
             param.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_NONEMPTY);
             if (colors.length != 0) {

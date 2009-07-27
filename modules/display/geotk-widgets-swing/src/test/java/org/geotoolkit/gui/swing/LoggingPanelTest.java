@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * Tests the {@link LoggingPanel}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.01
  */
@@ -84,6 +84,7 @@ public final class LoggingPanelTest extends WidgetTestCase<LoggingPanel> {
             test.setColumnVisible(LoggingPanel.Column.CLASS,  false);
             test.setColumnVisible(LoggingPanel.Column.METHOD, false);
         }
+        test.setCapacity(100);
         return test;
     }
 
@@ -99,6 +100,7 @@ public final class LoggingPanelTest extends WidgetTestCase<LoggingPanel> {
         if (!displayEnabled) {
             return;
         }
+        // Increase the 20 value to 200 if you want to test buffer rolling.
         for (int i=0; i<20; i++) {
             String message = "Message #" + i;
             if ((i % 3) == 0) {

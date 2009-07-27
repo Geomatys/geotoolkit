@@ -38,7 +38,7 @@ import org.geotoolkit.coverage.grid.ImageGeometry;
  * failures throw {@link AssertionError}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.5
  * @module
@@ -133,6 +133,15 @@ final class ComparedTileManager extends TileManager {
     public void setGridToCRS(AffineTransform gridToCRS) throws IllegalStateException, IOException {
         first .setGridToCRS(gridToCRS);
         second.setGridToCRS(gridToCRS);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void setGridGeometry(final ImageGeometry geometry) {
+        first .setGridGeometry(geometry);
+        second.setGridGeometry(geometry);
     }
 
     /**

@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -51,7 +50,7 @@ import org.geotoolkit.resources.Errors;
  * But subclasses can make such assumption for better performances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.5
  * @module
@@ -67,7 +66,7 @@ public abstract class TileManager implements Serializable {
      * The grid geometry, including the "<cite>grid to real world</cite>" transform.
      * This is provided by {@link TileManagerFactory} when this information is available.
      */
-    ImageGeometry geometry;
+    private ImageGeometry geometry;
 
     /**
      * All image providers used as an unmodifiable set. Computed when first needed.
@@ -89,7 +88,8 @@ public abstract class TileManager implements Serializable {
      * The <cite>grid to CRS</cite> transform is not necessary for proper working of {@linkplain
      * MosaicImageReader mosaic image reader}, but is provided as a convenience for users.
      * <p>
-     * This method can be invoked only once.
+     * This method can be invoked at most once. It can not be invoked at all if the transform
+     * has been automatically invoked by {@link TileManagerFactory}.
      *
      * @param gridToCRS The "grid to CRS" transform.
      * @throws IllegalStateException if a transform was already assigned to at least one tile.
@@ -119,6 +119,17 @@ public abstract class TileManager implements Serializable {
     }
 
     /**
+     * Sets the grid geometry to the given value. This method is for {@link TileManagerFactory}
+     * usage only, which will set the geometry computed by {@link RegionCalculator}.
+     */
+    synchronized void setGridGeometry(final ImageGeometry geometry) {
+        if (this.geometry != null) {
+            throw new IllegalStateException();
+        }
+        this.geometry = geometry;
+    }
+
+    /**
      * Returns the grid geometry, including the "<cite>grid to real world</cite>" transform.
      * This information is typically available only when {@linkplain AffineTransform affine
      * transform} were explicitly given to {@linkplain Tile#Tile(ImageReaderSpi,Object,int,
@@ -130,32 +141,6 @@ public abstract class TileManager implements Serializable {
      * @see Tile#getGridToCRS
      */
     public synchronized ImageGeometry getGridGeometry() throws IOException {
-        if (geometry == null) {
-            /*
-             * The gridToCRS transform is the same one than the one of the tile having origin at
-             * (0,0) and subsampling of (1,1).  So we search for exactly this tile and currently
-             * accept no other one. In a future version we could accept an other tile (but which
-             * one?) and translate the affine transform...  But the result could be wrong if the
-             * gridToCRS transform is not computed by RegionCalculator. Only the particular tile
-             * searched by current implementation should be okay in all cases.
-             */
-            for (final Tile tile : getInternalTiles()) {
-                final Dimension subsampling = tile.getSubsampling();
-                if (subsampling.width != 1 || subsampling.height != 1) {
-                    continue;
-                }
-                final Point origin = tile.getLocation();
-                if (origin.x != 0 || origin.y != 0) {
-                    continue;
-                }
-                final AffineTransform gridToCRS = tile.getGridToCRS();
-                if (gridToCRS == null) {
-                    continue;
-                }
-                geometry = new ImageGeometry(getRegion(), gridToCRS);
-                break;
-            }
-        }
         return geometry;
     }
 

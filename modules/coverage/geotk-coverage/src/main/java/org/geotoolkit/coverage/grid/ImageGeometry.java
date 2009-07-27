@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
  * instances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @see GridGeometry2D
  * @see GeneralGridGeometry
@@ -73,9 +73,15 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
      * @param bounds The image bounds in pixel coordinates.
      * @param gridToCRS The affine transform from pixel coordinates to "real world" coordinates.
      */
-    public ImageGeometry(final Rectangle bounds, final AffineTransform gridToCRS) {
+    public ImageGeometry(final Rectangle bounds, AffineTransform gridToCRS) {
         this.gridRange = new GridEnvelope2D(bounds);
-        this.gridToCRS = new AffineTransform2D(gridToCRS);
+        if (gridToCRS.getClass().equals(AffineTransform2D.class)) {
+            // Cast only if this is exactly the AffineTransform2D class,
+            // not a subclass (otherwise it could be mutable).
+            this.gridToCRS = (AffineTransform2D) gridToCRS;
+        } else {
+            this.gridToCRS = new AffineTransform2D(gridToCRS);
+        }
     }
 
     /**

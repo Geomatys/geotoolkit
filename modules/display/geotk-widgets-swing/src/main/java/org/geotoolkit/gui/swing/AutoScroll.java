@@ -41,17 +41,13 @@ import javax.swing.event.ChangeListener;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.0
  * @module
  */
-final class AutoScroll implements ChangeListener, Serializable {
-    /**
-     * Serial number for interoperability with different versions.
-     */
-    private static final long serialVersionUID = 8932928616386789102L;
-
+@SuppressWarnings("serial")
+class AutoScroll implements ChangeListener, Serializable {
     /**
       * The model for the vertical scrollbar.
       */
@@ -61,6 +57,11 @@ final class AutoScroll implements ChangeListener, Serializable {
      * Properties of the {@link BoundedRangeModel} the last time {@link #sync} has been invoked.
      */
     private int value, extent, maximum;
+
+    /**
+     * {@code true} if the current viewport is at the bottom of the scroll area.
+     */
+    private boolean viewBottom;
 
     /**
      * Constructs a new {@code AutoScroll} for the specified model.
@@ -100,10 +101,28 @@ final class AutoScroll implements ChangeListener, Serializable {
         final int oldExtent  = extent;
         final int oldMaximum = maximum;
         sync();
-        if (oldValue+oldExtent >= oldMaximum) {
-            if (value==oldValue && extent>=oldExtent && maximum>oldMaximum) {
-                model.setValue(oldValue + (maximum-oldMaximum));
+        if (viewBottom = oldValue + oldExtent >= oldMaximum) {
+            if (value == oldValue && extent >= oldExtent && maximum > oldMaximum) {
+                model.setValue(oldValue + (maximum - oldMaximum));
             }
+        }
+    }
+
+    /**
+     * Returns {@code true} if the current viewport is at the bottom of the scroll area.
+     */
+    final boolean isViewBottom() {
+        return viewBottom;
+    }
+
+    /**
+     * Changes the current value by the given amount, provided that it does not result in
+     * a value out of bounds. Otherwise this method does nothing.
+     */
+    final void conditionalScroll(final int delta) {
+        final int value = model.getValue() + delta;
+        if (value >= model.getMinimum() && value + model.getExtent() <= model.getMaximum()) {
+            model.setValue(value);
         }
     }
 }

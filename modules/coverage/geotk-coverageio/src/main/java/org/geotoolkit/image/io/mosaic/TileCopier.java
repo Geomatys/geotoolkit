@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -41,6 +44,8 @@ import javax.imageio.IIOException;
 import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
 import org.geotoolkit.internal.rmi.ShareableTask;
@@ -48,10 +53,12 @@ import org.geotoolkit.internal.image.io.RawFile;
 
 
 /**
- * Copies a set of tiles to temporary RAW files.
+ * Copies a set of tiles to temporary RAW files. This is created indirectly by
+ * {@link MosaicImageWriter#writeFromInput} before to start to creation of the
+ * new mosaic.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -118,6 +125,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
      */
     @Override
     public Map<Tile,RawFile> call() throws IOException {
+        final Logger logger = Logging.getLogger(TileCopier.class);
         final ObjectStream<Tile> tiles = inputs();
         final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes =
                 new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
@@ -129,6 +137,11 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
         BufferedImage targetImage = null;
         Tile tile;
         while ((tile = tiles.next()) != null) {
+            final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CACHING_$1, tile);
+            record.setSourceClassName("MosaicImageWriter"); // The public API which created this task.
+            record.setSourceMethodName("writeFromInput");
+            logger.log(record);
+
             final int imageIndex = tile.getImageIndex();
             final ImageReader reader = tile.getImageReader();
             ImageReadParam param = null;

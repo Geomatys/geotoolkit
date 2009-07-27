@@ -77,6 +77,11 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int APPLIED_UNIT_CONVERSION_$3 = 4;
 
         /**
+         * Caching {0}.
+         */
+        public static final int CACHING_$1 = 56;
+
+        /**
          * Failed to bind a "{0}" entry.
          */
         public static final int CANT_BIND_DATASOURCE_$1 = 5;

@@ -430,10 +430,12 @@ public class MosaicTableModel extends ListTableModel<Tile> {
          * like the tile location computed from the "gridToCRS" affine transform.
          * Fire a "row updates" event so we can see the updated values in the table.
          */
-        final int last = elements.length - 1;
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
-                fireTableRowsUpdated(0, last);
+                final int size = MosaicTableModel.this.elements.size();
+                if (size != 0) {
+                    fireTableRowsUpdated(0, size - 1);
+                }
             }
         });
         return managers;

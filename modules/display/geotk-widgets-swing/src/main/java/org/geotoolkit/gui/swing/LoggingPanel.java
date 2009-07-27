@@ -26,7 +26,6 @@ import javax.swing.ScrollPaneConstants;
 
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
@@ -37,7 +36,6 @@ import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.TableColumnExt;
@@ -71,7 +69,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * the logger messages to a higher level than the logger level.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.0
  * @module
@@ -112,12 +110,18 @@ public class LoggingPanel extends JPanel {
     /**
      * The model for this component.
      */
-    private final LoggingTableModel model = new LoggingTableModel();
+    private final LoggingTableModel model;
 
     /**
      * The table for displaying logging messages.
      */
-    private final JXTable table = new JXTable(model);
+    private final JXTable table;
+
+    /**
+     * Scroll down automatically when a new log record is added, provided that
+     * the scroll is already at the bottom.
+     */
+    private final LoggingTableModel.Scroll scrollControl;
 
     /**
      * Foreground and background colors to use for displaying logging messages.
@@ -136,7 +140,7 @@ public class LoggingPanel extends JPanel {
      * The font to use for messages. We use by default a monospaced font
      * because some messages are formatted for the console (e.g. as a table).
      */
-    private Font messageFont = Font.decode("Monospaced");
+    private Font messageFont;
 
     /**
      * Constructs a new logging panel. This panel is not registered to any logger.
@@ -148,11 +152,21 @@ public class LoggingPanel extends JPanel {
      */
     public LoggingPanel() {
         super(new BorderLayout());
+        messageFont = Font.decode("Monospaced");
+        model = new LoggingTableModel();
+        table = new JXTable(model);
+        /*
+         * Sets table properties, especially the row height which is set to the font size.
+         * This is needed in order to preserve the formatting of boxes, trees, etc. printed
+         * using the drawing character of monospaced font. The row height will be set again
+         * in the setMessageFont(...) method.
+         */
         table.setShowGrid(false);
         table.setRolloverEnabled(false);
         table.setColumnControlVisible(true);
         table.setCellSelectionEnabled(false);
-        table.setIntercellSpacing(new Dimension()); // Set to no space.
+        table.setRowHeight(messageFont.getSize());
+        table.setRowMargin(0);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         final TableColumnModel columns = table.getColumnModel();
         for (final Column c : Column.values()) {
@@ -167,7 +181,8 @@ public class LoggingPanel extends JPanel {
         }));
         final JScrollPane scroll = new JScrollPane(table);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        new AutoScroll(scroll.getVerticalScrollBar().getModel());
+        scrollControl = new LoggingTableModel.Scroll(table, scroll.getVerticalScrollBar().getModel());
+        model.addTableModelListener(scrollControl);
         add(scroll, BorderLayout.CENTER);
 
         setBackground(Color.WHITE);
@@ -233,8 +248,8 @@ public class LoggingPanel extends JPanel {
     }
 
     /**
-     * Returns the maximum number of {@link LogRecord}s the handler can memorize. If more
-     * messages are logged, then the earliest messages will be discarted.
+     * Returns the maximum number of {@link java.util.logging.LogRecord}s the handler can
+     * memorize. If more messages are logged, then the earliest messages will be discarted.
      *
      * @return The current maximum number of record.
      */
@@ -243,8 +258,8 @@ public class LoggingPanel extends JPanel {
     }
 
     /**
-     * Sets the maximum number of {@link LogRecord}s the handler can memorize. If more
-     * messages are logged, then the earliest messages will be discarted.
+     * Sets the maximum number of {@link java.util.logging.LogRecord}s the handler can memorize.
+     * If more messages are logged, then the earliest messages will be discarted.
      *
      * @param capacity The new maximum number of record.
      */
@@ -275,6 +290,7 @@ public class LoggingPanel extends JPanel {
     public void setMessageFont(final Font font) {
         final Font old = messageFont;
         messageFont = font;
+        table.setRowHeight(font.getSize());
         firePropertyChange("messageFont", old, font);
         repaint();
     }
@@ -427,6 +443,8 @@ public class LoggingPanel extends JPanel {
      * method must be invoked explicitely when the container is being discarted.
      */
     public void dispose() {
+        model.removeTableModelListener(scrollControl);
+        scrollControl.dispose();
         final Handler handler = getHandler();
         while (logger != null) {
             logger.removeHandler(handler);

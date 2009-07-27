@@ -68,7 +68,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @see org.geotoolkit.gui.swing.image.MosaicBuilderEditor
  *
@@ -1290,7 +1290,7 @@ public class MosaicBuilder {
          * geometry from the source tile, if there is any. This operation is conservative and
          * performed only on a "best effort" basis.
          */
-        if (tiles.geometry == null) {
+        if (tiles.getGridGeometry() == null) {
             if (writer.inputTiles != null) {
                 for (final TileManager candidate : writer.inputTiles) {
                     final ImageGeometry geometry = candidate.getGridGeometry();

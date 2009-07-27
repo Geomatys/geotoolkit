@@ -29,23 +29,20 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.JXLabel;
 
-import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.WizardController;
 
-import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
-import org.geotoolkit.internal.SwingUtilities;
 
 
 /**
  * Guides the user through the steps of creating a set of {@linkplain Tile tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 3.00
  * @module
@@ -77,6 +74,11 @@ public final class MosaicWizard extends AbstractWizard {
      * The ID for the panel asking confirmation.
      */
     static final String CONFIRM = "Confirm";
+
+    /**
+     * The last line displayed in the last panel.
+     */
+    private static final String CONFIRM_LABEL = "ConfirmLabel";
 
     /**
      * {@code true} if the input mosaic changed.  This is set to {@code true} if the
@@ -204,6 +206,7 @@ public final class MosaicWizard extends AbstractWizard {
             panel.add(label, BorderLayout.SOUTH);
             component = panel;
             addSetting(settings, CONFIRM, logging);
+            addSetting(settings, CONFIRM_LABEL, label);
         }
         component.setPreferredSize(SIZE);
         component.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));
@@ -266,19 +269,11 @@ public final class MosaicWizard extends AbstractWizard {
     @Override
     @SuppressWarnings("rawtypes")
     protected Object finish(final Map settings) {
+        ((JXLabel) settings.get(CONFIRM_LABEL)).setText("Creating the mosaic...");
         return new MosaicCreator();
     }
 
-    /**
-     * Displays this wizard.
-     *
-     * @param args The command line arguments.
-     */
-    public static void main(String[] args) {
-        SwingUtilities.setLookAndFeel(MosaicWizard.class, "main");
-        Registry.setDefaultCodecPreferences();
-        final MosaicWizard wizard = new MosaicWizard();
-        WizardDisplayer.showWizard(wizard.createWizard());
-        System.exit(0);
-    }
+    // There is no main method on intend on this class.  We want
+    // to force usage of the Main method because we need a Frame
+    // to be created before the call to setDefaultCodecPreferences().
 }

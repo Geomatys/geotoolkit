@@ -27,10 +27,12 @@ import java.util.Date;
 import java.text.DateFormat;
 
 import java.awt.EventQueue;
+import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.EventListenerList;
+import javax.swing.BoundedRangeModel;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.StringUtilities;
@@ -42,7 +44,7 @@ import org.geotoolkit.internal.StringUtilities;
  * a {@link javax.swing.JTable}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.0
  * @module
@@ -228,7 +230,7 @@ final class LoggingTableModel extends Handler implements TableModel {
         }
         /*
          * Wraps the LogRecord in exactly one Record instances (typicaly case), or more
-         * Record instances if the LogRecord message span more than one line.
+         * Record instances if the LogRecord message spans more than one line.
          */
         final int firstSlot = recordCount % capacity;
         final Record[] toAdd = Record.create(record, getFormatter().formatMessage(record));
@@ -243,19 +245,66 @@ final class LoggingTableModel extends Handler implements TableModel {
         /*
          * Notify all listeners that one (or more) records have been added.
          */
-        final TableModelEvent event;
-        if (recordCount <= capacity) {
-            event = new TableModelEvent(this, firstSlot, firstSlot + toAdd.length,
-                    TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+        final int upper   = Math.min(recordCount, capacity);
+        final int removed = Math.min(recordCount - capacity, toAdd.length);
+        final TableModelEvent remove, insert;
+        if (removed > 0) {
+            remove = new TableModelEvent(this, 0, removed-1,
+                    TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
         } else {
-            event = new TableModelEvent(this, 0, capacity-1,
-                    TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
+            remove = null;
         }
+        insert = new TableModelEvent(this, upper - toAdd.length, upper - 1,
+                TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
-                fireTableChanged(event);
+                if (remove != null) {
+                    fireTableChanged(remove);
+                }
+                fireTableChanged(insert);
             }
         });
+    }
+
+    /**
+     * Controls the scrolling of {@link LoggingPanel}. This class scroll down if the view port
+     * was already at the bottom of the scroll area and a new record is inserted, or scroll up
+     * if the view port is <em>not</em> at the bottom of the scroll area and the first record
+     * has been removed.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.02
+     *
+     * @since 3.02
+     * @module
+     */
+    @SuppressWarnings("serial")
+    static final class Scroll extends AutoScroll implements TableModelListener {
+        /**
+         * The table on which to control the scrolling.
+         */
+        private final JTable table;
+
+        /**
+         * Constructs a new {@code AutoScroll} for the specified model.
+         */
+        Scroll(final JTable table, final BoundedRangeModel model) {
+            super(model);
+            this.table = table;
+        }
+
+        /**
+         * Invoked when a new record has been added. If the oldest record has been removed
+         * and the viewport is not at the bottom of the scroll area, scroll up in order to
+         * keep the viewport on the same records.
+         */
+        @Override
+        public void tableChanged(final TableModelEvent event) {
+            if (event.getType() == TableModelEvent.DELETE && !isViewBottom()) {
+                final int n = event.getFirstRow() - (event.getLastRow() + 1); // Intentionally negative.
+                conditionalScroll(n * table.getRowHeight());
+            }
+        }
     }
 
     /**
@@ -366,10 +415,13 @@ final class LoggingTableModel extends Handler implements TableModel {
 
     /**
      * Forwards the given notification event to all {@link TableModelListeners}.
+     * Listeners are notified in registration order. This order is necessary,
+     * because the last listener is the {@link Scroll} object and we want it
+     * to be notified last.
      */
     private void fireTableChanged(final TableModelEvent event) {
         final Object[] listeners = listenerList.getListenerList();
-        for (int i=listeners.length-2; i>=0; i-=2) {
+        for (int i=0; i<listeners.length; i+=2) {
             if (listeners[i] == TableModelListener.class) {
                 ((TableModelListener) listeners[i+1]).tableChanged(event);
             }
@@ -377,14 +429,14 @@ final class LoggingTableModel extends Handler implements TableModel {
     }
 
     /**
-     * Flush any buffered output.
+     * Flushes any buffered output.
      */
     @Override
     public void flush() {
     }
 
     /**
-     * Close the {@code Handler} and free all associated resources.
+     * Closes the {@code Handler} and free all associated resources.
      */
     @Override
     public void close() {

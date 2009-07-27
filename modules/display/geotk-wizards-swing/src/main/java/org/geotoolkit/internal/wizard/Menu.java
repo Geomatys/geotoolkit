@@ -71,7 +71,6 @@ final class Menu extends JFrame implements ActionListener {
                 "remembered for all subsequent Geotoolkit.org usage.", c);
         setSize(740, 200);
         setLocationRelativeTo(null);
-        setVisible(true);
     }
 
     /**
@@ -127,7 +126,10 @@ final class Menu extends JFrame implements ActionListener {
      */
     public static void run() {
         SwingUtilities.setLookAndFeel(Main.class, "run");
+        final JFrame frame = new Menu();
+        // The line below should be after the Frame creation.
+        // See the javadoc in 'setDefaultCodecPreferences()'.
         Registry.setDefaultCodecPreferences();
-        new Menu();
+        frame.setVisible(true);
     }
 }

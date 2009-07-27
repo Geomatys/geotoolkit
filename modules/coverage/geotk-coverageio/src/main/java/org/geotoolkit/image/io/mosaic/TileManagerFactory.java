@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.grid.ImageGeometry;
  * Creates {@link TileManager} instances from a collection of tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.5
  * @module
@@ -163,7 +163,7 @@ public class TileManagerFactory extends Factory {
             managers = new TileManager[split.size() + count];
             for (final Map.Entry<ImageGeometry,Tile[]> entry : split.entrySet()) {
                 final TileManager manager = createGeneric(entry.getValue());
-                manager.geometry = entry.getKey();
+                manager.setGridGeometry(entry.getKey());
                 managers[count++] = manager;
             }
             tiles = remainings;
