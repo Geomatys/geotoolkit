@@ -80,7 +80,7 @@ import org.geotoolkit.ogc.xml.v110modified.TouchesType;
 import org.geotoolkit.ogc.xml.v110modified.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110modified.WithinType;
 
-// GeoAPI dependencies
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
@@ -293,7 +293,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propertyName = ((PropertyNameType)geometry).getPropertyName();
         }
         if (bounds.getCoordinateReferenceSystem() != null) {
-            CRSName = bounds.getCoordinateReferenceSystem().getName() + "";
+            CRSName = CRS.toSRS(bounds.getCoordinateReferenceSystem());
         } else {
             CRSName = "EPSG:4326";
         }
