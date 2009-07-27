@@ -46,15 +46,16 @@ import org.opengis.display.primitive.Graphic;
  */
 public class GraphicScaleBarJ2D extends AbstractGraphicJ2D{
 
+    private static final int MARGIN = 10;
+    private static final int ROUND_SIZE = 12;
+    private static final int INTER_MARGIN = 10;
+    
     private final ScaleBarTemplate template = new DefaultScaleBarTemplate(10,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,SI.METER);
 
     private final Dimension dim = new Dimension(500, 40);
-    private final int margin = 10;
-    private final int roundSize = 12;
-    private final int interMargin = 10;
 
     public GraphicScaleBarJ2D(ReferencedCanvas2D canvas){
         super(canvas,canvas.getObjectiveCRS());
@@ -70,7 +71,7 @@ public class GraphicScaleBarJ2D extends AbstractGraphicJ2D{
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
 
         final Rectangle all = context.getCanvasDisplayBounds();
-        final Rectangle area = new Rectangle(margin, all.y+all.height-margin-dim.height, dim.width, dim.height);
+        final Rectangle area = new Rectangle(MARGIN, all.y+all.height-MARGIN-dim.height, dim.width, dim.height);
 
         context.switchToDisplayCRS();
 
@@ -78,15 +79,15 @@ public class GraphicScaleBarJ2D extends AbstractGraphicJ2D{
 
         g2d.setStroke(new BasicStroke(1));
         g2d.setColor(new Color(1f, 1f, 1f, 0.85f));
-        g2d.fillRoundRect(area.x, area.y, area.width, area.height, roundSize, roundSize);
+        g2d.fillRoundRect(area.x, area.y, area.width, area.height, ROUND_SIZE, ROUND_SIZE);
 
         g2d.setColor(Color.GRAY);
-        g2d.drawRoundRect(area.x, area.y, area.width, area.height, roundSize, roundSize);
+        g2d.drawRoundRect(area.x, area.y, area.width, area.height, ROUND_SIZE, ROUND_SIZE);
 
-        area.x += interMargin;
-        area.y += interMargin;
-        area.width -= 2*interMargin;
-        area.height -= 2*interMargin;
+        area.x += INTER_MARGIN;
+        area.y += INTER_MARGIN;
+        area.width -= 2*INTER_MARGIN;
+        area.height -= 2*INTER_MARGIN;
 
         try {
             J2DScaleBarUtilities.getInstance().paintScaleBar(context.getObjectiveCRS(), context.getDisplayCRS(), centerPoint, g2d, area, template);

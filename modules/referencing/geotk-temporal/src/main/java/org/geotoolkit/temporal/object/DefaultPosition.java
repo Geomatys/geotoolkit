@@ -92,7 +92,7 @@ public class DefaultPosition implements Position {
         }
         if (this.position instanceof TemporalPosition) {
             if (this.position instanceof JulianDate) {
-                return Utils.JulianToDate((DefaultJulianDate) position);
+                return Utils.julianToDate((DefaultJulianDate) position);
             }
             if (this.position instanceof DateAndTime) {
                 return Utils.dateAndTimeToDate((DateAndTime) position);

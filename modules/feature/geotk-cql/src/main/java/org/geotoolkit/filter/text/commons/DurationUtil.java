@@ -32,7 +32,6 @@ import java.util.Date;
  * @author Gabriel Roldan - Axios Engineering
  */
 final class DurationUtil {
-    private static final Calendar CALENDAR = Calendar.getInstance();
     private static final int YEARS = 0;
     private static final int MONTHS = 1;
     private static final int DAYS = 2;
@@ -40,9 +39,6 @@ final class DurationUtil {
     private static final int HOURS = 0;
     private static final int MINUTES = 1;
     private static final int SECONDS = 2;
-
-    /** H,M,S */
-    private static int[] DURATION_TIME = new int[3];
 
     private DurationUtil() {
         // utility class
@@ -58,14 +54,14 @@ final class DurationUtil {
     private static int[] extractDurationDate(final String duration) {
         // initializes duration date container
         /** Y,M,D */
-        int[] durationDate = new int[3];
+        final int[] durationDate = new int[3];
 
         for (int i = 0; i < durationDate.length; i++) {
             durationDate[i] = -1;
         }
 
         // if has not duration date return array with -1 values
-        int cursor = duration.indexOf("P");
+        int cursor = duration.indexOf('P');
 
         if (cursor == -1) {
             return durationDate;
@@ -75,33 +71,33 @@ final class DurationUtil {
         cursor++;
 
         // years
-        int endYears = duration.indexOf("Y", cursor);
+        final int endYears = duration.indexOf('Y', cursor);
 
         if (endYears >= 0) {
-            String strYears = duration.substring(cursor, endYears);
-            int years = Integer.parseInt(strYears);
+            final String strYears = duration.substring(cursor, endYears);
+            final int years = Integer.parseInt(strYears);
             durationDate[YEARS] = years;
 
             cursor = endYears + 1;
         }
 
         // months
-        int endMonths = duration.indexOf("M", cursor);
+        final int endMonths = duration.indexOf('M', cursor);
 
         if (endMonths >= 0) {
-            String strMonths = duration.substring(cursor, endMonths);
-            int months = Integer.parseInt(strMonths);
+            final String strMonths = duration.substring(cursor, endMonths);
+            final int months = Integer.parseInt(strMonths);
             durationDate[MONTHS] = months;
 
             cursor = endMonths + 1;
         }
 
         // days
-        int endDays = duration.indexOf("D", cursor);
+        final int endDays = duration.indexOf('D', cursor);
 
         if (endDays >= 0) {
-            String strDays = duration.substring(cursor, endDays);
-            int days = Integer.parseInt(strDays);
+            final String strDays = duration.substring(cursor, endDays);
+            final int days = Integer.parseInt(strDays);
             durationDate[DAYS] = days;
         }
 
@@ -116,50 +112,51 @@ final class DurationUtil {
      *         present -1 will be returned.
      */
     private static int[] extractDurationTime(final String duration) {
-        for (int i = 0; i < DURATION_TIME.length; i++) {
-            DURATION_TIME[i] = -1;
+        final int[] durations = new int[3];
+        for (int i = 0; i < durations.length; i++) {
+            durations[i] = -1;
         }
 
-        int cursor = duration.indexOf("T");
+        int cursor = duration.indexOf('T');
 
         if (cursor == -1) {
-            return DURATION_TIME;
+            return durations;
         }
 
         cursor++;
 
         // hours
-        int endHours = duration.indexOf("H", cursor);
+        final int endHours = duration.indexOf('H', cursor);
 
         if (endHours >= 0) {
-            String strHours = duration.substring(cursor, endHours);
-            int hours = Integer.parseInt(strHours);
-            DURATION_TIME[HOURS] = hours;
+            final String strHours = duration.substring(cursor, endHours);
+            final int hours = Integer.parseInt(strHours);
+            durations[HOURS] = hours;
 
             cursor = endHours + 1;
         }
 
         // minute
-        int endMinutes = duration.indexOf("M", cursor);
+        final int endMinutes = duration.indexOf('M', cursor);
 
         if (endMinutes >= 0) {
-            String strMinutes = duration.substring(cursor, endMinutes);
-            int minutes = Integer.parseInt(strMinutes);
-            DURATION_TIME[MINUTES] = minutes;
+            final String strMinutes = duration.substring(cursor, endMinutes);
+            final int minutes = Integer.parseInt(strMinutes);
+            durations[MINUTES] = minutes;
 
             cursor = endMinutes + 1;
         }
 
         // seconds
-        int endSeconds = duration.indexOf("S", cursor);
+        final int endSeconds = duration.indexOf('S', cursor);
 
         if (endSeconds >= 0) {
-            String strSeconds = duration.substring(cursor, endSeconds);
-            int seconds = Integer.parseInt(strSeconds);
-            DURATION_TIME[SECONDS] = seconds;
+            final String strSeconds = duration.substring(cursor, endSeconds);
+            final int seconds = Integer.parseInt(strSeconds);
+            durations[SECONDS] = seconds;
         }
 
-        return DURATION_TIME;
+        return durations;
     }
 
     /**
@@ -201,24 +198,25 @@ final class DurationUtil {
             return date;
         }
 
-        CALENDAR.setTime(date);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
 
         // years
         if (durationDate[YEARS] >= 0) {
-            CALENDAR.add(Calendar.YEAR, sign * durationDate[YEARS]);
+            calendar.add(Calendar.YEAR, sign * durationDate[YEARS]);
         }
 
         // months
         if (durationDate[MONTHS] >= 0) {
-            CALENDAR.add(Calendar.MONTH, sign * durationDate[MONTHS]);
+            calendar.add(Calendar.MONTH, sign * durationDate[MONTHS]);
         }
 
         // days
         if (durationDate[DAYS] >= 0) {
-            CALENDAR.add(Calendar.DATE, sign * durationDate[DAYS]);
+            calendar.add(Calendar.DATE, sign * durationDate[DAYS]);
         }
 
-        return CALENDAR.getTime();
+        return calendar.getTime();
     }
 
     /**
@@ -251,32 +249,31 @@ final class DurationUtil {
      */
     private static Date computeDateFromDurationTime(final Date date, final String duration,
         final int sign) {
-        DURATION_TIME = extractDurationTime(duration);
+        final int[] DURATION_TIME = extractDurationTime(duration);
 
         if (isNull(DURATION_TIME)) {
             return date;
         }
 
-        CALENDAR.setTime(date);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
 
         // hours
         if (DURATION_TIME[HOURS] >= 0) {
-            CALENDAR.add(Calendar.HOUR, sign * DURATION_TIME[HOURS]);
+            calendar.add(Calendar.HOUR, sign * DURATION_TIME[HOURS]);
         }
 
         // minute
         if (DURATION_TIME[MINUTES] >= 0) {
-            CALENDAR.add(Calendar.MINUTE, sign * DURATION_TIME[MINUTES]);
+            calendar.add(Calendar.MINUTE, sign * DURATION_TIME[MINUTES]);
         }
 
         // seconds
         if (DURATION_TIME[SECONDS] >= 0) {
-            CALENDAR.add(Calendar.SECOND, sign * DURATION_TIME[SECONDS]);
+            calendar.add(Calendar.SECOND, sign * DURATION_TIME[SECONDS]);
         }
 
-        Date lastDate = CALENDAR.getTime();
-
-        return lastDate;
+        return calendar.getTime();
     }
 
     /**

@@ -40,11 +40,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Map;
-import org.geotoolkit.feature.collection.FeatureCollection;
 
+import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
@@ -56,6 +56,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @version $Id$
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class FeatureUtilities {
 
@@ -81,19 +82,19 @@ public class FeatureUtilities {
             return "";
         }
         if (type == Integer.class) {
-            return new Integer(0);
+            return Integer.valueOf(0);
         }
         if (type == Double.class) {
-            return new Double(0);
+            return Double.valueOf(0);
         }
         if (type == Long.class) {
-            return new Long(0);
+            return Long.valueOf(0);
         }
         if (type == Short.class) {
-            return new Short((short) 0);
+            return Short.valueOf((short) 0);
         }
         if (type == Float.class) {
-            return new Float(0.0f);
+            return Float.valueOf(0.0f);
         }
         if (type == BigDecimal.class) {
             return BigDecimal.valueOf(0);
@@ -102,7 +103,7 @@ public class FeatureUtilities {
             return BigInteger.valueOf(0);
         }
         if (type == Character.class) {
-            return new Character(' ');
+            return Character.valueOf(' ');
         }
         if (type == Boolean.class) {
             return Boolean.FALSE;
@@ -133,7 +134,7 @@ public class FeatureUtilities {
         if (type == LineString.class) {
             return fac.createLineString(new Coordinate[]{coordinate, coordinate, coordinate, coordinate});
         }
-        LinearRing linearRing = fac.createLinearRing(new Coordinate[]{coordinate, coordinate, coordinate, coordinate});
+        final LinearRing linearRing = fac.createLinearRing(new Coordinate[]{coordinate, coordinate, coordinate, coordinate});
         if (type == LinearRing.class) {
             return linearRing;
         }
@@ -247,7 +248,7 @@ public class FeatureUtilities {
             final List list = (List) src;
             final List copy = new ArrayList(list.size());
 
-            for (Iterator i = list.iterator(); i.hasNext();) {
+            for (final Iterator i = list.iterator(); i.hasNext();) {
                 copy.add(duplicate(i.next()));
             }
 
@@ -258,7 +259,7 @@ public class FeatureUtilities {
             final Map map = (Map) src;
             final Map copy = new HashMap(map.size());
 
-            for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
+            for (final Iterator i = map.entrySet().iterator(); i.hasNext();) {
                 final Map.Entry entry = (Map.Entry) i.next();
                 copy.put(entry.getKey(), duplicate(entry.getValue()));
             }

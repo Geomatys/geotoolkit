@@ -35,9 +35,9 @@ import java.awt.geom.Point2D;
  */
 public class TextStroke implements Stroke {
 
-    final byte STATE_INITIAL_GAP = 0;
-    final byte STATE_GAP = 1;
-    final byte STATE_LABEL = 2;
+    private static final byte STATE_INITIAL_GAP = 0;
+    private static final byte STATE_GAP = 1;
+    private static final byte STATE_LABEL = 2;
 
     private final String text;
     private final Font font;
@@ -62,7 +62,7 @@ public class TextStroke implements Stroke {
         final FontRenderContext frc = new FontRenderContext(null, true, true);
         final GlyphVector glyphVector = font.createGlyphVector(frc, text);
         final GeneralPath result = new GeneralPath();
-        final float points[] = new float[6];
+        final float[] points = new float[6];
         final int labelLength = glyphVector.getNumGlyphs();
         
         //no label to paint
@@ -173,10 +173,10 @@ public class TextStroke implements Stroke {
                                     //while have space paint the caractere
                                     final Shape charGlyph = glyphVector.getGlyphOutline(currentChar);
                                     final Point2D p = glyphVector.getGlyphPosition(currentChar);
-                                    float px = (float) p.getX();
-                                    float py = (float) p.getY();
-                                    float x = lastX + ((distance-segmentToConsume)/distance) * dx ;
-                                    float y = lastY + ((distance-segmentToConsume)/distance) * dy ;
+                                    final float px = (float) p.getX();
+                                    final float py = (float) p.getY();
+                                    final float x = lastX + ((distance-segmentToConsume)/distance) * dx ;
+                                    final float y = lastY + ((distance-segmentToConsume)/distance) * dy ;
                                     t.setToTranslation(x+0, y);
                                     t.rotate(angle);
                                     t.translate(-px, -py);
@@ -228,8 +228,8 @@ public class TextStroke implements Stroke {
 
     
     public float measurePathLength(Shape shape) {
-        PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1);
-        float points[] = new float[6];
+        final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1);
+        final float[] points = new float[6];
         float moveX = 0, moveY = 0;
         float lastX = 0, lastY = 0;
         float thisX = 0, thisY = 0;
@@ -252,8 +252,8 @@ public class TextStroke implements Stroke {
                 case PathIterator.SEG_LINETO:
                     thisX = points[0];
                     thisY = points[1];
-                    float dx = thisX - lastX;
-                    float dy = thisY - lastY;
+                    final float dx = thisX - lastX;
+                    final float dy = thisY - lastY;
                     total += (float) Math.sqrt(dx * dx + dy * dy);
                     lastX = thisX;
                     lastY = thisY;

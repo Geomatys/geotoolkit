@@ -27,14 +27,13 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
+import java.util.List;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
-import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StreamLogging;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
@@ -48,19 +47,20 @@ public class AttributeIndexWriter {
 
     public static final int HEADER_SIZE = 9;
     /** Number of bytes to be cached into memory (then it will be written to temporary file) */
-    private int cacheSize;
-    private int record_size;
-    private FileChannel writeChannel;
+    private final StreamLogging streamLogger = new StreamLogging("AttributeIndexWriter");
+    private final List<IndexRecord> buffer;
+    private final int cacheSize;
+    private final FileChannel writeChannel;
+    private final DbaseFileReader reader;
+    private final String attribute;
+    private final File[] tempFiles;
+
+    private int recordSize;
     private FileChannel currentChannel;
-    private DbaseFileReader reader;
-    private StreamLogging streamLogger = new StreamLogging("AttributeIndexWriter");
-    private String attribute;
     private int numRecords;
     private int attributeColumn;
     private Class attributeClass;
     private char attributeType;
-    private File[] tempFiles;
-    private ArrayList buffer;
     private long current;
     private long position;
     private int curFile;
@@ -83,7 +83,7 @@ public class AttributeIndexWriter {
         }
         streamLogger.open();
         tempFiles = new File[getNumFiles()];
-        buffer = new ArrayList(getCacheSize());
+        buffer = new ArrayList<IndexRecord>(getCacheSize());
         current = 0;
         curFile = 0;
     }
@@ -123,9 +123,9 @@ public class AttributeIndexWriter {
     }
 
     private void merge() throws IOException {
-        DataInputStream[] in = new DataInputStream[tempFiles.length];
+        final DataInputStream[] in = new DataInputStream[tempFiles.length];
         try {
-            IndexRecord[] recs = new IndexRecord[tempFiles.length];
+            final IndexRecord[] recs = new IndexRecord[tempFiles.length];
             for (int i = 0; i < tempFiles.length; i++) {
                 in[i] = new DataInputStream(new FileInputStream(tempFiles[i]));
                 recs[i] = null;
@@ -175,7 +175,7 @@ public class AttributeIndexWriter {
     /** Loads next part of file into cache */
     private void readBuffer() throws IOException {
         buffer.clear();
-        int n = getCacheSize();
+        final int n = getCacheSize();
         Comparable o;
         IndexRecord r;
         for (int i = 0; hasNext() && i < n; i++) {
@@ -198,9 +198,9 @@ public class AttributeIndexWriter {
             } catch (OutOfMemoryError err) {
                 throw new IOException(err.getMessage()+". Try to lower memory load parameter.");
             }
-            File file = File.createTempFile("attind", null);
+            final File file = File.createTempFile("attind", null);
             tempFiles[curFile++] = file;
-            Iterator it = buffer.iterator();
+            final Iterator it = buffer.iterator();
             raf = new RandomAccessFile(file, "rw");
             currentChannel = raf.getChannel();
             currentChannel.lock();
@@ -219,21 +219,21 @@ public class AttributeIndexWriter {
 
 
     private int getNumFiles() throws IOException {
-        int maxRec = getCacheSize();
-        int n = (numRecords / maxRec);
+        final int maxRec = getCacheSize();
+        final int n = numRecords / maxRec;
         return ((numRecords % maxRec)==0) ? n : n+1;
     }
 
     private int getCacheSize() {
-        return ((numRecords * record_size) > cacheSize) ? cacheSize / record_size : numRecords;
+        return ((numRecords * recordSize) > cacheSize) ? cacheSize / recordSize : numRecords;
     }
 
     private Comparable getAttribute() throws IOException {
-        DbaseFileReader.Row row = reader.readRow();
-        Object o = row.read(attributeColumn);
+        final DbaseFileReader.Row row = reader.readRow();
+        final Object o = row.read(attributeColumn);
         if (o instanceof Date) {
             //use ms from 1/1/70
-            return new Long(((Date)o).getTime());
+            return Long.valueOf(((Date)o).getTime());
         }
         return (Comparable)o;
     }
@@ -243,25 +243,25 @@ public class AttributeIndexWriter {
         switch (attributeType) {
             case 'N':
             case 'D':
-                if (attributeClass.isInstance(new Integer(0))) {
-                    obj = new Integer(in.readInt());
+                if (attributeClass.isInstance(Integer.valueOf(0))) {
+                    obj = Integer.valueOf(in.readInt());
                 } else {
-                    obj = new Long(in.readLong());
+                    obj = Long.valueOf(in.readLong());
                 }
                 break;
             case 'F':
-                obj = new Double(in.readDouble());
+                obj = Double.valueOf(in.readDouble());
                 break;
             case 'L':
-                obj = new Boolean(in.readBoolean());
+                obj = Boolean.valueOf(in.readBoolean());
                 break;
             case 'C':
             default:
-                byte[] b = new byte[record_size - 8];
+                final byte[] b = new byte[recordSize - 8];
                 in.read(b);
-                obj = (new String(b, "ISO-8859-1")).trim();
+                obj = new String(b, "ISO-8859-1").trim();
             }
-        long id = in.readLong();
+        final long id = in.readLong();
         return new IndexRecord(obj, id);
     }
 
@@ -271,18 +271,18 @@ public class AttributeIndexWriter {
                 return;
             if (writeBuffer == null)
                 allocateBuffers();
-            if (writeBuffer.remaining() < record_size)
+            if (writeBuffer.remaining() < recordSize)
                 drain();
             switch (attributeType) {
                 case 'N':
                 case 'D':
-                    Object obj = r.getAttribute();
+                    final Object obj = r.getAttribute();
                     //sometimes DbaseFileReader reads an attribute as Integer, even if it's described as Long in the header
-                    if (attributeClass.isInstance(new Integer(0))) {
-                        int i = (obj instanceof Integer) ? ((Number) obj).intValue() : (int) ((Number) obj).longValue();
+                    if (attributeClass.isInstance(Integer.valueOf(0))) {
+                        final int i = (obj instanceof Integer) ? ((Number) obj).intValue() : (int) ((Number) obj).longValue();
                         writeBuffer.putInt(i);
                     } else {
-                        long l = (obj instanceof Integer) ? (long) ((Number) obj).intValue() : ((Number) obj).longValue();
+                        final long l = (obj instanceof Integer) ? (long) ((Number) obj).intValue() : ((Number) obj).longValue();
                         writeBuffer.putLong(l);
                     }
                     break;
@@ -290,13 +290,13 @@ public class AttributeIndexWriter {
                     writeBuffer.putDouble(((Double) r.getAttribute()).doubleValue());
                     break;
                 case 'L':
-                    boolean b = ((Boolean) r.getAttribute()).booleanValue();
+                    final boolean b = ((Boolean) r.getAttribute()).booleanValue();
                     writeBuffer.put((byte)(b?1:0));
                     break;
                 case 'C':
                 default:
-                    byte[] btemp = r.getAttribute().toString().getBytes("ISO-8859-1");
-                    byte[] bres = new byte[record_size-8];
+                    final byte[] btemp = r.getAttribute().toString().getBytes("ISO-8859-1");
+                    final byte[] bres = new byte[recordSize-8];
                     for (int i = 0; i < bres.length; i++) {
                         bres[i] = (i<btemp.length) ? btemp[i] : (byte)0;
                     }
@@ -309,16 +309,16 @@ public class AttributeIndexWriter {
     }
 
     private void writeHeader() throws IOException {
-        ByteBuffer buf = ByteBuffer.allocate(HEADER_SIZE);
+        final ByteBuffer buf = ByteBuffer.allocate(HEADER_SIZE);
         buf.put((byte)attributeType);
-        buf.putInt(record_size); //record size in buffer
+        buf.putInt(recordSize); //record size in buffer
         buf.putInt(numRecords); //number of records in this index
         buf.flip();
         writeChannel.write(buf, 0);
     }
 
     private void allocateBuffers() throws IOException {
-        writeBuffer = ByteBuffer.allocateDirect(HEADER_SIZE+record_size * 1024);
+        writeBuffer = ByteBuffer.allocateDirect(HEADER_SIZE+recordSize * 1024);
     }
 
     private void drain() throws IOException {
@@ -334,7 +334,7 @@ public class AttributeIndexWriter {
     }
 
     private boolean retrieveAttributeInfos() {
-        DbaseFileHeader header = reader.getHeader();
+        final DbaseFileHeader header = reader.getHeader();
         for (int i = 0; i < header.getNumFields(); i++) {
             if (header.getFieldName(i).equals(attribute)) {
                 attributeColumn = i;
@@ -343,27 +343,27 @@ public class AttributeIndexWriter {
                 attributeType = header.getFieldType(i);
                 switch (attributeType) {
                     case 'C': //Character
-                        record_size = header.getFieldLength(i);
+                        recordSize = header.getFieldLength(i);
                         break;
                     case 'N': //Numeric
-                        if (attributeClass.isInstance(new Integer(0)))
-                            record_size = 4;
+                        if (attributeClass.isInstance(Integer.valueOf(0)))
+                            recordSize = 4;
                         else
-                            record_size = 8; //Long and Double are represented using 64 bits
+                            recordSize = 8; //Long and Double are represented using 64 bits
                         break;
                     case 'F': //Float
-                        record_size = 8;
+                        recordSize = 8;
                         break;
                     case 'D': //Date
-                        record_size = 8; //stored in ms from 1/1/70
+                        recordSize = 8; //stored in ms from 1/1/70
                         break;
                     case 'L': //Logic
-                        record_size = 1; //of course index on boolean feature doesn't have any meaning
+                        recordSize = 1; //of course index on boolean feature doesn't have any meaning
                         break;
                     default:
-                        record_size = header.getFieldLength(i);                            
+                        recordSize = header.getFieldLength(i);
                 }
-                record_size += 8; //fid index
+                recordSize += 8; //fid index
                 return true;
             }
         }

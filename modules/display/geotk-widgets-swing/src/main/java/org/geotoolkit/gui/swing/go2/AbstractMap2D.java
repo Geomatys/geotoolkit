@@ -38,14 +38,9 @@ import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
  * @author Johann Sorel
  */
 public abstract class AbstractMap2D extends JPanel implements Map2D {
-
-    /**
-     * Map2D reference , same as "this" but needed to explicitly point to the 
-     * map2d object when coding a private class
-     */
-    protected final AbstractMap2D THIS_MAP;
     
     private static final MapDecoration[] EMPTY_OVERLAYER_ARRAY = {};
+
     private final List<MapDecoration> userDecorations = new ArrayList<MapDecoration>();
     
     private final JLayeredPane mapDecorationPane = new JLayeredPane();
@@ -61,7 +56,6 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
      * create a default JDefaultMap2D
      */
     public AbstractMap2D() {
-        this.THIS_MAP = this;
         init();        
     }
     
@@ -72,9 +66,9 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
         userDecorationPane.setLayout(new BufferLayout());
         mainDecorationPane.setLayout(new BufferLayout());
 
-        mainDecorationPane.add(informationDecoration.geComponent(), new Integer(3));
-        mainDecorationPane.add(userDecorationPane, new Integer(2));
-        mainDecorationPane.add(mapDecorationPane, new Integer(1));
+        mainDecorationPane.add(informationDecoration.geComponent(), Integer.valueOf(3));
+        mainDecorationPane.add(userDecorationPane, Integer.valueOf(2));
+        mainDecorationPane.add(mapDecorationPane, Integer.valueOf(1));
 
         informationDecoration.setMap2D(this);
         
@@ -90,7 +84,7 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
             mapDecorationPane.remove(mapComponent);        
         }
         mapComponent = comp;
-        mapDecorationPane.add(mapComponent, new Integer(0));
+        mapDecorationPane.add(mapComponent, Integer.valueOf(0));
         mapDecorationPane.revalidate();
         
     }
@@ -109,7 +103,7 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
 
         mainDecorationPane.remove(informationDecoration.geComponent());
         informationDecoration = info;
-        mainDecorationPane.add(informationDecoration.geComponent(), new Integer(3));
+        mainDecorationPane.add(informationDecoration.geComponent(), Integer.valueOf(3));
 
         mainDecorationPane.revalidate();
         mainDecorationPane.repaint();
@@ -129,7 +123,7 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
 
         mainDecorationPane.remove(backDecoration.geComponent());
         backDecoration = back;
-        mainDecorationPane.add(backDecoration.geComponent(), new Integer(0));
+        mainDecorationPane.add(backDecoration.geComponent(), Integer.valueOf(0));
 
         mainDecorationPane.revalidate();
         mainDecorationPane.repaint();
@@ -144,9 +138,9 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
     public void addDecoration(MapDecoration deco) {
 
         if (deco != null && !userDecorations.contains(deco)) {
-            deco.setMap2D(THIS_MAP);
+            deco.setMap2D(this);
             userDecorations.add(deco);
-            userDecorationPane.add(deco.geComponent(), new Integer(userDecorations.indexOf(deco)));
+            userDecorationPane.add(deco.geComponent(), Integer.valueOf(userDecorations.indexOf(deco)));
             userDecorationPane.revalidate();
             userDecorationPane.repaint();
         }
@@ -156,9 +150,9 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
     public void addDecoration(int index, MapDecoration deco) {
 
         if (deco != null && !userDecorations.contains(deco)) {
-            deco.setMap2D(THIS_MAP);
+            deco.setMap2D(this);
             userDecorations.add(index, deco);
-            userDecorationPane.add(deco.geComponent(), new Integer(userDecorations.indexOf(deco)));
+            userDecorationPane.add(deco.geComponent(), Integer.valueOf(userDecorations.indexOf(deco)));
             userDecorationPane.revalidate();
             userDecorationPane.repaint();
         }
@@ -193,7 +187,7 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
      * @param deco : MapDecoration to add
      */
     protected void addMapDecoration(MapDecoration deco) {
-        mapDecorationPane.add(deco.geComponent(), new Integer(nextMapDecorationIndex));
+        mapDecorationPane.add(deco.geComponent(), Integer.valueOf(nextMapDecorationIndex));
         nextMapDecorationIndex++;
     }
 
