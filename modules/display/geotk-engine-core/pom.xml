@@ -25,19 +25,12 @@
     <artifactId>geotk-engine-core</artifactId>
     <packaging>jar</packaging>
     <name>Display engine abstract</name>
-    <url>http://maven.geotools.fr/reports/modules/unsupported/display/</url>
-
-    <scm>
-        <connection>scm:svn:http://svn.geotools.org/trunk/modules/unsupported/display/</connection>
-        <url>http://svn.geotools.org/trunk/modules/unsupported/display/</url>
-    </scm>
 
     <description>Provides a display implementation of GeoAPI.</description>
 
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
-            <url>http://svn.geotools.org/trunk/modules/unsupported/display/LICENSE.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>

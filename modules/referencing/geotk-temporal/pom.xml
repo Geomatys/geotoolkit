@@ -2,10 +2,9 @@
 <!-- =======================================================================    
         Maven Project Configuration File                                        
                                                                                 
-        The Geotools Project                                                    
-            http://www.geotools.org/                                            
-                                                                                
-        Version: $Id$              
+        The Geotoolkit Project
+            http://www.geotoolkit.org/                                           
+             
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0" 
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -27,17 +26,6 @@
   <artifactId>geotk-temporal</artifactId>
   <packaging>jar</packaging>
   <name>Referencing temporal</name>
-  <url>
-	http://maven.geotools.fr/reports/modules/unsupported/temporal/
-  </url>
-  <scm>
-    <connection>
-      scm:svn:http://svn.osgeo.org/geotools/trunk/modules/unsupported/temporal/
-    </connection>
-    <url>
-      http://svn.osgeo.org/geotools/trunk/modules/unsupported/temporal/
-    </url>
-  </scm>
 
   <description>
     Provides a Temporal (ISO 19108) implementation. This module contains temporal aspects implementations for geographic information.

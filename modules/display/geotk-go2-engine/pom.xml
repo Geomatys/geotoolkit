@@ -22,7 +22,6 @@
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
-            <url>http://svn.geotools.org/trunk/modules/unsupported/display/LICENSE.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
