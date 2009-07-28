@@ -19,7 +19,6 @@ package org.geotoolkit.ogc.xml.v110;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.expression.Expression;
@@ -49,9 +48,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpperBoundaryType", propOrder = {
-    "expression",
-    "literal",
-    "propertyName"
+    "expression"
 })
 public class UpperBoundaryType implements Expression {
 

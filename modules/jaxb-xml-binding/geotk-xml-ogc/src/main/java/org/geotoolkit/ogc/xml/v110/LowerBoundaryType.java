@@ -48,9 +48,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LowerBoundaryType", propOrder = {
-    "expression",
-    "literal",
-    "propertyName"
+    "expression"
 })
 public class LowerBoundaryType implements Expression {
 
