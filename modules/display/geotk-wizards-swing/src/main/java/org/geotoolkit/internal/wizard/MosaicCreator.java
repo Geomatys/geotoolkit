@@ -20,6 +20,9 @@ package org.geotoolkit.internal.wizard;
 import java.awt.Color;
 import java.util.Map;
 import java.util.logging.Level;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import javax.imageio.ImageWriter;
 import javax.imageio.event.IIOWriteProgressListener;
 import org.netbeans.spi.wizard.DeferredWizardResult;
@@ -83,6 +86,14 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
             } finally {
                 builder.listeners().removeIIOWriteProgressListener(this);
             }
+            /*
+             * At this point, we finished creating the mosaic. Serializes
+             * the TileManager object which describe the new mosaic.
+             */
+            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
+                    new File(builder.getTileDirectory(), "TileManager.serialized")));
+            out.writeObject(tiles);
+            out.close();
         } catch (Exception exception) {
             progress.failed(exception.getLocalizedMessage(), false);
             return;

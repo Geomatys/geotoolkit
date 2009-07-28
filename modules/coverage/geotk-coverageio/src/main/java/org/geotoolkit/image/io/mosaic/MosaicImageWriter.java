@@ -437,28 +437,27 @@ public class MosaicImageWriter extends ImageWriter {
              * from the list, so next iterations will process only the remaining tiles.
              */
             final Dimension imageSubsampling = new Dimension(); // Computed by next line.
-            final Tile imageTile = getEnclosingTile(tiles, tree, imageSubsampling,
-                    (image != null) ? new Dimension(image.getWidth(), image.getHeight()) : null,
-                    maximumPixelCount);
+            final Tile imageTile = getEnclosingTile(tiles, tree, imageSubsampling, maximumPixelCount);
             final Rectangle imageRegion = imageTile.getAbsoluteRegion();
             /*
              * Following line must be invoked before we touch to the image. It makes sure that
-             * all background thread have finished their work with the previous image content.
+             * all background threads have finished their work with the previous image content.
              */
             awaitTermination(tasks, initialTileCount - tiles.size(), progressScale);
             if (image != null) {
                 final int width  = imageRegion.width  / imageSubsampling.width;
                 final int height = imageRegion.height / imageSubsampling.height;
-                if (width == image.getWidth() && height == image.getHeight()) {
+                if (width <= image.getWidth() && height <= image.getHeight()) {
                     ImageUtilities.fill(image, FILL_VALUE);
-                    assert isEmpty(image, new Rectangle(image.getWidth(), image.getHeight()));
+                    assert isEmpty(image, new Rectangle(width, height));
                 } else {
+                    // Needs a bigger image than what we had previously.
                     image = null;
                 }
                 /*
                  * Next iteration may try to allocate bigger images. We do that inconditionnaly,
-                 * even if current image fit, because current image may be small due to memory
-                 * constaint during a previous iteration.
+                 * even if current image fits, because current image may be small due to memory
+                 * constraint during a previous iteration.
                  */
                 maximumPixelCount = (int) (maximumMemory / bytesPerPixel);
             }
@@ -475,7 +474,7 @@ public class MosaicImageWriter extends ImageWriter {
             }
             /*
              * Before to attempt image loading, ask explicitly for a garbage collection cycle.
-             * In theory we should not do that, but experience suggests that it really prevent
+             * In theory we should not do that, but experience suggests that it really prevents
              * OutOfMemoryError when creating large images. If we still get OutOfMemoryError,
              * we will try again with smaller value of 'maximumPixelCount'.
              */
@@ -498,11 +497,18 @@ public class MosaicImageWriter extends ImageWriter {
                     record.setLoggerName(logger.getName());
                     logger.log(record);
                 }
+                // Go back to the while(!tiles.isEmpty()) condition, which will ask for a
+                // new Tile from the same (not yet modified) collection of tiles but with
+                // a smaller maximumPixelCount value.
                 continue;
             }
+            if (logWrites && image != readParam.getDestination()) {
+                // Logs only if we have created a new image.
+                logMemoryUsage(logger);
+            }
             assert (image == null) || // Image can be null if MosaicImageReader found no tiles.
-                   (image.getWidth()  * imageSubsampling.width  == imageRegion.width &&
-                    image.getHeight() * imageSubsampling.height == imageRegion.height) : imageTile;
+                   (image.getWidth()  * imageSubsampling.width  >= imageRegion.width &&
+                    image.getHeight() * imageSubsampling.height >= imageRegion.height) : imageTile;
             /*
              * Searches tiles inside the same region with a resolution which is equals or lower by
              * an integer ratio. If such tiles are found we can write them using the image loaded
@@ -665,6 +671,9 @@ public class MosaicImageWriter extends ImageWriter {
 
     /**
      * Returns a log message for the given tile.
+     *
+     * @param log {@code true} if the given key is from the {@link Loggings} bundle,
+     *        or {@code false} if it is from the {@link Vocabulary} bundle.
      */
     private LogRecord getLogRecord(final boolean log, final int key, final Object arg) {
         final IndexedResourceBundle bundle = log ?
@@ -705,21 +714,14 @@ public class MosaicImageWriter extends ImageWriter {
      * @param tree Same as {@code tiles}, but as a tree for faster searches.
      * @param imageSubsampling Where to store the subsampling to use for reading the tile.
      *        This is an output parameter only.
+     * @param maximumPixelCount Tries to return a tile having an area smaller than this limit.
+     *        This is only a hint honored on a "best effort" basis: there is no garantees that
+     *        this limit will actually be respected.
      */
     private static Tile getEnclosingTile(final List<Tile> tiles, final TreeNode tree,
-            final Dimension imageSubsampling, Dimension preferredSize, final int maximumPixelCount)
-            throws IOException
+            final Dimension imageSubsampling, final int maximumPixelCount) throws IOException
     {
-        if (preferredSize != null) {
-            final int area = preferredSize.width * preferredSize.height;
-            if (area < maximumPixelCount / 2) {
-                // The image size was small, probably due to memory constraint in a previous
-                // iteration. Allow this method to try more aggresive memory usage.
-                preferredSize = null;
-            }
-        }
         final Set<Dimension> subsamplingDone = tiles.size() > 24 ? new HashSet<Dimension>() : null;
-        boolean selectedHasPreferredSize = false;
         int     selectedCount = 0;
         Tile    selectedTile  = null;
         Tile    fallbackTile  = null; // Used only if we failed to select a tile.
@@ -771,6 +773,8 @@ search: for (final Tile tile : tiles) {
             long area = (long) region.width * (long) region.height;
             area /= smallestPixelArea;
             if (area > maximumPixelCount) {
+                // Retains the smallest one of the too big tiles.
+                // To be used only if no suitable tile is found.
                 if (area < fallbackArea) {
                     fallbackArea = area;
                     fallbackTile = tile;
@@ -806,26 +810,20 @@ search: for (final Tile tile : tiles) {
             }
             /*
              * Retains the tile with the largest filtered collection of sub-tiles.
-             * A special case is made for tile having the preferred size, in order
-             * to recycle the existing BufferedImage.
+             * We count the number of tiles remaining after the removal performed
+             * by the code above.
              */
             final int tileCount = enclosed.size();
-            final boolean isPreferredSize = (preferredSize != null) &&
-                    region.width  / finestSubsampling.width  == preferredSize.width &&
-                    region.height / finestSubsampling.height == preferredSize.height;
-            if (selectedTile == null || tileCount > selectedCount ||
-                    (isPreferredSize && !selectedHasPreferredSize))
-            {
+            if (selectedTile == null || tileCount > selectedCount) {
                 selectedTile = tile;
                 selectedCount = tileCount;
-                selectedHasPreferredSize = isPreferredSize;
                 imageSubsampling.setSize(finestSubsampling);
             }
         }
         /*
          * The selected tile may still null if 'maximumPixelCount' is so small than even the
          * smallest tile doesn't fit. We will return the smallest tile anyway, maybe letting
-         * a OutOfMemoryError to occurs in the caller if really the tile can't hole in the
+         * a OutOfMemoryError to occurs in the caller if really the tile can't fit in the
          * available memory. We perform this try anyway because estimation of available memory
          * in Java is only approximative.
          */
@@ -857,9 +855,39 @@ search: for (final Tile tile : tiles) {
      */
     public long getMaximumMemoryAllocation() {
         final Runtime runtime = Runtime.getRuntime();
+        final long maxMemory = runtime.maxMemory();
         runtime.gc();
-        final long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-        return Math.min(128L*1024*1024, runtime.maxMemory() - 2*usedMemory);
+        long memory = runtime.freeMemory();
+        /*
+         * Add the amount of memory that the JVM is still allowed to allocate from the OS.
+         */
+        memory += maxMemory - runtime.totalMemory();
+        /*
+         * Keep a safety margin of 12.5% of the maximum available memory. This is 8 Mb if the
+         * default maximum memory is 64 Mb. This is 128 Mb if the maximum memory is 1 Gb.
+         */
+        memory -= maxMemory / 8;
+        /*
+         * Return at least 16 Mb, assuming that we can't do much with less than that.
+         */
+        return Math.max(16L*1024*1024, memory);
+    }
+
+    /**
+     * Send to the given logger some informations about current memory usage.
+     */
+    private void logMemoryUsage(final Logger logger) {
+        final Vocabulary resources = Vocabulary.getResources(locale);
+        final Runtime runtime = Runtime.getRuntime();
+        final long totalMemory = runtime.totalMemory();
+        final double usage = 1 - (float) runtime.freeMemory() / totalMemory;
+        final LogRecord record = new LogRecord(level,
+                resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1, totalMemory / (1024*1024L)) + ". " +
+                resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_$1, usage) + '.');
+        record.setSourceClassName(MosaicImageWriter.class.getName());
+        record.setSourceMethodName("writeFromInput"); // The public API invoking this method.
+        record.setLoggerName(logger.getName());
+        logger.log(record);
     }
 
     /**

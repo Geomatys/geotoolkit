@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Loggings;
  * The action run by {@link CommandLine#version()}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.5
  * @module
@@ -75,6 +75,11 @@ final class VersionAction {
         }));
         out.print(')');
         out.println(normal);
+        out.print(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1,
+                Math.round(Runtime.getRuntime().maxMemory() / (1024 * 1024.0))));
+        out.print(" (");
+        out.print(resources.getString(Vocabulary.Keys.MAXIMUM));
+        out.println(')');
         /*
          * Test for the presence of extensions for which the class may not be on the classpath:
          * JavaDB, JAI, Image I/O extensions for JAI.
