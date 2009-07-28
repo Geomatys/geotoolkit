@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -37,6 +38,7 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
 
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -74,6 +76,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         this.dim = dim;
 
         GC = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        painter = new SolidColorPainter(Color.WHITE);
     }
 
     @Override

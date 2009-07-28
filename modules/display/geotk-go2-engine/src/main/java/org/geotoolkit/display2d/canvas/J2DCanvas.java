@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import java.awt.Color;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -40,6 +41,7 @@ import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.factory.Hints;
