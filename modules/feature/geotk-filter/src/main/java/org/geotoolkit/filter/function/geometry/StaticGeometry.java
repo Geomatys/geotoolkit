@@ -19,7 +19,6 @@ package org.geotoolkit.filter.function.geometry;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -31,10 +30,12 @@ import com.vividsolutions.jts.io.WKTReader;
  */
 public class StaticGeometry {
 
+    private StaticGeometry(){}
+
     //--------------------------------------------------------------------------
     //JTS SF SQL functions
-    static public Geometry geomFromWKT(String wkt) {
-        WKTReader wktreader = new WKTReader();
+    public static Geometry geomFromWKT(final String wkt) {
+        final WKTReader wktreader = new WKTReader();
 
         try {
             return wktreader.read(wkt);
@@ -43,325 +44,245 @@ public class StaticGeometry {
         }
     }
 
-    static public String toWKT(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.toString();
+    public static String toWKT(final Geometry geom) {
+        return geom.toString();
     }
 
-    static public boolean contains(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.contains(arg1);
+    public static boolean contains(final Geometry geom1, final Geometry geom2) {
+        return geom1.contains(geom2);
     }
 
-    static public boolean isEmpty(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.isEmpty();
+    public static boolean isEmpty(final Geometry geom) {
+        return geom.isEmpty();
     }
 
-    static public double geomLength(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getLength();
+    public static double geomLength(final Geometry geom) {
+        return geom.getLength();
     }
 
-    static public boolean intersects(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.intersects(arg1);
+    public static boolean intersects(final Geometry geom1, final Geometry geom2) {
+        return geom1.intersects(geom2);
     }
 
-    static public boolean isValid(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.isValid();
+    public static boolean isValid(final Geometry geom) {
+        return geom.isValid();
     }
 
-    static public String geometryType(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getGeometryType();
+    public static String geometryType(final Geometry geom) {
+        return geom.getGeometryType();
     }
 
-    static public int numPoints(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getNumPoints();
+    public static int numPoints(final Geometry geom) {
+        return geom.getNumPoints();
     }
 
-    static public boolean isSimple(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.isSimple();
+    public static boolean isSimple(final Geometry geom) {
+        return geom.isSimple();
     }
 
-    static public double distance(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.distance(arg1);
+    public static double distance(final Geometry geom1, final Geometry geom2) {
+        return geom1.distance(geom2);
     }
 
-    static public boolean isWithinDistance(Geometry arg0, Geometry arg1, double arg2) {
-        Geometry _this = arg0;
-
-        return _this.isWithinDistance(arg1, arg2);
+    public static boolean isWithinDistance(final Geometry geom1, final Geometry geom2, final double dist) {
+        return geom1.isWithinDistance(geom2, dist);
     }
 
-    static public double area(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getArea();
+    public static double area(final Geometry geom) {
+        return geom.getArea();
     }
 
-    static public Geometry centroid(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getCentroid();
+    public static Geometry centroid(final Geometry geom) {
+        return geom.getCentroid();
     }
 
-    static public Geometry interiorPoint(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getInteriorPoint();
+    public static Geometry interiorPoint(final Geometry geom) {
+        return geom.getInteriorPoint();
     }
 
-    static public int dimension(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getDimension();
+    public static int dimension(final Geometry geom) {
+        return geom.getDimension();
     }
 
-    static public Geometry boundary(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getBoundary();
+    public static Geometry boundary(final Geometry geom) {
+        return geom.getBoundary();
     }
 
-    static public int boundaryDimension(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getBoundaryDimension();
+    public static int boundaryDimension(final Geometry geom) {
+        return geom.getBoundaryDimension();
     }
 
-    static public Geometry envelope(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.getEnvelope();
+    public static Geometry envelope(final Geometry geom) {
+        return geom.getEnvelope();
     }
 
-    static public boolean disjoint(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.disjoint(arg1);
+    public static boolean disjoint(final Geometry geom, final Geometry geom2) {
+        return geom.disjoint(geom2);
     }
 
-    static public boolean touches(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.touches(arg1);
+    public static boolean touches(final Geometry geom, final Geometry geom2) {
+        return geom.touches(geom2);
     }
 
-    static public boolean crosses(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.crosses(arg1);
+    public static boolean crosses(final Geometry geom, final Geometry geom2) {
+        return geom.crosses(geom2);
     }
 
-    static public boolean within(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.within(arg1);
+    public static boolean within(final Geometry geom, final Geometry geom2) {
+        return geom.within(geom2);
     }
 
-    static public boolean overlaps(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.overlaps(arg1);
+    public static boolean overlaps(final Geometry geom, final Geometry geom2) {
+        return geom.overlaps(geom2);
     }
 
-    static public boolean relatePattern(Geometry arg0, Geometry arg1, String arg2) {
-        Geometry _this = arg0;
-
-        return _this.relate(arg1, arg2);
+    public static boolean relatePattern(final Geometry geom, final Geometry geom2, final String pattern) {
+        return geom.relate(geom2, pattern);
     }
 
-    static public String relate(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.relate(arg1).toString();
+    public static String relate(final Geometry geom, final Geometry geom2) {
+        return geom.relate(geom2).toString();
     }
 
-    static public Geometry bufferWithSegments(Geometry arg0, double arg1, int arg2) {
-        Geometry _this = arg0;
-
-        return _this.buffer(arg1, arg2);
+    public static Geometry bufferWithSegments(final Geometry geom, final double dist, final int nbAngle) {
+        return geom.buffer(dist, nbAngle);
     }
 
-    static public Geometry buffer(Geometry arg0, double arg1) {
-        Geometry _this = arg0;
-
-        return _this.buffer(arg1);
+    public static Geometry buffer(final Geometry geom, final double dist) {
+        return geom.buffer(dist);
     }
 
-    static public Geometry convexHull(Geometry arg0) {
-        Geometry _this = arg0;
-
-        return _this.convexHull();
+    public static Geometry convexHull(final Geometry geom) {
+        return geom.convexHull();
     }
 
-    static public Geometry intersection(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.intersection(arg1);
+    public static Geometry intersection(final Geometry geom, final Geometry geom2) {
+        return geom.intersection(geom2);
     }
 
-    static public Geometry union(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.union(arg1);
+    public static Geometry union(final Geometry geom, final Geometry geom2) {
+        return geom.union(geom2);
     }
 
-    static public Geometry difference(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.difference(arg1);
+    public static Geometry difference(final Geometry geom, final Geometry geom2) {
+        return geom.difference(geom2);
     }
 
-    static public Geometry symDifference(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.symDifference(arg1);
+    public static Geometry symDifference(final Geometry geom, final Geometry geom2) {
+        return geom.symDifference(geom2);
     }
 
-    static public boolean equalsExactTolerance(Geometry arg0, Geometry arg1, double arg2) {
-        Geometry _this = arg0;
-
-        return _this.equalsExact(arg1, arg2);
+    public static boolean equalsExactTolerance(final Geometry geom, final Geometry geom2, final double tolerance) {
+        return geom.equalsExact(geom2, tolerance);
     }
 
-    static public boolean equalsExact(Geometry arg0, Geometry arg1) {
-        Geometry _this = arg0;
-
-        return _this.equalsExact(arg1);
+    public static boolean equalsExact(final Geometry geom, final Geometry geom2) {
+        return geom.equalsExact(geom2);
     }
 
-    static public int numGeometries(Geometry arg0) {
-        GeometryCollection _this = (GeometryCollection) arg0;
-
-        return _this.getNumGeometries();
+    public static int numGeometries(final Geometry geom) {
+        final GeometryCollection multiGeom = (GeometryCollection) geom;
+        return multiGeom.getNumGeometries();
     }
 
-    static public Geometry getGeometryN(Geometry arg0, int arg1) {
-        GeometryCollection _this = (GeometryCollection) arg0;
-
-        return _this.getGeometryN(arg1);
+    public static Geometry getGeometryN(final Geometry geom, final int index) {
+        final GeometryCollection multiGeom = (GeometryCollection) geom;
+        return multiGeom.getGeometryN(index);
     }
 
-    static public double getX(Geometry arg0) {
-        Point _this = (Point) arg0;
-
-        return _this.getX();
+    public static double getX(final Geometry geom) {
+        final Point point = (Point) geom;
+        return point.getX();
     }
 
-    static public double getY(Geometry arg0) {
-        Point _this = (Point) arg0;
-
-        return _this.getY();
+    public static double getY(final Geometry geom) {
+        final Point point = (Point) geom;
+        return point.getY();
     }
 
-    static public boolean isClosed(Geometry arg0) {
-        LineString _this = (LineString) arg0;
-
-        return _this.isClosed();
+    public static boolean isClosed(Geometry geom) {
+        final LineString line = (LineString) geom;
+        return line.isClosed();
     }
 
-    static public Geometry pointN(Geometry arg0, int arg1) {
-        LineString _this = (LineString) arg0;
-
-        return _this.getPointN(arg1);
+    public static Geometry pointN(final Geometry geom, final int index) {
+        final LineString line = (LineString) geom;
+        return line.getPointN(index);
     }
 
-    static public Geometry startPoint(Geometry arg0) {
-        LineString _this = (LineString) arg0;
-
-        return _this.getStartPoint();
+    public static Geometry startPoint(final Geometry geom) {
+        final LineString line = (LineString) geom;
+        return line.getStartPoint();
     }
 
-    static public Geometry endPoint(Geometry arg0) {
-        LineString _this = (LineString) arg0;
-
-        return _this.getEndPoint();
+    public static Geometry endPoint(final Geometry geom) {
+        final LineString line = (LineString) geom;
+        return line.getEndPoint();
     }
 
-    static public boolean isRing(Geometry arg0) {
-        LineString _this = (LineString) arg0;
-
-        return _this.isRing();
+    public static boolean isRing(final Geometry geom) {
+        final LineString line = (LineString) geom;
+        return line.isRing();
     }
 
-    static public Geometry exteriorRing(Geometry arg0) {
-        Polygon _this = (Polygon) arg0;
-
-        return _this.getExteriorRing();
+    public static Geometry exteriorRing(final Geometry geom) {
+        final Polygon poly = (Polygon) geom;
+        return poly.getExteriorRing();
     }
 
-    static public int numInteriorRing(Geometry arg0) {
-        Polygon _this = (Polygon) arg0;
-
-        return _this.getNumInteriorRing();
+    public static int numInteriorRing(final Geometry geom) {
+        final Polygon poly = (Polygon) geom;
+        return poly.getNumInteriorRing();
     }
 
-    static public Geometry interiorRingN(Geometry arg0, int arg1) {
-        Polygon _this = (Polygon) arg0;
-
-        return _this.getInteriorRingN(arg1);
+    public static Geometry interiorRingN(final Geometry geom, final int index) {
+        final Polygon poly = (Polygon) geom;
+        return poly.getInteriorRingN(index);
     }
 
     //--------------------------------------------------------------------------
     //JAVA String functions
-    static public String strConcat(String s1, String s2) {
+    public static String strConcat(final String s1, final String s2) {
         return s1 + s2;
     }
 
-    static public boolean strEndsWith(String s1, String s2) {
+    public static boolean strEndsWith(final String s1, final String s2) {
         return s1.endsWith(s2);
     }
 
-    static public boolean strStartsWith(String s1, String s2) {
+    public static boolean strStartsWith(final String s1, final String s2) {
         return s1.startsWith(s2);
     }
 
-    static public boolean strEqualsIgnoreCase(String s1, String s2) {
+    public static boolean strEqualsIgnoreCase(final String s1, final String s2) {
         return s1.equalsIgnoreCase(s2);
     }
 
-    static public int strIndexOf(String s1, String s2) {
+    public static int strIndexOf(final String s1, final String s2) {
         return s1.indexOf(s2);
     }
 
-    static public int strLastIndexOf(String s1, String s2) {
+    public static int strLastIndexOf(final String s1, final String s2) {
         return s1.lastIndexOf(s2);
     }
 
-    static public int strLength(String s1) {
+    public static int strLength(final String s1) {
         return s1.length();
     }
 
-    static public String strToLowerCase(String s1) {
+    public static String strToLowerCase(final String s1) {
         return s1.toLowerCase();
     }
 
-    static public String strToUpperCase(String s1) {
+    public static String strToUpperCase(final String s1) {
         return s1.toUpperCase();
     }
 
-    static public boolean strMatches(String s1, String s2) {
+    public static boolean strMatches(final String s1, final String s2) {
         return s1.matches(s2);
     }
 
-    static public String strReplace(String s1, String s2, String s3, boolean bAll) {
+    public static String strReplace(final String s1, final String s2, final String s3, final boolean bAll) {
         if (bAll) {
             return s1.replaceAll(s2, s3);
         } else {
@@ -369,66 +290,67 @@ public class StaticGeometry {
         }
     }
 
-    static public String strSubstring(String s1, int beg, int end) {
+    public static String strSubstring(final String s1, final int beg, final int end) {
         return s1.substring(beg, end);
     }
 
-    static public String strSubstringStart(String s1, int beg) {
+    public static String strSubstringStart(final String s1, final int beg) {
         return s1.substring(beg);
     }
 
-    static public String strTrim(String s1) {
+    public static String strTrim(final String s1) {
         return s1.trim();
     }
 
     //--------------------------------------------------------------------------
     //data type xform
-    static public double parseDouble(String s) {
+    public static double parseDouble(final String s) {
         return Double.parseDouble(s);
     }
 
-    static public int parseInt(String s) {
+    public static int parseInt(final String s) {
         try {
             return Integer.parseInt(s);
-        } catch (NumberFormatException e) // be nice for silly people!
-        {
+        } catch (NumberFormatException e){
+            // be nice for silly people!
             return (int) Math.round(Double.parseDouble(s));
         }
     }
 
-    static public long parseLong(String s) {
+    public static long parseLong(final String s) {
         try {
             return Long.parseLong(s);
-        } catch (NumberFormatException e) // be nice for silly people!
-        {
+        } catch (NumberFormatException e) {
+            // be nice for silly people!
             return (long) Math.round(Double.parseDouble(s));
         }
     }
 
-    static public boolean parseBoolean(String s) {
-        if (s.equalsIgnoreCase("") || s.equalsIgnoreCase("f") || s.equalsIgnoreCase("false") || s.equalsIgnoreCase("0") || s.equalsIgnoreCase("0.0")) {
+    public static boolean parseBoolean(final String s) {
+        if (s.equalsIgnoreCase("") || s.equalsIgnoreCase("f") || s.equalsIgnoreCase("false")
+                || s.equalsIgnoreCase("0") || s.equalsIgnoreCase("0.0")) {
             return false;
         }
         return true;
     }
 
-    static public int roundDouble(double d) {
+    public static int roundDouble(final double d) {
         return (int) Math.round(d);
     }
 
-    static public double int2ddouble(int i) {
+    public static double int2ddouble(final int i) {
         return (double) i;
     }
 
-    static public boolean int2bbool(int i) {
+    public static boolean int2bbool(final int i) {
         return i == 0;
     }
 
-    static public boolean double2bool(double d) {
+    public static boolean double2bool(final double d) {
         return d == 0;
     }
 
-    static public Object if_then_else(boolean p, Object a, Object b) {
+    public static Object ifThenElse(final boolean p, final Object a, final Object b) {
         if (p) {
             return a;
         } else {
@@ -438,127 +360,86 @@ public class StaticGeometry {
 
 //   --------------------------------------------------------------------------
     //OGC Filter comparisionOP functions
-    static public boolean equalTo(Object o1, Object o2) {
+    public static boolean equalTo(final Object o1, final Object o2) {
         if (o1.getClass() == o2.getClass()) {
             return o1.equals(o2);
         }
-        if ((o1 instanceof Number) && (o2 instanceof Number)) {
+        if (o1 instanceof Number && o2 instanceof Number) {
             return ((Number) o1).doubleValue() == ((Number) o2).doubleValue();
         }
-        return (o1).toString().equals((o2).toString());
+        return o1.toString().equals(o2.toString());
     }
 
-    static public boolean notEqualTo(Object o1, Object o2) {
-        return !(equalTo(o1, o2));
+    public static boolean notEqualTo(final Object o1, final Object o2) {
+        return !equalTo(o1, o2);
     }
 
-    static public boolean lessThan(Object o1, Object o2) {
-        if ((o1 instanceof Integer) && (o2 instanceof Integer)) {
+    public static boolean lessThan(final Object o1, final Object o2) {
+        if (o1 instanceof Integer && o2 instanceof Integer) {
             return ((Integer) o1).intValue() < ((Integer) o2).intValue();
         }
-        if ((o1 instanceof Number) && (o2 instanceof Number)) {
+        if (o1 instanceof Number && o2 instanceof Number) {
             return ((Number) o1).doubleValue() < ((Number) o2).doubleValue();
         }
-        return (o1).toString().compareTo((o2).toString()) == 0;
+        return o1.toString().compareTo(o2.toString()) == 0;
     }
 
-    static public boolean greaterThan(Object o1, Object o2) {
-        if ((o1 instanceof Integer) && (o2 instanceof Integer)) {
+    public static boolean greaterThan(final Object o1, final Object o2) {
+        if (o1 instanceof Integer && o2 instanceof Integer) {
             return ((Integer) o1).intValue() > ((Integer) o2).intValue();
         }
-        if ((o1 instanceof Number) && (o2 instanceof Number)) {
+        if (o1 instanceof Number && o2 instanceof Number) {
             return ((Number) o1).doubleValue() > ((Number) o2).doubleValue();
         }
-        return (o1).toString().compareTo((o2).toString()) == 2;
+        return o1.toString().compareTo(o2.toString()) == 2;
     }
 
-    static public boolean greaterEqualThan(Object o1, Object o2) {
-        if ((o1 instanceof Integer) && (o2 instanceof Integer)) {
+    public static boolean greaterEqualThan(final Object o1, final Object o2) {
+        if (o1 instanceof Integer && o2 instanceof Integer) {
             return ((Integer) o1).intValue() >= ((Integer) o2).intValue();
         }
-        if ((o1 instanceof Number) && (o2 instanceof Number)) {
+        if (o1 instanceof Number && o2 instanceof Number) {
             return ((Number) o1).doubleValue() >= ((Number) o2).doubleValue();
         }
-        return (((o1).toString().compareTo((o2).toString()) == 2) ||
-                ((o1).toString().compareTo((o2).toString()) == 1));
+        return o1.toString().compareTo(o2.toString()) == 2 ||
+               o1.toString().compareTo(o2.toString()) == 1;
     }
 
-    static public boolean lessEqualThan(Object o1, Object o2) {
-        if ((o1 instanceof Integer) && (o2 instanceof Integer)) {
+    public static boolean lessEqualThan(final Object o1, final Object o2) {
+        if (o1 instanceof Integer && o2 instanceof Integer) {
             return ((Integer) o1).intValue() <= ((Integer) o2).intValue();
         }
-        if ((o1 instanceof Number) && (o2 instanceof Number)) {
+        if (o1 instanceof Number && o2 instanceof Number) {
             return ((Number) o1).doubleValue() <= ((Number) o2).doubleValue();
         }
-        return (((o1).toString().compareTo((o2).toString()) == 0) ||
-                ((o1).toString().compareTo((o2).toString()) == 1));
+        return o1.toString().compareTo(o2.toString()) == 0 ||
+               o1.toString().compareTo(o2.toString()) == 1;
     }
 
-    static public boolean isLike(String s1, String s2) {
+    public static boolean isLike(final String s1, final String s2) {
         return s1.matches(s2); // this sucks, but hay...
     }
 
-    static public boolean isNull(Object o) {
+    public static boolean isNull(final Object o) {
         return o == null;
     }
 
-    static public boolean between(Object o, Object o_low, Object o_high) {
-
-        return StaticGeometry.greaterEqualThan(o, o_low) && StaticGeometry.lessEqualThan(o, o_high);
+    public static boolean between(final Object o, final Object min, final Object max) {
+        return StaticGeometry.greaterEqualThan(o, min) && StaticGeometry.lessEqualThan(o, max);
     }
 
-    static public boolean not(boolean b) {
+    public static boolean not(final boolean b) {
         return !b;
     }
 
 //   --------------------------------------------------------------------------
     // SQL "var in (list)"
-    static public boolean in2(Object s, Object s1, Object s2) {
-        return (equalTo(s, s1) || equalTo(s, s2));
-    }
 
-    static public boolean in3(Object s, Object s1, Object s2, Object s3) {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3));
+    public static boolean in(final Object s, final Object ... lst) {
+        for(final Object obj : lst){
+            if(equalTo(s, obj)) return true;
+        }
+        return false;
     }
-
-    static public boolean in4(Object s, Object s1, Object s2, Object s3, Object s4) {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4));
-    }
-
-    static public boolean in5(Object s, Object s1, Object s2, Object s3, Object s4, Object s5) {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4) || equalTo(s, s5));
-    }
-
-    static public boolean in6(Object s, Object s1, Object s2, Object s3, Object s4, Object s5, Object s6) {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4) || equalTo(s, s5) ||
-                equalTo(s, s6));
-    }
-
-    static public boolean in7(Object s, Object s1, Object s2, Object s3, Object s4, Object s5, Object s6,
-                                        Object s7)
-    {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4) || equalTo(s, s5) ||
-                equalTo(s, s6) || equalTo(s, s7));
-    }
-
-    static public boolean in8(Object s, Object s1, Object s2, Object s3, Object s4, Object s5, Object s6,
-                                        Object s7, Object s8)
-    {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4) || equalTo(s, s5) ||
-                equalTo(s, s6) || equalTo(s, s7) || equalTo(s, s8));
-    }
-
-    static public boolean in9(Object s, Object s1, Object s2, Object s3, Object s4, Object s5, Object s6,
-                                        Object s7, Object s8, Object s9)
-    {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4) || equalTo(s, s5) ||
-                equalTo(s, s6) || equalTo(s, s7) || equalTo(s, s8) || equalTo(s, s9));
-    }
-
-    static public boolean in10(Object s, Object s1, Object s2, Object s3, Object s4, Object s5, Object s6,
-                                         Object s7, Object s8, Object s9, Object s10)
-    {
-        return (equalTo(s, s1) || equalTo(s, s2) || equalTo(s, s3) || equalTo(s, s4) || equalTo(s, s5) ||
-                equalTo(s, s6) || equalTo(s, s7) || equalTo(s, s8) || equalTo(s, s9) || equalTo(s, s10));
-    }
+    
 }
