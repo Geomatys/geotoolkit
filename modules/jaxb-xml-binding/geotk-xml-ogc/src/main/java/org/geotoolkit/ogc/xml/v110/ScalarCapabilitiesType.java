@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.ArithmeticOperators;
+import org.opengis.filter.capability.ComparisonOperators;
+import org.opengis.filter.capability.ScalarCapabilities;
 
 
 /**
@@ -49,85 +52,54 @@ import javax.xml.bind.annotation.XmlType;
     "comparisonOperators",
     "arithmeticOperators"
 })
-public class ScalarCapabilitiesType {
+public class ScalarCapabilitiesType implements ScalarCapabilities {
 
     @XmlElement(name = "LogicalOperators")
-    protected LogicalOperators logicalOperators;
+    private LogicalOperators logicalOperators;
     @XmlElement(name = "ComparisonOperators")
-    protected ComparisonOperatorsType comparisonOperators;
+    private ComparisonOperatorsType comparisonOperators;
     @XmlElement(name = "ArithmeticOperators")
-    protected ArithmeticOperatorsType arithmeticOperators;
+    private ArithmeticOperatorsType arithmeticOperators;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public ScalarCapabilitiesType() {
+    }
+    
+     /**
+     *Build a new Scalar Capabilities
+     */
+    public ScalarCapabilitiesType(ComparisonOperators comparison, ArithmeticOperators arithmetic, boolean logical) {
+        if (logical) {
+            this.logicalOperators = new LogicalOperators();
+        }
+        this.comparisonOperators = (ComparisonOperatorsType) comparison;
+        this.arithmeticOperators = (ArithmeticOperatorsType) arithmetic;
+    }
+    
+    /**
      * Gets the value of the logicalOperators property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LogicalOperators }
-     *     
      */
     public LogicalOperators getLogicalOperators() {
         return logicalOperators;
     }
 
     /**
-     * Sets the value of the logicalOperators property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LogicalOperators }
-     *     
-     */
-    public void setLogicalOperators(LogicalOperators value) {
-        this.logicalOperators = value;
-    }
-
-    /**
      * Gets the value of the comparisonOperators property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ComparisonOperatorsType }
-     *     
      */
     public ComparisonOperatorsType getComparisonOperators() {
         return comparisonOperators;
     }
 
     /**
-     * Sets the value of the comparisonOperators property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ComparisonOperatorsType }
-     *     
-     */
-    public void setComparisonOperators(ComparisonOperatorsType value) {
-        this.comparisonOperators = value;
-    }
-
-    /**
      * Gets the value of the arithmeticOperators property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ArithmeticOperatorsType }
-     *     
      */
     public ArithmeticOperatorsType getArithmeticOperators() {
         return arithmeticOperators;
     }
 
-    /**
-     * Sets the value of the arithmeticOperators property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ArithmeticOperatorsType }
-     *     
-     */
-    public void setArithmeticOperators(ArithmeticOperatorsType value) {
-        this.arithmeticOperators = value;
+    public boolean hasLogicalOperators() {
+        return logicalOperators != null;
     }
-
 }

@@ -18,7 +18,6 @@ package org.geotoolkit.ogc.xml.v110;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -45,7 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "SpatialOperatorNameType")
 @XmlEnum
 public enum SpatialOperatorNameType {
 
@@ -86,7 +84,7 @@ public enum SpatialOperatorNameType {
                 return c;
             }
         }
-        throw new IllegalArgumentException(v);
+        throw new IllegalArgumentException(v.toString());
     }
 
 }

@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -45,35 +48,54 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "propertyName"
 })
-public class PropertyIsNullType
-    extends ComparisonOpsType
-{
+public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsNull {
 
     @XmlElement(name = "PropertyName", required = true)
-    protected PropertyNameType propertyName;
+    private PropertyNameType propertyName;
 
     /**
+     * An empty constructor used by JAXB
+     */
+     public PropertyIsNullType() {
+         
+     }
+     
+     /**
+     * Build a new Property is null operator.
+     */
+     public PropertyIsNullType(PropertyNameType prop) {
+         this.propertyName = prop;
+     }
+     
+    /**
      * Gets the value of the propertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PropertyNameType }
-     *     
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
     }
-
-    /**
-     * Sets the value of the propertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PropertyNameType }
-     *     
-     */
-    public void setPropertyName(PropertyNameType value) {
-        this.propertyName = value;
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (propertyName != null) {
+            s.append("PropertyName= ").append(propertyName.toString()).append('\n');
+        } else s.append(" PropertyName is null");
+        
+        return s.toString();
     }
 
+    /**
+     * implements PropertyIsNull GeoAPI interface
+     */
+    public Expression getExpression() {
+        return propertyName;
+    }
+
+    public boolean evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(FilterVisitor visitor, Object extraData) {
+        return visitor.visit( this, extraData );
+    }
 }

@@ -20,7 +20,11 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -52,33 +56,52 @@ import javax.xml.bind.annotation.XmlType;
     "spatialOps",
     "logicOps"
 })
-public class UnaryLogicOpType
-    extends LogicOpsType
-{
+public class UnaryLogicOpType extends LogicOpsType {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    protected JAXBElement<? extends ComparisonOpsType> comparisonOps;
+    private JAXBElement<? extends ComparisonOpsType> comparisonOps;
     @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    protected JAXBElement<? extends SpatialOpsType> spatialOps;
+    private JAXBElement<? extends SpatialOpsType> spatialOps;
     @XmlElementRef(name = "logicOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    protected JAXBElement<? extends LogicOpsType> logicOps;
+    private JAXBElement<? extends LogicOpsType> logicOps;
 
     /**
+     * an transient ogc factory to build JAXBelement
+     */
+    @XmlTransient
+    private ObjectFactory factory = new ObjectFactory();
+    
+    /**
+     * An empty constructor used by JAXB
+     */
+     public UnaryLogicOpType() {
+         
+     }
+     
+     /**
+      * Build a new Binary logic operator 
+      */
+     public UnaryLogicOpType(Object obj) {
+         
+         // comparison operator
+         if (obj instanceof ComparisonOpsType) {
+             this.comparisonOps = FilterType.createComparisonOps((ComparisonOpsType) obj);
+
+         // logical operator    
+         } else if (obj instanceof LogicOpsType) {
+             this.logicOps = FilterType.createLogicOps((LogicOpsType) obj);
+
+         // spatial operator    
+         } else if (obj instanceof SpatialOpsType) {
+             this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
+
+         } else {
+             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+         }
+         
+     }
+    /**
      * Gets the value of the comparisonOps property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JAXBElement }{@code <}{@link PropertyIsLikeType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link ComparisonOpsType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link PropertyIsBetweenType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     
      */
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
@@ -86,99 +109,143 @@ public class UnaryLogicOpType
 
     /**
      * Sets the value of the comparisonOps property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link PropertyIsLikeType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link ComparisonOpsType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link PropertyIsBetweenType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
-     *     
      */
-    public void setComparisonOps(JAXBElement<? extends ComparisonOpsType> value) {
-        this.comparisonOps = ((JAXBElement<? extends ComparisonOpsType> ) value);
+    public void setComparisonOps(JAXBElement<? extends ComparisonOpsType> comparisonOps) {
+        this.comparisonOps = comparisonOps;
     }
-
+    
+    /**
+     * Sets the value of the comparisonOps property.
+     */
+    public void setComparisonOps(ComparisonOpsType comparisonOps) {
+        this.comparisonOps = FilterType.createComparisonOps(comparisonOps);
+    }
+    
     /**
      * Gets the value of the spatialOps property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
     }
-
+    
     /**
      * Sets the value of the spatialOps property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-     *     
      */
-    public void setSpatialOps(JAXBElement<? extends SpatialOpsType> value) {
-        this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
+    public void setSpatialOps(JAXBElement<? extends SpatialOpsType> spatialOps) {
+        this.spatialOps = spatialOps;
+    }
+    
+    /**
+     * Sets the value of the spatialOps property.
+     */
+    public void setSpatialOps(SpatialOpsType spatialOps) {
+        this.spatialOps = FilterType.createSpatialOps(spatialOps);
     }
 
+    
     /**
      * Gets the value of the logicOps property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}
-     *     
      */
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
     }
-
+    
+        /**
+     * Sets the value of the logicOps property.
+     */
+    public void setLogicOps(JAXBElement<? extends LogicOpsType> logicOps) {
+        this.logicOps = logicOps;
+    }
+    
     /**
      * Sets the value of the logicOps property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}
-     *     
      */
-    public void setLogicOps(JAXBElement<? extends LogicOpsType> value) {
-        this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);
+    public void setLogicOps(LogicOpsType logicOps) {
+        this.logicOps = FilterType.createLogicOps(logicOps);
+    }
+    
+    /**
+     * implements geoAPI interface
+     * 
+     * @return 
+     */
+    public Filter getFilter() {
+        if (comparisonOps != null)
+            return comparisonOps.getValue();
+        else if (logicOps != null)
+            return logicOps.getValue();
+        else if (spatialOps != null)
+            return spatialOps.getValue();
+        else return null;
+        
     }
 
+     /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof UnaryLogicOpType) {
+            final UnaryLogicOpType that = (UnaryLogicOpType) object;
+
+            boolean comp = false;
+            if (this.comparisonOps != null && that.comparisonOps != null) {
+                comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
+            } else if (this.comparisonOps == null && that.comparisonOps == null)
+                comp = true;
+
+            boolean log = false;
+            if (this.logicOps != null && that.logicOps != null) {
+                log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
+            } else if (this.logicOps == null && that.logicOps == null)
+                log = true;
+
+            boolean spa = false;
+            if (this.spatialOps != null && that.spatialOps != null) {
+                spa = Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
+            } else if (this.spatialOps == null && that.spatialOps == null) {
+                spa = true;
+            }
+            /**
+             * TODO ID
+             */
+            return  comp && spa && log;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.comparisonOps != null ? this.comparisonOps.hashCode() : 0);
+        hash = 97 * hash + (this.spatialOps != null ? this.spatialOps.hashCode() : 0);
+        hash = 97 * hash + (this.logicOps != null ? this.logicOps.hashCode() : 0);
+        return hash;
+    }
+    
+     @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
+        if (spatialOps != null) {
+            s.append("SpatialOps: ").append(spatialOps.getValue().toString()).append('\n');
+        }
+        if (comparisonOps != null) {
+            s.append("ComparisonOps: ").append(comparisonOps.getValue().toString()).append('\n');
+        }
+        if (logicOps != null) {
+            s.append("LogicOps: ").append(logicOps.getValue().toString()).append('\n');
+        }
+        return s.toString();
+    }
+
+    public boolean evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(FilterVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

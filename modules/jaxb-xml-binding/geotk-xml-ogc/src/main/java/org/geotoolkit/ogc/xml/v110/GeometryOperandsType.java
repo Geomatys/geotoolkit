@@ -17,12 +17,14 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.opengis.filter.capability.GeometryOperand;
 
 
 /**
@@ -51,35 +53,37 @@ import javax.xml.namespace.QName;
 public class GeometryOperandsType {
 
     @XmlElement(name = "GeometryOperand", required = true)
-    protected List<QName> geometryOperand;
+    private List<QName> geometryOperand;
 
     /**
+     * Empty constructor used by JAXB
+     */
+    public GeometryOperandsType() {
+        
+    }
+    
+    /**
+     * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
+     */
+    public GeometryOperandsType(GeometryOperand[] geometryOperands) {
+        if (geometryOperands == null) {
+            geometryOperands = new GeometryOperand[0];
+        }
+        geometryOperand = new ArrayList<QName>();
+        for (GeometryOperand g: geometryOperands) {
+            geometryOperand.add(new QName(g.getNamespaceURI(), g.getLocalPart()));
+        }
+    }
+    
+    /**
      * Gets the value of the geometryOperand property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the geometryOperand property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGeometryOperand().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link QName }
-     * 
-     * 
+     * (unmodifiable)
      */
     public List<QName> getGeometryOperand() {
         if (geometryOperand == null) {
             geometryOperand = new ArrayList<QName>();
         }
-        return this.geometryOperand;
+        return Collections.unmodifiableList(geometryOperand);
     }
 
 }

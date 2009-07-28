@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.opengis.filter.identity.GmlObjectId;
 
 
 /**
@@ -45,38 +46,33 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GmlObjectIdType")
-public class GmlObjectIdType
-    extends AbstractIdType
-{
+public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
-    protected String id;
+    private String id;
 
     /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * An empty constructor used by JAXB
      */
-    public String getId() {
+    public GmlObjectIdType() {
+        
+    }
+    
+    /**
+     * Build a new GML object Id with the specified ID
+     */
+    public GmlObjectIdType(String id) {
+        this.id = id;
+    }
+    
+    public String getID() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
+    public boolean matches(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

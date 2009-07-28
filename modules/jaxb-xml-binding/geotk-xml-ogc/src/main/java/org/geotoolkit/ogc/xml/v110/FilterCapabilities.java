@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.IdCapabilities;
+import org.opengis.filter.capability.ScalarCapabilities;
+import org.opengis.filter.capability.SpatialCapabilities;
 
 
 /**
@@ -34,6 +37,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Spatial_Capabilities" type="{http://www.opengis.net/ogc}Spatial_CapabilitiesType"/>
+ *         &lt;element name="Temporal_Capabilities" type="{http://www.opengis.net/ogc}Temporal_CapabilitiesType"/>
+ *         &lt;element name="Existence_Capabilities" type="{http://www.opengis.net/ogc}Existence_CapabilitiesType"/>
+ *         &lt;element name="Classification_Capabilities" type="{http://www.opengis.net/ogc}Classification_CapabilitiesType"/>
  *         &lt;element name="Scalar_Capabilities" type="{http://www.opengis.net/ogc}Scalar_CapabilitiesType"/>
  *         &lt;element name="Id_Capabilities" type="{http://www.opengis.net/ogc}Id_CapabilitiesType"/>
  *       &lt;/sequence>
@@ -47,89 +53,90 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "spatialCapabilities",
+    "temporalCapabilities",
+    "existenceCapabilities",
+    "classificationCapabilities",
     "scalarCapabilities",
     "idCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities {
+public class FilterCapabilities implements org.opengis.filter.capability.FilterCapabilities {
 
     @XmlElement(name = "Spatial_Capabilities", required = true)
-    protected SpatialCapabilitiesType spatialCapabilities;
+    private SpatialCapabilitiesType spatialCapabilities;
+    @XmlElement(name = "Temporal_Capabilities", required = true)
+    private TemporalCapabilitiesType temporalCapabilities;
+    @XmlElement(name = "Existence_Capabilities", required = true)
+    private ExistenceCapabilitiesType existenceCapabilities;
+    @XmlElement(name = "Classification_Capabilities", required = true)
+    private ClassificationCapabilitiesType classificationCapabilities;
     @XmlElement(name = "Scalar_Capabilities", required = true)
-    protected ScalarCapabilitiesType scalarCapabilities;
+    private ScalarCapabilitiesType scalarCapabilities;
     @XmlElement(name = "Id_Capabilities", required = true)
-    protected IdCapabilitiesType idCapabilities;
+    private IdCapabilitiesType idCapabilities;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public FilterCapabilities() {
+        
+    }
+    
+    /**
+     * Build a new filter capabilities (light version)
+     */
+    public FilterCapabilities(ScalarCapabilities scalar, SpatialCapabilities spatial, IdCapabilities id) {
+        this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
+        this.idCapabilities      = (IdCapabilitiesType)      id;
+        this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
+        
+    }
+    
+    
+    /**
      * Gets the value of the spatialCapabilities property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SpatialCapabilitiesType }
-     *     
      */
     public SpatialCapabilitiesType getSpatialCapabilities() {
         return spatialCapabilities;
     }
 
     /**
-     * Sets the value of the spatialCapabilities property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SpatialCapabilitiesType }
-     *     
-     */
-    public void setSpatialCapabilities(SpatialCapabilitiesType value) {
-        this.spatialCapabilities = value;
+     * Gets the value of the temporalCapabilities property.
+    */
+    public TemporalCapabilitiesType getTemporalCapabilities() {
+        return temporalCapabilities;
     }
 
     /**
+     * Gets the value of the existenceCapabilities property.
+     */
+    public ExistenceCapabilitiesType getExistenceCapabilities() {
+        return existenceCapabilities;
+    }
+
+    /**
+     * Gets the value of the classificationCapabilities property.
+     */
+    public ClassificationCapabilitiesType getClassificationCapabilities() {
+        return classificationCapabilities;
+    }
+
+
+    /**
      * Gets the value of the scalarCapabilities property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ScalarCapabilitiesType }
-     *     
      */
     public ScalarCapabilitiesType getScalarCapabilities() {
         return scalarCapabilities;
     }
 
     /**
-     * Sets the value of the scalarCapabilities property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ScalarCapabilitiesType }
-     *     
-     */
-    public void setScalarCapabilities(ScalarCapabilitiesType value) {
-        this.scalarCapabilities = value;
-    }
-
-    /**
      * Gets the value of the idCapabilities property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IdCapabilitiesType }
-     *     
      */
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
     }
 
-    /**
-     * Sets the value of the idCapabilities property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IdCapabilitiesType }
-     *     
-     */
-    public void setIdCapabilities(IdCapabilitiesType value) {
-        this.idCapabilities = value;
+    public String getVersion() {
+        return "1.1.0";
     }
-
 }

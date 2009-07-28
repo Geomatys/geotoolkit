@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -41,10 +42,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LogicOpsType")
 @XmlSeeAlso({
-    UnaryLogicOpType.class,
-    BinaryLogicOpType.class
+    BinaryLogicOpType.class,
+    UnaryLogicOpType.class
 })
-public abstract class LogicOpsType {
+public abstract class LogicOpsType implements Filter {
 
-
+    @Override
+    public String toString() {
+        return "class: " + this.getClass().getSimpleName() + '\n';
+    }
 }

@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.IdCapabilities;
 
 
 /**
@@ -47,44 +45,54 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Id_CapabilitiesType", propOrder = {
-    "eidOrFID"
+    "eid",
+    "fid"
 })
-public class IdCapabilitiesType {
+public class IdCapabilitiesType implements IdCapabilities {
 
-    @XmlElements({
-        @XmlElement(name = "FID", type = FID.class),
-        @XmlElement(name = "EID", type = EID.class)
-    })
-    protected List<Object> eidOrFID;
+    @XmlElement(name = "EID")
+    private EID eid;
+    
+    @XmlElement(name = "FID")
+    private FID fid;
 
     /**
-     * Gets the value of the eidOrFID property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the eidOrFID property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getEIDOrFID().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FID }
-     * {@link EID }
-     * 
-     * 
+     * Empty constructor used By JAXB
      */
-    public List<Object> getEIDOrFID() {
-        if (eidOrFID == null) {
-            eidOrFID = new ArrayList<Object>();
-        }
-        return this.eidOrFID;
+     public IdCapabilitiesType() {
+        
+     }
+     
+    /**
+     * Build a new ID capabilities
+     */
+     public IdCapabilitiesType(boolean eid, boolean fid) {
+        if (eid)
+            this.eid = new EID();
+        if (fid)
+            this.fid = new FID();
+     }
+     
+    /**
+     * Gets the value of the eid property.
+     */
+    public EID getEID() {
+        return eid;
+    }
+    
+    /**
+     * Gets the value of the eid property.
+     */
+    public FID getFID() {
+        return fid;
+    }
+
+    public boolean hasEID() {
+        return eid != null;
+    }
+
+    public boolean hasFID() {
+        return fid != null;
     }
 
 }

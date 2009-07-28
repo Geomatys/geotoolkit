@@ -17,12 +17,14 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -48,61 +50,32 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BinaryOperatorType", propOrder = {
     "expression"
 })
-public class BinaryOperatorType
-    extends ExpressionType
-{
+public class BinaryOperatorType extends ExpressionType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    protected List<JAXBElement<?>> expression;
+    private List<JAXBElement<?>> expression;
 
     /**
      * Gets the value of the expression property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the expression property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExpression().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
-     * {@link JAXBElement }{@code <}{@link MapItemType }{@code >}
-     * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
-     * {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
-     * {@link JAXBElement }{@code <}{@link InterpolateType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ConcatenateType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ChangeCaseType }{@code >}
-     * {@link JAXBElement }{@code <}{@link PropertyNameType }{@code >}
-     * {@link JAXBElement }{@code <}{@link TrimType }{@code >}
-     * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
-     * {@link JAXBElement }{@code <}{@link net.opengis.ogc.FunctionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link FormatDateType }{@code >}
-     * {@link JAXBElement }{@code <}{@link CategorizeType }{@code >}
-     * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ExpressionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link InterpolationPointType }{@code >}
-     * {@link JAXBElement }{@code <}{@link StringLengthType }{@code >}
-     * {@link JAXBElement }{@code <}{@link RecodeType }{@code >}
-     * {@link JAXBElement }{@code <}{@link net.opengis.se.FunctionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
-     * {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
-     * {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     * 
-     * 
+     * (unmodifiable)
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
             expression = new ArrayList<JAXBElement<?>>();
         }
-        return this.expression;
+        return Collections.unmodifiableList(expression);
+    }
+
+    public Object evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public <T> T evaluate(Object object, Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(ExpressionVisitor visitor, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

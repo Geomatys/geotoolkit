@@ -48,15 +48,11 @@ import javax.xml.bind.annotation.XmlType;
 public class FunctionsType {
 
     @XmlElement(name = "FunctionNames", required = true)
-    protected FunctionNamesType functionNames;
+    private FunctionNamesType functionNames;
 
     /**
      * Gets the value of the functionNames property.
      * 
-     * @return
-     *     possible object is
-     *     {@link FunctionNamesType }
-     *     
      */
     public FunctionNamesType getFunctionNames() {
         return functionNames;
@@ -65,10 +61,6 @@ public class FunctionsType {
     /**
      * Sets the value of the functionNames property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link FunctionNamesType }
-     *     
      */
     public void setFunctionNames(FunctionNamesType value) {
         this.functionNames = value;

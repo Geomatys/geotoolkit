@@ -17,11 +17,14 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.FunctionName;
+import org.opengis.filter.capability.Functions;
 
 
 /**
@@ -45,40 +48,47 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionNamesType", propOrder = {
-    "functionName"
+    "functionNames"
 })
-public class FunctionNamesType {
+public class FunctionNamesType implements Functions {
 
     @XmlElement(name = "FunctionName", required = true)
-    protected List<FunctionNameType> functionName;
+    private List<FunctionNameType> functionNames;
+
 
     /**
-     * Gets the value of the functionName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the functionName property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFunctionName().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FunctionNameType }
-     * 
-     * 
+     * Empty construtor used by JAXB
      */
-    public List<FunctionNameType> getFunctionName() {
-        if (functionName == null) {
-            functionName = new ArrayList<FunctionNameType>();
+    public FunctionNamesType() {
+        
+    }
+    
+    /**
+     *Build a new Function names
+     */
+    public FunctionNamesType(List<FunctionNameType> functionNames) {
+        this.functionNames = functionNames;
+    }
+    
+    public Collection<FunctionName> getFunctionNames() {
+        List<FunctionName> result = new ArrayList<FunctionName>();
+        if (functionNames == null) {
+            functionNames = new ArrayList<FunctionNameType>();
         }
-        return this.functionName;
+        for (FunctionNameType f: functionNames) {
+            result.add(f);
+        }
+        return result;
+    }
+
+    public FunctionName getFunctionName(String name) {
+       if (functionNames == null) {
+            functionNames = new ArrayList<FunctionNameType>();
+       }
+       for (FunctionNameType f: functionNames) {
+            if (f.getName().equals(name)) return f;
+       }
+       return null;
     }
 
 }

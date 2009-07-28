@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 
 
 /**
@@ -47,59 +50,79 @@ import javax.xml.bind.annotation.XmlType;
     "propertyName",
     "sortOrder"
 })
-public class SortPropertyType {
+public class SortPropertyType implements SortBy {
 
     @XmlElement(name = "PropertyName", required = true)
-    protected PropertyNameType propertyName;
+    private PropertyNameType propertyName;
     @XmlElement(name = "SortOrder")
-    protected SortOrderType sortOrder;
+    private SortOrderType sortOrder;
+    
+    /**
+     * Empty constructor used by JAXB
+     */
+    public SortPropertyType(){
+        
+    }
+    
+    /**
+     * build a new SOrt property object.
+     */
+    public SortPropertyType(String propertyName, SortOrder sortOrder) {
+        this.propertyName = new PropertyNameType(propertyName);
+        if (sortOrder != null && sortOrder.equals(SortOrder.ASCENDING))
+            this.sortOrder = SortOrderType.ASC;
+        else if (sortOrder != null && sortOrder.equals(SortOrder.DESCENDING))
+            this.sortOrder = SortOrderType.DESC;
+    }
+    
+    /**
+     * build a new SOrt property object.
+     */
+    public SortPropertyType(String propertyName, SortOrderType sortOrder) {
+        this.propertyName = new PropertyNameType(propertyName);
+        this.sortOrder    = sortOrder;
+    }
 
     /**
      * Gets the value of the propertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PropertyNameType }
-     *     
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
     }
 
     /**
-     * Sets the value of the propertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PropertyNameType }
-     *     
-     */
-    public void setPropertyName(PropertyNameType value) {
-        this.propertyName = value;
-    }
-
-    /**
      * Gets the value of the sortOrder property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SortOrderType }
-     *     
      */
-    public SortOrderType getSortOrder() {
-        return sortOrder;
+    public SortOrder getSortOrder() {
+        if (sortOrder != null && sortOrder.equals(SortOrderType.ASC))
+            return SortOrder.ASCENDING;
+        else if (sortOrder != null && sortOrder.equals(SortOrderType.DESC))
+            return SortOrder.DESCENDING;
+        else
+            return SortOrder.ASCENDING;
     }
-
+    
     /**
-     * Sets the value of the sortOrder property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SortOrderType }
-     *     
+     * Verify if this entry is identical to the specified object.
      */
-    public void setSortOrder(SortOrderType value) {
-        this.sortOrder = value;
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SortPropertyType) {
+            final SortPropertyType that = (SortPropertyType) object;
+            return Utilities.equals(this.propertyName,  that.propertyName)   &&
+                   Utilities.equals(this.sortOrder,  that.sortOrder);
+        }
+        return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (this.propertyName != null ? this.propertyName.hashCode() : 0);
+        hash = 17 * hash + (this.sortOrder != null ? this.sortOrder.hashCode() : 0);
+        return hash;
+    }
 }

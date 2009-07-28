@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 
 /**
@@ -29,45 +30,60 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * <pre>
  * &lt;complexType name="DistanceType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="units" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
+ *   &lt;simpleContent>
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>double">
+ *       &lt;attribute name="units" use="required" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *     &lt;/extension>
+ *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DistanceType")
+@XmlType(name = "DistanceType", propOrder = {
+    "value"
+})
 public class DistanceType {
 
+    @XmlValue
+    private double value;
     @XmlAttribute(required = true)
-    protected String units;
+    private String units;
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    public DistanceType() {
+        
+    }
+    
+    /**
+     * An empty constructor used by JAXB
+     */
+    public DistanceType(double value, String units) {
+        this.value = value;
+        this.units = units;
+    }
+    
+    /**
+     * Gets the value of the value property.
+     * 
+     */
+    public double getValue() {
+        return value;
+    }
 
     /**
      * Gets the value of the units property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getUnits() {
         return units;
     }
 
-    /**
-     * Sets the value of the units property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUnits(String value) {
-        this.units = value;
+    @Override
+    public String toString(){
+        return "Distance= " + value + " " + units;
     }
 
 }

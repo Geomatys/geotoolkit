@@ -18,8 +18,8 @@ package org.geotoolkit.ogc.xml.v110;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -36,18 +36,11 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;/complexType>
  * </pre>
  * 
- * 
+ * @author Guilhem Legal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExpressionType")
-@XmlSeeAlso({
-    BinaryOperatorType.class,
-    org.geotoolkit.ogc.xml.v110.FunctionType.class
-//    org.geotoolkit.se.xml.v110.InterpolationPointType.class,
-//    org.geotoolkit.se.xml.v110.MapItemType.class,
-//    org.geotoolkit.se.xml.v110.FunctionType.class
-})
-public abstract class ExpressionType {
+public abstract class ExpressionType implements Expression {
 
 
 }

@@ -16,12 +16,17 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
+import javax.xml.namespace.QName;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.SpatialOperator;
 
 /**
  * <p>Java class for SpatialOperatorType complex type.
@@ -47,59 +52,62 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SpatialOperatorType", propOrder = {
     "geometryOperands"
 })
-public class SpatialOperatorType {
+public class SpatialOperatorType implements SpatialOperator {
 
     @XmlElement(name = "GeometryOperands")
-    protected GeometryOperandsType geometryOperands;
+    private GeometryOperandsType geometryOperands;
     @XmlAttribute
-    protected SpatialOperatorNameType name;
+    private SpatialOperatorNameType name;
 
     /**
-     * Gets the value of the geometryOperands property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GeometryOperandsType }
-     *     
+     * An empty constructor used by JAXB 
      */
-    public GeometryOperandsType getGeometryOperands() {
+    public SpatialOperatorType() {
+        
+    }
+    
+    /**
+     * build a new spatial operator 
+     */
+    public SpatialOperatorType(String name, GeometryOperand[] geometryOperands) {
+        this.name = SpatialOperatorNameType.valueOf(name);
+        this.geometryOperands = new GeometryOperandsType(geometryOperands);
+        
+    }
+    
+    /**
+     * Gets the value of the geometryOperands property.
+     */
+    public GeometryOperandsType getGeometryOperandsType() {
         return geometryOperands;
     }
 
     /**
-     * Sets the value of the geometryOperands property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GeometryOperandsType }
-     *     
-     */
-    public void setGeometryOperands(GeometryOperandsType value) {
-        this.geometryOperands = value;
-    }
-
-    /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SpatialOperatorNameType }
-     *     
      */
-    public SpatialOperatorNameType getName() {
+    public SpatialOperatorNameType getTypeName() {
         return name;
     }
 
+   
     /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SpatialOperatorNameType }
-     *     
+     * Implements SpatialOperator geoAPI interface
+     * @return
      */
-    public void setName(SpatialOperatorNameType value) {
-        this.name = value;
+    public Collection<GeometryOperand> getGeometryOperands() {
+        List<GeometryOperand> result = new ArrayList<GeometryOperand>();
+        if (geometryOperands != null) {
+            for (QName qn: geometryOperands.getGeometryOperand()) {
+                result.add(GeometryOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+            }
+        }
+        return result;
     }
 
+    public String getName() {
+        if (name != null) {
+            return name.name();
+        }
+        return null;
+    }
 }

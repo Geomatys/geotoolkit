@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -34,26 +36,30 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;choice>
  *         &lt;element ref="{http://www.opengis.net/ogc}expression"/>
+ *         &lt;element ref="{http://www.opengis.net/ogc}Literal"/>
+ *         &lt;element ref="{http://www.opengis.net/ogc}PropertyName"/>
  *       &lt;/choice>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
- * 
+ * @author Guilhem Legal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LowerBoundaryType", propOrder = {
-    "expression"
+    "expression",
+    "literal",
+    "propertyName"
 })
-public class LowerBoundaryType {
+public class LowerBoundaryType implements Expression {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    protected JAXBElement<?> expression;
+    private JAXBElement<?> expression;
 
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
@@ -78,7 +84,7 @@ public class LowerBoundaryType {
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -86,7 +92,7 @@ public class LowerBoundaryType {
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
@@ -111,10 +117,54 @@ public class LowerBoundaryType {
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *     
+     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
     }
 
+    /**
+     * Gets the value of the expression property.
+     */
+    public ExpressionType getExpressionType() {
+        final Object value = expression.getValue();
+        if (value instanceof ExpressionType) {
+            return (ExpressionType)value;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the literal property.
+     */
+    public LiteralType getLiteral() {
+        final Object value = expression.getValue();
+        if (value instanceof LiteralType) {
+            return (LiteralType)value;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the propertyName property.
+     */
+    public String getPropertyName() {
+        final Object value = expression.getValue();
+        if (value instanceof String) {
+            return (String)value;
+        }
+        return null;
+    }
+
+    public Object evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public <T> T evaluate(Object object, Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(ExpressionVisitor visitor, Object extraData) {
+        return extraData;
+    }
 }

@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsBetween;
 
 
 /**
@@ -45,26 +47,52 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsBetweenType", propOrder = {
     "expression",
     "lowerBoundary",
     "upperBoundary"
 })
-public class PropertyIsBetweenType
-    extends ComparisonOpsType
-{
+public class PropertyIsBetweenType extends ComparisonOpsType implements PropertyIsBetween {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     protected JAXBElement<?> expression;
     @XmlElement(name = "LowerBoundary", required = true)
-    protected LowerBoundaryType lowerBoundary;
+    private LowerBoundaryType lowerBoundary;
     @XmlElement(name = "UpperBoundary", required = true)
-    protected UpperBoundaryType upperBoundary;
+    private UpperBoundaryType upperBoundary;
+
+    private static final ObjectFactory FACTORY = new ObjectFactory();
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    public PropertyIsBetweenType() {
+        
+    }
+
+    /**
+     * build a new Property is Between
+     */
+    public PropertyIsBetweenType(ExpressionType expression, LowerBoundaryType lowerBoundary, UpperBoundaryType upperBoundary) {
+        this.expression    = FACTORY.createExpression(expression);
+        this.lowerBoundary = lowerBoundary;
+        this.upperBoundary = upperBoundary;
+    }
+
+    /**
+     * build a new Property is Between
+     */
+    public PropertyIsBetweenType(JAXBElement<?> expression, LowerBoundaryType lowerBoundary, UpperBoundaryType upperBoundary) {
+        this.expression    = expression;
+        this.lowerBoundary = lowerBoundary;
+        this.upperBoundary = upperBoundary;
+    }
 
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
@@ -89,15 +117,15 @@ public class PropertyIsBetweenType
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *     
+     *
      */
-    public JAXBElement<?> getExpression() {
+    public JAXBElement<?> getExpressionType() {
         return expression;
     }
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
@@ -122,58 +150,66 @@ public class PropertyIsBetweenType
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *     
+     *
      */
     public void setExpression(JAXBElement<?> value) {
-        this.expression = ((JAXBElement<?> ) value);
+        this.expression = value;
+    }
+
+    /**
+     * Gets the value of the expression property.
+     */
+    @Override
+    public ExpressionType getExpression() {
+        final Object value = expression.getValue();
+        if (value instanceof ExpressionType) {
+            return (ExpressionType)value;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the literal property.
+     */
+    public LiteralType getLiteral() {
+        final Object value = expression.getValue();
+        if (value instanceof LiteralType) {
+            return (LiteralType)value;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the propertyName property.
+     */
+    public String getPropertyName() {
+        final Object value = expression.getValue();
+        if (value instanceof String) {
+            return (String)value;
+        }
+        return null;
     }
 
     /**
      * Gets the value of the lowerBoundary property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LowerBoundaryType }
-     *     
      */
     public LowerBoundaryType getLowerBoundary() {
         return lowerBoundary;
     }
 
     /**
-     * Sets the value of the lowerBoundary property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LowerBoundaryType }
-     *     
-     */
-    public void setLowerBoundary(LowerBoundaryType value) {
-        this.lowerBoundary = value;
-    }
-
-    /**
      * Gets the value of the upperBoundary property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UpperBoundaryType }
-     *     
      */
     public UpperBoundaryType getUpperBoundary() {
         return upperBoundary;
     }
 
-    /**
-     * Sets the value of the upperBoundary property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UpperBoundaryType }
-     *     
-     */
-    public void setUpperBoundary(UpperBoundaryType value) {
-        this.upperBoundary = value;
+    public boolean evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(FilterVisitor visitor, Object extraData) {
+        return visitor.visit(this,extraData);
     }
 
 }

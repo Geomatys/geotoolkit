@@ -16,11 +16,16 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.opengis.filter.capability.FunctionName;
 
 
 /**
@@ -44,59 +49,73 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "FunctionNameType", propOrder = {
     "value"
 })
-public class FunctionNameType {
+public class FunctionNameType implements FunctionName {
 
     @XmlValue
-    protected String value;
+    private String value;
     @XmlAttribute(required = true)
-    protected String nArgs;
+    private String nArgs;
+    
+    @XmlTransient
+    private List<String> argumentNames;
+    @XmlTransient
+    private Logger logger = Logger.getAnonymousLogger();
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public FunctionNameType() {
+        
+    }
+    
+    /**
+     * An empty constructor used by JAXB
+     */
+    public FunctionNameType(String name, int nArgs) {
+        this.value = name;
+        this.nArgs = nArgs + "";
+    }
+    
+    /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
      * Gets the value of the nArgs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getNArgs() {
         return nArgs;
     }
 
-    /**
-     * Sets the value of the nArgs property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNArgs(String value) {
-        this.nArgs = value;
+    public int getArgumentCount() {
+        int result = 0;
+        try {
+            result = Integer.parseInt(nArgs);
+        } catch (NumberFormatException e) {
+            logger.severe("unable To parse number of argument in function " + value + " the value " + nArgs + " is not a number" );
+        }
+        return result;
     }
 
+    public List<String> getArgumentNames() {
+        if( argumentNames == null ){
+            argumentNames = generateArgumentNames(getArgumentCount());
+        }
+        return argumentNames;
+    }
+
+    private static List<String> generateArgumentNames( int count ){
+        List<String> names = Arrays.asList( new String[count]);
+        for( int i=0; i < count; i++){
+            names.set(i, "arg"+i );
+        }
+        return names;
+    }
+
+    public String getName() {
+        return value;
+    }
 }

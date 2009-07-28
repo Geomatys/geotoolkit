@@ -17,11 +17,13 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -50,35 +52,52 @@ import javax.xml.bind.annotation.XmlType;
 public class SortByType {
 
     @XmlElement(name = "SortProperty", required = true)
-    protected List<SortPropertyType> sortProperty;
+    private List<SortPropertyType> sortProperty;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public SortByType() {
+        
+    }
+    
+    /**
+     * Build a new sort by list.
+     */
+    public SortByType(List<SortPropertyType> sortProperty) {
+        this.sortProperty = sortProperty;
+    }
+    
+    /**
      * Gets the value of the sortProperty property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the sortProperty property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSortProperty().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SortPropertyType }
-     * 
-     * 
+     * (unmodifiable)
      */
     public List<SortPropertyType> getSortProperty() {
         if (sortProperty == null) {
             sortProperty = new ArrayList<SortPropertyType>();
         }
-        return this.sortProperty;
+        return Collections.unmodifiableList(sortProperty);
     }
 
+     /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SortByType) {
+            final SortByType that = (SortByType) object;
+            return Utilities.equals(this.sortProperty,  that.sortProperty);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (this.sortProperty != null ? this.sortProperty.hashCode() : 0);
+        return hash;
+    }
 }

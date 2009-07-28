@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeWithTimePeriodType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.BBOX;
 
 
 /**
@@ -35,8 +38,11 @@ import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.opengis.net/ogc}SpatialOpsType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.opengis.net/ogc}PropertyName"/>
- *         &lt;element ref="{http://www.opengis.net/gml}Envelope"/>
+ *         &lt;element name="PropertyName" type="{http://www.opengis.net/ogc}PropertyNameType" minOccurs="0"/>
+ *         &lt;choice>
+ *           &lt;element ref="{http://www.opengis.net/gml}Envelope"/>
+ *           &lt;element ref="{http://www.opengis.net/gml}EnvelopeWithTimePeriod"/>
+ *         &lt;/choice>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -48,65 +54,147 @@ import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BBOXType", propOrder = {
     "propertyName",
-    "envelope"
+    "envelope",
+    "envelopeWithTimePeriod"
 })
-public class BBOXType
-    extends SpatialOpsType
-{
+public class BBOXType extends SpatialOpsType implements BBOX {
 
-    @XmlElement(name = "PropertyName", required = true)
-    protected PropertyNameType propertyName;
-    @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends EnvelopeEntry> envelope;
+    @XmlElement(name = "PropertyName")
+    private String propertyName;
+    @XmlElement(name = "Envelope", namespace = "http://www.opengis.net/gml")
+    private EnvelopeEntry envelope;
+    @XmlElement(name = "EnvelopeWithTimePeriod", namespace = "http://www.opengis.net/gml")
+    private EnvelopeWithTimePeriodType envelopeWithTimePeriod;
 
     /**
-     * Gets the value of the propertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PropertyNameType }
-     *     
+     * An empty constructor used by JAXB
      */
-    public PropertyNameType getPropertyName() {
+    public BBOXType() {
+        
+    }
+    
+    /**
+     * build a new BBox with an envelope.
+     */
+    public BBOXType(String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+        this.propertyName = propertyName;
+        DirectPositionType lower = new DirectPositionType(minx, miny);
+        DirectPositionType upper = new DirectPositionType(maxx, maxy);
+        this.envelope = new EnvelopeEntry(null, lower, upper, srs);
+        
+    }
+    /**
+     * Gets the value of the propertyName property.
+     */
+    public String getPropertyName() {
         return propertyName;
     }
 
     /**
-     * Sets the value of the propertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PropertyNameType }
-     *     
-     */
-    public void setPropertyName(PropertyNameType value) {
-        this.propertyName = value;
-    }
-
-    /**
      * Gets the value of the envelope property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
-     *     
      */
-    public JAXBElement<? extends EnvelopeEntry> getEnvelope() {
+    public EnvelopeEntry getEnvelope() {
         return envelope;
     }
 
     /**
-     * Sets the value of the envelope property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
-     *     
+     * Gets the value of the envelopeWithTimePeriod property.
      */
-    public void setEnvelope(JAXBElement<? extends EnvelopeEntry> value) {
-        this.envelope = ((JAXBElement<? extends EnvelopeEntry> ) value);
+    public EnvelopeWithTimePeriodType getEnvelopeWithTimePeriod() {
+        return envelopeWithTimePeriod;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        s.append("PropertyName=").append(s).append('\n');
+        if (envelope != null) {
+            s.append("envelope= ").append(envelope.toString()).append('\n');
+        } else {
+            s.append("envelope null").append('\n');
+        }
+        if (envelopeWithTimePeriod != null) {
+            s.append("envelope with time period= ").append(envelopeWithTimePeriod.toString()).append('\n');
+        } else {
+            s.append("envelope with time null").append('\n');
+        }
+        return s.toString();
+    }
+
+    public String getSRS() {
+        if (envelope != null) {
+            return envelope.getSrsName();
+        } else if (envelopeWithTimePeriod != null) {
+            return envelopeWithTimePeriod.getSrsName();
+        }
+        return null;
+    }
+
+    public double getMinX() {
+        DirectPositionType pos = null;
+        if (envelope != null) {
+             pos = envelope.getLowerCorner();
+        } else if (envelopeWithTimePeriod != null) {
+            pos = envelopeWithTimePeriod.getLowerCorner();
+        }
+        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
+            return pos.getValue().get(0);
+        }
+        return -1;
+    }
+
+    public double getMinY() {
+       DirectPositionType pos = null;
+        if (envelope != null) {
+             pos = envelope.getLowerCorner();
+        } else if (envelopeWithTimePeriod != null) {
+            pos = envelopeWithTimePeriod.getLowerCorner();
+        }
+        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
+            return pos.getValue().get(1);
+        }
+        return -1;
+    }
+
+    public double getMaxX() {
+        DirectPositionType pos = null;
+        if (envelope != null) {
+            pos = envelope.getUpperCorner();
+        } else if (envelopeWithTimePeriod != null) {
+            pos = envelopeWithTimePeriod.getUpperCorner();
+        }
+        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
+            return pos.getValue().get(0);
+        }
+        return -1;
+    }
+
+    public double getMaxY() {
+        DirectPositionType pos = null;
+        if (envelope != null) {
+            pos = envelope.getUpperCorner();
+        } else if (envelopeWithTimePeriod != null) {
+            pos = envelopeWithTimePeriod.getUpperCorner();
+        }
+        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
+            return pos.getValue().get(1);
+        }
+        return -1;
+    }
+
+    public Expression getExpression1() {
+        return new PropertyNameType(propertyName);
+    }
+
+    public Expression getExpression2() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean evaluate(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(FilterVisitor visitor, Object extraData) {
+        return visitor.visit(this,extraData);
+    }
 }
