@@ -121,7 +121,6 @@
   <!-- =========================================================== -->
 
   <properties>
-    <geomodified.version>2.6-SNAPSHOT</geomodified.version>
     <geotoolkit.version>SNAPSHOT</geotoolkit.version>
   </properties>
 
@@ -259,13 +258,6 @@
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-widgets-swing</artifactId>
         <version>${geotoolkit.version}</version>
-      </dependency>
-
-      <!-- Remaining dependencies to geomodified -->
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gtm-api</artifactId>
-        <version>${geomodified.version}</version>
       </dependency>
 
       <!-- Batik SVG -->

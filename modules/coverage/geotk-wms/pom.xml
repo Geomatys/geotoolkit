@@ -2,10 +2,9 @@
 <!-- =======================================================================    
         Maven Project Configuration File                                        
                                                                                 
-        The Geotools Project                                                    
-            http://www.geotools.org/                                            
-                                                                                
-        Version: $Id$              
+        The Geotoolkit Project
+            http://www.geotoolkit.org/                                            
+           
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0" 
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -27,14 +26,6 @@
   <artifactId>geotk-wms</artifactId>
   <packaging>jar</packaging>
   <name>Coverage Web Map Server</name>
-  <url>http://maven.geotools.fr/reports/modules/plugin/wms/</url>
-
-  <scm>
-    <connection>
-      scm:svn:http://svn.osgeo.org/geotools/trunk/modules/plugin/wms/
-    </connection>
-    <url>http://svn.osgeo.org/geotools/trunk/modules/plugin/wms/</url>
-  </scm>
 
   <description>
     An OGC Web Map Server client implementation that can be used directly or as 

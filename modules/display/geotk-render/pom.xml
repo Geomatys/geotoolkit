@@ -2,10 +2,9 @@
 <!-- =======================================================================    
         Maven Project Configuration File                                        
                                                                                 
-        The Geotools Project                                                    
-            http://www.geotools.org/                                            
-                                                                                
-        Version: $Id$              
+        The Geotoolkit Project
+            http://www.geotoolkit.org/                                            
+             
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -27,18 +26,10 @@
   <artifactId>geotk-render</artifactId>
   <packaging>jar</packaging>
   <name>Display map model</name>
-  <url>http://maven.geotools.fr/reports/modules/library/render/</url>
-
-  <scm>
-    <connection>
-      scm:svn:http://svn.osgeo.org/geotools/trunk/modules/library/render/
-    </connection>
-    <url>http://svn.osgeo.org/geotools/trunk/modules/library/render/</url>
-  </scm>
 
   <description>
     The render module contains a renderer built around the interface in
-    api and main. This is a first class geotools module as creating a
+    api and main. This is a first class geotoolkit module as creating a
     visual representation of features is considered key to most geospatial
     applications.
   </description>

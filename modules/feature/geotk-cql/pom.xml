@@ -78,20 +78,20 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.geotools.maven</groupId>
-        <artifactId>jjtree-javacc</artifactId>
-        <version>2.6-SNAPSHOT</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
 
         <configuration>
+          <buildNodeFiles>false</buildNodeFiles>
           <nodePackage>org.geotoolkit.filter.text.generated.parsers</nodePackage>
-          <nodeDirectory>${basedir}/modified-src</nodeDirectory>
           <sourceDirectory>${basedir}/src/main/jjtree</sourceDirectory>
+          <jdkVersion>1.6</jdkVersion>
         </configuration>
 
         <executions>
           <execution>
              <goals>
-               <goal>generate</goal>
+               <goal>jjtree-javacc</goal>
              </goals>
           </execution>
         </executions>
