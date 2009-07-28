@@ -20,6 +20,8 @@ package org.geotoolkit.internal.wizard;
 import java.awt.Color;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.imageio.ImageWriter;
+import javax.imageio.event.IIOWriteProgressListener;
 import org.netbeans.spi.wizard.DeferredWizardResult;
 import org.netbeans.spi.wizard.ResultProgressHandle;
 
@@ -43,7 +45,12 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
  * @since 3.00
  * @module
  */
-final class MosaicCreator extends DeferredWizardResult {
+final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgressListener {
+    /**
+     * Where to report progress on the wizard component.
+     */
+    private ResultProgressHandle progress;
+
     /**
      * Creates a new {@code MosaicCreator}.
      */
@@ -56,26 +63,71 @@ final class MosaicCreator extends DeferredWizardResult {
     @Override
     @SuppressWarnings("rawtypes")
     public void start(final Map settings, final ResultProgressHandle progress) {
-        progress.setBusy("Creating the mosaic"); // TODO: use setProgress(...) instead.
+        this.progress = progress;
+        progress.setBusy("Creating the mosaic");
         final TileManager tiles;
         try {
             final TileManager[] inputs  = ((MosaicChooser)       settings.get(MosaicWizard.SELECT)).getSelectedTiles();
             final MosaicBuilder builder = ((MosaicBuilderEditor) settings.get(MosaicWizard.LAYOUT)).getMosaicBuilder();
             final Color[]       colors  = ((MultiColorChooser)   settings.get(MosaicWizard.COLORS)).getSelectedColors();
-            Logging.getLogger(MosaicBuilder.class).setLevel(Level.FINE);
-            builder.setLogLevel(Level.INFO);
             final MosaicImageWriteParam param = new MosaicImageWriteParam();
-            param.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_NONEMPTY);
             if (colors.length != 0) {
                 param.setOpaqueBorderFilter(colors);
             }
-            tiles = builder.writeFromInput(inputs, param);
-        } catch (Throwable exception) {
+            param.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_NONEMPTY);
+            Logging.getLogger(MosaicBuilder.class).setLevel(Level.FINE);
+            builder.setLogLevel(Level.INFO);
+            builder.listeners().addIIOWriteProgressListener(this);
+            try {
+                tiles = builder.writeFromInput(inputs, param);
+            } finally {
+                builder.listeners().removeIIOWriteProgressListener(this);
+            }
+        } catch (Exception exception) {
             progress.failed(exception.getLocalizedMessage(), false);
             return;
         } finally {
             ((LoggingPanel) settings.get(MosaicWizard.CONFIRM)).dispose();
         }
         progress.finished(tiles);
+    }
+
+    /**
+     * Invoked when the mosaic is about to be written.
+     */
+    @Override
+    public void imageStarted(ImageWriter source, int imageIndex) {
+        progress.setProgress("Writing the mosaic", 0, 100);
+    }
+
+    /**
+     * Invoked after a set of output tiles has been written.
+     */
+    @Override
+    public void imageProgress(ImageWriter source, float percentageDone) {
+        progress.setProgress((int) percentageDone, 100);
+    }
+
+    /**
+     * Ignored. The call to {@link ResultProgressHandle#finished} will be done at
+     * the end of the {@link #start} method.
+     */
+    @Override public void imageComplete(ImageWriter source) {
+    }
+
+    /** Ignored. */
+    @Override public void thumbnailStarted(ImageWriter source, int imageIndex, int thumbnailIndex) {
+    }
+
+    /** Ignored. */
+    @Override public void thumbnailProgress(ImageWriter source, float percentageDone) {
+    }
+
+    /** Ignored. */
+    @Override public void thumbnailComplete(ImageWriter source) {
+    }
+
+    /** Ignored. */
+    @Override public void writeAborted(ImageWriter source) {
     }
 }

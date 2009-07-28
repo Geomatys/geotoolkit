@@ -91,7 +91,7 @@ import org.geotoolkit.internal.rmi.RMI;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.01
+ * @version 3.02
  *
  * @since 2.5
  * @module
@@ -349,7 +349,7 @@ public class MosaicImageWriter extends ImageWriter {
         processImageStarted(outputIndex);
         /*
          * Gets the reader first - especially before getOutput() - because the user may have
-         * overriden filter(ImageReader) and set the output accordingly. TileBuilder do that.
+         * overriden filter(ImageReader) and set the output accordingly. TileBuilder does that.
          */
         final TileManager[] managers = getOutput();
         if (managers == null) {
@@ -377,6 +377,7 @@ public class MosaicImageWriter extends ImageWriter {
             }
         }
         final int initialTileCount = tiles.size();
+        final float progressScale = 100f / initialTileCount;
         /*
          * If the user do not wants to overwrite existing tiles (for faster processing when this
          * write process is started again after a previous failure), removes from the collection
@@ -430,7 +431,6 @@ public class MosaicImageWriter extends ImageWriter {
                 processWriteAborted();
                 return false;
             }
-            processImageProgress((initialTileCount - tiles.size()) * 100f / initialTileCount);
             /*
              * Gets the source region for some initial tile from the list. We will write as many
              * tiles as we can using a single image. The tiles successfully written will be removed
@@ -441,7 +441,11 @@ public class MosaicImageWriter extends ImageWriter {
                     (image != null) ? new Dimension(image.getWidth(), image.getHeight()) : null,
                     maximumPixelCount);
             final Rectangle imageRegion = imageTile.getAbsoluteRegion();
-            awaitTermination(tasks); // Must be invoked before we touch to the image.
+            /*
+             * Following line must be invoked before we touch to the image. It makes sure that
+             * all background thread have finished their work with the previous image content.
+             */
+            awaitTermination(tasks, initialTileCount - tiles.size(), progressScale);
             if (image != null) {
                 final int width  = imageRegion.width  / imageSubsampling.width;
                 final int height = imageRegion.height / imageSubsampling.height;
@@ -581,7 +585,7 @@ public class MosaicImageWriter extends ImageWriter {
             }
             assert !tiles.contains(imageTile) : imageTile;
         }
-        awaitTermination(tasks);
+        awaitTermination(tasks, initialTileCount, progressScale);
         if (abortRequested()) {
             processWriteAborted();
             return false;
@@ -610,14 +614,23 @@ public class MosaicImageWriter extends ImageWriter {
     /**
      * Waits for every tasks to be completed. The tasks collection is emptied by this method.
      *
+     * @param  tasks The list of tasks to wait for completion.
+     * @param  done The number of tiles written so far, assuming that every pending tasks are
+     *         already completed.
+     * @param  progressScale The factor by wich to multiply the number of tiles done in order
+     *         to get a percentage of completion.
      * @throws IOException if at least one task threw a {@code IOException}.
      */
-    private final void awaitTermination(final List<Future<?>> tasks) throws IOException {
+    private final void awaitTermination(final List<Future<?>> tasks, int done, final float progressScale)
+            throws IOException
+    {
+        done -= tasks.size();
         Throwable exception = null;
         for (int i=0; i<tasks.size(); i++) {
             Future<?> task = tasks.get(i);
             try {
                 task.get();
+                processImageProgress(progressScale * done++);
                 continue;
             } catch (ExecutionException e) {
                 if (exception == null) {

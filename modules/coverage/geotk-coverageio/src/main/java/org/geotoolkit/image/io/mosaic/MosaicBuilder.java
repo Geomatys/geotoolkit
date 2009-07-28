@@ -45,6 +45,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
+import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
@@ -137,6 +138,11 @@ public class MosaicBuilder {
     private int[] subsamplings;
 
     /**
+     * The image I/O listeners. Can contains both read and write listeners.
+     */
+    private final IIOListeners listeners;
+
+    /**
      * The filename formatter.
      */
     private final FilenameFormatter formatter;
@@ -163,6 +169,7 @@ public class MosaicBuilder {
         this.factory = (factory != null) ? factory : TileManagerFactory.DEFAULT;
         layout = TileLayout.CONSTANT_TILE_SIZE;
         formatter = new FilenameFormatter();
+        listeners = new IIOListeners();
     }
 
     /**
@@ -1118,6 +1125,7 @@ public class MosaicBuilder {
         Writer(final int inputIndex, final TileWritingPolicy policy) {
             this.inputIndex = inputIndex;
             this.policy = policy;
+            listeners.addListenersTo(this);
         }
 
         /**
@@ -1129,6 +1137,9 @@ public class MosaicBuilder {
          *   <li>{@link MosaicBuilder#setUntiledImageBounds(Rectangle)}</li>
          *   <li>{@link MosaicBuilder#setTileReaderSpi(ImageReaderSpi)}</li>
          * </ul>
+         * <p>
+         * In addition, the reader listeners are set to the values given to
+         * {@link MosaicBuilder#listeners()}.
          */
         @Override
         protected boolean filter(ImageReader reader) throws IOException {
@@ -1174,6 +1185,12 @@ public class MosaicBuilder {
                 }
                 throw exception;
             }
+            /*
+             * Sets the listeners and we are done. We use the listeners field instead than
+             * the method in order to avoid giving the ImageReader to client code (which
+             * could happen if addListenersTo(ImageReader) has been overriden).
+             */
+            listeners.addListenersTo(reader);
             return super.filter(reader);
         }
 
@@ -1302,6 +1319,21 @@ public class MosaicBuilder {
             }
         }
         return tiles;
+    }
+
+    /**
+     * Returns a modifiable collection of image I/O listeners. Methods like
+     * {@link IIOListeners#addIIOReadProgressListener addIIOReadProgressListener} and
+     * {@link IIOListeners#addIIOWriteProgressListener addIIOWriteProgressListener} can
+     * be invoked on the returned object. The read listeners are used when reading the
+     * input mosaic, while the write listeners are used when writing the output mosaic.
+     *
+     * @return The manager of image I/O listeners.
+     *
+     * @since 3.02
+     */
+    public IIOListeners listeners() {
+        return listeners;
     }
 
     /**

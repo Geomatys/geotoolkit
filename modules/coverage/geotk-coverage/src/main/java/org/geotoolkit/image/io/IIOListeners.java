@@ -21,9 +21,14 @@ import java.io.Serializable;
 import java.util.EventListener;
 import javax.swing.event.EventListenerList;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.event.IIOReadUpdateListener;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
+import javax.imageio.event.IIOWriteWarningListener;
+import javax.imageio.event.IIOWriteProgressListener;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.XArrays;
 
 
@@ -34,14 +39,13 @@ import org.geotoolkit.util.XArrays;
  * convenient when {@code ImageReader.addFooListener(...)} can't be invoked directly because the
  * {@link ImageReader} instance is not yet know or available.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.02
  *
  * @since 2.1
  * @module
- *
- * @todo Add other listener types.
  */
+@ThreadSafe
 public class IIOListeners implements Serializable {
     /**
      * For compatibility with different versions.
@@ -53,7 +57,16 @@ public class IIOListeners implements Serializable {
      */
     private static final Class<?>[] READ = {
         IIOReadProgressListener.class,
-        IIOReadWarningListener .class
+        IIOReadWarningListener .class,
+        IIOReadUpdateListener  .class
+    };
+
+    /**
+     * The listener categories for read operations.
+     */
+    private static final Class<?>[] WRITE = {
+        IIOWriteProgressListener.class,
+        IIOWriteWarningListener .class
     };
 
     /**
@@ -80,15 +93,43 @@ public class IIOListeners implements Serializable {
      * Removes an {@code IIOReadProgressListener} from the list of registered progress listeners.
      *
      * @param listener The listener to remove.
+     *
+     * @category Reader
      */
     public void removeIIOReadProgressListener(final IIOReadProgressListener listener) {
         listeners.remove(IIOReadProgressListener.class, listener);
     }
 
     /**
+     * Adds an {@code IIOReadUpdateListener} to the list of registered update listeners.
+     *
+     * @param listener The listener to add.
+     *
+     * @since 3.02
+     * @category Reader
+     */
+    public void addIIOReadUpdateListener(final IIOReadUpdateListener listener) {
+        listeners.add(IIOReadUpdateListener.class, listener);
+    }
+
+    /**
+     * Removes an {@code IIOReadUpdateListener} from the list of registered update listeners.
+     *
+     * @param listener The listener to remove.
+     *
+     * @since 3.02
+     * @category Reader
+     */
+    public void removeIIOReadUpdateListener(final IIOReadUpdateListener listener) {
+        listeners.remove(IIOReadUpdateListener.class, listener);
+    }
+
+    /**
      * Adds an {@code IIOReadWarningListener} to the list of registered warning listeners.
      *
      * @param listener The listener to add.
+     *
+     * @category Reader
      */
     public void addIIOReadWarningListener(final IIOReadWarningListener listener) {
         listeners.add(IIOReadWarningListener.class, listener);
@@ -98,19 +139,85 @@ public class IIOListeners implements Serializable {
      * Removes an {@code IIOReadWarningListener} from the list of registered warning listeners.
      *
      * @param listener The listener to remove.
+     *
+     * @category Reader
      */
     public void removeIIOReadWarningListener(final IIOReadWarningListener listener) {
         listeners.remove(IIOReadWarningListener.class, listener);
     }
 
     /**
-     * Returns all {@linkplain IIOReadProgressListener read progress} and
+     * Adds an {@code IIOWriteProgressListener} to the list of registered progress listeners.
+     *
+     * @param listener The listener to add.
+     *
+     * @since 3.02
+     * @category Writer
+     */
+    public void addIIOWriteProgressListener(final IIOWriteProgressListener listener) {
+        listeners.add(IIOWriteProgressListener.class, listener);
+    }
+
+    /**
+     * Removes an {@code IIOWriteProgressListener} from the list of registered progress listeners.
+     *
+     * @param listener The listener to remove.
+     *
+     * @since 3.02
+     * @category Writer
+     */
+    public void removeIIOWriteProgressListener(final IIOWriteProgressListener listener) {
+        listeners.remove(IIOWriteProgressListener.class, listener);
+    }
+
+    /**
+     * Adds an {@code IIOWriteWarningListener} to the list of registered warning listeners.
+     *
+     * @param listener The listener to add.
+     *
+     * @since 3.02
+     * @category Writer
+     */
+    public void addIIOWriteWarningListener(final IIOWriteWarningListener listener) {
+        listeners.add(IIOWriteWarningListener.class, listener);
+    }
+
+    /**
+     * Removes an {@code IIOWriteWarningListener} from the list of registered warning listeners.
+     *
+     * @param listener The listener to remove.
+     *
+     * @since 3.02
+     * @category Writer
+     */
+    public void removeIIOWriteWarningListener(final IIOWriteWarningListener listener) {
+        listeners.remove(IIOWriteWarningListener.class, listener);
+    }
+
+    /**
+     * Returns all {@linkplain IIOReadProgressListener read progress},
+     * {@linkplain IIOReadUpdateListener read update} and
      * {@linkplain IIOReadWarningListener read warning} listeners.
      *
      * @return All read listeners.
+     *
+     * @category Reader
      */
     public EventListener[] getReadListeners() {
         return getListeners(READ);
+    }
+
+    /**
+     * Returns all {@linkplain IIOWriteProgressListener write progress} and
+     * {@linkplain IIOWriteWarningListener write warning} listeners.
+     *
+     * @return All read listeners.
+     *
+     * @since 3.02
+     * @category Writer
+     */
+    public EventListener[] getWriteListeners() {
+        return getListeners(WRITE);
     }
 
     /**
@@ -147,6 +254,8 @@ public class IIOListeners implements Serializable {
      * Adds all listeners registered in this object to the specified image reader.
      *
      * @param reader The reader on which to register the listeners.
+     *
+     * @category Reader
      */
     public void addListenersTo(final ImageReader reader) {
         final Object[] listeners = this.listeners.getListenerList();
@@ -159,10 +268,44 @@ public class IIOListeners implements Serializable {
                 reader.   addIIOReadProgressListener(l);
                 continue;
             }
+            if (IIOReadUpdateListener.class.equals(classe)) {
+                final IIOReadUpdateListener l = (IIOReadUpdateListener) listener;
+                reader.removeIIOReadUpdateListener(l); // Ensure singleton
+                reader.   addIIOReadUpdateListener(l);
+                continue;
+            }
             if (IIOReadWarningListener.class.equals(classe)) {
                 final IIOReadWarningListener l = (IIOReadWarningListener) listener;
                 reader.removeIIOReadWarningListener(l); // Ensure singleton
                 reader.   addIIOReadWarningListener(l);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Adds all listeners registered in this object to the specified image writer.
+     *
+     * @param writer The writer on which to register the listeners.
+     *
+     * @since 3.02
+     * @category Writer
+     */
+    public void addListenersTo(final ImageWriter writer) {
+        final Object[] listeners = this.listeners.getListenerList();
+        for (int i=0; i<listeners.length;) {
+            final Object classe   = listeners[i++];
+            final Object listener = listeners[i++];
+            if (IIOWriteProgressListener.class.equals(classe)) {
+                final IIOWriteProgressListener l = (IIOWriteProgressListener) listener;
+                writer.removeIIOWriteProgressListener(l); // Ensure singleton
+                writer.   addIIOWriteProgressListener(l);
+                continue;
+            }
+            if (IIOWriteWarningListener.class.equals(classe)) {
+                final IIOWriteWarningListener l = (IIOWriteWarningListener) listener;
+                writer.removeIIOWriteWarningListener(l); // Ensure singleton
+                writer.   addIIOWriteWarningListener(l);
                 continue;
             }
         }
