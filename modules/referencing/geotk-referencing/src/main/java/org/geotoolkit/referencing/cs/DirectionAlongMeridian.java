@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opengis.referencing.cs.AxisDirection;
+import org.geotoolkit.internal.CodeLists;
 
 
 /**
@@ -29,7 +30,7 @@ import org.opengis.referencing.cs.AxisDirection;
  * used in the EPSG database for polar stereographic projections.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.02
  *
  * @since 2.4
  * @module
@@ -171,7 +172,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
              */
             direction = Directions.find(name);
             if (direction == null) {
-                direction = AxisDirection.valueOf(name);
+                direction = CodeLists.valueOf(AxisDirection.class, name);
             }
         }
         return direction;

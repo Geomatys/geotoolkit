@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.code;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.metadata.identification.TopicCategory;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.CodeLists;
 
 
 /**
@@ -82,6 +83,6 @@ public final class TopicCategoryAdapter extends MetadataAdapter<TopicCategoryAda
      * @param metadata The unmarshalled value.
      */
     public void setTopicCategory(final String metadata) {
-        this.metadata = TopicCategory.valueOf(metadata);
+        this.metadata = CodeLists.valueOf(TopicCategory.class, metadata);
     }
 }

@@ -20,8 +20,8 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.internal.jaxb.referencing.AxisDirectionAdapter.AxisDirectionType;
 import org.opengis.referencing.cs.AxisDirection;
+import org.geotoolkit.internal.CodeLists;
 
 
 /**
@@ -29,30 +29,36 @@ import org.opengis.referencing.cs.AxisDirection;
  * complying with ISO-19139 standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
  * @since 3.00
  * @module
  */
-public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionType, AxisDirection> {
+public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionAdapter, AxisDirection> {
+    /**
+     * The XML value.
+     */
+    @XmlValue
+    String value;
 
-    private AxisDirectionType axisDirection;
+    /**
+     * The code space as a XML attribute. This is often {@code "EPSG"}.
+     */
+    @XmlAttribute
+    String codeSpace;
 
     /**
      * Empty constructor for JAXB only.
      */
-    private AxisDirectionAdapter() {
+    public AxisDirectionAdapter() {
     }
 
     /**
-     * Wraps an axis direction value at marshalling-time.
-     *
-     * @param axis The value to marshall.
+     * Creates a new adapter for the given value.
      */
-    public AxisDirectionAdapter(final AxisDirection axis) {
-        axisDirection = new AxisDirectionType();
-        axisDirection.value = axis.identifier();
-        axisDirection.codeSpace = "EPSG";
+    private AxisDirectionAdapter(final AxisDirection value) {
+       this.codeSpace = "EPSG";
+       this.value     = value.identifier();
     }
 
     /**
@@ -63,11 +69,8 @@ public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionType, Ax
      * @return A code list which represents the metadata value.
      */
     @Override
-    public AxisDirection unmarshal(final AxisDirectionType axisDirection) {
-        if (axisDirection != null) {
-            return AxisDirection.valueOf(axisDirection.value);
-        }
-        return null;
+    public AxisDirection unmarshal(final AxisDirectionAdapter adapter) {
+        return (adapter != null) ? CodeLists.valueOf(AxisDirection.class, adapter.value) : null;
     }
 
     /**
@@ -78,31 +81,7 @@ public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionType, Ax
      * @return The adapter for the given code list.
      */
     @Override
-    public AxisDirectionType marshal(final AxisDirection value) {
-        return new AxisDirectionType(value);
-    }
-
-    public static class AxisDirectionType {
-
-        /**
-         * The XML value.
-         */
-        @XmlValue
-        public String value;
-        /**
-         * The code space as a XML attribute. This is often {@code "EPSG"}.
-         */
-        @XmlAttribute
-        public String codeSpace;
-
-        private AxisDirectionType() {
-
-        }
-
-        public AxisDirectionType(AxisDirection value) {
-           this.codeSpace = "EPSG";
-           this.value     = value.identifier();
-        }
-
+    public AxisDirectionAdapter marshal(final AxisDirection value) {
+        return new AxisDirectionAdapter(value);
     }
 }
