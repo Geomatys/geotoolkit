@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
     
     private final static QName _Observation_QNAME   = new QName("http://www.opengis.net/om/1.0", "Observation");
+    private final static QName _Result_QNAME        = new QName("http://www.opengis.net/om/1.0", "result");
      
     /**
      *
@@ -68,5 +69,14 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Observation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<ObservationEntry> createObservation(ObservationEntry value) {
         return new JAXBElement<ObservationEntry>(_Observation_QNAME, ObservationEntry.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "result")
+    public JAXBElement<Object> createResult(Object value) {
+        return new JAXBElement<Object>(_Result_QNAME, Object.class, null, value);
     }
 }

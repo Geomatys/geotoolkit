@@ -120,10 +120,10 @@ public class InsertObservation extends RequestBaseType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("Insert Observation:");
-        s.append('\n').append("assigned sensor id=").append(assignedSensorId).append('\n');
+        StringBuilder s = new StringBuilder("[Insert Observation]").append('\n');
+        s.append("assigned sensor id=").append(assignedSensorId).append('\n');
         if (observation != null)
-            s.append('\n').append("observation:").append('\n').append(observation.toString());
+            s.append("observation:").append('\n').append(observation.toString()).append('\n');
         return s.toString();
     }
 }

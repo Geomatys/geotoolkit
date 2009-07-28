@@ -24,6 +24,7 @@ import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
 // GeoTools dependencies
 import org.geotoolkit.util.Utilities;
+import org.opengis.observation.Measure;
 
 
 /**
@@ -34,7 +35,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Measure")
-public class MeasureEntry { //implements Measure{
+public class MeasureEntry implements Measure{
     
     /**
      * Le non de l'unité de mesure.
@@ -108,10 +109,8 @@ public class MeasureEntry { //implements Measure{
         if (object == this) {
             return true;
         }
-        if (!(object instanceof MeasureEntry)) {
-            return false;
-        }
-        if (super.equals(object)) {
+        
+        if (object instanceof MeasureEntry) {
             final MeasureEntry that = (MeasureEntry) object;
             return Utilities.equals(this.name,  that.name) &&
                    Utilities.equals(this.uom,   that.uom) &&
@@ -127,7 +126,15 @@ public class MeasureEntry { //implements Measure{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("name=").append(name).append(" value=").append(value).append('\n').append("uom =").append(uom.toString());
+        if (name != null) {
+            s.append("name=").append(name).append('\n');
+        }
+        if (uom != null) {
+            s.append("uom =").append(uom.toString()).append('\n');
+        }
+        
+        s.append(" value=").append(value).append('\n');
+        
         return  s.toString();
     }
     

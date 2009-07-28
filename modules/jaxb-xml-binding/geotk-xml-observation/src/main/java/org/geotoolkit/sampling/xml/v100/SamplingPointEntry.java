@@ -111,8 +111,12 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
 
     @Override
     public int hashCode() {
-       
-        return getId().hashCode();
+        String id = getId();
+        if (id != null) {
+            return id.hashCode();
+        } else  {
+            return super.hashCode();
+        }
     }
     
     /**
