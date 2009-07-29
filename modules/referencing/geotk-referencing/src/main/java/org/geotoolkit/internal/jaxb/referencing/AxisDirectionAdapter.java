@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
-import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.referencing.cs.AxisDirection;
 import org.geotoolkit.internal.CodeLists;
@@ -34,31 +32,16 @@ import org.geotoolkit.internal.CodeLists;
  * @since 3.00
  * @module
  */
-public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionAdapter, AxisDirection> {
+public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionType, AxisDirection> {
     /**
-     * The XML value.
+     * The axis direction to be marshalled.
      */
-    @XmlValue
-    String value;
-
-    /**
-     * The code space as a XML attribute. This is often {@code "EPSG"}.
-     */
-    @XmlAttribute
-    String codeSpace;
+    private AxisDirectionType axisDirection;
 
     /**
      * Empty constructor for JAXB only.
      */
     public AxisDirectionAdapter() {
-    }
-
-    /**
-     * Creates a new adapter for the given value.
-     */
-    private AxisDirectionAdapter(final AxisDirection value) {
-       this.codeSpace = "EPSG";
-       this.value     = value.identifier();
     }
 
     /**
@@ -69,7 +52,7 @@ public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionAdapter,
      * @return A code list which represents the metadata value.
      */
     @Override
-    public AxisDirection unmarshal(final AxisDirectionAdapter adapter) {
+    public AxisDirection unmarshal(final AxisDirectionType adapter) {
         return (adapter != null) ? CodeLists.valueOf(AxisDirection.class, adapter.value) : null;
     }
 
@@ -81,7 +64,7 @@ public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionAdapter,
      * @return The adapter for the given code list.
      */
     @Override
-    public AxisDirectionAdapter marshal(final AxisDirection value) {
-        return new AxisDirectionAdapter(value);
+    public AxisDirectionType marshal(final AxisDirection value) {
+        return new AxisDirectionType(value);
     }
 }
