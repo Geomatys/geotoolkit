@@ -18,9 +18,12 @@ package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -83,12 +86,16 @@ public class ObservationEntry implements Observation {
     private static final long serialVersionUID = 3269639171560208276L;
 
     @XmlTransient
-    org.geotoolkit.sampling.xml.v100.ObjectFactory factory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
+    protected org.geotoolkit.sampling.xml.v100.ObjectFactory factory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
+
+    @XmlTransient
+    protected ObjectFactory omfactory = new ObjectFactory();
+    
     /**
      * A logger (debugging purpose)
      */
     @XmlTransient
-    Logger logger = Logging.getLogger("observationEntry");
+    private static final Logger LOGGER = Logging.getLogger("observationEntry");
     
     /**
      *The observation name
@@ -99,6 +106,7 @@ public class ObservationEntry implements Observation {
     /**
      * La description de l'observation
      */
+    @XmlElement
     private String definition;
     
     /**
@@ -134,12 +142,13 @@ public class ObservationEntry implements Observation {
     /**
      * le resultat de l'observation de n'importe quel type 
      */
-    @XmlElement(required = true, type=DataArrayPropertyType.class)
-    private Object result;
+    @XmlElementRef(name= "result", namespace="http://www.opengis.net/om/1.0")
+    private JAXBElement<Object> result;
     
     /**
      *  
      */
+     @XmlElement
      private TimeGeometricPrimitivePropertyType samplingTime;
    
      
@@ -152,12 +161,14 @@ public class ObservationEntry implements Observation {
     /**
      * 
      */
+     @XmlElement
     private TimeGeometricPrimitivePropertyType procedureTime;
    
     
     /**
      *
      */
+    @XmlElement
     private Object procedureParameter;
     
     /**
@@ -194,7 +205,7 @@ public class ObservationEntry implements Observation {
         this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         this.procedure           = procedure;
         this.resultQuality       = quality;
-        this.result              = result;
+        this.result              = omfactory.createResult(result);
         this.observationMetadata = observationMetadata;
         this.procedureParameter  = procedureParameter; 
         this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
@@ -227,7 +238,7 @@ public class ObservationEntry implements Observation {
         this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         this.procedure           = procedure;
         this.resultQuality       = null;       //= resultQuality;
-        this.result              = result;
+        this.result              = omfactory.createResult(result);
         this.observationMetadata = null;
         this.procedureTime       = null;
         this.procedureParameter  = null;
@@ -252,10 +263,10 @@ public class ObservationEntry implements Observation {
             foi = (SamplingFeatureEntry) this.featureOfInterest.getAbstractFeature();
         }
         //debugging purpose
-        if (this.result instanceof DataArrayPropertyType) {
-            DataArrayEntry d = ((DataArrayPropertyType)this.result).getDataArray();
+        if (this.result != null && this.result.getValue() instanceof DataArrayPropertyType) {
+            DataArrayEntry d = ((DataArrayPropertyType)this.result.getValue()).getDataArray();
             
-            logger.info("encoding sent:" + d.getEncoding());     
+            LOGGER.info("encoding sent:" + d.getEncoding());
         }
         return new ObservationEntry(temporaryName,
                                     this.definition,
@@ -337,18 +348,21 @@ public class ObservationEntry implements Observation {
      */
     @Override
     public Object getResult() {
-        return result;
+        if (result != null) {
+            return result.getValue();
+        }
+        return null;
     }
     
     /**
      * fixe le resultat de l'observation
      */
     public void setResult(Object result) {
-        if (!(result instanceof ReferenceEntry) && !(result instanceof AnyResultEntry)) {
+        if (!(result instanceof ReferenceEntry) && !(result instanceof AnyResultEntry) && !(result instanceof DataArrayPropertyType) && !(result instanceof MeasureEntry)) {
             throw new IllegalArgumentException("this type " + result.getClass().getSimpleName() +
                                            " is not allowed in result");
         }
-        this.result = result;
+        this.result = omfactory.createResult(result);
     }
     
     /**
@@ -441,7 +455,7 @@ public class ObservationEntry implements Observation {
                         Utilities.equals(this.procedureParameter,  template.procedureParameter)  &&
                         obsProperty;
         if (!match) {
-            logger.severe("error matching template report:" + '\n' +
+            LOGGER.severe("error matching template report:" + '\n' +
                    "FOI  =>" + obsFoi                                                                   + '\n' +
                    "PROC =>" + Utilities.equals(this.procedure,           template.procedure)           + '\n' +
                    "QUAL =>" + Utilities.equals(this.resultQuality,       template.resultQuality)       + '\n' + 
@@ -475,11 +489,18 @@ public class ObservationEntry implements Observation {
         }
         if (object instanceof ObservationEntry) {
             final ObservationEntry that = (ObservationEntry) object;
+
+            boolean res = false;
+            if (this.result == null && that.result == null) {
+                res = true;
+            } else if (this.result != null && that.result != null) {
+                res = Utilities.equals(this.result.getValue(), that.result.getValue());
+            }
             return Utilities.equals(this.featureOfInterest,   that.featureOfInterest)   &&
                    Utilities.equals(this.observedProperty,    that.observedProperty)    &&
                    Utilities.equals(this.procedure,           that.procedure)           &&
                    Utilities.equals(this.resultQuality,       that.resultQuality)       && 
-                   Utilities.equals(this.result,              that.result)              &&
+                   res                                                                  &&
                    Utilities.equals(this.samplingTime,        that.samplingTime)        &&
                    Utilities.equals(this.observationMetadata, that.observationMetadata) &&
                    Utilities.equals(this.procedureTime,       that.procedureTime)       &&
@@ -501,8 +522,9 @@ public class ObservationEntry implements Observation {
      */
     @Override
     public String toString() {
-        StringBuilder s    = new StringBuilder();
+        StringBuilder s    = new StringBuilder('[').append(this.getClass().getSimpleName()).append(']');
         char lineSeparator = '\n';
+        s.append(lineSeparator);
         s.append("name = ").append(name);
         if (definition != null)
             s.append("definition = ").append(definition);
@@ -522,7 +544,7 @@ public class ObservationEntry implements Observation {
         else
             s.append("feature Of Interest is null!").append(lineSeparator);
         if (result != null)       
-            s.append(" result = ").append(result.toString()).append(lineSeparator);
+            s.append(" result = ").append(result.getValue()).append(lineSeparator);
         return s.toString();
     }
 

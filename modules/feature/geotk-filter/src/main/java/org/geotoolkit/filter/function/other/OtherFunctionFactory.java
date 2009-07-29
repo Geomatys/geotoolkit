@@ -42,15 +42,7 @@ public class OtherFunctionFactory implements FunctionFactory{
     public static final String GREATER_EQUAL_THAN = "greaterEqualThan";
     public static final String GREATER_THAN = "greaterThan";
     public static final String IF_THEN_ELSE = "if_then_else";
-    public static final String IN2 = "in2";
-    public static final String IN3 = "in3";
-    public static final String IN4 = "in4";
-    public static final String IN5 = "in5";
-    public static final String IN6 = "in6";
-    public static final String IN7 = "in7";
-    public static final String IN8 = "in8";
-    public static final String IN9 = "in9";
-    public static final String IN10 = "in10";
+    public static final String IN = "in";
     public static final String INT_TO_BBOOL = "int2bbool";
     public static final String INT_TO_DDOUBLE = "int2ddouble";
     public static final String IS_LIKE = "isLike";
@@ -73,8 +65,8 @@ public class OtherFunctionFactory implements FunctionFactory{
     static {
         NAMES = new String[] {
                     CONVERT, DATE_FORMAT, DATE_PARSE, DOUBLE_TO_BOOL, EQUALS_EXACT, EQUALS_EXACT_TOLERANCE,
-                    EQUAL_TO, EXPRESSION_VALUE_LENGHT, GREATER_EQUAL_THAN, GREATER_THAN, IF_THEN_ELSE, IN2,
-                    IN3, IN4, IN5, IN6, IN7, IN8, IN9, IN10, INT_TO_BBOOL, INT_TO_DDOUBLE, IS_LIKE, IS_NULL,
+                    EQUAL_TO, EXPRESSION_VALUE_LENGHT, GREATER_EQUAL_THAN, GREATER_THAN, IF_THEN_ELSE, IN,
+                    INT_TO_BBOOL, INT_TO_DDOUBLE, IS_LIKE, IS_NULL,
                     LESS_EQUAL_THAN, LESS_THAN, NOT, NOT_EQUAL_TO, NUMBER_FORMAT, PARSE_BOOLEAN, PARSE_DOUBLE,
                     PARSE_INT, PARSE_LONG, PROPERTY_EXISTS, ROUND_DOUBLE
         };
@@ -105,22 +97,7 @@ public class OtherFunctionFactory implements FunctionFactory{
         if(name.equals(GREATER_EQUAL_THAN)) return new GreaterEqualThanFunction(parameters[0], parameters[1]);
         if(name.equals(GREATER_THAN)) return new GreaterThanFunction(parameters[0], parameters[1]);
         if(name.equals(IF_THEN_ELSE)) return new IfThenElseFunction(parameters[0], parameters[1], parameters[2]);
-        if(name.equals(IN2)) return new In2Function(parameters[0], parameters[1], parameters[2]);
-        if(name.equals(IN3)) return new In3Function(parameters[0], parameters[1], parameters[2], parameters[3]);
-        if(name.equals(IN4)) return new In4Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
-        if(name.equals(IN5)) return new In5Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4],
-                                                    parameters[5]);
-        if(name.equals(IN6)) return new In6Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4],
-                                                    parameters[5], parameters[6]);
-        if(name.equals(IN7)) return new In7Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4],
-                                                    parameters[5], parameters[6], parameters[7]);
-        if(name.equals(IN8)) return new In8Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4],
-                                                    parameters[5], parameters[6], parameters[7], parameters[8]);
-        if(name.equals(IN9)) return new In9Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4],
-                                                    parameters[5], parameters[6], parameters[7], parameters[8], parameters[9]);
-        if(name.equals(IN9)) return new In10Function(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4],
-                                                     parameters[5], parameters[6], parameters[7], parameters[8], parameters[9],
-                                                     parameters[10]);
+        if(name.equals(IN)) return new InFunction(parameters);
         if(name.equals(INT_TO_BBOOL)) return new IntToBbool(parameters[0]);
         if(name.equals(INT_TO_DDOUBLE)) return new IntToDdoubleFunction(parameters[0]);
         if(name.equals(IS_LIKE)) return new IsLikeFunction(parameters[0], parameters[1]);

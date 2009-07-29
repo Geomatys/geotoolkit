@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.observation.BaseUnit;
 
 /**
  * Unité de mesure.
@@ -30,7 +31,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BaseUnit")
-public class UnitOfMeasureEntry { //implements BaseUnit {
+public class UnitOfMeasureEntry implements BaseUnit {
     /**
      * l'identifiant de l'unité ( exemple cm, és, ...)
      */

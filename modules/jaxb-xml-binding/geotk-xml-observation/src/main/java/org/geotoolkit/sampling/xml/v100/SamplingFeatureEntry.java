@@ -188,12 +188,14 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        Iterator i =  sampledFeature.iterator();
-        String sampledFeatures = "";
-        while (i.hasNext()) {
-            sampledFeatures += i.next() + " ";
+        if (sampledFeature != null) {
+            Iterator i =  sampledFeature.iterator();
+            String sampledFeatures = "";
+            while (i.hasNext()) {
+                sampledFeatures += i.next() + " ";
+            }
+            s.append("sampledFeature = ").append(sampledFeatures);
         }
-        s.append("sampledFeature = ").append(sampledFeatures);
         return s.toString();
     }
 
