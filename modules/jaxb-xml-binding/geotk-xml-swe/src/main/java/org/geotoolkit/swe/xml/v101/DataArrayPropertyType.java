@@ -115,10 +115,11 @@ public class DataArrayPropertyType implements DataArrayProperty {
      */
     @Override
     public String toString() {
-        StringBuilder s    = new StringBuilder();
+        StringBuilder s    = new StringBuilder("[DataArrayPropertyType]");
         char lineSeparator = '\n';
+        s.append('\n');
         if (dataArray != null)  {
-            s.append("[DataArrayPropertyType] array:");
+            s.append("array:");
             s.append(dataArray.getValue()).append(lineSeparator);
         }
         return s.toString();
