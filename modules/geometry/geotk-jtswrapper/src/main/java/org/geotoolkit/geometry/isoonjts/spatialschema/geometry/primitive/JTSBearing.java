@@ -9,6 +9,10 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
+import javax.measure.quantity.Angle;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 import org.opengis.geometry.primitive.Bearing;
 
 
@@ -68,5 +72,10 @@ public class JTSBearing implements Bearing {
     @Override
     public double[] getDirection() {
         return direction;
+    }
+
+    @Override
+    public Unit<Angle> getAngleUnit() {
+        return NonSI.DEGREE_ANGLE;
     }
 }
