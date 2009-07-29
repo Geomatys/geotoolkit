@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110modified.BinaryTemporalOpType;
-import org.geotoolkit.ogc.xml.v110modified.TemporalOpsType;
+import org.geotoolkit.ogc.xml.v110.BinaryTemporalOpType;
+import org.geotoolkit.ogc.xml.v110.TemporalOpsType;
 import org.geotoolkit.util.Utilities;
 
 /**

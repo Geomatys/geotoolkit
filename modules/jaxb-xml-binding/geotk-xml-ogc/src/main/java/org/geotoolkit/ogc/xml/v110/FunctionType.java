@@ -125,7 +125,14 @@ public class FunctionType extends ExpressionType implements Function {
     public String getName() {
         return name;
     }
-    
+
+    /**
+     * Sets the value of the name property.
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
+
     public LiteralType getFallbackValue() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

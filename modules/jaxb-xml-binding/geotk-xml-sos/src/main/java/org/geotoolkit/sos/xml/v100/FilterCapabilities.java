@@ -21,10 +21,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110modified.IdCapabilitiesType;
-import org.geotoolkit.ogc.xml.v110modified.ScalarCapabilitiesType;
-import org.geotoolkit.ogc.xml.v110modified.SpatialCapabilitiesType;
-import org.geotoolkit.ogc.xml.v110modified.TemporalCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.IdCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.ScalarCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.SpatialCapabilitiesType;
+import org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType;
 import org.geotoolkit.util.Utilities;
 
 

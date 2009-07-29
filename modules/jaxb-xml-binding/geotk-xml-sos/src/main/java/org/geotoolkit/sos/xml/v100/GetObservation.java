@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v110modified.BBOXType;
-import org.geotoolkit.ogc.xml.v110modified.BinaryComparisonOpType;
-import org.geotoolkit.ogc.xml.v110modified.BinarySpatialOpType;
-import org.geotoolkit.ogc.xml.v110modified.ComparisonOpsType;
-import org.geotoolkit.ogc.xml.v110modified.DistanceBufferType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyIsBetweenType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyIsLikeType;
-import org.geotoolkit.ogc.xml.v110modified.PropertyIsNullType;
-import org.geotoolkit.ogc.xml.v110modified.SpatialOpsType;
+import org.geotoolkit.ogc.xml.v110.BBOXType;
+import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
+import org.geotoolkit.ogc.xml.v110.BinarySpatialOpType;
+import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
+import org.geotoolkit.ogc.xml.v110.DistanceBufferType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
+import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.util.Utilities;
 
 

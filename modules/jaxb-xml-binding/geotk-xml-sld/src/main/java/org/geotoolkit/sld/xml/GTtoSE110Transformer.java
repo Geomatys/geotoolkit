@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -30,6 +29,7 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
@@ -39,8 +39,16 @@ import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.LogicOpsType;
 import org.geotoolkit.ogc.xml.v110.LowerBoundaryType;
+import org.geotoolkit.ogc.xml.v110.NotType;
+import org.geotoolkit.ogc.xml.v110.OrType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLessThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLessThanType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
@@ -215,7 +223,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             jax = ogc_factory.createMul(bot);
         }else if(exp instanceof Literal){
             LiteralType literal = ogc_factory.createLiteralType();
-            literal.getContent().add( ((Literal)exp).getValue().toString());
+            literal.setContent( ((Literal)exp).getValue().toString());
             jax = ogc_factory.createLiteral(literal);
         }else if(exp instanceof Add){
             Add add = (Add)exp;
@@ -348,53 +356,54 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 
         if(filter instanceof PropertyIsBetween){
             PropertyIsBetween pib = (PropertyIsBetween) filter;
-            PropertyIsBetweenType bot = ogc_factory.createPropertyIsBetweenType();
             LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
             lbt.setExpression(extract(pib.getLowerBoundary()));
             UpperBoundaryType ubt = ogc_factory.createUpperBoundaryType();
             ubt.setExpression(extract(pib.getUpperBoundary()));
-            
-            bot.setExpression( extract(pib.getExpression()) );
-            bot.setLowerBoundary( lbt );
-            bot.setUpperBoundary( ubt );
+            PropertyIsBetweenType bot = new PropertyIsBetweenType(extract(pib.getExpression()), lbt, ubt);
             return ogc_factory.createPropertyIsBetween(bot);
         }else if(filter instanceof PropertyIsEqualTo){
             BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsEqualTo(bot);
+            return ogc_factory.createPropertyIsEqualTo(new PropertyIsEqualToType(bot.getLiteral(),
+                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsGreaterThan){
             BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsGreaterThan(bot);
+            return ogc_factory.createPropertyIsGreaterThan(new PropertyIsGreaterThanType(bot.getLiteral(),
+                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsGreaterThanOrEqualTo){
             BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsGreaterThanOrEqualTo(bot);
+            return ogc_factory.createPropertyIsGreaterThanOrEqualTo(new PropertyIsGreaterThanOrEqualToType(bot.getLiteral(),
+                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsLessThan){
             BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsLessThan(bot);
+            return ogc_factory.createPropertyIsLessThan(new PropertyIsLessThanType(bot.getLiteral(),
+                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsLessThanOrEqualTo){
             BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
+            return ogc_factory.createPropertyIsLessThanOrEqualTo(new PropertyIsLessThanOrEqualToType(bot.getLiteral(),
+                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsLike){
             PropertyIsLike pis = (PropertyIsLike) filter;
             PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
             bot.setEscapeChar(pis.getEscape());
             LiteralType lt = ogc_factory.createLiteralType();
-            lt.getContent().add(pis.getLiteral());
-            bot.setLiteral( lt );
+            lt.setContent(pis.getLiteral());
+            bot.setLiteral( lt.getStringValue() );
             PropertyNameType pnt = (PropertyNameType) extract(pis.getExpression()).getValue();
             bot.setPropertyName(pnt);
             bot.setSingleChar(pis.getSingleChar());
@@ -405,7 +414,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
             BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsNotEqualTo(bot);
+            return ogc_factory.createPropertyIsNotEqualTo(new PropertyIsNotEqualToType(bot.getLiteral(),
+                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsNull){
             PropertyIsNull pis = (PropertyIsNull) filter;
             PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
@@ -417,32 +427,37 @@ public class GTtoSE110Transformer implements StyleVisitor{
             And and = (And) filter;
             BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
             for(Filter f : and.getChildren()){
-                lot.getComparisonOpsOrSpatialOpsOrLogicOps().add(visitFilter(f));
+                lot.getLogicOps().add((JAXBElement<? extends LogicOpsType>) visitFilter(f));
             }
-            return ogc_factory.createAnd(lot);
+            return ogc_factory.createAnd(new AndType(lot.getLogicOps().get(0).getValue(),
+                                                     lot.getLogicOps().get(1).getValue()));
         }else if(filter instanceof Or){
             Or or = (Or) filter;
             BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
             for(Filter f : or.getChildren()){
-                lot.getComparisonOpsOrSpatialOpsOrLogicOps().add(visitFilter(f));
+                lot.getLogicOps().add((JAXBElement<? extends LogicOpsType>) visitFilter(f));
             }
-            return ogc_factory.createOr(lot);
+            return ogc_factory.createOr(new OrType(lot.getLogicOps().get(0).getValue(),
+                                                   lot.getLogicOps().get(1).getValue()));
         }else if(filter instanceof Not){
             Not not = (Not) filter;
             UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
             JAXBElement<?> sf = visitFilter(not.getFilter());
             
-            if(sf.getValue() instanceof ComparisonOpsType){
+            if (sf.getValue() instanceof ComparisonOpsType){
                 lot.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
-            }else if(sf.getValue() instanceof LogicOpsType){
-                lot.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
-            }else if(sf.getValue() instanceof SpatialOpsType){
-                lot.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
-            }else{
-                //should not happen
-                throw new IllegalArgumentException("invalide filter element : " + sf);
+                return ogc_factory.createNot(new NotType(lot.getComparisonOps().getValue()));
             }
-            return ogc_factory.createNot(lot);
+            if(sf.getValue() instanceof LogicOpsType){
+                lot.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
+                return ogc_factory.createNot(new NotType(lot.getLogicOps().getValue()));
+            }
+            if(sf.getValue() instanceof SpatialOpsType){
+                lot.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
+                return ogc_factory.createNot(new NotType(lot.getSpatialOps().getValue()));
+            }
+            //should not happen
+            throw new IllegalArgumentException("invalide filter element : " + sf);
         }else if(filter instanceof FeatureId){
             
         }else if(filter instanceof BBOX){

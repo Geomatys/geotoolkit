@@ -70,7 +70,14 @@ public class PropertyNameType implements PropertyName {
     public String getContent() {
         return content;
     }
-    
+
+    /**
+     * Gets the value of the content property.
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     @Override
     public String toString() {
         return content;

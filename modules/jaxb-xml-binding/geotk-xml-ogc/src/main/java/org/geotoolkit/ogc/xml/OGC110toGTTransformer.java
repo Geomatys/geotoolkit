@@ -188,21 +188,18 @@ public class OGC110toGTTransformer {
                 final List<Filter> filters = new ArrayList<Filter>();
 
                 for (JAXBElement<? extends ComparisonOpsType> ele : binary.getComparisonOps()) {
-                    final Object value = ele.getValue();
-                    if (value instanceof ComparisonOpsType) {
-                        filters.add(visitComparisonOp((JAXBElement<? extends ComparisonOpsType>) value));
+                    if (ele.getValue() instanceof ComparisonOpsType) {
+                        filters.add(visitComparisonOp(ele));
                     }
                 }
                 for (JAXBElement<? extends LogicOpsType> ele : binary.getLogicOps()) {
-                    final Object value = ele.getValue();
-                    if (value instanceof LogicOpsType) {
-                        filters.add(visitLogicOp((JAXBElement<? extends LogicOpsType>) value));
+                    if (ele.getValue() instanceof LogicOpsType) {
+                        filters.add(visitLogicOp(ele));
                     }
                 }
                 for (JAXBElement<? extends SpatialOpsType> ele : binary.getSpatialOps()) {
-                    final Object value = ele.getValue();
-                    if (value instanceof SpatialOpsType) {
-                        filters.add(visitSpatialOp((JAXBElement<? extends SpatialOpsType>) value));
+                    if (ele.getValue() instanceof SpatialOpsType) {
+                        filters.add(visitSpatialOp(ele));
                     }
                 }
                 
@@ -211,21 +208,18 @@ public class OGC110toGTTransformer {
                 final List<Filter> filters = new ArrayList<Filter>();
                 
                 for (JAXBElement<? extends ComparisonOpsType> ele : binary.getComparisonOps()) {
-                    final Object value = ele.getValue();
-                    if (value instanceof ComparisonOpsType) {
-                        filters.add(visitComparisonOp((JAXBElement<? extends ComparisonOpsType>) value));
+                    if (ele.getValue() instanceof ComparisonOpsType) {
+                        filters.add(visitComparisonOp(ele));
                     }
                 }
                 for (JAXBElement<? extends LogicOpsType> ele : binary.getLogicOps()) {
-                    final Object value = ele.getValue();
-                    if (value instanceof LogicOpsType) {
-                        filters.add(visitLogicOp((JAXBElement<? extends LogicOpsType>) value));
+                    if (ele.getValue() instanceof LogicOpsType) {
+                        filters.add(visitLogicOp(ele));
                     }
                 }
                 for (JAXBElement<? extends SpatialOpsType> ele : binary.getSpatialOps()) {
-                    final Object value = ele.getValue();
-                    if (value instanceof SpatialOpsType) {
-                        filters.add(visitSpatialOp((JAXBElement<? extends SpatialOpsType>) value));
+                    if (ele.getValue() instanceof SpatialOpsType) {
+                        filters.add(visitSpatialOp(ele));
                     }
                 }
                 
@@ -249,7 +243,7 @@ public class OGC110toGTTransformer {
 
             Expression left = visitExpression(binary.getExpression().get(0));
             Expression right = visitExpression(binary.getExpression().get(1));
-            
+
             if (OGCJAXBStatics.FILTER_COMPARISON_ISEQUAL.equalsIgnoreCase(OpName)) {
                 return filterFactory.equals(left,right);
             } else if (OGCJAXBStatics.FILTER_COMPARISON_ISNOTEQUAL.equalsIgnoreCase(OpName)) {

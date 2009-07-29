@@ -57,13 +57,12 @@ public class BinaryOperatorType extends ExpressionType {
 
     /**
      * Gets the value of the expression property.
-     * (unmodifiable)
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
             expression = new ArrayList<JAXBElement<?>>();
         }
-        return Collections.unmodifiableList(expression);
+        return this.expression;
     }
 
     public Object evaluate(Object object) {

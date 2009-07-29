@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v110modified.FilterType;
-import org.geotoolkit.ogc.xml.v110modified.FunctionType;
-import org.geotoolkit.ogc.xml.v110modified.SortByType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.FunctionType;
+import org.geotoolkit.ogc.xml.v110.SortByType;
 
 
 /**

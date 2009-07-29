@@ -73,6 +73,13 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     public PropertyNameType getPropertyName() {
         return propertyName;
     }
+
+    /**
+     * Sets the value of the propertyName property.
+     */
+    public void setPropertyName(PropertyNameType propertyName) {
+        this.propertyName = propertyName;
+    }
     
     @Override
     public String toString() {

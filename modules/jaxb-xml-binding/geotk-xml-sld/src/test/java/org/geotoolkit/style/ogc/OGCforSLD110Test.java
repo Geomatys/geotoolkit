@@ -558,7 +558,7 @@ public class OGCforSLD110Test extends TestCase{
         ComparisonOpsType cot = ft.getComparisonOps().getValue();
         PropertyIsBetweenType pibt = (PropertyIsBetweenType) cot;
         
-        PropertyNameType pnt = (PropertyNameType) pibt.getExpression().getValue();
+        PropertyNameType pnt = (PropertyNameType) pibt.getExpressionType().getValue();
         LiteralType low = (LiteralType) pibt.getLowerBoundary().getExpression().getValue();
         LiteralType up = (LiteralType) pibt.getUpperBoundary().getExpression().getValue();
 
@@ -594,7 +594,7 @@ public class OGCforSLD110Test extends TestCase{
         
         ComparisonOpsType cot = ft.getComparisonOps().getValue();
         BinaryComparisonOpType pibt = (BinaryComparisonOpType) cot;
-        
+
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
@@ -779,7 +779,7 @@ public class OGCforSLD110Test extends TestCase{
         PropertyIsLikeType pibt = (PropertyIsLikeType) cot;
         
         PropertyNameType lf = pibt.getPropertyName();
-        LiteralType lt = pibt.getLiteral();
+        LiteralType lt = pibt.getLiteralType();
         String esc = pibt.getEscapeChar();
         String sin = pibt.getSingleChar();
         String wi = pibt.getWildCard();
@@ -902,8 +902,8 @@ public class OGCforSLD110Test extends TestCase{
         assertEquals( ft.getLogicOps().getName().getLocalPart(), SEJAXBStatics.FILTER_LOGIC_AND);
         BinaryLogicOpType pibt = (BinaryLogicOpType) cot;
         
-        BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOpsOrSpatialOpsOrLogicOps().get(0).getValue();
-        BinaryComparisonOpType rightoptype = (BinaryComparisonOpType) pibt.getComparisonOpsOrSpatialOpsOrLogicOps().get(1).getValue();
+        BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOps().get(0).getValue();
+        BinaryComparisonOpType rightoptype = (BinaryComparisonOpType) pibt.getComparisonOps().get(1).getValue();
         
         PropertyNameType lf = (PropertyNameType) leftoptype.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) leftoptype.getExpression().get(1).getValue();
@@ -956,8 +956,8 @@ public class OGCforSLD110Test extends TestCase{
         assertEquals( ft.getLogicOps().getName().getLocalPart(), SEJAXBStatics.FILTER_LOGIC_OR);
         BinaryLogicOpType pibt = (BinaryLogicOpType) cot;
         
-        BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOpsOrSpatialOpsOrLogicOps().get(0).getValue();
-        BinaryComparisonOpType rightoptype = (BinaryComparisonOpType) pibt.getComparisonOpsOrSpatialOpsOrLogicOps().get(1).getValue();
+        BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOps().get(0).getValue();
+        BinaryComparisonOpType rightoptype = (BinaryComparisonOpType) pibt.getComparisonOps().get(1).getValue();
         
         PropertyNameType lf = (PropertyNameType) leftoptype.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) leftoptype.getExpression().get(1).getValue();

@@ -88,11 +88,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
         if (this.expression == null) {
             this.expression = new ArrayList<JAXBElement<?>>();
         }
-        if (literal != null) {
-            this.expression.add(FACTORY.createLiteral(literal));
-        }
         if (propertyName != null) {
             this.expression.add(FACTORY.createPropertyName(propertyName));
+        }
+        if (literal != null) {
+            this.expression.add(FACTORY.createLiteral(literal));
         }
         this.matchCase = matchCase;
     }
@@ -179,8 +179,12 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
 
     public Expression getExpression1() {
         for (JAXBElement<?> elem : expression) {
-            if (elem.getValue() instanceof String) {
-                return new PropertyNameType((String) elem.getValue());
+            final Object value = elem.getValue();
+            if (value instanceof String) {
+                return new PropertyNameType((String) value);
+            }
+            if (value instanceof PropertyNameType) {
+                return (PropertyNameType) value;
             }
         }
         return null;
@@ -223,8 +227,12 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
 
     public String getPropertyName() {
         for (JAXBElement<?> elem : expression) {
-            if (elem.getValue() instanceof String) {
-                return (String) elem.getValue();
+            final Object value = elem.getValue();
+            if (value instanceof String) {
+                return (String) value;
+            }
+            if (value instanceof PropertyNameType) {
+                return ((PropertyNameType) value).getContent();
             }
         }
         return null;
