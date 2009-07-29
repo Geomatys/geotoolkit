@@ -25,6 +25,10 @@ import org.opengis.referencing.cs.AxisDirection;
 /**
  * JAXB adapter for {@link AxisDirection}, in order to integrate the value in an element
  * complying with ISO-19139 standard.
+ * <p>
+ * This implementation can not be merged with {@link AxisDirectionAdapter} because we
+ * are not allowed to use {@code @XmlValue} annotation in a class that extend an other
+ * class.
  *
  * @author Guilhem Legal (Geomatys)
  * @version 3.02
