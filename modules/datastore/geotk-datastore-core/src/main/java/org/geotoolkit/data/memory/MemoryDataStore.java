@@ -67,7 +67,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author jgarnett
  * @source $URL$
  */
-public class MemoryDataStore extends AbstractDataStore {
+public final class MemoryDataStore extends AbstractDataStore {
 
     /** Memory holds Map of Feature by fid by typeName. */
     protected final Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
@@ -83,8 +83,8 @@ public class MemoryDataStore extends AbstractDataStore {
      * @param schema An empty feature collection of this type will be made available
      */
     public MemoryDataStore(SimpleFeatureType featureType) {
-        Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
-        String typeName = featureType.getTypeName();
+        final Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
+        final String typeName = featureType.getTypeName();
         schema.put(typeName, featureType);
         memory.put(typeName, featureMap);
     }
@@ -119,7 +119,7 @@ public class MemoryDataStore extends AbstractDataStore {
             // use an order preserving map, so that features are returned in the same
             // order as they were inserted. This is important for repeatable rendering
             // of overlapping features.
-            Map<String, SimpleFeature> featureMap = new LinkedHashMap<String, SimpleFeature>();
+            final Map<String, SimpleFeature> featureMap = new LinkedHashMap<String, SimpleFeature>();
             String typeName;
             SimpleFeature feature;
 
@@ -159,7 +159,7 @@ public class MemoryDataStore extends AbstractDataStore {
     public void addFeatures(FeatureIterator<SimpleFeature> reader) throws IOException {
         try {
             SimpleFeatureType featureType;
-            Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
+            final Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
             String typeName;
             SimpleFeature feature;
 
@@ -203,14 +203,14 @@ public class MemoryDataStore extends AbstractDataStore {
         }
 
         synchronized (memory) {
-            for (Iterator i = collection.iterator(); i.hasNext();) {
+            for (final Iterator i = collection.iterator(); i.hasNext();) {
                 addFeatureInternal((SimpleFeature) i.next());
             }
         }
     }
 
     public void addFeatures(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
-        if ((collection == null)) {
+        if (collection == null) {
             throw new IllegalArgumentException("Provided FeatureCollection<SimpleFeatureType, SimpleFeature> is empty");
         }
         synchronized (memory) {
@@ -275,7 +275,7 @@ public class MemoryDataStore extends AbstractDataStore {
         SimpleFeatureType featureType;
         featureType = feature.getFeatureType();
 
-        String typeName = featureType.getTypeName();
+        final String typeName = featureType.getTypeName();
 
         Map featuresMap;
 
@@ -318,10 +318,10 @@ public class MemoryDataStore extends AbstractDataStore {
     @Override
     public String[] getTypeNames() {
         synchronized (memory) {
-            String[] types = new String[schema.size()];
+            final String[] types = new String[schema.size()];
             int index = 0;
 
-            for (Iterator i = schema.keySet().iterator(); i.hasNext(); index++) {
+            for (final Iterator i = schema.keySet().iterator(); i.hasNext(); index++) {
                 types[index] = (String) i.next();
             }
 
@@ -358,14 +358,14 @@ public class MemoryDataStore extends AbstractDataStore {
      */
     @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
-        String typeName = featureType.getTypeName();
+        final String typeName = featureType.getTypeName();
 
         if (memory.containsKey(typeName)) {
             // we have a conflict
             throw new IOException(typeName + " already exists");
         }
         // insertion order preserving map
-        Map featuresMap = new LinkedHashMap();
+        final Map featuresMap = new LinkedHashMap();
         schema.put(typeName, featureType);
         memory.put(typeName, featuresMap);
     }
@@ -535,7 +535,7 @@ public class MemoryDataStore extends AbstractDataStore {
                             throw new DataSourceException("Unable to accept modifications to " + live.getID() + " on " + typeName);
                         }
 
-                        JTSEnvelope2D bounds = new JTSEnvelope2D();
+                        final JTSEnvelope2D bounds = new JTSEnvelope2D();
                         bounds.expandToInclude(new JTSEnvelope2D(live.getBounds()));
                         bounds.expandToInclude(new JTSEnvelope2D(current.getBounds()));
                         listenerManager.fireFeaturesChanged(typeName, transaction,
@@ -585,21 +585,21 @@ public class MemoryDataStore extends AbstractDataStore {
     @Override
     protected JTSEnvelope2D getBounds(Query query)
             throws IOException {
-        String typeName = query.getTypeName();
-        Map contents = features(typeName);
-        Iterator iterator = contents.values().iterator();
+        final String typeName = query.getTypeName();
+        final Map contents = features(typeName);
+        final Iterator iterator = contents.values().iterator();
 
         JTSEnvelope2D envelope = null;
 
         if (iterator.hasNext()) {
             int count = 1;
-            Filter filter = query.getFilter();
-            SimpleFeature first = (SimpleFeature) iterator.next();
-            Envelope env = ((Geometry) first.getDefaultGeometry()).getEnvelopeInternal();
+            final Filter filter = query.getFilter();
+            final SimpleFeature first = (SimpleFeature) iterator.next();
+            final Envelope env = ((Geometry) first.getDefaultGeometry()).getEnvelopeInternal();
             envelope = new JTSEnvelope2D(env, first.getType().getCoordinateReferenceSystem());
 
             while (iterator.hasNext() && (count < query.getMaxFeatures())) {
-                SimpleFeature feature = (SimpleFeature) iterator.next();
+                final SimpleFeature feature = (SimpleFeature) iterator.next();
 
                 if (filter.evaluate(feature)) {
                     count++;
@@ -617,13 +617,13 @@ public class MemoryDataStore extends AbstractDataStore {
     @Override
     protected int getCount(Query query)
             throws IOException {
-        String typeName = query.getTypeName();
-        Map contents = features(typeName);
-        Iterator iterator = contents.values().iterator();
+        final String typeName = query.getTypeName();
+        final Map contents = features(typeName);
+        final Iterator iterator = contents.values().iterator();
 
         int count = 0;
 
-        Filter filter = query.getFilter();
+        final Filter filter = query.getFilter();
 
         while (iterator.hasNext() && (count < query.getMaxFeatures())) {
             if (filter.evaluate((SimpleFeature) iterator.next())) {

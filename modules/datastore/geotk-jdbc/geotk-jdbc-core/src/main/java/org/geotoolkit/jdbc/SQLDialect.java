@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -38,11 +39,12 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.filter.capability.GeometryOperand;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import java.util.Collections;
+
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -54,7 +56,6 @@ import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
-import org.opengis.filter.capability.GeometryOperand;
 
 
 /**
@@ -114,7 +115,7 @@ public abstract class SQLDialect {
     /**
      * The basic filter capabilities all databases should have
      */
-    public static DefaultFilterCapabilities BASE_DBMS_CAPABILITIES;
+    public static final DefaultFilterCapabilities BASE_DBMS_CAPABILITIES;
     static {
         final DefaultIdCapabilities idCaps = new DefaultIdCapabilities(true, true);
 
@@ -124,13 +125,14 @@ public abstract class SQLDialect {
             new DefaultOperator("not")
         };
         final DefaultComparisonOperators compOps = new DefaultComparisonOperators(ops);
+        final String obj = "obj";
         final DefaultFunctionName[] functionNames = new DefaultFunctionName[] {
-            new DefaultFunctionName("equals", Collections.singletonList("obj"), 0),
-            new DefaultFunctionName("greaterThan", Collections.singletonList("obj"), 0),
-            new DefaultFunctionName("greaterThanEqual", Collections.singletonList("obj"), 0),
-            new DefaultFunctionName("lessThan", Collections.singletonList("obj"), 0),
-            new DefaultFunctionName("lessThanEqual", Collections.singletonList("obj"), 0),
-            new DefaultFunctionName("notEquals", Collections.singletonList("obj"), 0)
+            new DefaultFunctionName("equals", Collections.singletonList(obj), 0),
+            new DefaultFunctionName("greaterThan", Collections.singletonList(obj), 0),
+            new DefaultFunctionName("greaterThanEqual", Collections.singletonList(obj), 0),
+            new DefaultFunctionName("lessThan", Collections.singletonList(obj), 0),
+            new DefaultFunctionName("lessThanEqual", Collections.singletonList(obj), 0),
+            new DefaultFunctionName("notEquals", Collections.singletonList(obj), 0)
         };
         final DefaultFunctions functions = new DefaultFunctions(functionNames);
         final DefaultArithmeticOperators arithmOps = new DefaultArithmeticOperators(true, functions);
@@ -267,29 +269,29 @@ public abstract class SQLDialect {
      *
      */
     public void registerSqlTypeToClassMappings(final Map<Integer, Class<?>> mappings) {
-        mappings.put(new Integer(Types.VARCHAR), String.class);
-        mappings.put(new Integer(Types.CHAR), String.class);
-        mappings.put(new Integer(Types.LONGVARCHAR), String.class);
+        mappings.put(Types.VARCHAR, String.class);
+        mappings.put(Types.CHAR, String.class);
+        mappings.put(Types.LONGVARCHAR, String.class);
 
-        mappings.put(new Integer(Types.BIT), Boolean.class);
-        mappings.put(new Integer(Types.BOOLEAN), Boolean.class);
+        mappings.put(Types.BIT, Boolean.class);
+        mappings.put(Types.BOOLEAN, Boolean.class);
 
-        mappings.put(new Integer(Types.TINYINT), Short.class);
-        mappings.put(new Integer(Types.SMALLINT), Short.class);
+        mappings.put(Types.TINYINT, Short.class);
+        mappings.put(Types.SMALLINT, Short.class);
 
-        mappings.put(new Integer(Types.INTEGER), Integer.class);
-        mappings.put(new Integer(Types.BIGINT), Long.class);
+        mappings.put(Types.INTEGER, Integer.class);
+        mappings.put(Types.BIGINT, Long.class);
 
-        mappings.put(new Integer(Types.REAL), Float.class);
-        mappings.put(new Integer(Types.FLOAT), Double.class);
-        mappings.put(new Integer(Types.DOUBLE), Double.class);
+        mappings.put(Types.REAL, Float.class);
+        mappings.put(Types.FLOAT, Double.class);
+        mappings.put(Types.DOUBLE, Double.class);
 
-        mappings.put(new Integer(Types.DECIMAL), BigDecimal.class);
-        mappings.put(new Integer(Types.NUMERIC), BigDecimal.class);
+        mappings.put(Types.DECIMAL, BigDecimal.class);
+        mappings.put(Types.NUMERIC, BigDecimal.class);
 
-        mappings.put(new Integer(Types.DATE), Date.class);
-        mappings.put(new Integer(Types.TIME), Time.class);
-        mappings.put(new Integer(Types.TIMESTAMP), Timestamp.class);
+        mappings.put(Types.DATE, Date.class);
+        mappings.put(Types.TIME, Time.class);
+        mappings.put(Types.TIMESTAMP, Timestamp.class);
 
         //subclasses should extend to provide additional
     }
@@ -304,24 +306,24 @@ public abstract class SQLDialect {
      * </p>
      */
     public void registerClassToSqlMappings(final Map<Class<?>, Integer> mappings) {
-        mappings.put(String.class, new Integer(Types.VARCHAR));
+        mappings.put(String.class, Types.VARCHAR);
 
-        mappings.put(Boolean.class, new Integer(Types.BOOLEAN));
+        mappings.put(Boolean.class, Types.BOOLEAN);
 
-        mappings.put(Short.class, new Integer(Types.SMALLINT));
+        mappings.put(Short.class, Types.SMALLINT);
 
-        mappings.put(Integer.class, new Integer(Types.INTEGER));
-        mappings.put(Long.class, new Integer(Types.BIGINT));
+        mappings.put(Integer.class, Types.INTEGER);
+        mappings.put(Long.class, Types.BIGINT);
 
-        mappings.put(Float.class, new Integer(Types.REAL));
-        mappings.put(Double.class, new Integer(Types.DOUBLE));
+        mappings.put(Float.class, Types.REAL);
+        mappings.put(Double.class, Types.DOUBLE);
 
-        mappings.put(BigDecimal.class, new Integer(Types.NUMERIC));
+        mappings.put(BigDecimal.class, Types.NUMERIC);
 
-        mappings.put(Date.class, new Integer(Types.DATE));
-        mappings.put(Time.class, new Integer(Types.TIME));
-        mappings.put(java.util.Date.class, new Integer(Types.TIMESTAMP));
-        mappings.put(Timestamp.class, new Integer(Types.TIMESTAMP));
+        mappings.put(Date.class, Types.DATE);
+        mappings.put(Time.class, Types.TIME);
+        mappings.put(java.util.Date.class, Types.TIMESTAMP);
+        mappings.put(Timestamp.class, Types.TIMESTAMP);
 
         //subclasses should extend and provide additional
     }

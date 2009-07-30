@@ -49,15 +49,15 @@ public class JAXBSLDUtilities {
     }
 
     //--------- SLD Version 1.0.0 ----------------------------------------------
-    public  org.geotoolkit.sld.xml.v100.StyledLayerDescriptor transform_V100(StyledLayerDescriptor sld){
+    public  org.geotoolkit.sld.xml.v100.StyledLayerDescriptor transformV100(StyledLayerDescriptor sld){
         return new GTtoSLD100Transformer().visit(sld, null);
     }
     
-    public MutableStyledLayerDescriptor transform_V100(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld){
+    public MutableStyledLayerDescriptor transformV100(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld){
         return new SLD100toGTTransformer(filterFactory,styleFactory,sldFactory).visit(sld);
     }
     
-    public  org.geotoolkit.sld.xml.v100.StyledLayerDescriptor unmarshall_V100(File sldFile){
+    public  org.geotoolkit.sld.xml.v100.StyledLayerDescriptor unmarshallV100(File sldFile){
         org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = null;
         
         try {
@@ -71,7 +71,7 @@ public class JAXBSLDUtilities {
         return sld;
     }
     
-    public File marshall_V100( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld, File sldFile) {
+    public File marshallV100( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld, File sldFile) {
         
         try {
             final JAXBContext context = JAXBContext.newInstance( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
@@ -88,15 +88,15 @@ public class JAXBSLDUtilities {
     }
         
     //--------- SLD Version 1.1.0 ----------------------------------------------   
-    public org.geotoolkit.sld.xml.v110.StyledLayerDescriptor transform_V110(StyledLayerDescriptor sld){
+    public org.geotoolkit.sld.xml.v110.StyledLayerDescriptor transformV110(StyledLayerDescriptor sld){
         return new GTtoSLD110Transformer().visit(sld, null);
     }
     
-    public MutableStyledLayerDescriptor transform_V110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld){
+    public MutableStyledLayerDescriptor transformV110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld){
         return new SLD110toGTTransformer(filterFactory,styleFactory,sldFactory).visit(sld);
     }
     
-    public org.geotoolkit.sld.xml.v110.StyledLayerDescriptor unmarshall_V110(File sldFile){
+    public org.geotoolkit.sld.xml.v110.StyledLayerDescriptor unmarshallV110(File sldFile){
         org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = null;
         
         try {
@@ -110,7 +110,7 @@ public class JAXBSLDUtilities {
         return sld;
     }
     
-    public File marshall_V110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld, File sldFile) {
+    public File marshallV110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld, File sldFile) {
         
         try {
             final JAXBContext context = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);

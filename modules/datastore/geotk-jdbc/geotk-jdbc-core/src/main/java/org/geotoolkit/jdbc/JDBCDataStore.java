@@ -122,8 +122,7 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
  * @author Justin Deoliveira, The Open Planning Project
  *
  */
-public final class JDBCDataStore extends ContentDataStore
-        implements GmlObjectStore {
+public final class JDBCDataStore extends ContentDataStore implements GmlObjectStore {
 
     /**
      * The native SRID associated to a certain descriptor
@@ -133,69 +132,69 @@ public final class JDBCDataStore extends ContentDataStore
      * name of table to use to store geometries when {@link #associations}
      * is set.
      */
-    protected static final String GEOMETRY_TABLE = "geometry";
+    public static final String GEOMETRY_TABLE = "geometry";
     /**
      * name of table to use to store multi geometries made up of non-multi
      * geometries when {@link #associations} is set.
      */
-    protected static final String MULTI_GEOMETRY_TABLE = "multi_geometry";
+    public static final String MULTI_GEOMETRY_TABLE = "multi_geometry";
     /**
      * name of table to use to store geometry associations when {@link #associations}
      * is set.
      */
-    protected static final String GEOMETRY_ASSOCIATION_TABLE = "geometry_associations";
+    public static final String GEOMETRY_ASSOCIATION_TABLE = "geometry_associations";
     /**
      * name of table to use to store feature relationships (information about
      * associations) when {@link #associations} is set.
      */
-    protected static final String FEATURE_RELATIONSHIP_TABLE = "feature_relationships";
+    public static final String FEATURE_RELATIONSHIP_TABLE = "feature_relationships";
     /**
      * name of table to use to store feature associations when {@link #associations}
      * is set.
      */
-    protected static final String FEATURE_ASSOCIATION_TABLE = "feature_associations";
+    public static final String FEATURE_ASSOCIATION_TABLE = "feature_associations";
     /**
      * The envelope returned when bounds is called against a geometryless feature type
      */
-    protected static final JTSEnvelope2D EMPTY_ENVELOPE = new JTSEnvelope2D();
+    public static final JTSEnvelope2D EMPTY_ENVELOPE = new JTSEnvelope2D();
     /**
      * data source
      */
-    protected DataSource dataSource;
+    private DataSource dataSource;
     /**
      * the dialect of sql
      */
-    protected SQLDialect dialect;
+    private SQLDialect dialect;
     /**
      * The database schema.
      */
-    protected String databaseSchema;
+    private String databaseSchema;
     /**
      * sql type to java class mappings
      */
-    protected HashMap<Integer, Class<?>> sqlTypeToClassMappings;
+    private HashMap<Integer, Class<?>> sqlTypeToClassMappings;
     /**
      * sql type name to java class mappings
      */
-    protected HashMap<String, Class<?>> sqlTypeNameToClassMappings;
+    private HashMap<String, Class<?>> sqlTypeNameToClassMappings;
     /**
      * java class to sql type mappings;
      */
-    protected HashMap<Class<?>, Integer> classToSqlTypeMappings;
+    private HashMap<Class<?>, Integer> classToSqlTypeMappings;
     /**
      * sql type to sql type name overrides
      */
-    protected HashMap<Integer, String> sqlTypeToSqlTypeNameOverrides;
+    private HashMap<Integer, String> sqlTypeToSqlTypeNameOverrides;
     /**
      * flag controlling if the datastore is supporting feature and geometry
      * relationships with associations
      */
-    protected boolean associations = false;
+    private boolean associations = false;
     /**
      * The fetch size for this datastore, defaulting to 1000. Set to a value less or equal
      * to 0 to disable fetch size limit and grab all the records in one shot.
      */
-    protected int fetchSize;
+    private int fetchSize;
     /**
      * TODO: this must be removed and replaced by a more configurable
      * cache
@@ -396,7 +395,7 @@ public final class JDBCDataStore extends ContentDataStore
      * @return The mapped java class, or <code>null</code>. if no such mapping exists.
      */
     public Class<?> getMapping(final int sqlType) {
-        return getSqlTypeToClassMappings().get(new Integer(sqlType));
+        return getSqlTypeToClassMappings().get(sqlType);
     }
 
     /**
@@ -1261,7 +1260,7 @@ public final class JDBCDataStore extends ContentDataStore
                                 //TODO: probably better to do a count to check... but if this
                                 // value already exists the db will throw an error when it tries
                                 // to insert
-                                next = new Integer(1);
+                                next = 1;
                             }
                         } finally {
                             closeSafe(rs);
@@ -3318,12 +3317,12 @@ public final class JDBCDataStore extends ContentDataStore
                     "before freeing all references to it");
             dispose();
         }
-
+        super.finalize();
     }
 
     @Override
     public void dispose() {
-        if (dataSource != null && dataSource instanceof ManageableDataSource) {
+        if (dataSource instanceof ManageableDataSource) {
             try {
                 final ManageableDataSource mds = (ManageableDataSource) dataSource;
                 dataSource = null;
@@ -3393,13 +3392,13 @@ public final class JDBCDataStore extends ContentDataStore
     {
 
         final int srid = getDescriptorSRID(gatt);
-        if (isGeneralizationRequired(hints, gatt) == true) {
+        if (isGeneralizationRequired(hints, gatt)) {
             final Double distance = (Double) hints.get(HintsPending.GEOMETRY_GENERALIZATION);
             dialect.encodeGeometryColumnGeneralized(gatt, srid, sql, distance);
             return;
         }
 
-        if (isSimplificationRequired(hints, gatt) == true) {
+        if (isSimplificationRequired(hints, gatt)) {
             final Double distance = (Double) hints.get(HintsPending.GEOMETRY_SIMPLIFICATION);
             dialect.encodeGeometryColumnSimplified(gatt, srid, sql, distance);
             return;

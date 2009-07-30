@@ -113,13 +113,13 @@ public class Tester {
     //--------------------- V1.0.0 ---------------------------------------------
     private static void testSLDMarshall_V100(File file) {
         StyledLayerDescriptor geoSLD = createSLD();
-        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V100(geoSLD);
-        SLD_UTILITIES.marshall_V100(sld, file);
+        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.transformV100(geoSLD);
+        SLD_UTILITIES.marshallV100(sld, file);
     }
 
     private static void testSLDUnMarshall_V100(File file) {        
-        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V100(file);
-        MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transform_V100(sld);
+        org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV100(file);
+        MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV100(sld);
         showSLD(geoSLD);
     }
     
@@ -128,13 +128,13 @@ public class Tester {
     //--------------------- V1.1.0 ---------------------------------------------
     private static void testSLDMarshall_V110(File file) {
         StyledLayerDescriptor geoSLD = createSLD();
-        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.transform_V110(geoSLD);
-        SLD_UTILITIES.marshall_V110(sld, file);
+        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.transformV110(geoSLD);
+        SLD_UTILITIES.marshallV110(sld, file);
     }
 
     private static void testSLDUnMarshall_V110(File file) {        
-        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshall_V110(file);
-        MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transform_V110(sld);
+        org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV110(file);
+        MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV110(sld);
         showSLD(geoSLD);
     }
     
