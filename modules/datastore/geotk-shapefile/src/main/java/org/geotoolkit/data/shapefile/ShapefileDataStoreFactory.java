@@ -261,7 +261,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
 
         boolean isLocal = shpFiles.isLocal();
         if (!isLocal || shpFiles.exists(ShpFileType.SHP)) {
-            LOGGER.warning("File already exists: "
+            LOGGER.fine("File already exists: "
                     + shpFiles.get(ShpFileType.SHP));
         }
         boolean useMemoryMappedBuffer = isLocal

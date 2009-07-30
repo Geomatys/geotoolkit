@@ -162,7 +162,7 @@ public class ShapefileReader implements FileReader {
         try {
             shxReader = new IndexFile(shapefileFiles, true);
         } catch(Exception e) {
-            LOGGER.log(Level.WARNING, "Could not open the .shx file, continuing " +
+            LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
             		"assuming the .shp file is not sparse", e);
             currentShape = UNKNOWN;
         }
