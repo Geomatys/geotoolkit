@@ -139,9 +139,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         
         if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(css.getName()) ){
 
-            List<Serializable> content = css.getContent();
+            final List<Serializable> content = css.getContent();
             Object value = null;
-            for(Serializable obj : content){
+            for(final Serializable obj : content){
                 if(obj instanceof String && !obj.toString().trim().isEmpty()){
                     value = obj.toString();
                 }else if(obj instanceof JAXBElement<?>){
@@ -151,12 +151,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
             if(value != null){
                 //its a float array
-                float[] values = new float[]{0,0};
-                String[] parts = value.toString().split(" ");
+                final float[] values = new float[]{0,0};
+                final String[] parts = value.toString().split(" ");
 
                 for(int i=0;i < parts.length && i<2 ;i++){
                     try{
-                        Float f = Float.valueOf(parts[0]);
+                        final Float f = Float.valueOf(parts[0]);
                         values[i] = f.floatValue();
                     }catch(NumberFormatException ne){}
                 }
@@ -170,7 +170,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
 
         if(css.getContent().size() >= 1){
-            for(Object obj : css.getContent()){
+            for(final Object obj : css.getContent()){
                 if(obj instanceof String){
 //                    System.out.println("laaaaa " + obj);
 //                    return filterFactory.literal(obj);
@@ -206,15 +206,15 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
         Expression result = Expression.NIL;
 
-        List<Serializable> sers = param.getContent();
+        final List<Serializable> sers = param.getContent();
 
-        for(Serializable ser :sers){
+        for(final Serializable ser :sers){
 
             if(ser instanceof String && !ser.toString().trim().isEmpty()){
 //                result = filterFactory.literal((String)ser);
 //                break;
             }else if(ser instanceof JAXBElement<?>){
-                JAXBElement<?> jax = (JAXBElement<?>) ser;
+                final JAXBElement<?> jax = (JAXBElement<?>) ser;
                 result = visitExpression(jax);
                 break;
             }
@@ -242,8 +242,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
             final List<org.geotoolkit.sld.xml.v100.FeatureTypeStyle> ftss = us.getFeatureTypeStyle();
 
-            for(org.geotoolkit.sld.xml.v100.FeatureTypeStyle obj : ftss){
-                MutableFeatureTypeStyle fts = visitFTS(obj);
+            for(final org.geotoolkit.sld.xml.v100.FeatureTypeStyle obj : ftss){
+                final MutableFeatureTypeStyle fts = visitFTS(obj);
                 mls.featureTypeStyles().add(fts);
             }
 
@@ -258,12 +258,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public MutableFeatureTypeStyle visitFTS(org.geotoolkit.sld.xml.v100.FeatureTypeStyle obj){
         if(obj == null) return null;        
     
-        MutableFeatureTypeStyle fts = styleFactory.featureTypeStyle();
-        org.geotoolkit.sld.xml.v100.FeatureTypeStyle ftst = (org.geotoolkit.sld.xml.v100.FeatureTypeStyle) obj;
+        final MutableFeatureTypeStyle fts = styleFactory.featureTypeStyle();
+        final org.geotoolkit.sld.xml.v100.FeatureTypeStyle ftst = (org.geotoolkit.sld.xml.v100.FeatureTypeStyle) obj;
 
         fts.setName(ftst.getName());
-        InternationalString title = (ftst.getTitle() == null) ? null : new SimpleInternationalString(ftst.getTitle());
-        InternationalString abs = (ftst.getAbstract() == null) ? null : new SimpleInternationalString(ftst.getAbstract());
+        final InternationalString title = (ftst.getTitle() == null) ? null : new SimpleInternationalString(ftst.getTitle());
+        final InternationalString abs = (ftst.getAbstract() == null) ? null : new SimpleInternationalString(ftst.getAbstract());
         fts.setDescription(styleFactory.description(title, abs));
         fts.semanticTypeIdentifiers().addAll(visitSemantics(ftst.getSemanticTypeIdentifier()));
         
@@ -290,8 +290,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             return Collections.emptyList();
         }
 
-        Collection<SemanticType> semantics = new ArrayList<SemanticType>();
-        for(String str : strs){
+        final Collection<SemanticType> semantics = new ArrayList<SemanticType>();
+        for(final String str : strs){
             if(GENERIC_ANY.equalsIgnoreCase(str)){
                 semantics.add( SemanticType.ANY );
             }else if(GENERIC_POINT.equalsIgnoreCase(str)){
@@ -317,11 +317,11 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
      */
     public MutableRule visitRule(org.geotoolkit.sld.xml.v100.Rule rt) {
 
-        MutableRule rule = styleFactory.rule();
+        final MutableRule rule = styleFactory.rule();
 
         rule.setName(rt.getName());
-        InternationalString title = (rt.getTitle() == null) ? null : new SimpleInternationalString(rt.getTitle());
-        InternationalString abs = (rt.getAbstract() == null) ? null : new SimpleInternationalString(rt.getAbstract());
+        final InternationalString title = (rt.getTitle() == null) ? null : new SimpleInternationalString(rt.getTitle());
+        final InternationalString abs = (rt.getAbstract() == null) ? null : new SimpleInternationalString(rt.getAbstract());
         rule.setDescription(styleFactory.description(title, abs));
         rule.setElseFilter(rt.getElseFilter() != null);
         rule.setFilter(visitFilter(rt.getFilter()));
@@ -333,26 +333,26 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             
         }else{
             
-            for(JAXBElement<? extends org.geotoolkit.sld.xml.v100.SymbolizerType> jax : rt.getSymbolizer()) {
-                org.geotoolkit.sld.xml.v100.SymbolizerType st = jax.getValue();
+            for(final JAXBElement<? extends org.geotoolkit.sld.xml.v100.SymbolizerType> jax : rt.getSymbolizer()) {
+                final org.geotoolkit.sld.xml.v100.SymbolizerType st = jax.getValue();
 
                 if (st == null) {
                     continue;
                 }
                 if (st instanceof org.geotoolkit.sld.xml.v100.PointSymbolizer) {
-                    org.geotoolkit.sld.xml.v100.PointSymbolizer pst = (org.geotoolkit.sld.xml.v100.PointSymbolizer) st;
+                    final org.geotoolkit.sld.xml.v100.PointSymbolizer pst = (org.geotoolkit.sld.xml.v100.PointSymbolizer) st;
                     rule.symbolizers().add(visit(pst));
                 } else if (st instanceof org.geotoolkit.sld.xml.v100.LineSymbolizer) {
-                    org.geotoolkit.sld.xml.v100.LineSymbolizer pst = (org.geotoolkit.sld.xml.v100.LineSymbolizer) st;
+                    final org.geotoolkit.sld.xml.v100.LineSymbolizer pst = (org.geotoolkit.sld.xml.v100.LineSymbolizer) st;
                     rule.symbolizers().add(visit(pst));
                 } else if (st instanceof org.geotoolkit.sld.xml.v100.PolygonSymbolizer) {
-                    org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst = (org.geotoolkit.sld.xml.v100.PolygonSymbolizer) st;
+                    final org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst = (org.geotoolkit.sld.xml.v100.PolygonSymbolizer) st;
                     rule.symbolizers().add(visit(pst));
                 } else if (st instanceof org.geotoolkit.sld.xml.v100.TextSymbolizer) {
-                    org.geotoolkit.sld.xml.v100.TextSymbolizer pst = (org.geotoolkit.sld.xml.v100.TextSymbolizer) st;
+                    final org.geotoolkit.sld.xml.v100.TextSymbolizer pst = (org.geotoolkit.sld.xml.v100.TextSymbolizer) st;
                     rule.symbolizers().add(visit(pst));
                 } else if (st instanceof org.geotoolkit.sld.xml.v100.RasterSymbolizer) {
-                    org.geotoolkit.sld.xml.v100.RasterSymbolizer pst = (org.geotoolkit.sld.xml.v100.RasterSymbolizer) st;
+                    final org.geotoolkit.sld.xml.v100.RasterSymbolizer pst = (org.geotoolkit.sld.xml.v100.RasterSymbolizer) st;
                     rule.symbolizers().add(visit(pst));
                 }
             }
@@ -372,11 +372,11 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public PointSymbolizer visit(org.geotoolkit.sld.xml.v100.PointSymbolizer pst) {
         if(pst == null) return null;
 
-        Graphic graphic = (pst.getGraphic() == null) ? styleFactory.graphic() : visit(pst.getGraphic());
-        Unit uom = NonSI.PIXEL;
-        String geom = visitGeom( pst.getGeometry());
-        String name = null;
-        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        final Graphic graphic = (pst.getGraphic() == null) ? styleFactory.graphic() : visit(pst.getGraphic());
+        final Unit uom = NonSI.PIXEL;
+        final String geom = visitGeom( pst.getGeometry());
+        final String name = null;
+        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
         return styleFactory.pointSymbolizer(name,geom,desc,uom,graphic);
     }
@@ -387,12 +387,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public LineSymbolizer visit(org.geotoolkit.sld.xml.v100.LineSymbolizer lst) {
         if(lst == null) return null;
 
-        Stroke stroke = (lst.getStroke() == null)? styleFactory.stroke() : visit(lst.getStroke());
-        Expression offset = filterFactory.literal(0);
-        Unit uom = NonSI.PIXEL;
-        String geom = visitGeom( lst.getGeometry());
-        String name = null;
-        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        final Stroke stroke = (lst.getStroke() == null)? styleFactory.stroke() : visit(lst.getStroke());
+        final Expression offset = filterFactory.literal(0);
+        final Unit uom = NonSI.PIXEL;
+        final String geom = visitGeom( lst.getGeometry());
+        final String name = null;
+        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
         return styleFactory.lineSymbolizer(name,geom,desc,uom,stroke, offset);
     }
@@ -403,14 +403,14 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public PolygonSymbolizer visit(org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst) {
         if(pst == null) return null;
 
-        Stroke stroke = (pst.getStroke() == null)? styleFactory.stroke() : visit(pst.getStroke());
-        Fill fill = (pst.getFill() == null)? styleFactory.fill() : visit(pst.getFill());
-        Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
-        Expression offset = filterFactory.literal(0);
-        Unit uom = NonSI.PIXEL;
-        String geom = visitGeom( pst.getGeometry());
-        String name = null;
-        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        final Stroke stroke = (pst.getStroke() == null)? styleFactory.stroke() : visit(pst.getStroke());
+        final Fill fill = (pst.getFill() == null)? styleFactory.fill() : visit(pst.getFill());
+        final Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
+        final Expression offset = filterFactory.literal(0);
+        final Unit uom = NonSI.PIXEL;
+        final String geom = visitGeom( pst.getGeometry());
+        final String name = null;
+        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
         return styleFactory.polygonSymbolizer(name,geom,desc,uom,stroke, fill, disp, offset);
     }
@@ -421,17 +421,17 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public RasterSymbolizer visit(org.geotoolkit.sld.xml.v100.RasterSymbolizer rst) {
         if(rst == null) return null;
 
-        Expression opacity = (rst.getOpacity() == null) ? filterFactory.literal(1) : visitExpression(rst.getOpacity());
-        ChannelSelection selection = visit(rst.getChannelSelection());
-        OverlapBehavior overlap = visitOverLap(rst.getOverlapBehavior());
-        ColorMap colorMap = visit(rst.getColorMap());
-        ContrastEnhancement enchance = visit(rst.getContrastEnhancement());
-        ShadedRelief relief = visit(rst.getShadedRelief());
-        Symbolizer outline = visit(rst.getImageOutline());
-        Unit uom = NonSI.PIXEL;
-        String geom = visitGeom( rst.getGeometry());
-        String name = "";
-        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        final Expression opacity = (rst.getOpacity() == null) ? filterFactory.literal(1) : visitExpression(rst.getOpacity());
+        final ChannelSelection selection = visit(rst.getChannelSelection());
+        final OverlapBehavior overlap = visitOverLap(rst.getOverlapBehavior());
+        final ColorMap colorMap = visit(rst.getColorMap());
+        final ContrastEnhancement enchance = visit(rst.getContrastEnhancement());
+        final ShadedRelief relief = visit(rst.getShadedRelief());
+        final Symbolizer outline = visit(rst.getImageOutline());
+        final Unit uom = NonSI.PIXEL;
+        final String geom = visitGeom( rst.getGeometry());
+        final String name = "";
+        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
         if(selection == null) return null;
 
@@ -444,15 +444,15 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public TextSymbolizer visit(org.geotoolkit.sld.xml.v100.TextSymbolizer tst) {
         if(tst == null) return null;
 
-        Expression label = visitExpression(tst.getLabel());
-        Font font = (tst.getFont() == null) ? styleFactory.font() : visit(tst.getFont());
-        LabelPlacement placement = (tst.getLabelPlacement() == null) ? styleFactory.pointPlacement() : visit(tst.getLabelPlacement());
-        Halo halo = visit(tst.getHalo());
-        Fill fill = visit(tst.getFill());
-        Unit uom = NonSI.PIXEL;
-        String geom = visitGeom( tst.getGeometry());
-        String name = null;
-        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        final Expression label = visitExpression(tst.getLabel());
+        final Font font = (tst.getFont() == null) ? styleFactory.font() : visit(tst.getFont());
+        final LabelPlacement placement = (tst.getLabelPlacement() == null) ? styleFactory.pointPlacement() : visit(tst.getLabelPlacement());
+        final Halo halo = visit(tst.getHalo());
+        final Fill fill = visit(tst.getFill());
+        final Unit uom = NonSI.PIXEL;
+        final String geom = visitGeom( tst.getGeometry());
+        final String name = null;
+        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
         
         if(label == null) return null;
         
@@ -469,10 +469,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             return null;
         }
 
-        Graphic graphic = visit(legendGraphic.getGraphic());
+        final Graphic graphic = visit(legendGraphic.getGraphic());
         if(graphic != null){
-            GraphicLegend legend = styleFactory.graphicLegend(graphic);
-            return legend;
+            return styleFactory.graphicLegend(graphic);
         }
 
         return null;
@@ -484,9 +483,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Graphic visit(org.geotoolkit.sld.xml.v100.Graphic graphic) {
         if(graphic == null) return null;
 
-        List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
 
-        for(Object obj : graphic.getExternalGraphicOrMark()){
+        for(final Object obj : graphic.getExternalGraphicOrMark()){
             if(obj instanceof org.geotoolkit.sld.xml.v100.Mark){
                 symbols.add( visit((org.geotoolkit.sld.xml.v100.Mark)obj));
             }else if(obj instanceof org.geotoolkit.sld.xml.v100.ExternalGraphic){
@@ -494,11 +493,11 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             }
         }
 
-        Expression opacity = visitExpression(graphic.getOpacity());
-        Expression size = visitExpression(graphic.getSize());
-        Expression rotation = visitExpression(graphic.getRotation());
-        AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
-        Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
+        final Expression opacity = visitExpression(graphic.getOpacity());
+        final Expression size = visitExpression(graphic.getSize());
+        final Expression rotation = visitExpression(graphic.getRotation());
+        final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
+        final Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
 
         return styleFactory.graphic(symbols, opacity, size, rotation, anchor, disp);
     }
@@ -509,8 +508,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Stroke visit(org.geotoolkit.sld.xml.v100.Stroke strk) {
         if(strk == null) return null;
 
-        GraphicFill fill = visit(strk.getGraphicFill());
-        GraphicStroke stroke = visit(strk.getGraphicStroke());
+        final GraphicFill fill = visit(strk.getGraphicFill());
+        final GraphicStroke stroke = visit(strk.getGraphicStroke());
         Expression color = Expression.NIL;
         Expression opacity = Expression.NIL;
         Expression width = Expression.NIL;
@@ -519,8 +518,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         float[] dashes = null;
         Expression offset = Expression.NIL;        
         
-        List<CssParameter> params = strk.getCssParameter();
-        for(CssParameter svg : params){
+        final List<CssParameter> params = strk.getCssParameter();
+        for(final CssParameter svg : params){
             if(SEJAXBStatics.STROKE.equalsIgnoreCase(svg.getName())){
                 color = (Expression)visitSVG(svg);
             }else if(SEJAXBStatics.STROKE_OPACITY.equalsIgnoreCase(svg.getName())){
@@ -555,12 +554,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Fill visit(org.geotoolkit.sld.xml.v100.Fill fl) {
         if(fl == null) return null;
 
-        GraphicFill fill = visit(fl.getGraphicFill());
+        final GraphicFill fill = visit(fl.getGraphicFill());
         Expression color = Expression.NIL;
         Expression opacity = Expression.NIL;
         
-        List<CssParameter> params = fl.getCssParameter();
-        for(CssParameter svg : params){
+        final List<CssParameter> params = fl.getCssParameter();
+        for(final CssParameter svg : params){
             if(SEJAXBStatics.FILL.equalsIgnoreCase(svg.getName())){
                 color = (Expression)visitSVG(svg);
             }else if(SEJAXBStatics.FILL_OPACITY.equalsIgnoreCase(svg.getName())){
@@ -577,8 +576,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Displacement visit(org.geotoolkit.sld.xml.v100.Displacement displacement) {
         if(displacement == null) return null;
         
-        Expression x = visitExpression(displacement.getDisplacementX());
-        Expression y = visitExpression(displacement.getDisplacementY());
+        final Expression x = visitExpression(displacement.getDisplacementX());
+        final Expression y = visitExpression(displacement.getDisplacementY());
         
         return styleFactory.displacement(x, y);
     }
@@ -609,7 +608,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         if(channelSelection == null) return null;
         
         if(channelSelection.getGrayChannel() != null){
-            SelectedChannelType sct = visit(channelSelection.getGrayChannel());
+            final SelectedChannelType sct = visit(channelSelection.getGrayChannel());
             return styleFactory.channelSelection(sct);
         }else{
             return styleFactory.channelSelection(
@@ -623,7 +622,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private ColorMap visit(org.geotoolkit.sld.xml.v100.ColorMap colorMap) {
         if(colorMap == null) return null;
         
-        Function function = null;
+        final Function function = null;
 //        if(colorMap.getCategorize() != null){
 //            function = visit(colorMap.getCategorize());
 //        }else if(colorMap.getInterpolate() != null){
@@ -641,7 +640,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private ContrastEnhancement visit(org.geotoolkit.sld.xml.v100.ContrastEnhancement contrastEnhancement) {
         if(contrastEnhancement == null) return null;
         
-        Expression gamma = filterFactory.literal(contrastEnhancement.getGammaValue());
+        final Expression gamma = filterFactory.literal(contrastEnhancement.getGammaValue());
         ContrastMethod type = ContrastMethod.NONE;
         
         if(contrastEnhancement.getHistogram() != null){
@@ -674,8 +673,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private ShadedRelief visit(org.geotoolkit.sld.xml.v100.ShadedRelief shadedRelief) {
         if(shadedRelief == null) return null;
         
-        boolean bright = shadedRelief.isBrightnessOnly();
-        Expression relief = filterFactory.literal(shadedRelief.getReliefFactor());
+        final boolean bright = shadedRelief.isBrightnessOnly();
+        final Expression relief = filterFactory.literal(shadedRelief.getReliefFactor());
         
         return styleFactory.shadedRelief(relief,bright);
     }
@@ -686,13 +685,13 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Font visit(org.geotoolkit.sld.xml.v100.Font font) {
         if(font == null) return null;
         
-        List<Expression> family = new ArrayList<Expression>();
+        final List<Expression> family = new ArrayList<Expression>();
         Expression style = Expression.NIL;
         Expression weight = Expression.NIL;
         Expression size = Expression.NIL;
         
-        List<CssParameter> params = font.getCssParameter();
-        for(CssParameter svg : params){
+        final List<CssParameter> params = font.getCssParameter();
+        for(final CssParameter svg : params){
             if(SEJAXBStatics.FONT_FAMILY.equalsIgnoreCase(svg.getName())){
                 family.add( (Expression)visitSVG(svg) );
             }else if(SEJAXBStatics.FONT_STYLE.equalsIgnoreCase(svg.getName())){
@@ -713,8 +712,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Halo visit(org.geotoolkit.sld.xml.v100.Halo halo) {
         if(halo == null) return null;
         
-        Fill fill = visit(halo.getFill());
-        Expression radius = visitExpression(halo.getRadius());
+        final Fill fill = visit(halo.getFill());
+        final Expression radius = visitExpression(halo.getRadius());
         
         return styleFactory.halo(fill, radius);
     }
@@ -741,8 +740,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private AnchorPoint visit(org.geotoolkit.sld.xml.v100.AnchorPoint anchorPoint) {
         if(anchorPoint == null) return null;
         
-        Expression x = visitExpression(anchorPoint.getAnchorPointX());
-        Expression y = visitExpression(anchorPoint.getAnchorPointY());
+        final Expression x = visitExpression(anchorPoint.getAnchorPointX());
+        final Expression y = visitExpression(anchorPoint.getAnchorPointY());
         
         return styleFactory.anchorPoint(x, y);
     }
@@ -753,9 +752,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private Mark visit(org.geotoolkit.sld.xml.v100.Mark markType) {
         if(markType == null) return null;
         
-        Expression wkn = filterFactory.literal(markType.getWellKnownName());
-        Fill fill = visit(markType.getFill());
-        Stroke stroke = visit(markType.getStroke());
+        final Expression wkn = filterFactory.literal(markType.getWellKnownName());
+        final Fill fill = visit(markType.getFill());
+        final Stroke stroke = visit(markType.getStroke());
         
         return styleFactory.mark(wkn, fill, stroke);
     }
@@ -763,10 +762,10 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private ExternalGraphic visit(org.geotoolkit.sld.xml.v100.ExternalGraphic externalGraphicType) {
         if(externalGraphicType == null) return null;
         
-        OnLineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
-        Icon icon = null;
-        String format = externalGraphicType.getFormat();
-        Collection<ColorReplacement> replaces = Collections.emptyList();
+        final OnLineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
+        final Icon icon = null;
+        final String format = externalGraphicType.getFormat();
+        final Collection<ColorReplacement> replaces = Collections.emptyList();
         
         if (resource != null){
             return styleFactory.externalGraphic(resource, format, replaces);
@@ -785,10 +784,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             return null;
         }
 
-        Graphic graphic = visit(graphicFill.getGraphic());
+        final Graphic graphic = visit(graphicFill.getGraphic());
         if(graphic != null){
-            GraphicFill fill = styleFactory.graphicFill(graphic);
-            return fill;
+            return styleFactory.graphicFill(graphic);
         }
         
         return null;
@@ -802,13 +800,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
             return null;
         }
 
-        Graphic graphic = visit(graphicStroke.getGraphic());
+        final Graphic graphic = visit(graphicStroke.getGraphic());
         if(graphic != null){
-            Expression gap = filterFactory.literal(0);
-            Expression initialGap = filterFactory.literal(0);
+            final Expression gap = filterFactory.literal(0);
+            final Expression initialGap = filterFactory.literal(0);
             
-            GraphicStroke stroke = styleFactory.graphicStroke(graphic,gap,initialGap);
-            return stroke;
+            return styleFactory.graphicStroke(graphic,gap,initialGap);
         }
         
         return null;
@@ -820,8 +817,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private SelectedChannelType visit(org.geotoolkit.sld.xml.v100.SelectedChannelType channel) {
         if(channel == null) return null;
         
-        String name = channel.getSourceChannelName();
-        ContrastEnhancement enchance = (channel.getContrastEnhancement() == null) ? 
+        final String name = channel.getSourceChannelName();
+        final ContrastEnhancement enchance = (channel.getContrastEnhancement() == null) ?
             StyleConstants.DEFAULT_CONTRAST_ENHANCEMENT : visit(channel.getContrastEnhancement());
         
         return styleFactory.selectedChannelType(name, enchance);
@@ -833,12 +830,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private LinePlacement visit(org.geotoolkit.sld.xml.v100.LinePlacement linePlacement) {
         if(linePlacement == null) return null;
         
-        Expression offset = visitExpression(linePlacement.getPerpendicularOffset());
-        Expression initial = filterFactory.literal(0);
-        Expression gap = filterFactory.literal(0);
-        boolean repeated = false;
-        boolean aligned = false;
-        boolean generalize = false;
+        final Expression offset = visitExpression(linePlacement.getPerpendicularOffset());
+        final Expression initial = filterFactory.literal(0);
+        final Expression gap = filterFactory.literal(0);
+        final boolean repeated = false;
+        final boolean aligned = false;
+        final boolean generalize = false;
         
         return styleFactory.linePlacement(offset, initial, gap, repeated, aligned, generalize);
     }
@@ -849,9 +846,9 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private PointPlacement visit(org.geotoolkit.sld.xml.v100.PointPlacement pointPlacement) {
         if(pointPlacement == null) return null;
         
-        AnchorPoint anchor = visit(pointPlacement.getAnchorPoint());
-        Displacement disp = visit(pointPlacement.getDisplacement());
-        Expression rotation = visitExpression(pointPlacement.getRotation());
+        final AnchorPoint anchor = visit(pointPlacement.getAnchorPoint());
+        final Displacement disp = visit(pointPlacement.getDisplacement());
+        final Expression rotation = visitExpression(pointPlacement.getRotation());
         
         return styleFactory.pointPlacement(anchor, disp, rotation);
     }

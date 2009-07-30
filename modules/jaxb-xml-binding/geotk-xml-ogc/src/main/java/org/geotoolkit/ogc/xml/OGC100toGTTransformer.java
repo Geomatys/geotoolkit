@@ -76,12 +76,12 @@ public class OGC100toGTTransformer {
         final String OpName = jax.getName().getLocalPart();
 
         if (ops instanceof org.geotoolkit.ogc.xml.v100.BinarySpatialOpType) {
-            org.geotoolkit.ogc.xml.v100.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v100.BinarySpatialOpType) ops;
-            JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> geom = binary.getGeometry();
-            org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyName();
+            final org.geotoolkit.ogc.xml.v100.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v100.BinarySpatialOpType) ops;
+            final JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> geom = binary.getGeometry();
+            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyName();
                         
-            Expression left = filterFactory.property(pnt.getContent());
-            Expression right = visit(geom);
+            final Expression left = filterFactory.property(pnt.getContent());
+            final Expression right = visit(geom);
 
             if (OGCJAXBStatics.FILTER_SPATIAL_CONTAINS.equalsIgnoreCase(OpName)) {
                 return filterFactory.contains(left,right);
@@ -104,15 +104,15 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
             
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.DistanceBufferType) {
-            org.geotoolkit.ogc.xml.v100.DistanceBufferType dstOp = (org.geotoolkit.ogc.xml.v100.DistanceBufferType) ops;
-            org.geotoolkit.ogc.xml.v100.DistanceType dt = dstOp.getDistance();
-            JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> geom = dstOp.getGeometry();
-            org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = dstOp.getPropertyName();
+            final org.geotoolkit.ogc.xml.v100.DistanceBufferType dstOp = (org.geotoolkit.ogc.xml.v100.DistanceBufferType) ops;
+            final org.geotoolkit.ogc.xml.v100.DistanceType dt = dstOp.getDistance();
+            final JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> geom = dstOp.getGeometry();
+            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = dstOp.getPropertyName();
 
-            Expression geom1 = filterFactory.property(pnt.getContent());
-            Expression geom2 = visit(geom);
-            double distance = Double.valueOf(dt.getContent());
-            String units = dt.getUnits();
+            final Expression geom1 = filterFactory.property(pnt.getContent());
+            final Expression geom2 = visit(geom);
+            final double distance = Double.valueOf(dt.getContent());
+            final String units = dt.getUnits();
             
             
             if (OGCJAXBStatics.FILTER_SPATIAL_DWITHIN.equalsIgnoreCase(OpName)) {
@@ -124,16 +124,16 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.BBOXType) {
-            org.geotoolkit.ogc.xml.v100.BBOXType binary = (org.geotoolkit.ogc.xml.v100.BBOXType) ops;
-            org.geotoolkit.gml.xml.v212.BoxType box = binary.getBox();
-            org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyName();
+            final org.geotoolkit.ogc.xml.v100.BBOXType binary = (org.geotoolkit.ogc.xml.v100.BBOXType) ops;
+            final org.geotoolkit.gml.xml.v212.BoxType box = binary.getBox();
+            final org.geotoolkit.ogc.xml.v100.PropertyNameType pnt = binary.getPropertyName();
             
-            Expression geom = filterFactory.property(pnt.getContent());
-            double minx = box.getCoord().get(0).getX().doubleValue();
-            double maxx = box.getCoord().get(1).getX().doubleValue();
-            double miny = box.getCoord().get(0).getY().doubleValue();
-            double maxy = box.getCoord().get(1).getY().doubleValue();
-            String srs =  box.getSrsName();
+            final Expression geom = filterFactory.property(pnt.getContent());
+            final double minx = box.getCoord().get(0).getX().doubleValue();
+            final double maxx = box.getCoord().get(1).getX().doubleValue();
+            final double miny = box.getCoord().get(0).getY().doubleValue();
+            final double maxy = box.getCoord().get(1).getY().doubleValue();
+            final String srs =  box.getSrsName();
             
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
                 return filterFactory.bbox(geom, minx, miny, maxx, maxy, srs);
@@ -154,7 +154,7 @@ public class OGC100toGTTransformer {
         final String OpName = jax.getName().getLocalPart();
 
         if (ops instanceof org.geotoolkit.ogc.xml.v100.UnaryLogicOpType) {
-            org.geotoolkit.ogc.xml.v100.UnaryLogicOpType unary = (org.geotoolkit.ogc.xml.v100.UnaryLogicOpType) ops;
+            final org.geotoolkit.ogc.xml.v100.UnaryLogicOpType unary = (org.geotoolkit.ogc.xml.v100.UnaryLogicOpType) ops;
 
             if (OGCJAXBStatics.FILTER_LOGIC_NOT.equalsIgnoreCase(OpName)) {
                 Filter filter = null;
@@ -171,13 +171,13 @@ public class OGC100toGTTransformer {
             }
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.BinaryLogicOpType) {
-            org.geotoolkit.ogc.xml.v100.BinaryLogicOpType binary = (org.geotoolkit.ogc.xml.v100.BinaryLogicOpType) ops;
+            final org.geotoolkit.ogc.xml.v100.BinaryLogicOpType binary = (org.geotoolkit.ogc.xml.v100.BinaryLogicOpType) ops;
             
             if (OGCJAXBStatics.FILTER_LOGIC_AND.equalsIgnoreCase(OpName)) {
-                List<Filter> filters = new ArrayList<Filter>();
+                final List<Filter> filters = new ArrayList<Filter>();
                 
-                for(JAXBElement<?> ele : binary.getComparisonOpsOrSpatialOpsOrLogicOps()){
-                    Object obj = ele.getValue();
+                for(final JAXBElement<?> ele : binary.getComparisonOpsOrSpatialOpsOrLogicOps()){
+                    final Object obj = ele.getValue();
                     if(obj instanceof org.geotoolkit.ogc.xml.v100.ComparisonOpsType){
                         filters.add(visitComparisonOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v100.ComparisonOpsType>) ele ));
                     }else if(obj instanceof org.geotoolkit.ogc.xml.v100.SpatialOpsType){
@@ -189,10 +189,10 @@ public class OGC100toGTTransformer {
                 
                 return filterFactory.and(filters);
             } else if (OGCJAXBStatics.FILTER_LOGIC_OR.equalsIgnoreCase(OpName)) {
-                List<Filter> filters = new ArrayList<Filter>();
+                final List<Filter> filters = new ArrayList<Filter>();
                 
-                for(JAXBElement<?> ele : binary.getComparisonOpsOrSpatialOpsOrLogicOps()){
-                    Object obj = ele.getValue();
+                for(final JAXBElement<?> ele : binary.getComparisonOpsOrSpatialOpsOrLogicOps()){
+                    final Object obj = ele.getValue();
                     if(obj instanceof org.geotoolkit.ogc.xml.v100.ComparisonOpsType){
                         filters.add(visitComparisonOp( (JAXBElement<? extends org.geotoolkit.ogc.xml.v100.ComparisonOpsType>) ele ));
                     }else if(obj instanceof org.geotoolkit.ogc.xml.v100.SpatialOpsType){
@@ -218,10 +218,10 @@ public class OGC100toGTTransformer {
         final String OpName = jax.getName().getLocalPart();
 
         if (ops instanceof org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType) {
-            org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType binary = (org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType) ops;
+            final org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType binary = (org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType) ops;
 
-            Expression left = visitExpression(binary.getExpression().get(0));
-            Expression right = visitExpression(binary.getExpression().get(1));
+            final Expression left = visitExpression(binary.getExpression().get(0));
+            final Expression right = visitExpression(binary.getExpression().get(1));
             
             if (OGCJAXBStatics.FILTER_COMPARISON_ISEQUAL.equalsIgnoreCase(OpName)) {
                 return filterFactory.equals(left,right);
@@ -240,13 +240,13 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.PropertyIsLikeType) {
-            org.geotoolkit.ogc.xml.v100.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v100.PropertyIsLikeType) ops;
+            final org.geotoolkit.ogc.xml.v100.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v100.PropertyIsLikeType) ops;
 
-            Expression expr = filterFactory.property(property.getPropertyName().getContent());
-            String pattern = visitExpression(property.getLiteral()).toString();
-            String wild = property.getWildCard();
-            String single = property.getSingleChar();
-            String escape = property.getEscape();
+            final Expression expr = filterFactory.property(property.getPropertyName().getContent());
+            final String pattern = visitExpression(property.getLiteral()).toString();
+            final String wild = property.getWildCard();
+            final String single = property.getSingleChar();
+            final String escape = property.getEscape();
             
             if (OGCJAXBStatics.FILTER_COMPARISON_ISLIKE.equalsIgnoreCase(OpName)) {
                 return filterFactory.like(expr, pattern, wild, single, escape);
@@ -255,11 +255,11 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType) {
-            org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType property = (org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType) ops;
+            final org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType property = (org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType) ops;
 
-            Expression lower = visitExpression( property.getLowerBoundary().getExpression() );
-            Expression upper = visitExpression( property.getUpperBoundary().getExpression() );
-            Expression expr = visitExpression( property.getExpression() );
+            final Expression lower = visitExpression( property.getLowerBoundary().getExpression() );
+            final Expression upper = visitExpression( property.getUpperBoundary().getExpression() );
+            final Expression expr = visitExpression( property.getExpression() );
             
             if (OGCJAXBStatics.FILTER_COMPARISON_ISBETWEEN.equalsIgnoreCase(OpName)) {
                 return filterFactory.between(expr, lower, upper);
@@ -268,7 +268,7 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v100.PropertyIsNullType) {
-            org.geotoolkit.ogc.xml.v100.PropertyIsNullType property = (org.geotoolkit.ogc.xml.v100.PropertyIsNullType) ops;
+            final org.geotoolkit.ogc.xml.v100.PropertyIsNullType property = (org.geotoolkit.ogc.xml.v100.PropertyIsNullType) ops;
 
             Expression expr = null;
             if(property.getPropertyName() != null){
@@ -292,9 +292,9 @@ public class OGC100toGTTransformer {
      * Transform a SLD IDS Filter v1.0 in GT filter.
      */
     public Filter visitIds(List<org.geotoolkit.ogc.xml.v100.FeatureIdType> lst){
-        Set<Identifier> ids = new HashSet<Identifier>();
+        final Set<Identifier> ids = new HashSet<Identifier>();
         
-        for(org.geotoolkit.ogc.xml.v100.FeatureIdType id : lst){
+        for(final org.geotoolkit.ogc.xml.v100.FeatureIdType id : lst){
             ids.add( filterFactory.gmlObjectId(id.getFid()) );
         }
         
@@ -318,15 +318,15 @@ public class OGC100toGTTransformer {
 //        JAXBElementPropertyNameType>  ---k
 //        JAXBElementBinaryOperatorType> ---k 
         
-        String expName = jax.getName().getLocalPart();
-        Object obj = jax.getValue();
+        final String expName = jax.getName().getLocalPart();
+        final Object obj = jax.getValue();
         
         if(obj instanceof LiteralType){
             return visitExpression( (LiteralType)obj );
         }else if(obj instanceof BinaryOperatorType){
-            BinaryOperatorType bot = (BinaryOperatorType) obj;
-            Expression left = visitExpression(bot.getExpression().get(0));
-            Expression right = visitExpression(bot.getExpression().get(1));
+            final BinaryOperatorType bot = (BinaryOperatorType) obj;
+            final Expression left = visitExpression(bot.getExpression().get(0));
+            final Expression right = visitExpression(bot.getExpression().get(1));
             
             if(OGCJAXBStatics.EXPRESSION_ADD.equalsIgnoreCase(expName)){
                 return filterFactory.add(left, right);
@@ -341,14 +341,14 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Unknowed expression element : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             
         }else if(obj instanceof PropertyNameType){
-            PropertyNameType pnt = (PropertyNameType) obj;
+            final PropertyNameType pnt = (PropertyNameType) obj;
             return filterFactory.property(pnt.getContent());
         }else if(obj instanceof FunctionType){
-            FunctionType ft = (FunctionType) obj;
-            Expression[] exps = new Expression[ft.getExpression().size()];
+            final FunctionType ft = (FunctionType) obj;
+            final Expression[] exps = new Expression[ft.getExpression().size()];
             
             int i=0;
-            for(JAXBElement<?> ele : ft.getExpression()){
+            for(final JAXBElement<?> ele : ft.getExpression()){
                 exps[i] = visitExpression(ele);
                 i++;
             }
@@ -363,9 +363,9 @@ public class OGC100toGTTransformer {
      * Transform a literalType in Expression.
      */
     public Expression visitExpression(LiteralType type){
-        List<Object> content = type.getContent();
+        final List<Object> content = type.getContent();
 
-        for(Object obj : content){
+        for(final Object obj : content){
             if(obj != null && !obj.toString().trim().isEmpty()){
                 return filterFactory.literal(obj);
             }

@@ -68,11 +68,11 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
      * Transform a jaxb v1.0.0 SLD in a GT SLD object.
      */
     public MutableStyledLayerDescriptor visit(StyledLayerDescriptor sld){
-        MutableStyledLayerDescriptor geoSLD = sldFactory.createSLD();
+        final MutableStyledLayerDescriptor geoSLD = sldFactory.createSLD();
         geoSLD.setName(sld.getName());
         geoSLD.setVersion(sld.getVersion());
-        InternationalString title = (sld.getTitle() == null) ? null : new SimpleInternationalString(sld.getTitle());
-        InternationalString abs = (sld.getAbstract() == null) ? null : new SimpleInternationalString(sld.getAbstract());
+        final InternationalString title = (sld.getTitle() == null) ? null : new SimpleInternationalString(sld.getTitle());
+        final InternationalString abs = (sld.getAbstract() == null) ? null : new SimpleInternationalString(sld.getAbstract());
         geoSLD.setDescription(styleFactory.description(title, abs));
         geoSLD.layers().addAll( visitLayers(sld.getNamedLayerOrUserLayer())); 
         return geoSLD;
@@ -85,24 +85,24 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(layers == null || layers.isEmpty()){
             return Collections.emptyList();
         } else {
-            Collection<MutableLayer> sldLayers = new ArrayList<MutableLayer>();
+            final Collection<MutableLayer> sldLayers = new ArrayList<MutableLayer>();
             
-            for(Object obj : layers){
+            for(final Object obj : layers){
                 if(obj instanceof NamedLayer){
-                    NamedLayer nl = (NamedLayer) obj;
-                    MutableNamedLayer mnl = sldFactory.createNamedLayer();
+                    final NamedLayer nl = (NamedLayer) obj;
+                    final MutableNamedLayer mnl = sldFactory.createNamedLayer();
                     mnl.setName(nl.getName());
                     mnl.getConstraints().constraints().addAll(visitFeatureConstraints(nl.getLayerFeatureConstraints()));
                     mnl.styles().addAll( visitStyles(nl.getNamedStyleOrUserStyle()) );
                     sldLayers.add(mnl);
                 }else if( obj instanceof UserLayer){
-                    UserLayer ul = (UserLayer) obj;
-                    MutableUserLayer mul = sldFactory.createUserLayer();
+                    final UserLayer ul = (UserLayer) obj;
+                    final MutableUserLayer mul = sldFactory.createUserLayer();
                     mul.setName(ul.getName());
                     mul.styles().addAll( visitUserStyles(ul.getUserStyle()) );
                     
                     if(ul.getLayerFeatureConstraints() != null){
-                        MutableLayerFeatureConstraints consts = sldFactory.createLayerFeatureConstraints();
+                        final MutableLayerFeatureConstraints consts = sldFactory.createLayerFeatureConstraints();
                         consts.constraints().addAll(visitFeatureConstraints(ul.getLayerFeatureConstraints()));
                         mul.setConstraints(consts);
                     }
@@ -128,13 +128,13 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(ftc == null || ftc.getFeatureTypeConstraint() == null || ftc.getFeatureTypeConstraint().isEmpty()){
             return Collections.emptyList();
         }else{
-            Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
+            final Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
             
-            for(org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
-                Name name = new DefaultName(aftc.getFeatureTypeName());
-                Filter filter = visitFilter(aftc.getFilter());
-                List<Extent> extents = visitExtents(aftc.getExtent());
-                FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);
+            for(final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
+                final Name name = new DefaultName(aftc.getFeatureTypeName());
+                final Filter filter = visitFilter(aftc.getFilter());
+                final List<Extent> extents = visitExtents(aftc.getExtent());
+                final FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);
                 constraints.add(cons);
             }
             
@@ -149,9 +149,9 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(exts == null || exts.isEmpty()){
             return Collections.emptyList();
         }else{
-            List<Extent> extents = new ArrayList<Extent>();
+            final List<Extent> extents = new ArrayList<Extent>();
             
-            for(org.geotoolkit.sld.xml.v100.Extent ex : exts){
+            for(final org.geotoolkit.sld.xml.v100.Extent ex : exts){
                 extents.add(sldFactory.createExtent(ex.getName(), ex.getValue()));
             }
             
@@ -166,7 +166,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(ows == null){
             return null;
         }else{
-            OnLineResource online = visitOnlineResource(ows.getOnlineResource());
+            final OnLineResource online = visitOnlineResource(ows.getOnlineResource());
             if( online != null){
                 return sldFactory.createRemoteOWS(ows.getService(), online);
             }else{
@@ -182,17 +182,17 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(styles == null || styles.isEmpty()){
             return Collections.emptyList();
         }else{
-            Collection<MutableLayerStyle> mStyles = new ArrayList<MutableLayerStyle>();
+            final Collection<MutableLayerStyle> mStyles = new ArrayList<MutableLayerStyle>();
             
-            for(Object obj : styles){
+            for(final Object obj : styles){
                 
                 if(obj instanceof org.geotoolkit.sld.xml.v100.NamedStyle){
-                    org.geotoolkit.sld.xml.v100.NamedStyle ns = (org.geotoolkit.sld.xml.v100.NamedStyle) obj;
-                    MutableNamedStyle mns = sldFactory.createNamedStyle();
+                    final org.geotoolkit.sld.xml.v100.NamedStyle ns = (org.geotoolkit.sld.xml.v100.NamedStyle) obj;
+                    final MutableNamedStyle mns = sldFactory.createNamedStyle();
                     mns.setName(ns.getName());
                     mStyles.add(mns);
                 }else if(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle){
-                    org.geotoolkit.sld.xml.v100.UserStyle us = (org.geotoolkit.sld.xml.v100.UserStyle) obj;
+                    final org.geotoolkit.sld.xml.v100.UserStyle us = (org.geotoolkit.sld.xml.v100.UserStyle) obj;
                     //we call SE transformer for this part
                     mStyles.add(visitUserStyle(us));
                 }
@@ -209,9 +209,9 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(styles == null || styles.isEmpty()){
             return Collections.emptyList();
         }else{
-            Collection<MutableStyle> mStyles = new ArrayList<MutableStyle>();
+            final Collection<MutableStyle> mStyles = new ArrayList<MutableStyle>();
             
-            for(org.geotoolkit.sld.xml.v100.UserStyle us : styles){
+            for(final org.geotoolkit.sld.xml.v100.UserStyle us : styles){
                 //we call SE transformer for this part
                 mStyles.add(visitUserStyle(us));
             }

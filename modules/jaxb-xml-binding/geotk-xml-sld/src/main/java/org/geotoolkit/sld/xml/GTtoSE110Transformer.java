@@ -208,43 +208,43 @@ public class GTtoSE110Transformer implements StyleVisitor{
         JAXBElement<?> jax = null;
         
         if(exp instanceof Function){
-            Function function = (Function) exp;
-            FunctionType ft = ogc_factory.createFunctionType();
+            final Function function = (Function) exp;
+            final FunctionType ft = ogc_factory.createFunctionType();
             ft.setName(function.getName());
-            for(Expression ex : function.getParameters()){
+            for(final Expression ex : function.getParameters()){
                 ft.getExpression().add( extract(ex) );
             }
             jax = ogc_factory.createFunction(ft);
         }else if(exp instanceof Multiply){
-            Multiply multiply = (Multiply)exp;
-            BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
+            final Multiply multiply = (Multiply)exp;
+            final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
             bot.getExpression().add(  extract(multiply.getExpression1()) );
             bot.getExpression().add(  extract(multiply.getExpression2()) );
             jax = ogc_factory.createMul(bot);
         }else if(exp instanceof Literal){
-            LiteralType literal = ogc_factory.createLiteralType();
+            final LiteralType literal = ogc_factory.createLiteralType();
             literal.setContent( ((Literal)exp).getValue().toString());
             jax = ogc_factory.createLiteral(literal);
         }else if(exp instanceof Add){
-            Add add = (Add)exp;
-            BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
+            final Add add = (Add)exp;
+            final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
             bot.getExpression().add(  extract(add.getExpression1()) );
             bot.getExpression().add(  extract(add.getExpression2()) );
             jax = ogc_factory.createAdd(bot);
         }else if(exp instanceof Divide){
-            Divide divide = (Divide)exp;
-            BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
+            final Divide divide = (Divide)exp;
+            final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
             bot.getExpression().add(  extract(divide.getExpression1()) );
             bot.getExpression().add(  extract(divide.getExpression2()) );
             jax = ogc_factory.createDiv(bot);
         }else if(exp instanceof Subtract){
-            Subtract substract = (Subtract)exp;
-            BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
+            final Subtract substract = (Subtract)exp;
+            final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
             bot.getExpression().add(  extract(substract.getExpression1()) );
             bot.getExpression().add(  extract(substract.getExpression2()) );
             jax = ogc_factory.createSub(bot);
         }else if(exp instanceof PropertyName){
-            PropertyNameType literal = ogc_factory.createPropertyNameType();
+            final PropertyNameType literal = ogc_factory.createPropertyNameType();
             literal.setContent( ((PropertyName)exp).getPropertyName() );
             jax = ogc_factory.createPropertyName(literal);
         }else if(exp instanceof NilExpression){
@@ -283,13 +283,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a GT Expression in a jaxb parameter value type.
      */
-    public ParameterValueType visitExpression(Expression exp) {
+    public ParameterValueType visitExpression(final Expression exp) {
         
-        JAXBElement<?> ele = extract(exp);
+        final JAXBElement<?> ele = extract(exp);
         if (ele == null) {
             return null;
         } else {
-            ParameterValueType param = se_factory.createParameterValueType();
+            final ParameterValueType param = se_factory.createParameterValueType();
             param.getContent().add(extract(exp));
             return param;
         }
@@ -299,7 +299,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform an expression or float array in a scg parameter.
      */
-    public SvgParameterType visitSVG(Object obj, String value){
+    public SvgParameterType visitSVG(final Object obj, final String value){
         SvgParameterType svg = se_factory.createSvgParameterType();
         svg.setName(value);
         
@@ -312,9 +312,9 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 svg.getContent().add(ele);
             }
         }else if(obj instanceof float[]){
-            float[] dashes = (float[]) obj;
-            StringBuilder sb = new StringBuilder();
-            for(float f : dashes){
+            final float[] dashes = (float[]) obj;
+            final StringBuilder sb = new StringBuilder();
+            for(final float f : dashes){
                 sb.append(f);
                 sb.append(' ');
             }
@@ -330,8 +330,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a geometrie name in a geometrytype.
      */
     public GeometryType visitGeometryType(String str){
-        GeometryType geo = se_factory.createGeometryType();
-        PropertyNameType value = ogc_factory.createPropertyNameType();
+        final GeometryType geo = se_factory.createGeometryType();
+        final PropertyNameType value = ogc_factory.createPropertyNameType();
         if(str == null)str= "";
         value.setContent(str);
         geo.setPropertyName(value);
@@ -342,8 +342,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a Feature name in a QName.
      */
     public QName visitName(Name name){
-        QName qname = new QName(name.getNamespaceURI(), name.getLocalPart());
-        return qname;
+        return new QName(name.getNamespaceURI(), name.getLocalPart());
     }
         
     public JAXBElement<?> visitFilter(Filter filter){
@@ -355,94 +354,94 @@ public class GTtoSE110Transformer implements StyleVisitor{
         }
                 
         if(filter instanceof PropertyIsBetween){
-            PropertyIsBetween pib = (PropertyIsBetween) filter;
-            LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
+            final PropertyIsBetween pib = (PropertyIsBetween) filter;
+            final LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
             lbt.setExpression(extract(pib.getLowerBoundary()));
-            UpperBoundaryType ubt = ogc_factory.createUpperBoundaryType();
+            final UpperBoundaryType ubt = ogc_factory.createUpperBoundaryType();
             ubt.setExpression(extract(pib.getUpperBoundary()));
-            PropertyIsBetweenType bot = new PropertyIsBetweenType(extract(pib.getExpression()), lbt, ubt);
+            final PropertyIsBetweenType bot = new PropertyIsBetweenType(extract(pib.getExpression()), lbt, ubt);
             return ogc_factory.createPropertyIsBetween(bot);
         }else if(filter instanceof PropertyIsEqualTo){
-            BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
+            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsEqualTo(new PropertyIsEqualToType(bot.getLiteral(),
                     new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsGreaterThan){
-            BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
+            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsGreaterThan(new PropertyIsGreaterThanType(bot.getLiteral(),
                     new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsGreaterThanOrEqualTo){
-            BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
+            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsGreaterThanOrEqualTo(new PropertyIsGreaterThanOrEqualToType(bot.getLiteral(),
                     new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsLessThan){
-            BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
+            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsLessThan(new PropertyIsLessThanType(bot.getLiteral(),
                     new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsLessThanOrEqualTo){
-            BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
+            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsLessThanOrEqualTo(new PropertyIsLessThanOrEqualToType(bot.getLiteral(),
                     new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsLike){
-            PropertyIsLike pis = (PropertyIsLike) filter;
-            PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
+            final PropertyIsLike pis = (PropertyIsLike) filter;
+            final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
             bot.setEscapeChar(pis.getEscape());
-            LiteralType lt = ogc_factory.createLiteralType();
+            final LiteralType lt = ogc_factory.createLiteralType();
             lt.setContent(pis.getLiteral());
             bot.setLiteral( lt.getStringValue() );
-            PropertyNameType pnt = (PropertyNameType) extract(pis.getExpression()).getValue();
+            final PropertyNameType pnt = (PropertyNameType) extract(pis.getExpression()).getValue();
             bot.setPropertyName(pnt);
             bot.setSingleChar(pis.getSingleChar());
             bot.setWildCard(pis.getWildCard());
             return ogc_factory.createPropertyIsLike(bot);
         }else if(filter instanceof PropertyIsNotEqualTo){
-            BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
+            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsNotEqualTo(new PropertyIsNotEqualToType(bot.getLiteral(),
                     new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
         }else if(filter instanceof PropertyIsNull){
-            PropertyIsNull pis = (PropertyIsNull) filter;
-            PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
-            Object obj = extract(pis.getExpression()).getValue();
+            final PropertyIsNull pis = (PropertyIsNull) filter;
+            final PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
+            final Object obj = extract(pis.getExpression()).getValue();
             bot.setPropertyName((PropertyNameType) obj);
             
             return ogc_factory.createPropertyIsNull(bot);
         }else if(filter instanceof And){
-            And and = (And) filter;
-            BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
-            for(Filter f : and.getChildren()){
+            final And and = (And) filter;
+            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            for(final Filter f : and.getChildren()){
                 lot.getLogicOps().add((JAXBElement<? extends LogicOpsType>) visitFilter(f));
             }
             return ogc_factory.createAnd(new AndType(lot.getLogicOps().get(0).getValue(),
                                                      lot.getLogicOps().get(1).getValue()));
         }else if(filter instanceof Or){
-            Or or = (Or) filter;
-            BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
-            for(Filter f : or.getChildren()){
+            final Or or = (Or) filter;
+            final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
+            for(final Filter f : or.getChildren()){
                 lot.getLogicOps().add((JAXBElement<? extends LogicOpsType>) visitFilter(f));
             }
             return ogc_factory.createOr(new OrType(lot.getLogicOps().get(0).getValue(),
                                                    lot.getLogicOps().get(1).getValue()));
         }else if(filter instanceof Not){
-            Not not = (Not) filter;
-            UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
-            JAXBElement<?> sf = visitFilter(not.getFilter());
+            final Not not = (Not) filter;
+            final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
+            final JAXBElement<?> sf = visitFilter(not.getFilter());
             
             if (sf.getValue() instanceof ComparisonOpsType){
                 lot.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
@@ -488,8 +487,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
     }
     
     public FilterType visit(Filter filter) {
-        FilterType ft = ogc_factory.createFilterType();
-        JAXBElement<?> sf = visitFilter(filter);
+        final FilterType ft = ogc_factory.createFilterType();
+        final JAXBElement<?> sf = visitFilter(filter);
 
         if(sf == null){
             return null;
@@ -526,12 +525,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public org.geotoolkit.sld.xml.v110.UserStyle visit(Style style, Object data) {
-        org.geotoolkit.sld.xml.v110.UserStyle userStyle = sld_factory_v110.createUserStyle();
+        final org.geotoolkit.sld.xml.v110.UserStyle userStyle = sld_factory_v110.createUserStyle();
         userStyle.setName(style.getName());
         userStyle.setDescription(visit(style.getDescription(), null));
         userStyle.setIsDefault(style.isDefault());
         
-        for(FeatureTypeStyle fts : style.featureTypeStyles()){
+        for(final FeatureTypeStyle fts : style.featureTypeStyles()){
             userStyle.getFeatureTypeStyleOrCoverageStyleOrOnlineResource().add(visit(fts,null));
         }
         
@@ -558,8 +557,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     
                     //try to find a coverage style
                     ruleLoop :
-                    for(Rule r : fts.rules()){
-                        for(Symbolizer s : r.symbolizers()){
+                    for(final Rule r : fts.rules()){
+                        for(final Symbolizer s : r.symbolizers()){
                             if(s instanceof RasterSymbolizer){
                                isCoverage = true;
                                break ruleLoop;
@@ -576,7 +575,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             //create the sld FTS
             if(isCoverage){
                 //coverage type
-                CoverageStyleType cst = se_factory.createCoverageStyleType();
+                final CoverageStyleType cst = se_factory.createCoverageStyleType();
                 
                 if(!fts.featureTypeNames().isEmpty()){
                     cst.setCoverageName(fts.featureTypeNames().iterator().next().toString());
@@ -585,7 +584,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 cst.setDescription(visit(fts.getDescription(), null));
                 cst.setName(fts.getName());
                 
-                for(SemanticType semantic : fts.semanticTypeIdentifiers()){
+                for(final SemanticType semantic : fts.semanticTypeIdentifiers()){
                     
                     if(SemanticType.ANY.equals(semantic)){
                         cst.getSemanticTypeIdentifier().add(GENERIC_ANY);
@@ -605,27 +604,27 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     
                 }
                 
-                for(Rule rule : fts.rules()){
+                for(final Rule rule : fts.rules()){
                     cst.getRuleOrOnlineResource().add(visit(rule,null));
                 }
                 
                 obj = cst;
             }else{
                 //feature type
-                FeatureTypeStyleType ftst = se_factory.createFeatureTypeStyleType();
+                final FeatureTypeStyleType ftst = se_factory.createFeatureTypeStyleType();
                 
                 if(!fts.featureTypeNames().isEmpty()){
-                    Name name = fts.featureTypeNames().iterator().next();
-                    String pre = name.getNamespaceURI();
-                    String sep = name.getSeparator();
-                    String local = name.getLocalPart();
+                    final Name name = fts.featureTypeNames().iterator().next();
+                    final String pre = name.getNamespaceURI();
+                    final String sep = name.getSeparator();
+                    final String local = name.getLocalPart();
                     ftst.setFeatureTypeName(new QName(pre+sep, local));
                 }
                 
                 ftst.setDescription(visit(fts.getDescription(), null));
                 ftst.setName(fts.getName());
                 
-                for(SemanticType semantic : fts.semanticTypeIdentifiers()){
+                for(final SemanticType semantic : fts.semanticTypeIdentifiers()){
                     
                     if(SemanticType.ANY.equals(semantic)){
                         ftst.getSemanticTypeIdentifier().add(GENERIC_ANY);
@@ -645,7 +644,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     
                 }
                 
-                for(Rule rule : fts.rules()){
+                for(final Rule rule : fts.rules()){
                     ftst.getRuleOrOnlineResource().add(visit(rule,null));
                 }
                 
@@ -666,7 +665,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             return visit(rule.getOnlineResource(), null);
         }
         
-        RuleType rt = se_factory.createRuleType();
+        final RuleType rt = se_factory.createRuleType();
         rt.setName(rule.getName());
         rt.setDescription(visit(rule.getDescription(),null));
         
@@ -683,7 +682,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         rt.setMaxScaleDenominator(rule.getMaxScaleDenominator());
         rt.setMinScaleDenominator(rule.getMinScaleDenominator());
         
-        for(Symbolizer symbol : rule.symbolizers()){
+        for(final Symbolizer symbol : rule.symbolizers()){
             if(symbol instanceof LineSymbolizer){
                 rt.getSymbolizer().add( visit((LineSymbolizer)symbol,null));
             }else if(symbol instanceof PolygonSymbolizer){
@@ -708,7 +707,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public JAXBElement<PointSymbolizerType> visit(PointSymbolizer point, Object data) {
-        PointSymbolizerType pst = se_factory.createPointSymbolizerType();
+        final PointSymbolizerType pst = se_factory.createPointSymbolizerType();
         pst.setName( point.getName() );
         pst.setDescription( visit(point.getDescription(),null) );
         pst.setUom( visitUOM(point.getUnitOfMeasure()));
@@ -725,7 +724,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public JAXBElement<LineSymbolizerType> visit(LineSymbolizer line, Object data) {
-        LineSymbolizerType lst = se_factory.createLineSymbolizerType();
+        final LineSymbolizerType lst = se_factory.createLineSymbolizerType();
         lst.setName( line.getName() );
         lst.setDescription( visit(line.getDescription(),null) );
         lst.setUom( visitUOM(line.getUnitOfMeasure()));
@@ -743,7 +742,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public JAXBElement<PolygonSymbolizerType> visit(PolygonSymbolizer polygon, Object data) {
-        PolygonSymbolizerType pst = se_factory.createPolygonSymbolizerType();
+        final PolygonSymbolizerType pst = se_factory.createPolygonSymbolizerType();
         pst.setName( polygon.getName() );
         pst.setDescription( visit(polygon.getDescription(),null) );
         pst.setUom( visitUOM(polygon.getUnitOfMeasure()));
@@ -771,7 +770,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public JAXBElement<TextSymbolizerType> visit(TextSymbolizer text, Object data) {
-        TextSymbolizerType tst = se_factory.createTextSymbolizerType();
+        final TextSymbolizerType tst = se_factory.createTextSymbolizerType();
         tst.setName( text.getName() );
         tst.setDescription( visit(text.getDescription(),null) );
         tst.setUom( visitUOM(text.getUnitOfMeasure()));
@@ -803,7 +802,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public JAXBElement<RasterSymbolizerType> visit(RasterSymbolizer raster, Object data) {
-        RasterSymbolizerType tst = se_factory.createRasterSymbolizerType();
+        final RasterSymbolizerType tst = se_factory.createRasterSymbolizerType();
         tst.setName( raster.getName() );
         tst.setDescription( visit(raster.getDescription(),null) );
         tst.setUom( visitUOM(raster.getUnitOfMeasure()));
@@ -822,13 +821,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
         }
         
         if(raster.getImageOutline() != null){
-            ImageOutlineType iot = se_factory.createImageOutlineType();
+            final ImageOutlineType iot = se_factory.createImageOutlineType();
             if(raster.getImageOutline() instanceof LineSymbolizer){
-                LineSymbolizer ls = (LineSymbolizer) raster.getImageOutline();
+                final LineSymbolizer ls = (LineSymbolizer) raster.getImageOutline();
                 iot.setLineSymbolizer( visit(ls, null).getValue() );
                 tst.setImageOutline(iot);
             }else if(raster.getImageOutline() instanceof PolygonSymbolizer){
-                PolygonSymbolizer ps = (PolygonSymbolizer)raster.getImageOutline();
+                final PolygonSymbolizer ps = (PolygonSymbolizer)raster.getImageOutline();
                 iot.setPolygonSymbolizer( visit(ps,null).getValue() );
                 tst.setImageOutline(iot);
             }            
@@ -857,7 +856,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public DescriptionType visit(Description description, Object data) {
-        DescriptionType dt = se_factory.createDescriptionType();
+        final DescriptionType dt = se_factory.createDescriptionType();
         if(description != null){
             if(description.getTitle() != null)    dt.setTitle(description.getTitle().toString());
             if(description.getAbstract() != null) dt.setAbstract(description.getAbstract().toString());
@@ -870,7 +869,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public DisplacementType visit(Displacement displacement, Object data) {
-        DisplacementType disp = se_factory.createDisplacementType();
+        final DisplacementType disp = se_factory.createDisplacementType();
         disp.setDisplacementX( visitExpression(displacement.getDisplacementX()) );
         disp.setDisplacementY( visitExpression(displacement.getDisplacementY()) );
         return disp;
@@ -881,13 +880,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public FillType visit(Fill fill, Object data) {
-        FillType ft = se_factory.createFillType();
+        final FillType ft = se_factory.createFillType();
         
         if(fill.getGraphicFill() != null){
             ft.setGraphicFill( visit(fill.getGraphicFill(),null) );
         }
         
-        List<SvgParameterType> svgs = ft.getSvgParameter();
+        final List<SvgParameterType> svgs = ft.getSvgParameter();
         svgs.add( visitSVG(fill.getColor(), SEJAXBStatics.FILL) );
         svgs.add( visitSVG(fill.getOpacity(), SEJAXBStatics.FILL_OPACITY) );
                 
@@ -899,10 +898,10 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public FontType visit(Font font, Object data) {
-        FontType ft = se_factory.createFontType();
+        final FontType ft = se_factory.createFontType();
         
-        List<SvgParameterType> svgs = ft.getSvgParameter();
-        for(Expression exp : font.getFamily() ){
+        final List<SvgParameterType> svgs = ft.getSvgParameter();
+        for(final Expression exp : font.getFamily() ){
             svgs.add( visitSVG(exp, SEJAXBStatics.FONT_FAMILY) );
         }
         
@@ -918,7 +917,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public StrokeType visit(Stroke stroke, Object data) {
-        StrokeType st = se_factory.createStrokeType();
+        final StrokeType st = se_factory.createStrokeType();
         
         if(stroke.getGraphicFill() != null){
             st.setGraphicFill( visit(stroke.getGraphicFill(),null) );
@@ -926,7 +925,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             st.setGraphicStroke( visit(stroke.getGraphicStroke(),null) );
         }
                 
-        List<SvgParameterType> svgs = st.getSvgParameter();
+        final List<SvgParameterType> svgs = st.getSvgParameter();
         svgs.add( visitSVG(stroke.getColor(), SEJAXBStatics.STROKE) );
         if(stroke.getDashArray() != null){
             svgs.add( visitSVG(stroke.getDashArray(), SEJAXBStatics.STROKE_DASHARRAY) );
@@ -945,17 +944,17 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public GraphicType visit(Graphic graphic, Object data) {
-        GraphicType gt = se_factory.createGraphicType();
+        final GraphicType gt = se_factory.createGraphicType();
         gt.setAnchorPoint( visit(graphic.getAnchorPoint(),null) );
-        for( GraphicalSymbol gs : graphic.graphicalSymbols()){
+        for(final GraphicalSymbol gs : graphic.graphicalSymbols()){
             if(gs instanceof Mark){
-                Mark mark = (Mark) gs;
+                final Mark mark = (Mark) gs;
                 gt.getExternalGraphicOrMark().add( visit(mark,null) );
             }else if(gs instanceof ExternalMark){
-                ExternalMark ext = (ExternalMark) gs;
+                final ExternalMark ext = (ExternalMark) gs;
                 gt.getExternalGraphicOrMark().add( visit(ext,null) );
             }else if(gs instanceof ExternalGraphic){
-                ExternalGraphic ext = (ExternalGraphic) gs;
+                final ExternalGraphic ext = (ExternalGraphic) gs;
                 gt.getExternalGraphicOrMark().add( visit(ext,null));
             }
         }
@@ -972,7 +971,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public GraphicFillType visit(GraphicFill graphicFill, Object data) {
-        GraphicFillType gft = se_factory.createGraphicFillType();
+        final GraphicFillType gft = se_factory.createGraphicFillType();
         gft.setGraphic( visit((Graphic)graphicFill,null) );
         return gft;
     }
@@ -982,7 +981,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public GraphicStrokeType visit(GraphicStroke graphicStroke, Object data) {
-        GraphicStrokeType gst = se_factory.createGraphicStrokeType();
+        final GraphicStrokeType gst = se_factory.createGraphicStrokeType();
         gst.setGraphic( visit((Graphic)graphicStroke,null) );
         gst.setGap( visitExpression(graphicStroke.getGap()) );
         gst.setInitialGap( visitExpression(graphicStroke.getInitialGap()) );
@@ -991,7 +990,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
 
     @Override
     public MarkType visit(Mark mark, Object data) {
-        MarkType mt = se_factory.createMarkType();
+        final MarkType mt = se_factory.createMarkType();
         mt.setFill( visit(mark.getFill(),null) );
         mt.setStroke( visit(mark.getStroke(),null) );
         
@@ -1020,7 +1019,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
 
     @Override
     public ExternalGraphicType visit(ExternalGraphic externalGraphic, Object data) {
-        ExternalGraphicType egt = se_factory.createExternalGraphicType();
+        final ExternalGraphicType egt = se_factory.createExternalGraphicType();
         egt.setFormat(externalGraphic.getFormat());
         
         System.out.println(externalGraphic.getOnlineResource());
@@ -1042,7 +1041,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public PointPlacementType visit(PointPlacement pointPlacement, Object data) {
-        PointPlacementType ppt = se_factory.createPointPlacementType();
+        final PointPlacementType ppt = se_factory.createPointPlacementType();
         ppt.setAnchorPoint( visit(pointPlacement.getAnchorPoint(), null) );
         ppt.setDisplacement( visit(pointPlacement.getDisplacement(), null) );
         ppt.setRotation( visitExpression(pointPlacement.getRotation()) );
@@ -1054,7 +1053,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public AnchorPointType visit(AnchorPoint anchorPoint, Object data) {
-        AnchorPointType apt = se_factory.createAnchorPointType();
+        final AnchorPointType apt = se_factory.createAnchorPointType();
         apt.setAnchorPointX( visitExpression(anchorPoint.getAnchorPointX()) );
         apt.setAnchorPointY( visitExpression(anchorPoint.getAnchorPointY()) );
         return apt;
@@ -1065,7 +1064,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public LinePlacementType visit(LinePlacement linePlacement, Object data) {
-        LinePlacementType lpt = se_factory.createLinePlacementType();
+        final LinePlacementType lpt = se_factory.createLinePlacementType();
         lpt.setGap( visitExpression(linePlacement.getGap()) );
         lpt.setGeneralizeLine( linePlacement.isGeneralizeLine() );
         lpt.setInitialGap( visitExpression(linePlacement.getInitialGap()) );
@@ -1080,12 +1079,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * @return
      */
     public LabelPlacementType visit(LabelPlacement labelPlacement, Object data) {
-        LabelPlacementType lpt = se_factory.createLabelPlacementType();
+        final LabelPlacementType lpt = se_factory.createLabelPlacementType();
         if(labelPlacement instanceof LinePlacement){
-            LinePlacement lp = (LinePlacement) labelPlacement;
+            final LinePlacement lp = (LinePlacement) labelPlacement;
             lpt.setLinePlacement( visit(lp, null) );
         }else if(labelPlacement instanceof PointPlacement){
-            PointPlacement pp = (PointPlacement) labelPlacement;
+            final PointPlacement pp = (PointPlacement) labelPlacement;
             lpt.setPointPlacement( visit(pp, null) );
         }
         return lpt;
@@ -1096,7 +1095,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public LegendGraphicType visit(GraphicLegend graphicLegend, Object data) {
-        LegendGraphicType lgt = se_factory.createLegendGraphicType();
+        final LegendGraphicType lgt = se_factory.createLegendGraphicType();
         lgt.setGraphic( visit((Graphic)graphicLegend,null) );
         return lgt;
     }
@@ -1105,7 +1104,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT onlineResource in jaxb online resource.
      */
     public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnLineResource onlineResource, Object data) {
-        OnlineResourceType ort = se_factory.createOnlineResourceType();
+        final OnlineResourceType ort = se_factory.createOnlineResourceType();
         try {
             ort.setHref(onlineResource.getLinkage().toURL().toString());
         } catch (MalformedURLException ex) {
@@ -1119,7 +1118,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public HaloType visit(Halo halo, Object data) {
-        HaloType ht = se_factory.createHaloType();
+        final HaloType ht = se_factory.createHaloType();
         ht.setFill( visit(halo.getFill(),null) );
         ht.setRadius( visitExpression(halo.getRadius()) );
         return ht;
@@ -1128,7 +1127,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public ColorMapType visit(ColorMap colorMap, Object data) {
 //TODO Fix that when better undestanding raster functions.
-        org.geotoolkit.se.xml.v110.ColorMapType cmt = se_factory.createColorMapType();
+        final org.geotoolkit.se.xml.v110.ColorMapType cmt = se_factory.createColorMapType();
         
         final Function fct = colorMap.getFunction();
         if(fct instanceof Categorize){
@@ -1201,7 +1200,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     
     @Override
     public ColorReplacementType visit(ColorReplacement colorReplacement, Object data) {
-        ColorReplacementType crt = se_factory.createColorReplacementType();
+        final ColorReplacementType crt = se_factory.createColorReplacementType();
         colorReplacement.getRecoding();
 //        crt.setRecode(value);
         throw new UnsupportedOperationException("Not supported yet.");
@@ -1212,10 +1211,10 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public ContrastEnhancementType visit(ContrastEnhancement contrastEnhancement, Object data) {
-        ContrastEnhancementType cet = se_factory.createContrastEnhancementType();
+        final ContrastEnhancementType cet = se_factory.createContrastEnhancementType();
         cet.setGammaValue(contrastEnhancement.getGammaValue().evaluate(null, Double.class));
         
-        ContrastMethod cm = contrastEnhancement.getMethod();
+        final ContrastMethod cm = contrastEnhancement.getMethod();
         if(ContrastMethod.HISTOGRAM.equals(cm)){
             cet.setHistogram(se_factory.createHistogramType());
         }else if(ContrastMethod.NORMALIZE.equals(cm)){
@@ -1230,7 +1229,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public ChannelSelectionType visit(ChannelSelection channelSelection, Object data) {
-        ChannelSelectionType cst = se_factory.createChannelSelectionType();
+        final ChannelSelectionType cst = se_factory.createChannelSelectionType();
         
         if(channelSelection.getRGBChannels() != null){
             SelectedChannelType[] scts = channelSelection.getRGBChannels();
@@ -1263,7 +1262,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public org.geotoolkit.se.xml.v110.SelectedChannelType visit(SelectedChannelType selectChannelType, Object data) {
-        org.geotoolkit.se.xml.v110.SelectedChannelType sct = se_factory.createSelectedChannelType();
+        final org.geotoolkit.se.xml.v110.SelectedChannelType sct = se_factory.createSelectedChannelType();
         sct.setContrastEnhancement( visit(selectChannelType.getContrastEnhancement(), null) );
         sct.setSourceChannelName( selectChannelType.getChannelName() );
         return sct;
@@ -1274,7 +1273,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public ShadedReliefType visit(ShadedRelief shadedRelief, Object data) {
-        ShadedReliefType srt = se_factory.createShadedReliefType();
+        final ShadedReliefType srt = se_factory.createShadedReliefType();
         srt.setBrightnessOnly(shadedRelief.isBrightnessOnly());
         srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));
         return srt;
