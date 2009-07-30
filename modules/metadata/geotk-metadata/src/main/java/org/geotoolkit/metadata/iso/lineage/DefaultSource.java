@@ -26,8 +26,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.lineage.NominalResolution;
 import org.opengis.metadata.lineage.Source;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.metadata.identification.RepresentativeFraction;
@@ -52,14 +54,16 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "scaleDenominator",
     "sourceCitation",
     "sourceExtents",
-    "sourceSteps"
+    "sourceSteps",
+    "processedLevel",
+    "resolution"
 })
 @XmlRootElement(name = "LI_Source")
 public class DefaultSource extends MetadataEntity implements Source {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = 2660914446466438044L;
+    private static final long serialVersionUID = 6277132009549470021L;
 
     /**
      * Detailed description of the level of the source data.
@@ -90,6 +94,17 @@ public class DefaultSource extends MetadataEntity implements Source {
      * Information about an event in the creation process for the source data.
      */
     private Collection<ProcessStep> sourceSteps;
+
+    /**
+     * Processing level of the source data.
+     */
+    private Identifier processedLevel;
+
+    /**
+     * Distance between consistent parts (centre, left side, right side) of two adjacent
+     * pixels.
+     */
+    private NominalResolution resolution;
 
     /**
      * Creates an initially empty source.
@@ -234,9 +249,49 @@ public class DefaultSource extends MetadataEntity implements Source {
     }
 
     /**
+     * Returns the processing level of the source data. {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "processedLevel")
+    public Identifier getProcessedLevel() {
+        return processedLevel;
+    }
+
+    /**
+     * Sets the processing level of the source data.
+     *
+     * @param newValue The new processed level value.
+     */
+    public synchronized void setProcessedLevel(final Identifier newValue) {
+        checkWritePermission();
+        processedLevel = newValue;
+    }
+
+    /**
+     * Returns the distance between consistent parts (centre, left side, right side) of
+     * two adjacent pixels. {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "resolution")
+    public NominalResolution getResolution() {
+        return resolution;
+    }
+
+    /**
+     * Sets the distance between consistent parts (centre, left side, right side) of
+     * two adjacent pixels.
+     *
+     * @param newValue The new nominal resolution value.
+     */
+    public synchronized void setResolution(final NominalResolution newValue) {
+        checkWritePermission();
+        resolution = newValue;
+    }
+
+    /**
      * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
-     * process is going to be done. This method is automatically called by JAXB
-     * when the marshalling begins.
+     * process is going to be done. This method is automatically called by JAXB when
+     * the marshalling begins.
      *
      * @param marshaller Not used in this implementation.
      */
@@ -250,7 +305,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      * process is finished. This method is automatically called by JAXB when the
      * marshalling ends.
      *
-     * @param marshaller Not used in this implementation
+     * @param marshaller Not used in this implementation.
      */
     @SuppressWarnings("unused")
     private void afterMarshal(Marshaller marshaller) {

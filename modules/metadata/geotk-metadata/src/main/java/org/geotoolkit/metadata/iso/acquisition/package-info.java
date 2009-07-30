@@ -17,9 +17,8 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation Spatial representation}
- * implementation. An explanation for this package is provided in the
- * {@linkplain org.opengis.metadata.spatial OpenGIS&reg; javadoc}.
+ * {@linkplain org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation Acquisition} implementation. An explanation
+ * for this package is provided in the {@linkplain org.opengis.metadata.acquisition OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotoolkit implementation.
  * <p>
  * In GeoAPI interfaces, most collections are typed with wildcards, for example
@@ -29,12 +28,10 @@
  * an existing collection using code like {@code getCitations().add(myCitation)} instead
  * than setting the collection as a whole with {@code setCitations(myCitations)}.
  *
- * @author Martin Desruisseaux (IRD)
- * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
- * @since 2.1
+ * @since 3.02
  * @module
  */
 @XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GMD, xmlns = {
@@ -44,24 +41,32 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(DimensionNameTypeAdapter.class),
-    @XmlJavaTypeAdapter(GeometricObjectTypeAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(PixelOrientationAdapter.class),
+    @XmlJavaTypeAdapter(EnvironmentalRecordAdapter.class),
+    @XmlJavaTypeAdapter(InstrumentAdapter.class),
+    @XmlJavaTypeAdapter(ObjectiveAdapter.class),
+    @XmlJavaTypeAdapter(OperationAdapter.class),
+    @XmlJavaTypeAdapter(PlanAdapter.class),
+    @XmlJavaTypeAdapter(RequirementAdapter.class),
+    @XmlJavaTypeAdapter(GeometryTypeAdapter.class),
+    @XmlJavaTypeAdapter(ProgressAdapter.class),
     @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(DimensionAdapter.class),
-    @XmlJavaTypeAdapter(CellGeometryAdapter.class),
-    @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
-    @XmlJavaTypeAdapter(GeometricObjectsAdapter.class),
-    @XmlJavaTypeAdapter(GeolocationInformationAdapter.class),
-    @XmlJavaTypeAdapter(GCPAdapter.class),
-    @XmlJavaTypeAdapter(ElementAdapter.class),
-    @XmlJavaTypeAdapter(DataQualityAdapter.class),
-
-    // Primitive type handling
-    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class)
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(IdentifierAdapter.class),
+    @XmlJavaTypeAdapter(OperationTypeAdapter.class),
+    @XmlJavaTypeAdapter(ObjectiveTypeAdapter.class),
+    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(EventAdapter.class),
+    @XmlJavaTypeAdapter(TriggerAdapter.class),
+    @XmlJavaTypeAdapter(ContextAdapter.class),
+    @XmlJavaTypeAdapter(SequenceAdapter.class),
+    @XmlJavaTypeAdapter(PlatformPassAdapter.class),
+    @XmlJavaTypeAdapter(PlatformAdapter.class),
+    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
+    @XmlJavaTypeAdapter(PriorityAdapter.class),
+    @XmlJavaTypeAdapter(RequestedDateAdapter.class)
 })
-package org.geotoolkit.metadata.iso.spatial;
+package org.geotoolkit.metadata.iso.acquisition;
 
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
@@ -74,5 +79,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;

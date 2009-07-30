@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.spatial.Dimension;
+import org.opengis.metadata.spatial.GCP;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -56,14 +57,15 @@ import org.opengis.util.InternationalString;
 /// "centerPoint",
     "pointInPixel",
     "transformationDimensionDescription",
-    "transformationDimensionMapping"
+    "transformationDimensionMapping",
+    "checkPoints"
 })
 @XmlRootElement(name = "MD_Georectified")
 public class DefaultGeorectified extends DefaultGridSpatialRepresentation implements Georectified {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = 5875851898471237138L;
+    private static final long serialVersionUID = -4467097498958444505L;
 
     /**
      * Indication of whether or not geographic position points are available to test the
@@ -106,6 +108,11 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      * Information about which grid dimensions are the spatial dimensions.
      */
     private Collection<InternationalString> transformationDimensionMapping;
+
+    /**
+     * Geographic references used to validate georectification of the data.
+     */
+    private Collection<GCP> checkPoints;
 
     /**
      * Constructs an initially empty georectified object.
@@ -298,6 +305,24 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
     {
         transformationDimensionMapping = copyCollection(newValues, transformationDimensionMapping,
                 InternationalString.class);
+    }
+
+    /**
+     * Returns the geographic references used to validate georectification of the data.
+     */
+    @Override
+    @XmlElement(name = "checkPoint")
+    public synchronized Collection<GCP> getCheckPoints() {
+        return xmlOptional(checkPoints = nonNullCollection(checkPoints, GCP.class));
+    }
+
+    /**
+     * Sets the geographic references used to validate georectification of the data.
+     *
+     * @param newValues The new check points values.
+     */
+    public synchronized void setCheckPoints(final Collection<? extends GCP> newValues) {
+        checkPoints = copyCollection(newValues, checkPoints, GCP.class);
     }
 
     /**

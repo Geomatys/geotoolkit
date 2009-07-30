@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.metadata.content.Band;
+import org.opengis.metadata.content.BandDefinition;
+import org.opengis.metadata.content.PolarizationOrientation;
+import org.opengis.metadata.content.TransferFunctionType;
 
 
 /**
@@ -46,14 +49,19 @@ import org.opengis.metadata.content.Band;
     "bitsPerValue",
     "toneGradation",
     "scaleFactor",
-    "offset"
+    "offset",
+    "bandBoundaryDefinition",
+    "nominalSpatialResolution",
+    "transferFunctionType",
+    "transmittedPolarization",
+    "detectedPolarization"
 })
 @XmlRootElement(name = "MD_Band")
 public class DefaultBand extends DefaultRangeDimension implements Band {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -2302918545469034653L;
+    private static final long serialVersionUID = -3543010637264725421L;
 
     /**
      * Longest wavelength that the sensor is capable of collecting within a designated band.
@@ -102,6 +110,34 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * {@code null} if unspecified.
      */
     private Double offset;
+
+    /**
+     * Designation of criterion for defining maximum and minimum wavelengths for a spectral band.
+     * {@code null} if unspecified.
+     */
+    private BandDefinition bandBoundaryDefinition;
+
+    /**
+     * Smallest distance between which separate points can be distinguished, as specified in
+     * instrument design. {@code null} if unspecified.
+     */
+    private Double nominalSpatialResolution;
+
+    /**
+     * Type of transfer function to be used when scaling a physical value for a given element.
+     * {@code null} if unspecified.
+     */
+    private TransferFunctionType transferFunctionType;
+
+    /**
+     * Polarization of the radiation transmitted. {@code null} if unspecified.
+     */
+    private PolarizationOrientation transmittedPolarization;
+
+    /**
+     * Polarization of the radiation detected. {@code null} if unspecified.
+     */
+    private PolarizationOrientation detectedPolarization;
 
     /**
      * Constructs an initially empty band.
@@ -285,5 +321,106 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
     public synchronized void setOffset(final Double newValue) {
         checkWritePermission();
         offset = newValue;
+    }
+
+    /**
+     * Returns the designation of criterion for defining maximum and minimum wavelengths
+     * for a spectral band. Returns {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "bandBoundaryDefinition")
+    public BandDefinition getBandBoundaryDefinition() {
+        return bandBoundaryDefinition;
+    }
+
+    /**
+     * Sets designation of criterion for defining maximum and minimum wavelengths
+     * for a spectral band.
+     *
+     * @param newValue The new band definition.
+     */
+    public synchronized void setBandBoundaryDefinition(final BandDefinition newValue) {
+        checkWritePermission();
+        bandBoundaryDefinition = newValue;
+    }
+
+    /**
+     * Returns the smallest distance between which separate points can be distinguished,
+     * as specified in instrument design. Returns {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "nominalSpatialResolution")
+    public Double getNominalSpatialResolution() {
+        return nominalSpatialResolution;
+    }
+
+    /**
+     * Sets the smallest distance between which separate points can be distinguished,
+     * as specified in instrument design.
+     *
+     * @param newValue The new nominal spatial resolution.
+     */
+    public synchronized void setNominalSpatialResolution(final Double newValue) {
+        checkWritePermission();
+        nominalSpatialResolution = newValue;
+    }
+
+    /**
+     * Returns type of transfer function to be used when scaling a physical value for a
+     * given element. Returns {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "transferFunctionType")
+    public TransferFunctionType getTransferFunctionType() {
+        return transferFunctionType;
+    }
+
+    /**
+     * Sets the type of transfer function to be used when scaling a physical value for a
+     * given element.
+     *
+     * @param newValue The new transfer function value.
+     */
+    public synchronized void setTransferFunctionType(final TransferFunctionType newValue) {
+        checkWritePermission();
+        transferFunctionType = newValue;
+    }
+
+    /**
+     * Polarization of the radiation transmitted. Returns {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "transmittedPolarization")
+    public PolarizationOrientation getTransmittedPolarization() {
+        return transmittedPolarization;
+    }
+
+    /**
+     * Sets the polarization of the radiation transmitted.
+     *
+     * @param newValue The new transmitted polarization.
+     */
+    public synchronized void setTransmittedPolarization(final PolarizationOrientation newValue) {
+        checkWritePermission();
+        transmittedPolarization = newValue;
+    }
+
+    /**
+     * Polarization of the radiation detected. Returns {@code null} if unspecified.
+     */
+    @Override
+    @XmlElement(name = "detectedPolarization")
+    public PolarizationOrientation getDetectedPolarization() {
+        return detectedPolarization;
+    }
+
+    /**
+     * Sets the polarization of the radiation detected.
+     *
+     * @param newValue The new detected polarization.
+     */
+    public synchronized void setDetectedPolarization(final PolarizationOrientation newValue) {
+        checkWritePermission();
+        detectedPolarization = newValue;
     }
 }

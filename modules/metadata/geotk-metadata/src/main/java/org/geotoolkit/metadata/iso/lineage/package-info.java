@@ -50,7 +50,12 @@
     @XmlJavaTypeAdapter(RepresentativeFractionAdapter.class),
     @XmlJavaTypeAdapter(ExtentAdapter.class),
     @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    @XmlJavaTypeAdapter(DateTimeAdapter.class),
+    @XmlJavaTypeAdapter(IdentifierAdapter.class),
+    @XmlJavaTypeAdapter(NominalResolutionAdapter.class),
+    @XmlJavaTypeAdapter(ProcessingAdapter.class),
+    @XmlJavaTypeAdapter(ProcessStepReportAdapter.class),
+    @XmlJavaTypeAdapter(AlgorithmAdapter.class)
 })
 package org.geotoolkit.metadata.iso.lineage;
 

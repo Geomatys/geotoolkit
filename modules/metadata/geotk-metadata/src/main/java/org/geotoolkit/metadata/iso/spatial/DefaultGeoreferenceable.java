@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.opengis.metadata.spatial.GeolocationInformation;
 import org.opengis.util.Record;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
@@ -52,7 +53,8 @@ import org.opengis.metadata.spatial.Georeferenceable;
     "controlPointAvailable",
     "orientationParameterAvailable",
     "orientationParameterDescription",
-    "parameterCitations"
+    "parameterCitations",
+    "geolocationInformation"
 })
 @XmlRootElement(name = "MD_Georeferenceable")
 public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation implements Georeferenceable {
@@ -85,6 +87,11 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      * Reference providing description of the parameters.
      */
     private Collection<Citation> parameterCitations;
+
+    /**
+     * Information that can be used to geolocate the data.
+     */
+    private Collection<GeolocationInformation> geolocationInformation;
 
     /**
      * Constructs an initially empty georeferenceable.
@@ -226,6 +233,28 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      */
     public synchronized void setParameterCitations(final Collection<? extends Citation> newValues) {
         parameterCitations = copyCollection(newValues, parameterCitations, Citation.class);
+    }
+
+    /**
+     * Returns the information that can be used to geolocate the data.
+     */
+    @Override
+    @XmlElement(name = "geolocationInformation")
+    public synchronized Collection<GeolocationInformation> getGeolocationInformation() {
+        return geolocationInformation = nonNullCollection(geolocationInformation,
+                                                          GeolocationInformation.class);
+    }
+
+    /**
+     * Sets the information that can be used to geolocate the data.
+     *
+     * @param newValues The new geolocation information values.
+     */
+    public synchronized void setGeolocationInformation(
+            final Collection<? extends GeolocationInformation> newValues)
+    {
+        geolocationInformation = copyCollection(newValues, geolocationInformation,
+                                                GeolocationInformation.class);
     }
 
     /**

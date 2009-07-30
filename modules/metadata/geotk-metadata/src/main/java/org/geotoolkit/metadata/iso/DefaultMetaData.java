@@ -34,6 +34,7 @@ import org.opengis.metadata.MetaData;
 import org.opengis.metadata.ApplicationSchemaInformation;
 import org.opengis.metadata.MetadataExtensionInformation;
 import org.opengis.metadata.PortrayalCatalogueReference;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.content.ContentInformation;
@@ -82,14 +83,15 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
     "portrayalCatalogueInfo",
     "metadataConstraints",
     "applicationSchemaInfo",
-    "metadataMaintenance"
+    "metadataMaintenance",
+    "acquisitionInformation"
 })
 @XmlRootElement(name = "MD_Metadata")
 public class DefaultMetaData extends MetadataEntity implements MetaData {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -5600409558876701144L;
+    private static final long serialVersionUID = 7254025230235329493L;
 
     /**
      * Unique identifier for this metadata file, or {@code null} if none.
@@ -208,6 +210,11 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      * Provides information about the frequency of metadata updates, and the scope of those updates.
      */
     private MaintenanceInformation metadataMaintenance;
+
+    /**
+     * Provides information about the acquisition of the data.
+     */
+    private Collection< AcquisitionInformation> acquisitionInformation;
 
     /**
      * Creates an initially empty metadata.
@@ -701,6 +708,28 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
     public void setDataSetUri(final String newValue) {
         checkWritePermission();
         dataSetUri = newValue;
+    }
+
+    /**
+     * Provides information about the acquisition of the data.
+     */
+    @Override
+    @XmlElement(name = "acquisitionInformation")
+    public synchronized Collection<AcquisitionInformation> getAcquisitionInformation() {
+        return xmlOptional(acquisitionInformation = nonNullCollection(acquisitionInformation,
+                                                              AcquisitionInformation.class));
+    }
+
+    /**
+     * Sets information about the acquisition of the data.
+     *
+     * @param newValues The new acquisition information.
+     */
+    public synchronized void setAcquisitionInformation(
+            final Collection<? extends AcquisitionInformation> newValues)
+    {
+        acquisitionInformation = copyCollection(newValues, acquisitionInformation,
+                                               AcquisitionInformation.class);
     }
 
     /**

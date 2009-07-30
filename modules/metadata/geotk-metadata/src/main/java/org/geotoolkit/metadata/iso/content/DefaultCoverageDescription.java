@@ -27,10 +27,11 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.opengis.util.RecordType;
 import org.opengis.metadata.content.CoverageContentType;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.RangeElementDescription;
+import org.opengis.util.RecordType;
 
 
 /**
@@ -47,7 +48,8 @@ import org.opengis.metadata.content.RangeDimension;
 @XmlType(name = "MD_CoverageDescription", propOrder={
 /// "attributeDescription",
     "contentType",
-    "dimensions"
+    "dimensions",
+    "rangeElementDescriptions"
 })
 @XmlSeeAlso({DefaultImageDescription.class})
 @XmlRootElement(name = "MD_CoverageDescription")
@@ -55,7 +57,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -326050615789333559L;;
+    private static final long serialVersionUID = 5943716957630930520L;
 
     /**
      * Description of the attribute described by the measurement value.
@@ -71,6 +73,11 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      * Information on the dimensions of the cell measurement value.
      */
     private Collection<RangeDimension> dimensions;
+
+    /**
+     * Provides the description of the specific range elements of a coverage.
+     */
+    private Collection<RangeElementDescription> rangeElementDescriptions;
 
     /**
      * Constructs an empty coverage description.
@@ -146,6 +153,30 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      */
     public synchronized void setDimensions(final Collection<? extends RangeDimension> newValues) {
         dimensions = copyCollection(newValues, dimensions, RangeDimension.class);
+    }
+
+    /**
+     * Provides the description of the specific range elements of a coverage.
+     *
+     * @return Description of the specific range elements of a coverage.
+     */
+    @Override
+    @XmlElement(name = "rangeElementDescription")
+    public synchronized Collection<RangeElementDescription> getRangeElementDescriptions() {
+        return xmlOptional(rangeElementDescriptions =
+                nonNullCollection(rangeElementDescriptions, RangeElementDescription.class));
+    }
+
+    /**
+     * Sets the description of the specific range elements of a coverage.
+     *
+     * @param newValues The new range element description.
+     */
+    public synchronized void setRangeElementDescriptions(
+            final Collection<? extends RangeElementDescription> newValues)
+    {
+        rangeElementDescriptions = copyCollection(newValues, rangeElementDescriptions,
+                                                  RangeElementDescription.class);
     }
 
     /**

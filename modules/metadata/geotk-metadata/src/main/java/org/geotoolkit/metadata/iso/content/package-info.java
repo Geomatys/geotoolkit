@@ -53,6 +53,10 @@
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(GenericNameAdapter.class),
     @XmlJavaTypeAdapter(RecordTypeAdapter.class),
+    @XmlJavaTypeAdapter(RangeElementDescriptionAdapter.class),
+    @XmlJavaTypeAdapter(BandDefinitionAdapter.class),
+    @XmlJavaTypeAdapter(PolarizationOrientationAdapter.class),
+    @XmlJavaTypeAdapter(TransferFunctionTypeAdapter.class),
 
     // Primitive type handling
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
@@ -79,8 +83,12 @@ import org.geotoolkit.internal.jaxb.text.LocaleAdapter;
 import org.geotoolkit.internal.jaxb.text.RecordTypeAdapter;
 import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.code.BandDefinitionAdapter;
 import org.geotoolkit.internal.jaxb.code.ImagingConditionAdapter;
 import org.geotoolkit.internal.jaxb.code.CoverageContentTypeAdapter;
+import org.geotoolkit.internal.jaxb.code.PolarizationOrientationAdapter;
+import org.geotoolkit.internal.jaxb.code.TransferFunctionTypeAdapter;
 import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
 import org.geotoolkit.internal.jaxb.metadata.IdentifierAdapter;
 import org.geotoolkit.internal.jaxb.metadata.RangeDimensionAdapter;
+import org.geotoolkit.internal.jaxb.metadata.RangeElementDescriptionAdapter;
