@@ -39,8 +39,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _ResourceList_QNAME = new QName("http://www.opengis.net/ows-context", "ResourceList");
-    private final static QName _OWSContext_QNAME = new QName("http://www.opengis.net/ows-context", "OWSContext");
+    private static final QName _ResourceList_QNAME = new QName("http://www.opengis.net/ows-context", "ResourceList");
+    private static final QName _OWSContext_QNAME = new QName("http://www.opengis.net/ows-context", "OWSContext");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.ows_context

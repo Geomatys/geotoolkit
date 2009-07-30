@@ -30,22 +30,22 @@ import org.geotoolkit.ows.xml.v110.ReferenceGroupType;
 @XmlRegistry
 public class ObjectFactory {
     
-    private final static QName _CoverageSummaryTypeSupportedCRS_QNAME    = new QName("http://www.opengis.net/wcs/1.1.1", "SupportedCRS");
-    private final static QName _CoverageSummaryTypeSupportedFormat_QNAME = new QName("http://www.opengis.net/wcs/1.1.1", "SupportedFormat");
-    private final static QName _CoverageSummary_QNAME                    = new QName("http://www.opengis.net/wcs/1.1.1", "CoverageSummary");
-    private final static QName _SpatialDomain_QNAME                      = new QName("http://www.opengis.net/wcs/1.1.1", "spatialDomain");
-    private final static QName _GridCRS_QNAME                            = new QName("http://www.opengis.net/wcs/1.1.1", "GridCRS");
-    private final static QName _InterpolationMethod_QNAME                = new QName("http://www.opengis.net/wcs/1.1.1", "interpolationMethod");
-    private final static QName _Identifier_QNAME                         = new QName("http://www.opengis.net/wcs/1.1.1", "Identifier");
-    private final static QName _GridBaseCRS_QNAME                        = new QName("http://www.opengis.net/wcs/1.1.1", "GridBaseCRS");
-    private final static QName _TemporalSubset_QNAME                     = new QName("http://www.opengis.net/wcs/1.1.1", "TemporalSubset");
-    private final static QName _GridCS_QNAME                             = new QName("http://www.opengis.net/wcs/1.1.1", "GridCS");
-    private final static QName _Coverages_QNAME                          = new QName("http://www.opengis.net/wcs/1.1.1", "Coverages");
-    private final static QName _GridOffsets_QNAME                        = new QName("http://www.opengis.net/wcs/1.1.1", "GridOffsets");
-    private final static QName _GridType_QNAME                           = new QName("http://www.opengis.net/wcs/1.1.1", "GridType");
-    private final static QName _TemporalDomain_QNAME                     = new QName("http://www.opengis.net/wcs/1.1.1", "TemporalDomain");
-    private final static QName _Coverage_QNAME                           = new QName("http://www.opengis.net/wcs/1.1.1", "Coverage");
-    private final static QName _GridOrigin_QNAME                         = new QName("http://www.opengis.net/wcs/1.1.1", "GridOrigin");
+    private static final QName _CoverageSummaryTypeSupportedCRS_QNAME    = new QName("http://www.opengis.net/wcs/1.1.1", "SupportedCRS");
+    private static final QName _CoverageSummaryTypeSupportedFormat_QNAME = new QName("http://www.opengis.net/wcs/1.1.1", "SupportedFormat");
+    private static final QName _CoverageSummary_QNAME                    = new QName("http://www.opengis.net/wcs/1.1.1", "CoverageSummary");
+    private static final QName _SpatialDomain_QNAME                      = new QName("http://www.opengis.net/wcs/1.1.1", "spatialDomain");
+    private static final QName _GridCRS_QNAME                            = new QName("http://www.opengis.net/wcs/1.1.1", "GridCRS");
+    private static final QName _InterpolationMethod_QNAME                = new QName("http://www.opengis.net/wcs/1.1.1", "interpolationMethod");
+    private static final QName _Identifier_QNAME                         = new QName("http://www.opengis.net/wcs/1.1.1", "Identifier");
+    private static final QName _GridBaseCRS_QNAME                        = new QName("http://www.opengis.net/wcs/1.1.1", "GridBaseCRS");
+    private static final QName _TemporalSubset_QNAME                     = new QName("http://www.opengis.net/wcs/1.1.1", "TemporalSubset");
+    private static final QName _GridCS_QNAME                             = new QName("http://www.opengis.net/wcs/1.1.1", "GridCS");
+    private static final QName _Coverages_QNAME                          = new QName("http://www.opengis.net/wcs/1.1.1", "Coverages");
+    private static final QName _GridOffsets_QNAME                        = new QName("http://www.opengis.net/wcs/1.1.1", "GridOffsets");
+    private static final QName _GridType_QNAME                           = new QName("http://www.opengis.net/wcs/1.1.1", "GridType");
+    private static final QName _TemporalDomain_QNAME                     = new QName("http://www.opengis.net/wcs/1.1.1", "TemporalDomain");
+    private static final QName _Coverage_QNAME                           = new QName("http://www.opengis.net/wcs/1.1.1", "Coverage");
+    private static final QName _GridOrigin_QNAME                         = new QName("http://www.opengis.net/wcs/1.1.1", "GridOrigin");
  
     /**
      * Create an instance of {@link Contents }

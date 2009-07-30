@@ -39,10 +39,10 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Author_QNAME = new QName("http://www.w3.org/2005/Atom", "author");
-    private final static QName _Name_QNAME = new QName("http://www.w3.org/2005/Atom", "name");
-    private final static QName _Email_QNAME = new QName("http://www.w3.org/2005/Atom", "email");
-    private final static QName _Uri_QNAME = new QName("http://www.w3.org/2005/Atom", "uri");
+    private static final QName _Author_QNAME = new QName("http://www.w3.org/2005/Atom", "author");
+    private static final QName _Name_QNAME = new QName("http://www.w3.org/2005/Atom", "name");
+    private static final QName _Email_QNAME = new QName("http://www.w3.org/2005/Atom", "email");
+    private static final QName _Uri_QNAME = new QName("http://www.w3.org/2005/Atom", "uri");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.w3._2005.atom

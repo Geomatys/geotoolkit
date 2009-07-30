@@ -102,7 +102,7 @@ public class CswXMLBindingTest {
     /**
      * a QName for csw:Record type
      */
-    private final static QName _Record_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Record");
+    private static final QName _Record_QNAME = new QName("http://www.opengis.net/cat/csw/2.0.2", "Record");
 
     @Before
     public void setUp() throws JAXBException {

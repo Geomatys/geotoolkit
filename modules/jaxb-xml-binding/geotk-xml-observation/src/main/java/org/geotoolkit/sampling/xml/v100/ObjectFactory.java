@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
     
-    private final static QName _SamplingPoint_QNAME = new QName("http://www.opengis.net/sa/1.0", "SamplingPoint");
+    private static final QName _SamplingPoint_QNAME = new QName("http://www.opengis.net/sa/1.0", "SamplingPoint");
     /**
      *
      */

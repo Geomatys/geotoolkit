@@ -31,27 +31,27 @@ public final class WorldImageConstants {
     /** 
      * {@link Set} of supported extensions for png world files. 
      */
-    private final static Set<String> PNG_WFILE_EXT;
+    private static final Set<String> PNG_WFILE_EXT;
     
     /** 
      * {@link Set} of supported extensions for tiff world files. 
      */
-    private final static Set<String> TIFF_WFILE_EXT;
+    private static final Set<String> TIFF_WFILE_EXT;
     
     /** 
      * {@link Set} of supported extensions for jpeg world files. 
      */
-    private final static Set<String> JPG_WFILE_EXT;
+    private static final Set<String> JPG_WFILE_EXT;
     
     /** 
      * {@link Set} of supported extensions for gif world files. 
      */
-    private final static Set<String> GIF_WFILE_EXT;
+    private static final Set<String> GIF_WFILE_EXT;
     
     /** 
      * {@link Set} of supported extensions for bmp world files. 
      */
-    private final static Set<String> BMP_WFILE_EXT;
+    private static final Set<String> BMP_WFILE_EXT;
     
     static {
         Set<String> tempSet = new HashSet<String>(2);

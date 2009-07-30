@@ -41,19 +41,19 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Process_QNAME                    = new QName("http://www.opengis.net/sensorML/1.0", "AbstractProcess");
-    private final static QName _RuleLanguage_QNAME               = new QName("http://www.opengis.net/sensorML/1.0", "ruleLanguage");
-    private final static QName _ProcessMethod_QNAME              = new QName("http://www.opengis.net/sensorML/1.0", "ProcessMethod");
-    private final static QName _ComponentArray_QNAME             = new QName("http://www.opengis.net/sensorML/1.0", "ComponentArray");
-    private final static QName _ProcessModel_QNAME               = new QName("http://www.opengis.net/sensorML/1.0", "ProcessModel");
-    private final static QName _Method_QNAME                     = new QName("http://www.opengis.net/sensorML/1.0", "method");
-    private final static QName _ProcessChain_QNAME               = new QName("http://www.opengis.net/sensorML/1.0", "ProcessChain");
-    private final static QName _System_QNAME                     = new QName("http://www.opengis.net/sensorML/1.0", "System");
-    private final static QName _RelaxNG_QNAME                    = new QName("http://www.opengis.net/sensorML/1.0", "relaxNG");
-    private final static QName _DataSource_QNAME                 = new QName("http://www.opengis.net/sensorML/1.0", "DataSource");
-    private final static QName _Component_QNAME                  = new QName("http://www.opengis.net/sensorML/1.0", "Component");
-    private final static QName _Schematron_QNAME                 = new QName("http://www.opengis.net/sensorML/1.0", "schematron");
-    private final static QName _KeywordsKeywordListKeyword_QNAME = new QName("http://www.opengis.net/sensorML/1.0", "keyword");
+    private static final QName _Process_QNAME                    = new QName("http://www.opengis.net/sensorML/1.0", "AbstractProcess");
+    private static final QName _RuleLanguage_QNAME               = new QName("http://www.opengis.net/sensorML/1.0", "ruleLanguage");
+    private static final QName _ProcessMethod_QNAME              = new QName("http://www.opengis.net/sensorML/1.0", "ProcessMethod");
+    private static final QName _ComponentArray_QNAME             = new QName("http://www.opengis.net/sensorML/1.0", "ComponentArray");
+    private static final QName _ProcessModel_QNAME               = new QName("http://www.opengis.net/sensorML/1.0", "ProcessModel");
+    private static final QName _Method_QNAME                     = new QName("http://www.opengis.net/sensorML/1.0", "method");
+    private static final QName _ProcessChain_QNAME               = new QName("http://www.opengis.net/sensorML/1.0", "ProcessChain");
+    private static final QName _System_QNAME                     = new QName("http://www.opengis.net/sensorML/1.0", "System");
+    private static final QName _RelaxNG_QNAME                    = new QName("http://www.opengis.net/sensorML/1.0", "relaxNG");
+    private static final QName _DataSource_QNAME                 = new QName("http://www.opengis.net/sensorML/1.0", "DataSource");
+    private static final QName _Component_QNAME                  = new QName("http://www.opengis.net/sensorML/1.0", "Component");
+    private static final QName _Schematron_QNAME                 = new QName("http://www.opengis.net/sensorML/1.0", "schematron");
+    private static final QName _KeywordsKeywordListKeyword_QNAME = new QName("http://www.opengis.net/sensorML/1.0", "keyword");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sensorml

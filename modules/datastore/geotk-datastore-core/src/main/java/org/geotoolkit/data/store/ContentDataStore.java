@@ -98,8 +98,8 @@ public abstract class ContentDataStore implements DataStore {
     /**
      * writer flags
      */
-    protected final static int WRITER_ADD = 0x01<<0;
-    protected final static int WRITER_UPDATE = 0x01<<1;
+    protected static final int WRITER_ADD = 0x01<<0;
+    protected static final int WRITER_UPDATE = 0x01<<1;
 
     /**
      * name, entry map

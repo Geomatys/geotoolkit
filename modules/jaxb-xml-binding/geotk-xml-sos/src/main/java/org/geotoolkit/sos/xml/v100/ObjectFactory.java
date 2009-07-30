@@ -42,9 +42,9 @@ import org.geotoolkit.gml.xml.v311.CodeType;
 @XmlRegistry
 public class ObjectFactory {
     
-    private final static QName _SrsName_QNAME = new QName("http://www.opengis.net/sos/1.0", "srsName");
-    private final static QName _SupportedSensorDescription_QNAME = new QName("http://www.opengis.net/sos/1.0", "supportedSensorDescription");
-    private final static QName _SupportedSRS_QNAME = new QName("http://www.opengis.net/sos/1.0", "supportedSRS");
+    private static final QName _SrsName_QNAME = new QName("http://www.opengis.net/sos/1.0", "srsName");
+    private static final QName _SupportedSensorDescription_QNAME = new QName("http://www.opengis.net/sos/1.0", "supportedSensorDescription");
+    private static final QName _SupportedSRS_QNAME = new QName("http://www.opengis.net/sos/1.0", "supportedSRS");
     
     /**
      * Create an instance of {@link ObservationOfferingType }

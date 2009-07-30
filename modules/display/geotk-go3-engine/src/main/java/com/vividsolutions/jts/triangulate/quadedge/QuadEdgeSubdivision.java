@@ -81,7 +81,7 @@ public class QuadEdgeSubdivision {
 			throw new IllegalArgumentException("Edges do not form a triangle");
 	}
 
-	private final static double EDGE_COINCIDENCE_TOL_FACTOR = 1000;
+	private static final double EDGE_COINCIDENCE_TOL_FACTOR = 1000;
 
 	// debugging only - preserve current subdiv statically
 	// private static QuadEdgeSubdivision currentSubdiv;

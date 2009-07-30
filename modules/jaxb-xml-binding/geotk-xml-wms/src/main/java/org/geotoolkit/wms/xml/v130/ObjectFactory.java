@@ -41,38 +41,38 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Name_QNAME = new QName("http://www.opengis.net/wms", "Name");
-    private final static QName _MinScaleDenominator_QNAME = new QName("http://www.opengis.net/wms", "MinScaleDenominator");
-    private final static QName _PostCode_QNAME = new QName("http://www.opengis.net/wms", "PostCode");
-    private final static QName _MaxHeight_QNAME = new QName("http://www.opengis.net/wms", "MaxHeight");
-    private final static QName _Address_QNAME = new QName("http://www.opengis.net/wms", "Address");
-    private final static QName _ContactFacsimileTelephone_QNAME = new QName("http://www.opengis.net/wms", "ContactFacsimileTelephone");
-    private final static QName _AddressType_QNAME = new QName("http://www.opengis.net/wms", "AddressType");
-    private final static QName _ContactVoiceTelephone_QNAME = new QName("http://www.opengis.net/wms", "ContactVoiceTelephone");
-    private final static QName _Abstract_QNAME = new QName("http://www.opengis.net/wms", "Abstract");
-    private final static QName _MaxWidth_QNAME = new QName("http://www.opengis.net/wms", "MaxWidth");
-    private final static QName _AccessConstraints_QNAME = new QName("http://www.opengis.net/wms", "AccessConstraints");
-    private final static QName _ExtendedCapabilities_QNAME = new QName("http://www.opengis.net/wms", "_ExtendedCapabilities");
-    private final static QName _ContactPerson_QNAME = new QName("http://www.opengis.net/wms", "ContactPerson");
-    private final static QName _GetCapabilities_QNAME = new QName("http://www.opengis.net/wms", "GetCapabilities");
-    private final static QName _LayerLimit_QNAME = new QName("http://www.opengis.net/wms", "LayerLimit");
-    private final static QName _ContactOrganization_QNAME = new QName("http://www.opengis.net/wms", "ContactOrganization");
-    private final static QName _ExtendedOperation_QNAME = new QName("http://www.opengis.net/wms", "_ExtendedOperation");
-    private final static QName _Country_QNAME = new QName("http://www.opengis.net/wms", "Country");
-    private final static QName _City_QNAME = new QName("http://www.opengis.net/wms", "City");
-    private final static QName _Title_QNAME = new QName("http://www.opengis.net/wms", "Title");
-    private final static QName _Fees_QNAME = new QName("http://www.opengis.net/wms", "Fees");
-    private final static QName _GetMap_QNAME = new QName("http://www.opengis.net/wms", "GetMap");
-    private final static QName _GetFeatureInfo_QNAME = new QName("http://www.opengis.net/wms", "GetFeatureInfo");
-    private final static QName _StateOrProvince_QNAME = new QName("http://www.opengis.net/wms", "StateOrProvince");
-    private final static QName _Format_QNAME = new QName("http://www.opengis.net/wms", "Format");
-    private final static QName _CRS_QNAME = new QName("http://www.opengis.net/wms", "CRS");
-    private final static QName _MaxScaleDenominator_QNAME = new QName("http://www.opengis.net/wms", "MaxScaleDenominator");
-    private final static QName _ContactElectronicMailAddress_QNAME = new QName("http://www.opengis.net/wms", "ContactElectronicMailAddress");
-    private final static QName _ContactPosition_QNAME = new QName("http://www.opengis.net/wms", "ContactPosition");
+    private static final QName _Name_QNAME = new QName("http://www.opengis.net/wms", "Name");
+    private static final QName _MinScaleDenominator_QNAME = new QName("http://www.opengis.net/wms", "MinScaleDenominator");
+    private static final QName _PostCode_QNAME = new QName("http://www.opengis.net/wms", "PostCode");
+    private static final QName _MaxHeight_QNAME = new QName("http://www.opengis.net/wms", "MaxHeight");
+    private static final QName _Address_QNAME = new QName("http://www.opengis.net/wms", "Address");
+    private static final QName _ContactFacsimileTelephone_QNAME = new QName("http://www.opengis.net/wms", "ContactFacsimileTelephone");
+    private static final QName _AddressType_QNAME = new QName("http://www.opengis.net/wms", "AddressType");
+    private static final QName _ContactVoiceTelephone_QNAME = new QName("http://www.opengis.net/wms", "ContactVoiceTelephone");
+    private static final QName _Abstract_QNAME = new QName("http://www.opengis.net/wms", "Abstract");
+    private static final QName _MaxWidth_QNAME = new QName("http://www.opengis.net/wms", "MaxWidth");
+    private static final QName _AccessConstraints_QNAME = new QName("http://www.opengis.net/wms", "AccessConstraints");
+    private static final QName _ExtendedCapabilities_QNAME = new QName("http://www.opengis.net/wms", "_ExtendedCapabilities");
+    private static final QName _ContactPerson_QNAME = new QName("http://www.opengis.net/wms", "ContactPerson");
+    private static final QName _GetCapabilities_QNAME = new QName("http://www.opengis.net/wms", "GetCapabilities");
+    private static final QName _LayerLimit_QNAME = new QName("http://www.opengis.net/wms", "LayerLimit");
+    private static final QName _ContactOrganization_QNAME = new QName("http://www.opengis.net/wms", "ContactOrganization");
+    private static final QName _ExtendedOperation_QNAME = new QName("http://www.opengis.net/wms", "_ExtendedOperation");
+    private static final QName _Country_QNAME = new QName("http://www.opengis.net/wms", "Country");
+    private static final QName _City_QNAME = new QName("http://www.opengis.net/wms", "City");
+    private static final QName _Title_QNAME = new QName("http://www.opengis.net/wms", "Title");
+    private static final QName _Fees_QNAME = new QName("http://www.opengis.net/wms", "Fees");
+    private static final QName _GetMap_QNAME = new QName("http://www.opengis.net/wms", "GetMap");
+    private static final QName _GetFeatureInfo_QNAME = new QName("http://www.opengis.net/wms", "GetFeatureInfo");
+    private static final QName _StateOrProvince_QNAME = new QName("http://www.opengis.net/wms", "StateOrProvince");
+    private static final QName _Format_QNAME = new QName("http://www.opengis.net/wms", "Format");
+    private static final QName _CRS_QNAME = new QName("http://www.opengis.net/wms", "CRS");
+    private static final QName _MaxScaleDenominator_QNAME = new QName("http://www.opengis.net/wms", "MaxScaleDenominator");
+    private static final QName _ContactElectronicMailAddress_QNAME = new QName("http://www.opengis.net/wms", "ContactElectronicMailAddress");
+    private static final QName _ContactPosition_QNAME = new QName("http://www.opengis.net/wms", "ContactPosition");
 
-    private final static QName _GetLegendGraphic_QNAME = new QName("http://www.opengis.net/sld", "GetLegendGraphic");
-    private final static QName _DescribeLayer_QNAME = new QName("http://www.opengis.net/sld", "DescribeLayer");
+    private static final QName _GetLegendGraphic_QNAME = new QName("http://www.opengis.net/sld", "GetLegendGraphic");
+    private static final QName _DescribeLayer_QNAME = new QName("http://www.opengis.net/sld", "DescribeLayer");
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wms
      * 

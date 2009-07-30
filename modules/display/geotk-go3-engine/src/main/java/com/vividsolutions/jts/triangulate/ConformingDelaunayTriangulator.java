@@ -393,7 +393,7 @@ public class ConformingDelaunayTriangulator
 
 	// ==================================================================
 
-	private final static int MAX_SPLIT_ITER = 99;
+	private static final int MAX_SPLIT_ITER = 99;
 
 	/**
 	 * Enforces the supplied constraints into the triangulation.

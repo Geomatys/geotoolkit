@@ -38,11 +38,11 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Service_QNAME = new QName("http://www.opengis.net/sld", "Service");
-    private final static QName _Value_QNAME = new QName("http://www.opengis.net/sld", "Value");
-    private final static QName _IsDefault_QNAME = new QName("http://www.opengis.net/sld", "IsDefault");
-    private final static QName _TimePeriod_QNAME = new QName("http://www.opengis.net/sld", "TimePeriod");
-    private final static QName _UserDefinedSymbolization_QNAME = new QName("http://www.opengis.net/sld", "UserDefinedSymbolization");
+    private static final QName _Service_QNAME = new QName("http://www.opengis.net/sld", "Service");
+    private static final QName _Value_QNAME = new QName("http://www.opengis.net/sld", "Value");
+    private static final QName _IsDefault_QNAME = new QName("http://www.opengis.net/sld", "IsDefault");
+    private static final QName _TimePeriod_QNAME = new QName("http://www.opengis.net/sld", "TimePeriod");
+    private static final QName _UserDefinedSymbolization_QNAME = new QName("http://www.opengis.net/sld", "UserDefinedSymbolization");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sld

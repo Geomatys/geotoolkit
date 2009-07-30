@@ -96,7 +96,7 @@ public class FeatureTypeUtilities {
     public static final URI DEFAULT_NAMESPACE;
 
     /** abstract base type for all feature types */
-    public final static SimpleFeatureType ABSTRACT_FEATURE_TYPE;
+    public static final SimpleFeatureType ABSTRACT_FEATURE_TYPE;
 
     private static final Map<String, Class> typeMap = new HashMap<String, Class>();
     private static final Map<Class, String> typeEncode = new HashMap<Class, String>();

@@ -64,7 +64,7 @@ public class GeoTIFFactory {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.coverage.wi");
 
     /** SPI for creating tiff readers in ImageIO tools */
-    private final static TIFFImageReaderSpi readerSPI = new TIFFImageReaderSpi();
+    private static final TIFFImageReaderSpi readerSPI = new TIFFImageReaderSpi();
 
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.

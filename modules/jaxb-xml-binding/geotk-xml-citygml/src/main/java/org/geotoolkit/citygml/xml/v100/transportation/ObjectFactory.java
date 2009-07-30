@@ -39,22 +39,22 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _TrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "TrafficArea");
-    private final static QName _TransportationComplex_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "TransportationComplex");
-    private final static QName _GenericApplicationPropertyOfSquare_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfSquare");
-    private final static QName _GenericApplicationPropertyOfRoad_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfRoad");
-    private final static QName _GenericApplicationPropertyOfTransportationComplex_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTransportationComplex");
-    private final static QName _GenericApplicationPropertyOfTrack_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTrack");
-    private final static QName _Railway_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Railway");
-    private final static QName _Road_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Road");
-    private final static QName _Track_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Track");
-    private final static QName _GenericApplicationPropertyOfTransportationObject_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTransportationObject");
-    private final static QName _GenericApplicationPropertyOfRailway_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfRailway");
-    private final static QName _TransportationObject_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_TransportationObject");
-    private final static QName _Square_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Square");
-    private final static QName _AuxiliaryTrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "AuxiliaryTrafficArea");
-    private final static QName _GenericApplicationPropertyOfTrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTrafficArea");
-    private final static QName _GenericApplicationPropertyOfAuxiliaryTrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfAuxiliaryTrafficArea");
+    private static final QName _TrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "TrafficArea");
+    private static final QName _TransportationComplex_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "TransportationComplex");
+    private static final QName _GenericApplicationPropertyOfSquare_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfSquare");
+    private static final QName _GenericApplicationPropertyOfRoad_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfRoad");
+    private static final QName _GenericApplicationPropertyOfTransportationComplex_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTransportationComplex");
+    private static final QName _GenericApplicationPropertyOfTrack_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTrack");
+    private static final QName _Railway_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Railway");
+    private static final QName _Road_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Road");
+    private static final QName _Track_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Track");
+    private static final QName _GenericApplicationPropertyOfTransportationObject_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTransportationObject");
+    private static final QName _GenericApplicationPropertyOfRailway_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfRailway");
+    private static final QName _TransportationObject_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_TransportationObject");
+    private static final QName _Square_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "Square");
+    private static final QName _AuxiliaryTrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "AuxiliaryTrafficArea");
+    private static final QName _GenericApplicationPropertyOfTrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfTrafficArea");
+    private static final QName _GenericApplicationPropertyOfAuxiliaryTrafficArea_QNAME = new QName("http://www.opengis.net/citygml/transportation/1.0", "_GenericApplicationPropertyOfAuxiliaryTrafficArea");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml.transportation._1

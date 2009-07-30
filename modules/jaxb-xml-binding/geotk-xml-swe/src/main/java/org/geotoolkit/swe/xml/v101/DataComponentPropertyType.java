@@ -65,7 +65,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     private String actuate;
 
     @XmlTransient
-    private final static ObjectFactory sweFactory = new ObjectFactory();
+    private static final ObjectFactory sweFactory = new ObjectFactory();
     
     /**
      * An empty constructor used by JAXB

@@ -86,13 +86,13 @@ import org.geotoolkit.feature.FeatureCollectionUtilities;
  * @author Ian Schneider
  */
 public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
-    final static String STATE_POP = "shapes/statepop.shp";
+    static final String STATE_POP = "shapes/statepop.shp";
 
-    final static String STREAM = "shapes/stream.shp";
+    static final String STREAM = "shapes/stream.shp";
 
-    final static String DANISH = "shapes/danish_point.shp";
+    static final String DANISH = "shapes/danish_point.shp";
 
-    final static String CHINESE = "shapes/chinese_poly.shp";
+    static final String CHINESE = "shapes/chinese_poly.shp";
 
     public IndexedShapefileDataStoreTest(String testName) throws IOException {
         super(testName);

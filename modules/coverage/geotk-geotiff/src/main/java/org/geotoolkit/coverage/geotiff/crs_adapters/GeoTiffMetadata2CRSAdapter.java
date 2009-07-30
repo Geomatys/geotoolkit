@@ -129,7 +129,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 public final class GeoTiffMetadata2CRSAdapter {
 
     /** {@link Logger}. */
-    private final static Logger LOGGER = Logging.getLogger("org.geotools.gce.geotiff.crs_adapters");
+    private static final Logger LOGGER = Logging.getLogger("org.geotools.gce.geotiff.crs_adapters");
     /**
      * This {@link AffineTransform} can be used when the underlying geotiff
      * declares to work with {@link GeoTiffConstants#RasterPixelIsArea} pixel
@@ -151,7 +151,7 @@ public final class GeoTiffMetadata2CRSAdapter {
      * Cached {@link MathTransformFactory} for building {@link MathTransform}
      * objects.
      */
-    private final static MathTransformFactory mtFactory = new DefaultMathTransformFactory();
+    private static final MathTransformFactory mtFactory = new DefaultMathTransformFactory();
     /**
      * The default value for {@link #maxStrongReferences} .
      */
@@ -159,7 +159,7 @@ public final class GeoTiffMetadata2CRSAdapter {
     /**
      * The pool of cached objects.
      */
-    private final static Map pool = Collections.synchronizedMap(new Cache(DEFAULT_MAX,1,false));
+    private static final Map pool = Collections.synchronizedMap(new Cache(DEFAULT_MAX,1,false));
     /** Group Factory for creating {@link ProjectedCRS} objects. */
     private final ReferencingFactoryContainer factories;
     /** CS Factory for creating {@link CoordinateSystem} objects. */
@@ -703,7 +703,7 @@ public final class GeoTiffMetadata2CRSAdapter {
      *            is the {@link String} to clean up.
      * @return a cleaned up {@link String}.
      */
-    private final static String cleanName(String tiffName) {
+    private static final String cleanName(String tiffName) {
         // look fofr strange chars
         // $
         int index = tiffName.lastIndexOf('$');

@@ -97,7 +97,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  */
 public class IndexedShapefileDataStore extends ShapefileDataStore implements
         FileWriter {
-    private final static class IdentifierComparator implements Comparator<Identifier>
+    private static final class IdentifierComparator implements Comparator<Identifier>
     {
         public int compare(Identifier o1, Identifier o2)
         {

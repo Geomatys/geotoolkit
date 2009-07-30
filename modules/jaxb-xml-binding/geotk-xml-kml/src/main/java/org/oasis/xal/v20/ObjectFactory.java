@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _AddressDetails_QNAME = new QName("urn:oasis:names:tc:ciq:xsdschema:xAL:2.0", "AddressDetails");
+    private static final QName _AddressDetails_QNAME = new QName("urn:oasis:names:tc:ciq:xsdschema:xAL:2.0", "AddressDetails");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: oasis.names.tc.ciq.xsdschema.xal._2

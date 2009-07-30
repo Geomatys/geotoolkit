@@ -39,28 +39,28 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _GetFeature_QNAME = new QName("http://www.opengis.net/wfs", "GetFeature");
-    private final static QName _Property_QNAME = new QName("http://www.opengis.net/wfs", "Property");
-    private final static QName _DescribeFeatureType_QNAME = new QName("http://www.opengis.net/wfs", "DescribeFeatureType");
-    private final static QName _FeatureTypeList_QNAME = new QName("http://www.opengis.net/wfs", "FeatureTypeList");
-    private final static QName _LockFeature_QNAME = new QName("http://www.opengis.net/wfs", "LockFeature");
-    private final static QName _ServesGMLObjectTypeList_QNAME = new QName("http://www.opengis.net/wfs", "ServesGMLObjectTypeList");
-    private final static QName _Update_QNAME = new QName("http://www.opengis.net/wfs", "Update");
-    private final static QName _PropertyName_QNAME = new QName("http://www.opengis.net/wfs", "PropertyName");
-    private final static QName _TransactionResponse_QNAME = new QName("http://www.opengis.net/wfs", "TransactionResponse");
-    private final static QName _GetGmlObject_QNAME = new QName("http://www.opengis.net/wfs", "GetGmlObject");
-    private final static QName _GetCapabilities_QNAME = new QName("http://www.opengis.net/wfs", "GetCapabilities");
-    private final static QName _Native_QNAME = new QName("http://www.opengis.net/wfs", "Native");
-    private final static QName _WFSCapabilities_QNAME = new QName("http://www.opengis.net/wfs", "WFS_Capabilities");
-    private final static QName _LockFeatureResponse_QNAME = new QName("http://www.opengis.net/wfs", "LockFeatureResponse");
-    private final static QName _LockId_QNAME = new QName("http://www.opengis.net/wfs", "LockId");
-    private final static QName _SupportsGMLObjectTypeList_QNAME = new QName("http://www.opengis.net/wfs", "SupportsGMLObjectTypeList");
-    private final static QName _Insert_QNAME = new QName("http://www.opengis.net/wfs", "Insert");
-    private final static QName _Transaction_QNAME = new QName("http://www.opengis.net/wfs", "Transaction");
-    private final static QName _Query_QNAME = new QName("http://www.opengis.net/wfs", "Query");
-    private final static QName _GetFeatureWithLock_QNAME = new QName("http://www.opengis.net/wfs", "GetFeatureWithLock");
-    private final static QName _Delete_QNAME = new QName("http://www.opengis.net/wfs", "Delete");
-    private final static QName _FeatureCollection_QNAME = new QName("http://www.opengis.net/wfs", "FeatureCollection");
+    private static final QName _GetFeature_QNAME = new QName("http://www.opengis.net/wfs", "GetFeature");
+    private static final QName _Property_QNAME = new QName("http://www.opengis.net/wfs", "Property");
+    private static final QName _DescribeFeatureType_QNAME = new QName("http://www.opengis.net/wfs", "DescribeFeatureType");
+    private static final QName _FeatureTypeList_QNAME = new QName("http://www.opengis.net/wfs", "FeatureTypeList");
+    private static final QName _LockFeature_QNAME = new QName("http://www.opengis.net/wfs", "LockFeature");
+    private static final QName _ServesGMLObjectTypeList_QNAME = new QName("http://www.opengis.net/wfs", "ServesGMLObjectTypeList");
+    private static final QName _Update_QNAME = new QName("http://www.opengis.net/wfs", "Update");
+    private static final QName _PropertyName_QNAME = new QName("http://www.opengis.net/wfs", "PropertyName");
+    private static final QName _TransactionResponse_QNAME = new QName("http://www.opengis.net/wfs", "TransactionResponse");
+    private static final QName _GetGmlObject_QNAME = new QName("http://www.opengis.net/wfs", "GetGmlObject");
+    private static final QName _GetCapabilities_QNAME = new QName("http://www.opengis.net/wfs", "GetCapabilities");
+    private static final QName _Native_QNAME = new QName("http://www.opengis.net/wfs", "Native");
+    private static final QName _WFSCapabilities_QNAME = new QName("http://www.opengis.net/wfs", "WFS_Capabilities");
+    private static final QName _LockFeatureResponse_QNAME = new QName("http://www.opengis.net/wfs", "LockFeatureResponse");
+    private static final QName _LockId_QNAME = new QName("http://www.opengis.net/wfs", "LockId");
+    private static final QName _SupportsGMLObjectTypeList_QNAME = new QName("http://www.opengis.net/wfs", "SupportsGMLObjectTypeList");
+    private static final QName _Insert_QNAME = new QName("http://www.opengis.net/wfs", "Insert");
+    private static final QName _Transaction_QNAME = new QName("http://www.opengis.net/wfs", "Transaction");
+    private static final QName _Query_QNAME = new QName("http://www.opengis.net/wfs", "Query");
+    private static final QName _GetFeatureWithLock_QNAME = new QName("http://www.opengis.net/wfs", "GetFeatureWithLock");
+    private static final QName _Delete_QNAME = new QName("http://www.opengis.net/wfs", "Delete");
+    private static final QName _FeatureCollection_QNAME = new QName("http://www.opengis.net/wfs", "FeatureCollection");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wfs

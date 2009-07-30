@@ -29,8 +29,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
     
-    private final static QName _Observation_QNAME   = new QName("http://www.opengis.net/om/1.0", "Observation");
-    private final static QName _Result_QNAME        = new QName("http://www.opengis.net/om/1.0", "result");
+    private static final QName _Observation_QNAME   = new QName("http://www.opengis.net/om/1.0", "Observation");
+    private static final QName _Result_QNAME        = new QName("http://www.opengis.net/om/1.0", "result");
      
     /**
      *

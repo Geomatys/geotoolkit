@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _MultiligualCapabilities_QNAME = new QName("http://www.inspire.org", "MultiligualCapabilities");
+    private static final QName _MultiligualCapabilities_QNAME = new QName("http://www.inspire.org", "MultiligualCapabilities");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.inspire

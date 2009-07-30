@@ -39,8 +39,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Layer_QNAME = new QName("http://www.opengis.net/wmts/1.0", "Layer");
-    private final static QName _FeatureInfoResponse_QNAME = new QName("http://www.opengis.net/wmts/1.0", "FeatureInfoResponse");
+    private static final QName _Layer_QNAME = new QName("http://www.opengis.net/wmts/1.0", "Layer");
+    private static final QName _FeatureInfoResponse_QNAME = new QName("http://www.opengis.net/wmts/1.0", "FeatureInfoResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.geotoolkit.wmts.xml.v100

@@ -30,35 +30,35 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
     
-    private final static QName _AbstractDataRecord_QNAME    = new QName("http://www.opengis.net/swe/1.0.1", "AbstractDataRecord");
-    private final static QName _SimpleDataRecord_QNAME      = new QName("http://www.opengis.net/swe/1.0.1", "SimpleDataRecord");
-    private final static QName _Item_QNAME                  = new QName("http://www.opengis.net/swe/1.0.1", "Item");
-    private final static QName _CompositePhenomenon_QNAME   = new QName("http://www.opengis.net/swe/1.0.1", "CompositePhenomenon");
-    private final static QName _Phenomenon_QNAME            = new QName("http://www.opengis.net/swe/1.0.1", "Phenomenon");
-    private final static QName _CompoundPhenomenon_QNAME    = new QName("http://www.opengis.net/swe/1.0.1", "CompoundPhenomenon");
-    private final static QName _TextBlock_QNAME             = new QName("http://www.opengis.net/swe/1.0.1", "TextBlock");
-    private final static QName _Encoding_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Encoding");
-    private final static QName _AbstractDataComponent_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "AbstractDataComponent");
-    private final static QName _Time_QNAME                  = new QName("http://www.opengis.net/swe/1.0.1", "Time");
-    private final static QName _Quantity_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Quantity");
-    private final static QName _Boolean_QNAME               = new QName("http://www.opengis.net/swe/1.0.1", "Boolean");
-    private final static QName _DataArray_QNAME             = new QName("http://www.opengis.net/swe/1.0.1", "DataArray");
-    private final static QName _ConditionalValue_QNAME      = new QName("http://www.opengis.net/swe/1.0.1", "ConditionalValue");
-    private final static QName _Envelope_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Envelope");
-    private final static QName _GeoLocationArea_QNAME       = new QName("http://www.opengis.net/swe/1.0.1", "GeoLocationArea");
-    private final static QName _Vector_QNAME                = new QName("http://www.opengis.net/swe/1.0.1", "Vector");
-    private final static QName _Position_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Position");
-    private final static QName _AbstractDataArray_QNAME     = new QName("http://www.opengis.net/swe/1.0.1", "AbstractDataArray");
-    private final static QName _DataBlockDefinition_QNAME   = new QName("http://www.opengis.net/swe/1.0.1", "DataBlockDefinition");
-    private final static QName _SquareMatrix_QNAME          = new QName("http://www.opengis.net/swe/1.0.1", "SquareMatrix");
-    private final static QName _XMLBlock_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "XMLBlock");
-    private final static QName _PhenomenonSeries_QNAME      = new QName("http://www.opengis.net/swe/1.0.1", "PhenomenonSeries");
-    private final static QName _DataStreamDefinition_QNAME  = new QName("http://www.opengis.net/swe/1.0.1", "DataStreamDefinition");
-    private final static QName _MultiplexStreamFormat_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "MultiplexedStreamFormat");
-    private final static QName _ConstrainedPhenomenon_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "ConstrainedPhenomenon");
-    private final static QName _AllowedTokenValueList_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "valueList");
-    private final static QName _AllowedTimesInterval_QNAME  = new QName("http://www.opengis.net/swe/1.0.1", "interval");
-    private final static QName _DataRecord_QNAME            = new QName("http://www.opengis.net/swe/1.0.1", "DataRecord");
+    private static final QName _AbstractDataRecord_QNAME    = new QName("http://www.opengis.net/swe/1.0.1", "AbstractDataRecord");
+    private static final QName _SimpleDataRecord_QNAME      = new QName("http://www.opengis.net/swe/1.0.1", "SimpleDataRecord");
+    private static final QName _Item_QNAME                  = new QName("http://www.opengis.net/swe/1.0.1", "Item");
+    private static final QName _CompositePhenomenon_QNAME   = new QName("http://www.opengis.net/swe/1.0.1", "CompositePhenomenon");
+    private static final QName _Phenomenon_QNAME            = new QName("http://www.opengis.net/swe/1.0.1", "Phenomenon");
+    private static final QName _CompoundPhenomenon_QNAME    = new QName("http://www.opengis.net/swe/1.0.1", "CompoundPhenomenon");
+    private static final QName _TextBlock_QNAME             = new QName("http://www.opengis.net/swe/1.0.1", "TextBlock");
+    private static final QName _Encoding_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Encoding");
+    private static final QName _AbstractDataComponent_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "AbstractDataComponent");
+    private static final QName _Time_QNAME                  = new QName("http://www.opengis.net/swe/1.0.1", "Time");
+    private static final QName _Quantity_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Quantity");
+    private static final QName _Boolean_QNAME               = new QName("http://www.opengis.net/swe/1.0.1", "Boolean");
+    private static final QName _DataArray_QNAME             = new QName("http://www.opengis.net/swe/1.0.1", "DataArray");
+    private static final QName _ConditionalValue_QNAME      = new QName("http://www.opengis.net/swe/1.0.1", "ConditionalValue");
+    private static final QName _Envelope_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Envelope");
+    private static final QName _GeoLocationArea_QNAME       = new QName("http://www.opengis.net/swe/1.0.1", "GeoLocationArea");
+    private static final QName _Vector_QNAME                = new QName("http://www.opengis.net/swe/1.0.1", "Vector");
+    private static final QName _Position_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "Position");
+    private static final QName _AbstractDataArray_QNAME     = new QName("http://www.opengis.net/swe/1.0.1", "AbstractDataArray");
+    private static final QName _DataBlockDefinition_QNAME   = new QName("http://www.opengis.net/swe/1.0.1", "DataBlockDefinition");
+    private static final QName _SquareMatrix_QNAME          = new QName("http://www.opengis.net/swe/1.0.1", "SquareMatrix");
+    private static final QName _XMLBlock_QNAME              = new QName("http://www.opengis.net/swe/1.0.1", "XMLBlock");
+    private static final QName _PhenomenonSeries_QNAME      = new QName("http://www.opengis.net/swe/1.0.1", "PhenomenonSeries");
+    private static final QName _DataStreamDefinition_QNAME  = new QName("http://www.opengis.net/swe/1.0.1", "DataStreamDefinition");
+    private static final QName _MultiplexStreamFormat_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "MultiplexedStreamFormat");
+    private static final QName _ConstrainedPhenomenon_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "ConstrainedPhenomenon");
+    private static final QName _AllowedTokenValueList_QNAME = new QName("http://www.opengis.net/swe/1.0.1", "valueList");
+    private static final QName _AllowedTimesInterval_QNAME  = new QName("http://www.opengis.net/swe/1.0.1", "interval");
+    private static final QName _DataRecord_QNAME            = new QName("http://www.opengis.net/swe/1.0.1", "DataRecord");
     /**
      *
      */

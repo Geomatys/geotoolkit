@@ -40,16 +40,16 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _GenericApplicationPropertyOfSite_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfSite");
-    private final static QName _CityObjectMember_QNAME = new QName("http://www.opengis.net/citygml/1.0", "cityObjectMember");
-    private final static QName _Site_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_Site");
-    private final static QName _GenericApplicationPropertyOfAddress_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfAddress");
-    private final static QName _CityModel_QNAME = new QName("http://www.opengis.net/citygml/1.0", "CityModel");
-    private final static QName _ImplicitGeometry_QNAME = new QName("http://www.opengis.net/citygml/1.0", "ImplicitGeometry");
-    private final static QName _CityObject_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_CityObject");
-    private final static QName _GenericApplicationPropertyOfCityObject_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfCityObject");
-    private final static QName _Address_QNAME = new QName("http://www.opengis.net/citygml/1.0", "Address");
-    private final static QName _GenericApplicationPropertyOfCityModel_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfCityModel");
+    private static final QName _GenericApplicationPropertyOfSite_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfSite");
+    private static final QName _CityObjectMember_QNAME = new QName("http://www.opengis.net/citygml/1.0", "cityObjectMember");
+    private static final QName _Site_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_Site");
+    private static final QName _GenericApplicationPropertyOfAddress_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfAddress");
+    private static final QName _CityModel_QNAME = new QName("http://www.opengis.net/citygml/1.0", "CityModel");
+    private static final QName _ImplicitGeometry_QNAME = new QName("http://www.opengis.net/citygml/1.0", "ImplicitGeometry");
+    private static final QName _CityObject_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_CityObject");
+    private static final QName _GenericApplicationPropertyOfCityObject_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfCityObject");
+    private static final QName _Address_QNAME = new QName("http://www.opengis.net/citygml/1.0", "Address");
+    private static final QName _GenericApplicationPropertyOfCityModel_QNAME = new QName("http://www.opengis.net/citygml/1.0", "_GenericApplicationPropertyOfCityModel");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml._1

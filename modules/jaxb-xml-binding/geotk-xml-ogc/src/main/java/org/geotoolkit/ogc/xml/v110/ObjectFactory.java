@@ -40,68 +40,68 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     // Comparison operators
-    private final static QName _PropertyIsLessThan_QNAME             = new QName("http://www.opengis.net/ogc", "PropertyIsLessThan");
-    private final static QName _PropertyIsGreaterThanOrEqualTo_QNAME = new QName("http://www.opengis.net/ogc", "PropertyIsGreaterThanOrEqualTo");
-    private final static QName _PropertyIsNotEqualTo_QNAME           = new QName("http://www.opengis.net/ogc", "PropertyIsNotEqualTo");
-    private final static QName _PropertyIsLessThanOrEqualTo_QNAME    = new QName("http://www.opengis.net/ogc", "PropertyIsLessThanOrEqualTo");
-    private final static QName _PropertyIsLike_QNAME                 = new QName("http://www.opengis.net/ogc", "PropertyIsLike");
-    private final static QName _PropertyIsNull_QNAME                 = new QName("http://www.opengis.net/ogc", "PropertyIsNull");
-    private final static QName _PropertyIsBetween_QNAME              = new QName("http://www.opengis.net/ogc", "PropertyIsBetween");
-    private final static QName _PropertyIsGreaterThan_QNAME          = new QName("http://www.opengis.net/ogc", "PropertyIsGreaterThan");
-    private final static QName _PropertyIsEqualTo_QNAME              = new QName("http://www.opengis.net/ogc", "PropertyIsEqualTo");
-    private final static QName _ComparisonOps_QNAME                  = new QName("http://www.opengis.net/ogc", "comparisonOps");
+    private static final QName _PropertyIsLessThan_QNAME             = new QName("http://www.opengis.net/ogc", "PropertyIsLessThan");
+    private static final QName _PropertyIsGreaterThanOrEqualTo_QNAME = new QName("http://www.opengis.net/ogc", "PropertyIsGreaterThanOrEqualTo");
+    private static final QName _PropertyIsNotEqualTo_QNAME           = new QName("http://www.opengis.net/ogc", "PropertyIsNotEqualTo");
+    private static final QName _PropertyIsLessThanOrEqualTo_QNAME    = new QName("http://www.opengis.net/ogc", "PropertyIsLessThanOrEqualTo");
+    private static final QName _PropertyIsLike_QNAME                 = new QName("http://www.opengis.net/ogc", "PropertyIsLike");
+    private static final QName _PropertyIsNull_QNAME                 = new QName("http://www.opengis.net/ogc", "PropertyIsNull");
+    private static final QName _PropertyIsBetween_QNAME              = new QName("http://www.opengis.net/ogc", "PropertyIsBetween");
+    private static final QName _PropertyIsGreaterThan_QNAME          = new QName("http://www.opengis.net/ogc", "PropertyIsGreaterThan");
+    private static final QName _PropertyIsEqualTo_QNAME              = new QName("http://www.opengis.net/ogc", "PropertyIsEqualTo");
+    private static final QName _ComparisonOps_QNAME                  = new QName("http://www.opengis.net/ogc", "comparisonOps");
     
     // Spatial Operator
-    private final static QName _Intersects_QNAME                     = new QName("http://www.opengis.net/ogc", "Intersects");
-    private final static QName _SpatialOps_QNAME                     = new QName("http://www.opengis.net/ogc", "spatialOps");
-    private final static QName _Touches_QNAME                        = new QName("http://www.opengis.net/ogc", "Touches");
-    private final static QName _Disjoint_QNAME                       = new QName("http://www.opengis.net/ogc", "Disjoint");
-    private final static QName _Crosses_QNAME                        = new QName("http://www.opengis.net/ogc", "Crosses");
-    private final static QName _Contains_QNAME                       = new QName("http://www.opengis.net/ogc", "Contains");
-    private final static QName _Equals_QNAME                         = new QName("http://www.opengis.net/ogc", "Equals");
-    private final static QName _Overlaps_QNAME                       = new QName("http://www.opengis.net/ogc", "Overlaps");
-    private final static QName _BBOX_QNAME                           = new QName("http://www.opengis.net/ogc", "BBOX");
-    private final static QName _Within_QNAME                         = new QName("http://www.opengis.net/ogc", "Within");
+    private static final QName _Intersects_QNAME                     = new QName("http://www.opengis.net/ogc", "Intersects");
+    private static final QName _SpatialOps_QNAME                     = new QName("http://www.opengis.net/ogc", "spatialOps");
+    private static final QName _Touches_QNAME                        = new QName("http://www.opengis.net/ogc", "Touches");
+    private static final QName _Disjoint_QNAME                       = new QName("http://www.opengis.net/ogc", "Disjoint");
+    private static final QName _Crosses_QNAME                        = new QName("http://www.opengis.net/ogc", "Crosses");
+    private static final QName _Contains_QNAME                       = new QName("http://www.opengis.net/ogc", "Contains");
+    private static final QName _Equals_QNAME                         = new QName("http://www.opengis.net/ogc", "Equals");
+    private static final QName _Overlaps_QNAME                       = new QName("http://www.opengis.net/ogc", "Overlaps");
+    private static final QName _BBOX_QNAME                           = new QName("http://www.opengis.net/ogc", "BBOX");
+    private static final QName _Within_QNAME                         = new QName("http://www.opengis.net/ogc", "Within");
     
     // Spatial Distance Operator
-    private final static QName _DWithin_QNAME                        = new QName("http://www.opengis.net/ogc", "DWithin");
-    private final static QName _Beyond_QNAME                         = new QName("http://www.opengis.net/ogc", "Beyond");
+    private static final QName _DWithin_QNAME                        = new QName("http://www.opengis.net/ogc", "DWithin");
+    private static final QName _Beyond_QNAME                         = new QName("http://www.opengis.net/ogc", "Beyond");
     
     // Logical Operator
-    private final static QName _And_QNAME                            = new QName("http://www.opengis.net/ogc", "And");
-    private final static QName _Or_QNAME                             = new QName("http://www.opengis.net/ogc", "Or");
-    private final static QName _LogicOps_QNAME                       = new QName("http://www.opengis.net/ogc", "logicOps");
-    private final static QName _Not_QNAME                            = new QName("http://www.opengis.net/ogc", "Not");
+    private static final QName _And_QNAME                            = new QName("http://www.opengis.net/ogc", "And");
+    private static final QName _Or_QNAME                             = new QName("http://www.opengis.net/ogc", "Or");
+    private static final QName _LogicOps_QNAME                       = new QName("http://www.opengis.net/ogc", "logicOps");
+    private static final QName _Not_QNAME                            = new QName("http://www.opengis.net/ogc", "Not");
     
     // Temporal Operator
-    private final static QName _TOveralps_QNAME                      = new QName("http://www.opengis.net/ogc", "TM_Overalps");
-    private final static QName _TEquals_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_Equals");
-    private final static QName _TMeets_QNAME                         = new QName("http://www.opengis.net/ogc", "TM_Meets");
-    private final static QName _TOverlappedBy_QNAME                  = new QName("http://www.opengis.net/ogc", "TM_OverlappedBy");
-    private final static QName _TEndedBy_QNAME                       = new QName("http://www.opengis.net/ogc", "TM_EndedBy");
-    private final static QName _TEnds_QNAME                          = new QName("http://www.opengis.net/ogc", "TM_Ends");
-    private final static QName _TAfter_QNAME                         = new QName("http://www.opengis.net/ogc", "TM_After");
-    private final static QName _TMetBy_QNAME                         = new QName("http://www.opengis.net/ogc", "TM_MetBy");
-    private final static QName _TBegins_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_Begins");
-    private final static QName _TBefore_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_Before");
-    private final static QName _TBegunBy_QNAME                       = new QName("http://www.opengis.net/ogc", "TM_BegunBy");
-    private final static QName _TContains_QNAME                      = new QName("http://www.opengis.net/ogc", "TM_Contains");
-    private final static QName _TDuring_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_During");
-    private final static QName _TemporalOps_QNAME                    = new QName("http://www.opengis.net/ogc", "temporalOps");
+    private static final QName _TOveralps_QNAME                      = new QName("http://www.opengis.net/ogc", "TM_Overalps");
+    private static final QName _TEquals_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_Equals");
+    private static final QName _TMeets_QNAME                         = new QName("http://www.opengis.net/ogc", "TM_Meets");
+    private static final QName _TOverlappedBy_QNAME                  = new QName("http://www.opengis.net/ogc", "TM_OverlappedBy");
+    private static final QName _TEndedBy_QNAME                       = new QName("http://www.opengis.net/ogc", "TM_EndedBy");
+    private static final QName _TEnds_QNAME                          = new QName("http://www.opengis.net/ogc", "TM_Ends");
+    private static final QName _TAfter_QNAME                         = new QName("http://www.opengis.net/ogc", "TM_After");
+    private static final QName _TMetBy_QNAME                         = new QName("http://www.opengis.net/ogc", "TM_MetBy");
+    private static final QName _TBegins_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_Begins");
+    private static final QName _TBefore_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_Before");
+    private static final QName _TBegunBy_QNAME                       = new QName("http://www.opengis.net/ogc", "TM_BegunBy");
+    private static final QName _TContains_QNAME                      = new QName("http://www.opengis.net/ogc", "TM_Contains");
+    private static final QName _TDuring_QNAME                        = new QName("http://www.opengis.net/ogc", "TM_During");
+    private static final QName _TemporalOps_QNAME                    = new QName("http://www.opengis.net/ogc", "temporalOps");
     
-    private final static QName _Literal_QNAME                        = new QName("http://www.opengis.net/ogc", "Literal");
-    private final static QName _PropertyName_QNAME                   = new QName("http://www.opengis.net/ogc", "PropertyName");
-    private final static QName _Expression_QNAME                     = new QName("http://www.opengis.net/ogc", "expression");
-    private final static QName _Id_QNAME                             = new QName("http://www.opengis.net/ogc", "_Id");
-    private final static QName _Add_QNAME                            = new QName("http://www.opengis.net/ogc", "Add");
-    private final static QName _Sub_QNAME                            = new QName("http://www.opengis.net/ogc", "Sub");
-    private final static QName _Div_QNAME                            = new QName("http://www.opengis.net/ogc", "Div");
-    private final static QName _Mul_QNAME                            = new QName("http://www.opengis.net/ogc", "Mul"); 
-    private final static QName _FeatureId_QNAME                      = new QName("http://www.opengis.net/ogc", "FeatureId");
-    private final static QName _Filter_QNAME                         = new QName("http://www.opengis.net/ogc", "Filter");
-    private final static QName _Function_QNAME                       = new QName("http://www.opengis.net/ogc", "Function");
-    private final static QName _GmlObjectId_QNAME                    = new QName("http://www.opengis.net/ogc", "GmlObjectId");
-    private final static QName _SortBy_QNAME                         = new QName("http://www.opengis.net/ogc", "SortBy");
+    private static final QName _Literal_QNAME                        = new QName("http://www.opengis.net/ogc", "Literal");
+    private static final QName _PropertyName_QNAME                   = new QName("http://www.opengis.net/ogc", "PropertyName");
+    private static final QName _Expression_QNAME                     = new QName("http://www.opengis.net/ogc", "expression");
+    private static final QName _Id_QNAME                             = new QName("http://www.opengis.net/ogc", "_Id");
+    private static final QName _Add_QNAME                            = new QName("http://www.opengis.net/ogc", "Add");
+    private static final QName _Sub_QNAME                            = new QName("http://www.opengis.net/ogc", "Sub");
+    private static final QName _Div_QNAME                            = new QName("http://www.opengis.net/ogc", "Div");
+    private static final QName _Mul_QNAME                            = new QName("http://www.opengis.net/ogc", "Mul"); 
+    private static final QName _FeatureId_QNAME                      = new QName("http://www.opengis.net/ogc", "FeatureId");
+    private static final QName _Filter_QNAME                         = new QName("http://www.opengis.net/ogc", "Filter");
+    private static final QName _Function_QNAME                       = new QName("http://www.opengis.net/ogc", "Function");
+    private static final QName _GmlObjectId_QNAME                    = new QName("http://www.opengis.net/ogc", "GmlObjectId");
+    private static final QName _SortBy_QNAME                         = new QName("http://www.opengis.net/ogc", "SortBy");
     
     
     /**

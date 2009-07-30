@@ -39,27 +39,27 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _MinInclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "minInclusive");
-    private final static QName _MaxLength_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "maxLength");
-    private final static QName _Sequence_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "sequence");
-    private final static QName _MinLength_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "minLength");
-    private final static QName _Group_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "group");
-    private final static QName _AttributeGroup_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "attributeGroup");
-    private final static QName _Key_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "key");
-    private final static QName _All_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "all");
-    private final static QName _Length_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "length");
-    private final static QName _SimpleType_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "simpleType");
-    private final static QName _Enumeration_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "enumeration");
-    private final static QName _Choice_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "choice");
-    private final static QName _FractionDigits_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "fractionDigits");
-    private final static QName _MinExclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "minExclusive");
-    private final static QName _MaxExclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "maxExclusive");
-    private final static QName _Element_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "element");
-    private final static QName _Unique_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "unique");
-    private final static QName _ComplexType_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "complexType");
-    private final static QName _MaxInclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "maxInclusive");
-    private final static QName _Attribute_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "attribute");
-    private final static QName _AnyAttribute_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "anyAttribute");
+    private static final QName _MinInclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "minInclusive");
+    private static final QName _MaxLength_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "maxLength");
+    private static final QName _Sequence_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "sequence");
+    private static final QName _MinLength_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "minLength");
+    private static final QName _Group_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "group");
+    private static final QName _AttributeGroup_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "attributeGroup");
+    private static final QName _Key_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "key");
+    private static final QName _All_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "all");
+    private static final QName _Length_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "length");
+    private static final QName _SimpleType_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "simpleType");
+    private static final QName _Enumeration_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "enumeration");
+    private static final QName _Choice_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "choice");
+    private static final QName _FractionDigits_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "fractionDigits");
+    private static final QName _MinExclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "minExclusive");
+    private static final QName _MaxExclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "maxExclusive");
+    private static final QName _Element_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "element");
+    private static final QName _Unique_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "unique");
+    private static final QName _ComplexType_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "complexType");
+    private static final QName _MaxInclusive_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "maxInclusive");
+    private static final QName _Attribute_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "attribute");
+    private static final QName _AnyAttribute_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "anyAttribute");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.w3._2001.xmlschema

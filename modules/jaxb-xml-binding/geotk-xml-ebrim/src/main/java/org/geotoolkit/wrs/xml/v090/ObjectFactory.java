@@ -39,9 +39,9 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Geometry_QNAME           = new QName("http://www.opengis.net/cat/wrs", "Geometry");
-    private final static QName _ApplicationModule_QNAME  = new QName("http://www.opengis.net/cat/wrs", "ApplicationModule");
-    private final static QName _WRSExtrinsicObject_QNAME = new QName("http://www.opengis.net/cat/wrs", "WRSExtrinsicObject");
+    private static final QName _Geometry_QNAME           = new QName("http://www.opengis.net/cat/wrs", "Geometry");
+    private static final QName _ApplicationModule_QNAME  = new QName("http://www.opengis.net/cat/wrs", "ApplicationModule");
+    private static final QName _WRSExtrinsicObject_QNAME = new QName("http://www.opengis.net/cat/wrs", "WRSExtrinsicObject");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.cat.wrs

@@ -34,26 +34,26 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Capabilities_QNAME           = new QName("http://www.opengis.net/cat/csw", "Capabilities");
-    private final static QName _GetRecordById_QNAME          = new QName("http://www.opengis.net/cat/csw", "GetRecordById");
-    private final static QName _AbstractRecord_QNAME         = new QName("http://www.opengis.net/cat/csw", "AbstractRecord");
-    private final static QName _GetDomainResponse_QNAME      = new QName("http://www.opengis.net/cat/csw", "GetDomainResponse");
-    private final static QName _GetDomain_QNAME              = new QName("http://www.opengis.net/cat/csw", "GetDomain");
-    private final static QName _DescribeRecordResponse_QNAME = new QName("http://www.opengis.net/cat/csw", "DescribeRecordResponse");
-    private final static QName _GetRecordByIdResponse_QNAME  = new QName("http://www.opengis.net/cat/csw", "GetRecordByIdResponse");
-    private final static QName _SummaryRecord_QNAME          = new QName("http://www.opengis.net/cat/csw", "SummaryRecord");
-    private final static QName _Query_QNAME                  = new QName("http://www.opengis.net/cat/csw", "Query");
-    private final static QName _Record_QNAME                 = new QName("http://www.opengis.net/cat/csw", "Record");
-    private final static QName _BriefRecord_QNAME            = new QName("http://www.opengis.net/cat/csw", "BriefRecord");
-    private final static QName _GetCapabilities_QNAME        = new QName("http://www.opengis.net/cat/csw", "GetCapabilities");
-    private final static QName _DCMIRecord_QNAME             = new QName("http://www.opengis.net/cat/csw", "DCMIRecord");
-    private final static QName _ElementSetName_QNAME         = new QName("http://www.opengis.net/cat/csw", "ElementSetName");
-    private final static QName _Constraint_QNAME             = new QName("http://www.opengis.net/cat/csw", "Constraint");
-    private final static QName _DescribeRecord_QNAME         = new QName("http://www.opengis.net/cat/csw", "DescribeRecord");
-    private final static QName _GetRecords_QNAME             = new QName("http://www.opengis.net/cat/csw", "GetRecords");
-    private final static QName _Acknowledgement_QNAME        = new QName("http://www.opengis.net/cat/csw", "Acknowledgement");
-    private final static QName _AbstractQuery_QNAME          = new QName("http://www.opengis.net/cat/csw", "AbstractQuery");
-    private final static QName _GetRecordsResponse_QNAME     = new QName("http://www.opengis.net/cat/csw", "GetRecordsResponse");
+    private static final QName _Capabilities_QNAME           = new QName("http://www.opengis.net/cat/csw", "Capabilities");
+    private static final QName _GetRecordById_QNAME          = new QName("http://www.opengis.net/cat/csw", "GetRecordById");
+    private static final QName _AbstractRecord_QNAME         = new QName("http://www.opengis.net/cat/csw", "AbstractRecord");
+    private static final QName _GetDomainResponse_QNAME      = new QName("http://www.opengis.net/cat/csw", "GetDomainResponse");
+    private static final QName _GetDomain_QNAME              = new QName("http://www.opengis.net/cat/csw", "GetDomain");
+    private static final QName _DescribeRecordResponse_QNAME = new QName("http://www.opengis.net/cat/csw", "DescribeRecordResponse");
+    private static final QName _GetRecordByIdResponse_QNAME  = new QName("http://www.opengis.net/cat/csw", "GetRecordByIdResponse");
+    private static final QName _SummaryRecord_QNAME          = new QName("http://www.opengis.net/cat/csw", "SummaryRecord");
+    private static final QName _Query_QNAME                  = new QName("http://www.opengis.net/cat/csw", "Query");
+    private static final QName _Record_QNAME                 = new QName("http://www.opengis.net/cat/csw", "Record");
+    private static final QName _BriefRecord_QNAME            = new QName("http://www.opengis.net/cat/csw", "BriefRecord");
+    private static final QName _GetCapabilities_QNAME        = new QName("http://www.opengis.net/cat/csw", "GetCapabilities");
+    private static final QName _DCMIRecord_QNAME             = new QName("http://www.opengis.net/cat/csw", "DCMIRecord");
+    private static final QName _ElementSetName_QNAME         = new QName("http://www.opengis.net/cat/csw", "ElementSetName");
+    private static final QName _Constraint_QNAME             = new QName("http://www.opengis.net/cat/csw", "Constraint");
+    private static final QName _DescribeRecord_QNAME         = new QName("http://www.opengis.net/cat/csw", "DescribeRecord");
+    private static final QName _GetRecords_QNAME             = new QName("http://www.opengis.net/cat/csw", "GetRecords");
+    private static final QName _Acknowledgement_QNAME        = new QName("http://www.opengis.net/cat/csw", "Acknowledgement");
+    private static final QName _AbstractQuery_QNAME          = new QName("http://www.opengis.net/cat/csw", "AbstractQuery");
+    private static final QName _GetRecordsResponse_QNAME     = new QName("http://www.opengis.net/cat/csw", "GetRecordsResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.constellation.cat.csw.v200

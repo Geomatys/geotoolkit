@@ -39,8 +39,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _CityFurniture_QNAME = new QName("http://www.opengis.net/citygml/cityfurniture/1.0", "CityFurniture");
-    private final static QName _GenericApplicationPropertyOfCityFurniture_QNAME = new QName("http://www.opengis.net/citygml/cityfurniture/1.0", "_GenericApplicationPropertyOfCityFurniture");
+    private static final QName _CityFurniture_QNAME = new QName("http://www.opengis.net/citygml/cityfurniture/1.0", "CityFurniture");
+    private static final QName _GenericApplicationPropertyOfCityFurniture_QNAME = new QName("http://www.opengis.net/citygml/cityfurniture/1.0", "_GenericApplicationPropertyOfCityFurniture");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml.cityfurniture._1

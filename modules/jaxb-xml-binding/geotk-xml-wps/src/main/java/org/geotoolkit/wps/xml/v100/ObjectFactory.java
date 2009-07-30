@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Capabilities_QNAME = new QName("http://www.opengis.net/wps/1.0.0", "Capabilities");
+    private static final QName _Capabilities_QNAME = new QName("http://www.opengis.net/wps/1.0.0", "Capabilities");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wps._1_0

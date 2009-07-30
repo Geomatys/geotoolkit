@@ -32,22 +32,22 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-   private final static QName _Status_QNAME            = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Status");
-   private final static QName _Action_QNAME            = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Action");
-   private final static QName _Decision_QNAME          = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Decision");
-   private final static QName _Environment_QNAME       = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Environment");
-   private final static QName _Subject_QNAME           = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Subject");
-   private final static QName _StatusDetail_QNAME      = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "StatusDetail");
-   private final static QName _MissingAttrDetail_QNAME = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "MissingAttributeDetail");
-   private final static QName _Response_QNAME          = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Response");
-   private final static QName _ResourceContent_QNAME   = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "ResourceContent");
-   private final static QName _Resource_QNAME          = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Resource");
-   private final static QName _Request_QNAME           = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Request");
-   private final static QName _Attribute_QNAME         = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Attribute");
-   private final static QName _Result_QNAME            = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Result");
-   private final static QName _AttributeValue_QNAME    = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "AttributeValue");
-   private final static QName _StatusCode_QNAME        = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "StatusCode");
-   private final static QName _StatusMessage_QNAME     = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "StatusMessage");
+   private static final QName _Status_QNAME            = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Status");
+   private static final QName _Action_QNAME            = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Action");
+   private static final QName _Decision_QNAME          = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Decision");
+   private static final QName _Environment_QNAME       = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Environment");
+   private static final QName _Subject_QNAME           = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Subject");
+   private static final QName _StatusDetail_QNAME      = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "StatusDetail");
+   private static final QName _MissingAttrDetail_QNAME = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "MissingAttributeDetail");
+   private static final QName _Response_QNAME          = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Response");
+   private static final QName _ResourceContent_QNAME   = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "ResourceContent");
+   private static final QName _Resource_QNAME          = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Resource");
+   private static final QName _Request_QNAME           = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Request");
+   private static final QName _Attribute_QNAME         = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Attribute");
+   private static final QName _Result_QNAME            = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "Result");
+   private static final QName _AttributeValue_QNAME    = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "AttributeValue");
+   private static final QName _StatusCode_QNAME        = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "StatusCode");
+   private static final QName _StatusMessage_QNAME     = new QName("urn:oasis:names:tc:xacml:2.0:context:schema:os", "StatusMessage");
 
    /**
     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: 

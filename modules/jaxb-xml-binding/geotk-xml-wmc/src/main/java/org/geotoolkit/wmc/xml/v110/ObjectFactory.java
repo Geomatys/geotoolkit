@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _ViewContext_QNAME = new QName("http://www.opengis.net/context", "ViewContext");
+    private static final QName _ViewContext_QNAME = new QName("http://www.opengis.net/context", "ViewContext");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.context

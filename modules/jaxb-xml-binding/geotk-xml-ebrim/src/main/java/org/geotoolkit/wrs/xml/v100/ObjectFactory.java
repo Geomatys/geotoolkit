@@ -40,11 +40,11 @@ import org.geotoolkit.csw.xml.v202.Capabilities;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _RecordId_QNAME        = new QName("http://www.opengis.net/cat/wrs/1.0", "RecordId");
-    private final static QName _Capabilities_QNAME    = new QName("http://www.opengis.net/cat/wrs/1.0", "Capabilities");
-    private final static QName _ExtrinsicObject_QNAME = new QName("http://www.opengis.net/cat/wrs/1.0", "ExtrinsicObject");
-    private final static QName _AnyValue_QNAME        = new QName("http://www.opengis.net/cat/wrs/1.0", "AnyValue");
-    private final static QName _ValueList_QNAME       = new QName("http://www.opengis.net/cat/wrs/1.0", "ValueList");
+    private static final QName _RecordId_QNAME        = new QName("http://www.opengis.net/cat/wrs/1.0", "RecordId");
+    private static final QName _Capabilities_QNAME    = new QName("http://www.opengis.net/cat/wrs/1.0", "Capabilities");
+    private static final QName _ExtrinsicObject_QNAME = new QName("http://www.opengis.net/cat/wrs/1.0", "ExtrinsicObject");
+    private static final QName _AnyValue_QNAME        = new QName("http://www.opengis.net/cat/wrs/1.0", "AnyValue");
+    private static final QName _ValueList_QNAME       = new QName("http://www.opengis.net/cat/wrs/1.0", "ValueList");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.cat.wrs._1

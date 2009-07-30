@@ -93,7 +93,7 @@ public final class CRS2GeoTiffMetadataAdapter {
     /**
      * The pool of cached objects.
      */
-    private final static Map pool = new Cache(DEFAULT_MAX,1,false);
+    private static final Map pool = new Cache(DEFAULT_MAX,1,false);
     /**
      * The {@link CoordinateReferenceSystem} to be get the metadata from:
      */
