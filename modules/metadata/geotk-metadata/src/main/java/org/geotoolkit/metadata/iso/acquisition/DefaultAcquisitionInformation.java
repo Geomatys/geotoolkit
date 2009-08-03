@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.opengis.metadata.acquisition.Instrument;
@@ -36,15 +35,17 @@ import org.opengis.metadata.acquisition.Plan;
 import org.opengis.metadata.acquisition.Platform;
 import org.opengis.metadata.acquisition.Requirement;
 
+import org.geotoolkit.metadata.iso.MetadataEntity;
+
 
 /**
  * Designations for the measuring instruments, the platform carrying them, and the mission to
  * which the data contributes.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder = {

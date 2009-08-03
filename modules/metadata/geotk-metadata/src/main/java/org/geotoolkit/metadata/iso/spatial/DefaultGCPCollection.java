@@ -35,9 +35,9 @@ import org.opengis.util.InternationalString;
  * Information about a control point collection.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={

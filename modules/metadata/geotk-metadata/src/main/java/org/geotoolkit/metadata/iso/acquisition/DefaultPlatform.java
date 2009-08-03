@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.acquisition.Platform;
@@ -34,14 +33,16 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.metadata.iso.MetadataEntity;
+
 
 /**
  * Designation of the platform used to acquire the dataset.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={

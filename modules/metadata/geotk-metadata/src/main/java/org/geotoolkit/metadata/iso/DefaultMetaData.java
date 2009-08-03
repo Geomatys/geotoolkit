@@ -56,7 +56,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -214,7 +214,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
     /**
      * Provides information about the acquisition of the data.
      */
-    private Collection< AcquisitionInformation> acquisitionInformation;
+    private Collection<AcquisitionInformation> acquisitionInformation;
 
     /**
      * Creates an initially empty metadata.
@@ -446,7 +446,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
     @XmlElement(name = "spatialRepresentationInfo")
     public synchronized Collection<SpatialRepresentation> getSpatialRepresentationInfo() {
         return xmlOptional(spatialRepresentationInfo = nonNullCollection(spatialRepresentationInfo,
-                                                             SpatialRepresentation.class));
+                SpatialRepresentation.class));
     }
 
     /**
@@ -458,7 +458,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
             final Collection<? extends SpatialRepresentation> newValues)
     {
         spatialRepresentationInfo = copyCollection(newValues, spatialRepresentationInfo,
-                                                   SpatialRepresentation.class);
+                SpatialRepresentation.class);
     }
 
     /**
@@ -500,7 +500,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
             final Collection<? extends MetadataExtensionInformation> newValues)
     {
         metadataExtensionInfo = copyCollection(newValues, metadataExtensionInfo,
-                                               MetadataExtensionInformation.class);
+                MetadataExtensionInformation.class);
     }
 
     /**
@@ -600,7 +600,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
             final Collection<? extends PortrayalCatalogueReference> newValues)
     {
         portrayalCatalogueInfo = copyCollection(newValues, portrayalCatalogueInfo,
-                                                PortrayalCatalogueReference.class);
+                PortrayalCatalogueReference.class);
     }
 
     /**
@@ -630,7 +630,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
     @XmlElement(name = "applicationSchemaInfo")
     public synchronized Collection<ApplicationSchemaInformation> getApplicationSchemaInfo() {
         return xmlOptional(applicationSchemaInfo = nonNullCollection(applicationSchemaInfo,
-                                                         ApplicationSchemaInformation.class));
+                ApplicationSchemaInformation.class));
     }
 
     /**
@@ -642,7 +642,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
             final Collection<? extends ApplicationSchemaInformation> newValues)
     {
         applicationSchemaInfo = copyCollection(newValues, applicationSchemaInfo,
-                                               ApplicationSchemaInformation.class);
+                ApplicationSchemaInformation.class);
     }
 
     /**
@@ -712,24 +712,28 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
 
     /**
      * Provides information about the acquisition of the data.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "acquisitionInformation")
     public synchronized Collection<AcquisitionInformation> getAcquisitionInformation() {
         return xmlOptional(acquisitionInformation = nonNullCollection(acquisitionInformation,
-                                                              AcquisitionInformation.class));
+                AcquisitionInformation.class));
     }
 
     /**
      * Sets information about the acquisition of the data.
      *
      * @param newValues The new acquisition information.
+     *
+     * @since 3.03
      */
     public synchronized void setAcquisitionInformation(
             final Collection<? extends AcquisitionInformation> newValues)
     {
         acquisitionInformation = copyCollection(newValues, acquisitionInformation,
-                                               AcquisitionInformation.class);
+                AcquisitionInformation.class);
     }
 
     /**

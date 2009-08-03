@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.acquisition.GeometryType;
 import org.opengis.metadata.acquisition.Operation;
 import org.opengis.metadata.acquisition.Plan;
@@ -34,14 +33,16 @@ import org.opengis.metadata.acquisition.Requirement;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Progress;
 
+import org.geotoolkit.metadata.iso.MetadataEntity;
+
 
 /**
  * Designations for the planning information related to meeting the data acquisition requirements.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={
@@ -168,6 +169,8 @@ public class DefaultPlan extends MetadataEntity implements Plan {
 
     /**
      * Sets the identification of the activity or activities that satisfy a plan.
+     *
+     * @param newValues The new identifications of the activity.
      */
     public synchronized void setOperations(final Collection<? extends Operation> newValues) {
         operations = copyCollection(newValues, operations, Operation.class);

@@ -29,9 +29,9 @@ import org.opengis.metadata.quality.Usability;
  * Degree of adherence of a dataset to a specific set of user requirements.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlRootElement(name = "QE_Usability")

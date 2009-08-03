@@ -31,9 +31,9 @@ import org.opengis.metadata.lineage.NominalResolution;
  * Distance between consistent parts of (centre, left side, right side) adjacent pixels.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={

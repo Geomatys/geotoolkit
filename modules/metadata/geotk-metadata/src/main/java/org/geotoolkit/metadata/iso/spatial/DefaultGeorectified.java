@@ -45,7 +45,7 @@ import org.opengis.util.InternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -309,6 +309,8 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
 
     /**
      * Returns the geographic references used to validate georectification of the data.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "checkPoint")
@@ -320,6 +322,8 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      * Sets the geographic references used to validate georectification of the data.
      *
      * @param newValues The new check points values.
+     *
+     * @since 3.03
      */
     public synchronized void setCheckPoints(final Collection<? extends GCP> newValues) {
         checkPoints = copyCollection(newValues, checkPoints, GCP.class);

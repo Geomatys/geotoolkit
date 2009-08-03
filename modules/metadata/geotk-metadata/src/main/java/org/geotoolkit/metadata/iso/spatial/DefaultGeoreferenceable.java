@@ -44,7 +44,7 @@ import org.opengis.metadata.spatial.Georeferenceable;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -237,24 +237,30 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
 
     /**
      * Returns the information that can be used to geolocate the data.
+     *
+     * @since 3.03
+     *
+     * @todo This attribute is declared as mandatory in ISO 19115-2. However metadata compliant
+     *       with ISO 19115 (without the -2 part) do not contains this attribute. How should we
+     *       handle the XML formatting for this one?
      */
     @Override
     @XmlElement(name = "geolocationInformation")
     public synchronized Collection<GeolocationInformation> getGeolocationInformation() {
-        return geolocationInformation = nonNullCollection(geolocationInformation,
-                                                          GeolocationInformation.class);
+        return geolocationInformation = nonNullCollection(geolocationInformation, GeolocationInformation.class);
     }
 
     /**
      * Sets the information that can be used to geolocate the data.
      *
      * @param newValues The new geolocation information values.
+     *
+     * @since 3.03
      */
     public synchronized void setGeolocationInformation(
             final Collection<? extends GeolocationInformation> newValues)
     {
-        geolocationInformation = copyCollection(newValues, geolocationInformation,
-                                                GeolocationInformation.class);
+        geolocationInformation = copyCollection(newValues, geolocationInformation, GeolocationInformation.class);
     }
 
     /**

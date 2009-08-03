@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.acquisition.Plan;
 import org.opengis.metadata.acquisition.Priority;
@@ -36,14 +35,16 @@ import org.opengis.metadata.acquisition.Requirement;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
+import org.geotoolkit.metadata.iso.MetadataEntity;
+
 
 /**
  * Requirement to be satisfied by the planned data acquisition.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={

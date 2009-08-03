@@ -26,19 +26,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.spatial.GCP;
+
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
  * Information on ground control point.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={

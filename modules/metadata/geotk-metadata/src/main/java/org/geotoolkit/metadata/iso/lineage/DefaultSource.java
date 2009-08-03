@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -250,6 +250,8 @@ public class DefaultSource extends MetadataEntity implements Source {
 
     /**
      * Returns the processing level of the source data. {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "processedLevel")
@@ -261,6 +263,8 @@ public class DefaultSource extends MetadataEntity implements Source {
      * Sets the processing level of the source data.
      *
      * @param newValue The new processed level value.
+     *
+     * @since 3.03
      */
     public synchronized void setProcessedLevel(final Identifier newValue) {
         checkWritePermission();
@@ -270,6 +274,8 @@ public class DefaultSource extends MetadataEntity implements Source {
     /**
      * Returns the distance between consistent parts (centre, left side, right side) of
      * two adjacent pixels. {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "resolution")
@@ -282,6 +288,8 @@ public class DefaultSource extends MetadataEntity implements Source {
      * two adjacent pixels.
      *
      * @param newValue The new nominal resolution value.
+     *
+     * @since 3.03
      */
     public synchronized void setResolution(final NominalResolution newValue) {
         checkWritePermission();

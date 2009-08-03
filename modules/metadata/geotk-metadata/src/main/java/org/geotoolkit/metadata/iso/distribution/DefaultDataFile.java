@@ -34,9 +34,9 @@ import org.opengis.util.LocalName;
  * Description of a transfer data file.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={
@@ -109,7 +109,7 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
     /**
      * Sets the format of the transfer data file.
      *
-     * @param fileFormat The new file format value.
+     * @param newValue The new file format value.
      */
     public synchronized void setFileFormat(final Format newValue) {
         checkWritePermission();

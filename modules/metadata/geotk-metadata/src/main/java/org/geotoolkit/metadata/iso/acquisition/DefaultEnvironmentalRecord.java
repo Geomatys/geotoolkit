@@ -24,18 +24,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
  * Information about the environmental conditions during the acquisition.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={

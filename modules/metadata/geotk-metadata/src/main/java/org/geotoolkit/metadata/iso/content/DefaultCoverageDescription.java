@@ -40,7 +40,7 @@ import org.opengis.util.RecordType;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -159,6 +159,8 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      * Provides the description of the specific range elements of a coverage.
      *
      * @return Description of the specific range elements of a coverage.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "rangeElementDescription")
@@ -171,12 +173,14 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      * Sets the description of the specific range elements of a coverage.
      *
      * @param newValues The new range element description.
+     *
+     * @since 3.03
      */
     public synchronized void setRangeElementDescriptions(
             final Collection<? extends RangeElementDescription> newValues)
     {
         rangeElementDescriptions = copyCollection(newValues, rangeElementDescriptions,
-                                                  RangeElementDescription.class);
+                RangeElementDescription.class);
     }
 
     /**

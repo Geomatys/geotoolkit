@@ -36,7 +36,7 @@ import org.opengis.metadata.spatial.SpatialRepresentationType;
  * Result of a data quality measure organising the measured values as a coverage.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module

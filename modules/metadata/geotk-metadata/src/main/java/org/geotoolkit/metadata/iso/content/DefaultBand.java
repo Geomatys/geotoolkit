@@ -25,6 +25,7 @@ import javax.measure.quantity.Length;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.BandDefinition;
 import org.opengis.metadata.content.PolarizationOrientation;
@@ -37,7 +38,7 @@ import org.opengis.metadata.content.TransferFunctionType;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -326,6 +327,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
     /**
      * Returns the designation of criterion for defining maximum and minimum wavelengths
      * for a spectral band. Returns {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "bandBoundaryDefinition")
@@ -338,6 +341,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * for a spectral band.
      *
      * @param newValue The new band definition.
+     *
+     * @since 3.03
      */
     public synchronized void setBandBoundaryDefinition(final BandDefinition newValue) {
         checkWritePermission();
@@ -347,6 +352,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
     /**
      * Returns the smallest distance between which separate points can be distinguished,
      * as specified in instrument design. Returns {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "nominalSpatialResolution")
@@ -359,6 +366,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * as specified in instrument design.
      *
      * @param newValue The new nominal spatial resolution.
+     *
+     * @since 3.03
      */
     public synchronized void setNominalSpatialResolution(final Double newValue) {
         checkWritePermission();
@@ -368,6 +377,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
     /**
      * Returns type of transfer function to be used when scaling a physical value for a
      * given element. Returns {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "transferFunctionType")
@@ -380,6 +391,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * given element.
      *
      * @param newValue The new transfer function value.
+     *
+     * @since 3.03
      */
     public synchronized void setTransferFunctionType(final TransferFunctionType newValue) {
         checkWritePermission();
@@ -388,6 +401,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
 
     /**
      * Polarization of the radiation transmitted. Returns {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "transmittedPolarization")
@@ -399,6 +414,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * Sets the polarization of the radiation transmitted.
      *
      * @param newValue The new transmitted polarization.
+     *
+     * @since 3.03
      */
     public synchronized void setTransmittedPolarization(final PolarizationOrientation newValue) {
         checkWritePermission();
@@ -407,6 +424,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
 
     /**
      * Polarization of the radiation detected. Returns {@code null} if unspecified.
+     *
+     * @since 3.03
      */
     @Override
     @XmlElement(name = "detectedPolarization")
@@ -418,6 +437,8 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * Sets the polarization of the radiation detected.
      *
      * @param newValue The new detected polarization.
+     *
+     * @since 3.03
      */
     public synchronized void setDetectedPolarization(final PolarizationOrientation newValue) {
         checkWritePermission();

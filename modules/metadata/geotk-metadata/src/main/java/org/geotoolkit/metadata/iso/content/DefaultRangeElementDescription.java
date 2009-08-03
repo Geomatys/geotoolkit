@@ -36,9 +36,9 @@ import org.opengis.util.Record;
  * Description of specific range elements.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
- * @since 3.02
+ * @since 3.03
  * @module
  */
 @XmlType(propOrder={
