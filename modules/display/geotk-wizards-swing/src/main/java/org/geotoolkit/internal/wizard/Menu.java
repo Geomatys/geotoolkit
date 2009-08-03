@@ -31,18 +31,18 @@ import org.netbeans.api.wizard.WizardDisplayer;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.setup.ControlPanel;
+import org.geotoolkit.resources.Wizards;
 
 
 /**
  * The main menu, which propose to setup or start a wizard.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @author Cédric Briançon (Geomatys)
+ * @version 3.03
  *
  * @since 3.01
  * @module
- *
- * @todo Needs localization.
  */
 @SuppressWarnings("serial")
 final class Menu extends JFrame implements ActionListener {
@@ -56,19 +56,16 @@ final class Menu extends JFrame implements ActionListener {
      */
     private Menu() {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setTitle("Geotoolkit.org wizards");
         setLayout(new GridBagLayout());
+        final Wizards resources = Wizards.getResources(getLocale());
+        setTitle(resources.getString(Wizards.Keys.GEOTK_WIZARDS));
         final GridBagConstraints c = new GridBagConstraints();
         c.gridy=0;
-        addButton(MOSAIC, "Mosaic generator",
-                "Read a potentially big image (which may be splitted in many tiles " +
-                "at the same resolution) and write a set of smaller tiles of given " +
-                "size and using different subsamplings.", c);
+        addButton(MOSAIC, resources.getString(Wizards.Keys.MOSAIC_TITLE),
+                  resources.getString(Wizards.Keys.MOSAIC_DESC), c);
         c.gridy++;
-        addButton(SETUP,  "Geotoolkit Setup",
-                "Select directories and install the NADCON and EPSG data. " +
-                "This setup is optional. If executed, the setting will be " +
-                "remembered for all subsequent Geotoolkit.org usage.", c);
+        addButton(SETUP,  resources.getString(Wizards.Keys.SETUP_TITLE),
+                  resources.getString(Wizards.Keys.SETUP_DESC), c);
         setSize(740, 200);
         setLocationRelativeTo(null);
     }

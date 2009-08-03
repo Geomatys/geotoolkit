@@ -37,13 +37,14 @@ import org.geotoolkit.gui.swing.image.MultiColorChooser;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
+import org.geotoolkit.resources.Wizards;
 
 
 /**
  * The object that create a mosaic once {@link MosaicWizard} finished to collect all information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -67,7 +68,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
     @SuppressWarnings("rawtypes")
     public void start(final Map settings, final ResultProgressHandle progress) {
         this.progress = progress;
-        progress.setBusy("Creating the mosaic");
+        progress.setBusy(Wizards.format(Wizards.Keys.CREATING_MOSAIC));
         final TileManager tiles;
         try {
             final TileManager[] inputs  = ((MosaicChooser)       settings.get(MosaicWizard.SELECT)).getSelectedTiles();
@@ -108,7 +109,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
      */
     @Override
     public void imageStarted(ImageWriter source, int imageIndex) {
-        progress.setProgress("Writing the mosaic", 0, 100);
+        progress.setProgress(Wizards.format(Wizards.Keys.CREATING_MOSAIC), 0, 100);
     }
 
     /**

@@ -52,11 +52,23 @@
 
   <!-- =========================================================== -->
   <!--     Dependencies                                            -->
+  <!--     The Widgets and Wizards dependencies are additional     -->
+  <!--     modules for which this plugin compiles resources.       -->
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-widgets-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-wizards-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

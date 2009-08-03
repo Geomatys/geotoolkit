@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * can also be invoked directly from the command line (without Maven).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  *
@@ -61,7 +61,7 @@ public class ResourceCompilerMojo extends AbstractMojo {
      * @throws MojoExecutionException if the plugin execution failed.
      */
     @Override
-    @SuppressWarnings("unchecked") // Generic array creation.
+    @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
     public void execute() throws MojoExecutionException {
         final String[] arguments;
         if (renumber) {
@@ -94,6 +94,14 @@ public class ResourceCompilerMojo extends AbstractMojo {
                     org.geotoolkit.resources.Vocabulary  .class,
                     org.geotoolkit.resources.Loggings    .class,
                     org.geotoolkit.resources.Errors      .class
+                };
+            } else if (module.equals("geotk-widgets-swing")) {
+                resourcesToProcess = new Class[] {
+                    org.geotoolkit.resources.Widgets.class
+                };
+            } else if (module.equals("geotk-wizards-swing")) {
+                resourcesToProcess = new Class[] {
+                    org.geotoolkit.resources.Wizards.class
                 };
             } else {
                 continue;

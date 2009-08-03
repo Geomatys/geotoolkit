@@ -52,7 +52,7 @@ public class IndexedResourceCompiler extends CommandLine implements FilenameFilt
      */
     public static void main(final String[] arguments) {
         final File sourceDirectory = new File("modules/utility/geotk-utility/src/main");
-        @SuppressWarnings("unchecked") // Generic array creation.
+        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         final Class<? extends IndexedResourceBundle>[] resourcesToProcess = new Class[] {
             org.geotoolkit.resources.Descriptions.class,
             org.geotoolkit.resources.Vocabulary  .class,
@@ -585,8 +585,8 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
      */
     @Override
     public final int compare(Object o1, Object o2) {
-        if (o1 instanceof Map.Entry) o1 = ((Map.Entry<?,?>) o1).getValue();
-        if (o2 instanceof Map.Entry) o2 = ((Map.Entry<?,?>) o2).getValue();
+        if (o1 instanceof Map.Entry<?,?>) o1 = ((Map.Entry<?,?>) o1).getValue();
+        if (o2 instanceof Map.Entry<?,?>) o2 = ((Map.Entry<?,?>) o2).getValue();
         final String key1 = (String) o1;
         final String key2 = (String) o2;
         return key1.compareTo(key2);

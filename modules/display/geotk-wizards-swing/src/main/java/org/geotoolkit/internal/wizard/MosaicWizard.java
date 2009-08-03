@@ -36,18 +36,18 @@ import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
+import org.geotoolkit.resources.Wizards;
 
 
 /**
  * Guides the user through the steps of creating a set of {@linkplain Tile tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @author Cédric Briançon (Geomatys)
+ * @version 3.03
  *
  * @since 3.00
  * @module
- *
- * @todo Needs localization.
  */
 public final class MosaicWizard extends AbstractWizard {
     /**
@@ -94,16 +94,16 @@ public final class MosaicWizard extends AbstractWizard {
      * Creates a new wizard.
      */
     public MosaicWizard() {
-        super("Geotoolkit Pyramid Builder", new String[] {
+        super(Wizards.format(Wizards.Keys.MOSAIC_TITLE), new String[] {
             SELECT,
             LAYOUT,
             COLORS,
             CONFIRM
         }, new String[] {
-            "Select source tiles",
-            "Define pyramid tiling",
-            "Remove opaque border",
-            "Confirm"
+            Wizards.format(Wizards.Keys.SELECT_SOURCE_TILES),
+            Wizards.format(Wizards.Keys.DEFINE_PYRAMID_TILING),
+            Wizards.format(Wizards.Keys.REMOVE_OPAQUE_BORDER),
+            Wizards.format(Wizards.Keys.CONFIRM)
         });
     }
 
@@ -134,9 +134,9 @@ public final class MosaicWizard extends AbstractWizard {
                     final TileManager[] tiles = getSelectedTiles();
                     final String problem;
                     switch (tiles.length) {
-                        case 0:  problem = "At least one tile must be selected."; break;
+                        case 0:  problem = Wizards.format(Wizards.Keys.NO_SELECTED_TILES); break;
                         case 1:  problem = null; break; // We can process
-                        default: problem = "The selected tiles can not make a single mosaic."; break;
+                        default: problem = Wizards.format(Wizards.Keys.INVALID_MOSAIC_LAYOUT); break;
                     }
                     controller.setProblem(problem);
                 }
@@ -158,7 +158,7 @@ public final class MosaicWizard extends AbstractWizard {
 
                 /** Invoked when the values in the form changed. */
                 @Override protected void plotEfficiency(final long delay) {
-                    controller.setProblem("Calculation in progress...");
+                    controller.setProblem(Wizards.format(Wizards.Keys.CALCULATION_PROGESSING));
                     super.plotEfficiency(delay);
                 }
 
@@ -198,8 +198,7 @@ public final class MosaicWizard extends AbstractWizard {
             logging.setColumnVisible(LoggingPanel.Column.METHOD, false);
             logging.setColumnVisible(LoggingPanel.Column.LEVEL,  false);
             logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
-            final JXLabel label = new JXLabel("The wizard has now enough informations for " +
-                    "creating the mosaic. Press \"Finish\" to confirm.");
+            final JXLabel label = new JXLabel(Wizards.format(Wizards.Keys.ENOUGH_INFORMATION));
             label.setLineWrap(true);
             final JPanel panel = new JPanel(new BorderLayout());
             panel.add(logging, BorderLayout.CENTER);

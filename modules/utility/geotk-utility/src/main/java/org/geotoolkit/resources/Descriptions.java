@@ -82,7 +82,7 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * Inserted {0} rows in {1} seconds.
          */
-        public static final int INSERTED_ROWS_$2 = 9;
+        public static final int INSERTED_ROWS_$2 = 6;
 
         /**
          * Count:       {0}
@@ -92,7 +92,7 @@ public final class Descriptions extends IndexedResourceBundle {
          * RMS: {4}
          * Standard deviation:  {5}
          */
-        public static final int STATISTICS_TO_STRING_$6 = 6;
+        public static final int STATISTICS_TO_STRING_$6 = 7;
 
         /**
          * Use {0,choice,0#the embedded|1#a specific} database.
@@ -102,7 +102,7 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * Use "help" to show available commands.
          */
-        public static final int USE_HELP_COMMAND = 7;
+        public static final int USE_HELP_COMMAND = 9;
     }
 
     /**

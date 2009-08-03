@@ -249,7 +249,7 @@ public class ProgressMailer implements ProgressListener {
      */
     @Override
     public synchronized void started() {
-        send("started", 0);
+        send(Vocabulary.format(Vocabulary.Keys.STARTED), 0);
     }
 
     /**
@@ -263,7 +263,7 @@ public class ProgressMailer implements ProgressListener {
             nextTime = time + timeInterval;
             if (percent <  1f) percent =  1f;
             if (percent > 99f) percent = 99f;
-            send("progress", percent);
+            send(Vocabulary.format(Vocabulary.Keys.PROGRESSION), percent);
         }
     }
 
@@ -341,7 +341,7 @@ public class ProgressMailer implements ProgressListener {
      */
     @Override
     public synchronized void complete() {
-        send("complete", 100);
+        send(Vocabulary.format(Vocabulary.Keys.COMPLETED), 100);
     }
 
     /**
