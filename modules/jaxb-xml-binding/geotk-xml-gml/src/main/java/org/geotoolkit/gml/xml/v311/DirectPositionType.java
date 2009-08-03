@@ -360,6 +360,8 @@ public class DirectPositionType implements DirectPosition {
         StringBuilder s = new StringBuilder("[DirectPositionType]:");
         if (srsName != null) {
             s.append("srsName = ").append(srsName).append('\n');
+        }
+        if (srsDimension != null) {
             s.append(" srsDimension = ").append(srsDimension).append('\n');
         }
         if (value != null) {
