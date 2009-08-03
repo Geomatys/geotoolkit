@@ -121,7 +121,7 @@ public class ObservationCollectionEntry extends AbstractFeatureEntry implements 
         s.append("super:").append(super.toString());
         int i = 1;
         for (ObservationPropertyType obs:member) {
-            s.append("observation n" + i + ":").append('\n').append(obs.getObservation().toString());
+            s.append("observation n" + i + ":").append('\n').append(obs.getObservation());
             i++;
         }
         return s.toString();

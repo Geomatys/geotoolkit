@@ -117,7 +117,6 @@ public class PhenomenonEntry extends DefinitionType implements Phenomenon {
      */
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder(super.toString());
-        return s.toString();
+        return super.toString();
     }
 }

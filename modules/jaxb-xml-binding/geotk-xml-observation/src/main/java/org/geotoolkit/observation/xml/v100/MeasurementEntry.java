@@ -18,10 +18,11 @@ package org.geotoolkit.observation.xml.v100;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
 import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
@@ -106,6 +107,34 @@ public class MeasurementEntry extends ObservationEntry implements Measurement {
     }
 
 
+    /**
+     * Construit un nouveau template temporaire d'observation a partir d'un template fournit en argument.
+     * On y rajoute un samplingTime et un id temporaire.
+     */
+    @Override
+    public MeasurementEntry getTemporaryTemplate(String temporaryName, AbstractTimeGeometricPrimitiveType time) {
+        if (time == null) {
+            TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
+            time = new TimePeriodType(begin);
+        }
+        PhenomenonEntry pheno = null;
+        if (getObservedProperty() != null) {
+            pheno = (PhenomenonEntry) getObservedProperty();
+        }
+        SamplingFeatureEntry foi = null;
+        if (getFeatureOfInterest() != null) {
+            foi = (SamplingFeatureEntry) getFeatureOfInterest();
+        }
+        
+        return new MeasurementEntry(temporaryName,
+                                    getDefinition(),
+                                    foi,
+                                    pheno,
+                                    (ProcessEntry)getProcedure(),
+                                    (MeasureEntry) getResult(),
+                                    time);
+
+    }
 
     /**
      * Vérifie si cette entré est identique à l'objet spécifié.
