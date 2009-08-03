@@ -116,10 +116,10 @@ public class BinarySpatialTest {
     public void testBeyond() {
         //we can not test units while using jts geometries
 
-        Beyond beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "foot");
+        Beyond beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
         assertFalse(beyond.evaluate(FEATURE_1));
 
-        beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "foot");
+        beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
         assertTrue(beyond.evaluate(FEATURE_1));
     }
 
@@ -152,11 +152,11 @@ public class BinarySpatialTest {
     public void testDWithin() {
         //we can not test units while using jts geometries
 
-        DWithin beyond = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "foot");
-        assertTrue(beyond.evaluate(FEATURE_1));
+        DWithin within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
+        assertTrue(within.evaluate(FEATURE_1));
 
-        beyond = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "foot");
-        assertFalse(beyond.evaluate(FEATURE_1));
+        within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
+        assertFalse(within.evaluate(FEATURE_1));
     }
 
     @Test

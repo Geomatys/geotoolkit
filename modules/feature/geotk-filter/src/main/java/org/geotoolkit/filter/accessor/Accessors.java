@@ -35,7 +35,7 @@ public class Accessors {
         final FactoryRegistry fr = new FactoryRegistry(PropertyAccessorFactory.class);
         final Iterator<PropertyAccessorFactory> factories = fr.getServiceProviders(PropertyAccessorFactory.class, null, null);
 
-        List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
+        final List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
         while(factories.hasNext()){
             lst.add(factories.next());
         }
@@ -54,8 +54,8 @@ public class Accessors {
      * @return PropertyAccessor or null if none could match the given classes
      */
     public static final PropertyAccessor getAccessor(Class type, String xpath, Class target){
-        for(PropertyAccessorFactory pf : ACCESSOR_FACTORIES){
-            PropertyAccessor pa = pf.createPropertyAccessor(type, xpath, target,null);
+        for(final PropertyAccessorFactory pf : ACCESSOR_FACTORIES){
+            final PropertyAccessor pa = pf.createPropertyAccessor(type, xpath, target,null);
             if(pa != null) return pa;
         }
         return null;

@@ -18,9 +18,16 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.Unit;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Beyond;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Immutable "beyond" filter.
@@ -30,12 +37,14 @@ import org.opengis.filter.spatial.Beyond;
 public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expression> implements Beyond {
 
     private final double distance;
-    private final String unit;
+    private final Unit unit;
+    private final String strUnit;
 
     public DefaultBeyond(Expression left, Expression right, double distance, String unit) {
         super(left,right);
         this.distance = distance;
-        this.unit = unit;
+        this.strUnit = unit;
+        this.unit = toUnit(unit);
     }
 
     /**
@@ -51,7 +60,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
      */
     @Override
     public String getDistanceUnits() {
-        return unit.toString();
+        return strUnit.toString();
     }
 
     /**
@@ -66,11 +75,29 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
             return false;
         }
 
-        // TODO we can not handle units with JTS geometries
-        // we need a way to obtain both geometry CRS to be able to make a correct
-        // unit usage
+        try {
+            final Object[] values = toSameCRS(leftGeom, rightGeom, unit);
 
-        return !leftGeom.isWithinDistance(rightGeom, distance);
+            if(values[2] == null){
+                //no matching crs was found, assume both have the same and valid unit
+                return !leftGeom.isWithinDistance(rightGeom, distance);
+            }else{
+                final Geometry leftMatch = (Geometry) values[0];
+                final Geometry rightMatch = (Geometry) values[1];
+                final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) values[2];
+                final UnitConverter converter = unit.getConverterTo(crs.getCoordinateSystem().getAxis(0).getUnit());
+
+                return !leftMatch.isWithinDistance(rightMatch, converter.convert(distance));
+            }
+
+        } catch (FactoryException ex) {
+            Logger.getLogger(DefaultBeyond.class.getName()).log(Level.WARNING, null, ex);
+            return false;
+        } catch (TransformException ex) {
+            Logger.getLogger(DefaultBeyond.class.getName()).log(Level.WARNING, null, ex);
+            return false;
+        }
+
     }
 
     /**
@@ -90,7 +117,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
                 .append(left).append(',')
                 .append(right).append(',')
                 .append(distance).append(',')
-                .append(unit).append('}')
+                .append(strUnit).append('}')
                 .toString();
     }
 
@@ -115,7 +142,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
         if (this.distance != other.distance) {
             return false;
         }
-        if (!this.unit.equals(other.unit)) {
+        if (!this.strUnit.equals(other.strUnit)) {
             return false;
         }
         return true;
@@ -130,7 +157,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
         hash = 71 * hash + this.left.hashCode();
         hash = 71 * hash + this.right.hashCode();
         hash = 71 * hash + (int)this.distance;
-        hash = 71 * hash + this.unit.hashCode();
+        hash = 71 * hash + this.strUnit.hashCode();
         return hash;
     }
 

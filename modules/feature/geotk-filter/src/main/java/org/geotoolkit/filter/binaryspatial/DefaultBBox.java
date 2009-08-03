@@ -23,12 +23,21 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Immutable "BBOX" filter.
@@ -44,11 +53,15 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     //cache the bbox geometry
     private final PreparedGeometry boundingGeometry;
     private final com.vividsolutions.jts.geom.Envelope boundingEnv;
+    private final CoordinateReferenceSystem crs;
+    private final int srid;
 
     public DefaultBBox(PropertyName property, DefaultLiteral<Envelope> bbox) {
         super(property,bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
+        this.crs = bbox.getValue().getCoordinateReferenceSystem();
+        this.srid = SRIDGenerator.toSRID(crs, SRIDGenerator.COMPACT_V1);
     }
 
     /**
@@ -104,17 +117,39 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public boolean evaluate(Object object) {
-        final Geometry candidate = left.evaluate(object, Geometry.class);
+        Geometry candidate = left.evaluate(object, Geometry.class);
 
         if(candidate == null){
             return false;
         }
 
-//        return boundingGeometry.intersects(candidate);
+        final int srid = candidate.getSRID();
+        if(srid != 0 && srid != this.srid){
+            //check that the geometry has the same crs as the boundingbox
+            final CoordinateReferenceSystem crs;
+            try {
+                 crs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.COMPACT_V1));
+
+                 if(!CRS.equalsIgnoreMetadata(crs, this.crs)){
+                    //we must reproject the geometry
+                    MathTransform trs = CRS.findMathTransform(crs, this.crs);
+                    candidate = JTS.transform(candidate, trs);
+                }
+
+            } catch (FactoryException ex) {
+                //should not append if we have a srid
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            } catch (TransformException ex) {
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+            
+        }
 
         final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
 
-		if(boundingEnv.contains(candidateEnv) || candidateEnv.contains(boundingEnv)) {
+        if(boundingEnv.contains(candidateEnv) || candidateEnv.contains(boundingEnv)) {
             return true;
         } else if(boundingEnv.intersects(candidateEnv)) {
             return boundingGeometry.intersects(candidate);

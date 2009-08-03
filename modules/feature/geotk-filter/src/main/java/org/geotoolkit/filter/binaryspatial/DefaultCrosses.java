@@ -20,9 +20,13 @@ package org.geotoolkit.filter.binaryspatial;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Crosses;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Immutable "crosses" filter.
@@ -40,12 +44,25 @@ public class DefaultCrosses extends AbstractBinarySpatialOperator<Expression,Exp
      */
     @Override
     public boolean evaluate(Object object) {
-        final Geometry leftGeom = left.evaluate(object, Geometry.class);
-        final Geometry rightGeom = right.evaluate(object, Geometry.class);
+        Geometry leftGeom = left.evaluate(object, Geometry.class);
+        Geometry rightGeom = right.evaluate(object, Geometry.class);
 
         if(leftGeom == null || rightGeom == null){
             return false;
         }
+
+        final Geometry[] values;
+        try {
+            values = toSameCRS(leftGeom, rightGeom);
+        } catch (FactoryException ex) {
+            Logger.getLogger(DefaultContains.class.getName()).log(Level.WARNING, null, ex);
+            return false;
+        } catch (TransformException ex) {
+            Logger.getLogger(DefaultContains.class.getName()).log(Level.WARNING, null, ex);
+            return false;
+        }
+        leftGeom = values[0];
+        rightGeom = values[1];
 
         final Envelope envLeft = leftGeom.getEnvelopeInternal();
         final Envelope envRight = rightGeom.getEnvelopeInternal();
