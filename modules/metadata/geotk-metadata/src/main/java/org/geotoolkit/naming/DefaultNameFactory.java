@@ -21,13 +21,11 @@ import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
-import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.InternationalString;
@@ -140,37 +138,6 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     }
 
     /**
-     * @deprecated Replaced by {@link #createNameSpace(GenericName, Map)}.
-     *
-     * @param name
-     *          The name of the namespace to be returned. This argument can be created using
-     *          <code>{@linkplain #createGenericName createGenericName}(null, parsedNames)</code>.
-     * @param headSeparator
-     *          The separator to insert between the namespace and the {@linkplain AbstractName#head
-     *          head}. For HTTP namespace, it is {@code "://"}. For URN namespace, it is typically
-     *          {@code ":"}.
-     * @param separator
-     *          The separator to insert between {@linkplain AbstractName#getParsedNames parsed names}
-     *          in that namespace. For HTTP namespace, it is {@code "."}. For URN namespace, it is
-     *          typically {@code ":"}.
-     * @return A namespace having the given name and separator.
-     *
-     * @since 3.00
-     */
-    @Override
-    @Deprecated
-    public NameSpace createNameSpace(final GenericName name,
-            final String headSeparator, final String separator)
-    {
-        ensureNonNull("separator",     separator);
-        ensureNonNull("headSeparator", headSeparator);
-        final Map<String,String> properties = new HashMap<String,String>(4);
-        properties.put("separator", separator);
-        properties.put("separator.head", headSeparator);
-        return createNameSpace(name, properties);
-    }
-
-    /**
      * Creates a namespace having the given name and using the
      * {@linkplain DefaultNameSpace#DEFAULT_SEPARATOR default separator}.
      *
@@ -233,68 +200,6 @@ public class DefaultNameFactory extends Factory implements NameFactory {
             case 1:  return createLocalName(scope, parsedNames[0]); // User may override.
             case 0:  throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
         }
-    }
-
-    /**
-     * Creates a local name from a {@linkplain DefaultLocalName#scope scope} and a
-     * {@linkplain DefaultLocalName#toString name}. The {@code scope} argument identifies the
-     * {@linkplain DefaultNameSpace name space} in which the local name will be created. The
-     * {@code name} argument is taken verbatism as the string representation of the local name.
-     *
-     * @param scope The scope, or {@code null} for the global one.
-     * @param name  The unlocalized name. May be {@code null} if {@code localizedName} is non-null.
-     * @param localizedName A localized version of the name, or {@code null} if none.
-     * @return The local name.
-     *
-     * @deprecated Replaced by {@link #createNameSpace createNameSpace} for the scope argument,
-     *             and {@link #createGenericName createGenericName} for the name and localized
-     *             name arguments.
-     */
-    @Override
-    @Deprecated
-    public LocalName createLocalName(GenericName scope, String name, InternationalString localizedName) {
-        final CharSequence n = merge(name, localizedName);
-        ensureNonNull("name", n);
-        return new DefaultLocalName(DefaultNameSpace.forName(scope,
-                DEFAULT_SEPARATOR_STRING, DEFAULT_SEPARATOR_STRING), n);
-    }
-
-    /**
-     * @deprecated Not implemented.
-     */
-    @Override
-    @Deprecated
-    public ScopedName createScopedName(GenericName scope, String name, InternationalString localizedName) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * Returns a {@linkplain String string} or an {@linkplain InternationalString international
-     * string} for the given argument. If both arguments are non-null, returns an international
-     * string where {@code toString(null)} returns the unlocalized name.
-     *
-     * @deprecated To be deleted after we removed the deprecated methods from {@link NameFactory}.
-     */
-    @Deprecated
-    private CharSequence merge(final String name, final InternationalString localizedName) {
-        if (localizedName == null) {
-            return name;
-        }
-        if (name == null || name.equals(localizedName.toString(null))) {
-            return localizedName;
-        }
-        if (localizedName.getClass().equals(DefaultInternationalString.class)) {
-            final DefaultInternationalString def = (DefaultInternationalString) localizedName;
-            final Map<Locale,String> names = new HashMap<Locale,String>();
-            synchronized (def) {
-                for (final Locale locale : def.getLocales()) {
-                    names.put(locale, def.toString(locale));
-                }
-            }
-            names.put(null, name);
-            return new DefaultInternationalString(names);
-        }
-        return new InternationalName(name, localizedName);
     }
 
     /**

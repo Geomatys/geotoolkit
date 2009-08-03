@@ -45,7 +45,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * constructor required by JAXB.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -107,13 +107,6 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
         return Collections.emptyList();
     }
 
-    /** @deprecated Replaced by {@link #getComponents()}. */
-    @Override
-    @Deprecated
-    public List<CoordinateReferenceSystem> getCoordinateReferenceSystems() {
-        return Collections.emptyList();
-    }
-
     /** Returns {@code this} in all cases. */
     @Override
     public NullReferencingObject getCoordinateSystem() {
@@ -129,7 +122,7 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
     /** Returns {@link VerticalDatumType#ELLIPSOIDAL} in all cases. */
     @Override
     public VerticalDatumType getVerticalDatumType() {
-        return VerticalDatumType.ELLIPSOIDAL;
+        return VerticalDatumTypes.ELLIPSOIDAL;
     }
 
     /** Returns {@link DefaultEllipsoid#WGS84} in all cases. */

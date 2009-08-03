@@ -26,6 +26,7 @@ import java.util.Map;
 import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
 
+import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
@@ -41,7 +42,7 @@ import org.geotoolkit.util.Utilities;
  * it is combined to create a {@linkplain org.opengis.referencing.crs.VerticalCRS vertical CRS}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 1.2
  * @module
@@ -55,7 +56,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     /**
      * A copy of the list of vertical types.
      */
-    private static final VerticalDatumType[] TYPES = VerticalDatumType.values();
+    private static final VerticalDatumType[] TYPES = VerticalDatumTypes.values();
 
     /**
      * Mapping between {@linkplain VerticalDatumType vertical datum type} and the numeric
@@ -63,12 +64,12 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      */
     private static final short[] LEGACY_CODES = new short[TYPES.length];
     static {
-        LEGACY_CODES[VerticalDatumType.GEOIDAL      .ordinal()] = 2005; // CS_VD_GeoidModelDerived
-        LEGACY_CODES[VerticalDatumType.ELLIPSOIDAL  .ordinal()] = 2002; // CS_VD_Ellipsoidal
-        LEGACY_CODES[VerticalDatumType.DEPTH        .ordinal()] = 2006; // CS_VD_Depth
-        LEGACY_CODES[VerticalDatumType.BAROMETRIC   .ordinal()] = 2003; // CS_VD_AltitudeBarometric
-        LEGACY_CODES[VerticalDatumType.ORTHOMETRIC  .ordinal()] = 2001; // CS_VD_Orthometric
-        LEGACY_CODES[VerticalDatumType.OTHER_SURFACE.ordinal()] = 2000; // CS_VD_Other
+        LEGACY_CODES[VerticalDatumType .GEOIDAL      .ordinal()] = 2005; // CS_VD_GeoidModelDerived
+        LEGACY_CODES[VerticalDatumTypes.ELLIPSOIDAL  .ordinal()] = 2002; // CS_VD_Ellipsoidal
+        LEGACY_CODES[VerticalDatumType .DEPTH        .ordinal()] = 2006; // CS_VD_Depth
+        LEGACY_CODES[VerticalDatumType .BAROMETRIC   .ordinal()] = 2003; // CS_VD_AltitudeBarometric
+        LEGACY_CODES[VerticalDatumTypes.ORTHOMETRIC  .ordinal()] = 2001; // CS_VD_Orthometric
+        LEGACY_CODES[VerticalDatumType .OTHER_SURFACE.ordinal()] = 2000; // CS_VD_Other
     }
 
     /**
@@ -88,7 +89,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      * of horizontal datum.
      */
     public static final DefaultVerticalDatum ELLIPSOIDAL =
-            new DefaultVerticalDatum(name(Vocabulary.Keys.ELLIPSOIDAL), VerticalDatumType.ELLIPSOIDAL);
+            new DefaultVerticalDatum(name(Vocabulary.Keys.ELLIPSOIDAL), VerticalDatumTypes.ELLIPSOIDAL);
 
     /**
      * Constructs a new object in which every attributes are set to a default value.

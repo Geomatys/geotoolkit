@@ -31,6 +31,7 @@ import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
+import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.*;
@@ -76,8 +77,8 @@ public final class DatumTest extends ReferencingTestCase {
         assertEquals("Ellipsoid",     DefaultEllipsoid.WGS84, WGS84.getEllipsoid());
         assertEquals("PrimeMeridian", GREENWICH, WGS84.getPrimeMeridian());
         assertFalse ("VerticalDatum", GEOIDAL.equals(ELLIPSOIDAL));
-        assertEquals("Geoidal",       VerticalDatumType.GEOIDAL,     GEOIDAL    .getVerticalDatumType());
-        assertEquals("Ellipsoidal",   VerticalDatumType.ELLIPSOIDAL, ELLIPSOIDAL.getVerticalDatumType());
+        assertEquals("Geoidal",       VerticalDatumType. GEOIDAL,     GEOIDAL    .getVerticalDatumType());
+        assertEquals("Ellipsoidal",   VerticalDatumTypes.ELLIPSOIDAL, ELLIPSOIDAL.getVerticalDatumType());
     }
 
     /**

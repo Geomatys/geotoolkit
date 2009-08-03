@@ -51,6 +51,7 @@ import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static java.util.Collections.singletonList;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
@@ -715,7 +716,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final VerticalCRS   targetCRS)
             throws FactoryException
     {
-        if (VerticalDatumType.ELLIPSOIDAL.equals(targetCRS.getDatum().getVerticalDatumType())) {
+        if (VerticalDatumTypes.ELLIPSOIDAL.equals(targetCRS.getDatum().getVerticalDatumType())) {
             final Matrix matrix = swapAndScaleAxis(sourceCRS.getCoordinateSystem(),
                                                    targetCRS.getCoordinateSystem());
             return createFromAffineTransform(AXIS_CHANGES, sourceCRS, targetCRS, matrix);

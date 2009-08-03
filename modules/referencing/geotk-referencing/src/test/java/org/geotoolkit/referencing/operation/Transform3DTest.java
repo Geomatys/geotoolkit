@@ -32,6 +32,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -84,7 +85,7 @@ public final class Transform3DTest {
         final GeodeticDatum wgs84 = datumFactory.createGeodeticDatum(
                     name("WGS84 Datum"), wgs84Ellipsoid, greenwichMeridian);
         final VerticalDatum wgs84_height = datumFactory.createVerticalDatum(
-                    name("WGS84 Ellispoidal height"), VerticalDatumType.ELLIPSOIDAL);
+                    name("WGS84 Ellispoidal height"), VerticalDatumTypes.ELLIPSOIDAL);
 
         // ----------------------------------------------------------
         // Creates standard (in geodesy) geocentric axis

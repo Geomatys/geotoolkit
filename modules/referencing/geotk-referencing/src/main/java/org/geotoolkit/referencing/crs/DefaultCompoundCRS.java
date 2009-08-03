@@ -211,21 +211,6 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     }
 
     /**
-     * The ordered list of coordinate reference systems.
-     *
-     * @return The coordinate reference systems as an unmodifiable list.
-     *
-     * @deprecated
-     *   Renamed as {@link #getComponents()} for matching the name in ISO 19111:2007.
-     */
-    @Override
-    @Deprecated
-    @SuppressWarnings("unchecked") // We are safe if the list is read-only.
-    public List<CoordinateReferenceSystem> getCoordinateReferenceSystems() {
-        return (List<CoordinateReferenceSystem>) crs;
-    }
-
-    /**
      * Returns the ordered list of single coordinate reference systems. If this compound CRS
      * contains other compound CRS, all of them are expanded in an array of {@code SingleCRS}
      * objects.

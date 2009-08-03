@@ -33,6 +33,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
+import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -312,7 +313,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             if (candidate instanceof VerticalCRS) {
                 if (vertical == null) {
                     vertical = (VerticalCRS) candidate;
-                    if (VerticalDatumType.ELLIPSOIDAL.equals(
+                    if (VerticalDatumTypes.ELLIPSOIDAL.equals(
                             vertical.getDatum().getVerticalDatumType()))
                     {
                         vi = i;

@@ -27,10 +27,10 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 import org.opengis.parameter.*;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.measure.UnitsTest;
+import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -263,7 +263,7 @@ public final class ParameterTest {
         assertEquals("Actual value", AxisDirection.DISPLAY_UP, p.getValue());
         p.setValue(AxisDirection.DOWN);
         try {
-            p.setValue(VerticalDatumType.ELLIPSOIDAL);
+            p.setValue(VerticalDatumTypes.ELLIPSOIDAL);
             fail("setValue(VerticalDatumType)");
         } catch (InvalidParameterValueException exception) {
             // This is the expected exception.
