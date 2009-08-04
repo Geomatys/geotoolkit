@@ -59,14 +59,14 @@ import org.geotoolkit.util.Utilities;
 public class TimePositionType {
 
     @XmlValue
-    protected String value;
+    private String value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String frame;
+    private String frame;
     @XmlAttribute
-    protected String calendarEraName;
+    private String calendarEraName;
     @XmlAttribute
-    protected TimeIndeterminateValueType indeterminatePosition;
+    private TimeIndeterminateValueType indeterminatePosition;
 
     /**
      * empty constructor used by JAXB.

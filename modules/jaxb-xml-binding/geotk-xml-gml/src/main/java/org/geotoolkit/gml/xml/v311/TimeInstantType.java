@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 public class TimeInstantType extends AbstractTimeGeometricPrimitiveType {
 
     @XmlElement(required = true)
-    protected TimePositionType timePosition;
+    private TimePositionType timePosition;
 
     /**
      * Empty constructor used by JAXB.
@@ -88,4 +88,12 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType {
         this.timePosition = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TimeInstantType]").append('\n');
+        if (timePosition != null) {
+            sb.append("timePosition:").append(timePosition).append('\n');
+        }
+        return sb.toString();
+    }
 }

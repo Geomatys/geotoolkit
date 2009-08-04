@@ -195,5 +195,18 @@ public abstract class AbstractGMLEntry implements AbstractGML {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']').append('\n');
+        if (id != null)
+            sb.append("id:").append(id).append('\n');
+        if (name != null)
+            sb.append("name:").append(name).append('\n');
+        if (description != null)
+            sb.append("description:").append(description).append('\n');
+        if (descriptionReference != null)
+            sb.append("description reference:").append(descriptionReference).append('\n');
+        return sb.toString();
+    }
 
 }

@@ -37,10 +37,14 @@ import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.feature.Association;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
@@ -67,8 +71,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.util.Converters;
+
 
 /**
  * Reader for jdbc datastore
@@ -203,6 +206,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     public JDBCFeatureReader(final JDBCFeatureReader other) {
         this.featureType = other.featureType;
         this.dataStore = other.dataStore;
+        this.featureSource = other.featureSource;
         this.tx = other.tx;
         this.hints = other.hints;
         this.geometryFactory = other.geometryFactory;
@@ -951,7 +955,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
         @Override
         public Object getDefaultGeometry() {
-            throw new UnsupportedOperationException();
+            final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();
+            return getAttribute(geomDesc.getName());
         }
 
         @Override
@@ -961,12 +966,18 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
         @Override
         public void setDefaultGeometry(Object defaultGeometry) {
-            throw new UnsupportedOperationException();
+            final GeometryDescriptor descriptor = featureType.getGeometryDescriptor();
+            setAttribute(descriptor.getName(), defaultGeometry );
         }
 
         @Override
         public BoundingBox getBounds() {
-            throw new UnsupportedOperationException();
+            final Object obj = getDefaultGeometry();
+            if (obj instanceof Geometry) {
+                final Geometry geometry = (Geometry) obj;
+                return new JTSEnvelope2D(geometry.getEnvelopeInternal(), featureType.getCoordinateReferenceSystem());
+            }
+            return new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
         }
 
         @Override

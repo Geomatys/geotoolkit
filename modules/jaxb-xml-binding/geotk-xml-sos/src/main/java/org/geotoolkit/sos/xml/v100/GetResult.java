@@ -78,7 +78,8 @@ public class GetResult extends RequestBaseType {
     /**
      * Build a new request GetResult.
      */
-     public GetResult(String observationTemplateId, List<EventTime> eventTime){
+     public GetResult(String observationTemplateId, List<EventTime> eventTime, String version){
+        super(version);
         this.eventTime             = eventTime;
         this.observationTemplateId = observationTemplateId;
      }

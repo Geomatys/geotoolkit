@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -52,7 +53,10 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ObservationPropertyType {
 
-    @XmlElementRef(name = "Observation", namespace = "http://www.opengis.net/om/1.0", type = JAXBElement.class)
+    @XmlElementRefs({
+        @XmlElementRef(name = "Observation", namespace = "http://www.opengis.net/om/1.0", type = JAXBElement.class),
+        @XmlElementRef(name = "Measurement", namespace = "http://www.opengis.net/om/1.0", type = JAXBElement.class)
+    })
     private JAXBElement<? extends ObservationEntry> observation;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -90,7 +94,11 @@ public class ObservationPropertyType {
      * A JAXB constructor.
      */
     public ObservationPropertyType(ObservationEntry observation) {
-        this.observation = omFactory.createObservation(observation);
+        if (observation instanceof MeasurementEntry) {
+            this.observation = omFactory.createMeasurement((MeasurementEntry) observation);
+        } else {
+            this.observation = omFactory.createObservation(observation);
+        }
     }
     
     /**

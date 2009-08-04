@@ -239,6 +239,7 @@ public class AnyScalarPropertyType implements AnyScalar {
                    Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
                    Utilities.equals(this.show,               that.show)             &&
                    Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.name,               that.name)             &&
                    Utilities.equals(this.title,              that.title);
             }
         return false;
@@ -260,6 +261,7 @@ public class AnyScalarPropertyType implements AnyScalar {
         hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
         hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
 
@@ -270,6 +272,9 @@ public class AnyScalarPropertyType implements AnyScalar {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
+        if(name != null) {
+            s.append("name=").append(name).append('\n');
+        }
         if (abstractDataComponent != null)
             s.append(abstractDataComponent).append('\n');
         if (_boolean != null)
