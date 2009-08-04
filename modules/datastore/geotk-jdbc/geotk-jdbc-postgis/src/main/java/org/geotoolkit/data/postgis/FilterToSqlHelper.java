@@ -88,7 +88,9 @@ class FilterToSqlHelper {
         spatialOptsList.add(operatorWithin);
 
         final SpatialOperators spatialOpts = new DefaultSpatialOperators(spatialOptsList.toArray(new SpatialOperator[]{}));
-        final SpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(null, spatialOpts);
+        final SpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(
+                SQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getGeometryOperands().toArray(new GeometryOperand[]{}),
+                spatialOpts);
         return new DefaultFilterCapabilities(SQLDialect.BASE_DBMS_CAPABILITIES.getVersion(),
                                              SQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities(),
                                              spatialCaps,
