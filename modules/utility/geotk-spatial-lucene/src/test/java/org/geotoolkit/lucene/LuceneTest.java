@@ -701,7 +701,6 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            System.out.println(doc);
             String name =  doc.get("name");
             results.add(name);
             logger.finer('\t' + "Name: " +  name);
@@ -2124,7 +2123,7 @@ public class LuceneTest {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("name");
             results.add(name);
-            System.out.println('\t' + "Name: " +  name);
+            logger.finer('\t' + "Name: " +  name);
         }
         
         //we verify that we obtain the correct results.
@@ -2582,7 +2581,7 @@ public class LuceneTest {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("name");
             results.add(name);
-            System.out.println('\t' + "Name: " +  name);
+            logger.finer('\t' + "Name: " +  name);
         }
         
         //we verify that we obtain the correct results.

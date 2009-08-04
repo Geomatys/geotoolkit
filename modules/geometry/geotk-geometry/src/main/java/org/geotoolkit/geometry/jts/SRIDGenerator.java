@@ -49,7 +49,8 @@ public final class SRIDGenerator {
         final Set<ReferenceIdentifier> ids = crs.getIdentifiers();
 
         if(ids.isEmpty()){
-            throw new IllegalArgumentException("CoordinateReferenceSystem has not identifier, impossible to compact it.");
+            return 0;
+//            throw new IllegalArgumentException("CoordinateReferenceSystem has not identifier, impossible to compact it.");
         }
 
         final ReferenceIdentifier id = ids.iterator().next();
