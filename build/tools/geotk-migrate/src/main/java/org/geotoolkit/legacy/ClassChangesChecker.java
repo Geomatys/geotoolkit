@@ -76,7 +76,7 @@ search: for (String c : classes) {
     }
 
     /**
-     * Lists the GeoTools classes which have been ported to Geotoolkit. If non-null, the given
+     * Lists the GeoTools classes which have been ported to Geotk. If non-null, the given
      * command is printed before the file. This is a convenience for building a file of commands
      * to execute, for example {@code "hg remove").
      */

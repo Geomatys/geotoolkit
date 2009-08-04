@@ -27,8 +27,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Merges the binaries produced by <code>JarCollector</code> and compress them using Pack200.
- * This mojo is very specific to the Geotoolkit project and is not appropriate for any other
- * project.
+ * This mojo is very specific to the Geotk project and is not appropriate for any other project.
  * <p>
  * Maven invocation syntax is:
  *

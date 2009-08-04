@@ -43,7 +43,7 @@ import org.opengis.temporal.Position;
  * TODO: The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we do
  *       that because we already have an other class in the GML binding of Constellation, and it falls on conflict.
  *       Remove the namespace, in order to fallback on GML, when the temporal implementation will have a floor
- *       in Geotoolkit.
+ *       in Geotk.
  */
 @XmlType(name = "TimePeriodType", propOrder = {"beginPosition", "endPosition"}, namespace = Namespaces.GMD)
 public final class TimePeriod {

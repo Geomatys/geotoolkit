@@ -34,7 +34,7 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * Static methods related to RMI usage in Geotoolkit.
+ * Static methods related to RMI usage in Geotk.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

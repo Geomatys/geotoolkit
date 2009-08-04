@@ -189,7 +189,7 @@ public final class ParserTest {
                " UNIT [\"Decimal Degree\", 0.01745329251994328]]," +
              " PROJECTION[\"Transverse_Mercator\"]," +
 //           " PROJECTION[\"Modified Portuguese Grid (EPSG OP 19974)\"]," +
-// TODO: The real projection is "Modified Portugues", but it is not yet implemented in Geotoolkit.
+// TODO: The real projection is "Modified Portugues", but it is not yet implemented in Geotk.
              " PARAMETER[\"Latitude_Of_Origin\", 39.66666666666666666666666666666666666667]," +
              " PARAMETER[\"Central_Meridian\", -8.13190611111111111111111111111111111111]," +
              " PARAMETER[\"Scale_Factor\", 1]," +

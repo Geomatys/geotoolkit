@@ -1,11 +1,11 @@
-Geotoolkit modules
+Geotoolkit.org modules
 
-  The modules that are components of the Geotoolkit library. Some worthly modules are:
+  The modules that are components of the Geotk library. Some worthly modules are:
 
    * {{{utility/index.html}Utilities}}
 
       * {{{utility/geotk-setup/index.html}Setup}} -
-        Geotoolkit configuration
+        Geotk configuration
 
       * {{{utility/geotk-utility/index.html}Utility core}} -
         Collections and miscellaneous utilities

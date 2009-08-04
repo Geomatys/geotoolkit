@@ -35,7 +35,7 @@ import org.geotoolkit.io.ExpandedTabWriter;
  * UTF-8 encoding. It also checks for key validity and checks values for {@link MessageFormat}
  * compatibility. Finally, it writes the key values in the Java source files.
  * <p>
- * This class must be run from the maven root of Geotoolkit project. An error will be reported
+ * This class must be run from the maven root of Geotk project. An error will be reported
  * if the expected directories are not found.
  *
  * @author Martin Desruisseaux (IRD)

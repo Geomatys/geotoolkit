@@ -2,7 +2,7 @@
 <!-- =======================================================================
         Maven Project Configuration File
 
-        The Geotoolkit Project
+        The Geotoolkit.org Project
             http://www.geotoolkit.org/
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -27,7 +27,7 @@
   <name>Migrate</name>
 
   <description>
-    Helper tools for migrating from GeoTools to Geotoolkit.
+    Helper tools for migrating from GeoTools to Geotk.
   </description>
 
 

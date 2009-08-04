@@ -909,7 +909,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject
                  * We need to perform a special check for Geodetic longitude and latitude.
                  * Because of the ALIAS map, the "Geodetic latitude" and "Latitude" names
                  * are considered equivalent, while they are two distinct predefined axis
-                 * constants in Geotoolkit. Because Geodetic longitude & latitude constants
+                 * constants in Geotk. Because Geodetic longitude & latitude constants
                  * are declared first, they have precedence.  So we prevent the selection
                  * of GEODETIC_LATITUDE if the user is likely to ask for LATITUDE.
                  */

@@ -34,8 +34,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
 
 
 /**
- * Creates and configures {@link Marshaller} or {@link Unmarshaller} objects for use with
- * Geotoolkit.
+ * Creates and configures {@link Marshaller} or {@link Unmarshaller} objects for use with Geotk.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)

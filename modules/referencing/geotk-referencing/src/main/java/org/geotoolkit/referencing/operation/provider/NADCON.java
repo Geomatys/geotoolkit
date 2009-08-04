@@ -47,7 +47,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * {@section Grid data}
  *
- * This transform requires data that are not bundled by default with Geotoolkit. Run the
+ * This transform requires data that are not bundled by default with Geotk. Run the
  * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module
  * for downloading and installing the grid data.
  *

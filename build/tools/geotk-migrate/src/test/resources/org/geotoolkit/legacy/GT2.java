@@ -7,7 +7,7 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * Test file.
- * {@code GT2.java} is an example of GeoTools 2 code to upgrade to Geotoolkit.
+ * {@code GT2.java} is an example of GeoTools 2 code to upgrade to Geotk.
  * {@code GT3.java} is the expected result after {@link UpgradeFromGeoTools2} execution.
  */
 public class GT {

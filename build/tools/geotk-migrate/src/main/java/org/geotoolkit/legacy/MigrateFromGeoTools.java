@@ -22,7 +22,7 @@ import java.util.*;
 
 
 /**
- * Performs a shallow migration of Java code from GeoTools to Geotoolkit. This helper tools
+ * Performs a shallow migration of Java code from GeoTools to Geotk. This helper tools
  * performs some class and package renaming. It will not solve every dependency issues, but
  * just some common ones. The last changes in method names, signatures, <cite>etc.</cite>
  * will need to be done by hand.

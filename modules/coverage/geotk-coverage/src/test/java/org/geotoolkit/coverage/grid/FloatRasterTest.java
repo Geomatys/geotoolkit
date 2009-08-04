@@ -71,7 +71,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale coverage", raster, envelope);
         if (show) {
-            ((GridCoverage2D) gc).show(); // Convenience method specific to Geotoolkit.
+            ((GridCoverage2D) gc).show(); // Convenience method specific to Geotk.
         }
         /*
          * The above example created a grayscale image. The example below creates a new grid
@@ -106,7 +106,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale matrix", matrix, envelope);
         if (show) {
-            ((GridCoverage2D) gc).show(); // Convenience method specific to Geotoolkit.
+            ((GridCoverage2D) gc).show(); // Convenience method specific to Geotk.
         }
     }
 }

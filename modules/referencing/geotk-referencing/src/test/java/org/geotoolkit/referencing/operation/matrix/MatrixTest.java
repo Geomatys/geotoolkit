@@ -72,7 +72,7 @@ public final class MatrixTest {
                 assertSame  (matrix, toXMatrix(matrix));
                 assertSame  (reference, toGeneralMatrix(reference));
                 /*
-                 * Following is actually more a test of vecmath than Geotoolkit. We make sure that
+                 * Following is actually more a test of vecmath than Geotk. We make sure that
                  * the specialized implementations return the same result than the general one.
                  */
                 final GeneralMatrix clone = reference.clone(); // We will need that later.

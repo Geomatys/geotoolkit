@@ -17,7 +17,7 @@
  */
 
 /**
- * Extensions to the {@linkplain java.util.logging Java logging} framework. The Geotoolkit project
+ * Extensions to the {@linkplain java.util.logging Java logging} framework. The Geotk project
  * uses the standard {@link java.util.logging.Logger} API for its logging, but this package allows
  * redirection of logs to some other frameworks like <a href="http://logging.apache.org/log4j/">Log4J</a>.
  *

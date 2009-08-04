@@ -1,30 +1,30 @@
-Downloading Geotoolkit Binaries
+Downloading Geotoolkit.org Binaries
 
-  Binary versions of Geotoolkit are available in several different formats. The easiest approach
-  to integrate Geotoolkit into a Java project uses the Apache maven dependency management tool to
+  Binary versions of Geotk are available in several different formats. The easiest approach
+  to integrate Geotk into a Java project uses the Apache maven dependency management tool to
   automatically obtain the required Java Archives (JAR) files from the network. For convenience
-  of users who are not using the maven build tool, Geotoolkit is also distributed as bundles which
+  of users who are not using the maven build tool, Geotk is also distributed as bundles which
   combine components of the library into a single JAR file. Finally, users can download the source
-  code and build Geotoolkit themselves to obtain all of the pieces in one shot as explained on the
+  code and build Geotk themselves to obtain all of the pieces in one shot as explained on the
   {{{build.html}building from source}} page.
 
-  To run this code, Geotoolkit requires a properly configured runtime environment as described in
-  the {{{run.html}running Geotoolkit}} page.
+  To run this code, Geotk requires a properly configured runtime environment as described in
+  the {{{run.html}running Geotoolkit.org}} page.
 
 
 * Maven downloads
 
-  Geotoolkit can be obtained using the Apache's {{{http://maven.apache.org/}Maven}} management
-  tool to download Geotoolkit JAR files which have been deployed into the project's
+  Geotk can be obtained using the Apache's {{{http://maven.apache.org/}Maven}} management
+  tool to download Geotk JAR files which have been deployed into the project's
   {{{http://maven.geotoolkit.org/}Maven repository}}.
 
-  The Maven approach provides the following advantages compared to using Geotoolkit bundles:
+  The Maven approach provides the following advantages compared to using Geotk bundles:
 
     * Developers can select only the dependencies they want, thus reducing the total
       size of their application.
 
     * Developers can add dependencies that are not otherwise included in the bundles,
-      for example <<<geotk-logging-log4j.jar>>> which redirect all Geotoolkit loggings to
+      for example <<<geotk-logging-log4j.jar>>> which redirect all Geotk loggings to
       the Log4J framework.
 
     * Developers can reuse the same JAR files accross many projects, thus reducing the
@@ -34,7 +34,7 @@ Downloading Geotoolkit Binaries
       Snapshots are checked daily for updates.
 
   Below is an example of declaration in a <<<pom.xml>>> file for building a project with the
-  Geotoolkit referencing module and redirect all Geotoolkit loggings to the Log4J framework:
+  Geotk referencing module and redirect all Geotk loggings to the Log4J framework:
 
 -----------------------------------------------------------------------------------
 <dependencies>
@@ -63,7 +63,7 @@ Downloading Geotoolkit Binaries
   </repository>
   <repository>
      <id>geotoolkit</id>
-     <name>Geotoolkit repository</name>
+     <name>Geotk repository</name>
      <url>http://maven.geotoolkit.org/repository</url>
   </repository>
 </repositories>
@@ -74,13 +74,13 @@ Downloading Geotoolkit Binaries
 
 * Bundle downloads (everything in a single JAR)
 
-  Geotoolkit can be obtained as single archives which bundles together specific components of the
+  Geotk can be obtained as single archives which bundles together specific components of the
   library to provide an easy way to get started. A single archive file should be downloaded; when
   uncompressed with the <<<unpack200>>> tool distributed with Java, the archive results in a single
-  JAR file which includes the desired components of Geotoolkit along with all the required
-  dependencies. Geotoolkit can then be used simply by placing the JAR on the classpath.
+  JAR file which includes the desired components of Geotk along with all the required
+  dependencies. Geotk can then be used simply by placing the JAR on the classpath.
 
-  These Geotoolkit bundles can be downloaded from:
+  These Geotk bundles can be downloaded from:
 
     * {{{http://download.geotoolkit.org/}Monthly releases}}
 
@@ -117,7 +117,7 @@ Downloading Geotoolkit Binaries
   Those files can be unpacked using the <<<unpack200>>> executable provided in the Java
   installation directory.
 
-  For example, users who wish to use the georeferencing functionality of Geotoolkit can select the
+  For example, users who wish to use the georeferencing functionality of Geotk can select the
   <<<geotk-bundle-referencing-SNAPSHOT.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 

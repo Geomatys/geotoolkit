@@ -1,17 +1,17 @@
-Introduction to Geotoolkit
+Introduction to Geotoolkit.org
 
-  The Geotoolkit library provides a toolkit of data structures and methods which can be used by
-  Java applications. While using Geotoolkit requires only adding a bundle JAR file to the classpath
-  and calling public methods of the library, discovering the contents of the library, understanding
-  the underlying concepts, and learning to use the Geotoolkit classes and methods can take quite
-  some time. Geotoolkit performs very complex tasks such as converting coordinates from one
+  The Geotoolkit.org library (abridged <Geotk>) provides a toolkit of data structures and methods which
+  can be used by Java applications. While using Geotk requires only adding a bundle JAR file to the
+  classpath and calling public methods of the library, discovering the contents of the library, understanding
+  the underlying concepts, and learning to use the Geotk classes and methods can take quite
+  some time. Geotk performs very complex tasks such as converting coordinates from one
   coordinate system into another and no library can simplify the concepts and mathematics behind the
-  operations. Geotoolkit is hard because geospatial manipulation is hard.
+  operations. Geotk is hard because geospatial manipulation is hard.
 
-  Generally, users of Geotoolkit should interact only with the factory system, the GeoAPI interfaces
-  and the utility classes in Geotoolkit. The factory system enables users to create new objects
+  Generally, users of Geotk should interact only with the factory system, the GeoAPI interfaces
+  and the utility classes in Geotk. The factory system enables users to create new objects
   which conform to the interfaces declared by GeoAPI. Those interfaces allow users to manipulate the
-  objects conformant to the specifications provided by ISO and the OGC. The Geotoolkit utility
+  objects conformant to the specifications provided by ISO and the OGC. The Geotk utility
   classes provide convenience way to perform some common operations on those objects.
 
   The first few examples below, in order to remain simple and introduce only a few concepts at a
@@ -48,8 +48,8 @@ unpack200 geotk-referencing-SNAPSHOT.pack.gz geotk-referencing-bundle.jar
 
 -----------------------------------------------------------------------------------
 /*
- * The Geotoolkit project provides this file for any use, modification, or redistribution
- * that anyone may desire but without warranty of any kind, neither exprssed nor implied,
+ * The Geotoolkit.org project provides this file for any use, modification, or redistribution
+ * that anyone may desire but without warranty of any kind, neither expressed nor implied,
  * and no expression of merchantibility or fitness for any particular purpose.
  */
 
@@ -104,8 +104,8 @@ GEOGCS["WGS84(DD)",
 
 -----------------------------------------------------------------------------------
 /*
- * The Geotoolkit project provides this file for any use, modification, or redistribution
- * that anyone may desire but without warranty of any kind, neither exprssed nor implied,
+ * The Geotoolkit.org project provides this file for any use, modification, or redistribution
+ * that anyone may desire but without warranty of any kind, neither expressed nor implied,
  * and no expression of merchantibility or fitness for any particular purpose.
  */
 
@@ -202,7 +202,7 @@ String result = sw.toString();
 
   The examples given in this introduction are admitedly simplistic. We have unfortunately not yet
   developed extensive documentation for the project. For now, the best way to proceed is to read
-  the javadoc API documentation for both GeoAPI and for Geotoolkit. The unit tests for the various
+  the javadoc API documentation for both GeoAPI and for Geotk. The unit tests for the various
   modules provide further usage examples of the library.
 
 

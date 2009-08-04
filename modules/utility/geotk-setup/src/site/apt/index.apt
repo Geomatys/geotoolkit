@@ -1,8 +1,8 @@
-Geotoolkit installer
+Geotoolkit.org installer
 
   Most of the Geotoolkit library can work out of the box without any installation or setup.
   However they are some exceptions to this general rule. Some coordinate operations require a
-  large amount of data, and not all those data are distributed with Geotoolkit. For example the
+  large amount of data, and not all those data are distributed with Geotk. For example the
   {{{http://www.epsg.org}EPSG database}} is bundled in Geotoolkit because it is considered a
   fundamental piece of referencing service applicable to many Coordinate Reference Systems in use
   around the world. On the other hand, {{{http://www.ngs.noaa.gov/TOOLS/Nadcon/Nadcon.html}NADCON}}

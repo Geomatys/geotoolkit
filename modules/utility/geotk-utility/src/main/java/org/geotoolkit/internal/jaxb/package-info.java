@@ -17,7 +17,7 @@
  */
 
 /**
- * Utilities for using JAXB with Geotoolkit.
+ * Utilities for using JAXB with Geotk.
  *
  * <STRONG>Do not use!</STRONG>.
  *

@@ -41,7 +41,7 @@ import org.geotoolkit.util.converter.Classes;
 
 
 /**
- * A set of utilities method for configuring loggings in Geotoolkit.
+ * A set of utilities method for configuring loggings in Geotk.
  * <p>
  * <b>Example:</b> In order to redirect every Geotoolkit log events to
  * <A HREF="http://jakarta.apache.org/commons/logging/">commons-logging</A>,
@@ -210,7 +210,7 @@ public final class Logging {
 
     /**
      * Returns a {@code Logging} instance for the specified base logger. This instance is
-     * used for controlling logging configuration in Geotoolkit. For example methods like
+     * used for controlling logging configuration in Geotk. For example methods like
      * {@link #forceMonolineConsoleOutput} are invoked on a {@code Logging} instance.
      * <p>
      * {@code Logging} instances follow the same hierarchy than {@link Logger}, i.e.

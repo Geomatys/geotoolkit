@@ -2,7 +2,7 @@
 <!-- =======================================================================
         Maven Project Configuration File
 
-        The Geotoolkit Project
+        The Geotoolkit.org Project
             http://www.geotoolkit.org/
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -27,7 +27,7 @@
   <name>Log4J logging adapter</name>
 
   <description>
-    An adapter for using Log4J in Geotoolkit. Geotoolkit will automatically redirect
+    An adapter for using Log4J in Geotk. Geotk will automatically redirect
     all its logging events to Log4J if this JAR is on the classpath. If there is
     no need for Log4J interoperability, we recommand to NOT include this JAR on
     the classpath in order to use the default Java logging framework instead.

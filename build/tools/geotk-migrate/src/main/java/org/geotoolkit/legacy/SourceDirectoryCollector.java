@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * Collects source directories of a Maven project. This classes assumes that the project
- * use the standard Maven layout, which is the case of GeoTools and Geotoolkit projects.
+ * use the standard Maven layout, which is the case of GeoTools and Geotk projects.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

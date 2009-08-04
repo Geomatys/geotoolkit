@@ -8,11 +8,11 @@
         Migrated to Mercurial versioning system
       </question>
       <answer>
-        <p>Geotoolkit uses the mercurial distributed version control system whereas GeoTools 2
+        <p>Geotk uses the mercurial distributed version control system whereas GeoTools 2
         uses the a centralized version control system Subversion. Since it is expected that many uses
         will want to use a modified version of the library, either because they have local changes
         particular to their own work or because they do not agree with a technical decision made
-        by the Geotoolkit project, it was considered useful to move to a distributed versioning
+        by the Geotk project, it was considered useful to move to a distributed versioning
         system. Mercurial was selected because it combined an easy to use command-line interface,
         good support by the NetBeans IDE, and because already in use for the development of major
         software projects such as Java itself, OpenOffice, OpenSolaris, NetBeans, Firefox and
@@ -25,8 +25,8 @@
         Upgraded to Java 6
       </question>
       <answer>
-        <p>Geotoolkit targets Java 6 while GeoTools 2 targets the older Java 5. This allowed
-        Geotoolkit to integrate the use of the new annotations defined in the new version. The code
+        <p>Geotk targets Java 6 while GeoTools 2 targets the older Java 5. This allowed
+        Geotk to integrate the use of the new annotations defined in the new version. The code
         in several methods saw significant speed improvements due to the leveraging of new API
         defined in Java 6. The transition fixed the compilation errors when using Java 6. The
         dependency to the JAXB JAR was removed since this is now part of the Java runtime itself.</p>
@@ -38,7 +38,7 @@
         Major cleanup of the code
       </question>
       <answer>
-        <p>In the transition to Geotoolkit almost all of the several thousand <code>javac</code> and
+        <p>In the transition to Geotk almost all of the several thousand <code>javac</code> and
         <code>javadoc</code> warnings were fixed. The build was made more robust so that the
         <code>javadoc</code> could be built and the site fully deployed.</p>
       </answer>
@@ -62,7 +62,7 @@
       </question>
       <answer>
         <p>GeoTools 2 organized the modules in <code>library</code>, <code>plugin</code>,
-        <code>extension</code> and <code>unsupported</code> sub-directories. In Geotoolkit
+        <code>extension</code> and <code>unsupported</code> sub-directories. In Geotk
         those directories are gone. They are replaced by "general topic" directories like
         <code>metadata</code>, <code>referencing</code> and <code>coverage</code>. Each of
         those directories regroup the core library and the plugins related to their topic.
@@ -81,10 +81,10 @@
       </question>
       <answer>
         <p>In addition to the usual compressed JAR files deployed to the Maven repository,
-        the build process creates also bundles. When using those bundles, most of Geotoolkit
+        the build process creates also bundles. When using those bundles, most of Geotk
         code and dependency (including GeoAPI) are available in a single JAR file.</p>
 
-        <p><a href="../../../download.html">More about Geotoolkit bundles</a>.</p>
+        <p><a href="../../../download.html">More about Geotk bundles</a>.</p>
       </answer>
     </faq>
 
@@ -94,7 +94,7 @@
       </question>
       <answer>
         <p>GeoTools 2 contains a number of command-line tools scattered through the class hierarchy.
-        Some of them are quite useful but largely ignored. In Geotoolkit, all command-line tools are
+        Some of them are quite useful but largely ignored. In Geotk, all command-line tools are
         centralized in the <code>org.geotoolkit.console</code> package. The amount of main classes
         has been reduced by regrouping functionalities in only a few (but more powerfull) main classes.
         Their capabilities are better documented with help screen and usage examples.</p>
@@ -106,9 +106,9 @@
         More tests with GeoAPI validators
       </question>
       <answer>
-        <p>Together with the development of Geotoolkit, a set of implementation-independant
-        validators has been commited to GeoAPI. Those validators (and some related classes) can
-        be shared by other projects than Geotoolkit. Objects that are created during Geotoolkit
+        <p>Together with the development of Geotk, a set of implementation-independant
+        validators has been commited to GeoAPI. Those validators (and some related classes)
+        can be shared by other projects than Geotk. Objects that are created during Geotk
         test suite can be checked by those validators, which perform a more extensive object
         inspection than GeoTools 2 ever had.</p>
 
@@ -134,7 +134,7 @@
         Automated daily builds
       </question>
       <answer>
-        <p>Geotoolkit is built fully every day by the Hudson build tool. The build includes running
+        <p>Geotk is built fully every day by the Hudson build tool. The build includes running
         the complete test suite and performing an analysis of the code base. Successful builds are
         then deployed to the maven repository. Hudson provides a
         <a href="http://hudson.geomatys.com/job/Geotoolkit/">web page</a> which lists the
@@ -156,7 +156,7 @@
       <answer>
         <p>In GeoTools 2, the metadata module was also a home for a large set of utility classes,
         including a growing set of collection implementations, the factory registry, <i>etc.</i>
-        In Geotoolkit the utility classes moved to their own module, and the metadata module is now
+        In Geotk the utility classes moved to their own module, and the metadata module is now
         focusing specifically on metadata.</p>
       </answer>
     </faq>
@@ -167,7 +167,7 @@
       </question>
       <answer>
         <p>In GeoTools 2, the <code>org.geotools.util</code> package has grew considerably.
-        In Geotoolkit it has been splitted. The numerous collection implementations moved to
+        In Geotk it has been splitted. The numerous collection implementations moved to
         the <code>org.geotoolkit.util.collection</code> subpackage.
         The <code>GenericName</code> implementations and related classes moved to a new
         package, <code>org.geotoolkit.naming</code>.</p>
@@ -183,7 +183,7 @@
         some other ones end with the <code>Impl</code> suffix. The former was the usage in the referencing
         module while the later was the usage in the metadata module.</p>
 
-        <p>In Geotoolkit a more consistent naming scheme is applied. The prefix approach has been preferred
+        <p>In Geotk a more consistent naming scheme is applied. The prefix approach has been preferred
         to the suffix one because it is a slightly more etablished practice in the standard JDK, and it
         leads more naturally to different prefix. <code>Default</code> and <code>Abstract</code> are the
         most common, but there is also a few others. For example <code>General</code> is used in order
@@ -206,7 +206,7 @@
 
         <p>Ordering based on priority level has been removed. They are replaced by the pair-wise
         ordering mechanism bundled in Java <code>ServiceRegistry</code> class, and controlled in
-        Geotoolkit by the <code>Factory.Organizer</code> inner class.</p>
+        Geotk by the <code>Factory.Organizer</code> inner class.</p>
       </answer>
     </faq>
 
@@ -246,7 +246,7 @@
       </question>
       <answer>
         <p><cite>Threaded EPSG factories</cite> were added to GeoTools 2, but this work has been
-        done in a context that resulted in lot of code duplication. In Geotoolkit that work has
+        done in a context that resulted in lot of code duplication. In Geotk that work has
         been entirely rewriten, code duplication removed, some global locks removed for higher
         concurrency and some deadlocks removed. In addition the EPSG factory has been made
         compatible with PostgreSQL 8.3 and tested against latest EPSG database.</p>
@@ -291,13 +291,13 @@
         degrees to radians, scaling the projection result to the Earth's dimension and applying
         the easting/northing offsets.</p>
 
-        <p>In Geotoolkit all the above steps, which are linear, are delegated to affine transforms.
+        <p>In Geotk all the above steps, which are linear, are delegated to affine transforms.
         Consequently the base class is now concerned exclusively about the non-linear part, defined
         as projections on an ellipse having a semi-major axis length of 1. The base class has been
         renamed <code>UnitaryProjection</code> to reflect that fact.</p>
 
         <p>The advantage of this approach is that affine transforms are easy to concatenate. With
-        this new architecture, it is easier for Geotoolkit to find the most efficient transformation
+        this new architecture, it is easier for Geotk to find the most efficient transformation
         path in a <var>inverse projection</var> - <var>forward projection</var> concatenation, for
         example when going from a Mercator projection to an other Mercator projection on the same
         ellipsoid. It is also much easier to implement projections having non-standard orientation,
@@ -320,9 +320,9 @@
         Conic Conformal (1SP) is called "<cite>Northing at false origin</cite>" in the 2SP case.</p>
 
         <p>GeoTools 2 put all parameter names in the same bag. For example the two above names
-        are declared for the same parameter no matter the projection using it. In Geotoolkit,
+        are declared for the same parameter no matter the projection using it. In Geotk,
         parameter names are declared on a case-by-case basis with only the relevant name for
-        a given projection. Concequently WKT parsing in Geotoolkit is stricter regarding the
+        a given projection. Concequently WKT parsing in Geotk is stricter regarding the
         parameter names, and WKT formatting writes the correct names (GeoTools 2 writes the
         wrong names in many cases).</p>
       </answer>
@@ -334,7 +334,7 @@
       </question>
       <answer>
         <p>In GeoTools 2, any attempt to project a point outside the projection valid area result
-        in an exception being thrown. In Geotoolkit, <cite>not-a-number</cite> (NaN) or infinite
+        in an exception being thrown. In Geotk, <cite>not-a-number</cite> (NaN) or infinite
         values are returned when appropriate. For example applying the Mercator projection on the
         North pole or the South pole now result in +∞ or -∞ respectively, while applying the
         projection on a latitude further than 90°N or 90°S result in <code>NaN</code>.</p>
@@ -358,7 +358,7 @@
         build. Unfortunatly experience has show that math transforms and their providers do not
         always have a one-to-one relationship. For example "Mercator1SP" and "Mercator2SP"
         are two ways (and consequently two distinct providers) to define the same math transform.
-        In Geotoolkit providers are defined in their own package, and their class name match the
+        In Geotk providers are defined in their own package, and their class name match the
         OGC name.</p>
       </answer>
     </faq>
@@ -370,10 +370,10 @@
       <answer>
         <p>In GeoTools 2 the user had to manually download the NADCON grids, save the files in a
         directory of his choice and specify this directory to GeoTools by running the main method
-        of <code>NadconTransform</code>. In Geotoolkit a Graphical User Interface is provided in
+        of <code>NadconTransform</code>. In Geotk a Graphical User Interface is provided in
         the <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module for
         performing all those steps automatically. It also provides a central place where the user
-        can choose and download all data used by Geotoolkit, not just NADCON grids.</p>
+        can choose and download all data used by Geotk, not just NADCON grids.</p>
 
         <p>In addition the downloaded NADCON grids are now automatically used by the EPSG-backed
         coordinate operation factory. Consequently the transformation of coordinates over the
@@ -440,9 +440,9 @@
         XML marshalling and unmarshalling
       </question>
       <answer>
-        <p>XML marshalling and unmarshalling in Geotoolkit are totally different than what
-        they were in GeoTools 2. Geotoolkit uses the JAXB implementation bundled in Java 6
-        while GeoTools uses an Eclipse-based technology. In Geotoolkit, developers marshall
+        <p>XML marshalling and unmarshalling in Geotk are totally different than what
+        they were in GeoTools 2. Geotk uses the JAXB implementation bundled in Java 6
+        while GeoTools uses an Eclipse-based technology. In Geotk, developers marshall
         and unmarshall directly the metadata and referencing classes they use instead than
         intermediate classes generated automatically from the XML schema.</p>
       </answer>

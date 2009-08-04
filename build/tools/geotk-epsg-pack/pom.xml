@@ -2,7 +2,7 @@
 <!-- =======================================================================
         Maven Project Configuration File
 
-        The Geotoolkit Project
+        The Geotoolkit.org Project
             http://www.geotoolkit.org/
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0"

@@ -17,7 +17,7 @@
  */
 
 /**
- * Descriptors of JAI operations implemeted in Geotoolkit. They are the classes to be declared
+ * Descriptors of JAI operations implemeted in Geotk. They are the classes to be declared
  * in the JAI {@code META-INF/registryFile.jai} file.
  *
  * @author Martin Desruisseaux (Geomatys)

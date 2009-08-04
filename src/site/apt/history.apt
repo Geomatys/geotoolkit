@@ -1,8 +1,8 @@
-Geotoolkit History
+Geotoolkit.org History
 
-  Geotoolkit originates from several projects going back to 1995. Along the way, the GeoTools
+  Geotk originates from several projects going back to 1995. Along the way, the GeoTools
   and Seagis projects joined forces to develop a Java library for geospatial applications. More
-  recently, Geotoolkit has emerged as an independent fork of GeoTools.
+  recently, Geotk has emerged as an independent fork of GeoTools.
 
 * History of GeoTools 1 (1996 - 2003)
 
@@ -161,9 +161,9 @@ Geotoolkit History
   original GeoTools\ 2 effort.
 
 
-* The start of Geotoolkit (2009)
+* The start of Geotoolkit.org (2009)
 
-  On March\ 27,\ 2009, Martin along with several other developers, decided to launch the Geotoolkit
+  On March\ 27,\ 2009, Martin along with several other developers, decided to launch the Geotk
   project with the same stated goals as the GeoTools\ 2 project but with a different way of working.
 
   The project was started as a formal fork of the GeoTools\ 2 project on the basis of the newly
@@ -172,7 +172,7 @@ Geotoolkit History
   web site and source code repository were created. The original Seagis
   stateful renderer was revived and built on the ported code, as was a new styling engine.
 
-  Geotoolkit has adopted new tools. The newer version of the Java language, Java\ 6, was used as the
+  Geotk has adopted new tools. The newer version of the Java language, Java\ 6, was used as the
   base platform and the project aims to follow the evolution of the language according to the rules
   documented in the GeoTools developer's guide: "Our policy is waiting for a dot release before
   migrating to new version of the Java language." The Mercurial distributed source code versioning
@@ -184,7 +184,7 @@ Geotoolkit History
   example, it would be very easy to maintain a version of the library which runs on the older
   Java\ 5 runtime and base library.
 
-  Geotoolkit has returned to the old governance model where decisions are reached by consensus
+  Geotk has returned to the old governance model where decisions are reached by consensus
   rather than by vote and module maintainers are defered to for technical decisions. It is also
   expected that contributions will be heavily reviewed before being integrated into the library and
   that new contributors will need to spend time working with the library before being given leading

@@ -73,7 +73,7 @@ public final class SwingUtilities {
     }
 
     /**
-     * Sets the Swing Look and Feel to the default value used in Geotoolkit. This method exists
+     * Sets the Swing Look and Feel to the default value used in Geotk. This method exists
      * in order to have a central place where this setting can be performed, so we can change
      * the setting in a consistent fashion for the whole library.
      *
