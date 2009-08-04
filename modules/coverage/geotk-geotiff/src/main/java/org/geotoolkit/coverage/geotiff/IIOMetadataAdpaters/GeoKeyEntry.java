@@ -1,7 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
+ *    (C) 2009, Geomatys
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -16,8 +17,8 @@
  */
 package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
+
 
 /**
  * This class is a holder for a GeoKey record containing four short values as

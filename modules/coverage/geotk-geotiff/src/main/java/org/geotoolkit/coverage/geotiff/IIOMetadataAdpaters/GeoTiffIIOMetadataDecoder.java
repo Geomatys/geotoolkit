@@ -1,21 +1,19 @@
 /*
- * (c) 2004 Mike Nidel
- *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
- *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
+ *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
- * Take, Modify, Distribute freely
- * Buy, Sell, Pass it off as your own
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
  *
- * Use this code at your own risk, the author makes no guarantee
- * of performance and retains no liability for the failure of this
- * software.
- *
- * If you feel like it, send any suggestions for improvement or
- * bug fixes, or modified source code to mike@gelbin.org
- *
- * Do not taunt Happy Fun Ball.
- *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters;
 
@@ -66,9 +64,7 @@ import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
  * 
  * @author Mike Nidel
  * @author Simone Giannecchini, GeoSolutions
- * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/plugin/geotiff/src/org/geotools/gce/geotiff/IIOMetadataAdpaters/GeoTiffIIOMetadataDecoder.java $
+ *
  * @todo we can improve a little bt this class caching the pixel scale, the transformation, etc...
  */
 public final class GeoTiffIIOMetadataDecoder {
