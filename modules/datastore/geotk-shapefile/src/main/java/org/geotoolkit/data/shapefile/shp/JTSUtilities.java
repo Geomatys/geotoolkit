@@ -34,12 +34,10 @@ import com.vividsolutions.jts.geom.Polygon;
  * 
  * @author aaime
  * @author Ian Schneider
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/JTSUtilities.java $
  */
-public class JTSUtilities {
+public final class JTSUtilities {
 
-    static final GeometryFactory factory = new GeometryFactory();
+    static final GeometryFactory FACTORY = new GeometryFactory();
 
     private JTSUtilities() {
     }
@@ -145,14 +143,14 @@ public class JTSUtilities {
      * @return A new ring with the reversed Coordinates.
      */
     public static final LinearRing reverseRing(LinearRing lr) {
-        int numPoints = lr.getNumPoints();
-        Coordinate[] newCoords = new Coordinate[numPoints];
+        final int numPoints = lr.getNumPoints();
+        final Coordinate[] newCoords = new Coordinate[numPoints];
 
         for (int t = numPoints-1; t >= 0; t--) {
             newCoords[t] = lr.getCoordinateN(numPoints - t);
         }
 
-        return factory.createLinearRing(newCoords);
+        return FACTORY.createLinearRing(newCoords);
     }
 
     /**
@@ -164,8 +162,8 @@ public class JTSUtilities {
      * @return The "nice" Polygon.
      */
     public static final Polygon makeGoodShapePolygon(Polygon p) {
-        LinearRing outer;
-        LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+        final LinearRing outer;
+        final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
         Coordinate[] coords;
 
         coords = p.getExteriorRing().getCoordinates();
@@ -186,7 +184,7 @@ public class JTSUtilities {
             }
         }
 
-        return factory.createPolygon(outer, holes);
+        return FACTORY.createPolygon(outer, holes);
     }
 
     /**
@@ -197,7 +195,7 @@ public class JTSUtilities {
      * @return The "nicified" MultiPolygon.
      */
     public static final MultiPolygon makeGoodShapeMultiPolygon(MultiPolygon mp) {
-        MultiPolygon result;
+        final MultiPolygon result;
         Polygon[] ps = new Polygon[mp.getNumGeometries()];
 
         // check each sub-polygon
@@ -205,7 +203,7 @@ public class JTSUtilities {
             ps[t] = makeGoodShapePolygon((Polygon) mp.getGeometryN(t));
         }
 
-        result = factory.createMultiPolygon(ps);
+        result = FACTORY.createMultiPolygon(ps);
 
         return result;
     }
@@ -237,39 +235,39 @@ public class JTSUtilities {
         Geometry retVal = null;
 
         if (type.isPointType()) {
-            if ((geom instanceof Point)) {
+            if (geom instanceof Point) {
                 retVal = geom;
             } else {
                 Point[] pNull = null;
-                retVal = factory.createMultiPoint(pNull);
+                retVal = FACTORY.createMultiPoint(pNull);
             }
         } else if (type.isLineType()) {
-            if ((geom instanceof LineString)) {
-                retVal = factory
+            if (geom instanceof LineString) {
+                retVal = FACTORY
                         .createMultiLineString(new LineString[] { (LineString) geom });
             } else if (geom instanceof MultiLineString) {
                 retVal = geom;
             } else {
-                retVal = factory.createMultiLineString(null);
+                retVal = FACTORY.createMultiLineString(null);
             }
         } else if (type.isPolygonType()) {
             if (geom instanceof Polygon) {
-                Polygon p = makeGoodShapePolygon((Polygon) geom);
-                retVal = factory.createMultiPolygon(new Polygon[] { p });
+                final Polygon p = makeGoodShapePolygon((Polygon) geom);
+                retVal = FACTORY.createMultiPolygon(new Polygon[] { p });
             } else if (geom instanceof MultiPolygon) {
                 retVal = JTSUtilities
                         .makeGoodShapeMultiPolygon((MultiPolygon) geom);
             } else {
-                retVal = factory.createMultiPolygon(null);
+                retVal = FACTORY.createMultiPolygon(null);
             }
         } else if (type.isMultiPointType()) {
-            if ((geom instanceof Point)) {
-                retVal = factory.createMultiPoint(new Point[] { (Point) geom });
+            if (geom instanceof Point) {
+                retVal = FACTORY.createMultiPoint(new Point[] { (Point) geom });
             } else if (geom instanceof MultiPoint) {
                 retVal = geom;
             } else {
                 Point[] pNull = null;
-                retVal = factory.createMultiPoint(pNull);
+                retVal = FACTORY.createMultiPoint(pNull);
             }
         } else
             throw new RuntimeException("Could not convert " + geom.getClass()

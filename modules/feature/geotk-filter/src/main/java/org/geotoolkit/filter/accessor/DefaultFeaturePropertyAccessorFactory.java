@@ -47,8 +47,8 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static final PropertyAccessor ATTRIBUTE_ACCESS = new SimpleFeaturePropertyAccessor();
     private static final PropertyAccessor DEFAULT_GEOMETRY_ACCESS = new DefaultGeometrySimpleFeaturePropertyAccessor();
     private static final PropertyAccessor FID_ACCESS = new FidSimpleFeaturePropertyAccessor();
-    private static final Pattern idPattern = Pattern.compile("@(\\w+:)?id");
-    private static final Pattern propertyPattern = Pattern.compile("(\\w+:)?(\\w+)");
+    private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(\\w+)");
     private static final Cache<String,PropertyAccessor> CACHE = new Cache<String, PropertyAccessor>();
 
     /**
@@ -75,7 +75,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         //if ("".equals(xpath) && target == Geometry.class)
         if (xpath.isEmpty()) {
-            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
             accessor = handler.peek();
             if (accessor == null) {
                 accessor = DEFAULT_GEOMETRY_ACCESS;
@@ -85,8 +85,8 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         //check for fid access
-        if (idPattern.matcher(xpath).matches()) {
-            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+        if (ID_PATTERN.matcher(xpath).matches()) {
+            final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
             accessor = handler.peek();
             if (accessor == null) {
                 accessor = FID_ACCESS;
@@ -96,8 +96,8 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         //check for simple property acess
-        if (propertyPattern.matcher(xpath).matches()) {
-            Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+        if (PROPERTY_PATTERN.matcher(xpath).matches()) {
+            final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
             accessor = handler.peek();
             if (accessor == null) {
                 accessor = ATTRIBUTE_ACCESS;
@@ -121,7 +121,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
      * @return xpath with any XML prefixes removed
      */
     private static String stripPrefix(String xpath) {
-        int split = xpath.indexOf(':');
+        final int split = xpath.indexOf(':');
         if (split != -1) {
             return xpath.substring(split + 1);
         }
@@ -143,7 +143,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public Object get(Object object, String xpath, Class target) {
-            Feature feature = (Feature) object;
+            final Feature feature = (Feature) object;
             return feature.getIdentifier().getID();
         }
 

@@ -55,8 +55,10 @@ import org.opengis.filter.expression.Expression;
  * 
  */
 public class ExpressionExtractor {
-    static final FilterFactory ff = FactoryFinder.getFilterFactory(null);
-    
+    static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+
+    private ExpressionExtractor() {}
+
     /**
      * Parses the original string and returns an array or parsed expressions, in
      * particular, the result of parsing each embedded cql expression and string
@@ -68,8 +70,8 @@ public class ExpressionExtractor {
      */
     static List<Expression> splitCqlExpressions(String expression) {
         boolean inCqlExpression = false;
-        List<Expression> result = new ArrayList<Expression>();
-        StringBuilder sb = new StringBuilder();
+        final List<Expression> result = new ArrayList<Expression>();
+        final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < expression.length(); i++) {
             final char curr = expression.charAt(i);
             final boolean last = (i == expression.length() - 1);
@@ -98,7 +100,7 @@ public class ExpressionExtractor {
                 
                 // if we extracted a literal in between two expressions, add it to the result
                 if(sb.length() > 0) {
-                    result.add(ff.literal(sb.toString()));
+                    result.add(FF.literal(sb.toString()));
                     sb.setLength(0);
                 }
                 
@@ -128,7 +130,7 @@ public class ExpressionExtractor {
         if(inCqlExpression) {
             throw new IllegalArgumentException("Unclosed CQL expression '" + sb + "'");
         } else if(sb.length() > 0){
-            result.add(ff.literal(sb.toString()));
+            result.add(FF.literal(sb.toString()));
         }
         return result;
     }
@@ -144,7 +146,7 @@ public class ExpressionExtractor {
         
         Expression result = expressions.get(0);
         for (int i = 1; i < expressions.size(); i++) {
-            result = ff.function("strConcat", result, expressions.get(i));
+            result = FF.function("strConcat", result, expressions.get(i));
         }
         
         return result;

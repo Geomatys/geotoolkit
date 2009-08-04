@@ -95,9 +95,9 @@ public class CoverageLayerNode extends A3DGraphic{
         back.updateModelBound();
 
         try {
-            GridCoverage2D coverage = layer.getCoverageReader().read(null);
-            RenderedImage img = coverage.getRenderedImage();
-            Image image = AWTImageLoader.makeArdor3dImage(img, false);
+            final GridCoverage2D coverage = layer.getCoverageReader().read(null);
+            final RenderedImage img = coverage.getRenderedImage();
+            final Image image = AWTImageLoader.makeArdor3dImage(img, false);
 
             // Add a texture to the box.
             final TextureState ts = new TextureState();
@@ -156,7 +156,7 @@ public class CoverageLayerNode extends A3DGraphic{
                 LOGGER.log(Level.SEVERE, null, ex);
             }
 
-            Mesh mesh = buildQuad();
+            final Mesh mesh = buildQuad();
 
             synchronized(meshes){
                 meshes.add(mesh);
@@ -170,7 +170,7 @@ public class CoverageLayerNode extends A3DGraphic{
 
     private static class UpdateThread extends Thread{
 
-        private static final Map<CoverageLayerNode,double[]> nodes = new HashMap<CoverageLayerNode,double[]>();
+        private static final Map<CoverageLayerNode,double[]> NODES = new HashMap<CoverageLayerNode,double[]>();
         private static final int MIN_STEP = 100;
 
         @Override
@@ -181,19 +181,19 @@ public class CoverageLayerNode extends A3DGraphic{
                 } catch (InterruptedException ex) {
                 }
 
-                synchronized(nodes){
-                    for(CoverageLayerNode node : nodes.keySet()){
+                synchronized(NODES){
+                    for(CoverageLayerNode node : NODES.keySet()){
                         final double[] coords = node.canvas.getController().getCameraPosition();
 
                         if(coords != null){
-                            final double[] lastPosition = nodes.get(node);
+                            final double[] lastPosition = NODES.get(node);
                             if( Math.abs(coords[0]-lastPosition[0]) > MIN_STEP ||
                                 Math.abs(coords[1]-lastPosition[1]) > MIN_STEP ){
                                 System.out.println("difference de position");
                                 lastPosition[0] = coords[0];
                                 lastPosition[1] = coords[1];
 
-                                Mesh mesh = node.buildQuad();
+                                final Mesh mesh = node.buildQuad();
 
                                 synchronized(node){
                                     node._children.clear();

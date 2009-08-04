@@ -62,7 +62,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
@@ -70,7 +69,6 @@ import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.ReferenceIdentifier;
 
 /**
@@ -98,61 +96,61 @@ public class FeatureTypeUtilities {
     /** abstract base type for all feature types */
     public static final SimpleFeatureType ABSTRACT_FEATURE_TYPE;
 
-    private static final Map<String, Class> typeMap = new HashMap<String, Class>();
-    private static final Map<Class, String> typeEncode = new HashMap<Class, String>();
+    private static final Map<String, Class> TYPE_MAP = new HashMap<String, Class>();
+    private static final Map<Class, String> TYPE_ENCODE = new HashMap<Class, String>();
 
     static {
-        typeEncode.put(String.class, "String");
-        typeMap.put("String", String.class);
-        typeMap.put("string", String.class);
-        typeMap.put("\"\"", String.class);
+        TYPE_ENCODE.put(String.class, "String");
+        TYPE_MAP.put("String", String.class);
+        TYPE_MAP.put("string", String.class);
+        TYPE_MAP.put("\"\"", String.class);
 
-        typeEncode.put(Integer.class, "Integer");
-        typeMap.put("Integer", Integer.class);
-        typeMap.put("int", Integer.class);
-        typeMap.put("0", Integer.class);
+        TYPE_ENCODE.put(Integer.class, "Integer");
+        TYPE_MAP.put("Integer", Integer.class);
+        TYPE_MAP.put("int", Integer.class);
+        TYPE_MAP.put("0", Integer.class);
 
-        typeEncode.put(Double.class, "Double");
-        typeMap.put("Double", Double.class);
-        typeMap.put("double", Double.class);
-        typeMap.put("0.0", Double.class);
+        TYPE_ENCODE.put(Double.class, "Double");
+        TYPE_MAP.put("Double", Double.class);
+        TYPE_MAP.put("double", Double.class);
+        TYPE_MAP.put("0.0", Double.class);
 
-        typeEncode.put(Float.class, "Float");
-        typeMap.put("Float", Float.class);
-        typeMap.put("float", Float.class);
-        typeMap.put("0.0f", Float.class);
+        TYPE_ENCODE.put(Float.class, "Float");
+        TYPE_MAP.put("Float", Float.class);
+        TYPE_MAP.put("float", Float.class);
+        TYPE_MAP.put("0.0f", Float.class);
 
-        typeEncode.put(Boolean.class, "Boolean");
-        typeMap.put("Boolean", Boolean.class);
-        typeMap.put("true", Boolean.class);
-        typeMap.put("false", Boolean.class);
+        TYPE_ENCODE.put(Boolean.class, "Boolean");
+        TYPE_MAP.put("Boolean", Boolean.class);
+        TYPE_MAP.put("true", Boolean.class);
+        TYPE_MAP.put("false", Boolean.class);
 
-        typeEncode.put(Geometry.class, "Geometry");
-        typeMap.put("Geometry", Geometry.class);
+        TYPE_ENCODE.put(Geometry.class, "Geometry");
+        TYPE_MAP.put("Geometry", Geometry.class);
 
-        typeEncode.put(Point.class, "Point");
-        typeMap.put("Point", Point.class);
+        TYPE_ENCODE.put(Point.class, "Point");
+        TYPE_MAP.put("Point", Point.class);
 
-        typeEncode.put(LineString.class, "LineString");
-        typeMap.put("LineString", LineString.class);
+        TYPE_ENCODE.put(LineString.class, "LineString");
+        TYPE_MAP.put("LineString", LineString.class);
 
-        typeEncode.put(Polygon.class, "Polygon");
-        typeMap.put("Polygon", Polygon.class);
+        TYPE_ENCODE.put(Polygon.class, "Polygon");
+        TYPE_MAP.put("Polygon", Polygon.class);
 
-        typeEncode.put(MultiPoint.class, "MultiPoint");
-        typeMap.put("MultiPoint", MultiPoint.class);
+        TYPE_ENCODE.put(MultiPoint.class, "MultiPoint");
+        TYPE_MAP.put("MultiPoint", MultiPoint.class);
 
-        typeEncode.put(MultiLineString.class, "MultiLineString");
-        typeMap.put("MultiLineString", MultiLineString.class);
+        TYPE_ENCODE.put(MultiLineString.class, "MultiLineString");
+        TYPE_MAP.put("MultiLineString", MultiLineString.class);
 
-        typeEncode.put(MultiPolygon.class, "MultiPolygon");
-        typeMap.put("MultiPolygon", MultiPolygon.class);
+        TYPE_ENCODE.put(MultiPolygon.class, "MultiPolygon");
+        TYPE_MAP.put("MultiPolygon", MultiPolygon.class);
 
-        typeEncode.put(GeometryCollection.class, "GeometryCollection");
-        typeMap.put("GeometryCollection", GeometryCollection.class);
+        TYPE_ENCODE.put(GeometryCollection.class, "GeometryCollection");
+        TYPE_MAP.put("GeometryCollection", GeometryCollection.class);
 
-        typeEncode.put(Date.class, "Date");
-        typeMap.put("Date", Date.class);
+        TYPE_ENCODE.put(Date.class, "Date");
+        TYPE_MAP.put("Date", Date.class);
 
 
         URI uri;
@@ -184,6 +182,7 @@ public class FeatureTypeUtilities {
             new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
 
+    private FeatureTypeUtilities() {}
 
     /**
      * Create a derived FeatureType
@@ -307,7 +306,7 @@ public class FeatureTypeUtilities {
             return featureType;
         }
 
-        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
         tb.setName(featureType.getName());
 
         for (int i = 0; i < properties.length; i++) {
@@ -461,7 +460,7 @@ public class FeatureTypeUtilities {
      * @throws SchemaException If typeSpect could not be interpreted
      */
     static AttributeDescriptor createAttribute(final String typeSpec) throws SchemaException {
-        final int split = typeSpec.indexOf(":");
+        final int split = typeSpec.indexOf(':');
 
         final String name;
         final String type;
@@ -473,7 +472,7 @@ public class FeatureTypeUtilities {
         } else {
             name = typeSpec.substring(0, split);
 
-            final int split2 = typeSpec.indexOf(":", split + 1);
+            final int split2 = typeSpec.indexOf(':', split + 1);
 
             if (split2 == -1) {
                 type = typeSpec.substring(split + 1);
@@ -572,16 +571,16 @@ public class FeatureTypeUtilities {
     }
 
     static Class type(final String typeName) throws ClassNotFoundException {
-        if (typeMap.containsKey(typeName)) {
-            return (Class) typeMap.get(typeName);
+        if (TYPE_MAP.containsKey(typeName)) {
+            return (Class) TYPE_MAP.get(typeName);
         }
 
         return Class.forName(typeName);
     }
 
     static String typeMap(final Class type) {
-        if (typeEncode.containsKey(type)) {
-            return typeEncode.get(type);
+        if (TYPE_ENCODE.containsKey(type)) {
+            return TYPE_ENCODE.get(type);
         }
         /*
         SortedSet<String> choose = new TreeSet<String>();
@@ -629,7 +628,7 @@ public class FeatureTypeUtilities {
             for (Filter f : type.getRestrictions()) {
                 if (f != null && f != Filter.EXCLUDE && f != Filter.INCLUDE && (f instanceof PropertyIsLessThan || f instanceof PropertyIsLessThanOrEqualTo)) {
                     try {
-                        BinaryComparisonOperator cf = (BinaryComparisonOperator) f;
+                        final BinaryComparisonOperator cf = (BinaryComparisonOperator) f;
                         if (cf.getExpression1() instanceof LengthFunction) {
                             return Integer.parseInt(((Literal) cf.getExpression2()).getValue().toString());
                         } else if (cf.getExpression2() instanceof LengthFunction) {
@@ -950,7 +949,7 @@ public class FeatureTypeUtilities {
                 (AttributeDescriptor[]) attributesB.toArray(new AttributeDescriptor[attributesB.size()]));
     }
 
-    public static boolean equals(final AttributeDescriptor attributesA[], final AttributeDescriptor attributesB[]) {
+    public static boolean equals(final AttributeDescriptor[] attributesA, final AttributeDescriptor[] attributesB) {
         if (attributesA.length != attributesB.length) {
             return false;
         }
@@ -997,16 +996,16 @@ public class FeatureTypeUtilities {
             return false;
         }
 
-        String typeNameA = typeA.getTypeName();
-        String typeNameB = typeB.getTypeName();
+        final String typeNameA = typeA.getTypeName();
+        final String typeNameB = typeB.getTypeName();
         if (typeNameA == null && typeNameB != null) {
             return false;
         } else if (!typeNameA.equals(typeNameB)) {
             return false;
         }
 
-        String namespaceA = typeA.getName().getNamespaceURI();
-        String namespaceB = typeB.getName().getNamespaceURI();
+        final String namespaceA = typeA.getName().getNamespaceURI();
+        final String namespaceB = typeB.getName().getNamespaceURI();
         if (namespaceA == null && namespaceB != null) {
             return false;
         } else if (!namespaceA.equals(namespaceB)) {
