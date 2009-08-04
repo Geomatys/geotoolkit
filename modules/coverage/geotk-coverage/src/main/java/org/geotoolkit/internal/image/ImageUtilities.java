@@ -505,7 +505,7 @@ public final class ImageUtilities {
             case TYPE_FLOAT:  return -Float  .MAX_VALUE;
             case TYPE_DOUBLE: return -Double .MAX_VALUE;
             default: throw new IllegalArgumentException(String.valueOf(dataType));
-            }
+        }
     }
 
     /**

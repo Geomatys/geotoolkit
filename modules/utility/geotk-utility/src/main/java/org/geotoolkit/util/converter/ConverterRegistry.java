@@ -32,7 +32,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 /**
  * A collection of {@linkplain ObjectConverter Object Converters}. A converter from the given
  * <var>source type</var> to the given <var>target type</var> can be obtained by a call to
- * {@link #converters(Class, Class)}. If no converter exists for the given source and target
+ * {@link #converter(Class, Class)}. If no converter exists for the given source and target
  * types, then this registry searchs for a suitable converter accepting a parent class of the
  * given source type, or returning a sub-class of the given target type.
  * <p>

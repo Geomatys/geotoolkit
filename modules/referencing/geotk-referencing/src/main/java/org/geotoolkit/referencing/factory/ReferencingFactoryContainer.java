@@ -290,13 +290,12 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     }
 
     /**
-     * Converts a 2D&nbsp;+&nbsp;1D compound CRS into a 3D CRS, if possible. More specifically,
-     * if the specified {@linkplain CompoundCRS compound CRS} is made of a
-     * {@linkplain GeographicCRS geographic} (or {@linkplain ProjectedCRS projected}) and a
-     * {@linkplain VerticalCRS vertical} CRS, and if the vertical CRS datum type is
-     * {@linkplain VerticalDatumType#ELLIPSOIDAL height above the ellipsoid}, then this method
-     * converts the compound CRS in a single 3D CRS. Otherwise, the {@code crs} argument is
-     * returned unchanged.
+     * Converts a 2D&nbsp;+&nbsp;1D compound CRS into a 3D CRS, if possible.
+     * More specifically, if the specified {@linkplain CompoundCRS compound CRS} is made
+     * of a {@linkplain GeographicCRS geographic} (or {@linkplain ProjectedCRS projected})
+     * and a {@linkplain VerticalCRS vertical} CRS, and if the vertical CRS datum type is
+     * {@code ELLIPSOIDAL} (height above the ellipsoid), then this method converts the compound
+     * CRS in a single 3D CRS. Otherwise, the {@code crs} argument is returned unchanged.
      *
      * @param  crs The compound CRS to converts in a 3D geographic or projected CRS.
      * @return The 3D geographic or projected CRS, or {@code crs} if the change can't be applied.

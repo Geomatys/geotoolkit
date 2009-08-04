@@ -700,10 +700,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
 
     /**
      * Creates an operation between a geographic and a vertical coordinate reference systems.
-     * The default implementation accepts the conversion only if the geographic CRS is a tri
-     * dimensional one and the vertical CRS is for {@linkplain VerticalDatumType#ELLIPSOIDAL
-     * height above the ellipsoid}. More elaborated operation, like transformation from
-     * ellipsoidal to geoidal height, should be implemented here.
+     * The default implementation accepts the conversion only if the geographic CRS is a
+     * tridimensional one and the vertical CRS is for <cite>height above the ellipsoid</cite>.
+     * More elaborated operation, like transformation from ellipsoidal to geoidal height,
+     * should be implemented here.
      *
      * @param  sourceCRS Input coordinate reference system.
      * @param  targetCRS Output coordinate reference system.

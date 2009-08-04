@@ -200,7 +200,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.5</version>
+        <version>4.6</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -400,7 +400,7 @@
           <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->
           <maxmemory>512M</maxmemory>      <!-- maximum Java heap size to be used when launching the tool. -->
           <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
-          <additionalparam>-keywords</additionalparam>
+          <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
           <excludePackageNames>
             org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra
@@ -427,8 +427,8 @@
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
             <link>http://jscience.org/api/</link>
-            <link>http://geoapi.sourceforge.net/snapshot/javadoc</link>
-            <link>http://geoapi.sourceforge.net/snapshot/pending</link>
+            <link>http://www.geoapi.org/snapshot/javadoc</link>
+            <link>http://www.geoapi.org/snapshot/pending</link>
           </links>
 
           <!-- Separates packages on the overview page into the groups specified. -->
@@ -523,7 +523,7 @@
     <repository>
       <id>geotoolkit</id>
       <name>Geotoolkit repository</name>
-      <url>http://maven.geotoolkit.org/</url>
+      <url>http://maven.geotoolkit.org</url>
     </repository>
   </repositories>
 
@@ -531,7 +531,7 @@
     <pluginRepository>
       <id>geotoolkit</id>
       <name>Geotoolkit repository</name>
-      <url>http://maven.geotoolkit.org/</url>
+      <url>http://maven.geotoolkit.org</url>
     </pluginRepository>
   </pluginRepositories>
 
