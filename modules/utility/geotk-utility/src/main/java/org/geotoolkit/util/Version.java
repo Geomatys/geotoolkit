@@ -48,7 +48,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
     /**
      * The version of this Geotoolkit distribution.
      */
-    public static final Version GEOTOOLKIT = new Version("3.02-SNAPSHOT");
+    public static final Version GEOTOOLKIT = new Version("3.03-SNAPSHOT");
 
     /**
      * The separator characters between {@linkplain #getMajor major}, {@linkplain #getMinor minor}
