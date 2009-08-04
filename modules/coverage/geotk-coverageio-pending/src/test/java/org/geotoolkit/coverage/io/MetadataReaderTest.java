@@ -90,7 +90,7 @@ public final class MetadataReaderTest {
         assertEquals("Height", 600, range.getHigh(1));
 
         final CoordinateSystemAxis axisOne = parser.getAxis(0);
-        assertTrue(axisOne.getDirection() == AxisDirection.valueOf("east"));
+        assertTrue(axisOne.getDirection() == AxisDirection.EAST);
         assertTrue(axisOne.getName().getCode().equalsIgnoreCase("x"));
 
         final Datum datum = parser.getDatum();
