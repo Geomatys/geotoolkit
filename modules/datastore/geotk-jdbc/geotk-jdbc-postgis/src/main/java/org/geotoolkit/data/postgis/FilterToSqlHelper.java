@@ -19,14 +19,18 @@ package org.geotoolkit.data.postgis;
 import java.io.IOException;
 import java.io.Writer;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialOperator;
+import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.jdbc.SQLDialect;
-import org.opengis.filter.capability.FilterCapabilities;
-import org.opengis.filter.capability.IdCapabilities;
-import org.opengis.filter.capability.ScalarCapabilities;
+import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.SpatialOperator;
+import org.opengis.filter.capability.SpatialOperators;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
@@ -56,28 +60,39 @@ class FilterToSqlHelper {
     }
 
     public static DefaultFilterCapabilities createFilterCapabilities() {
+        final GeometryOperand[] operandEnvelope = new GeometryOperand[]{GeometryOperand.Envelope};
+        final SpatialOperator operatorBBOX       = new DefaultSpatialOperator(BBOX.NAME      , operandEnvelope);
+        final SpatialOperator operatorBeyond     = new DefaultSpatialOperator(Beyond.NAME    , operandEnvelope);
+        final SpatialOperator operatorContains   = new DefaultSpatialOperator(Contains.NAME  , operandEnvelope);
+        final SpatialOperator operatorCrosses    = new DefaultSpatialOperator(Crosses.NAME   , operandEnvelope);
+        final SpatialOperator operatorDisjoint   = new DefaultSpatialOperator(Disjoint.NAME  , operandEnvelope);
+        final SpatialOperator operatorDWithin    = new DefaultSpatialOperator(DWithin.NAME   , operandEnvelope);
+        final SpatialOperator operatorEquals     = new DefaultSpatialOperator(Equals.NAME    , operandEnvelope);
+        final SpatialOperator operatorIntersects = new DefaultSpatialOperator(Intersects.NAME, operandEnvelope);
+        final SpatialOperator operatorOverlaps   = new DefaultSpatialOperator(Overlaps.NAME  , operandEnvelope);
+        final SpatialOperator operatorTouches    = new DefaultSpatialOperator(Touches.NAME   , operandEnvelope);
+        final SpatialOperator operatorWithin     = new DefaultSpatialOperator(Within.NAME    , operandEnvelope);
 
-//        final FilterCapabilities caps = new FilterCapabilities();
-//        caps.addAll(SQLDialect.BASE_DBMS_CAPABILITIES);
-//
-//        // adding the spatial filters support
-//        caps.addType(BBOX.class);
-//        caps.addType(Contains.class);
-//        caps.addType(Crosses.class);
-//        caps.addType(Disjoint.class);
-//        caps.addType(Equals.class);
-//        caps.addType(Intersects.class);
-//        caps.addType(Overlaps.class);
-//        caps.addType(Touches.class);
-//        caps.addType(Within.class);
-//        caps.addType(DWithin.class);
-//        caps.addType(Beyond.class);
-        /*final IdCapabilities idCapsBase = SQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities();
-        final SpatialCapabilities spatialCapsBase = SQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities();
-        final SpatialCapabilities spatialCapsFinal = new DefaultSpatialCapabilities(operands, operators);
-        final ScalarCapabilities scalarCapsbase = SQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities();
-        return new DefaultFilterCapabilities(null, idCapsBase, spatialCapsFinal, scalarCapsbase);*/
-        return SQLDialect.BASE_DBMS_CAPABILITIES;
+        final List<SpatialOperator> spatialOptsList = new ArrayList<SpatialOperator>();
+        spatialOptsList.addAll(SQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getSpatialOperators().getOperators());
+        spatialOptsList.add(operatorBBOX);
+        spatialOptsList.add(operatorBeyond);
+        spatialOptsList.add(operatorContains);
+        spatialOptsList.add(operatorCrosses);
+        spatialOptsList.add(operatorDisjoint);
+        spatialOptsList.add(operatorDWithin);
+        spatialOptsList.add(operatorEquals);
+        spatialOptsList.add(operatorIntersects);
+        spatialOptsList.add(operatorOverlaps);
+        spatialOptsList.add(operatorTouches);
+        spatialOptsList.add(operatorWithin);
+
+        final SpatialOperators spatialOpts = new DefaultSpatialOperators(spatialOptsList.toArray(new SpatialOperator[]{}));
+        final SpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(null, spatialOpts);
+        return new DefaultFilterCapabilities(SQLDialect.BASE_DBMS_CAPABILITIES.getVersion(),
+                                             SQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities(),
+                                             spatialCaps,
+                                             SQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities());
     }
 
     protected Object visitBinarySpatialOperator(final BinarySpatialOperator filter,
