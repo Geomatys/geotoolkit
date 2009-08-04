@@ -61,7 +61,11 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
         this.crs = bbox.getValue().getCoordinateReferenceSystem();
-        this.srid = SRIDGenerator.toSRID(crs, SRIDGenerator.COMPACT_V1);
+        if(crs != null){
+            this.srid = SRIDGenerator.toSRID(crs, SRIDGenerator.COMPACT_V1);
+        }else{
+            this.srid = 0;
+        }
     }
 
     /**
