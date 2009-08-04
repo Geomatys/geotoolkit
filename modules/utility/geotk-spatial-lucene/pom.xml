@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>utility</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,39 +22,39 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>utility</artifactId>
-  <packaging>pom</packaging>
-  <name>Utilities</name>
+  <artifactId>geotk-spatial-lucene</artifactId>
+  <packaging>jar</packaging>
+  <name>Utility lucene spatial extension</name>
 
   <description>
-    Projects group for miscellaneous utilities.
+    Lucene extension for spatial datas.
   </description>
 
 
   <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
-  <developers>
-    <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <timezone>+1</timezone>
-      <roles>
-        <role>Administrator</role>
-      </roles>
-    </developer>
-  </developers>
 
-
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>geotk-utility-pending</module>
-    <module>geotk-spatial-lucene</module>
-  </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-filter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

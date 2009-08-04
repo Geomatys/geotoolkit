@@ -678,7 +678,12 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(Object obj) {
-        return new DefaultLiteral<Object>(obj);
+        if(obj instanceof Envelope){
+            //special case for envelopes to change them in JTS geometries
+            return new DefaultEnvelopeLiteral((Envelope) obj);
+        }else{
+            return new DefaultLiteral<Object>(obj);
+        }
     }
 
     /**

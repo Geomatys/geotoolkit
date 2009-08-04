@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.resources;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
@@ -106,4 +108,39 @@ public final class NIOUtilities {
                        + ' '         + System.getProperty("java.vendor");
         Logging.getLogger("org.geotools.io").log(Level.SEVERE, message, e);
     }
+
+    /**
+     * Delete a directory and all its contents, both files and directories.
+     * <p>
+     * Note, if this is passed a file rather than a directory, the method will
+     * not delete anything and return {@code false}.
+     * </p>
+     *
+     * @param directory A {@code File} object, expected to reference a
+     *                    directory.
+     * @return {@code true} if, and only if, the directory was successfully
+     *           deleted, and {@code false} otherwise.
+     */
+    public static boolean deleteDirectory(final File directory) throws IOException{
+        if (directory == null)
+            return false;
+        if (!directory.exists())
+            return false;
+
+        if (directory.isDirectory()) {
+            for (File f : directory.listFiles()) {
+                if (f.isDirectory()) {
+                    deleteDirectory(directory);
+                } else {
+                    final boolean deleted = f.delete();
+                    if (!deleted) {
+                        throw new IOException("unable to delete the file:" + f.getName());
+                    }
+                }
+            }
+        }
+        return directory.delete();
+
+    }
+
 }
