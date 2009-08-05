@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
@@ -62,7 +63,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
         this.crs = bbox.getValue().getCoordinateReferenceSystem();
         if(crs != null){
-            this.srid = SRIDGenerator.toSRID(crs, SRIDGenerator.COMPACT_V1);
+            this.srid = SRIDGenerator.toSRID(crs, Version.V1);
         }else{
             this.srid = 0;
         }
@@ -132,7 +133,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             //check that the geometry has the same crs as the boundingbox
             final CoordinateReferenceSystem crs;
             try {
-                 crs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.COMPACT_V1));
+                 crs = CRS.decode(SRIDGenerator.toSRS(srid, Version.V1));
 
                  if(!CRS.equalsIgnoreMetadata(crs, this.crs)){
                     //we must reproject the geometry

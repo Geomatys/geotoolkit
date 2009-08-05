@@ -23,6 +23,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.BinarySpatialOperator;
@@ -106,8 +107,8 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             return new Geometry[]{leftGeom, rightGeom};
         }
 
-        final CoordinateReferenceSystem leftCRS = CRS.decode(SRIDGenerator.toSRS(srid1, SRIDGenerator.COMPACT_V1));
-        final CoordinateReferenceSystem rightCRS = CRS.decode(SRIDGenerator.toSRS(srid2, SRIDGenerator.COMPACT_V1));
+        final CoordinateReferenceSystem leftCRS = CRS.decode(SRIDGenerator.toSRS(srid1, Version.V1));
+        final CoordinateReferenceSystem rightCRS = CRS.decode(SRIDGenerator.toSRS(srid2, Version.V1));
 
         //we choose to reproject the right operand.
         //there is no special reason to make this choice but we must make one.
@@ -136,7 +137,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //both are in the same CRS
 
             final CoordinateReferenceSystem geomCRS = CRS.decode(
-                    SRIDGenerator.toSRS((srid1 == 0)? srid2 : srid1, SRIDGenerator.COMPACT_V1));
+                    SRIDGenerator.toSRS((srid1 == 0)? srid2 : srid1, Version.V1));
 
             if(geomCRS.getCoordinateSystem().getAxis(0).getUnit().isCompatible(unit)){
                 //the geometries crs is compatible with the requested unit, nothing to reproject
@@ -160,8 +161,8 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
         }else{
             //both have different CRS, try to find the most appropriate crs amoung both
-            final CoordinateReferenceSystem leftCRS = CRS.decode(SRIDGenerator.toSRS(srid1, SRIDGenerator.COMPACT_V1));
-            final CoordinateReferenceSystem rightCRS = CRS.decode(SRIDGenerator.toSRS(srid2, SRIDGenerator.COMPACT_V1));
+            final CoordinateReferenceSystem leftCRS = CRS.decode(SRIDGenerator.toSRS(srid1, Version.V1));
+            final CoordinateReferenceSystem rightCRS = CRS.decode(SRIDGenerator.toSRS(srid2, Version.V1));
 
             final CoordinateReferenceSystem matchingCRS;
             final Geometry leftMatch;

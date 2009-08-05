@@ -58,6 +58,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
         Document doc = (Document) object;
 
         if(xpath.equals(LuceneOGCFilter.GEOMETRY_FIELD_NAME)){
+
             //if the requested field is the geometry we must grab the crs field too
             //to generate the geometry
             final byte[] compact = doc.getBinaryValue(LuceneOGCFilter.GEOMETRY_FIELD_NAME);

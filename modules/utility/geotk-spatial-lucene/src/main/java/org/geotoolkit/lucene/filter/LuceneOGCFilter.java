@@ -39,7 +39,7 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
 
-    public static final String GEOMETRY_FIELD_NAME = "geom";
+    public static final String GEOMETRY_FIELD_NAME = "idx_lucene_geometry";
     public static final PropertyName GEOMETRY_PROPERTY =
             FactoryFinder.getFilterFactory(null).property(GEOMETRY_FIELD_NAME);
     public static final Term GEOMETRY_FIELD = new Term(GEOMETRY_FIELD_NAME);
@@ -59,6 +59,10 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
 
     private LuceneOGCFilter(final Filter filter){
         this.filter = filter;
+    }
+
+    public Filter getOGCFilter(){
+        return filter;
     }
 
     /**

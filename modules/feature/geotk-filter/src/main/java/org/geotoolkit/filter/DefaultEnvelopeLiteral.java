@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -52,7 +53,7 @@ public class DefaultEnvelopeLiteral extends DefaultLiteral<Geometry> {
         coords[4] = new Coordinate(minx, miny);
         final LinearRing ring = GF.createLinearRing(coords);
         final Polygon poly = GF.createPolygon(ring, new LinearRing[0]);
-        final int srid = SRIDGenerator.toSRID(env.getCoordinateReferenceSystem(), SRIDGenerator.COMPACT_V1);
+        final int srid = SRIDGenerator.toSRID(env.getCoordinateReferenceSystem(), Version.V1);
         poly.setSRID(srid);
         return poly;
     }

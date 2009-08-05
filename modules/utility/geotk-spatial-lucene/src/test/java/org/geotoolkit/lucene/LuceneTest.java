@@ -49,6 +49,7 @@ import org.apache.lucene.search.TopDocs;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer;
@@ -347,7 +348,7 @@ public class LuceneTest {
             new Coordinate(7, 30),
             new Coordinate(7, -30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY,FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -382,7 +383,7 @@ public class LuceneTest {
             new Coordinate(775978.5043848383, 3339584.723798207),
             new Coordinate(775978.5043848383, -3339584.723798207),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -414,7 +415,7 @@ public class LuceneTest {
             new Coordinate(40, 40),
             new Coordinate(40, -30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -444,7 +445,7 @@ public class LuceneTest {
             new Coordinate(4452779.631730943, 4838471.398061137),
             new Coordinate(4452779.631730943, -3339584.723798207),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -511,7 +512,7 @@ public class LuceneTest {
             new Coordinate(0, 0),
             new Coordinate(25, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -540,7 +541,7 @@ public class LuceneTest {
          * case 3: point
          */
         geom = GF.createPoint(new Coordinate(-10, 10));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -605,7 +606,7 @@ public class LuceneTest {
             new Coordinate(-25, 5),
             new Coordinate(-15, 5),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -631,7 +632,7 @@ public class LuceneTest {
          * case 3: BOX/point
          */ 
         geom = GF.createPoint(new Coordinate(-25, 5));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -657,7 +658,7 @@ public class LuceneTest {
          * case 4: Line/point
          */ 
         geom = GF.createPoint(new Coordinate(20, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),0.00001,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -688,7 +689,7 @@ public class LuceneTest {
             new Coordinate(20, 0),
             new Coordinate(15, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),TOLERANCE,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -723,7 +724,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(-25, 5));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -764,7 +765,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -806,7 +807,7 @@ public class LuceneTest {
             new Coordinate(-40, 0),
             new Coordinate(30, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -845,7 +846,7 @@ public class LuceneTest {
             new Coordinate(7, 40),
             new Coordinate(7, -20),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -961,7 +962,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -991,7 +992,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(-30, 5));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1018,7 +1019,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(-25, -50));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1045,7 +1046,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, -10));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1075,7 +1076,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(40, 20));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1105,7 +1106,7 @@ public class LuceneTest {
             new Coordinate(7, 30),
             new Coordinate(7, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1136,7 +1137,7 @@ public class LuceneTest {
             new Coordinate(-15, 3),
             new Coordinate(30, 4),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1167,7 +1168,7 @@ public class LuceneTest {
             new Coordinate(0, 0),
             new Coordinate(-40, -40),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1308,7 +1309,7 @@ public class LuceneTest {
             new Coordinate(-40, 30),
             new Coordinate(40, 20),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1346,7 +1347,7 @@ public class LuceneTest {
             new Coordinate(40, 10),
             new Coordinate(40, 30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1377,7 +1378,7 @@ public class LuceneTest {
             new Coordinate(40, 10),
             new Coordinate(-5, -5),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1410,7 +1411,7 @@ public class LuceneTest {
             new Coordinate(-25, 5),
             new Coordinate(-35, -45),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1438,7 +1439,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1468,7 +1469,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(5, 13));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1609,7 +1610,7 @@ public class LuceneTest {
             new Coordinate(7, 40),
             new Coordinate(6, -40),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         List<Filter> filters3     = new ArrayList<Filter>();
@@ -1721,7 +1722,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5.0,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1751,7 +1752,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500.0,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1784,7 +1785,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1817,7 +1818,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1853,7 +1854,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1890,7 +1891,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1929,7 +1930,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2083,7 +2084,7 @@ public class LuceneTest {
             new Coordinate(-50, -45),
             new Coordinate(60, -43),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2220,7 +2221,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2257,7 +2258,7 @@ public class LuceneTest {
          * 
          */ 
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2291,7 +2292,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2326,7 +2327,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2357,7 +2358,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2387,7 +2388,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2415,7 +2416,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2528,7 +2529,7 @@ public class LuceneTest {
             new Coordinate(-50, -45),
             new Coordinate(60, -43),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2860,7 +2861,7 @@ public class LuceneTest {
             new Coordinate(40, 30),
             new Coordinate(40, -30),
         });
-        geom1.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1));
+        geom1.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
 
@@ -2896,8 +2897,8 @@ public class LuceneTest {
     
     private static void fillTestData(IndexWriter writer) throws Exception {
 
-        final int srid4326 = SRIDGenerator.toSRID(CRS.decode("CRS:84"), SRIDGenerator.COMPACT_V1);
-        final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), SRIDGenerator.COMPACT_V1);
+        final int srid4326 = SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1);
+        final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
 
         Document doc = new Document();
         doc.add(new Field("name", "point 1", Field.Store.YES, Field.Index.ANALYZED));

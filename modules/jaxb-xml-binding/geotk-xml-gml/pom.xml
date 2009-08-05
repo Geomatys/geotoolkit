@@ -67,6 +67,11 @@
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-utility</artifactId>
     </dependency>
+    <dependency>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>geotk-geometry</artifactId>
+        <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

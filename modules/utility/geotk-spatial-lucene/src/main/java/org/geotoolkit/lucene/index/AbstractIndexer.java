@@ -43,6 +43,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.resources.NIOUtilities;
@@ -55,8 +56,9 @@ import org.geotoolkit.resources.NIOUtilities;
  */
 public abstract class AbstractIndexer<E> extends IndexLucene {
 
+    protected static final int SRID_4326 = 4326;
 
-    private static final GeometryFactory GF = new GeometryFactory();
+    protected static final GeometryFactory GF = new GeometryFactory();
     protected static final String CORRUPTED_SINGLE_MSG = "CorruptIndexException while indexing document: ";
     protected static final String CORRUPTED_MULTI_MSG  = "CorruptIndexException while indexing document: ";
     protected static final String LOCK_SINGLE_MSG      = "LockObtainException while indexing document: ";
@@ -209,7 +211,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     private final Polygon polygon = new Polygon(ring, new LinearRing[0],GF);
     
 
-    protected byte[] toByte(double minx, double maxx, double miny, double maxy, int srid){
+    protected byte[] toBytes(double minx, double maxx, double miny, double maxy, int srid){
         coords[0].x = minx;
         coords[0].y = miny;
         coords[1].x = minx;
@@ -221,18 +223,18 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         coords[4].x = minx;
         coords[4].y = miny;
         polygon.setSRID(srid);
-       return new WKBWriter(2).write(polygon);
+        return toBytes(polygon);
     }
 
 
     protected void addBoundingBox(Document doc, double minx, double maxx, double miny, double maxy, int srid) {
-        addGeometry(doc, toByte(minx, maxx, miny, maxy,srid));
+        addGeometry(doc, toBytes(minx, maxx, miny, maxy,srid));
     }
 
     public static byte[] toBytes(Geometry geom){
         final byte[] wkb = new WKBWriter(2).write(geom);
-        final int SRID = geom.getSRID();
-        final byte[] crs = SRIDGenerator.toBytes(SRID, SRIDGenerator.COMPACT_V1);
+        final int srid = geom.getSRID();
+        final byte[] crs = SRIDGenerator.toBytes(srid, Version.V1);
         final byte[] compact = new byte[wkb.length+crs.length];
         
         int i=0;
