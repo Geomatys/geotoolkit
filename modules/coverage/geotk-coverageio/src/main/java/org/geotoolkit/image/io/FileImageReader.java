@@ -27,7 +27,9 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import javax.imageio.spi.ImageReaderSpi;
+
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.io.TemporaryFile;
 
 
 /**
@@ -38,7 +40,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Antoine Hnawia (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.4
  * @module
@@ -146,8 +148,7 @@ public abstract class FileImageReader extends StreamImageReader {
                 suffix = suffixes[0];
             }
         }
-        inputFile = File.createTempFile("Image", suffix);
-        inputFile.deleteOnExit();
+        inputFile = TemporaryFile.createTempFile("Image", suffix, null);
         isTemporary = true;
         /*
          * Copy the content of the specified input stream to the temporary file.
@@ -194,7 +195,7 @@ public abstract class FileImageReader extends StreamImageReader {
     protected void close() throws IOException {
         if (inputFile != null) {
             if (isTemporary) {
-                inputFile.delete();
+                TemporaryFile.delete(inputFile);
             }
             inputFile = null;
         }

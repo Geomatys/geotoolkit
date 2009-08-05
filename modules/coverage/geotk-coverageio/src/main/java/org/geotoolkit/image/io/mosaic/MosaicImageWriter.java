@@ -59,6 +59,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Compressions;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
+import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.rmi.RMI;
 
 
@@ -91,7 +92,7 @@ import org.geotoolkit.internal.rmi.RMI;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.5
  * @module
@@ -1462,7 +1463,7 @@ search: for (final Tile tile : tiles) {
      */
     private void deleteTemporaryFiles() {
         for (final Iterator<RawFile> it=temporaryFiles.values().iterator(); it.hasNext();) {
-            it.next().file.delete();
+            TemporaryFile.delete(it.next().file);
             it.remove();
         }
     }

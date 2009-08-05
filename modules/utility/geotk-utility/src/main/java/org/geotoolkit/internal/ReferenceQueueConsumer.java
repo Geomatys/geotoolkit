@@ -20,6 +20,7 @@ package org.geotoolkit.internal;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -37,7 +38,7 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
     /**
      * The group of {@code ReferenceQueueConsumer} threads running.
      */
-    private static final ThreadGroup GROUP = new ThreadGroup("ReferenceQueueHandler");
+    private static final ThreadGroup GROUP = new ThreadGroup("ReferenceQueueConsumers");
 
     /**
      * List of references collected by the garbage collector.
@@ -104,6 +105,6 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
                 // keep the same behaviour as if assertions were turned off.
             }
         }
-        Logging.getLogger(getClass()).severe("Daemon stopped."); // Should never happen.
+        Logging.getLogger(getClass()).severe(Classes.getShortClassName(this) + " daemon stopped."); // Should never happen.
     }
 }

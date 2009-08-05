@@ -48,6 +48,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
+import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.rmi.ShareableTask;
 import org.geotoolkit.internal.image.io.RawFile;
 
@@ -58,7 +59,7 @@ import org.geotoolkit.internal.image.io.RawFile;
  * new mosaic.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -182,8 +183,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             } else {
                 image = sourceImage;
             }
-            final File file = File.createTempFile("IMW", ".raw", directory);
-            file.deleteOnExit();
+            final File file = TemporaryFile.createTempFile("IMW", ".raw", directory);
             final RawFile entry = new RawFile(file,
                     share(sharedTypes, ImageTypeSpecifier.createFromRenderedImage(image)),
                     share(sharedSizes, new Dimension(image.getWidth(), image.getHeight())));
@@ -222,7 +222,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     @Override
     public void rollback() {
         for (final RawFile file : temporaryFiles.values()) {
-            file.file.delete();
+            TemporaryFile.delete(file.file);
         }
         temporaryFiles.clear();
     }

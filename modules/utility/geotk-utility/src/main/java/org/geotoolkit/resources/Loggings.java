@@ -300,6 +300,11 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int SEND_REPAINT_EVENT_$5 = 48;
 
         /**
+         * Temporary file "{0}" has been garbage-collected.
+         */
+        public static final int TEMPORARY_FILE_GC_$1 = 57;
+
+        /**
          * Unavailable authority factory: {0}
          */
         public static final int UNAVAILABLE_AUTHORITY_FACTORY_$1 = 49;

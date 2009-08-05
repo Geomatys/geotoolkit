@@ -21,13 +21,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 import org.geotoolkit.internal.FactoryUtilities;
+import org.geotoolkit.internal.Threads;
 
 
 /**
  * Disposes every factories on JVM shutdown.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -37,6 +38,9 @@ final class ShutdownHook extends Thread {
      * The single shutdown hook instance.
      */
     static final ShutdownHook INSTANCE = new ShutdownHook();
+    static {
+        Runtime.getRuntime().addShutdownHook(INSTANCE);
+    }
 
     /**
      * How long to wait for the threads running {@link Factory#dispose} to die.  This is the
@@ -54,8 +58,7 @@ final class ShutdownHook extends Thread {
      * Creates the singleton instance.
      */
     private ShutdownHook() {
-        super("Factories shutdown");
-        Runtime.getRuntime().addShutdownHook(this);
+        super(Threads.SHUTDOWN, "FactoryCleaner");
     }
 
     /**
