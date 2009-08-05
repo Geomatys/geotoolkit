@@ -55,13 +55,15 @@ public final class SRIDGenerator {
      * exemple : version = COMPACT_V1
      * first 4 bits = 0 > EPSG
      * first 4 bits = 1 > CRS
+     *
+     * return int , 0 if no srid could be generated because the crs has no identifiers.
      */
     public static int toSRID(CoordinateReferenceSystem crs, Version version){
         final Set<ReferenceIdentifier> ids = crs.getIdentifiers();
 
         if(ids.isEmpty()){
-//            return 0;
-            throw new IllegalArgumentException("CoordinateReferenceSystem has not identifier, impossible to compact it.");
+            return 0;
+//            throw new IllegalArgumentException("CoordinateReferenceSystem has not identifier, impossible to compact it.");
         }
 
         final ReferenceIdentifier id = ids.iterator().next();
