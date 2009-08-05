@@ -1,7 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
+ *    (C) 2009, Geomatys
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -62,13 +63,13 @@ public final class GeoTiffGCSCodes {
      * user-defined GCS and for ellipsoids. GeoKey Requirements for
      * "user-defined" units: GeogCitationGeoKey GeogAngularUnitSizeGeoKey
      */
-    public static final int GeogAngularUnitsGeoKey = 2054;
+    public static final int GEOG_ANGULAR_UNITS_GEO_KEY = 2054;
     /**
      * GeogAngularUnitSizeGeoKey Key ID = 2055 Type = DOUBLE Units: radians
      * Allows the definition of user-defined angular geographic units, as
      * measured in radians.
      */
-    public static final int GeogAngularUnitSizeGeoKey = 2055;
+    public static final int GEOG_ANGULAR_UNIT_SIZE_GEO_KEY = 2055;
     /**
      * GeogAzimuthUnitsGeoKey Key ID = 2060 Type = SHORT (code) Values = Section
      * 6.3.1.4 Codes This key may be used to specify the angular units of
@@ -77,12 +78,12 @@ public final class GeoTiffGCSCodes {
      * algorithms, and may not necessarily be the same angular units used for
      * lat-long.
      */
-    public static final int GeogAzimuthUnitsGeoKey = 2060;
+    public static final int GEOG_AZIMUTH_UNITS_GEO_KEY = 2060;
     /**
      * GeogCitationGeoKey Key ID = 2049 Type = ASCII Values = text General
      * citation and reference for all Geographic CS parameters.
      */
-    public static final int GeogCitationGeoKey = 2049;
+    public static final int GEOG_CITATION_GEO_KEY = 2049;
     /**
      * GeogEllipsoidGeoKey Key ID = 2056 Type = SHORT (code) Values = Section
      * 6.3.2.3 Codes
@@ -92,7 +93,7 @@ public final class GeoTiffGCSCodes {
      * Ellipsoid: GeogCitationGeoKey [GeogSemiMajorAxisGeoKey,
      * [GeogSemiMinorAxisGeoKey | GeogInvFlatteningGeoKey] ]
      */
-    public static final int GeogEllipsoidGeoKey = 2056;
+    public static final int GEOG_ELLIPSOID_GEO_KEY = 2056;
     /**
      * GeogGeodeticDatumGeoKey Key ID = 2050 Type = SHORT (code) Values =
      * Section 6.3.2.2 Codes
@@ -102,7 +103,7 @@ public final class GeoTiffGCSCodes {
      * geographic coordinate systems. GeoKey Requirements for User-Defined
      * Horizontal Datum: GeogCitationGeoKey GeogEllipsoidGeoKey
      */
-    public static final int GeogGeodeticDatumGeoKey = 2050;
+    public static final int GEOG_GEODETIC_DATUM_GEO_KEY = 2050;
     /**
      * GeogInvFlatteningGeoKey Key ID = 2059 Type = DOUBLE Units: none. Allows
      * the specification of the inverse of user-defined Ellipsoid's flattening
@@ -112,19 +113,19 @@ public final class GeoTiffGCSCodes {
      * GeogSemiMinorAxisGeoKey instead, and set it equal to the semi-major axis
      * length.
      */
-    public static final int GeogInvFlatteningGeoKey = 2059;
+    public static final int GEOG_INV_FLATTENING_GEO_KEY = 2059;
     /**
      * GeogLinearUnitsGeoKey Key ID = 2052 Type = SHORT Values: Section 6.3.1.3
      * Codes http://www.remotesensing.org/geotiff/spec/geotiff6.html#6.3.1.3
      * Allows the definition of geocentric CS linear units for user-defined GCS.
      */
-    public static final int GeogLinearUnitsGeoKey = 2052;
+    public static final int GEOG_LINEAR_UNITS_GEO_KEY = 2052;
     /**
      * GeogLinearUnitSizeGeoKey Key ID = 2053 Type = DOUBLE Units: meters Allows
      * the definition of user-defined linear geocentric units, as measured in
      * meters.
      */
-    public static final int GeogLinearUnitSizeGeoKey = 2053;
+    public static final int GEOG_LINEAR_UNIT_SIZE_GEO_KEY = 2053;
     /**
      * GeogPrimeMeridianGeoKey Key ID = 2051 Type = SHORT (code) Units: Section
      * 6.3.2.4 code
@@ -133,14 +134,14 @@ public final class GeoTiffGCSCodes {
      * geographic coordinate systems. The default standard is Greenwich,
      * England.
      */
-    public static final int GeogPrimeMeridianGeoKey = 2051;
+    public static final int GEOG_PRIME_MERIDIAN_GEO_KEY = 2051;
     /**
      * GeogPrimeMeridianLongGeoKey Key ID = 2061 Type = DOUBLE Units =
      * GeogAngularUnits This key allows definition of user-defined Prime
      * Meridians, the location of which is defined by its longitude relative to
      * Greenwich.
      */
-    public static final int GeogPrimeMeridianLongGeoKey = 2061;
+    public static final int GEOG_PRIME_MERIDIAN_LONG_GEO_KEY = 2061;
     /**
      * GeographicTypeGeoKey Key ID = 2048 Type = SHORT (code) Values = Section
      * 6.3.2.1 Codes
@@ -151,28 +152,28 @@ public final class GeoTiffGCSCodes {
      * GeogGeodeticDatumGeoKey GeogAngularUnitsGeoKey (if not degrees)
      * GeogPrimeMeridianGeoKey (if not Greenwich)
      */
-    public static final int GeographicTypeGeoKey = 2048;
+    public static final int GEOGRAPHIC_TYPE_GEO_KEY = 2048;
     /**
      * GeogSemiMajorAxisGeoKey Key ID = 2057 Type = DOUBLE Units: Geocentric CS
      * Linear Units Allows the specification of user-defined Ellipsoid
      * Semi-Major Axis (a).
      */
-    public static final int GeogSemiMajorAxisGeoKey = 2057;
+    public static final int GEOG_SEMI_MAJOR_AXIS_GEO_KEY = 2057;
     /**
      * GeogSemiMinorAxisGeoKey Key ID = 2058 Type = DOUBLE Units: Geocentric CS
      * Linear Units Allows the specification of user-defined Ellipsoid
      * Semi-Minor Axis (b).
      */
-    public static final int GeogSemiMinorAxisGeoKey = 2058;
+    public static final int GEOG_SEMI_MINOR_AXIS_GEO_KEY = 2058;
     /**
      * GTCitationGeoKey Key ID = 1026 Type = ASCII As with all the "Citation"
      * GeoKeys, this is provided to give an ASCII reference to published
      * documentation on the overall configuration of this
      * GeoTIFFWritingUtilities file.
      */
-    public static final int GTCitationGeoKey = 1026;
-    public static final int ModelTypeGeocentric = 3;
-    public static final int ModelTypeGeographic = 2;
+    public static final int GT_CITATION_GEO_KEY = 1026;
+    public static final int MODEL_TYPE_GEOCENTRIC = 3;
+    public static final int MODEL_TYPE_GEOGRAPHIC = 2;
 
     private GeoTiffGCSCodes() {
     }

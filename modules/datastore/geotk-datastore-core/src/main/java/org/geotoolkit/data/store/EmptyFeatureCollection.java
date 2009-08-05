@@ -32,10 +32,10 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
     /**
      * null bounds
      */
-    private static final JTSEnvelope2D bounds = new JTSEnvelope2D(new Envelope(), null);
+    private static final JTSEnvelope2D BOUNDS = new JTSEnvelope2D(new Envelope(), null);
 
     static {
-        bounds.setToNull();
+        BOUNDS.setToNull();
     }
 
     public EmptyFeatureCollection(final SimpleFeatureType schema) {
@@ -47,7 +47,7 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
      */
     @Override
     public JTSEnvelope2D getBounds() {
-        return bounds;
+        return BOUNDS;
     }
 
     /**

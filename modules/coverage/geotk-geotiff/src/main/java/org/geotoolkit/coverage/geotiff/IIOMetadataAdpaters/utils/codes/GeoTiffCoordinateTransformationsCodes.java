@@ -1,7 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
+ *    (C) 2009, Geomatys
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -39,42 +40,42 @@ package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.utils.codes;
  */
 public final class GeoTiffCoordinateTransformationsCodes {
 
-    public static final short CT_TransverseMercator = 1;
-    public static final short CT_TransvMercator_Modified_Alaska = 2;
-    public static final short CT_ObliqueMercator = 3;
-    public static final short CT_ObliqueMercator_Laborde = 4;
-    public static final short CT_ObliqueMercator_Rosenmund = 5;
-    public static final short CT_ObliqueMercator_Spherical = 6;
-    public static final short CT_Mercator = 7;
-    public static final short CT_LambertConfConic_2SP = 8;
-    public static final short CT_LambertConfConic = CT_LambertConfConic_2SP;
-    public static final short CT_LambertConfConic_1SP = 9;
-    public static final short CT_LambertConfConic_Helmert = CT_LambertConfConic_1SP;
-    public static final short CT_LambertAzimEqualArea = 10;
-    public static final short CT_AlbersEqualArea = 11;
-    public static final short CT_AzimuthalEquidistant = 12;
-    public static final short CT_EquidistantConic = 13;
-    public static final short CT_Stereographic = 14;
-    public static final short CT_PolarStereographic = 15;
-    public static final short CT_ObliqueStereographic = 16;
-    public static final short CT_Equirectangular = 17;
-    public static final short CT_CassiniSoldner = 18;
-    public static final short CT_Gnomonic = 19;
-    public static final short CT_MillerCylindrical = 20;
-    public static final short CT_Orthographic = 21;
-    public static final short CT_Polyconic = 22;
-    public static final short CT_Robinson = 23;
-    public static final short CT_Sinusoidal = 24;
-    public static final short CT_VanDerGrinten = 25;
-    public static final short CT_NewZealandMapGrid = 26;
-    public static final short CT_TransvMercator_SouthOriented = 27;
-    public static final short CT_SouthOrientedGaussConformal = CT_TransvMercator_SouthOriented;
-    public static final short CT_AlaskaConformal = CT_TransvMercator_Modified_Alaska;
-    public static final short CT_TransvEquidistCylindrical = CT_CassiniSoldner;
-    public static final short CT_ObliqueMercator_Hotine = CT_ObliqueMercator;
-    public static final short CT_SwissObliqueCylindrical = CT_ObliqueMercator_Rosenmund;
-    public static final short CT_GaussBoaga = CT_TransverseMercator;
-    public static final short CT_GaussKruger = CT_TransverseMercator;
+    public static final short CT_TRANSVERSE_MERCATOR = 1;
+    public static final short CT_TRANSVERSE_MERCATOR_MODIFIED_ALASKA = 2;
+    public static final short CT_OBLIQUE_MERCATOR = 3;
+    public static final short CT_OBLIQUE_MERCATOR_LABORDE = 4;
+    public static final short CT_OBLIQUE_MERCATOR_ROSENMUND = 5;
+    public static final short CT_OBLIQUE_MERCATOR_SPHERICAL = 6;
+    public static final short CT_MERCATOR = 7;
+    public static final short CT_LAMBERT_CONF_CONIC_2SP = 8;
+    public static final short CT_LAMBERT_CONF_CONIC = CT_LAMBERT_CONF_CONIC_2SP;
+    public static final short CT_LAMBERT_CONF_CONIC_1SP = 9;
+    public static final short CT_LAMBERT_CONF_CONIC_HELMERT = CT_LAMBERT_CONF_CONIC_1SP;
+    public static final short CT_LAMBERT_AZIM_EQUAL_AREA = 10;
+    public static final short CT_ALBERS_EQUAL_AREA = 11;
+    public static final short CT_AZIMUTHAL_EQUIDISTANT = 12;
+    public static final short CT_EQUIDISTANT_CONIC = 13;
+    public static final short CT_STEREOGRAPHIC = 14;
+    public static final short CT_POLAR_STEREOGRAPHIC = 15;
+    public static final short CT_OBLIQUE_STEREOGRAPHIC = 16;
+    public static final short CT_EQUIRECTANGULAR = 17;
+    public static final short CT_CASSINI_SOLDNER = 18;
+    public static final short CT_GNOMONIC = 19;
+    public static final short CT_MILLER_CYLINDRICAL = 20;
+    public static final short CT_ORTHOGRAPHIC = 21;
+    public static final short CT_POLYCONIC = 22;
+    public static final short CT_ROBINSON = 23;
+    public static final short CT_SINUSOIDAL = 24;
+    public static final short CT_VAN_DER_GRINTEN = 25;
+    public static final short CT_NEW_ZEALAND_MAP_GRID = 26;
+    public static final short CT_TRANSV_MERCATOR_SOUTH_ORIENTED = 27;
+    public static final short CT_SOUTH_ORIENTED_GAUSS_CONFORMAL = CT_TRANSV_MERCATOR_SOUTH_ORIENTED;
+    public static final short CT_ALASKA_CONFORMAL = CT_TRANSVERSE_MERCATOR_MODIFIED_ALASKA;
+    public static final short CT_TRANSV_EQUIDIST_CYLINDRICAL = CT_CASSINI_SOLDNER;
+    public static final short CT_OBLIQUE_MERCATOR_HOTINE = CT_OBLIQUE_MERCATOR;
+    public static final short CT_SWISS_OBLIQUE_CYLINDRICAL = CT_OBLIQUE_MERCATOR_ROSENMUND;
+    public static final short CT_GAUSS_BOAGA = CT_TRANSVERSE_MERCATOR;
+    public static final short CT_GAUSS_KRUGER = CT_TRANSVERSE_MERCATOR;
 
     private GeoTiffCoordinateTransformationsCodes() {
     }

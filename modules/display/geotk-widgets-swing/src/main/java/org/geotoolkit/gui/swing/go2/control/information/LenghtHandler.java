@@ -52,13 +52,13 @@ public class LenghtHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> units = new ArrayList<Unit>();
+    public static final List<Unit> UNITS = new ArrayList<Unit>();
 
     static{
-        units.add(SI.KILOMETER);
-        units.add(SI.METER);
-        units.add(NonSI.MILE);
-        units.add(NonSI.INCH);
+        UNITS.add(SI.KILOMETER);
+        UNITS.add(SI.METER);
+        UNITS.add(NonSI.MILE);
+        UNITS.add(NonSI.INCH);
     }
 
     private final MouseListen mouseInputListener;
@@ -120,13 +120,13 @@ public class LenghtHandler implements CanvasHandler {
         public void mouseClicked(MouseEvent e) {
             super.mouseClicked(e);
 
-            int mousebutton = e.getButton();
+            final int mousebutton = e.getButton();
             if (mousebutton == MouseEvent.BUTTON1) {
                 //add a coordinate
-                AffineMatrix3 trs = map.getCanvas().getController().getTransform();
+                final AffineMatrix3 trs = map.getCanvas().getController().getTransform();
                 try {
-                    AffineTransform dispToObj = trs.createInverse();
-                    double[] crds = new double[]{e.getX(),e.getY()};
+                    final AffineTransform dispToObj = trs.createInverse();
+                    final double[] crds = new double[]{e.getX(),e.getY()};
                     dispToObj.transform(crds, 0, crds, 0, 1);
                     coords.add(new Coordinate(crds[0], crds[1]));
                     updateGeometry();

@@ -38,7 +38,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 public class JGeomBox extends JComboBox {
 
-    private static final String allGeom = MessageBundle.getString("allGeom");
+    private static final String ALL_GEOM = MessageBundle.getString("allGeom");
     private MapLayer layer = null;
 
     public JGeomBox() {
@@ -52,22 +52,22 @@ public class JGeomBox extends JComboBox {
 
         setEnabled(layer != null);
 
-        if (layer != null && layer instanceof FeatureMapLayer) {
-            Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getFeatureSource().getSchema().getDescriptors();
-            Iterator<PropertyDescriptor> ite = col.iterator();
+        if (layer instanceof FeatureMapLayer && layer != null) {
+            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getFeatureSource().getSchema().getDescriptors();
+            final Iterator<PropertyDescriptor> ite = col.iterator();
 
-            List<String> geoms = new ArrayList<String>();
-            geoms.add(allGeom);
+            final List<String> geoms = new ArrayList<String>();
+            geoms.add(ALL_GEOM);
 
             while (ite.hasNext()) {
-                PropertyDescriptor desc = ite.next();
+                final PropertyDescriptor desc = ite.next();
                 if (desc instanceof GeometryDescriptor) {
                     geoms.add(desc.getName().toString());
                 }
             }
 
             setModel(new ListComboBoxModel(geoms));
-            setSelectedItem(allGeom);
+            setSelectedItem(ALL_GEOM);
         }
 
     }
@@ -77,7 +77,7 @@ public class JGeomBox extends JComboBox {
     }
 
     public String getGeom() {
-        if(getSelectedItem().toString().equals(allGeom)){
+        if(getSelectedItem().toString().equals(ALL_GEOM)){
             return null;
         }else{
             return getSelectedItem().toString();
@@ -88,7 +88,7 @@ public class JGeomBox extends JComboBox {
         if (layer != null && name != null) {
             setSelectedItem(name);
         }else{
-            setSelectedItem(allGeom);
+            setSelectedItem(ALL_GEOM);
         }
     }
 

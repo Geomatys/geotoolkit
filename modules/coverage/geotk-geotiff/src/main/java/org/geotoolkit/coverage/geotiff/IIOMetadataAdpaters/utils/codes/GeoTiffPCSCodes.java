@@ -1,7 +1,8 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
+ *    (C) 2009, Geomatys
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -42,24 +43,24 @@ public final class GeoTiffPCSCodes {
      * State Plane (NAD27): 267xx/320xx US State Plane (NAD83): 269xx/321xx
      * Note: These are only a subset of the possible values
      */
-    public static final int PCS_WGS72_UTM_zone_1N = 32201;
-    public static final int PCS_WGS72_UTM_zone_1S = 32301;
-    public static final int PCS_WGS72_UTM_zone_60N = 32260;
-    public static final int PCS_WGS72_UTM_zone_60S = 32360;
-    public static final int PCS_WGS72BE_UTM_zone_1N = 32401;
-    public static final int PCS_WGS72BE_UTM_zone_1S = 32501;
-    public static final int PCS_WGS72BE_UTM_zone_60S = 32560;
-    public static final int PCS_WGS84_UTM_zone_1N = 32601;
-    public static final int PCS_WGS84_UTM_zone_1S = 32701;
-    public static final int PCS_WGS84_UTM_zone_60N = 32660;
-    public static final int PCS_WGS84_UTM_zone_60S = 32760;
+    public static final int PCS_WGS72_UTM_ZONE_1N = 32201;
+    public static final int PCS_WGS72_UTM_ZONE_1S = 32301;
+    public static final int PCS_WGS72_UTM_ZONE_60N = 32260;
+    public static final int PCS_WGS72_UTM_ZONE_60S = 32360;
+    public static final int PCS_WGS72BE_UTM_ZONE_1N = 32401;
+    public static final int PCS_WGS72BE_UTM_ZONE_1S = 32501;
+    public static final int PCS_WGS72BE_UTM_ZONE_60S = 32560;
+    public static final int PCS_WGS84_UTM_ZONE_1N = 32601;
+    public static final int PCS_WGS84_UTM_ZONE_1S = 32701;
+    public static final int PCS_WGS84_UTM_ZONE_60N = 32660;
+    public static final int PCS_WGS84_UTM_ZONE_60S = 32760;
     /**
      * PCSCitationGeoKey Key ID = 3073 Type = ASCII As with all the "Citation"
      * GeoKeys, this is provided to give an ASCII reference to published
      * documentation on the Projected Coordinate System particularly if this is
      * a "user-defined" PCS.
      */
-    public static final int PCSCitationGeoKey = 3073;
+    public static final int PCS_CITATION_GEO_KEY = 3073;
     /**
      * ProjAzimuthAngleGeoKey Key ID = 3094 Type = DOUBLE Units: GeogAzimuthUnit
      * Azimuth angle east of true north of the central line passing through the
@@ -67,32 +68,32 @@ public final class GeoTiffPCSCodes {
      * this is the standard method of measuring azimuth, but is opposite the
      * usual mathematical convention of positive indicating counter-clockwise.
      */
-    public static final int ProjAzimuthAngleGeoKey = 3094;
+    public static final int PROJ_AZIMUTH_ANGLE_GEO_KEY = 3094;
     /**
      * ProjCenterEastingGeoKey Key ID = 3090 Type = DOUBLE Units: ProjLinearUnit
      * Gives the easting coordinate of the center. This is NOT the False
      * Easting.
      */
-    public static final int ProjCenterEastingGeoKey = 3090;
+    public static final int PROJ_CENTER_EASTING_GEO_KEY = 3090;
     /**
      * ProjCenterLatGeoKey Key ID = 3089 Type = DOUBLE Units: GeogAngularUnit
      * Latitude of Center of Projection. Note that this is not necessarily the
      * origin of the projection.
      */
-    public static final int ProjCenterLatGeoKey = 3089;
+    public static final int PROJ_CENTER_LAT_GEO_KEY = 3089;
     /**
      * ProjCenterLongGeoKey Key ID = 3088 Type = DOUBLE Units: GeogAngularUnit
      * Longitude of Center of Projection. Note that this is not necessarily the
      * origin of the projection.
      */
-    public static final int ProjCenterLongGeoKey = 3088;
+    public static final int PROJ_CENTER_LONG_GEO_KEY = 3088;
     /**
      * ProjCenterNorthingGeoKey Key ID = 3091 Type = DOUBLE Units:
      * ProjLinearUnit Gives the northing coordinate of the center. This is NOT
      * the False Northing. NOTE this value is incorrectly named at
      * http://www.remotesensing.org/geotiff/spec/geotiff2.7.html#2.7
      */
-    public static final int ProjCenterNorthingGeoKey = 3091;
+    public static final int PROJ_CENTER_NORTHING_GEO_KEY = 3091;
     /**
      * ProjCoordTransGeoKey Key ID = 3075 Type = SHORT (code) Values: Section
      * 6.3.3.3 codes
@@ -104,14 +105,14 @@ public final class GeoTiffPCSCodes {
      * "user-defined" Coordinate Transformations: PCSCitationGeoKey (additional
      * parameter geokeys depending on the Coord. Trans. specified).
      */
-    public static final int ProjCoordTransGeoKey = 3075;
+    public static final int PROJ_COORD_TRANS_GEO_KEY = 3075;
     /**
      * ProjectedCSTypeGeoKey Key ID = 3072 Type = SHORT (codes) Values: Section
      * 6.3.3.1 codes This code is provided to specify the projected coordinate
      * system. GeoKey requirements for "user-defined" PCS families:
      * PCSCitationGeoKey ProjectionGeoKey
      */
-    public static final int ProjectedCSTypeGeoKey = 3072;
+    public static final int PROJECTED_CS_TYPE_GEO_KEY = 3072;
     /**
      * ProjectionGeoKey Key ID = 3074 Type = SHORT (code) Values: Section
      * 6.3.3.2 codes
@@ -123,96 +124,96 @@ public final class GeoTiffPCSCodes {
      * ProjCoordTransGeoKey ProjLinearUnitsGeoKey (additional parameters
      * depending on ProjCoordTransGeoKey).
      */
-    public static final int ProjectionGeoKey = 3074;
+    public static final int PROJECTION_GEO_KEY = 3074;
     /**
      * ProjFalseEastingGeoKey Key ID = 3082 Type = DOUBLE Units: ProjLinearUnit
      * Gives the easting coordinate of the map projection Natural origin.
      */
-    public static final int ProjFalseEastingGeoKey = 3082;
+    public static final int PROJ_FALSE_EASTING_GEO_KEY = 3082;
     /**
      * ProjFalseNorthingGeoKey Key ID = 3083 Type = DOUBLE Units: ProjLinearUnit
      * Gives the northing coordinate of the map projection Natural origin.
      */
-    public static final int ProjFalseNorthingGeoKey = 3083;
+    public static final int PROJ_FALSE_NORTHING_GEO_KEY = 3083;
     /**
      * ProjFalseOriginEastingGeoKey Key ID = 3086 Type = DOUBLE Units:
      * ProjLinearUnit Gives the easting coordinate of the false origin. This is
      * NOT the False Easting, which is the easting attached to the Natural
      * origin.
      */
-    public static final int ProjFalseOriginEastingGeoKey = 3086;
+    public static final int PROJ_FALSE_ORIGIN_EASTING_GEO_KEY = 3086;
     /**
      * ProjFalseOriginLatGeoKey Key ID = 3085 Type = DOUBLE Units:
      * GeogAngularUnit Gives the latitude of the False origin.
      */
-    public static final int ProjFalseOriginLatGeoKey = 3085;
+    public static final int PROJ_FALSE_ORIGIN_LAT_GEO_KEY = 3085;
     /**
      * ProjFalseOriginLongGeoKey Key ID = 3084 Type = DOUBLE Units:
      * GeogAngularUnit Gives the longitude of the False origin.
      */
-    public static final int ProjFalseOriginLongGeoKey = 3084;
+    public static final int PROJ_FALSE_ORIGIN_LONG_GEO_KEY = 3084;
     /**
      * ProjFalseOriginNorthingGeoKey Key ID = 3087 Type = DOUBLE Units:
      * ProjLinearUnit Gives the northing coordinate of the False origin. This is
      * NOT the False Northing, which is the northing attached to the Natural
      * origin.
      */
-    public static final int ProjFalseOriginNorthingGeoKey = 3087;
+    public static final int PROJ_FALSE_ORIGIN_NORTHING_GEO_KEY = 3087;
     /**
      * ProjLinearUnitsGeoKey Key ID = 3076 Type = SHORT (code) Values: Section
      * 6.3.1.3 codes Defines linear units used by this projection.
      * http://www.remotesensing.org/geotiff/spec/geotiff6.html#6.3.1.3
      */
-    public static final int ProjLinearUnitsGeoKey = 3076;
+    public static final int PROJ_LINEAR_UNITS_GEO_KEY = 3076;
     /**
      * ProjLinearUnitSizeGeoKey Key ID = 3077 Type = DOUBLE Units: meters
      * Defines size of user-defined linear units in meters.
      */
-    public static final int ProjLinearUnitSizeGeoKey = 3077;
+    public static final int PROJ_LINEAR_UNITS_SIZE_GEO_KEY = 3077;
     /**
      * ProjNatOriginLatGeoKey Key ID = 3081 Type = DOUBLE Units: GeogAngularUnit
      * Alias: ProjOriginLatGeoKey Latitude of map-projection Natural origin.
      */
-    public static final int ProjNatOriginLatGeoKey = 3081;
+    public static final int PROJ_NAT_ORIGIN_LAT_GEO_KEY = 3081;
     /**
      * ProjNatOriginLongGeoKey Key ID = 3080 Type = DOUBLE Units:
      * GeogAngularUnit Alias: ProjOriginLongGeoKey Longitude of map-projection
      * Natural origin.
      */
-    public static final int ProjNatOriginLongGeoKey = 3080;
-    public static final int ProjRectifiedGridAngle = 3094;
+    public static final int PROJ_NAT_ORIGIN_LONG_GEO_KEY = 3080;
+    public static final int PROJ_RECTIFIED_GRID_ANGLE = 3094;
     /**
      * ProjScaleAtCenterGeoKey Key ID = 3093 Type = DOUBLE Units: none Scale at
      * Center. This is a ratio, so no units are required.
      */
-    public static final int ProjScaleAtCenterGeoKey = 3093;
+    public static final int PROJ_SCALE_AT_CENTER_GEO_KEY = 3093;
     /**
      * ProjScaleAtNatOriginGeoKey Key ID = 3092 Type = DOUBLE Units: none Alias:
      * ProjScaleAtOriginGeoKey (Rev. 0.2) Scale at Natural Origin. This is a
      * ratio, so no units are required.
      */
-    public static final int ProjScaleAtNatOriginGeoKey = 3092;
+    public static final int PROJ_SCALE_AT_NAT_ORIGIN_GEO_KEY = 3092;
     /**
      * ProjStdParallel1GeoKey Key ID = 3078 Type = DOUBLE Units: GeogAngularUnit
      * Alias: ProjStdParallelGeoKey (from Rev 0.2) Latitude of primary Standard
      * Parallel.
      */
-    public static final int ProjStdParallel1GeoKey = 3078;
+    public static final int PROJ_STD_PARALLEL1_GEO_KEY = 3078;
     /**
      * ProjStdParallel2GeoKey Key ID = 3079 Type = DOUBLE Units: GeogAngularUnit
      * Latitude of second Standard Parallel.
      */
-    public static final int ProjStdParallel2GeoKey = 3079;
+    public static final int PROJ_STD_PARALLEL2_GEO_KEY = 3079;
     /**
      * ProjStraightVertPoleLongGeoKey Key ID = 3095 Type = DOUBLE Units:
      * GeogAngularUnit Longitude at Straight Vertical Pole. For polar
      * stereographic.
      */
-    public static final int ProjStraightVertPoleLongGeoKey = 3095;
+    public static final int PROJ_STRAIGHT_VERT_POLE_LONG_GEO_KEY = 3095;
     /**
      * 6.3.1.1 Model Type Codes Ranges: 0 = undefined [ 1, 32766] = GeoTIFFWritingUtilities Reserved Codes 32767 = user-defined [32768, 65535] = Private User Implementations GeoTIFFWritingUtilities defined CS Model Type Codes: ModelTypeProjected = 1 Projection Coordinate System ModelTypeGeographic = 2 Geographic latitude-longitude System ModelTypeGeocentric = 3 Geocentric (X,Y,Z) Coordinate System Notes: 1. ModelTypeGeographic and ModelTypeProjected correspond to the FGDC metadata Geographic and Planar-Projected coordinate system types.
      */
-    public static final int ModelTypeProjected = 1;
+    public static final int MODEL_TYPE_PROJECTED = 1;
 
     private GeoTiffPCSCodes() {
     }

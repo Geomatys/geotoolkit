@@ -53,7 +53,7 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     private static final Color SHADOW_COLOR = new Color(0f, 0f, 0f, 0.5f);
     private static final int SHADOW_STEP = 2;
 
-    private final JUOMChooser guiUOM = new JUOMChooser(AreaHandler.units);
+    private final JUOMChooser guiUOM = new JUOMChooser(AreaHandler.UNITS);
     private final JLabel guiLbl = new JLabel();
 
     AreaDecoration() {

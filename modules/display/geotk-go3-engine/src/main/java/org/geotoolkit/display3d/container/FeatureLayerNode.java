@@ -75,7 +75,7 @@ import org.opengis.filter.FilterFactory2;
 public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGraphic{
 
     private static final FilterFactory2 FF = new DefaultFilterFactory2();
-    private static final int searchExtent = 2000;
+    private static final int SEARCH_EXTENT = 2000;
 
     private final FeatureMapLayer layer;
 
@@ -101,13 +101,13 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     private Mesh toNodeLine(LineString geom, float z ,ColorRGBA color){
                 
         final Coordinate[] coords = geom.getCoordinates();
-        final FloatBuffer verts = BufferUtils.createVector3Buffer((coords.length));
+        final FloatBuffer verts = BufferUtils.createVector3Buffer(coords.length);
         
         for(Coordinate c : coords){
             verts.put((float)c.x).put((float)z).put((float)c.y);
         }
         
-        Line line = new Line("Lines", verts, null, null, null);
+        final Line line = new Line("Lines", verts, null, null, null);
         line.getMeshData().setIndexMode(IndexMode.LineStrip);
         line.setLineWidth(0.5f);
         line.setDefaultColor(color);
@@ -121,10 +121,10 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
     private Node toNodeLine(MultiLineString geom, float z ,ColorRGBA color){
 
-        Node node = new Node();
+        final Node node = new Node();
 
         for(int i=0,n=geom.getNumGeometries();i<n;i++){
-            LineString ln = (LineString) geom.getGeometryN(i);
+            final LineString ln = (LineString) geom.getGeometryN(i);
             node.attachChild(toNodeLine(ln, z,color));
         }
 
@@ -132,7 +132,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     }
 
     private Mesh toNodePoint(Point geom,float z,ReadOnlyColorRGBA color){
-        Tube cy = new Tube("cy", 4, 5, 10);
+        final Tube cy = new Tube("cy", 4, 5, 10);
         cy.setTranslation(geom.getCoordinate().x, z,geom.getCoordinate().y);
         cy.setDefaultColor(color);
         cy.getSceneHints().setLightCombineMode(LightCombineMode.Off);
@@ -142,10 +142,10 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
     private Node toNodePoint(MultiPoint geom,float z,ReadOnlyColorRGBA color){
 
-        Node node = new Node();
+        final Node node = new Node();
 
         for(int i=0,n=geom.getNumGeometries();i<n;i++){
-            Point ln = (Point) geom.getGeometryN(i);
+            final Point ln = (Point) geom.getGeometryN(i);
             node.attachChild(toNodePoint(ln, z,color));
         }
 
@@ -188,8 +188,8 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         final FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
 
         final DefaultBoundingBox bb = new DefaultBoundingBox(layer.getBounds());
-        bb.setRange(0, cameraPosition.getX()-searchExtent, cameraPosition.getX()+searchExtent);
-        bb.setRange(1, cameraPosition.getZ()-searchExtent, cameraPosition.getZ()+searchExtent);
+        bb.setRange(0, cameraPosition.getX()-SEARCH_EXTENT, cameraPosition.getX()+SEARCH_EXTENT);
+        bb.setRange(1, cameraPosition.getZ()-SEARCH_EXTENT, cameraPosition.getZ()+SEARCH_EXTENT);
 
         final Filter f = FF.bbox(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),bb);
 //            Filter f = FF.dwithin(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),
@@ -202,10 +202,10 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     private void loadArea(Filter filter){
         final List<String> exactList = new ArrayList<String>();
 
-        GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
+        final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
 
         //HACK TO ENABLE 3D
-        Class geoClass = layer.getFeatureSource().getSchema().getGeometryDescriptor().getType().getBinding();
+        final Class geoClass = layer.getFeatureSource().getSchema().getGeometryDescriptor().getType().getBinding();
 
         if(geoClass.equals(Point.class) || geoClass.equals(MultiPoint.class)){
             System.out.println("3d point");
@@ -222,7 +222,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
 
 
-        FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
+        final FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
         try {
             dataToObjectiveTransformer.setMathTransform(
                     CRS.findMathTransform(source.getSchema().getCoordinateReferenceSystem(),
@@ -255,7 +255,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                     }
 
                     synchronized(tounload){
-                        Spatial sp = tounload.get(id);
+                        final Spatial sp = tounload.get(id);
                         if(sp != null){
                             //spatial is on the unloading list
                             //avoid it to be unloaded
@@ -296,8 +296,8 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                     if(geom instanceof Polygon){
                         obj = new DefaultPolygonMesh((Polygon)geom,0,1);
                     }else if(geom instanceof MultiPolygon ){
-                        MultiPolygon multi = (MultiPolygon) geom;
-                        Node mp = new Node();
+                        final MultiPolygon multi = (MultiPolygon) geom;
+                        final Node mp = new Node();
                         for(int i=0,n=multi.getNumGeometries();i<n;i++){
                             mp.attachChild(new DefaultPolygonMesh((Polygon) multi.getGeometryN(i),minz,maxz));
                         }
@@ -331,10 +331,10 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
 
         //unload uncesseray features
-        Collection<String> keys = new ArrayList(loaded.keySet());
+        final Collection<String> keys = new ArrayList(loaded.keySet());
         for(String key : keys){
             if(!exactList.contains(key)){
-                Spatial sp = loaded.get(key);
+                final Spatial sp = loaded.get(key);
                 cache.put(key, sp);
                 synchronized(tounload){
                     tounload.put(key, sp);

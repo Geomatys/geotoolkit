@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.geotiff;
 
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -29,15 +30,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
-
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
+
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.DefaultCoverageReader;
-
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.GeoTiffIIOMetadataDecoder;
 import org.geotoolkit.coverage.geotiff.crs_adapters.GeoTiffMetadata2CRSAdapter;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
@@ -45,14 +45,15 @@ import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.referencing.CRS;
-
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
+
 
 /**
  *
@@ -64,7 +65,7 @@ public class GeoTIFFactory {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.coverage.wi");
 
     /** SPI for creating tiff readers in ImageIO tools */
-    private static final TIFFImageReaderSpi readerSPI = new TIFFImageReaderSpi();
+    private static final TIFFImageReaderSpi READER_SPI = new TIFFImageReaderSpi();
 
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
@@ -300,7 +301,7 @@ public class GeoTIFFactory {
         // Get a reader for this format
         // //
 
-        final ImageReader reader = readerSPI.createReaderInstance();
+        final ImageReader reader = READER_SPI.createReaderInstance();
 
         // //
         // get the METADATA

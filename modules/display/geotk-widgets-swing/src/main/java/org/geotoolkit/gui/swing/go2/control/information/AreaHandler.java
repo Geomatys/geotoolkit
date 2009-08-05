@@ -53,12 +53,12 @@ public class AreaHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> units = new ArrayList<Unit>();
+    public static final List<Unit> UNITS = new ArrayList<Unit>();
 
     static{
-        units.add(SI.SQUARE_METRE);
-        units.add(NonSI.ARE);
-        units.add(NonSI.HECTARE);
+        UNITS.add(SI.SQUARE_METRE);
+        UNITS.add(NonSI.ARE);
+        UNITS.add(NonSI.HECTARE);
     }
 
     private final MouseListen mouseInputListener;
@@ -100,9 +100,9 @@ public class AreaHandler implements CanvasHandler {
             geoms.add(GEOMETRY_FACTORY.createLineString(coords.toArray(new Coordinate[coords.size()])));
         }else if(coords.size() > 2){
             //polygon
-            Coordinate[] ringCoords = coords.toArray(new Coordinate[coords.size()+1]);
+            final Coordinate[] ringCoords = coords.toArray(new Coordinate[coords.size()+1]);
             ringCoords[coords.size()] = coords.get(0);
-            LinearRing ring = GEOMETRY_FACTORY.createLinearRing(ringCoords);
+            final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(ringCoords);
             geoms.add(GEOMETRY_FACTORY.createPolygon(ring, new LinearRing[0]));
         }
 
@@ -127,10 +127,10 @@ public class AreaHandler implements CanvasHandler {
             int mousebutton = e.getButton();
             if (mousebutton == MouseEvent.BUTTON1) {
                 //add a coordinate
-                AffineMatrix3 trs = map.getCanvas().getController().getTransform();
+                final AffineMatrix3 trs = map.getCanvas().getController().getTransform();
                 try {
-                    AffineTransform dispToObj = trs.createInverse();
-                    double[] crds = new double[]{e.getX(),e.getY()};
+                    final AffineTransform dispToObj = trs.createInverse();
+                    final double[] crds = new double[]{e.getX(),e.getY()};
                     dispToObj.transform(crds, 0, crds, 0, 1);
                     coords.add(new Coordinate(crds[0], crds[1]));
                     updateGeometry();
