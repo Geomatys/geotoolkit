@@ -104,7 +104,7 @@ public class BinaryTemporalOpType extends TemporalOpsType {
         if (rest == null) {
             rest = new ArrayList<Object>();
         }
-        return Collections.unmodifiableList(rest);
+        return rest;
     }
 
     /**

@@ -237,6 +237,15 @@ public class ObservationXMLBindingTest {
         marshaller.marshal(collection, sw);
 
         result = sw.toString();
+        //System.out.println(result);
+
+        collection = new ObservationCollectionEntry();
+        collection.add(obs.getTemporaryTemplate("temporaryName", samplingTime));
+
+        sw = new StringWriter();
+        marshaller.marshal(collection, sw);
+
+        result = sw.toString();
         System.out.println(result);
         
     }

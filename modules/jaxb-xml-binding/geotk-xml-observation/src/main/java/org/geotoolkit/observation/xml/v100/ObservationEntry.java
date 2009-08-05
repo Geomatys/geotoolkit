@@ -262,17 +262,22 @@ public class ObservationEntry implements Observation {
             foi = (SamplingFeatureEntry) this.featureOfInterest.getAbstractFeature();
         }
         //debugging purpose
-        if (this.result != null && this.result.getValue() instanceof DataArrayPropertyType) {
-            DataArrayEntry d = ((DataArrayPropertyType)this.result.getValue()).getDataArray();
+        Object res = null;
+
+        if (this.result != null) {
+            res = this.result.getValue();
+            if (this.result.getValue() instanceof DataArrayPropertyType) {
+                DataArrayEntry d = ((DataArrayPropertyType)this.result.getValue()).getDataArray();
             
-            LOGGER.info("encoding sent:" + d.getEncoding());
+                LOGGER.info("encoding sent:" + d.getEncoding());
+            }
         }
         return new ObservationEntry(temporaryName,
                                     this.definition,
                                     foi, 
                                     pheno,
                                     this.procedure,
-                                    this.result,
+                                    res,
                                     time);
         
     }
