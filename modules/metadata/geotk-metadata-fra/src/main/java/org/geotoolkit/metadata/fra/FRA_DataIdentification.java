@@ -18,7 +18,6 @@
 package org.geotoolkit.metadata.fra;
 
 import java.util.Collection;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -46,7 +45,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -96,29 +95,5 @@ public class FRA_DataIdentification extends DefaultDataIdentification {
      */
     public synchronized void setRelatedCitations(final Collection<? extends Citation> newValues) {
         relatedCitations = copyCollection(newValues, relatedCitations, Citation.class);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
-     * process is going to be done. This method is automatically called by JAXB
-     * when the marshalling begins.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void beforeMarshal(Marshaller marshaller) {
-        xmlMarshalling(true);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code false}, since the marshalling
-     * process is finished. This method is automatically called by JAXB when the
-     * marshalling ends.
-     *
-     * @param marshaller Not used in this implementation
-     */
-    @SuppressWarnings("unused")
-    private void afterMarshal(Marshaller marshaller) {
-        xmlMarshalling(false);
     }
 }

@@ -21,7 +21,6 @@
 package org.geotoolkit.metadata.iso.lineage;
 
 import java.util.Collection;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -46,7 +45,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultScope;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -155,29 +154,5 @@ public class DefaultLineage extends MetadataEntity implements Lineage {
      */
     public synchronized void setSources(final Collection<? extends Source> newValues) {
         sources = copyCollection(newValues, sources, Source.class);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
-     * process is going to be done. This method is automatically called by JAXB
-     * when the marshalling begins.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void beforeMarshal(Marshaller marshaller) {
-        xmlMarshalling(true);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code false}, since the marshalling
-     * process is finished. This method is automatically called by JAXB when the
-     * marshalling ends.
-     *
-     * @param marshaller Not used in this implementation
-     */
-    @SuppressWarnings("unused")
-    private void afterMarshal(Marshaller marshaller) {
-        xmlMarshalling(false);
     }
 }

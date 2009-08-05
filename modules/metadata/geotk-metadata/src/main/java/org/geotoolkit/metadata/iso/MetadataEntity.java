@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.internal.io.XML;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
@@ -34,7 +35,7 @@ import org.geotoolkit.metadata.InvalidMetadataException;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -45,13 +46,6 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
      * Serial number for interoperability with different versions.
      */
     private static final long serialVersionUID = 5730550742604669102L;
-
-    /**
-     * If a XML marshalling with JAXB is under progress, value {@link Boolean#TRUE}. Otherwise
-     * {@link Boolean#FALSE}. This implementation assumes that JAXB performs marshalling in the
-     * same thread than the one that invoke the {@code beforeMarshal(...)} method.
-     */
-    private transient ThreadLocal<Boolean> xmlMarshalling;
 
     /**
      * Constructs an initially empty metadata entity.
@@ -104,33 +98,6 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
     }
 
     /**
-     * Invoked with value {@code true} if a XML marshalling is begining,
-     * or {@code false} if XML marshalling ended.
-     *
-     * @param marshalling {@code true} if a XML marshalling is begining, or {@code false} if it ended.
-     *
-     * @since 2.5
-     * @level advanced
-     *
-     * @todo Current implementation may leave the object in an unstable state if the marshalling
-     *       failed with an exception. We need to find a better mechanism, maybe through
-     *       {@link javax.xml.bind.ValidationEventHandler}.
-     *
-     * @deprecated This method is strictly for internal Geotoolkit implementation and will
-     *             be replaced by an other mechanism in a future version.
-     */
-    @Deprecated
-    protected final synchronized void xmlMarshalling(final boolean marshalling) {
-        if (xmlMarshalling == null) {
-            if (!marshalling) {
-                return;
-            }
-            xmlMarshalling = new ThreadLocal<Boolean>();
-        }
-        xmlMarshalling.set(Boolean.valueOf(marshalling));
-    }
-
-    /**
      * If a XML marshalling is under progress and the given collection is empty, returns
      * {@code null}. Otherwise returns the collection unchanged. This method is invoked
      * by implementation having optional elements to ommit when empty.
@@ -143,16 +110,9 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
      * @since 2.5
      * @level advanced
      */
-    protected final <E> Collection<E> xmlOptional(final Collection<E> elements) {
-        assert Thread.holdsLock(this);
-        if (elements != null && elements.isEmpty()) {
-            final ThreadLocal<Boolean> xmlMarshalling = this.xmlMarshalling;
-            if (xmlMarshalling != null) {
-                final Boolean isMarshalling = xmlMarshalling.get();
-                if (Boolean.TRUE.equals(isMarshalling)) {
-                    return null;
-                }
-            }
+    protected static <E> Collection<E> xmlOptional(final Collection<E> elements) {
+        if (elements != null && elements.isEmpty() && XML.marshalling()) {
+            return null;
         }
         return elements;
     }

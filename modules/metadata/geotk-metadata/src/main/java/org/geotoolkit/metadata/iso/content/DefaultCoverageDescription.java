@@ -21,7 +21,6 @@
 package org.geotoolkit.metadata.iso.content;
 
 import java.util.Collection;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
@@ -181,29 +180,5 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
     {
         rangeElementDescriptions = copyCollection(newValues, rangeElementDescriptions,
                 RangeElementDescription.class);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
-     * process is going to be done. This method is automatically called by JAXB
-     * when the marshalling begins.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void beforeMarshal(Marshaller marshaller) {
-        xmlMarshalling(true);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code false}, since the marshalling
-     * process is finished. This method is automatically called by JAXB when the
-     * marshalling ends.
-     *
-     * @param marshaller Not used in this implementation
-     */
-    @SuppressWarnings("unused")
-    private void afterMarshal(Marshaller marshaller) {
-        xmlMarshalling(false);
     }
 }

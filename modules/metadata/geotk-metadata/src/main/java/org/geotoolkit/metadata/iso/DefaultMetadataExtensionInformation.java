@@ -22,7 +22,6 @@ package org.geotoolkit.metadata.iso;
 
 import java.util.Collection;
 
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -38,7 +37,7 @@ import org.opengis.metadata.MetadataExtensionInformation;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -125,29 +124,5 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
             final Collection<? extends ExtendedElementInformation> newValues) {
         extendedElementInformation = copyCollection(newValues, extendedElementInformation,
                                                     ExtendedElementInformation.class);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
-     * process is going to be done. This method is automatically called by JAXB
-     * when the marshalling begins.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void beforeMarshal(Marshaller marshaller) {
-        xmlMarshalling(true);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code false}, since the marshalling
-     * process is finished. This method is automatically called by JAXB when the
-     * marshalling ends.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void afterMarshal(Marshaller marshaller) {
-        xmlMarshalling(false);
     }
 }

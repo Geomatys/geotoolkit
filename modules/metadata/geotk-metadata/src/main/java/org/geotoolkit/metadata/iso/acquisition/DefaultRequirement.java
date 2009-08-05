@@ -22,7 +22,6 @@ package org.geotoolkit.metadata.iso.acquisition;
 
 import java.util.Collection;
 import java.util.Date;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -267,29 +266,5 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     public synchronized void setSatisifedPlans(final Collection<? extends Plan> newValues) {
         satisifedPlans = copyCollection(newValues, satisifedPlans, Plan.class);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code true}, since the marshalling
-     * process is going to be done. This method is automatically called by JAXB when
-     * the marshalling begins.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void beforeMarshal(Marshaller marshaller) {
-        xmlMarshalling(true);
-    }
-
-    /**
-     * Sets the {@code xmlMarshalling} flag to {@code false}, since the marshalling
-     * process is finished. This method is automatically called by JAXB when the
-     * marshalling ends.
-     *
-     * @param marshaller Not used in this implementation.
-     */
-    @SuppressWarnings("unused")
-    private void afterMarshal(Marshaller marshaller) {
-        xmlMarshalling(false);
     }
 }

@@ -98,11 +98,11 @@ public class MarshallerPool {
     private final Deque<Unmarshaller> unmarshallers = new LinkedList<Unmarshaller>();
 
     /**
-     * Returns the classes of the root Geotoolkit objects to be marshalled by default.
+     * Returns the root classes of Geotk objects to be marshalled by default.
      * Those classes can be given as the last argument to the {@code MarshallerPool}
      * constructors, in order to bound a default set of classes with {@link JAXBContext}.
      * <p>
-     * The list of classes is determined dynamically from the Geotoolkit modules found on
+     * The list of classes is determined dynamically from the Geotk modules found on
      * the classpath.
      *
      * @return The default set of classes to be bound to the {@code JAXBContext}.

@@ -29,6 +29,10 @@ import javax.xml.validation.Schema;
 
 /**
  * Base class of {@link PooledMarshaller} and {@link PooledUnmarshaller}.
+ * This class provides basic service for saving the initial values of [un]marshaller properties,
+ * in order to reset them to their initial values after usage. This is required in order to allow
+ * [un]marshaller reuse. In addition this base class translate properties key from JDK 6 names to
+ * "endorsed JAR" names if needed.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
@@ -64,6 +68,10 @@ abstract class Pooled {
 
     /**
      * Default constructor.
+     *
+     * @param internal {@code true} if the JAXB implementation is the one bundled in JDK 6,
+     *        or {@code false} if this is an external implementation like a JAR put in the
+     *        endorsed directory.
      */
     Pooled(final boolean internal) {
         this.internal = internal;
