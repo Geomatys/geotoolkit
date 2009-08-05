@@ -141,7 +141,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      */
     @Override
     @XmlElement(name = "description", required = true)
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -160,7 +160,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      */
     @Override
     @XmlElement(name = "rationale")
-    public InternationalString getRationale() {
+    public synchronized InternationalString getRationale() {
         return rationale;
     }
 
@@ -265,7 +265,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      */
     @Override
     @XmlElement(name = "processingInformation")
-    public Processing getProcessingInformation() {
+    public synchronized Processing getProcessingInformation() {
         return processingInformation;
     }
 

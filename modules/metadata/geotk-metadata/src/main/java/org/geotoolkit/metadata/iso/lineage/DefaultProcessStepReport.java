@@ -85,7 +85,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      */
     @Override
     @XmlElement(name = "name")
-    public InternationalString getName() {
+    public synchronized InternationalString getName() {
         return name;
     }
 
@@ -105,7 +105,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -125,7 +125,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      */
     @Override
     @XmlElement(name = "fileType")
-    public InternationalString getFileType() {
+    public synchronized InternationalString getFileType() {
         return fileType;
     }
 

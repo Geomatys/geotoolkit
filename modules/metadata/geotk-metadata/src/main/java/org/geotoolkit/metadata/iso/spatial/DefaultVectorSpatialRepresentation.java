@@ -85,7 +85,7 @@ public class DefaultVectorSpatialRepresentation extends AbstractSpatialRepresent
      */
     @Override
     @XmlElement(name = "topologyLevel")
-    public TopologyLevel getTopologyLevel() {
+    public synchronized TopologyLevel getTopologyLevel() {
         return topologyLevel;
     }
 

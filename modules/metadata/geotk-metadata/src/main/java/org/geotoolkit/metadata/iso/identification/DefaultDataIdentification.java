@@ -150,7 +150,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @XmlElement(name = "spatialRepresentationType")
     public synchronized Collection<SpatialRepresentationType> getSpatialRepresentationTypes() {
         return xmlOptional(spatialRepresentationTypes = nonNullCollection(spatialRepresentationTypes,
-                                                              SpatialRepresentationType.class));
+                SpatialRepresentationType.class));
     }
 
     /**
@@ -162,7 +162,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
             final Collection<? extends SpatialRepresentationType> newValues)
     {
         spatialRepresentationTypes = copyCollection(newValues, spatialRepresentationTypes,
-                                                    SpatialRepresentationType.class);
+                SpatialRepresentationType.class);
     }
 
     /**
@@ -181,9 +181,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      *
      * @param newValues The new spatial resolutions.
      */
-    public synchronized void setSpatialResolutions(
-            final Collection<? extends Resolution> newValues)
-    {
+    public synchronized void setSpatialResolutions(final Collection<? extends Resolution> newValues) {
         spatialResolutions = copyCollection(newValues, spatialResolutions, Resolution.class);
     }
 
@@ -237,9 +235,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      *
      * @param newValues The new topic categories.
      */
-    public synchronized void setTopicCategories(
-            final Collection<? extends TopicCategory> newValues)
-    {
+    public synchronized void setTopicCategories(final Collection<? extends TopicCategory> newValues) {
         topicCategories = copyCollection(newValues, topicCategories, TopicCategory.class);
     }
 
@@ -249,7 +245,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      */
     @Override
     @XmlElement(name = "environmentDescription")
-    public InternationalString getEnvironmentDescription() {
+    public synchronized InternationalString getEnvironmentDescription() {
         return environmentDescription;
     }
 
@@ -287,7 +283,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      */
     @Override
     @XmlElement(name = "supplementalInformation")
-    public InternationalString getSupplementalInformation() {
+    public synchronized InternationalString getSupplementalInformation() {
         return supplementalInformation;
     }
 

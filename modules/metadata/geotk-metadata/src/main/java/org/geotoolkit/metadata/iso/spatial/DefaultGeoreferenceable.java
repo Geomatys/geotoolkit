@@ -141,7 +141,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      */
     @Override
     @XmlElement(name = "controlPointAvailability", required = true)
-    public boolean isControlPointAvailable() {
+    public synchronized boolean isControlPointAvailable() {
         return controlPointAvailable;
     }
 
@@ -160,7 +160,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      */
     @Override
     @XmlElement(name = "orientationParameterAvailability", required = true)
-    public boolean isOrientationParameterAvailable() {
+    public synchronized boolean isOrientationParameterAvailable() {
         return orientationParameterAvailable;
     }
 
@@ -179,7 +179,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      */
     @Override
     @XmlElement(name = "orientationParameterDescription")
-    public InternationalString getOrientationParameterDescription() {
+    public synchronized InternationalString getOrientationParameterDescription() {
         return orientationParameterDescription;
     }
 
@@ -200,7 +200,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      */
     @Override
 /// @XmlElement(name = "georeferencedParameters", required = true)
-    public Record getGeoreferencedParameters() {
+    public synchronized Record getGeoreferencedParameters() {
         return georeferencedParameters;
     }
 
@@ -256,9 +256,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      *
      * @since 3.03
      */
-    public synchronized void setGeolocationInformation(
-            final Collection<? extends GeolocationInformation> newValues)
-    {
+    public synchronized void setGeolocationInformation(final Collection<? extends GeolocationInformation> newValues) {
         geolocationInformation = copyCollection(newValues, geolocationInformation, GeolocationInformation.class);
     }
 }

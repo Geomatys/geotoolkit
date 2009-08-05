@@ -104,7 +104,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      */
     @Override
     @XmlElement(name = "type")
-    public GeometryType getType() {
+    public synchronized GeometryType getType() {
         return type;
     }
 
@@ -124,7 +124,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      */
     @Override
     @XmlElement(name = "status")
-    public Progress getStatus() {
+    public synchronized Progress getStatus() {
         return status;
     }
 
@@ -143,7 +143,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      */
     @Override
     @XmlElement(name = "citation")
-    public Citation getCitation() {
+    public synchronized Citation getCitation() {
         return citation;
     }
 

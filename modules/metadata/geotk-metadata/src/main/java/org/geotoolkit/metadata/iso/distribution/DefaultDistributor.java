@@ -109,7 +109,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
      */
     @Override
     @XmlElement(name = "distributorContact", required = true)
-    public ResponsibleParty getDistributorContact() {
+    public synchronized ResponsibleParty getDistributorContact() {
         return distributorContact;
     }
 
@@ -172,7 +172,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @XmlElement(name = "distributorTransferOptions")
     public synchronized Collection<DigitalTransferOptions> getDistributorTransferOptions() {
         return xmlOptional(distributorTransferOptions = nonNullCollection(distributorTransferOptions,
-                                                              DigitalTransferOptions.class));
+                DigitalTransferOptions.class));
     }
 
     /**
@@ -184,6 +184,6 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
             final Collection<? extends DigitalTransferOptions> newValues)
     {
         distributorTransferOptions = copyCollection(newValues, distributorTransferOptions,
-                                                    DigitalTransferOptions.class);
+                DigitalTransferOptions.class);
     }
 }

@@ -90,7 +90,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "extensionOnLineResource")
-    public OnLineResource getExtensionOnLineResource() {
+    public synchronized OnLineResource getExtensionOnLineResource() {
         return extensionOnLineResource;
     }
 

@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -245,7 +245,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "address")
-    public Address getAddress() {
+    public synchronized Address getAddress() {
         return address;
     }
 
@@ -265,7 +265,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "contactInstructions")
-    public InternationalString getContactInstructions() {
+    public synchronized InternationalString getContactInstructions() {
         return contactInstructions;
     }
 
@@ -285,7 +285,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "onlineResource")
-    public OnLineResource getOnLineResource() {
+    public synchronized OnLineResource getOnLineResource() {
         return onLineResource;
     }
 
@@ -305,7 +305,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "phone")
-    public Telephone getPhone() {
+    public synchronized Telephone getPhone() {
         return phone;
     }
 
@@ -325,7 +325,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "hoursOfService")
-    public InternationalString getHoursOfService() {
+    public synchronized InternationalString getHoursOfService() {
         return hoursOfService;
     }
 

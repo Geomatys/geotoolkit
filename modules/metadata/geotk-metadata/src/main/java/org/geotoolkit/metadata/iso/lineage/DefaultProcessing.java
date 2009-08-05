@@ -109,7 +109,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -146,7 +146,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     @Override
     @XmlElement(name = "procedureDescription")
-    public InternationalString getProcedureDescription() {
+    public synchronized InternationalString getProcedureDescription() {
         return procedureDescription;
     }
 
@@ -184,7 +184,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     @Override
     @XmlElement(name = "runTimeParameter")
-    public InternationalString getRunTimeParameter() {
+    public synchronized InternationalString getRunTimeParameter() {
         return runTimeParameter;
     }
 

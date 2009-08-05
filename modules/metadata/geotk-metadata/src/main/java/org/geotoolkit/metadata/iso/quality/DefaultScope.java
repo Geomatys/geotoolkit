@@ -34,7 +34,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -91,7 +91,7 @@ public class DefaultScope extends MetadataEntity implements Scope {
      * Returns the hierarchical level of the data specified by the scope.
      */
     @Override
-    public ScopeCode getLevel() {
+    public synchronized ScopeCode getLevel() {
         return level;
     }
 
@@ -133,7 +133,7 @@ public class DefaultScope extends MetadataEntity implements Scope {
      * scope.
      */
     @Override
-    public Extent getExtent() {
+    public synchronized Extent getExtent() {
         return extent;
     }
 

@@ -155,7 +155,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
      */
     @Override
     @XmlElement(name = "environmentalConditions")
-    public EnvironmentalRecord getEnvironmentalConditions() {
+    public synchronized EnvironmentalRecord getEnvironmentalConditions() {
         return environmentalConditions;
     }
 

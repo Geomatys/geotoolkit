@@ -39,7 +39,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -106,7 +106,8 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      * @return The start time, or {@code null} if none.
      */
     public synchronized Date getStartTime() {
-        return (startTime!=Long.MIN_VALUE) ? new Date(startTime) : null;
+        final long time = startTime;
+        return (time != Long.MIN_VALUE) ? new Date(time) : null;
     }
 
     /**
@@ -125,7 +126,8 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      * @return The end time, or {@code null} if none.
      */
     public synchronized Date getEndTime() {
-        return (endTime!=Long.MIN_VALUE) ? new Date(endTime) : null;
+        final long time = endTime;
+        return (time != Long.MIN_VALUE) ? new Date(time) : null;
     }
 
     /**
@@ -145,7 +147,7 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      */
     @Override
     @XmlElement(name = "extent", required = true)
-    public TemporalPrimitive getExtent() {
+    public synchronized TemporalPrimitive getExtent() {
         return extent;
     }
 

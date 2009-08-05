@@ -122,7 +122,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      */
     @Override
     @XmlElement(name = "name", required = true)
-    public InternationalString getName() {
+    public synchronized InternationalString getName() {
         return name;
     }
 
@@ -141,7 +141,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      */
     @Override
     @XmlElement(name = "version", required = true)
-    public InternationalString getVersion() {
+    public synchronized InternationalString getVersion() {
         return version;
     }
 
@@ -160,7 +160,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      */
     @Override
     @XmlElement(name = "amendmentNumber")
-    public InternationalString getAmendmentNumber() {
+    public synchronized InternationalString getAmendmentNumber() {
         return amendmentNumber;
     }
 
@@ -179,7 +179,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      */
     @Override
     @XmlElement(name = "specification")
-    public InternationalString getSpecification() {
+    public synchronized InternationalString getSpecification() {
         return specification;
     }
 
@@ -199,7 +199,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      */
     @Override
     @XmlElement(name = "fileDecompressionTechnique")
-    public InternationalString getFileDecompressionTechnique() {
+    public synchronized InternationalString getFileDecompressionTechnique() {
         return fileDecompressionTechnique;
     }
 

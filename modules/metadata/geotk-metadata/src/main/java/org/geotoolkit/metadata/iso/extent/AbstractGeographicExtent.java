@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -89,7 +89,7 @@ public class AbstractGeographicExtent extends MetadataEntity implements Geograph
      */
     @Override
     @XmlElement(name = "extentTypeCode")
-    public Boolean getInclusion() {
+    public synchronized Boolean getInclusion() {
         return inclusion;
     }
 

@@ -163,7 +163,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "maxValue")
-    public Double getMaxValue() {
+    public synchronized Double getMaxValue() {
         return maxValue;
     }
 
@@ -184,7 +184,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "minValue")
-    public Double getMinValue() {
+    public synchronized Double getMinValue() {
         return minValue;
     }
 
@@ -206,7 +206,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
 /// @XmlElement(name = "units", required = false)
-    public Unit<Length> getUnits() {
+    public synchronized Unit<Length> getUnits() {
         return units;
     }
 
@@ -228,7 +228,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "peakResponse")
-    public Double getPeakResponse() {
+    public synchronized Double getPeakResponse() {
         return peakResponse;
     }
 
@@ -249,7 +249,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "bitsPerValue")
-    public Integer getBitsPerValue() {
+    public synchronized Integer getBitsPerValue() {
         return bitsPerValue;
     }
 
@@ -270,7 +270,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "toneGradation")
-    public Integer getToneGradation() {
+    public synchronized Integer getToneGradation() {
         return toneGradation;
     }
 
@@ -290,7 +290,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "scaleFactor")
-    public Double getScaleFactor() {
+    public synchronized Double getScaleFactor() {
         return scaleFactor;
     }
 
@@ -310,7 +310,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "offset")
-    public Double getOffset() {
+    public synchronized Double getOffset() {
         return offset;
     }
 
@@ -332,7 +332,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "bandBoundaryDefinition")
-    public BandDefinition getBandBoundaryDefinition() {
+    public synchronized BandDefinition getBandBoundaryDefinition() {
         return bandBoundaryDefinition;
     }
 
@@ -357,7 +357,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "nominalSpatialResolution")
-    public Double getNominalSpatialResolution() {
+    public synchronized Double getNominalSpatialResolution() {
         return nominalSpatialResolution;
     }
 
@@ -382,7 +382,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "transferFunctionType")
-    public TransferFunctionType getTransferFunctionType() {
+    public synchronized TransferFunctionType getTransferFunctionType() {
         return transferFunctionType;
     }
 
@@ -406,7 +406,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "transmittedPolarization")
-    public PolarizationOrientation getTransmittedPolarization() {
+    public synchronized PolarizationOrientation getTransmittedPolarization() {
         return transmittedPolarization;
     }
 
@@ -429,7 +429,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "detectedPolarization")
-    public PolarizationOrientation getDetectedPolarization() {
+    public synchronized PolarizationOrientation getDetectedPolarization() {
         return detectedPolarization;
     }
 

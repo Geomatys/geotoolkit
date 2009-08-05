@@ -80,7 +80,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      */
     @Override
     @XmlElement(name = "scanningResolution")
-    public Double getScanningResolution() {
+    public synchronized Double getScanningResolution() {
         return scanningResolution;
     }
 
@@ -101,7 +101,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      */
     @Override
     @XmlElement(name = "groundResolution")
-    public Double getGroundResolution() {
+    public synchronized Double getGroundResolution() {
         return groundResolution;
     }
 

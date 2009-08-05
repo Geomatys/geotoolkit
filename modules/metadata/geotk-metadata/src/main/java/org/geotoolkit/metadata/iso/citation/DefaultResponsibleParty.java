@@ -45,7 +45,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -342,7 +342,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      */
     @Override
     @XmlElement(name = "individualName")
-    public String getIndividualName() {
+    public synchronized String getIndividualName() {
         return individualName;
     }
 
@@ -365,7 +365,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      */
     @Override
     @XmlElement(name = "organisationName")
-    public InternationalString getOrganisationName() {
+    public synchronized InternationalString getOrganisationName() {
         return organisationName;
     }
 
@@ -388,7 +388,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      */
     @Override
     @XmlElement(name = "positionName")
-    public InternationalString getPositionName() {
+    public synchronized InternationalString getPositionName() {
         return positionName;
     }
 
@@ -409,7 +409,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      */
     @Override
     @XmlElement(name = "contactInfo")
-    public Contact getContactInfo() {
+    public synchronized Contact getContactInfo() {
         return contactInfo;
     }
 
@@ -428,7 +428,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      */
     @Override
     @XmlElement(name = "role", required = true)
-    public Role getRole() {
+    public synchronized Role getRole() {
         return role;
     }
 

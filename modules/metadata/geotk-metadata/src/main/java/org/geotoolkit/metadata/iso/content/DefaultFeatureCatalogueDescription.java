@@ -105,7 +105,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
      */
     @Override
     @XmlElement(name = "complianceCode")
-    public Boolean isCompliant() {
+    public synchronized Boolean isCompliant() {
         return compliant;
     }
 
@@ -142,7 +142,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
      */
     @Override
     @XmlElement(name = "includeWithDataset")
-    public boolean isIncludedWithDataset() {
+    public synchronized boolean isIncludedWithDataset() {
         return includeWithDataset;
     }
 

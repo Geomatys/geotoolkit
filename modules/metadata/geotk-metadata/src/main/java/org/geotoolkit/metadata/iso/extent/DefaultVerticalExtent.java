@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -109,7 +109,7 @@ public class DefaultVerticalExtent extends MetadataEntity implements VerticalExt
      */
     @Override
     @XmlElement(name = "minimumValue", required = true)
-    public Double getMinimumValue() {
+    public synchronized Double getMinimumValue() {
         return minimumValue;
     }
 
@@ -128,7 +128,7 @@ public class DefaultVerticalExtent extends MetadataEntity implements VerticalExt
      */
     @Override
     @XmlElement(name = "maximumValue", required = true)
-    public Double getMaximumValue() {
+    public synchronized Double getMaximumValue() {
         return maximumValue;
     }
 
@@ -151,7 +151,7 @@ public class DefaultVerticalExtent extends MetadataEntity implements VerticalExt
      */
     @Override
     @XmlElement(name = "verticalCRS", required = true)
-    public VerticalCRS getVerticalCRS() {
+    public synchronized VerticalCRS getVerticalCRS() {
         return verticalCRS;
     }
 

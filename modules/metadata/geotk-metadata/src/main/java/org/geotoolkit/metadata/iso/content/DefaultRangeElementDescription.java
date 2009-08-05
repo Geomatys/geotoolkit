@@ -88,7 +88,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
      */
     @Override
     @XmlElement(name = "name")
-    public InternationalString getName() {
+    public synchronized InternationalString getName() {
         return name;
     }
 
@@ -107,7 +107,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
      */
     @Override
     @XmlElement(name = "definition")
-    public InternationalString getDefinition() {
+    public synchronized InternationalString getDefinition() {
         return definition;
     }
 

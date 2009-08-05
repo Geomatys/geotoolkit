@@ -113,7 +113,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
      */
     @Override
     @XmlElement(name = "name")
-    public MediumName getName() {
+    public synchronized MediumName getName() {
         return name;
     }
 
@@ -132,7 +132,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
      */
     @Override
 /// @XmlElement(name = "densityUnits")
-    public Unit<?> getDensityUnits() {
+    public synchronized Unit<?> getDensityUnits() {
         return densityUnits;
     }
 
@@ -152,7 +152,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
      */
     @Override
     @XmlElement(name = "volumes")
-    public Integer getVolumes() {
+    public synchronized Integer getVolumes() {
         return volumes;
     }
 
@@ -190,7 +190,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
      */
     @Override
     @XmlElement(name = "mediumName")
-    public InternationalString getMediumNote() {
+    public synchronized InternationalString getMediumNote() {
         return mediumNote;
     }
 

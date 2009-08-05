@@ -38,7 +38,7 @@ import org.geotoolkit.internal.jaxb.text.URINameAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -103,7 +103,7 @@ public class DefaultBrowseGraphic extends MetadataEntity implements BrowseGraphi
     @Override
     @XmlJavaTypeAdapter(URINameAdapter.class)
     @XmlElement(name = "fileName")
-    public URI getFileName() {
+    public synchronized URI getFileName() {
         return fileName;
     }
 
@@ -123,7 +123,7 @@ public class DefaultBrowseGraphic extends MetadataEntity implements BrowseGraphi
      */
     @Override
     @XmlElement(name = "fileDescription")
-    public InternationalString getFileDescription() {
+    public synchronized InternationalString getFileDescription() {
         return fileDescription;
     }
 
@@ -143,7 +143,7 @@ public class DefaultBrowseGraphic extends MetadataEntity implements BrowseGraphi
      */
     @Override
     @XmlElement(name = "fileType")
-    public String getFileType() {
+    public synchronized String getFileType() {
         return fileType;
     }
 

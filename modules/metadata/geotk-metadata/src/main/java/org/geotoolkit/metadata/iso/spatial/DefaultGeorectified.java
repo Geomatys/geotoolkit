@@ -166,7 +166,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      */
     @Override
     @XmlElement(name = "checkPointAvailability", required = true)
-    public boolean isCheckPointAvailable() {
+    public synchronized boolean isCheckPointAvailable() {
         return checkPointAvailable;
     }
 
@@ -187,7 +187,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      */
     @Override
     @XmlElement(name = "checkPointDescription")
-    public InternationalString getCheckPointDescription() {
+    public synchronized InternationalString getCheckPointDescription() {
         return checkPointDescription;
     }
 
@@ -230,7 +230,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      */
     @Override
 /// @XmlElement(name = "centerPoint")
-    public Point getCenterPoint() {
+    public synchronized Point getCenterPoint() {
         return centerPoint;
     }
 
@@ -249,7 +249,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      */
     @Override
     @XmlElement(name = "pointInPixel", required = true)
-    public PixelOrientation getPointInPixel() {
+    public synchronized PixelOrientation getPointInPixel() {
         return pointInPixel;
     }
 
@@ -269,7 +269,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      */
     @Override
     @XmlElement(name = "transformationDimensionDescription")
-    public InternationalString getTransformationDimensionDescription() {
+    public synchronized InternationalString getTransformationDimensionDescription() {
         return transformationDimensionDescription;
     }
 
@@ -299,11 +299,8 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      *
      * @param newValues The new transformation mapping.
      */
-    public synchronized void setTransformationDimensionMapping(
-            final Collection<? extends InternationalString> newValues)
-    {
-        transformationDimensionMapping = copyCollection(newValues, transformationDimensionMapping,
-                InternationalString.class);
+    public synchronized void setTransformationDimensionMapping(final Collection<? extends InternationalString> newValues) {
+        transformationDimensionMapping = copyCollection(newValues, transformationDimensionMapping, InternationalString.class);
     }
 
     /**

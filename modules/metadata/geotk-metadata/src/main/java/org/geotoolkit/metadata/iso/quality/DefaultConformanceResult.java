@@ -31,7 +31,7 @@ import org.opengis.metadata.quality.ConformanceResult;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -96,7 +96,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      * requirement against which data is being evaluated.
      */
     @Override
-    public Citation getSpecification() {
+    public synchronized Citation getSpecification() {
         return specification;
     }
 
@@ -115,7 +115,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      * Returns the explanation of the meaning of conformance for this result.
      */
     @Override
-    public InternationalString getExplanation() {
+    public synchronized InternationalString getExplanation() {
         return explanation;
     }
 
@@ -133,7 +133,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      * Returns an indication of the conformance result.
      */
     @Override
-    public boolean pass() {
+    public synchronized boolean pass() {
         return pass;
     }
 

@@ -165,7 +165,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      */
     @Override
     @XmlElement(name = "citation", required = true)
-    public Citation getCitation() {
+    public synchronized Citation getCitation() {
         return citation;
     }
 
@@ -184,7 +184,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      */
     @Override
     @XmlElement(name = "abstract", required = true)
-    public InternationalString getAbstract() {
+    public synchronized InternationalString getAbstract() {
         return abstracts;
     }
 
@@ -203,7 +203,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      */
     @Override
     @XmlElement(name = "purpose")
-    public InternationalString getPurpose() {
+    public synchronized InternationalString getPurpose() {
         return purpose;
     }
 
@@ -287,9 +287,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @param newValues The new resource maintenance info.
      */
-    public synchronized void setResourceMaintenances(
-            final Collection<? extends MaintenanceInformation> newValues)
-    {
+    public synchronized void setResourceMaintenances(final Collection<? extends MaintenanceInformation> newValues) {
         resourceMaintenances = copyCollection(newValues, resourceMaintenances, MaintenanceInformation.class);
     }
 
@@ -307,9 +305,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @param newValues The new graphics overviews.
      */
-    public synchronized void setGraphicOverviews(
-            final Collection<? extends BrowseGraphic> newValues)
-    {
+    public synchronized void setGraphicOverviews(final Collection<? extends BrowseGraphic> newValues) {
         graphicOverviews = copyCollection(newValues, graphicOverviews, BrowseGraphic.class);
     }
 
@@ -364,9 +360,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @param newValues The new resource specific usages.
      */
-    public synchronized void setResourceSpecificUsages(
-            final Collection<? extends Usage> newValues)
-    {
+    public synchronized void setResourceSpecificUsages(final Collection<? extends Usage> newValues) {
         resourceSpecificUsages = copyCollection(newValues, resourceSpecificUsages, Usage.class);
     }
 
@@ -384,9 +378,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @param newValues The new resource constraints.
      */
-    public synchronized void setResourceConstraints(
-            final Collection<? extends Constraints> newValues)
-    {
+    public synchronized void setResourceConstraints(final Collection<? extends Constraints> newValues) {
         resourceConstraints = copyCollection(newValues, resourceConstraints, Constraints.class);
     }
 
@@ -408,9 +400,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
      *
      * @since 2.4
      */
-    public synchronized void setAggregationInfo(
-            final Collection<? extends AggregateInformation> newValues)
-    {
+    public synchronized void setAggregationInfo(final Collection<? extends AggregateInformation> newValues) {
         aggregationInfo = copyCollection(newValues, aggregationInfo, AggregateInformation.class);
     }
 }

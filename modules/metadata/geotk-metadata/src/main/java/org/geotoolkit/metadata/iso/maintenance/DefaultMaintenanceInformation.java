@@ -131,7 +131,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      */
     @Override
     @XmlElement(name = "maintenanceAndUpdateFrequency", required = true)
-    public MaintenanceFrequency getMaintenanceAndUpdateFrequency() {
+    public synchronized MaintenanceFrequency getMaintenanceAndUpdateFrequency() {
         return maintenanceAndUpdateFrequency;
     }
 
@@ -152,7 +152,8 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     @Override
     @XmlElement(name = "dateOfNextUpdate")
     public synchronized Date getDateOfNextUpdate() {
-        return (dateOfNextUpdate!=Long.MIN_VALUE) ? new Date(dateOfNextUpdate) : null;
+        final long date = dateOfNextUpdate;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -171,7 +172,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      * @todo needs an implementation of org.opengis.temporal modules to anntote this parameter.
      */
     @Override
-    public PeriodDuration getUserDefinedMaintenanceFrequency() {
+    public synchronized PeriodDuration getUserDefinedMaintenanceFrequency() {
         return userDefinedMaintenanceFrequency;
     }
 
@@ -225,9 +226,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      *
      * @since 2.4
      */
-    public synchronized void setUpdateScopeDescriptions(
-            final Collection<? extends ScopeDescription> newValues)
-    {
+    public synchronized void setUpdateScopeDescriptions(final Collection<? extends ScopeDescription> newValues) {
         updateScopeDescriptions = copyCollection(newValues, updateScopeDescriptions, ScopeDescription.class);
     }
 
@@ -249,9 +248,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      *
      * @since 2.4
      */
-    public synchronized void setMaintenanceNotes(
-            final Collection<? extends InternationalString> newValues)
-    {
+    public synchronized void setMaintenanceNotes(final Collection<? extends InternationalString> newValues) {
         maintenanceNotes = copyCollection(newValues, maintenanceNotes, InternationalString.class);
     }
 

@@ -34,7 +34,7 @@ import org.opengis.metadata.citation.Citation;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -115,7 +115,7 @@ public class DefaultIdentifier extends MetadataEntity implements Identifier {
      */
     @Override
     @XmlElement(name = "code", required = true)
-    public String getCode() {
+    public synchronized String getCode() {
         return code;
     }
 
@@ -137,7 +137,7 @@ public class DefaultIdentifier extends MetadataEntity implements Identifier {
      *
      * @return The version, or {@code null} if not available.
      */
-    public String getVersion() {
+    public synchronized String getVersion() {
         return version;
     }
 
@@ -159,7 +159,7 @@ public class DefaultIdentifier extends MetadataEntity implements Identifier {
      */
     @Override
     @XmlElement(name = "authority")
-    public Citation getAuthority() {
+    public synchronized Citation getAuthority() {
         return authority;
     }
 

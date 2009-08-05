@@ -118,7 +118,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      */
     @Override
     @XmlElement(name = "contentType", required = true)
-    public CoverageContentType getContentType() {
+    public synchronized CoverageContentType getContentType() {
         return contentType;
     }
 

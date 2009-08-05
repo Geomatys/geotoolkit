@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -93,7 +93,7 @@ public class DefaultGeometricObjects extends MetadataEntity implements Geometric
      */
     @Override
     @XmlElement(name = "geometricObjectType", required = true)
-    public GeometricObjectType getGeometricObjectType() {
+    public synchronized GeometricObjectType getGeometricObjectType() {
         return geometricObjectType;
     }
 
@@ -112,7 +112,7 @@ public class DefaultGeometricObjects extends MetadataEntity implements Geometric
      */
     @Override
     @XmlElement(name = "geometricObjectCount", required = true)
-    public Integer getGeometricObjectCount() {
+    public synchronized Integer getGeometricObjectCount() {
         return geometricObjectCount;
     }
 

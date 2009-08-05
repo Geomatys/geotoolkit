@@ -147,7 +147,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the code identifying a registered standard procedure, or {@code null} if none.
      */
     @Override
-    public Identifier getMeasureIdentification() {
+    public synchronized Identifier getMeasureIdentification() {
         return measureIdentification;
     }
 
@@ -165,7 +165,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the description of the measure being determined.
      */
     @Override
-    public InternationalString getMeasureDescription() {
+    public synchronized InternationalString getMeasureDescription() {
         return measureDescription;
     }
 
@@ -184,7 +184,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * or {@code null} if unspecified.
      */
     @Override
-    public EvaluationMethodType getEvaluationMethodType() {
+    public synchronized EvaluationMethodType getEvaluationMethodType() {
         return evaluationMethodType;
     }
 
@@ -202,7 +202,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the description of the evaluation method.
      */
     @Override
-    public InternationalString getEvaluationMethodDescription() {
+    public synchronized InternationalString getEvaluationMethodDescription() {
         return evaluationMethodDescription;
     }
 
@@ -220,7 +220,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the reference to the procedure information, or {@code null} if none.
      */
     @Override
-    public Citation getEvaluationProcedure() {
+    public synchronized Citation getEvaluationProcedure() {
         return evaluationProcedure;
     }
 
@@ -262,7 +262,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      *
      * @since 2.4
      */
-    public void setDates(final Collection<Date> newValues) {
+    public synchronized void setDates(final Collection<Date> newValues) {
         checkWritePermission();
         date1 = date2 = Long.MIN_VALUE;
         final Iterator<Date> it = newValues.iterator();

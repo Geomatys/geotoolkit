@@ -37,7 +37,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -105,7 +105,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * Returns the attributes to which the information applies.
      */
     @Override
-    public Set<AttributeType> getAttributes() {
+    public synchronized Set<AttributeType> getAttributes() {
         return attributes = nonNullSet(attributes, AttributeType.class);
     }
 
@@ -123,7 +123,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * Returns the features to which the information applies.
      */
     @Override
-    public Set<FeatureType> getFeatures() {
+    public synchronized Set<FeatureType> getFeatures() {
         return features = nonNullSet(features, FeatureType.class);
     }
 
@@ -142,7 +142,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * Returns the feature instances to which the information applies.
      */
     @Override
-    public Set<FeatureType> getFeatureInstances() {
+    public synchronized Set<FeatureType> getFeatureInstances() {
         return featureInstances = nonNullSet(featureInstances, FeatureType.class);
     }
 
@@ -163,7 +163,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.4
      */
     @Override
-    public Set<AttributeType> getAttributeInstances() {
+    public synchronized Set<AttributeType> getAttributeInstances() {
         return attributeInstances = nonNullSet(attributeInstances, AttributeType.class);
     }
 
@@ -185,7 +185,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      */
     @Override
     @XmlElement(name = "dataset", required = true)
-    public String getDataset() {
+    public synchronized String getDataset() {
         return dataset;
     }
 
@@ -209,7 +209,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      */
     @Override
     @XmlElement(name = "other", required = true)
-    public String getOther() {
+    public synchronized String getOther() {
         return other;
     }
 

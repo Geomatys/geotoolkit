@@ -37,7 +37,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -116,7 +116,7 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
      */
     @Override
     @XmlElement(name = "dateType", required = true)
-    public DateType getDateType() {
+    public synchronized DateType getDateType() {
         return dateType;
     }
 

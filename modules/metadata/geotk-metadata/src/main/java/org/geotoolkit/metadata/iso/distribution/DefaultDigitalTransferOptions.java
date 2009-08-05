@@ -100,7 +100,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      */
     @Override
     @XmlElement(name = "unitsOfDistribution")
-    public InternationalString getUnitsOfDistribution() {
+    public synchronized InternationalString getUnitsOfDistribution() {
         return unitsOfDistribution;
     }
 
@@ -120,7 +120,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      */
     @Override
     @XmlElement(name = "transferSize")
-    public Double getTransferSize() {
+    public synchronized Double getTransferSize() {
         return transferSize;
     }
 
@@ -158,7 +158,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      */
     @Override
     @XmlElement(name = "offLine")
-    public Medium getOffLine() {
+    public synchronized Medium getOffLine() {
         return offLines;
     }
 

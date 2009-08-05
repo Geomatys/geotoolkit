@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -97,7 +97,7 @@ public class DefaultDataQuality extends MetadataEntity implements DataQuality {
      */
     @Override
 /// @XmlElement(name = "scope", required = true)
-    public Scope getScope() {
+    public synchronized Scope getScope() {
         return scope;
     }
 
@@ -139,7 +139,7 @@ public class DefaultDataQuality extends MetadataEntity implements DataQuality {
      */
     @Override
     @XmlElement(name = "lineage")
-    public Lineage getLineage() {
+    public synchronized Lineage getLineage() {
         return lineage;
     }
 

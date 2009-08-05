@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -164,7 +164,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         super(true);
         if (fromEnvelope == null) {
             // No need to synchronize; not a big deal if we set this field twice.
-            fromEnvelope = getMethod("copy", new Class[] {
+            fromEnvelope = getMethod("copy", new Class<?>[] {
                 Envelope.class,
                 DefaultGeographicBoundingBox.class
             });
@@ -207,7 +207,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         super(true);
         if (fromRectangle == null) {
             // No need to synchronize; not a big deal if we set this field twice.
-            fromRectangle = getMethod("copy", new Class[] {
+            fromRectangle = getMethod("copy", new Class<?>[] {
                 Rectangle2D.class,
                 CoordinateReferenceSystem.class,
                 DefaultGeographicBoundingBox.class
@@ -267,7 +267,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      */
     @Override
     @XmlElement(name = "westBoundLongitude", required = true)
-    public double getWestBoundLongitude() {
+    public synchronized double getWestBoundLongitude() {
         return westBoundLongitude;
     }
 
@@ -292,7 +292,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      */
     @Override
     @XmlElement(name = "eastBoundLongitude", required = true)
-    public double getEastBoundLongitude() {
+    public synchronized double getEastBoundLongitude() {
         return eastBoundLongitude;
     }
 
@@ -317,7 +317,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      */
     @Override
     @XmlElement(name = "southBoundLatitude", required = true)
-    public double getSouthBoundLatitude()  {
+    public synchronized double getSouthBoundLatitude()  {
         return southBoundLatitude;
     }
 
@@ -342,7 +342,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      */
     @Override
     @XmlElement(name = "northBoundLatitude", required = true)
-    public double getNorthBoundLatitude()   {
+    public synchronized double getNorthBoundLatitude()   {
         return northBoundLatitude;
     }
 
@@ -479,7 +479,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      *
      * @since 2.5
      */
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         // Use '!' in order to catch NaN values.
         return !(eastBoundLongitude > westBoundLongitude && northBoundLatitude > southBoundLatitude);
     }
@@ -542,7 +542,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * Returns a string representation of this extent using a default angle pattern.
      */
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return toString(this, "DD°MM'SS.s\"", null);
     }
 
@@ -562,8 +562,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     {
         if (toString == null) {
             // No need to synchronize.
-            toString = getMethod("toString",  new Class[] {
-                        GeographicBoundingBox.class, String.class, Locale.class});
+            toString = getMethod("toString",  new Class<?>[] {
+                    GeographicBoundingBox.class, String.class, Locale.class});
         }
         try {
             return String.valueOf(invoke(toString, new Object[] {box, pattern, locale}));

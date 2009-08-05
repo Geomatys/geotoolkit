@@ -109,7 +109,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
      */
     @Override
     @XmlElement(name = "administrativeArea")
-    public InternationalString getAdministrativeArea() {
+    public synchronized InternationalString getAdministrativeArea() {
         return administrativeArea;
     }
 
@@ -129,7 +129,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
      */
     @Override
     @XmlElement(name = "city")
-    public InternationalString getCity() {
+    public synchronized InternationalString getCity() {
         return city;
     }
 
@@ -149,7 +149,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
      */
     @Override
     @XmlElement(name = "country")
-    public InternationalString getCountry() {
+    public synchronized InternationalString getCountry() {
         return country;
     }
 
@@ -177,9 +177,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
      *
      * @param newValues The new delivery points.
      */
-    public synchronized void setDeliveryPoints(
-            final Collection<? extends String> newValues)
-    {
+    public synchronized void setDeliveryPoints(final Collection<? extends String> newValues) {
         deliveryPoints = copyCollection(newValues, deliveryPoints, String.class);
     }
 
@@ -197,9 +195,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
      *
      * @param newValues The new electronic mail addresses.
      */
-    public synchronized void setElectronicMailAddresses(
-            final Collection<? extends String> newValues)
-    {
+    public synchronized void setElectronicMailAddresses(final Collection<? extends String> newValues) {
         electronicMailAddresses = copyCollection(newValues, electronicMailAddresses, String.class);
     }
 
@@ -209,7 +205,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
      */
     @Override
     @XmlElement(name = "postalCode")
-    public String getPostalCode() {
+    public synchronized String getPostalCode() {
         return postalCode;
     }
 

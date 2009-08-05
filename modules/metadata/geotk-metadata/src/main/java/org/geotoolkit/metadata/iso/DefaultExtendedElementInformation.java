@@ -195,7 +195,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "name", required = true)
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
@@ -217,7 +217,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "shortName")
-    public String getShortName()  {
+    public synchronized String getShortName()  {
         return shortName;
     }
 
@@ -238,7 +238,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "domainCode")
-    public Integer getDomainCode() {
+    public synchronized Integer getDomainCode() {
         return domainCode;
     }
 
@@ -257,7 +257,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "definition", required = true)
-    public InternationalString getDefinition()  {
+    public synchronized InternationalString getDefinition()  {
         return definition;
     }
 
@@ -276,7 +276,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
 /// @XmlElement(name = "obligation")
-    public Obligation getObligation()  {
+    public synchronized Obligation getObligation()  {
         return obligation;
     }
 
@@ -297,7 +297,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "condition")
-    public InternationalString getCondition() {
+    public synchronized InternationalString getCondition() {
         return condition;
     }
 
@@ -316,7 +316,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "dataType", required = true)
-    public Datatype getDataType() {
+    public synchronized Datatype getDataType() {
         return dataType;
     }
 
@@ -339,7 +339,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "maximumOccurrence")
-    public Integer getMaximumOccurrence() {
+    public synchronized Integer getMaximumOccurrence() {
         return maximumOccurrence;
     }
 
@@ -362,7 +362,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "domainValue")
-    public InternationalString getDomainValue() {
+    public synchronized InternationalString getDomainValue() {
         return domainValue;
     }
 
@@ -400,7 +400,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "rule", required = true)
-    public InternationalString getRule() {
+    public synchronized InternationalString getRule() {
         return rule;
     }
 
@@ -428,9 +428,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      *
      * @param newValues The new rationales.
      */
-    public synchronized void setRationales(
-            final Collection<? extends InternationalString> newValues)
-    {
+    public synchronized void setRationales(final Collection<? extends InternationalString> newValues) {
         rationales = copyCollection(newValues, rationales, InternationalString.class);
     }
 
@@ -448,9 +446,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      *
      * @param newValues The new sources.
      */
-    public synchronized void setSources(
-            final Collection<? extends ResponsibleParty> newValues)
-    {
+    public synchronized void setSources(final Collection<? extends ResponsibleParty> newValues) {
         sources = copyCollection(newValues, sources, ResponsibleParty.class);
     }
 }

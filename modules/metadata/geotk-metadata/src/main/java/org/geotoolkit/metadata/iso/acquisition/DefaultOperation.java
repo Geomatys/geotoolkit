@@ -145,7 +145,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -165,7 +165,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "citation")
-    public Citation getCitation() {
+    public synchronized Citation getCitation() {
         return citation;
     }
 
@@ -184,7 +184,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -203,7 +203,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "status")
-    public Progress getStatus() {
+    public synchronized Progress getStatus() {
         return status;
     }
 
@@ -222,7 +222,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "type")
-    public OperationType getType() {
+    public synchronized OperationType getType() {
         return type;
     }
 
@@ -277,7 +277,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "parentOperation")
-    public Operation getParentOperation() {
+    public synchronized Operation getParentOperation() {
         return parentOperation;
     }
 
@@ -296,7 +296,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "plan")
-    public Plan getPlan() {
+    public synchronized Plan getPlan() {
         return plan;
     }
 
@@ -334,7 +334,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     @Override
     @XmlElement(name = "significantEvent")
     public synchronized Collection<Event> getSignificantEvents() {
-        return significantEvents;
+        return significantEvents = nonNullCollection(significantEvents, Event.class);
     }
 
     /**

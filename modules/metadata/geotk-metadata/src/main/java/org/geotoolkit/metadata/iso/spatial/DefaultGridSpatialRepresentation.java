@@ -37,7 +37,7 @@ import org.opengis.metadata.spatial.GridSpatialRepresentation;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -121,7 +121,7 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      */
     @Override
     @XmlElement(name = "numberOfDimensions", required = true)
-    public Integer getNumberOfDimensions() {
+    public synchronized Integer getNumberOfDimensions() {
         return numberOfDimensions;
     }
 
@@ -160,7 +160,7 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      */
     @Override
     @XmlElement(name = "cellGeometry", required = true)
-    public CellGeometry getCellGeometry() {
+    public synchronized CellGeometry getCellGeometry() {
         return cellGeometry;
     }
 
@@ -179,7 +179,7 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      */
     @Override
     @XmlElement(name = "transformationParameterAvailability", required = true)
-    public boolean isTransformationParameterAvailable() {
+    public synchronized boolean isTransformationParameterAvailable() {
         return transformationParameterAvailable;
     }
 

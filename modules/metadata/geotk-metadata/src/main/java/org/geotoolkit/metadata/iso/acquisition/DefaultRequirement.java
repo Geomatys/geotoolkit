@@ -94,9 +94,10 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
     private RequestedDate requestedDate;
 
     /**
-     * Date and time after which collection is no longer valid.
+     * Date and time after which collection is no longer valid,
+     * or {@link Long#MIN_VALUE} if none.
      */
-    private Date expiryDate;
+    private long expiryDate = Long.MIN_VALUE;
 
     /**
      * Plan that identifies solution to satisfy the requirement.
@@ -124,7 +125,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     @Override
     @XmlElement(name = "citation")
-    public Citation getCitation() {
+    public synchronized Citation getCitation() {
         return citation;
     }
 
@@ -143,7 +144,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -198,7 +199,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     @Override
     @XmlElement(name = "priority")
-    public Priority getPriority() {
+    public synchronized Priority getPriority() {
         return priority;
     }
 
@@ -217,7 +218,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     @Override
     @XmlElement(name = "requestedDate")
-    public RequestedDate getRequestedDate() {
+    public synchronized RequestedDate getRequestedDate() {
         return requestedDate;
     }
 
@@ -236,8 +237,9 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     @Override
     @XmlElement(name = "expiryDate")
-    public Date getExpiryDate() {
-        return expiryDate;
+    public synchronized Date getExpiryDate() {
+        final long date = this.expiryDate;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -247,7 +249,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     public synchronized void setExpiryDate(final Date newValue) {
         checkWritePermission();
-        expiryDate = newValue;
+        expiryDate = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

@@ -93,7 +93,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      */
     @Override
     @XmlElement(name = "collectionIdentification")
-    public Integer getCollectionIdentification() {
+    public synchronized Integer getCollectionIdentification() {
         return collectionIdentification;
     }
 
@@ -112,7 +112,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      */
     @Override
     @XmlElement(name = "collectionName")
-    public InternationalString getCollectionName() {
+    public synchronized InternationalString getCollectionName() {
         return collectionName;
     }
 
@@ -131,7 +131,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      */
     @Override
     @XmlElement(name = "coordinateReferenceSystem")
-    public ReferenceSystem getCoordinateReferenceSystem() {
+    public synchronized ReferenceSystem getCoordinateReferenceSystem() {
         return coordinateReferenceSystem;
     }
 

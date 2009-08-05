@@ -121,7 +121,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -140,7 +140,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      */
     @Override
     @XmlElement(name = "type")
-    public InternationalString getType() {
+    public synchronized InternationalString getType() {
         return type;
     }
 
@@ -159,7 +159,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -178,7 +178,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      */
     @Override
     @XmlElement(name = "mountedOn")
-    public Platform getMountedOn() {
+    public synchronized Platform getMountedOn() {
         return mountedOn;
     }
 

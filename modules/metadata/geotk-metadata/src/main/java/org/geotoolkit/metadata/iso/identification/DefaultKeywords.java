@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -121,7 +121,7 @@ public class DefaultKeywords extends MetadataEntity implements Keywords {
      */
     @Override
     @XmlElement(name = "type", required = false)
-    public KeywordType getType() {
+    public synchronized KeywordType getType() {
         return type;
     }
 
@@ -141,7 +141,7 @@ public class DefaultKeywords extends MetadataEntity implements Keywords {
      */
     @Override
     @XmlElement(name = "thesaurusName")
-    public Citation getThesaurusName() {
+    public synchronized Citation getThesaurusName() {
         return thesaurusName;
     }
 

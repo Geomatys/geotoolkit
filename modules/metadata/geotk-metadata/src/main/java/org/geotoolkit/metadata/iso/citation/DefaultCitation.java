@@ -221,7 +221,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "title", required = true)
-    public InternationalString getTitle() {
+    public synchronized InternationalString getTitle() {
         return title;
     }
 
@@ -250,9 +250,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      *
      * @param newValues The new alternate titles.
      */
-    public synchronized void setAlternateTitles(
-            final Collection<? extends InternationalString> newValues)
-    {
+    public synchronized void setAlternateTitles(final Collection<? extends InternationalString> newValues) {
         alternateTitles = copyCollection(newValues, alternateTitles, InternationalString.class);
     }
 
@@ -279,7 +277,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "edition")
-    public InternationalString getEdition() {
+    public synchronized InternationalString getEdition() {
         return edition;
     }
 
@@ -350,9 +348,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      *
      * @param newValues The new cited responsible parties.
      */
-    public synchronized void setCitedResponsibleParties(
-            final Collection<? extends ResponsibleParty> newValues)
-    {
+    public synchronized void setCitedResponsibleParties(final Collection<? extends ResponsibleParty> newValues) {
         citedResponsibleParties = copyCollection(newValues, citedResponsibleParties, ResponsibleParty.class);
     }
 
@@ -380,7 +376,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "series")
-    public Series getSeries() {
+    public synchronized Series getSeries() {
         return series;
     }
 
@@ -401,7 +397,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "otherCitationDetails")
-    public InternationalString getOtherCitationDetails() {
+    public synchronized InternationalString getOtherCitationDetails() {
         return otherCitationDetails;
     }
 
@@ -423,7 +419,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "collectiveTitle", required = true)
-    public InternationalString getCollectiveTitle() {
+    public synchronized InternationalString getCollectiveTitle() {
         return collectiveTitle;
     }
 
@@ -444,7 +440,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "ISBN")
-    public String getISBN() {
+    public synchronized String getISBN() {
         return ISBN;
     }
 
@@ -463,7 +459,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "ISSN")
-    public String getISSN() {
+    public synchronized String getISSN() {
         return ISSN;
     }
 

@@ -85,9 +85,9 @@ public class DefaultEvent extends MetadataEntity implements Event {
     private Sequence sequence;
 
     /**
-     * Time the event occurred.
+     * Time the event occurred, or {@link Long#MIN_VALUE} if none.
      */
-    private Date time;
+    private long time;
 
     /**
      * Objective or objectives satisfied by an event.
@@ -124,7 +124,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -143,7 +143,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "trigger")
-    public Trigger getTrigger() {
+    public synchronized Trigger getTrigger() {
         return trigger;
     }
 
@@ -162,7 +162,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "context")
-    public Context getContext() {
+    public synchronized Context getContext() {
         return context;
     }
 
@@ -181,7 +181,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "sequence")
-    public Sequence getSequence() {
+    public synchronized Sequence getSequence() {
         return sequence;
     }
 
@@ -200,8 +200,9 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "time")
-    public Date getTime() {
-        return time;
+    public synchronized Date getTime() {
+        final long date = this.time;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -211,7 +212,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     public synchronized void setTime(final Date newValue) {
         checkWritePermission();
-        time = newValue;
+        time = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**
@@ -237,7 +238,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "relatedPass")
-    public PlatformPass getRelatedPass() {
+    public synchronized PlatformPass getRelatedPass() {
         return relatedPass;
     }
 

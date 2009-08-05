@@ -102,7 +102,7 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
      * Returns the format of the transfer data file.
      */
     @Override
-    public Format getFileFormat() {
+    public synchronized Format getFileFormat() {
         return fileFormat;
     }
 

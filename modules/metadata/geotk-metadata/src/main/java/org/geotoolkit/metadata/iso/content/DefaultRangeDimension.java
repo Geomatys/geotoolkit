@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -89,7 +89,7 @@ public class DefaultRangeDimension extends MetadataEntity implements RangeDimens
      * @todo needs to annotate the package org.geotoolkit.util before.
      */
     @Override
-    public MemberName getSequenceIdentifier() {
+    public synchronized MemberName getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
@@ -109,7 +109,7 @@ public class DefaultRangeDimension extends MetadataEntity implements RangeDimens
      */
     @Override
     @XmlElement(name = "descriptor")
-    public InternationalString getDescriptor() {
+    public synchronized InternationalString getDescriptor() {
         return descriptor;
     }
 

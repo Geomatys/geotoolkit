@@ -35,7 +35,7 @@ import org.opengis.metadata.constraint.SecurityConstraints;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -105,7 +105,7 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
      */
     @Override
     @XmlElement(name = "classification", required = true)
-    public Classification getClassification() {
+    public synchronized Classification getClassification() {
         return classification;
     }
 
@@ -125,7 +125,7 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
      */
     @Override
     @XmlElement(name = "userNote")
-    public InternationalString getUserNote() {
+    public synchronized InternationalString getUserNote() {
         return userNote;
     }
 
@@ -145,7 +145,7 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
      */
     @Override
     @XmlElement(name = "classificationSystem")
-    public InternationalString getClassificationSystem() {
+    public synchronized InternationalString getClassificationSystem() {
         return classificationSystem;
     }
 
@@ -164,7 +164,7 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
      */
     @Override
     @XmlElement(name = "handlingDescription")
-    public InternationalString getHandlingDescription() {
+    public synchronized InternationalString getHandlingDescription() {
         return handlingDescription;
     }
 

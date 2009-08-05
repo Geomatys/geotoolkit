@@ -89,7 +89,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -98,7 +98,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      *
      * @param newValue The new identifier value.
      */
-    public void setIdentifier(final Identifier newValue) {
+    public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
         identifier = newValue;
     }
@@ -110,7 +110,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      */
     @Override
     //@XmlElement(name = "extent")
-    public Geometry getExtent() {
+    public synchronized Geometry getExtent() {
         return extent;
     }
 
@@ -119,7 +119,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      *
      * @param newValue The new extent value.
      */
-    public void setExtent(final Geometry newValue) {
+    public synchronized void setExtent(final Geometry newValue) {
         checkWritePermission();
         extent = newValue;
     }

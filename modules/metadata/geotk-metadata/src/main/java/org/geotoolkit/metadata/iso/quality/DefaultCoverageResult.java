@@ -101,7 +101,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      */
     @Override
     @XmlElement(name = "spatialRepresentationType")
-    public SpatialRepresentationType getSpatialRepresentationType() {
+    public synchronized SpatialRepresentationType getSpatialRepresentationType() {
         return spatialRepresentationType;
     }
 
@@ -120,7 +120,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      */
     @Override
     @XmlElement(name = "resultSpatialRepresentation")
-    public SpatialRepresentation getResultSpatialRepresentation() {
+    public synchronized SpatialRepresentation getResultSpatialRepresentation() {
         return resultSpatialRepresentation;
     }
 
@@ -140,7 +140,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      */
     @Override
     @XmlElement(name = "resultContentDescription")
-    public CoverageDescription getResultContentDescription() {
+    public synchronized CoverageDescription getResultContentDescription() {
         return resultContentDescription;
     }
 
@@ -160,7 +160,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      */
     @Override
     @XmlElement(name = "resultFormat")
-    public Format getResultFormat() {
+    public synchronized Format getResultFormat() {
         return resultFormat;
     }
 
@@ -179,7 +179,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      */
     @Override
     @XmlElement(name = "resultFile")
-    public DataFile getResultFile() {
+    public synchronized DataFile getResultFile() {
         return resultFile;
     }
 

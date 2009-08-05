@@ -92,7 +92,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      */
     @Override
     @XmlElement(name = "averageAirTemperature")
-    public Double getAverageAirTemperature() {
+    public synchronized Double getAverageAirTemperature() {
         return averageAirTemperature;
     }
 
@@ -111,7 +111,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      */
     @Override
     @XmlElement(name = "maxRelativeHumidity")
-    public Double getMaxRelativeHumidity() {
+    public synchronized Double getMaxRelativeHumidity() {
         return maxRelativeHumidity;
     }
 
@@ -130,7 +130,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      */
     @Override
     @XmlElement(name = "maxAltitude")
-    public Double getMaxAltitude() {
+    public synchronized Double getMaxAltitude() {
         return maxAltitude;
     }
 
@@ -150,7 +150,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      */
     @Override
     @XmlElement(name = "meteorologicalConditions")
-    public InternationalString getMeteorologicalConditions() {
+    public synchronized InternationalString getMeteorologicalConditions() {
         return meteorologicalConditions;
     }
 

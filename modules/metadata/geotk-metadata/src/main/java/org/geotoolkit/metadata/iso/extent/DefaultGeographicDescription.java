@@ -34,7 +34,7 @@ import org.opengis.metadata.extent.GeographicDescription;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -85,7 +85,7 @@ public class DefaultGeographicDescription extends AbstractGeographicExtent
      */
     @Override
     @XmlElement(name = "geographicIdentifier", required = true)
-    public Identifier getGeographicIdentifier() {
+    public synchronized Identifier getGeographicIdentifier() {
         return geographicIdentifier;
     }
 

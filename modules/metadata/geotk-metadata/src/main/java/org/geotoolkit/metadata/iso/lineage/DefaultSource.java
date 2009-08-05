@@ -136,7 +136,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -177,7 +177,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      * @todo needs to annotate the referencing module before.
      */
     @Override
-    public ReferenceSystem getSourceReferenceSystem()  {
+    public synchronized ReferenceSystem getSourceReferenceSystem()  {
         return sourceReferenceSystem;
     }
 
@@ -196,7 +196,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      */
     @Override
     @XmlElement(name = "sourceCitation")
-    public Citation getSourceCitation() {
+    public synchronized Citation getSourceCitation() {
         return sourceCitation;
     }
 
@@ -254,7 +254,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      */
     @Override
     @XmlElement(name = "processedLevel")
-    public Identifier getProcessedLevel() {
+    public synchronized Identifier getProcessedLevel() {
         return processedLevel;
     }
 
@@ -278,7 +278,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      */
     @Override
     @XmlElement(name = "resolution")
-    public NominalResolution getResolution() {
+    public synchronized NominalResolution getResolution() {
         return resolution;
     }
 

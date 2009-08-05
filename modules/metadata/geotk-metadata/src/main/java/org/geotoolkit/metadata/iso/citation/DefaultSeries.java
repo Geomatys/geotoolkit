@@ -36,7 +36,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -105,7 +105,7 @@ public class DefaultSeries extends MetadataEntity implements Series {
      */
     @Override
     @XmlElement(name = "name")
-    public InternationalString getName() {
+    public synchronized InternationalString getName() {
         return name;
     }
 
@@ -124,7 +124,7 @@ public class DefaultSeries extends MetadataEntity implements Series {
      */
     @Override
     @XmlElement(name = "issueIdentification")
-    public String getIssueIdentification() {
+    public synchronized String getIssueIdentification() {
         return issueIdentification;
     }
 
@@ -143,7 +143,7 @@ public class DefaultSeries extends MetadataEntity implements Series {
      */
     @Override
     @XmlElement(name = "page")
-    public String getPage() {
+    public synchronized String getPage() {
         return page;
     }
 

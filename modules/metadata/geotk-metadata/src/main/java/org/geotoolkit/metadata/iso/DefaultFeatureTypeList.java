@@ -32,7 +32,7 @@ import org.opengis.metadata.FeatureTypeList;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -92,7 +92,7 @@ public class DefaultFeatureTypeList extends MetadataEntity implements FeatureTyp
      */
     @Override
     @XmlElement(name = "spatialObject", required = true)
-    public String getSpatialObject() {
+    public synchronized String getSpatialObject() {
         return spatialObject;
     }
 
@@ -111,7 +111,7 @@ public class DefaultFeatureTypeList extends MetadataEntity implements FeatureTyp
      */
     @Override
     @XmlElement(name = "spatialSchemaName", required = true)
-    public String getSpatialSchemaName() {
+    public synchronized String getSpatialSchemaName() {
         return spatialSchemaName;
     }
 

@@ -36,7 +36,7 @@ import org.opengis.metadata.citation.Citation;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -132,7 +132,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "name", required = true)
-    public Citation getName() {
+    public synchronized Citation getName() {
         return name;
     }
 
@@ -151,7 +151,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "schemaLanguage", required = true)
-    public String getSchemaLanguage() {
+    public synchronized String getSchemaLanguage() {
         return schemaLanguage;
     }
 
@@ -170,7 +170,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "constraintLanguage", required = true)
-    public String getConstraintLanguage()  {
+    public synchronized String getConstraintLanguage()  {
         return constraintLanguage;
     }
 
@@ -189,7 +189,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "schemaAscii")
-    public URI getSchemaAscii()  {
+    public synchronized URI getSchemaAscii()  {
         return schemaAscii;
     }
 
@@ -208,7 +208,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "graphicsFile")
-    public URI getGraphicsFile()  {
+    public synchronized URI getGraphicsFile()  {
         return graphicsFile;
     }
 
@@ -227,7 +227,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "softwareDevelopmentFile")
-    public URI getSoftwareDevelopmentFile()  {
+    public synchronized URI getSoftwareDevelopmentFile()  {
         return softwareDevelopmentFile;
     }
 
@@ -246,7 +246,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "softwareDevelopmentFile")
-    public String getSoftwareDevelopmentFileFormat()  {
+    public synchronized String getSoftwareDevelopmentFileFormat()  {
         return softwareDevelopmentFileFormat;
     }
 

@@ -32,7 +32,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.4
  * @module
@@ -90,7 +90,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * @return <code>1.0 / {@linkplain #getDenominator() denominator}</code>
      */
     @Override
-    public double doubleValue() {
+    public synchronized double doubleValue() {
         return 1.0 / (double) denominator;
     }
 
@@ -98,7 +98,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * Returns the scale as a {@code float} type.
      */
     @Override
-    public float floatValue() {
+    public synchronized float floatValue() {
         return 1.0f / (float) denominator;
     }
 
@@ -123,7 +123,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * @throws ArithmeticException if the {@linkplain #getDenominator denominator} is 0.
      */
     @Override
-    public int intValue() throws ArithmeticException {
+    public synchronized int intValue() throws ArithmeticException {
         if (denominator == 1) {
             return 1;
         } else if (denominator != 0) {
@@ -138,7 +138,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      */
     @Override
     @XmlElement(name = "denominator")
-    public long getDenominator() {
+    public synchronized long getDenominator() {
         return denominator;
     }
 
@@ -147,7 +147,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      *
      * @param denominator The new denominator value.
      */
-    public void setDenominator(final long denominator) {
+    public synchronized void setDenominator(final long denominator) {
         this.denominator = denominator;
     }
 
@@ -158,7 +158,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final Object object) {
+    public synchronized boolean equals(final Object object) {
         /*
          * Note: 'equals(Object)' and 'hashCode()' implementations are defined in the interface,
          * in order to ensure that the following requirements hold:
@@ -177,7 +177,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * Returns a hash value for this representative fraction.
      */
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         return (int) denominator;
     }
 }

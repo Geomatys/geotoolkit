@@ -35,7 +35,7 @@ import org.opengis.metadata.content.ImagingCondition;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -153,7 +153,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "illuminationElevationAngle")
-    public Double getIlluminationElevationAngle() {
+    public synchronized Double getIlluminationElevationAngle() {
         return illuminationElevationAngle;
     }
 
@@ -176,7 +176,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "illuminationAzimuthAngle")
-    public Double getIlluminationAzimuthAngle() {
+    public synchronized Double getIlluminationAzimuthAngle() {
         return illuminationAzimuthAngle;
     }
 
@@ -196,7 +196,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "imagingCondition")
-    public ImagingCondition getImagingCondition() {
+    public synchronized ImagingCondition getImagingCondition() {
         return imagingCondition;
     }
 
@@ -215,7 +215,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "imageQualityCode")
-    public Identifier getImageQualityCode() {
+    public synchronized Identifier getImageQualityCode() {
         return imageQualityCode;
     }
 
@@ -235,7 +235,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "cloudCoverPercentage")
-    public Double getCloudCoverPercentage() {
+    public synchronized Double getCloudCoverPercentage() {
         return cloudCoverPercentage;
     }
 
@@ -256,7 +256,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "processingLevelCode")
-    public Identifier getProcessingLevelCode() {
+    public synchronized Identifier getProcessingLevelCode() {
         return processingLevelCode;
     }
 
@@ -277,7 +277,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "compressionGenerationQuantity")
-    public Integer getCompressionGenerationQuantity() {
+    public synchronized Integer getCompressionGenerationQuantity() {
         return compressionGenerationQuantity;
     }
 
@@ -297,7 +297,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "triangulationIndicator")
-    public Boolean getTriangulationIndicator() {
+    public synchronized Boolean getTriangulationIndicator() {
         return triangulationIndicator;
     }
 
@@ -317,7 +317,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "radiometricCalibrationDataAvailability")
-    public Boolean isRadiometricCalibrationDataAvailable() {
+    public synchronized Boolean isRadiometricCalibrationDataAvailable() {
         return radiometricCalibrationDataAvailable;
     }
 
@@ -338,7 +338,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "cameraCalibrationInformationAvailability")
-    public Boolean isCameraCalibrationInformationAvailable() {
+    public synchronized Boolean isCameraCalibrationInformationAvailable() {
         return cameraCalibrationInformationAvailable;
     }
 
@@ -358,7 +358,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "filmDistortionInformationAvailability")
-    public Boolean isFilmDistortionInformationAvailable() {
+    public synchronized Boolean isFilmDistortionInformationAvailable() {
         return filmDistortionInformationAvailable;
     }
 
@@ -377,7 +377,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      */
     @Override
     @XmlElement(name = "lensDistortionInformationAvailability")
-    public Boolean isLensDistortionInformationAvailable() {
+    public synchronized Boolean isLensDistortionInformationAvailable() {
         return lensDistortionInformationAvailable;
     }
 

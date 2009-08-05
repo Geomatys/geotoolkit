@@ -81,7 +81,7 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
      */
     @Override
     @XmlElement(name = "citation")
-    public Citation getCitation() {
+    public synchronized Citation getCitation() {
         return citation;
     }
 
@@ -100,7 +100,7 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 

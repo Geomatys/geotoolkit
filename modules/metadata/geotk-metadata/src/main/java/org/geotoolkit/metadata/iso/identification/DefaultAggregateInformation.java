@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Aggregate dataset information.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -93,7 +93,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      */
     @Override
     @XmlElement(name = "aggregateDataSetName", required = false)
-    public Citation getAggregateDataSetName() {
+    public synchronized Citation getAggregateDataSetName() {
         return aggregateDataSetName;
     }
 
@@ -114,7 +114,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      */
     @Override
     @XmlElement(name = "aggregateDataSetIdentifier", required = false)
-    public Identifier getAggregateDataSetIdentifier() {
+    public synchronized Identifier getAggregateDataSetIdentifier() {
         return aggregateDataSetIdentifier;
     }
 
@@ -134,7 +134,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      */
     @Override
     @XmlElement(name = "associationType", required = false)
-    public AssociationType getAssociationType() {
+    public synchronized AssociationType getAssociationType() {
         return associationType;
     }
 
@@ -154,7 +154,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      */
     @Override
     @XmlElement(name = "initiativeType", required = false)
-    public InitiativeType getInitiativeType() {
+    public synchronized InitiativeType getInitiativeType() {
         return initiativeType;
     }
 

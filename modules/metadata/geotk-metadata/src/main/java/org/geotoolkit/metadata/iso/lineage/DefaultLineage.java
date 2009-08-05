@@ -103,7 +103,7 @@ public class DefaultLineage extends MetadataEntity implements Lineage {
      */
     @Override
     @XmlElement(name = "statement")
-    public InternationalString getStatement() {
+    public synchronized InternationalString getStatement() {
         return statement;
     }
 

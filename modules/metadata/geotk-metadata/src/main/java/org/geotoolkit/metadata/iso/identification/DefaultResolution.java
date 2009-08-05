@@ -37,7 +37,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -92,7 +92,7 @@ public class DefaultResolution extends MetadataEntity implements Resolution {
      */
     @Override
     @XmlElement(name = "equivalentScale")
-    public RepresentativeFraction getEquivalentScale()  {
+    public synchronized RepresentativeFraction getEquivalentScale()  {
         return equivalentScale;
     }
 
@@ -116,7 +116,7 @@ public class DefaultResolution extends MetadataEntity implements Resolution {
     @Override
     @XmlJavaTypeAdapter(DistanceAdapter.class)
     @XmlElement(name = "distance")
-    public Double getDistance() {
+    public synchronized Double getDistance() {
         return distance;
     }
 

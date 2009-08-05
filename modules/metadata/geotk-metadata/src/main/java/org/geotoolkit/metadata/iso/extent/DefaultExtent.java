@@ -120,7 +120,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -148,9 +148,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      *
      * @param newValues The new geographic elements.
      */
-    public synchronized void setGeographicElements(
-            final Collection<? extends GeographicExtent> newValues)
-    {
+    public synchronized void setGeographicElements(final Collection<? extends GeographicExtent> newValues) {
         geographicElements = copyCollection(newValues, geographicElements, GeographicExtent.class);
     }
 
@@ -168,9 +166,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      *
      * @param newValues The new temporal elements.
      */
-    public synchronized void setTemporalElements(
-            final Collection<? extends TemporalExtent> newValues)
-    {
+    public synchronized void setTemporalElements(final Collection<? extends TemporalExtent> newValues) {
         temporalElements = copyCollection(newValues, temporalElements, TemporalExtent.class);
     }
 
@@ -188,9 +184,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      *
      * @param newValues The new vertical elements.
      */
-    public synchronized void setVerticalElements(
-            final Collection<? extends VerticalExtent> newValues)
-    {
+    public synchronized void setVerticalElements(final Collection<? extends VerticalExtent> newValues) {
         verticalElements = copyCollection(newValues, verticalElements, VerticalExtent.class);
     }
 

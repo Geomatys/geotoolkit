@@ -254,7 +254,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "fileIdentifier")
-    public String getFileIdentifier() {
+    public synchronized String getFileIdentifier() {
         return fileIdentifier;
     }
 
@@ -273,7 +273,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "language")
-    public Locale getLanguage() {
+    public synchronized Locale getLanguage() {
         return language;
     }
 
@@ -292,7 +292,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "characterSet")
-    public CharacterSet getCharacterSet()  {
+    public synchronized CharacterSet getCharacterSet()  {
         return characterSet;
     }
 
@@ -311,7 +311,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "parentIdentifier")
-    public String getParentIdentifier() {
+    public synchronized String getParentIdentifier() {
         return parentIdentifier;
     }
 
@@ -405,7 +405,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "metadataStandardName")
-    public String getMetadataStandardName() {
+    public synchronized String getMetadataStandardName() {
         return metadataStandardName;
     }
 
@@ -424,7 +424,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "metadataStandardVersion")
-    public String getMetadataStandardVersion() {
+    public synchronized String getMetadataStandardVersion() {
         return metadataStandardVersion;
     }
 
@@ -547,7 +547,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "distributionInfo")
-    public Distribution getDistributionInfo() {
+    public synchronized Distribution getDistributionInfo() {
         return distributionInfo;
     }
 
@@ -649,7 +649,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "metadataMaintenance")
-    public MaintenanceInformation getMetadataMaintenance() {
+    public synchronized MaintenanceInformation getMetadataMaintenance() {
         return metadataMaintenance;
     }
 
@@ -693,7 +693,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      */
     @Override
     @XmlElement(name = "dataSetURI")
-    public String getDataSetUri() {
+    public synchronized String getDataSetUri() {
         return dataSetUri;
     }
 
@@ -704,7 +704,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      *
      * @since 2.4
      */
-    public void setDataSetUri(final String newValue) {
+    public synchronized void setDataSetUri(final String newValue) {
         checkWritePermission();
         dataSetUri = newValue;
     }

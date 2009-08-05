@@ -37,7 +37,7 @@ import org.geotoolkit.internal.jaxb.uom.MeasureInPixelAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -100,7 +100,7 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
      */
     @Override
     @XmlElement(name = "dimensionName", required = true)
-    public DimensionNameType getDimensionName() {
+    public synchronized DimensionNameType getDimensionName() {
         return dimensionName;
     }
 
@@ -119,7 +119,7 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
      */
     @Override
     @XmlElement(name = "dimensionSize", required = true)
-    public Integer getDimensionSize() {
+    public synchronized Integer getDimensionSize() {
         return dimensionSize;
     }
 
@@ -139,7 +139,7 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
     @Override
     @XmlJavaTypeAdapter(MeasureInPixelAdapter.class)
     @XmlElement(name = "resolution")
-    public Double getResolution() {
+    public synchronized Double getResolution() {
         return resolution;
     }
 

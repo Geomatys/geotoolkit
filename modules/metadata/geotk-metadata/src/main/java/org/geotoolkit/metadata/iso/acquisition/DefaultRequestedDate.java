@@ -51,14 +51,16 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
     private static final long serialVersionUID = -8884795189934200802L;
 
     /**
-     * Preferred date and time of collection.
+     * Preferred date and time of collection,
+     * or {@link Long#MIN_VALUE} if none.
      */
-    private Date requestedDateOfCollection;
+    private long requestedDateOfCollection;
 
     /**
-     * Latest date and time collection must be completed.
+     * Latest date and time collection must be completed,
+     * or {@link Long#MIN_VALUE} if none.
      */
-    private Date latestAcceptableDate;
+    private long latestAcceptableDate;
 
     /**
      * Constructs an initially empty requested date.
@@ -80,8 +82,9 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      */
     @Override
     @XmlElement(name = "requestedDateOfCollection")
-    public Date getRequestedDateOfCollection() {
-        return requestedDateOfCollection;
+    public synchronized Date getRequestedDateOfCollection() {
+        final long date = this.requestedDateOfCollection;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -91,7 +94,7 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      */
     public synchronized void setRequestedDateOfCollection(final Date newValue) {
         checkWritePermission();
-        requestedDateOfCollection = newValue;
+        requestedDateOfCollection = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**
@@ -99,8 +102,9 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      */
     @Override
     @XmlElement(name = "latestAcceptableDate")
-    public Date getLatestAcceptableDate() {
-        return latestAcceptableDate;
+    public synchronized Date getLatestAcceptableDate() {
+        final long date = this.latestAcceptableDate;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -110,6 +114,6 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      */
     public synchronized void setLatestAcceptableDate(final Date newValue) {
         checkWritePermission();
-        latestAcceptableDate = newValue;
+        latestAcceptableDate = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 }

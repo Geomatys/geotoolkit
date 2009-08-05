@@ -140,9 +140,7 @@ public class DefaultDistribution extends MetadataEntity implements Distribution 
      *
      * @param newValues The new transfer options.
      */
-    public synchronized void setTransferOptions(
-            final Collection<? extends DigitalTransferOptions> newValues)
-    {
+    public synchronized void setTransferOptions(final Collection<? extends DigitalTransferOptions> newValues) {
         transferOptions = copyCollection(newValues, transferOptions, DigitalTransferOptions.class);
     }
 }

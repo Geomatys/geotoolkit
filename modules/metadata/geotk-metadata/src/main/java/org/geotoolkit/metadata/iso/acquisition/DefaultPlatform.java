@@ -104,7 +104,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      */
     @Override
     @XmlElement(name = "citation")
-    public Citation getCitation() {
+    public synchronized Citation getCitation() {
         return citation;
     }
 
@@ -123,7 +123,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      */
     @Override
     @XmlElement(name = "identifier")
-    public Identifier getIdentifier() {
+    public synchronized Identifier getIdentifier() {
         return identifier;
     }
 
@@ -142,7 +142,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 

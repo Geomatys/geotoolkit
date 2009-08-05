@@ -41,7 +41,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -118,7 +118,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      */
     @Override
     @XmlElement(name = "specificUsage", required = true)
-    public InternationalString getSpecificUsage() {
+    public synchronized InternationalString getSpecificUsage() {
         return specificUsage;
     }
 
@@ -159,7 +159,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      */
     @Override
     @XmlElement(name = "userDeterminedLimitations")
-    public InternationalString getUserDeterminedLimitations() {
+    public synchronized InternationalString getUserDeterminedLimitations() {
         return userDeterminedLimitations;
     }
 
@@ -190,9 +190,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      *
      * @param newValues The new user contact info.
      */
-    public synchronized void setUserContactInfo(
-            final Collection<? extends ResponsibleParty> newValues)
-    {
+    public synchronized void setUserContactInfo(final Collection<? extends ResponsibleParty> newValues) {
         userContactInfo = copyCollection(newValues, userContactInfo, ResponsibleParty.class);
     }
 }

@@ -40,7 +40,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -103,7 +103,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      */
     @Override
     @XmlElement(name = "fees")
-    public InternationalString getFees() {
+    public synchronized InternationalString getFees() {
         return fees;
     }
 
@@ -144,7 +144,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      */
     @Override
     @XmlElement(name = "orderingInstructions")
-    public InternationalString getOrderingInstructions() {
+    public synchronized InternationalString getOrderingInstructions() {
         return orderingInstructions;
     }
 
@@ -163,7 +163,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      */
     @Override
     @XmlElement(name = "turnaround")
-    public InternationalString getTurnaround() {
+    public synchronized InternationalString getTurnaround() {
         return turnaround;
     }
 

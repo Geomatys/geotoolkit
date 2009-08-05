@@ -39,7 +39,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -261,7 +261,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      */
     @Override
     @XmlElement(name = "applicationProfile")
-    public String getApplicationProfile() {
+    public synchronized String getApplicationProfile() {
         return applicationProfile;
     }
 
@@ -282,7 +282,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      */
     @Override
     @XmlElement(name = "name")
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
@@ -304,7 +304,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      */
     @Override
     @XmlElement(name = "description")
-    public InternationalString getDescription() {
+    public synchronized InternationalString getDescription() {
         return description;
     }
 
@@ -324,7 +324,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      */
     @Override
     @XmlElement(name = "function")
-    public OnLineFunction getFunction() {
+    public synchronized OnLineFunction getFunction() {
         return function;
     }
 
@@ -344,7 +344,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      */
     @Override
     @XmlElement(name = "linkage", required = true)
-    public URI getLinkage() {
+    public synchronized URI getLinkage() {
         return linkage;
     }
 
@@ -365,7 +365,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      */
     @Override
     @XmlElement(name = "protocol")
-    public String getProtocol() {
+    public synchronized String getProtocol() {
         final URI linkage = this.linkage;
         return (linkage!=null) ? linkage.getScheme() : null;
     }

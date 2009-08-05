@@ -85,7 +85,7 @@ public class DefaultGCP extends MetadataEntity implements GCP {
      */
     @Override
     //@XmlElement(name = "geographicCoordinates")
-    public DirectPosition getGeographicCoordinates() {
+    public synchronized DirectPosition getGeographicCoordinates() {
         return geographicCoordinates;
     }
 

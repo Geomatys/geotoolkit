@@ -143,7 +143,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      */
     @Override
     @XmlElement(name = "priority")
-    public InternationalString getPriority() {
+    public synchronized InternationalString getPriority() {
         return priority;
     }
 

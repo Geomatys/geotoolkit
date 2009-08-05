@@ -35,7 +35,7 @@ import org.opengis.util.RecordType;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -177,7 +177,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Return the value type for reporting a data quality result, or {@code null} if none.
      */
     @Override
-    public RecordType getValueType()  {
+    public synchronized RecordType getValueType()  {
         return valueType;
     }
 
@@ -195,7 +195,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Returns the value unit for reporting a data quality result, or {@code null} if none.
      */
     @Override
-    public Unit<?> getValueUnit()  {
+    public synchronized Unit<?> getValueUnit()  {
         return valueUnit;
     }
 
@@ -213,7 +213,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Returns the statistical method used to determine the value, or {@code null} if none.
      */
     @Override
-    public InternationalString getErrorStatistic()  {
+    public synchronized InternationalString getErrorStatistic()  {
         return errorStatistic;
     }
 
