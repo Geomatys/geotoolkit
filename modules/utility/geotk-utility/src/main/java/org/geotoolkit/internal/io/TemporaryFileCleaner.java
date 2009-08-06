@@ -41,6 +41,9 @@ final class TemporaryFileCleaner extends ReferenceQueueConsumer<File> {
      * The unique instance.
      */
     static final TemporaryFileCleaner INSTANCE = new TemporaryFileCleaner();
+    static {
+        INSTANCE.start();
+    }
 
     /**
      * Creates a new thread.

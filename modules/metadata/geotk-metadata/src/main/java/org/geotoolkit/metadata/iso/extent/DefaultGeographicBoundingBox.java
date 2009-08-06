@@ -499,14 +499,10 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         if (object!=null && object.getClass().equals(DefaultGeographicBoundingBox.class)) {
             final DefaultGeographicBoundingBox that = (DefaultGeographicBoundingBox) object;
             return Utilities.equals(this.getInclusion(), that.getInclusion()) &&
-                   doubleToLongBits(this.southBoundLatitude) ==
-                   doubleToLongBits(that.southBoundLatitude) &&
-                   doubleToLongBits(this.northBoundLatitude) ==
-                   doubleToLongBits(that.northBoundLatitude) &&
-                   doubleToLongBits(this.eastBoundLongitude) ==
-                   doubleToLongBits(that.eastBoundLongitude) &&
-                   doubleToLongBits(this.westBoundLongitude) ==
-                   doubleToLongBits(that.westBoundLongitude);
+                   Utilities.equals(this.southBoundLatitude, that.southBoundLatitude) &&
+                   Utilities.equals(this.northBoundLatitude, that.northBoundLatitude) &&
+                   Utilities.equals(this.eastBoundLongitude, that.eastBoundLongitude) &&
+                   Utilities.equals(this.westBoundLongitude, that.westBoundLongitude);
         }
         return super.equals(object);
     }

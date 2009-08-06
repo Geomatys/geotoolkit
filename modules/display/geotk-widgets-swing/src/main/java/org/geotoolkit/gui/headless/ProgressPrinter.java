@@ -241,7 +241,7 @@ public class ProgressPrinter implements ProgressListener {
      */
     @Override
     @Deprecated
-    public String getDescription() {
+    public synchronized String getDescription() {
         return (description != null) ? description.toString() : null;
     }
 

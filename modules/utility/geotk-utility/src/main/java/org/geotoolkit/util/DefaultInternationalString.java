@@ -383,7 +383,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      *
      * @since 2.3
      */
-    public boolean isSubsetOf(final Object candidate) {
+    public synchronized boolean isSubsetOf(final Object candidate) {
         if (candidate instanceof InternationalString) {
             final InternationalString string = (InternationalString) candidate;
             for (final Map.Entry<Locale,String> entry : localMap.entrySet()) {

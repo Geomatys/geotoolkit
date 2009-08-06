@@ -380,9 +380,8 @@ public class PaletteFactory {
      *
      * @since 2.4
      */
-    public Locale getWarningLocale() {
+    public synchronized Locale getWarningLocale() {
         final ThreadLocal<Locale> warningLocales = this.warningLocales;
-        // Protected 'warningLocales' from changes so there is no need to synchronize.
         if (warningLocales != null) {
             return warningLocales.get();
         }

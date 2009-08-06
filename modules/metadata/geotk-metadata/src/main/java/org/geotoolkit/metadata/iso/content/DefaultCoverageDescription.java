@@ -99,7 +99,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      */
     @Override
 /// @XmlElement(name = "attributeDescription", required = true)
-    public RecordType getAttributeDescription() {
+    public synchronized RecordType getAttributeDescription() {
         return attributeDescription;
     }
 
