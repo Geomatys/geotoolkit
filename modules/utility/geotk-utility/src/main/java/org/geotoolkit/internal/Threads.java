@@ -38,7 +38,24 @@ public final class Threads {
     }
 
     /**
+     * The parent of all thread groups defined in this class.
+     * This is the root of our tree of thread groups.
+     */
+    static final ThreadGroup PARENT = new ThreadGroup("Geotoolkit.org");
+
+    /**
      * The group of shutdown hooks.
      */
-    public static final ThreadGroup SHUTDOWN = new ThreadGroup("ShutdownHooks");
+    public static final ThreadGroup SHUTDOWN_HOOKS = new ThreadGroup(PARENT, "ShutdownHooks");
+
+    /*
+     * Other ThreadGroups are defined in:
+     *
+     *   - SwingUtilities
+     *   - FactoryUtilities
+     *   - ReferenceQueueConsumer
+     *
+     * They are left in their respective class in order to instantiate the group only on
+     * class initialization. The shutdown group is defined here because needed soon anyway.
+     */
 }

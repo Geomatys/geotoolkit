@@ -420,7 +420,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * run the user-code while we hold a synchronization lock on this factory.
      */
     private void dispose(final AbstractAuthorityFactory factory, final boolean shutdown) {
-        final Thread thread = new Thread(FactoryUtilities.DISPOSAL_GROUP, (Runnable) null) {
+        final Thread thread = new Thread(FactoryUtilities.DISPOSER_THREADS, (Runnable) null) {
             @Override public void run() {
                 if (shutdown || canDisposeBackingStore(factory)) {
                     factory.dispose(shutdown);

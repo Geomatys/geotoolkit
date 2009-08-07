@@ -61,7 +61,7 @@ public final class SwingUtilities {
      * The main purpose of this group is to keep trace of swing workers that we
      * create in various location in Geotoolkit code.
      */
-    public static final ThreadGroup WORKER_THREADS = new ThreadGroup("SwingWorkers");
+    public static final ThreadGroup WORKER_THREADS = new ThreadGroup(Threads.PARENT, "SwingWorkers");
     static {
         WORKER_THREADS.setMaxPriority(Thread.NORM_PRIORITY - 1);
     }

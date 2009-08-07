@@ -58,7 +58,7 @@ final class ShutdownHook extends Thread {
      * Creates the singleton instance.
      */
     private ShutdownHook() {
-        super(Threads.SHUTDOWN, "FactoryCleaner");
+        super(Threads.SHUTDOWN_HOOKS, "FactoryCleaner");
     }
 
     /**
@@ -91,8 +91,8 @@ final class ShutdownHook extends Thread {
          * Waits for disposal to complete. We wait at most 2 seconds per thread,
          * which is an arbitrary timeout.
          */
-        final Thread[] threads = new Thread[FactoryUtilities.DISPOSAL_GROUP.activeCount()];
-        int count = FactoryUtilities.DISPOSAL_GROUP.enumerate(threads);
+        final Thread[] threads = new Thread[FactoryUtilities.DISPOSER_THREADS.activeCount()];
+        int count = FactoryUtilities.DISPOSER_THREADS.enumerate(threads);
         while (--count >= 0) {
             try {
                 threads[count].join(Math.max(100, limit - System.currentTimeMillis()));

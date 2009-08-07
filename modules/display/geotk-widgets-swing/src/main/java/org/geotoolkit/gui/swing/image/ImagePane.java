@@ -27,6 +27,7 @@ import java.awt.image.renderable.RenderableImage;
 import javax.media.jai.operator.ScaleDescriptor;
 
 import org.geotoolkit.gui.swing.ZoomPane;
+import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.GraphicsUtilities;
 
 
@@ -178,8 +179,8 @@ public class ImagePane extends ZoomPane implements Runnable {
         if (rendered == null) {
             if (renderable!=null && !running) {
                 running = true;
-                final Thread runner = new Thread(this, "Renderer");
-                runner.setPriority(Thread.NORM_PRIORITY-2);
+                final Thread runner = new Thread(SwingUtilities.WORKER_THREADS, this, "Renderer");
+                runner.setPriority(Thread.NORM_PRIORITY - 2);
                 runner.start();
             }
         } else try {

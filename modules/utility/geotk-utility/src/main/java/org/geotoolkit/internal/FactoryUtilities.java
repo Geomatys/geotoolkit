@@ -52,7 +52,7 @@ public final class FactoryUtilities {
      * The group of threads that dispose factories. This is used only when
      * {@link Factory#dispose} is invoked in a background thread.
      */
-    public static final ThreadGroup DISPOSAL_GROUP = new ThreadGroup("Factory disposal");
+    public static final ThreadGroup DISPOSER_THREADS = new ThreadGroup(Threads.PARENT, "FactoryDisposers");
 
     /**
      * The minimal delay (in miliseconds) between uncessfull calls to {@link Factory#isAvailable}.

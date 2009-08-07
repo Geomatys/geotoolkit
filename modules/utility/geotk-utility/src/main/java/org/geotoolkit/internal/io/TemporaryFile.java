@@ -54,7 +54,7 @@ public final class TemporaryFile extends PhantomReference<File> {
      * Registers a shutdown hook which will delete every files not yet deleted.
      */
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(Threads.SHUTDOWN, "TemporaryFileCleaner") {
+        Runtime.getRuntime().addShutdownHook(new Thread(Threads.SHUTDOWN_HOOKS, "TemporaryFileCleaner") {
             @Override public void run() {
                 while (deleteAll()) {
                     Thread.yield();

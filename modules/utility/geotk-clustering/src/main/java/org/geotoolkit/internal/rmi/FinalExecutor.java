@@ -18,11 +18,12 @@
 package org.geotoolkit.internal.rmi;
 
 import java.rmi.RemoteException;
+import org.geotoolkit.internal.Threads;
 
 
 /**
  * A private class for {@link ClusterCommands} which exit the JVM after the shutdown.
- * It should be the very last executor to be shutdown.
+ * It should be the very last executor to be run.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
@@ -51,7 +52,9 @@ final class FinalExecutor extends RemoteExecutor implements Runnable {
     @Override
     public void shutdown() throws RemoteException {
         super.shutdown();
-        new Thread(this).start();
+        // This is not really a shutdown hook, but close
+        // (more a kind of "pre-shutdown hook").
+        new Thread(Threads.SHUTDOWN_HOOKS, this, "exit").start();
     }
 
     /**

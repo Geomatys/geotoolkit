@@ -38,7 +38,7 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
     /**
      * The group of {@code ReferenceQueueConsumer} threads running.
      */
-    private static final ThreadGroup GROUP = new ThreadGroup("ReferenceQueueConsumers");
+    private static final ThreadGroup GROUP = new ThreadGroup(Threads.PARENT, "ReferenceQueueConsumers");
 
     /**
      * List of references collected by the garbage collector.

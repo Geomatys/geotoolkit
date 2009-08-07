@@ -480,7 +480,7 @@ public class About extends JPanel implements Dialog {
          */
         public synchronized void start() {
             if (worker == null) {
-                worker = new Thread(this, resources.getString(Vocabulary.Keys.ABOUT));
+                worker = new Thread(SwingUtilities.WORKER_THREADS, this, resources.getString(Vocabulary.Keys.ABOUT));
                 worker.setPriority(Thread.MIN_PRIORITY);
                 worker.setDaemon(true);
                 worker.start();
