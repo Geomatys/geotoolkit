@@ -14,12 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.util.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.collection.CheckedArrayList;
 
 /**
  * Abstract synchronized list that define notify methods called when

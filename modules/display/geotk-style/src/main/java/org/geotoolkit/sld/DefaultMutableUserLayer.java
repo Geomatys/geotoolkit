@@ -28,10 +28,10 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.NotifiedCheckedList;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.sld.Constraint;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.SLDVisitor;

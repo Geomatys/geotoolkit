@@ -24,10 +24,10 @@ import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.NotifiedCheckedList;
 import org.geotoolkit.util.NumberRange;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.sld.Constraint;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;

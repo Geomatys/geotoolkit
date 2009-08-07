@@ -33,10 +33,10 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.NotifiedCheckedList;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;

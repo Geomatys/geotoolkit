@@ -21,10 +21,10 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.util.NotifiedCheckedList;
 import org.geotoolkit.util.NumberRange;
-
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
+
 import org.opengis.filter.Filter;
 import org.opengis.metadata.citation.OnLineResource;
 import org.opengis.style.Description;

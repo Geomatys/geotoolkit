@@ -23,9 +23,9 @@ import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.CollectionChangeListener;
-import org.geotoolkit.util.NotifiedCheckedList;
 import org.geotoolkit.util.NumberRange;
 
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.sld.Constraint;
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.SLDVisitor;

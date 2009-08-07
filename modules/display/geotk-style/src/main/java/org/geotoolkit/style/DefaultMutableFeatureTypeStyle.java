@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.util.NotifiedCheckedList;
-import org.geotoolkit.util.NotifiedCheckedSet;
 import org.geotoolkit.util.NumberRange;
-
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.geotoolkit.util.collection.NotifiedCheckedSet;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
 import org.opengis.metadata.citation.OnLineResource;

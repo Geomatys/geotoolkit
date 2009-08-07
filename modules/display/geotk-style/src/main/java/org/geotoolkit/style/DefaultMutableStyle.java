@@ -22,10 +22,10 @@ import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.util.NotifiedCheckedList;
 import org.geotoolkit.util.NumberRange;
-
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
+
 import org.opengis.feature.type.Name;
 import org.opengis.style.Description;
 import org.opengis.style.SemanticType;
