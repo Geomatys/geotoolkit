@@ -50,6 +50,7 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer;
@@ -3021,7 +3022,7 @@ public class LuceneTest {
     private static void addBoundingBox(Document doc, double minx, double maxx, double miny, double maxy, int srid) {
 
         toByte(minx, maxx, miny, maxy,srid);
-        byte[] bytes = AbstractIndexer.toBytes(polygon);
+        byte[] bytes = WKBUtils.toWKBwithSRID(polygon);
 
         AbstractIndexer.addGeometry(doc, bytes);
 
@@ -3057,7 +3058,5 @@ public class LuceneTest {
         polygon.setSRID(srid);
        return new WKBWriter(2).write(polygon);
     }
-
-
 
 }

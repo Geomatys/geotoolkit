@@ -44,6 +44,7 @@ import org.apache.lucene.search.TermQuery;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.resources.NIOUtilities;
@@ -223,7 +224,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         coords[4].x = minx;
         coords[4].y = miny;
         polygon.setSRID(srid);
-        return toBytes(polygon);
+        return WKBUtils.toWKBwithSRID(polygon);
     }
 
 
@@ -231,25 +232,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         addGeometry(doc, toBytes(minx, maxx, miny, maxy,srid));
     }
 
-    public static byte[] toBytes(Geometry geom){
-        final byte[] wkb = new WKBWriter(2).write(geom);
-        final int srid = geom.getSRID();
-        final byte[] crs = SRIDGenerator.toBytes(srid, Version.V1);
-        final byte[] compact = new byte[wkb.length+crs.length];
-        
-        int i=0;
-        for(;i<crs.length;i++){
-            compact[i] = crs[i];
-        }
-        for(int j=0; j<wkb.length; i++,j++){
-            compact[i] = wkb[j];
-        }
-
-        return compact;
-    }
-
     public static void addGeometry(Document doc, Geometry geom) {
-        addGeometry(doc, toBytes(geom));
+        addGeometry(doc, WKBUtils.toWKBwithSRID(geom));
     }
 
     public static void addGeometry(Document doc, byte[] geom) {
