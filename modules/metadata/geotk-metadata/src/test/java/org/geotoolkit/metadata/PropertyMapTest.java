@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Tests {@link PropertyMap}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 3.00
  */
@@ -94,5 +94,18 @@ public final class PropertyMapTest {
         final DefaultCitation copy = new DefaultCitation();
         copy.asMap().putAll(expected);
         assertEquals(citation, copy);
+        /*
+         * Tries different kind of views.
+         */
+        Map<String,Object> m2;
+        final MetadataStandard s = MetadataStandard.ISO_19115;
+        m2 = s.asMap(citation, MapContent.NON_EMPTY, MetadataKeyName.JAVABEANS_PROPERTY);
+        assertFalse("Null values should be excluded.", m2.containsKey("alternateTitles"));
+        assertEquals(map, m2);
+
+        m2 = s.asMap(citation, MapContent.ALL, MetadataKeyName.JAVABEANS_PROPERTY);
+        assertTrue ("Null values should be included.", m2.containsKey("alternateTitles"));
+        assertTrue ("'m2' should be a larger map than 'map'.", m2.entrySet().containsAll(map.entrySet()));
+        assertFalse("'m2' should be a larger map than 'map'.", map.entrySet().containsAll(m2.entrySet()));
     }
 }

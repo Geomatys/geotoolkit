@@ -33,13 +33,14 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.metadata.MetadataKeyName.*;
 
 
 /**
  * Tests the {@link PropertyAccessor} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.4
  */
@@ -68,17 +69,37 @@ public final class PropertyAccessorTest {
     }
 
     /**
-     * Tests the {@code indexOf} and {code name} methods.
+     * Tests the {@code indexOf} and {@code name} methods.
      */
     @Test
     public void testName() {
         final Citation citation = Citations.EPSG;
         final PropertyAccessor accessor = createPropertyAccessor(citation);
         assertEquals("Non-existent property",   -1,  accessor.indexOf("dummy"));
-        assertEquals("getTitle() property", "title", accessor.name(accessor.indexOf("title")));
-        assertEquals("getTitle() property", "title", accessor.name(accessor.indexOf("TITLE")));
-        assertEquals("getISBN() property",  "ISBN",  accessor.name(accessor.indexOf("ISBN")));
-        assertNull(accessor.name(-1));
+        assertEquals("getTitle() property", "title", accessor.name(accessor.indexOf("title"), JAVABEANS_PROPERTY));
+        assertEquals("getTitle() property", "title", accessor.name(accessor.indexOf("TITLE"), JAVABEANS_PROPERTY));
+        assertEquals("getTitle() property", "title", accessor.name(accessor.indexOf("title"), UML_IDENTIFIER));
+        assertEquals("getISBN() property",  "ISBN",  accessor.name(accessor.indexOf("ISBN" ), JAVABEANS_PROPERTY));
+        assertEquals("getISBN() property",  "ISBN",  accessor.name(accessor.indexOf("isbn" ), JAVABEANS_PROPERTY));
+        assertEquals("getISBN() property",  "ISBN",  accessor.name(accessor.indexOf("ISBN" ), UML_IDENTIFIER));
+        assertNull(accessor.name(-1, JAVABEANS_PROPERTY));
+        /*
+         * Method name - this is the simpliest name(...) implementation.
+         */
+        assertEquals("getAlternateTitles() property", "getAlternateTitles",
+                accessor.name(accessor.indexOf("alternateTitle"), METHOD_NAME));
+        /*
+         * Note that at the opposite of UML_IDENTIFIER, the value returned
+         * by identifier(int) for this property end with a "s".
+         */
+        assertEquals("getAlternateTitles() property", "alternateTitles",
+                accessor.name(accessor.indexOf("alternatetitle"), JAVABEANS_PROPERTY));
+        /*
+         * Note that at the opposite of JAVABEANS_PROPERTY, the value returned
+         * by identifier(int) for this property do not have a "s".
+         */
+        assertEquals("getAlternateTitles() property", "alternateTitle",
+                accessor.name(accessor.indexOf("alternate title"), UML_IDENTIFIER));
     }
 
     /**

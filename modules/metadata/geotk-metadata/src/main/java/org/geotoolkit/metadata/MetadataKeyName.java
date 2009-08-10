@@ -1,0 +1,59 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.metadata;
+
+
+/**
+ * The name of the keys included in a {@link java.util.Map} of metadata. Those maps are created
+ * by the {@link MetadataStandard#asMap(Object,MetadataKeyName) MetadataStandard.asMap} method.
+ * The keys in those map are {@link String}s which can be inferred from the
+ * {@linkplain org.opengis.annotation.UML#identifier() UML identifier}, the name of the
+ * Javabeans property, or the {@linkplain java.lang.reflect.Method#getName() method name}.
+ * <p>
+ * In GeoAPI implementation of ISO 19115, {@code UML_IDENTIFIER} and {@code JAVA_PROPERTY}
+ * are usually identical except for {@linkplain java.util.Collection collections}:
+ * {@code JAVA_PROPERTY} names are plural when the attribute is a collection while
+ * {@code UML_IDENTIFIER} usually stay singular no matter the attribute cardinality.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.03
+ *
+ * @since 3.03
+ * @module
+ */
+public enum MetadataKeyName {
+    /**
+     * The keys in the map are the {@link org.opengis.annotation.UML#identifier() UML identifier}
+     * of the metadata attributes. If an attribute has no UML annotation, then the Javabeans
+     * property name is used as a fallback.
+     */
+    UML_IDENTIFIER,
+
+    /**
+     * The keys in the map are the Javabeans property names. This is the method name with
+     * the {@code get} or {@code is} prefix removed, and the first letter made lower-case.
+     * <p>
+     * This is the default type of names returned by {@link AbstractMetadata#asMap()}.
+     */
+    JAVABEANS_PROPERTY,
+
+    /**
+     * The keys in the map are the plain {@linkplain java.lang.reflect.Method#getName() method names}.
+     */
+    METHOD_NAME
+}

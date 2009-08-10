@@ -237,7 +237,7 @@ public final class ISOTest {
             final String classname = Classes.getShortName(accessor.type) + '.';
             final int count = accessor.count();
             for (int i=0; i<count; i++) {
-                final String name = accessor.name(i);
+                final String name = accessor.name(i, MetadataKeyName.JAVABEANS_PROPERTY);
                 assertNotNull(String.valueOf(i), name);
                 final String fullname = classname + name;
                 assertEquals(fullname, i, accessor.indexOf(name));

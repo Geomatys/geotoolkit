@@ -22,11 +22,10 @@
  * defined through a set of Java interfaces (for example {@link org.opengis.metadata})
  * and uses reflection for performing basic operations like comparisons and copies.
  * <p>
- * Possible metadata implementations (already available or planed in a future
- * Geotoolkit version) are:
+ * Possible metadata implementations (already available or planed in a future Geotk version) are:
  * <UL>
  *   <LI><P>{@link org.geotoolkit.metadata.iso}: concrete implementation of ISO
- *       interfaces, including ISO 19115.</P></LI>
+ *       interfaces, including ISO&nbsp;19115 and ISO&nbsp;19115-2.</P></LI>
  *   <LI><P>{@code org.geotoolkit.metadata.dublin}: concrete implementation of
  *       Dublin core interfaces. <EM>Not yet implemented.</EM></P></LI>
  *   <LI><P>{@link org.geotoolkit.metadata.sql}: implementation of metadata interfaces
@@ -35,7 +34,7 @@
  * </UL>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.0
  * @module

@@ -350,7 +350,7 @@ final class PropertyTree {
             /*
              * The value is a metadata object (unknown implementation).
              */
-            asMap = new PropertyMap(value, accessor);
+            asMap = new PropertyMap(value, accessor, MapContent.NON_EMPTY, MetadataKeyName.JAVABEANS_PROPERTY);
         } else if (value instanceof Collection<?>) {
             /*
              * The value is a collection of any other cases. Add all the childs recursively,

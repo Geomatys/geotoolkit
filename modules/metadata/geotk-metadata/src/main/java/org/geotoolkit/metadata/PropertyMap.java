@@ -56,11 +56,30 @@ final class PropertyMap extends AbstractMap<String,Object> {
     private final Set<Map.Entry<String,Object>> entrySet;
 
     /**
-     * Creates a property map for the specified metadata and accessor.
+     * The behavior of this map toward null or empty values.
      */
-    public PropertyMap(final Object metadata, final PropertyAccessor accessor) {
+    final MapContent content;
+
+    /**
+     * Determines the string representation of keys in the map.
+     */
+    final MetadataKeyName keyNames;
+
+    /**
+     * Creates a property map for the specified metadata and accessor.
+     *
+     * @param metadata The metadata object to wrap.
+     * @param accessor The accessor to use for the metadata.
+     * @param content  The behavior of this map toward null or empty values.
+     * @param keyNames Determines the string representation of keys in the map..
+     */
+    PropertyMap(final Object metadata, final PropertyAccessor accessor,
+            final MapContent content, final MetadataKeyName keyNames)
+    {
         this.metadata = metadata;
         this.accessor = accessor;
+        this.content  = content;
+        this.keyNames = keyNames;
         entrySet = new Entries();
     }
 
@@ -88,9 +107,16 @@ final class PropertyMap extends AbstractMap<String,Object> {
     public Object get(final Object key) {
         if (key instanceof String) {
             final Object value = accessor.get(accessor.indexOf((String) key), metadata);
-            if (!PropertyAccessor.isEmpty(value)) {
-                return value;
+            switch (content) {
+                case NON_EMPTY: {
+                    // For now this is the only enum requerying a special handling.
+                    if (PropertyAccessor.isEmpty(value)) {
+                        return null;
+                    }
+                    break;
+                }
             }
+            return value;
         }
         return null;
     }
@@ -175,7 +201,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
          */
         @Override
         public String getKey() {
-            return accessor.name(index);
+            return accessor.name(index, keyNames);
         }
 
         /**
@@ -184,7 +210,16 @@ final class PropertyMap extends AbstractMap<String,Object> {
         @Override
         public Object getValue() {
             final Object value = accessor.get(index, metadata);
-            return PropertyAccessor.isEmpty(value) ? null : value;
+            switch (content) {
+                case NON_EMPTY: {
+                    // For now this is the only enum requerying a special handling.
+                    if (PropertyAccessor.isEmpty(value)) {
+                        return null;
+                    }
+                    break;
+                }
+            }
+            return value;
         }
 
         /**
@@ -255,13 +290,32 @@ final class PropertyMap extends AbstractMap<String,Object> {
         }
 
         /**
-         * Move {@link #next} to the first property with a valid value,
+         * Moves {@link #next} to the first property with a valid value,
          * starting at the specified index.
          */
         private void move(int index) {
             final int count = accessor.count();
             while (index < count) {
-                if (!PropertyAccessor.isEmpty(accessor.get(index, metadata))) {
+                final Object value = accessor.get(index, metadata);
+                final boolean skip;
+                switch (content) {
+                    case ALL: {
+                        skip = false; // Never skip entries.
+                        break;
+                    }
+                    case NON_NULL: {
+                        skip = (value == null); // Skip only null values (not empty collections).
+                        break;
+                    }
+                    case NON_EMPTY: {
+                        skip = PropertyAccessor.isEmpty(value);
+                        break;
+                    }
+                    default: {
+                        throw new AssertionError(content);
+                    }
+                }
+                if (!skip) {
                     next = new Property(index);
                     return;
                 }

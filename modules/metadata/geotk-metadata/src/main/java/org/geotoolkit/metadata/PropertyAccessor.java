@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -32,7 +31,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.opengis.annotation.UML;
-import org.opengis.annotation.Obligation;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
@@ -51,7 +49,7 @@ import org.geotoolkit.internal.CollectionUtilities;
  * declared in the Geotoolkit implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.4
  * @module
@@ -85,46 +83,6 @@ final class PropertyAccessor {
      */
     private static final String[] EXCLUDES = {
         "clone", "getClass", "hashCode", "toString"
-    };
-
-    /**
-     * The comparator for sorting method order. This comparator put mandatory methods first,
-     * which is necessary for reducing the risk of ambiguity in {@link PropertyTree#parse}.
-     */
-    private static final Comparator<Method> COMPARATOR = new Comparator<Method>() {
-        @Override public int compare(final Method m1, final Method m2) {
-            final UML a1 = m1.getAnnotation(UML.class);
-            final UML a2 = m2.getAnnotation(UML.class);
-            if (a1 != null) {
-                if (a2 == null) return +1;       // Sort annotated elements first.
-                int c = order(a1) - order(a2);   // Mandatory elements must be first.
-                if (c == 0) {
-                    // Fallback on alphabetical order.
-                    c = a1.identifier().compareToIgnoreCase(a2.identifier());
-                }
-                return c;
-            } else if (a2 != null) {
-                return -1; // Sort annotated elements first.
-            }
-            // Fallback on alphabetical order.
-            return m1.getName().compareToIgnoreCase(m2.getName());
-        }
-
-        /**
-         * Returns a higher number for obligation which should be first.
-         */
-        private int order(final UML uml) {
-            final Obligation obligation = uml.obligation();
-            if (obligation != null) {
-                switch (obligation) {
-                    case MANDATORY:   return 1;
-                    case CONDITIONAL: return 2;
-                    case OPTIONAL:    return 3;
-                    case FORBIDDEN:   return 4;
-                }
-            }
-            return 5;
-        }
     };
 
     /**
@@ -175,6 +133,11 @@ final class PropertyAccessor {
      * Index of getter or setter for a given name. The name must be all lower cases with
      * conversion done using {@link #LOCALE}. This map must be considered as immutable
      * after construction.
+     * <p>
+     * The keys in this map are both inferred from the method names (without {@code get} or
+     * {@code is} prefix), and fetched from the UML annotations. Consequently the map may
+     * contains two entries for the same value if some method names are different than the
+     * UML identifiers.
      */
     private final Map<String,Integer> mapping;
 
@@ -398,7 +361,7 @@ final class PropertyAccessor {
                     }
                 }
                 getters = XArrays.resize(getters, count);
-                Arrays.sort(getters, COMPARATOR);
+                Arrays.sort(getters, PropertyComparator.INSTANCE);
                 SHARED_GETTERS.put(type, getters);
             }
             return getters;
@@ -463,10 +426,9 @@ final class PropertyAccessor {
      * @return The index of the given key.
      * @throws IllegalArgumentException if the given key is not found.
      */
-    final int requiredIndexOf(String key) throws IllegalArgumentException {
-        key = key.trim();
-        final Integer index = mapping.get(key.toLowerCase(LOCALE));
-        if (index != null) {
+    final int requiredIndexOf(final String key) throws IllegalArgumentException {
+        final int index = indexOf(key);
+        if (index >= 0) {
             return index;
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, key));
@@ -489,32 +451,52 @@ final class PropertyAccessor {
 
     /**
      * Returns the name of the property at the given index, or {@code null} if none.
-     * The name is inferred from the method name, not from the UML annotation.
+     *
+     * @param  index The index of the property for which to get the name.
+     * @param  keyName The kind of name to return.
+     * @return The name of the given kind at the given index, or {@code null} if the
+     *         index is out of bounds.
      */
-    final String name(final int index) {
+    @SuppressWarnings("fallthrough")
+    final String name(final int index, final MetadataKeyName keyName) {
         if (index >= 0 && index < getters.length) {
-            String name = getters[index].getName();
-            final int base = prefix(name).length();
-            /*
-             * Remove the "get" or "is" prefix and turn the first character after the
-             * prefix into lower case. For example the method name "getTitle" will be
-             * replaced by the property name "title". We will performs this operation
-             * only if there is at least 1 character after the prefix.
-             */
-            if (name.length() > base) {
-                if (isAcronym(name, base)) {
-                    name = name.substring(base);
-                } else {
-                    final char up = name.charAt(base);
-                    final char lo = Character.toLowerCase(up);
-                    if (up != lo) {
-                        name = lo + name.substring(base + 1);
-                    } else {
-                        name = name.substring(base);
+            final Method getter = getters[index];
+            switch (keyName) {
+                case UML_IDENTIFIER: {
+                    final UML uml = getter.getAnnotation(UML.class);
+                    if (uml != null) {
+                        return uml.identifier();
                     }
+                    // Fallthrough
+                }
+                case JAVABEANS_PROPERTY: {
+                    String name = getter.getName();
+                    final int base = prefix(name).length();
+                    /*
+                     * Remove the "get" or "is" prefix and turn the first character after the
+                     * prefix into lower case. For example the method name "getTitle" will be
+                     * replaced by the property name "title". We will performs this operation
+                     * only if there is at least 1 character after the prefix.
+                     */
+                    if (name.length() > base) {
+                        if (isAcronym(name, base)) {
+                            name = name.substring(base);
+                        } else {
+                            final char up = name.charAt(base);
+                            final char lo = Character.toLowerCase(up);
+                            if (up != lo) {
+                                name = lo + name.substring(base + 1);
+                            } else {
+                                name = name.substring(base);
+                            }
+                        }
+                    }
+                    return name;
+                }
+                case METHOD_NAME: {
+                    return getter.getName();
                 }
             }
-            return name;
         }
         return null;
     }

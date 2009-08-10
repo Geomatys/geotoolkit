@@ -19,6 +19,7 @@ package org.geotoolkit.metadata;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
 import java.text.ParseException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
@@ -41,8 +42,8 @@ import org.geotoolkit.util.NullArgumentException;
  *
  * <ul>
  *   <li><p>Properties (or metadata attributes) are defined by the collection of {@code get*()}
- *       (arbitrary return type) or {@code is*()} (boolean return type) methods found
- *       in the <strong>interface</strong>. Getters declared only in the implementation
+ *       method with arbitrary return type, or {@code is*()} method with boolean return type,
+ *       found in the <strong>interface</strong>. Getters declared only in the implementation
  *       are ignored.</p></li>
  *   <li><p>A property is <cite>writable</cite> if a {@code set*(...)} method is defined
  *       in the implementation class for the corresponding {@code get*()} method. The
@@ -50,7 +51,7 @@ import org.geotoolkit.util.NullArgumentException;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.4
  * @module
@@ -201,6 +202,20 @@ public final class MetadataStandard {
     }
 
     /**
+     * Returns {@code true} if the given class implements an interface from this standard.
+     * If this method returns {@code true}, then invoking {@link #getInterface(Class)} is
+     * garanteed to succeed without exception.
+     *
+     * @param  implementation The implementation class.
+     * @return {@code true} if the given class implements an interface of this standard.
+     *
+     * @since 3.03
+     */
+    public boolean isMetadata(final Class<?> implementation) {
+        return getAccessorOptional(implementation) != null;
+    }
+
+    /**
      * Returns the metadata interface implemented by the specified implementation class.
      *
      * @param  implementation The implementation class.
@@ -259,11 +274,14 @@ public final class MetadataStandard {
      * Returns a view of the specified metadata object as a {@linkplain Map map}.
      * The map is backed by the metadata object using Java reflection, so changes
      * in the underlying metadata object are immediately reflected in the map.
-     * The keys are the property names as determined by the list of {@code get*()}
-     * methods declared in the {@linkplain #getInterface metadata interface}.
+     * The keys are the property names as determined by the list of {@code getFoo()}
+     * methods declared in the {@linkplain #getInterface metadata interface}, and
+     * only the entries with a non-null or non-{@linkplain Collection#isEmpty empty}
+     * value are listed.
      * <p>
-     * The map supports the {@link Map#put put} operations if the underlying
-     * metadata object contains {@code setFoo(...)} methods.
+     * The map supports the {@link Map#put put} operations if the underlying metadata
+     * object contains {@code setFoo(...)} methods. The keys are case-insensitive and
+     * can be either the javabeans property name, or the UML identifier.
      *
      * @param  metadata The metadata object to view as a map.
      * @return A map view over the metadata object.
@@ -273,7 +291,41 @@ public final class MetadataStandard {
      * @see AbstractMetadata#asMap
      */
     public Map<String,Object> asMap(final Object metadata) throws ClassCastException {
-        return new PropertyMap(metadata, getAccessor(metadata.getClass()));
+        return asMap(metadata, MapContent.NON_EMPTY, MetadataKeyName.JAVABEANS_PROPERTY);
+    }
+
+    /**
+     * Returns a view of the specified metadata object as a {@linkplain Map map}.
+     * The map is backed by the metadata object using Java reflection, so changes
+     * in the underlying metadata object are immediately reflected in the map.
+     * <p>
+     * The content of the {@linkplain Map#keySet() key set} is determined by the arguments:
+     * {@code metadata} determines the set of keys, {@code content} determines whatever the
+     * keys for entries having a null value or an empty collection should be included, and
+     * {@code keyNames} determines their {@code String} representations.
+     * <p>
+     * The map supports the {@link Map#put put} operations if the underlying metadata object
+     * contains {@code setFoo(...)} methods. The keys are case-insensitive and can be either
+     * the javabeans property name, or the UML identifier.
+     *
+     * @param  metadata The metadata object to view as a map.
+     * @param  content Whatever the entries having null values or empty collections should
+     *         be included in the map. The default is {@link MapContent#NON_EMPTY NON_EMPTY}.
+     * @param  keyNames The string representation of map keys. The default is
+     *         {@link MetadataKeyName#JAVABEANS_PROPERTY JAVABEANS_PROPERTY}.
+     * @return A map view over the metadata object.
+     * @throws ClassCastException if at the metadata object don't
+     *         implements a metadata interface of the expected package.
+     *
+     * @since 3.03
+     */
+    public Map<String,Object> asMap(final Object metadata, final MapContent content,
+            final MetadataKeyName keyNames) throws ClassCastException
+    {
+        ensureNonNull("metadata", metadata);
+        ensureNonNull("content",  content);
+        ensureNonNull("keyNames", keyNames);
+        return new PropertyMap(metadata, getAccessor(metadata.getClass()), content, keyNames);
     }
 
     /**
