@@ -41,7 +41,10 @@ public abstract class DefaultTemporalPrimitive extends DefaultTemporalObject imp
             Instant timeobject = (Instant) this;
             Instant instantOther = (Instant) other;
 
-            if (timeobject.getPosition().getDate().before(instantOther.getPosition().getDate())) {
+            if (timeobject.getPosition() == null || instantOther.getPosition() == null || (timeobject.getPosition() != null && timeobject.getPosition().getDate() == null) ||
+                    (instantOther.getPosition() != null && instantOther.getPosition().getDate() == null)) {
+                return null;
+            } else if (timeobject.getPosition().getDate().before(instantOther.getPosition().getDate())) {
                 return RelativePosition.BEFORE;
             } else {
                 return (timeobject.getPosition().getDate().compareTo(instantOther.getPosition().getDate()) == 0) ? RelativePosition.EQUALS : RelativePosition.AFTER;
