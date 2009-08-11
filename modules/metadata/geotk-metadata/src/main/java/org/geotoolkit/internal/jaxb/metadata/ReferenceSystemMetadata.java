@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -188,7 +189,15 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
      */
     @Override
     public String toString() {
-        return ReferenceIdentifierMetadata.toString("RS", referenceSystemIdentifier.getAuthority(),
-                referenceSystemIdentifier.getCodeSpace(), referenceSystemIdentifier.getCode());
+        String code = null;
+        String codespace = null;
+        Citation authority = null;
+        final ReferenceIdentifier id = referenceSystemIdentifier;
+        if (id != null) {
+            code      = id.getCode();
+            codespace = id.getCodeSpace();
+            authority = id.getAuthority();
+        }
+        return ReferenceIdentifierMetadata.toString("RS", authority, codespace, code);
     }
 }

@@ -23,21 +23,21 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 
 import org.geotoolkit.xml.Namespaces;
-import org.opengis.temporal.Period;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Position;
 
 
 /**
- * The adapter for time period.
+ * The adapter for time Instant.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.02
  *
- * @since 3.00
+ * @since 3.02
  * @module
  *
  * TODO: The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we do
@@ -45,36 +45,20 @@ import org.opengis.temporal.Position;
  *       Remove the namespace, in order to fallback on GML, when the temporal implementation will have a floor
  *       in Geotk.
  */
-@XmlType(name = "TimePeriodType", propOrder = {"beginPosition", "endPosition", "begin", "end"}, namespace = Namespaces.GMD)
-public final class TimePeriod {
+@XmlRootElement(name="TimeInstant")
+@XmlType(name = "TimeInstantType", propOrder = {"timePosition"}, namespace = Namespaces.GMD)
+public final class TimeInstant {
     /**
-     * The start time.
+     * The time.
      */
     @XmlElement(namespace = Namespaces.GML)
-    public String beginPosition;
+    public String timePosition;
 
-    /**
-     * The end time.
-     */
-    @XmlElement(namespace = Namespaces.GML)
-    public String endPosition;
-
-    /**
-     * The start time.
-     */
-    @XmlElement(namespace = Namespaces.GML)
-    public TimeInstantPropertyType begin;
-
-    /**
-     * The end time.
-     */
-    @XmlElement(namespace = Namespaces.GML)
-    public TimeInstantPropertyType end;
-
+    
     /**
      * Empty constructor used by JAXB.
      */
-    public TimePeriod() {
+    public TimeInstant() {
     }
 
     /**
@@ -82,10 +66,9 @@ public final class TimePeriod {
      *
      * @param period The period to use for initializing this object.
      */
-    public TimePeriod(final Period period) {
+    public TimeInstant(final Instant instant) {
         final DateFormat format = XmlUtilities.getDateFormat();
-        beginPosition = format(period.getBeginning(), format);
-        endPosition = format(period.getEnding(), format);
+        timePosition = format(instant, format);
     }
 
     /**
@@ -118,6 +101,6 @@ public final class TimePeriod {
      */
     @Override
     public String toString() {
-        return "TimePeriod[" + beginPosition + " ... " + endPosition + ']';
+        return "TimeInstant[" + timePosition + ']';
     }
 }

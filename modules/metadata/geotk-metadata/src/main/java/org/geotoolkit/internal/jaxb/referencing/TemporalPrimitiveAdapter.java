@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.temporal.Period;
@@ -108,18 +110,35 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
     public void setTimePeriod(final TimePeriod period) {
         metadata = null; // Cleaned first in case of failure.
         if (period != null) {
-            final DateFormat df = XmlUtilities.getDateFormat();
-            final Date begin, end;
+
             try {
-                begin = df.parse(period.beginPosition);
-                end   = df.parse(period.endPosition);
-            } catch (ParseException e) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "TimePeriod", period));
+                final DateFormat df = XmlUtilities.getDateFormat();
+                final Date begin, end;
+                try {
+                    if (period.beginPosition != null) {
+                        begin = df.parse(period.beginPosition);
+                    } else if (period.begin != null && period.begin.timeInstant != null && period.begin.timeInstant.timePosition != null) {
+                        begin = df.parse(period.begin.timeInstant.timePosition);
+                    } else {
+                        begin = null;
+                    }
+                    if (period.endPosition != null) {
+                        end   = df.parse(period.endPosition);
+                    } else if (period.end != null && period.end.timeInstant != null && period.end.timeInstant.timePosition != null) {
+                        end   = df.parse(period.end.timeInstant.timePosition);
+                    } else {
+                        end = null;
+                    }
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(Errors.format(
+                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "TimePeriod", period));
+                }
+                metadata = factory.createPeriod(
+                            factory.createInstant(factory.createPosition(begin)),
+                            factory.createInstant(factory.createPosition(end)));
+            } catch (IllegalArgumentException ex) {
+                Logger.getAnonymousLogger().log(Level.WARNING, "Unable to instanciate a timePeriod in temporalPrimitiveAdapter. cause:\n" + ex.getMessage());
             }
-            metadata = factory.createPeriod(
-                        factory.createInstant(factory.createPosition(begin)),
-                        factory.createInstant(factory.createPosition(end)));
         }
     }
 }
