@@ -40,7 +40,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
-import org.geotoolkit.display.canvas.HintKey;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -106,37 +105,12 @@ public class DefaultPortrayalService implements PortrayalService{
             final String mime, final Dimension canvasDimension, Hints hints, 
             final boolean strechImage) throws PortrayalException {
 
-        final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
-        final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
-        canvas.setContainer(renderer);
-        canvas.setBackgroundPainter(new SolidColorPainter(background));
-
-        renderer.setContext(context);
-        try {
-            canvas.getController().setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
-        } catch (TransformException ex) {
-            throw new PortrayalException("Could not set objective crs",ex);
-        }
-
-        canvas.getController().setTemporalRange(start, end);
-
-        //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
-        try {
-            canvas.getController().setVisibleArea(contextEnv);
-        } catch (NoninvertibleTransformException ex) {
-            throw new PortrayalException(ex);
-        }
-        canvas.getController().repaint();
-        final BufferedImage image = canvas.getSnapShot();
-
-        //dispose the canvas, avoid memory leack
-        canvas.dispose();
+        final BufferedImage image = portray(context,contextEnv,start,end,canvasDimension,strechImage,0.0f,null,background,hints);
 
         if(image == null){
             throw new PortrayalException("No image created by the canvas.");
         }
-        
+
         try {
             writeImage(image, mime, output);
         } catch (IOException ex) {
@@ -144,6 +118,27 @@ public class DefaultPortrayalService implements PortrayalService{
         }
         
     }
+
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Date start, final Date end, final Color background, final Object output,
+            final String mime, final Dimension canvasDimension, Hints hints,
+            final boolean strechImage, PortrayalExtension ... extensions) throws PortrayalException {
+
+        final BufferedImage image = portray(context,contextEnv,start,end,
+                canvasDimension,strechImage,0.0f,null,background,hints,extensions);
+
+        if(image == null){
+            throw new PortrayalException("No image created by the canvas.");
+        }
+
+        try {
+            writeImage(image, mime, output);
+        } catch (IOException ex) {
+            throw new PortrayalException(ex);
+        }
+
+    }
+
 
     /**
      * Portray a MapContext and returns an Image.
@@ -177,6 +172,14 @@ public class DefaultPortrayalService implements PortrayalService{
             final Date start, final Date end, final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, Hints hints) throws PortrayalException{
+        return portray(context,contextEnv,start,end,canvasDimension,
+                strechImage,azimuth,monitor,background,hints,null);
+    }
+
+    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
+            final Date start, final Date end, final Dimension canvasDimension,
+            final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
+            final Color background, Hints hints, PortrayalExtension ... extensions) throws PortrayalException{
 
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
@@ -212,8 +215,14 @@ public class DefaultPortrayalService implements PortrayalService{
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
         }
+
+        //paints all extensions
+        for(final PortrayalExtension extension : extensions){
+            extension.completeCanvas(canvas);
+        }
+
         canvas.getController().repaint();
-        BufferedImage buffer = canvas.getSnapShot();
+        final BufferedImage buffer = canvas.getSnapShot();
         canvas.dispose();
 
         return buffer;
