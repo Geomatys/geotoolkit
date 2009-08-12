@@ -35,7 +35,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
  * @version 3.01
  *
  * @since 3.01
- * @module
  */
 public class GeoapiTest extends CRSTest {
     /**

@@ -32,7 +32,6 @@ import org.opengis.test.referencing.ReferencingTest;
  * @version 3.01
  *
  * @since 3.01
- * @module
  */
 public class GeoapiTest extends ReferencingTest {
     /**

@@ -37,11 +37,14 @@ package org.geotoolkit.util;
  * and uses Java reflection as a fallback.
  *
  * @author Martin Desruisseaux (IRD)
- * @since 3.01 (derived from GeoAPI 1.0)
+ * @version 3.01
  *
  * @see java.lang.Cloneable
  * @see <A HREF="http://developer.java.sun.com/developer/bugParade/bugs/4098033.html">&quot;<cite>Cloneable
  *      doesn't define <code>clone()</code></cite>&quot; on Sun's bug parade</A>
+ *
+ * @since 3.01 (derived from GeoAPI 1.0)
+ * @module
  */
 public interface Cloneable extends java.lang.Cloneable {
     /**

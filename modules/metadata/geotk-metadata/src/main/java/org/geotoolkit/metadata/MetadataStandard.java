@@ -204,7 +204,7 @@ public final class MetadataStandard {
     /**
      * Returns {@code true} if the given class implements an interface from this standard.
      * If this method returns {@code true}, then invoking {@link #getInterface(Class)} is
-     * garanteed to succeed without exception.
+     * garanteed to succeed without throwing an exception.
      *
      * @param  implementation The implementation class.
      * @return {@code true} if the given class implements an interface of this standard.

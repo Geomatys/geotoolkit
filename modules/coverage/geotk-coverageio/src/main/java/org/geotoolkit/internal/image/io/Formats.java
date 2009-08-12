@@ -33,6 +33,7 @@ import org.geotoolkit.resources.Errors;
  * @version 3.01
  *
  * @since 3.01
+ * @module
  */
 @Static
 public final class Formats {
