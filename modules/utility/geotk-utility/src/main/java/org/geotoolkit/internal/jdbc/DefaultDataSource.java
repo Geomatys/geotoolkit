@@ -31,13 +31,14 @@ import javax.sql.DataSource;
 
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
  * A data source which get the connection from a {@link DriverManager}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -164,5 +165,26 @@ public class DefaultDataSource implements DataSource {
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         throw new SQLException();
+    }
+
+    /**
+     * Shutdown the database represented by this data source.
+     *
+     * @since 3.03
+     */
+    public void shutdown() {
+        if (url.startsWith("jdbc:derby:")) try {
+            DriverManager.getConnection(url + ";shutdown=true");
+        } catch (SQLException e) {
+            // This is the expected exception.
+        }
+    }
+
+    /**
+     * Returns a string representation of this data source.
+     */
+    @Override
+    public String toString() {
+        return Classes.getShortClassName(this) + "[\"" + url + "\"]";
     }
 }

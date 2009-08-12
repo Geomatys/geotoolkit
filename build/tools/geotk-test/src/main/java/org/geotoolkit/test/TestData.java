@@ -61,7 +61,7 @@ import java.util.zip.ZipFile;
  * @author James McGill (Leeds)
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.4
  */
@@ -114,7 +114,7 @@ public class TestData implements Runnable {
             name = DIRECTORY + '/' + name;
         }
         if (caller != null) {
-            final Class<?> c = (caller instanceof Class) ? (Class) caller : caller.getClass();
+            final Class<?> c = (caller instanceof Class<?>) ? (Class<?>) caller : caller.getClass();
             return c.getResource(name);
         } else {
             return Thread.currentThread().getContextClassLoader().getResource(name);
@@ -303,6 +303,26 @@ public class TestData implements Runnable {
             deleteOnExit(path, false);
         }
         zipFile.close();
+    }
+
+    /**
+     * Deletes the given file or directory. If the given argument denotes a directory,
+     * then the directory content is deleted as well.
+     *
+     * @param file The file or directory to delete.
+     * @return {@code true} on success.
+     *
+     * @since 3.03
+     */
+    public static boolean deleteRecursively(final File file) {
+        if (file.isDirectory()) {
+            for (final File child : file.listFiles()) {
+                if (!deleteRecursively(child)) {
+                    return false;
+                }
+            }
+        }
+        return file.delete();
     }
 
     /**

@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>metadata</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,14 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit</groupId>
-  <artifactId>metadata</artifactId>
-  <packaging>pom</packaging>
-  <name>Metadata</name>
+  <artifactId>geotk-metadata-sql</artifactId>
+  <packaging>jar</packaging>
+  <name>Metadata on SQL</name>
 
   <description>
-    Projects group for metadata.
+    Stores metadata in a SQL database. Each metadata classes are mapped to a table,
+    and each metadata attributes are mapped to a column in the appropriate table.
+    Tables and columns are created only when first needed.
   </description>
 
 
@@ -43,51 +45,27 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Cédric Briançon</name>
-      <id>cedricbr</id>
-      <email>cedric.briancon@geomatys.fr</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <timezone>+1</timezone>
-      <roles>
-        <role>Administrator</role>
+        <role>Module maintainer</role>
+        <role>Java developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- =========================================================== -->
-  <!--     Dependencies to be inherited by all modules.            -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-pending</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-utility</artifactId>
+      <artifactId>geotk-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>conformance</artifactId>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>geotk-metadata</module>
-    <module>geotk-metadata-fra</module>
-    <module>geotk-metadata-sql</module>
-  </modules>
 
 </project>

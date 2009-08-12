@@ -17,6 +17,10 @@
  */
 package org.geotoolkit.internal;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 import org.geotoolkit.lang.Static;
 
 
@@ -30,7 +34,7 @@ import org.geotoolkit.lang.Static;
  * @module
  */
 @Static
-public final class Threads {
+public final class Threads implements ThreadFactory {
     /**
      * Do not allow instantiation of this class.
      */
@@ -58,4 +62,38 @@ public final class Threads {
      * They are left in their respective class in order to instantiate the group only on
      * class initialization. The shutdown group is defined here because needed soon anyway.
      */
+
+    /**
+     * The group of threads pooled by {@link #EXECUTOR}.
+     */
+    private static final ThreadGroup POOL = new ThreadGroup(PARENT, "ThreadPool");
+
+    /**
+     * A pool of threads to be shared by different Geotk utility classes. This pool is useful
+     * only for thread living for a limited amount of time. If a thread is to live until the
+     * JVM shutdown, don't use this executor - create the thread directly instead.
+     * <p>
+     * Every threads created by this executor are daemon threads. Consequenty the tasks submitted
+     * to this executor should be only house-keeping work. If the tasks need to be completed before
+     * JVM shutdown, then define your own executor.
+     * <p>
+     * The threads in this executor have a priority slightly higher than the normal priority.
+     * This is on the assumption that the tasks will spend most of their time waiting for some
+     * condition, and complete quickly when the condition become true.
+     */
+    public static final Executor EXECUTOR = Executors.newCachedThreadPool(new Threads());
+
+    /**
+     * For internal usage by {@link #EXECUTOR} only.
+     *
+     * @param  task The task to execute.
+     * @return A new thread running the given task.
+     */
+    @Override
+    public Thread newThread(final Runnable task) {
+        final Thread thread = new Thread(POOL, task);
+        thread.setPriority(Thread.NORM_PRIORITY + 1);
+        thread.setDaemon(true);
+        return thread;
+    }
 }
