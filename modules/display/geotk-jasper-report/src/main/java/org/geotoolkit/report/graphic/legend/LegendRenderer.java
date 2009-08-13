@@ -16,8 +16,12 @@
  */
 package org.geotoolkit.report.graphic.legend;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
@@ -28,6 +32,8 @@ import net.sf.jasperreports.engine.JRRenderable;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
+import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
 import org.geotoolkit.display2d.ext.legend.J2DLegendUtilities;
 import org.geotoolkit.display2d.ext.legend.LegendTemplate;
@@ -42,13 +48,25 @@ import org.opengis.display.canvas.Canvas;
  */
 public class LegendRenderer implements JRRenderable{
 
-    private LegendTemplate template = new DefaultLegendTemplate(3, 20, 25, new Font("Serial", Font.PLAIN, 8));
+    private BackgroundTemplate back = new DefaultBackgroundTemplate(
+            new BasicStroke(0),
+            new Color(0f, 0f, 0f, 0f),
+            Color.WHITE,
+            new Insets(5, 5, 5, 5),
+            0);
+
+    private LegendTemplate template = new DefaultLegendTemplate(
+            back,
+            2,
+            new Dimension(25, 20),
+            new Font("Serial", Font.ITALIC, 11),
+            true,
+            new Font("Serial", Font.BOLD, 15));
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private Canvas canvas = null;
 
-    public LegendRenderer(){        
-
+    public LegendRenderer(){
     }
 
     public void setCanvas(final Canvas canvas){
@@ -111,7 +129,7 @@ public class LegendRenderer implements JRRenderable{
         final MapContext context = renderer.getContext();
 
         try {
-            J2DLegendUtilities.getInstance().paintLegend(context, g2d, area, template);
+            J2DLegendUtilities.paintLegend(context, g2d, area, template);
         } catch (PortrayalException ex) {
             ex.printStackTrace();
         }

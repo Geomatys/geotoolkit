@@ -163,7 +163,6 @@ public class J2DLegendUtilities {
 
         g2d.translate(0, -moveY);
         g2d.translate(-X, -Y);
-
     }
 
     /**
@@ -206,7 +205,7 @@ public class J2DLegendUtilities {
     }
 
 
-    public static Dimension estimate(Graphics2D g,MapContext context, LegendTemplate template, boolean considerBackground){
+    public static Dimension estimate(Graphics2D g, MapContext context, LegendTemplate template, boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
 
         final FontMetrics layerFontMetric = g.getFontMetrics(template.getLayerFont());
