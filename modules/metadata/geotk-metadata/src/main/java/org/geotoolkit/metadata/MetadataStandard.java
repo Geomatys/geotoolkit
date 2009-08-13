@@ -212,11 +212,19 @@ public final class MetadataStandard {
      * @since 3.03
      */
     public boolean isMetadata(final Class<?> implementation) {
+        if (implementation != null && implementation.getName().startsWith(interfacePackage)) {
+            return true;
+        }
         return getAccessorOptional(implementation) != null;
     }
 
     /**
      * Returns the metadata interface implemented by the specified implementation class.
+     *
+     * {@note The word "interface" may be taken in a looser sense than the usual Java sense
+     *        because if the given type is defined in this standard package, then it is returned
+     *        unchanged. The standard package is usually made of interfaces and code lists only,
+     *        but this is not verified by this method.}
      *
      * @param  implementation The implementation class.
      * @return The interface implemented by the given implementation class.
@@ -226,7 +234,47 @@ public final class MetadataStandard {
      * @see AbstractMetadata#getInterface
      */
     public Class<?> getInterface(final Class<?> implementation) throws ClassCastException {
+        ensureNonNull("implementation", implementation);
+        if (implementation.getName().startsWith(interfacePackage)) {
+            return implementation;
+        }
         return getAccessor(implementation).type;
+    }
+
+    /**
+     * Returns the type of the given property in the given class. The property name is either
+     * the name of a Java method in the given implementation class without its {@code get} or
+     * {@code is} prefix, or the {@linkplain org.opengis.annotation.UML UML} identifier associated
+     * to that method.
+     * <p>
+     * First, {@code getElementType} fetches the
+     * {@linkplain java.lang.reflect.Method#getReturnType() return type} of the property method.
+     * Then there is a choice:
+     * <p>
+     * <ul>
+     *   <li>If the return type is a {@linkplain java.util.Collection collection}, the type
+     *       of collection <em>elements</em> is returned (not the type of the collection
+     *       itself).</li>
+     *   <li>Otherwise the return type is returned directly.</li>
+     * </ul>
+     * <p>
+     * <b>Example:</b> {@code ISO_19115.getElementType(DefaultCitation.class, "alternateTitle")}
+     * returns {@code InternationalString.class}.
+     *
+     * @param  implementation The implementation class.
+     * @param  property The name of the property for which to get the type.
+     * @return The type of elements for the given property.
+     * @throws ClassCastException if the specified implementation class do
+     *         not implements a metadata interface of the expected package.
+     * @throws IllegalArgumentException if the given property name is not found.
+     *
+     * @since 3.03
+     */
+    public Class<?> getElementType(final Class<?> implementation, final String property) {
+        ensureNonNull("implementation", implementation);
+        ensureNonNull("property", property);
+        final PropertyAccessor accessor = getAccessor(implementation);
+        return accessor.type(accessor.requiredIndexOf(property));
     }
 
     /**

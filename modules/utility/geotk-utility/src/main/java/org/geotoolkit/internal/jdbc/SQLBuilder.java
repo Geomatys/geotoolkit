@@ -33,6 +33,11 @@ import java.util.StringTokenizer;
  */
 public final class SQLBuilder {
     /**
+     * The database dialect. This is used for a few database-dependant syntax.
+     */
+    private final Dialect dialect;
+
+    /**
      * The characters used for quoting identifiers, or an empty string if none.
      */
     private final String quote;
@@ -55,8 +60,9 @@ public final class SQLBuilder {
      * @throws SQLException If an error occured while fetching the database metadata.
      */
     public SQLBuilder(final DatabaseMetaData metadata) throws SQLException {
-        quote  = metadata.getIdentifierQuoteString();
-        escape = metadata.getSearchStringEscape();
+        dialect = Dialect.guess(metadata);
+        quote   = metadata.getIdentifierQuoteString();
+        escape  = metadata.getSearchStringEscape();
     }
 
     /**
@@ -65,8 +71,9 @@ public final class SQLBuilder {
      * @param metadata The builder from which to copy metadata.
      */
     public SQLBuilder(final SQLBuilder metadata) {
-        quote  = metadata.quote;
-        escape = metadata.escape;
+        dialect = metadata.dialect;
+        quote   = metadata.quote;
+        escape  = metadata.escape;
     }
 
     /**
@@ -85,6 +92,17 @@ public final class SQLBuilder {
      */
     public SQLBuilder clear() {
         buffer.setLength(0);
+        return this;
+    }
+
+    /**
+     * Appends the given integer.
+     *
+     * @param  n The integer to append.
+     * @return This builder, for method call chaining.
+     */
+    public SQLBuilder append(final int n) {
+        buffer.append(n);
         return this;
     }
 
@@ -193,6 +211,43 @@ public final class SQLBuilder {
             buffer.append(escape).append(tokens.nextToken());
         }
         return this;
+    }
+
+    /**
+     * Returns a SQL statement for creating a foreigner key constraint.
+     * The returned statement is of the form:
+     *
+     * {@preformat sql
+     *   ALTER TABLE "schema"."table" ADD CONSTRAINT "table_column_fkey" FOREIGN KEY("column")
+     *   REFERENCES "schema"."target" (primaryKey) ON UPDATE CASCADE ON DELETE RESTRICT
+     * }
+     *
+     * Note that the primary key is NOT quoted on intend. If quoted are desired, then they must
+     * be added explicitly before to call this method.
+     *
+     * @param  schema     The schema for both tables.
+     * @param  table      The table to alter with the new constraint.
+     * @param  column     The column to alter with the new constraint.
+     * @param  target     The table to reference.
+     * @param  primaryKey The primary key in the target table.
+     * @param  cascade    {@code true} if updates in primary key should be cascaded.
+     *                    This apply to updates only; delete is always restricted.
+     * @return A SQL statement for creating the foreigner key constraint.
+     */
+    public String createForeignKey(final String schema, final String table, final String column,
+            final String target, final String primaryKey, boolean cascade)
+    {
+        if (Dialect.DERBY.equals(dialect)) {
+            // Derby does not support "ON UPDATE CASCADE". It must be RESTRICT.
+            cascade = false;
+        }
+        buffer.setLength(0);
+        final String name = buffer.append(table).append('_').append(column).append("_fkey").toString();
+        return clear().append("ALTER TABLE ").appendIdentifier(schema, table).append(" ADD CONSTRAINT ")
+                .appendIdentifier(name).append(" FOREIGN KEY(").appendIdentifier(column).append(") REFERENCES ")
+                .appendIdentifier(schema, target).append(" (").append(primaryKey)
+                .append(") ON UPDATE ").append(cascade ? "CASCADE" : "RESTRICT")
+                .append(" ON DELETE RESTRICT").toString();
     }
 
     /**

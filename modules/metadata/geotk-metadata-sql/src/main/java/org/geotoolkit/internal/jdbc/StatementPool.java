@@ -43,6 +43,28 @@ import org.geotoolkit.util.logging.Logging;
  * wider than the {@code get} and {@code put} scope. Execution of a prepared statement may
  * also need to be done inside the synchronized block, because a single JDBC connection can
  * not be assumed thread-safe.
+ * <p>
+ * Example of usage:
+ *
+ * {@preformat java
+ *     StatementPool<String,StatementEntry> pool = ...;
+ *     String key = ...;
+ *     synchronized (pool) {
+ *         // Get an entry, or create a new one if no entry is available.
+ *         // Note that we remove the entry from the map for preventing
+ *         // 'removeEldestEntry' to close it before we are done.
+ *         StatementEntry entry = pool.remove(key);
+ *         if (entry == null) {
+ *             entry = new StatementEntry(someStatement);
+ *         }
+ *         // Use the statement and give it back to the pool once we are
+ *         // done. We do not put it back in case of SQLException.
+ *         entry.statement.doSomeStuff();
+ *         if (pool.put(key, entry) != null) {
+ *             throw new AssertionError();
+ *         }
+ *     }
+ * }
  *
  * @param <K> The type of keys.
  * @param <V> The type of values.
@@ -78,7 +100,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
      * @param dataSource The datasource to the database.
      */
     public StatementPool(final int capacity, final DataSource dataSource) {
-        super(Utilities.hashMapCapacity(capacity), 0.75f, true);
+        super(Utilities.hashMapCapacity(capacity));
         this.capacity = capacity;
         this.dataSource = dataSource;
     }
@@ -90,7 +112,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
      * @param source The pool from which to copy the configuration.
      */
     public StatementPool(final StatementPool<K,V> source) {
-        super(Utilities.hashMapCapacity(source.capacity), 0.75f, true);
+        super(Utilities.hashMapCapacity(source.capacity));
         capacity   = source.capacity;
         dataSource = source.dataSource;
     }
@@ -134,6 +156,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
      */
     @Override
     public final V put(final K key, final V value) {
+        value.touch();
         assert Thread.holdsLock(this);
         return super.put(key, value);
     }

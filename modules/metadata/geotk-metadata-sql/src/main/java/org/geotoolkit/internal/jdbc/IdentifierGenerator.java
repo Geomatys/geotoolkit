@@ -27,16 +27,18 @@ import java.sql.SQLNonTransientException;
  * Checks the existence of identifiers (usually primary keys) in a set of tables.
  * This class implements a very naive algorithm and is used only when some raisonably
  * meanful ID are wanted. If "meanful" ID is not a requirement, then it is much more
- * efficient to relies on the ID numbers generated automatically by the database.
+ * efficient to rely on the ID numbers generated automatically by the database.
  * <p>
- * This class checks if a given identifiers exists in the database. If it exists, then
- * it searchs for an unused {@code "id-n"} identifier, where {@code "id"} is the given
- * identifier and {@code "n"} is a number. The algorithm in this class takes advantage
- * of the fact that alphabetical order is not the same than numerical order for finding
- * an empty slot without scaning every records. However the selected numbers are not
- * garanteed to be in increasing order if there is "holes" in the sequence (i.e. if some
- * old records have been deleted). Generating strictly increasing sequence is not a goal
- * of this class, since it would be too costly.
+ * This class checks if a given identifier exists in the database. If it exists, then
+ * it searchs for an unused {@code "proposal-n"} identifier, where {@code "proposal"}
+ * is the given identifier and {@code "n"} is a number. The algorithm in this class
+ * takes advantage of the fact that alphabetical order is not the same than numerical
+ * order for scaning a slightly smaller amount of records (however the advantage is
+ * significant only in some special cases - generally speaking this class is not for
+ * table having thousands of identifier begining with the given prefix). However the
+ * selected numbers are not garanteed to be in increasing order if there is "holes"
+ * in the sequence of numbers (i.e. if some old records have been deleted). Generating
+ * strictly increasing sequence is not a goal of this class, since it would be too costly.
  *
  * {@section Assumptions}
  * <ul>
@@ -197,14 +199,11 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     public final String identifier(final String schema, final String table, String proposal) throws SQLException {
         synchronized (pool) {
             final K key = key(table);
-            V entry = pool.get(key);
+            V entry = pool.remove(key);
             if (entry == null) {
                 entry = value(pool.connection().prepareStatement(buffer.clear().append("SELECT DISTINCT ")
                         .append(column).append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
                         .append(column).append(" LIKE ? ORDER BY ").append(column).toString()));
-                if (pool.put(key, entry) != null) {
-                    throw new AssertionError();
-                }
             }
             entry.statement.setString(1, buffer.clear().appendEscaped(proposal).append('%').toString());
             final ResultSet rs = entry.statement.executeQuery();
@@ -248,9 +247,11 @@ searchValidRecord:  while (rs.next()) {
                 }
             }
             rs.close();
-            entry.touch();
-            return proposal;
+            if (pool.put(key, entry) != null) {
+                throw new AssertionError();
+            }
         }
+        return proposal;
     }
 
     /**

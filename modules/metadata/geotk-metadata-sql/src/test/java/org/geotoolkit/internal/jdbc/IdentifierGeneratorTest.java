@@ -76,9 +76,9 @@ public final class IdentifierGeneratorTest {
                 generator = null;
                 pool.close();
                 ds.shutdown();
+                assertTrue(TestData.deleteRecursively(directory));
             }
         }
-        assertTrue(TestData.deleteRecursively(directory));
     }
 
     /**

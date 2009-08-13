@@ -252,6 +252,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DATABASE_FAILURE_$2 = 40;
 
         /**
+         * Failed to update the database.
+         */
+        public static final int DATABASE_UPDATE_FAILURE = 219;
+
+        /**
          * Date {0} is outside the range of available data.
          */
         public static final int DATE_OUTSIDE_COVERAGE_$1 = 41;
@@ -904,6 +909,11 @@ public final class Errors extends IndexedResourceBundle {
          * Ranges [{0}..{1}] and [{2}..{3}] overlap.
          */
         public static final int RANGE_OVERLAP_$4 = 170;
+
+        /**
+         * No record found in table "{0}" for key "{1}".
+         */
+        public static final int RECORD_NOT_FOUND_$2 = 220;
 
         /**
          * Recursive call while creating a '{0}' object.

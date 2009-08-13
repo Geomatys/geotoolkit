@@ -67,7 +67,7 @@ public class StatementEntry {
     /**
      * Notifies this object that it has been used.
      */
-    public final void touch() {
+    final void touch() {
         expireTime = System.currentTimeMillis() + TIMEOUT;
     }
 

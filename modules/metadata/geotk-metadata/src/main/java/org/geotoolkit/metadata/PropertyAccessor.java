@@ -506,8 +506,8 @@ final class PropertyAccessor {
      * a GeoAPI interface (at least in the case of Geotoolkit implementation). Primitive
      * types like {@code double} or {@code int} are converted to their wrapper types.
      * <p>
-     * If the property is a collection, then this method returns the type of collection element.
-     * In other words, this method make abstraction of collections.
+     * If the property is a collection, then this method returns the type of collection
+     * elements.
      *
      * @param  index The index of the property.
      * @return The type of property values, or {@code null} if unknown.
