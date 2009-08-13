@@ -35,38 +35,27 @@ import static javax.swing.SwingConstants.*;
  */
 public class GraphicImageJ2D extends PositionedGraphic2D{
 
-    private final BufferedImage image;
+    private final ImageTemplate template;
 
-    public GraphicImageJ2D(final ReferencedCanvas2D canvas, final BufferedImage image){
-        this(canvas,image,null);
-    }
 
-    public GraphicImageJ2D(final ReferencedCanvas2D canvas, final BufferedImage image, final Dimension resize){
+    public GraphicImageJ2D(final ReferencedCanvas2D canvas, ImageTemplate template){
         super(canvas);
 
-        if(resize != null){
-            final BufferedImage img = new BufferedImage(resize.width, resize.height, BufferedImage.TYPE_INT_ARGB);
-            img.getGraphics().drawImage(image, 0, 0, resize.width, resize.height, null);
-            this.image = img;
-        }else{
-            this.image = image;
-        }
-
+        this.template = template;
     }
 
     @Override
     protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
         
-        if(image == null) return;
-
         final Graphics2D g = context.getGraphics();
         context.switchToDisplayCRS();
 
         Rectangle bounds = context.getCanvasDisplayBounds();
 
+        Dimension estimate = J2DImageUtilities.estimate(g, template, true);
 
-        final int imgHeight = image.getHeight();
-        final int imgWidth  = image.getWidth();
+        final int imgHeight = estimate.height;
+        final int imgWidth  = estimate.width;
         int x = 0;
         int y = 0;
 
@@ -109,7 +98,8 @@ public class GraphicImageJ2D extends PositionedGraphic2D{
                 break;
         }
 
-        g.drawImage(image, x, y, null);
+        J2DImageUtilities.paint(g, template, x, y);
+
     }
 
 }

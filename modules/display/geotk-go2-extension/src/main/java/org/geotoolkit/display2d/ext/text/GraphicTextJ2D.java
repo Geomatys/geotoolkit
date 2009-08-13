@@ -39,30 +39,26 @@ import static javax.swing.SwingConstants.*;
  */
 public class GraphicTextJ2D extends PositionedGraphic2D{
 
-    private final String text;
+    private final TextTemplate template;
 
-    public GraphicTextJ2D(final ReferencedCanvas2D canvas, final String text){
+    public GraphicTextJ2D(final ReferencedCanvas2D canvas, TextTemplate template){
         super(canvas);
-        this.text = text;
+        this.template = template;
     }
 
     @Override
     protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
         
-        if(text == null || text.isEmpty()) return;
 
         final Graphics2D g = context.getGraphics();
         context.switchToDisplayCRS();
 
         Rectangle bounds = context.getCanvasDisplayBounds();
 
-        JLabel lbl = new JLabel(text);
-        lbl.setSize(lbl.getPreferredSize());
-        lbl.setOpaque(false);
+        Dimension estimate = J2DTextUtilities.estimate(g, template, true);
 
-
-        final int imgHeight = lbl.getHeight();
-        final int imgWidth  = lbl.getWidth();
+        final int imgHeight = estimate.height;
+        final int imgWidth  = estimate.width;
         int x = 0;
         int y = 0;
 
@@ -105,9 +101,7 @@ public class GraphicTextJ2D extends PositionedGraphic2D{
                 break;
         }
 
-        g.translate(x, y);
-        lbl.paint(g);
-        g.translate(-x, -y);
+        J2DTextUtilities.paint(g, template, x, y);
     }
 
 }
