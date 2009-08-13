@@ -49,5 +49,12 @@ public interface LabelRenderer {
      * have been painted.
      */
     void portrayLabels() throws TransformException;
-    
+
+    /**
+     * Portray the labelLayer immidiately.
+     * This will disable any label placement algorithm that light have been apply in the
+     * normal portrayLabels call
+     */
+    void portrayImmidiately(LabelLayer layer);
+
 }

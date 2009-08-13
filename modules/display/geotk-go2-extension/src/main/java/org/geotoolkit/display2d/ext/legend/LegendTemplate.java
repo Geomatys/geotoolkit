@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.display2d.ext.legend;
 
+import java.awt.Dimension;
 import java.awt.Font;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 
 /**
@@ -28,23 +30,33 @@ import java.awt.Font;
 public interface LegendTemplate {
 
     /**
+     * The background.
+     */
+    BackgroundTemplate getBackground();
+
+    /**
      * @return the gap between 2 legend elements
      */
     float getGapSize();
 
     /**
-     * @return height of the glyph
+     * @return size of the glyph
      */
-    float getGlyphHeight();
+    Dimension getGlyphSize();
 
     /**
-     * @return width of the glyph
+     * @return true if the name of the layer should be displayed
      */
-    float getGlyphWidth();
+    boolean isLayerVisible();
 
     /**
-     * @return Font to use
+     * @return Font for the layer name
      */
-    Font getFont();
+    Font getLayerFont();
+
+    /**
+     * @return Font to use for style rules
+     */
+    Font getRuleFont();
 
 }

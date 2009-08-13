@@ -49,6 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
+ * Utility class to render grid on J2DCanvas.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -210,7 +211,7 @@ public class J2DGridUtilities {
             ex.printStackTrace();
         }
 
-        renderer.append(layer);
+        renderer.portrayImmidiately(layer);
     }
 
 

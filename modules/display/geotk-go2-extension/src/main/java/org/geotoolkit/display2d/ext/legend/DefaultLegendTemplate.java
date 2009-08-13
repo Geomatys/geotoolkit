@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,9 @@
  */
 package org.geotoolkit.display2d.ext.legend;
 
+import java.awt.Dimension;
 import java.awt.Font;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 
 /**
@@ -28,15 +29,30 @@ import java.awt.Font;
 public class DefaultLegendTemplate implements LegendTemplate{
 
     private final float gap;
-    private final float glyphHeight;
-    private final float glyphWidth;
-    private final Font font;
+    private final Dimension glyphSize;
+    private final Font rulefont;
+    private final boolean layerVisible;
+    private final Font layerFont;
 
-    public DefaultLegendTemplate(float gap, float glyphHeight, float glyphWidth, Font font){
+    private final BackgroundTemplate background;
+
+
+    public DefaultLegendTemplate(BackgroundTemplate background,
+            float gap, Dimension glyphSize, Font rulefont, boolean layerVisible, Font layerFont) {
+        this.background = background;
         this.gap = gap;
-        this.glyphHeight = glyphHeight;
-        this.glyphWidth = glyphWidth;
-        this.font = font;
+        this.glyphSize = glyphSize;
+        this.rulefont = rulefont;
+        this.layerVisible = layerVisible;
+        this.layerFont = layerFont;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public BackgroundTemplate getBackground() {
+        return background;
     }
 
     /**
@@ -51,24 +67,26 @@ public class DefaultLegendTemplate implements LegendTemplate{
      * {@inheritDoc }
      */
     @Override
-    public float getGlyphHeight() {
-        return glyphHeight;
+    public Dimension getGlyphSize() {
+        return glyphSize;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public float getGlyphWidth() {
-        return glyphWidth;
+    public Font getRuleFont() {
+        return rulefont;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public Font getFont() {
-        return font;
+    public boolean isLayerVisible() {
+        return layerVisible;
+    }
+
+    @Override
+    public Font getLayerFont() {
+        return layerFont;
     }
 
 }

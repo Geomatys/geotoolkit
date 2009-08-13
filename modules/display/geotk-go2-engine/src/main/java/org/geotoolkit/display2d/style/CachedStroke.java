@@ -347,8 +347,10 @@ public class CachedStroke extends Cache<Stroke>{
      * @param coeff : use to adjust stroke size, if in display unit value equals 1
      * @return Java2D Stroke
      */
-    public java.awt.Stroke getJ2DStroke(final Feature feature, final float coeff){
+    public java.awt.Stroke getJ2DStroke(final Feature feature, float coeff){
         evaluate();
+
+        coeff = Math.abs(coeff);
 
         java.awt.Stroke j2dStroke = cachedStroke;
         //if stroke is null it means something is dynamic

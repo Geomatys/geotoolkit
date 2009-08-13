@@ -43,7 +43,7 @@ import org.opengis.referencing.operation.TransformException;
 public class DefaultLabelRenderer implements LabelRenderer{
 
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
-    private RenderingContext2D context = null;
+    protected RenderingContext2D context = null;
     
     public DefaultLabelRenderer() {
     }
@@ -92,6 +92,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
                 }
             }
         }
+        this.layers.clear();
     }
 
     private void portray(Graphics2D g2, PointLabelDescriptor label){
@@ -166,6 +167,21 @@ public class DefaultLabelRenderer implements LabelRenderer{
         g2.setStroke(new BasicStroke(0));
         g2.setPaint(label.getTextPaint());
         g2.fill(shape);
+    }
+
+    @Override
+    public void portrayImmidiately(LabelLayer layer) {
+        final Graphics2D g2 = context.getGraphics();
+        //enable antialiasing for labels
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        for(LabelDescriptor label : layer.labels()){
+            if(label instanceof PointLabelDescriptor){
+                portray(g2, (PointLabelDescriptor)label);
+            }else if(label instanceof LinearLabelDescriptor){
+                portray(g2, (LinearLabelDescriptor)label);
+            }
+        }
     }
         
 }
