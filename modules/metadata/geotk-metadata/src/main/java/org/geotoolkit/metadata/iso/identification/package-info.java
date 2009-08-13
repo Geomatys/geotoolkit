@@ -70,7 +70,8 @@
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
 
     // Primitive type handling
-    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class)
+    @XmlJavaTypeAdapter(DoubleAdapter.class), @XmlJavaTypeAdapter(type=double.class, value=DoubleAdapter.class),
+    @XmlJavaTypeAdapter(LongAdapter.class),   @XmlJavaTypeAdapter(type=long.class,   value=LongAdapter.class)
 })
 package org.geotoolkit.metadata.iso.identification;
 
@@ -86,6 +87,7 @@ import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.uom.DateAdapter;
+import org.geotoolkit.internal.jaxb.primitive.LongAdapter;
 import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;

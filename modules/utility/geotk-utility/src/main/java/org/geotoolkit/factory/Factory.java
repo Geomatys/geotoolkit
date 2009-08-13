@@ -200,7 +200,8 @@ public abstract class Factory {
 
     /**
      * Controls the ordering of the enclosing {@linkplain Factory factory} relative to other
-     * factories. An instance of this class is passed to the {@link Factory#setOrdering} method
+     * factories. An instance of this class is passed to the
+     * {@link Factory#setOrdering Factory.setOrdering(Organizer)} method
      * after the enclosing factory has been registered in {@link FactoryRegistry}. That
      * {@code setOrdering} method can invoke any method in this class in order to specify whatever
      * the encloding factory should be selected {@linkplain #before(Class, boolean) before}

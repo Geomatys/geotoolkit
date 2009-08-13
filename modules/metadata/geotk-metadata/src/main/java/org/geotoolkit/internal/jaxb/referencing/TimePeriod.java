@@ -23,19 +23,20 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
 
-import org.geotoolkit.xml.Namespaces;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Position;
 
+import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.XmlUtilities;
+
 
 /**
- * The adapter for time period.
+ * The adapter for {@code "TimePeriod"}. This is an attribute of {@link TemporalPrimitiveAdapter}.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -45,19 +46,35 @@ import org.opengis.temporal.Position;
  *       Remove the namespace, in order to fallback on GML, when the temporal implementation will have a floor
  *       in Geotk.
  */
-@XmlType(name = "TimePeriodType", propOrder = {"beginPosition", "endPosition"}, namespace = Namespaces.GMD)
+@XmlType(name = "TimePeriodType", propOrder = {"beginPosition", "endPosition", "begin", "end"}, namespace = Namespaces.GMD)
 public final class TimePeriod {
     /**
-     * The start time.
+     * The start time. This element is part of GML 3.1.1 specification.
+     * If non-null, then this field has precedence over {@link #begin}.
      */
     @XmlElement(namespace = Namespaces.GML)
     public String beginPosition;
 
     /**
-     * The end time.
+     * The end time. This element is part of GML 3.1.1 specification.
+     * If non-null, then this field has precedence over {@link #end}.
      */
     @XmlElement(namespace = Namespaces.GML)
     public String endPosition;
+
+    /**
+     * The start time. This element is part of GML 2.1.1 specification
+     * and is used only if {@link #beginPosition} (from GML 3) is null.
+     */
+    @XmlElement(namespace = Namespaces.GML)
+    public TimeInstantPropertyType begin;
+
+    /**
+     * The end time. This element is part of GML 2.1.1 specification
+     * and is used only if {@link #endPosition} (from GML 3) is null.
+     */
+    @XmlElement(namespace = Namespaces.GML)
+    public TimeInstantPropertyType end;
 
     /**
      * Empty constructor used by JAXB.
@@ -73,7 +90,7 @@ public final class TimePeriod {
     public TimePeriod(final Period period) {
         final DateFormat format = XmlUtilities.getDateFormat();
         beginPosition = format(period.getBeginning(), format);
-        endPosition = format(period.getEnding(), format);
+        endPosition   = format(period.getEnding(),    format);
     }
 
     /**
@@ -94,10 +111,12 @@ public final class TimePeriod {
 
     /**
      * The {@code gml:id}, which is mandatory.
+     *
+     * @return The {@code "extent"} ID.
      */
     @XmlID
     @XmlAttribute(name = "id", required = true, namespace = Namespaces.GML)
-    private String getID() {
+    public String getID() {
         return "extent";
     }
 
@@ -106,6 +125,20 @@ public final class TimePeriod {
      */
     @Override
     public String toString() {
-        return "TimePeriod[" + beginPosition + " ... " + endPosition + ']';
+        return "TimePeriod[" + toString(beginPosition, begin) + " ... " + toString(endPosition, end) + ']';
+    }
+
+    /**
+     * Returns the string representation of the given position if non-null, or
+     * the given type otherwise. In neither is defined, returns {@code null}.
+     */
+    private static String toString(String position, final TimeInstantPropertyType type) {
+        if (position == null && type != null) {
+            final TimeInstant t = type.timeInstant;
+            if (t != null) {
+                position = t.timePosition;
+            }
+        }
+        return position;
     }
 }
