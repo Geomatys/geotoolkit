@@ -56,7 +56,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
     }
 
     public JNorthArrowDecoration(URL svgFile){
-        arrowTemplate = new DefaultNorthArrowTemplate(svgFile);
+        arrowTemplate = new DefaultNorthArrowTemplate(null,svgFile, new Dimension(100,100));
     }
 
     /**
@@ -139,7 +139,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
             arrowArea.height -= 2*interMargin;
 
             try {
-                J2DNorthArrowUtilities.getInstance().paintNorthArrow(rotate,bufferG, arrowArea, arrowTemplate);
+                J2DNorthArrowUtilities.paint(rotate,bufferG, arrowArea.x,arrowArea.y, arrowTemplate);
             } catch (PortrayalException ex) {
                 ex.printStackTrace();
             }

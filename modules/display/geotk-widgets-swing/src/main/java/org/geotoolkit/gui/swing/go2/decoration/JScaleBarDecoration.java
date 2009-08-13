@@ -48,7 +48,8 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
 
     private Map2D map = null;
 
-    private ScaleBarTemplate template = new DefaultScaleBarTemplate(10,
+    private ScaleBarTemplate template = new DefaultScaleBarTemplate(null,
+                            new Dimension(300,40),10,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,
@@ -106,7 +107,8 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
     }
 
     public void setUnit(Unit unit) {
-        template = new DefaultScaleBarTemplate(10,
+        template = new DefaultScaleBarTemplate(null,
+                            new Dimension(300,40),10,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,
@@ -167,7 +169,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
             scaleArea.height -= 2*interMargin;
 
             try {
-                J2DScaleBarUtilities.getInstance().paintScaleBar(objCRS, dispCRS, centerPoint, bufferG, scaleArea, template);
+                J2DScaleBarUtilities.paint(objCRS, dispCRS, centerPoint, bufferG, scaleArea.x, scaleArea.y, template);
             } catch (PortrayalException ex) {
                 ex.printStackTrace();
             }
