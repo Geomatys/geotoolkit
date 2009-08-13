@@ -40,11 +40,13 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -436,6 +438,30 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public double[] getResolution() {
         return resolution.clone();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public double[] getResolution(CoordinateReferenceSystem crs) {
+        if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
+            return getResolution();
+        }else{
+            final double[] res = new double[2];
+
+            final Envelope env;
+            try {
+                env = CRS.transform(canvasObjectiveBBox, crs);
+                final Rectangle2D canvasCRSBounds = new Rectangle2D.Double(0, 0, env.getSpan(0), env.getSpan(1));
+                res[0] = Math.abs(canvasCRSBounds.getWidth()/canvasDisplaybounds.getWidth());
+                res[1] = Math.abs(canvasCRSBounds.getHeight()/canvasDisplaybounds.getHeight());
+            } catch (TransformException ex) {
+                Logger.getLogger(DefaultRenderingContext2D.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            return res;
+        }
     }
 
     /**

@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -29,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
@@ -41,6 +43,7 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -71,7 +74,7 @@ public class J2DGridUtilities {
             ite.next();
         }
 
-        final double[] res = context.getResolution();
+        final double[] gridResolution = context.getResolution(gridCRS);
         final GeometryFactory fact = new GeometryFactory();
         final LinearRing ring = fact.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
         final Polygon bounds = fact.createPolygon(ring, new LinearRing[0]);
@@ -86,6 +89,7 @@ public class J2DGridUtilities {
         try{
             final Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds(), gridCRS);
             final MathTransform gridToObj = CRS.findMathTransform(gridCRS, context.getObjectiveCRS(), true);
+            final MathTransform inverse = gridToObj.inverse();
             final MathTransform objToDisp = context.getObjectiveToDisplay();
 
             //grid on X axis ---------------------------------------------------
@@ -101,12 +105,14 @@ public class J2DGridUtilities {
                 final String label = tickIte.currentLabel();
                 final double d = tickIte.currentPosition();
 
-                Geometry ls = fact.createLineString(new Coordinate[]{
-                    new Coordinate(d,gridBounds.getMinimum(1)),
-                    new Coordinate(d,gridBounds.getMaximum(1)),
-                });
+                final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
+                final double maxY = gridBounds.getMaximum(1);
+                for(double k= gridBounds.getMinimum(1); k<maxY; k+=gridResolution[1]){
+                    lineCoords.add(new Coordinate(d, k));
+                }
+                lineCoords.add(new Coordinate(d, maxY));
 
-
+                Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 ls = JTS.transform(ls, gridToObj);
 
                 final Geometry geom = ls.intersection(bounds);
@@ -155,12 +161,14 @@ public class J2DGridUtilities {
                 final String label = tickIte.currentLabel();
                 final double d = tickIte.currentPosition();
 
-                Geometry ls = fact.createLineString(new Coordinate[]{
-                    new Coordinate(gridBounds.getMinimum(0),d),
-                    new Coordinate(gridBounds.getMaximum(0),d),
-                });
+                final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
+                final double maxX = gridBounds.getMaximum(0);
+                for(double k= gridBounds.getMinimum(0); k<maxX; k+=gridResolution[1]){
+                    lineCoords.add(new Coordinate(k, d));
+                }
+                lineCoords.add(new Coordinate(maxX, d));
 
-
+                Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 ls = JTS.transform(ls, gridToObj);
 
                 final Geometry geom = ls.intersection(bounds);

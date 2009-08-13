@@ -29,6 +29,7 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -92,10 +93,20 @@ public interface RenderingContext2D extends RenderingContext{
     /**
      * Returns the current painting resolution. this may be used in the parameters
      * given to gridCoverageReaders to extract the best resolution grid coverage.
+     * This resolution is between Objective and Display CRS.
      *
      * @return double[] of 2 dimensions
      */
     double[] getResolution();
+
+    /**
+     * Returns the current painting resolution. this may be used in the parameters
+     * given to gridCoverageReaders to extract the best resolution grid coverage.
+     * This resolution is between the given CRS and Display CRS.
+     *
+     * @return double[] of 2 dimensions
+     */
+    double[] getResolution(CoordinateReferenceSystem crs);
 
     /**
      * Returns the scale factor, or {@link Double#NaN NaN} if the scale is unknow. The scale factor
