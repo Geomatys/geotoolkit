@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.geotoolkit.xml.Namespaces;
 
@@ -48,7 +49,7 @@ public final class TimeInstant {
      * The time.
      */
     @XmlElement(namespace = Namespaces.GML)
-    public String timePosition;
+    public XMLGregorianCalendar timePosition;
 
     /**
      * Empty constructor used by JAXB.

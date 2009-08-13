@@ -22,9 +22,6 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.temporal.Period;
@@ -108,22 +105,12 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
      * This method is called at unmarshalling-time by JAXB.
      *
      * @param period The adapter to set.
-     * @throws IllegalArgumentException If a date is not properly formatted.
      */
-    public void setTimePeriod(final TimePeriod period) throws IllegalArgumentException {
+    public void setTimePeriod(final TimePeriod period) {
         metadata = null; // Cleaned first in case of failure.
         if (period != null) {
-            final DateFormat df = XmlUtilities.getDateFormat();
-            final Date begin, end;
-            try {
-                begin = parse(df, period.beginPosition, period.begin);
-                end   = parse(df, period.endPosition,   period.end);
-            } catch (ParseException e) {
-                // The problem actually is in our current parsing approach, which is incomplete.
-                Logging.getLogger("org.geotoolkit.xml").warning(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "TimePeriod", period));
-                return;
-            }
+            final Date begin = XmlUtilities.toDate(TimePeriod.select(period.beginPosition, period.begin));
+            final Date end   = XmlUtilities.toDate(TimePeriod.select(period.endPosition,   period.end));
             if (begin != null && end != null) {
                 if (end.before(begin)) {
                     /*
@@ -144,32 +131,5 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
                             factory.createInstant(factory.createPosition(end)));
             }
         }
-    }
-
-    /**
-     * Parses the given position or instant using the given date format,
-     * or returns {@code null} if the instant is {@code null}.
-     *
-     * @param  df The date format to use.
-     * @param  position The string to parse, or {@code null} if none.
-     * @param  instant The property to parse if {@code position} is null, or {@code null} if none.
-     * @return The parsed date, or {@code null} if both {@code position} and {@code instant} are null.
-     * @throws ParseException If the string is not properly formatted.
-     */
-    private static Date parse(final DateFormat df, final String position,
-            final TimeInstantPropertyType instant) throws ParseException
-    {
-        if (position != null) {
-            return df.parse(position);
-        } else if (instant != null) {
-            final TimeInstant t = instant.timeInstant;
-            if (t != null) {
-                final String s = t.timePosition;
-                if (s != null) {
-                    return df.parse(s);
-                }
-            }
-        }
-        return null;
     }
 }

@@ -18,11 +18,11 @@
 package org.geotoolkit.internal.jaxb.referencing;
 
 import java.util.Date;
-import java.text.DateFormat;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Instant;
@@ -53,14 +53,14 @@ public final class TimePeriod {
      * If non-null, then this field has precedence over {@link #begin}.
      */
     @XmlElement(namespace = Namespaces.GML)
-    public String beginPosition;
+    public XMLGregorianCalendar beginPosition;
 
     /**
      * The end time. This element is part of GML 3.1.1 specification.
      * If non-null, then this field has precedence over {@link #end}.
      */
     @XmlElement(namespace = Namespaces.GML)
-    public String endPosition;
+    public XMLGregorianCalendar endPosition;
 
     /**
      * The start time. This element is part of GML 2.1.1 specification
@@ -88,25 +88,22 @@ public final class TimePeriod {
      * @param period The period to use for initializing this object.
      */
     public TimePeriod(final Period period) {
-        final DateFormat format = XmlUtilities.getDateFormat();
-        beginPosition = format(period.getBeginning(), format);
-        endPosition   = format(period.getEnding(),    format);
+        beginPosition = toDate(period.getBeginning());
+        endPosition   = toDate(period.getEnding());
     }
 
     /**
-     * Formats the given instants, or returns an empty string if null.
+     * Creates a XML Gregorian Calendar from the given instants, if non-null.
+     * Otherwise returns {@code null}.
      */
-    private static String format(final Instant instant, final DateFormat format) {
+    private static XMLGregorianCalendar toDate(final Instant instant) {
         if (instant != null) {
             final Position position = instant.getPosition();
             if (position != null) {
-                final Date date = position.getDate();
-                if (date != null) {
-                    return format.format(date);
-                }
+                return XmlUtilities.toXML(position.getDate());
             }
         }
-        return "";
+        return null;
     }
 
     /**
@@ -125,14 +122,14 @@ public final class TimePeriod {
      */
     @Override
     public String toString() {
-        return "TimePeriod[" + toString(beginPosition, begin) + " ... " + toString(endPosition, end) + ']';
+        return "TimePeriod[" + select(beginPosition, begin) + " ... " + select(endPosition, end) + ']';
     }
 
     /**
-     * Returns the string representation of the given position if non-null, or
+     * Returns the given position if non-null, or the position extracted from
      * the given type otherwise. In neither is defined, returns {@code null}.
      */
-    private static String toString(String position, final TimeInstantPropertyType type) {
+    static XMLGregorianCalendar select(XMLGregorianCalendar position, final TimeInstantPropertyType type) {
         if (position == null && type != null) {
             final TimeInstant t = type.timeInstant;
             if (t != null) {
