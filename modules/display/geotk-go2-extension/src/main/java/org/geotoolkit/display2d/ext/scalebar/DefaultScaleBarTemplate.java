@@ -18,10 +18,12 @@
 package org.geotoolkit.display2d.ext.scalebar;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Paint;
 import java.text.NumberFormat;
 import javax.measure.unit.Unit;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 /**
  * Default scalebar template, immutable.
@@ -30,6 +32,8 @@ import javax.measure.unit.Unit;
  */
 public class DefaultScaleBarTemplate implements ScaleBarTemplate{
 
+    private final BackgroundTemplate background;
+    private final Dimension size;
     private final float thickness;
     private final boolean geodesic;
     private final int divisions;
@@ -45,12 +49,14 @@ public class DefaultScaleBarTemplate implements ScaleBarTemplate{
     private final Unit unit;
 
 
-    public DefaultScaleBarTemplate(int thickness, boolean geodesic,
+    public DefaultScaleBarTemplate(BackgroundTemplate background, Dimension size, int thickness, boolean geodesic,
                         int subdivisions, NumberFormat format, Paint foreground, 
                         Paint firstRect, Paint secondRect, int tikHeight,
                         boolean scaleVisible, boolean useAbreviation,
                         Font font, boolean textAboveBar, Unit unit){
 
+        this.background = background;
+        this.size = size;
         if(format == null) format         = NumberFormat.getInstance();
         if(foreground == null) foreground = Color.BLACK;
         if(firstRect == null) firstRect   = Color.WHITE;
@@ -170,6 +176,16 @@ public class DefaultScaleBarTemplate implements ScaleBarTemplate{
     @Override
     public Unit getUnit() {
         return unit;
+    }
+
+    @Override
+    public BackgroundTemplate getBackground() {
+        return background;
+    }
+
+    @Override
+    public Dimension getSize() {
+        return size;
     }
 
 }

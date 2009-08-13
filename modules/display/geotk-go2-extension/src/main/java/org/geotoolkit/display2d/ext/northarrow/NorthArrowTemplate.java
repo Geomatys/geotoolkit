@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.ext.northarrow;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 /**
  * Template holding informations about the design of the north arrow to paint.
@@ -27,12 +28,16 @@ import java.awt.Image;
  */
 public interface NorthArrowTemplate {
 
+    BackgroundTemplate getBackground();
+
     /**
      * Get an image representation of the north arrow.
      *
      * @param size, wanted image size
      * @return Image or null if the image could not be generated
      */
-    public Image getImage(Dimension size);
+    Image getImage(Dimension size);
+
+    Dimension getSize();
 
 }

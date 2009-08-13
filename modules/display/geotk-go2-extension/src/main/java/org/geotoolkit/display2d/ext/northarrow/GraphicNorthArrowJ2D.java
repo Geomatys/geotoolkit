@@ -17,12 +17,9 @@
  */
 package org.geotoolkit.display2d.ext.northarrow;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.net.URL;
 import java.util.logging.Level;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -39,15 +36,15 @@ import static javax.swing.SwingConstants.*;
  */
 public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
 
-    private final NorthArrowTemplate template;
+    private NorthArrowTemplate template;
 
-    private final Dimension dim = new Dimension(100,100);
-    private final int roundSize = 12;
-    private final int interMargin = 10;
-
-    public GraphicNorthArrowJ2D(ReferencedCanvas2D canvas, URL svgFile){
+    public GraphicNorthArrowJ2D(ReferencedCanvas2D canvas, NorthArrowTemplate template){
         super(canvas);
-        template = new DefaultNorthArrowTemplate(svgFile);
+        this.template = template;
+    }
+
+    public void setTemplate(NorthArrowTemplate template) {
+        this.template = template;
     }
 
     /**
@@ -58,9 +55,13 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
 
         final Rectangle bounds = context.getCanvasDisplayBounds();
 
+        context.switchToDisplayCRS();
+        final Graphics2D g2d = context.getGraphics();
 
-        final int imgHeight = dim.height;
-        final int imgWidth  = dim.width;
+        final Dimension estimate = J2DNorthArrowUtilities.estimate(g2d, template, true);
+
+        final int imgHeight = estimate.height;
+        final int imgWidth  = estimate.width;
         int x = 0;
         int y = 0;
 
@@ -103,28 +104,8 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
                 break;
         }
 
-
-
-        final Rectangle area = new Rectangle(x,y, dim.width, dim.height);
-
-        context.switchToDisplayCRS();
-
-        final Graphics2D g2d = context.getGraphics();
-
-        g2d.setStroke(new BasicStroke(1));
-        g2d.setColor(new Color(1f, 1f, 1f, 0.85f));
-        g2d.fillRoundRect(area.x, area.y, area.width, area.height, roundSize, roundSize);
-
-        g2d.setColor(Color.GRAY);
-        g2d.drawRoundRect(area.x, area.y, area.width, area.height, roundSize, roundSize);
-
-        area.x += interMargin;
-        area.y += interMargin;
-        area.width -= 2*interMargin;
-        area.height -= 2*interMargin;
-
         try {
-            J2DNorthArrowUtilities.getInstance().paintNorthArrow((float)context.getCanvas().getController().getRotation(),g2d, area, template);
+            J2DNorthArrowUtilities.paint((float)context.getCanvas().getController().getRotation(),g2d, x,y, template);
         } catch (PortrayalException ex) {
             context.getMonitor().exceptionOccured(ex, Level.SEVERE);
         }

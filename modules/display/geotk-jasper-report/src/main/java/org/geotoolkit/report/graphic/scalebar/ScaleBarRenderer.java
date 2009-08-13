@@ -17,6 +17,7 @@
 package org.geotoolkit.report.graphic.scalebar;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -44,7 +45,8 @@ import org.opengis.display.canvas.Canvas;
  */
 public class ScaleBarRenderer implements JRRenderable{
 
-    private final ScaleBarTemplate template = new DefaultScaleBarTemplate(6,
+    private final ScaleBarTemplate template = new DefaultScaleBarTemplate(
+                            null,new Dimension(300,30),6,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 8),true,SI.METER);
@@ -111,7 +113,7 @@ public class ScaleBarRenderer implements JRRenderable{
             final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
 
             try {
-                J2DScaleBarUtilities.getInstance().paintScaleBar(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area, template);
+                J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
             } catch (PortrayalException ex) {
                 ex.printStackTrace();
             }

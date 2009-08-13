@@ -17,13 +17,17 @@
  */
 package org.geotoolkit.display2d.ext.northarrow;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Rectangle;
 
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
+import org.geotoolkit.display2d.ext.BackgroundUtilities;
 
 
 /**
@@ -32,8 +36,6 @@ import org.geotoolkit.display.exception.PortrayalException;
  * @author Johann Sorel (Geomatys)
  */
 public class J2DNorthArrowUtilities {
-
-    private static J2DNorthArrowUtilities INSTANCE = null;
 
     private J2DNorthArrowUtilities(){
     }
@@ -47,12 +49,36 @@ public class J2DNorthArrowUtilities {
      * @param template  : north arrow template
      * @throws org.geotools.display.exception.PortrayalException
      */
-    public void paintNorthArrow(final float rotation,
+    public static void paint(final float rotation,
                               final Graphics2D g2d,
-                              final Rectangle bounds,
+                              int x, int y,
                               final NorthArrowTemplate template) throws PortrayalException{
 
-        final Image img = template.getImage(bounds.getSize());
+        final Dimension estimation = estimate(g2d, template, false);
+        final Dimension size = template.getSize();
+        final Rectangle bounds = new Rectangle(size);
+        int X = x;
+        int Y = y;
+
+        final BackgroundTemplate background = template.getBackground();
+        if(background != null){
+            final Rectangle area = new Rectangle(estimation);
+            area.x = x;
+            area.y = y;
+
+            Insets insets = background.getBackgroundInsets();
+            area.width += insets.left + insets.right;
+            area.height += insets.top + insets.bottom;
+            X += insets.left;
+            Y += insets.top;
+
+            BackgroundUtilities.paint(g2d, area, background);
+        }
+
+        bounds.x = X;
+        bounds.y = Y;
+
+        final Image img = template.getImage(template.getSize());
 
         if(img == null) return;
 
@@ -72,14 +98,19 @@ public class J2DNorthArrowUtilities {
 
     }
 
-    /**
-     * Get the default instance, singleton.
-     */
-    public static final J2DNorthArrowUtilities getInstance(){
-        if(INSTANCE == null){
-            INSTANCE = new J2DNorthArrowUtilities();
+    public static Dimension estimate(Graphics2D g, NorthArrowTemplate template, boolean considerBackground){
+        final Dimension dim = new Dimension(0, 0);
+
+        dim.width = template.getSize().width;
+        dim.height = template.getSize().height;
+
+        if(considerBackground && template.getBackground() != null){
+            final Insets insets = template.getBackground().getBackgroundInsets();
+            dim.width += insets.left + insets.right;
+            dim.height += insets.bottom + insets.top;
         }
-        return INSTANCE;
+
+        return dim;
     }
 
 }

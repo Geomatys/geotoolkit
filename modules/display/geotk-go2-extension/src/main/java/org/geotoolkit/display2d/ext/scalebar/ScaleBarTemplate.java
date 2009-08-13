@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.display2d.ext.scalebar;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Paint;
 import java.text.NumberFormat;
 import javax.measure.unit.Unit;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 /**
  * Template holding informations about the design of the scalebar to paint.
@@ -28,6 +30,11 @@ import javax.measure.unit.Unit;
  * @author Johann Sorel (Geomatys)
  */
 public interface ScaleBarTemplate {
+
+    /**
+     * The background.
+     */
+    BackgroundTemplate getBackground();
 
     /**
      * @return thickness of the scalebar.
@@ -101,5 +108,10 @@ public interface ScaleBarTemplate {
      * Returns the unit displayed.
      */
     Unit getUnit();
+
+    /**
+     * Size of the scalebar
+     */
+    Dimension getSize();
 
 }

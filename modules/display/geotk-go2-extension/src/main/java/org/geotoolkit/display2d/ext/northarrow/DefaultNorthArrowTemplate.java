@@ -22,6 +22,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.batik.transcoder.TranscoderException;
+import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.renderer.svg.SvgUtils;
 
 /**
@@ -32,10 +33,14 @@ import org.geotoolkit.renderer.svg.SvgUtils;
 public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
 
     private final URL svgFile;
+    private final BackgroundTemplate background;
+    private final Dimension size;
     private Image buffer = null;
 
-    public DefaultNorthArrowTemplate(URL svgFile){
+    public DefaultNorthArrowTemplate(BackgroundTemplate background,URL svgFile, Dimension size){
         this.svgFile = svgFile;
+        this.background = background;
+        this.size = size;
     }
 
     /**
@@ -57,6 +62,16 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
         }
 
         return buffer;
+    }
+
+    @Override
+    public BackgroundTemplate getBackground() {
+        return background;
+    }
+
+    @Override
+    public Dimension getSize() {
+        return size;
     }
 
 }

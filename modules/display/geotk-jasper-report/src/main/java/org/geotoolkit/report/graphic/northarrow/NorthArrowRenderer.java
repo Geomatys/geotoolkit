@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.report.graphic.northarrow;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
@@ -46,7 +47,8 @@ public class NorthArrowRenderer implements JRRenderable{
 
     public NorthArrowRenderer(){
 
-        template = new DefaultNorthArrowTemplate(NorthArrowRenderer.class.getResource("/org/geotoolkit/report/boussole.svg"));
+        template = new DefaultNorthArrowTemplate(null,
+                NorthArrowRenderer.class.getResource("/org/geotoolkit/report/boussole.svg"), new Dimension(100, 100));
         
 
     }
@@ -107,7 +109,7 @@ public class NorthArrowRenderer implements JRRenderable{
            ReferencedCanvas2D c2d = (ReferencedCanvas2D) canvas;
 
             try {
-                J2DNorthArrowUtilities.getInstance().paintNorthArrow((float)c2d.getController().getRotation(), g2d, area, template);
+                J2DNorthArrowUtilities.paint((float)c2d.getController().getRotation(), g2d, area.x, area.y, template);
             } catch (PortrayalException ex) {
                 ex.printStackTrace();
             }
