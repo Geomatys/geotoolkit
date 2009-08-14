@@ -33,10 +33,9 @@ public interface NorthArrowTemplate {
     /**
      * Get an image representation of the north arrow.
      *
-     * @param size, wanted image size
      * @return Image or null if the image could not be generated
      */
-    Image getImage(Dimension size);
+    Image getImage();
 
     Dimension getSize();
 

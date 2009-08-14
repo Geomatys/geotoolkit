@@ -59,7 +59,10 @@ public class J2DGridUtilities {
     }
 
     public static void paint(RenderingContext2D context, GridTemplate template){
-        final CoordinateReferenceSystem gridCRS = template.getCRS();
+
+        CoordinateReferenceSystem gridCRS = template.getCRS();
+        //use context crs if gridcrs is not defined
+        if(gridCRS == null) gridCRS = context.getObjectiveCRS();
 
         final Graphics2D g = context.getGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -78,7 +78,7 @@ public class J2DNorthArrowUtilities {
         bounds.x = X;
         bounds.y = Y;
 
-        final Image img = template.getImage(template.getSize());
+        final Image img = template.getImage();
 
         if(img == null) return;
 
