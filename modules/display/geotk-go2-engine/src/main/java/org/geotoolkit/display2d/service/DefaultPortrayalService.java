@@ -217,8 +217,10 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
         //paints all extensions
-        for(final PortrayalExtension extension : extensions){
-            extension.completeCanvas(canvas);
+        if(extensions != null){
+            for(final PortrayalExtension extension : extensions){
+                extension.completeCanvas(canvas);
+            }
         }
 
         canvas.getController().repaint();
