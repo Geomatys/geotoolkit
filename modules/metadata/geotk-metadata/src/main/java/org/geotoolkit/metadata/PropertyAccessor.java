@@ -107,6 +107,7 @@ final class PropertyAccessor {
 
     /**
      * The getter methods. This array should not contain any null element.
+     * They are the methods defined in the interface, not the implementation class.
      */
     private final Method[] getters;
 
@@ -458,7 +459,7 @@ final class PropertyAccessor {
      *         index is out of bounds.
      */
     @SuppressWarnings("fallthrough")
-    final String name(final int index, final MetadataKeyName keyName) {
+    final String name(final int index, final KeyNamePolicy keyName) {
         if (index >= 0 && index < getters.length) {
             final Method getter = getters[index];
             switch (keyName) {
@@ -510,11 +511,33 @@ final class PropertyAccessor {
      * elements.
      *
      * @param  index The index of the property.
+     * @param  policy The kind of type to return.
      * @return The type of property values, or {@code null} if unknown.
      */
-    final Class<?> type(final int index) {
+    final Class<?> type(final int index, final TypeValuePolicy policy) {
         if (index >= 0 && index < getters.length) {
-            return elementTypes[index];
+            switch (policy) {
+                case ELEMENT_TYPE: {
+                    return elementTypes[index];
+                }
+                case PROPERTY_TYPE: {
+                    return getters[index].getReturnType();
+                }
+                case DECLARING_INTERFACE: {
+                    return getters[index].getDeclaringClass();
+                }
+                case DECLARING_CLASS: {
+                    Method getter = getters[index];
+                    try {
+                        getter = implementation.getMethod(getter.getName(), (Class<?>[]) null);
+                    } catch (NoSuchMethodException error) {
+                        // Should never happen, since the implementation class
+                        // implements the the interface where the getter come from.
+                        throw new AssertionError(error);
+                    }
+                    return getter.getDeclaringClass();
+                }
+            }
         }
         return null;
     }

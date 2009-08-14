@@ -40,8 +40,8 @@ import org.geotoolkit.internal.jdbc.SQLBuilder;
 import org.geotoolkit.internal.jdbc.StatementPool;
 import org.geotoolkit.internal.jdbc.DefaultDataSource;
 import org.geotoolkit.internal.jdbc.StatementEntry;
-import org.geotoolkit.metadata.MapContent;
-import org.geotoolkit.metadata.MetadataKeyName;
+import org.geotoolkit.metadata.NullValuePolicy;
+import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.WeakValueHashMap;
@@ -59,7 +59,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * {@preformat java
  *   DataSource     source     = ... // This is database-specific.
- *   MetadataSource source     = new MetadataSource(source, "metadata");
+ *   MetadataSource source     = new MetadataSource(MetadataStandard.ISO_19115, source, "metadata");
  *   Telephone      telephone  = source.get(Telephone.class, id);
  * }
  *
@@ -266,11 +266,11 @@ public class MetadataSource {
      *
      * @param  metadata The metadata object to view as a map.
      * @return A map view over the metadata object.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      */
-    final Map<String,Object> asMap(final Object metadata) {
-        return standard.asMap(metadata, MapContent.ALL, MetadataKeyName.UML_IDENTIFIER);
+    final Map<String,Object> asMap(final Object metadata) throws ClassCastException {
+        return standard.asMap(metadata, NullValuePolicy.ALL, KeyNamePolicy.UML_IDENTIFIER);
     }
 
     /**
@@ -291,8 +291,8 @@ public class MetadataSource {
      * @param  metadata The metadata to search for.
      * @return The identifier of the given metadata, or {@code null} if none.
      * @throws SQLException If an error occured while searching in the database.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      */
     public String search(final Object metadata) throws ClassCastException, SQLException {
         ensureNonNull("metadata", metadata);
@@ -626,9 +626,9 @@ public class MetadataSource {
     }
 
     /**
-     * Closes all connections used in this object.
+     * Closes the database connection used by this object.
      *
-     * @throws SQLException If an error occured while closing the connections.
+     * @throws SQLException If an error occured while closing the connection.
      */
     public void close() throws SQLException {
         statements.close();

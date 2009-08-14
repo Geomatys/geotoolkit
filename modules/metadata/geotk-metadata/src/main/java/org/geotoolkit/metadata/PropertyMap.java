@@ -32,7 +32,7 @@ import org.geotoolkit.util.Utilities;
  * are the value returned by the {@code getFoo()} method using reflection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.4
  * @module
@@ -58,12 +58,12 @@ final class PropertyMap extends AbstractMap<String,Object> {
     /**
      * The behavior of this map toward null or empty values.
      */
-    final MapContent content;
+    final NullValuePolicy content;
 
     /**
      * Determines the string representation of keys in the map.
      */
-    final MetadataKeyName keyNames;
+    final KeyNamePolicy keyNames;
 
     /**
      * Creates a property map for the specified metadata and accessor.
@@ -74,7 +74,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
      * @param keyNames Determines the string representation of keys in the map..
      */
     PropertyMap(final Object metadata, final PropertyAccessor accessor,
-            final MapContent content, final MetadataKeyName keyNames)
+            final NullValuePolicy content, final KeyNamePolicy keyNames)
     {
         this.metadata = metadata;
         this.accessor = accessor;
@@ -364,7 +364,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
 
 
     /**
-     * View of the mapping contained in the map.
+     * View of the entries contained in the map.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.00

@@ -28,12 +28,12 @@ package org.geotoolkit.metadata;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
  *
- * @see MetadataStandard#asMap(Object, MapContent, MetadataKeyName)
+ * @see MetadataStandard#asMap(Object, NullValuePolicy, KeyNamePolicy)
  *
  * @since 3.03
  * @module
  */
-public enum MapContent {
+public enum NullValuePolicy {
     /**
      * Includes all entries in the map, including those having a null value or an
      * empty collection.

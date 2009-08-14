@@ -213,7 +213,7 @@ final class PropertyTree {
             if (index < 0) {
                 throw new ParseException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, name), 0);
             }
-            Class<?> childType = accessor.type(index);
+            Class<?> childType = accessor.type(index, TypeValuePolicy.ELEMENT_TYPE);
             if (childType == null) {
                 // The type of the parameter is unknow (actually the message is a bit
                 // misleading since it doesn't said that only the type is unknown).
@@ -350,7 +350,7 @@ final class PropertyTree {
             /*
              * The value is a metadata object (unknown implementation).
              */
-            asMap = new PropertyMap(value, accessor, MapContent.NON_EMPTY, MetadataKeyName.JAVABEANS_PROPERTY);
+            asMap = new PropertyMap(value, accessor, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
         } else if (value instanceof Collection<?>) {
             /*
              * The value is a collection of any other cases. Add all the childs recursively,

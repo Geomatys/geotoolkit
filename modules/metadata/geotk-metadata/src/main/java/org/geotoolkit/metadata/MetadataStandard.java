@@ -25,6 +25,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.opengis.annotation.UML;
+
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -242,39 +244,34 @@ public final class MetadataStandard {
     }
 
     /**
-     * Returns the type of the given property in the given class. The property name is either
-     * the name of a Java method in the given implementation class without its {@code get} or
-     * {@code is} prefix, or the {@linkplain org.opengis.annotation.UML UML} identifier associated
-     * to that method.
+     * Returns a view of the property types for the specified metadata type as a {@linkplain Map map}.
+     * The keys are the property names as determined by the list of {@code getFoo()} methods declared
+     * in the {@linkplain #getInterface metadata interface}, or the {@linkplain UML} identifier
+     * associated to those methods. The values are determined by the {@link TypeValuePolicy}
+     * argument.
      * <p>
-     * First, {@code getElementType} fetches the
-     * {@linkplain java.lang.reflect.Method#getReturnType() return type} of the property method.
-     * Then there is a choice:
-     * <p>
-     * <ul>
-     *   <li>If the return type is a {@linkplain java.util.Collection collection}, the type
-     *       of collection <em>elements</em> is returned (not the type of the collection
-     *       itself).</li>
-     *   <li>Otherwise the return type is returned directly.</li>
-     * </ul>
-     * <p>
-     * <b>Example:</b> {@code ISO_19115.getElementType(DefaultCitation.class, "alternateTitle")}
-     * returns {@code InternationalString.class}.
+     * <b>Example:</b> The following code returns {@code InternationalString.class}.
+     *
+     * {@preformat java
+     *   ISO_19115.asTypeMap(DefaultCitation.class, ELEMENT_TYPE, UML_IDENTIFIER).get("alternateTitle");
+     * }
      *
      * @param  implementation The implementation class.
-     * @param  property The name of the property for which to get the type.
-     * @return The type of elements for the given property.
+     * @param  types Whatever the values should be 
+     * @param  keyNames The string representation of map keys.
+     * @return The types for the given property.
      * @throws ClassCastException if the specified implementation class do
      *         not implements a metadata interface of the expected package.
-     * @throws IllegalArgumentException if the given property name is not found.
      *
      * @since 3.03
      */
-    public Class<?> getElementType(final Class<?> implementation, final String property) {
+    public Map<String,Class<?>> asTypeMap(final Class<?> implementation,
+            final TypeValuePolicy types, final KeyNamePolicy keyNames)
+    {
         ensureNonNull("implementation", implementation);
-        ensureNonNull("property", property);
-        final PropertyAccessor accessor = getAccessor(implementation);
-        return accessor.type(accessor.requiredIndexOf(property));
+        ensureNonNull("types",          types);
+        ensureNonNull("keyNames",       keyNames);
+        return new TypeMap(getAccessor(implementation), types, keyNames);
     }
 
     /**
@@ -333,13 +330,13 @@ public final class MetadataStandard {
      *
      * @param  metadata The metadata object to view as a map.
      * @return A map view over the metadata object.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      *
      * @see AbstractMetadata#asMap
      */
     public Map<String,Object> asMap(final Object metadata) throws ClassCastException {
-        return asMap(metadata, MapContent.NON_EMPTY, MetadataKeyName.JAVABEANS_PROPERTY);
+        return asMap(metadata, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
     }
 
     /**
@@ -358,17 +355,17 @@ public final class MetadataStandard {
      *
      * @param  metadata The metadata object to view as a map.
      * @param  content Whatever the entries having null values or empty collections should
-     *         be included in the map. The default is {@link MapContent#NON_EMPTY NON_EMPTY}.
+     *         be included in the map. The default is {@link NullValuePolicy#NON_EMPTY NON_EMPTY}.
      * @param  keyNames The string representation of map keys. The default is
-     *         {@link MetadataKeyName#JAVABEANS_PROPERTY JAVABEANS_PROPERTY}.
+     *         {@link KeyNamePolicy#JAVABEANS_PROPERTY JAVABEANS_PROPERTY}.
      * @return A map view over the metadata object.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      *
      * @since 3.03
      */
-    public Map<String,Object> asMap(final Object metadata, final MapContent content,
-            final MetadataKeyName keyNames) throws ClassCastException
+    public Map<String,Object> asMap(final Object metadata, final NullValuePolicy content,
+            final KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
         ensureNonNull("content",  content);
@@ -386,8 +383,8 @@ public final class MetadataStandard {
      *
      * @param  metadata The metadata object to formats as a string.
      * @return A tree representation of the specified metadata.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      *
      * @see AbstractMetadata#asTree
      */
@@ -518,8 +515,8 @@ public final class MetadataStandard {
      *
      * @param  metadata The metadata object to compute hash code.
      * @return A hash code value for the specified metadata.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      *
      * @see AbstractMetadata#hashCode
      */
@@ -532,8 +529,8 @@ public final class MetadataStandard {
      *
      * @param  metadata The metadata object to formats as a string.
      * @return A string representation of the specified metadata.
-     * @throws ClassCastException if at the metadata object don't
-     *         implements a metadata interface of the expected package.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      *
      * @see AbstractMetadata#toString
      */

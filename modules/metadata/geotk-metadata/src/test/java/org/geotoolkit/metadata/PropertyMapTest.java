@@ -19,21 +19,27 @@ package org.geotoolkit.metadata;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.opengis.util.InternationalString;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.extent.GeographicDescription;
 
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.extent.AbstractGeographicExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link PropertyMap}.
+ * Tests {@link TypeMap} and {@link PropertyMap}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -42,11 +48,48 @@ import static org.junit.Assert.*;
  */
 public final class PropertyMapTest {
     /**
+     * Tests {@link TestMap} on a well known metadata type.
+     */
+    @Test
+    public void testTypeMap() {
+        final MetadataStandard standard = MetadataStandard.ISO_19115;
+        final KeyNamePolicy keyNames = KeyNamePolicy.JAVABEANS_PROPERTY;
+        Map<String, Class<?>> types;
+
+        types = standard.asTypeMap(DefaultCitation.class, TypeValuePolicy.PROPERTY_TYPE, keyNames);
+        assertEquals(InternationalString.class, types.get("title"));
+        assertEquals(Collection.class,          types.get("alternateTitles"));
+
+        types = standard.asTypeMap(DefaultCitation.class, TypeValuePolicy.ELEMENT_TYPE, keyNames);
+        assertEquals(InternationalString.class, types.get("title"));
+        assertEquals(InternationalString.class, types.get("alternateTitles"));
+
+        types = standard.asTypeMap(DefaultCitation.class, TypeValuePolicy.DECLARING_INTERFACE, keyNames);
+        assertEquals(Citation.class, types.get("title"));
+        assertEquals(Citation.class, types.get("alternateTitles"));
+
+        types = standard.asTypeMap(DefaultCitation.class, TypeValuePolicy.DECLARING_CLASS, keyNames);
+        assertEquals(DefaultCitation.class, types.get("title"));
+        assertEquals(DefaultCitation.class, types.get("alternateTitles"));
+
+        /*
+         * Tests declaring classes/interfaces again, now with metadata having a class hierarchy.
+         */
+        types = standard.asTypeMap(DefaultGeographicDescription.class, TypeValuePolicy.DECLARING_INTERFACE, keyNames);
+        assertEquals(GeographicDescription.class, types.get("geographicIdentifier"));
+        assertEquals(GeographicExtent.class,      types.get("inclusion"));
+
+        types = standard.asTypeMap(DefaultGeographicDescription.class, TypeValuePolicy.DECLARING_CLASS, keyNames);
+        assertEquals(DefaultGeographicDescription.class, types.get("geographicIdentifier"));
+        assertEquals(AbstractGeographicExtent.class,     types.get("inclusion"));
+    }
+
+    /**
      * Creates a map from a metadata object and verifies that the map contains
      * the expected values. Then remove values from this map.
      */
     @Test
-    public void testMap() {
+    public void testPropertyMap() {
         final DefaultCitation citation = new DefaultCitation();
         final InternationalString title = new SimpleInternationalString("Undercurrent");
         citation.setTitle(title);
@@ -99,11 +142,11 @@ public final class PropertyMapTest {
          */
         Map<String,Object> m2;
         final MetadataStandard s = MetadataStandard.ISO_19115;
-        m2 = s.asMap(citation, MapContent.NON_EMPTY, MetadataKeyName.JAVABEANS_PROPERTY);
+        m2 = s.asMap(citation, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
         assertFalse("Null values should be excluded.", m2.containsKey("alternateTitles"));
         assertEquals(map, m2);
 
-        m2 = s.asMap(citation, MapContent.ALL, MetadataKeyName.JAVABEANS_PROPERTY);
+        m2 = s.asMap(citation, NullValuePolicy.ALL, KeyNamePolicy.JAVABEANS_PROPERTY);
         assertTrue ("Null values should be included.", m2.containsKey("alternateTitles"));
         assertTrue ("'m2' should be a larger map than 'map'.", m2.entrySet().containsAll(map.entrySet()));
         assertFalse("'m2' should be a larger map than 'map'.", map.entrySet().containsAll(m2.entrySet()));

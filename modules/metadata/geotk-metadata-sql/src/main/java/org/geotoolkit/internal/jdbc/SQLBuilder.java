@@ -165,12 +165,10 @@ public final class SQLBuilder {
     public SQLBuilder appendCondition(final Object value) {
         if (value == null) {
             buffer.append("IS NULL");
-        } else if (value instanceof Number) {
-            buffer.append('=').append(value);
-        } else {
-            buffer.append("='").append(doubleQuotes(value)).append('\'');
+            return this;
         }
-        return this;
+        buffer.append('=');
+        return appendValue(value);
     }
 
     /**
@@ -182,6 +180,8 @@ public final class SQLBuilder {
     public SQLBuilder appendValue(final Object value) {
         if (value == null) {
             buffer.append("NULL");
+        } else if (value instanceof Boolean) {
+            buffer.append(((Boolean) value).booleanValue() ? "TRUE" : "FALSE");
         } else if (value instanceof Number) {
             buffer.append(value);
         } else {
@@ -211,6 +211,38 @@ public final class SQLBuilder {
             buffer.append(escape).append(tokens.nextToken());
         }
         return this;
+    }
+
+    /**
+     * Returns a SQL statement for adding a column in a table.
+     * The returned statement is of the form:
+     *
+     * {@preformat sql
+     *   ALTER TABLE "schema"."table" ADD COLUMN "column" type
+     * }
+     *
+     * Where {@code type} is some SQL keyword like {@code INTEGER} or {@code VARCHAR}
+     * depending on the {@code type} argument.
+     *
+     * @param  schema     The schema for the table.
+     * @param  table      The table to alter with the new column.
+     * @param  column     The column to add.
+     * @param  type       The column type, or {@code null} for {@code VARCHAR}.
+     * @param  maxLength  The maximal length (used for {@code VARCHAR} only).
+     * @return A SQL statement for creating the column.
+     */
+    public String createColumn(final String schema, final String table, final String column,
+            final Class<?> type, final int maxLength)
+    {
+        clear().append("ALTER TABLE ").appendIdentifier(schema, table)
+               .append(" ADD COLUMN ").appendIdentifier(column).append(' ');
+        final String sqlType = TypeMapper.keywordFor(type);
+        if (sqlType != null) {
+            append(sqlType);
+        } else {
+            append("VARCHAR(").append(maxLength).append(')');
+        }
+        return toString();
     }
 
     /**

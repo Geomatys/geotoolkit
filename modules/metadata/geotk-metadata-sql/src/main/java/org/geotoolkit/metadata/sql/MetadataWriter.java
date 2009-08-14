@@ -35,7 +35,9 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.metadata.MapContent;
+import org.geotoolkit.metadata.KeyNamePolicy;
+import org.geotoolkit.metadata.TypeValuePolicy;
+import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.jdbc.DefaultDataSource;
@@ -51,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * as needed when the {@link #add(Object)} method is invoked.
  * <p>
  * No more than one instance of {@code MetadataWriter} should be used for the same database.
- * However multiple instances of {@code MetadataSource} can be used concurrently with the
+ * However multiple instances of {@code MetadataSource} can be used concurrently with a single
  * {@code MetadataWriter} instance on the same database.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -79,9 +81,9 @@ public class MetadataWriter extends MetadataSource {
 
     /**
      * Whatever the tables should contain a column for every attribute, or only for non-null
-     * and non-empty attributes. The default is {@link MapContent#NON_EMPTY NON-EMPTY}.
+     * and non-empty attributes. The default is {@link NullValuePolicy#NON_EMPTY NON-EMPTY}.
      */
-    private MapContent columnCreationPolicy = MapContent.NON_EMPTY;
+    private NullValuePolicy columnCreationPolicy = NullValuePolicy.NON_EMPTY;
 
     /**
      * The statements for checking collisions of primary keys.
@@ -121,12 +123,12 @@ public class MetadataWriter extends MetadataSource {
 
     /**
      * Whatever the tables should contain a column for every attributes, or only for non-null
-     * and non-empty attributes. The default is {@link MapContent#NON_EMPTY NON-EMPTY}, which
+     * and non-empty attributes. The default is {@link NullValuePolicy#NON_EMPTY NON-EMPTY}, which
      * implies that new columns are added only when first needed.
      *
      * @return The current policy for column creation.
      */
-    public MapContent getColumnCreationPolicy() {
+    public NullValuePolicy getColumnCreationPolicy() {
         synchronized (statements) {
             return columnCreationPolicy;
         }
@@ -134,12 +136,12 @@ public class MetadataWriter extends MetadataSource {
 
     /**
      * Sets whatever columns should be created only for non-empty attributes, or for all
-     * attributes. If this policy is set to {@link MapContent#ALL ALL}, then all columns
+     * attributes. If this policy is set to {@link NullValuePolicy#ALL ALL}, then all columns
      * will be added in newly created tables even if their content is empty.
      *
      * @param policy The new policy for column creation.
      */
-    public void setColumnCreationPolicy(final MapContent policy) {
+    public void setColumnCreationPolicy(final NullValuePolicy policy) {
         ensureNonNull("policy", policy);
         synchronized (statements) {
             columnCreationPolicy = policy;
@@ -157,8 +159,10 @@ public class MetadataWriter extends MetadataSource {
      * @throws SQLException If an exception occured while reading or writing the database.
      *         In such case, the database content is left unchanged (i.e. this method is a
      *         <cite>all or nothing</cite> operation).
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      */
-    public String add(final Object metadata) throws SQLException {
+    public String add(final Object metadata) throws ClassCastException, SQLException {
         String identifier = proxy(metadata);
         if (identifier == null) {
             synchronized (statements) {
@@ -197,9 +201,11 @@ public class MetadataWriter extends MetadataSource {
      * @param  parent   The identifier of the parent, or {@code null} if there is no parent.
      * @return The identifier (primary key) of the metadata just added.
      * @throws SQLException If an exception occured while reading or writing the database.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
      */
     private String add(final Statement stmt, final Object metadata, final Map<Object,String> done,
-            final String parent) throws SQLException
+            final String parent) throws ClassCastException, SQLException
     {
         assert Thread.holdsLock(statements);
         /*
@@ -229,7 +235,7 @@ public class MetadataWriter extends MetadataSource {
          * after the check for existing entries, in order to take in account null values
          * when checking existing entries.
          */
-        if (!MapContent.ALL.equals(columnCreationPolicy)) {
+        if (!NullValuePolicy.ALL.equals(columnCreationPolicy)) {
             for (final Iterator<Object> it=asMap.values().iterator(); it.hasNext();) {
                 if (it.next() == null) {
                     it.remove();
@@ -247,10 +253,12 @@ public class MetadataWriter extends MetadataSource {
             columns.add(ID_COLUMN);
         }
         Map<String,Class<?>> foreigners = null;
+        final Map<String,Class<?>> elementTypes = standard.asTypeMap(metadataType,
+                TypeValuePolicy.ELEMENT_TYPE, KeyNamePolicy.UML_IDENTIFIER);
         for (final String column : asMap.keySet()) {
             if (!columns.contains(column)) {
                 int maxLength = VALUE_MAX_LENGTH;
-                final Class<?> rt = standard.getElementType(metadataType, column);
+                Class<?> rt = elementTypes.get(column);
                 if (CodeList.class.isAssignableFrom(rt) || standard.isMetadata(rt)) {
                     /*
                      * Found a foreigner key to an other metadata.
@@ -263,11 +271,9 @@ public class MetadataWriter extends MetadataSource {
                     if (foreigners.put(column, rt) != null) {
                         throw new AssertionError(column); // Should never happen.
                     }
+                    rt = null; // For forcing VARCHAR type.
                 }
-                final String sql = buffer.clear().append("ALTER TABLE ").appendIdentifier(schema, table)
-                        .append(" ADD COLUMN ").appendIdentifier(column).append(" VARCHAR(")
-                        .append(maxLength).append(')').toString();
-                stmt.executeUpdate(sql);
+                stmt.executeUpdate(buffer.createColumn(schema, table, column, rt, maxLength));
                 columns.add(column);
             }
         }
@@ -420,7 +426,7 @@ public class MetadataWriter extends MetadataSource {
     /**
      * Suggests an identifier (primary key) to be used for the given metadata.
      * This method is invoked automatically when a new metadata is about to be
-     * inserted in the database. The default implementation use heuristic rules
+     * inserted in the database. The default implementation uses heuristic rules
      * of a few "well known" metadata like {@link Identifier} and {@link Citation}.
      * Subclasses can override this method for implementing their own heuristic.
      * <p>

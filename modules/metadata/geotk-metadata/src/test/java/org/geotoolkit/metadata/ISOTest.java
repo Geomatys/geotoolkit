@@ -237,7 +237,7 @@ public final class ISOTest {
             final String classname = Classes.getShortName(accessor.type) + '.';
             final int count = accessor.count();
             for (int i=0; i<count; i++) {
-                final String name = accessor.name(i, MetadataKeyName.JAVABEANS_PROPERTY);
+                final String name = accessor.name(i, KeyNamePolicy.JAVABEANS_PROPERTY);
                 assertNotNull(String.valueOf(i), name);
                 final String fullname = classname + name;
                 assertEquals(fullname, i, accessor.indexOf(name));
@@ -251,7 +251,7 @@ public final class ISOTest {
                  * Get the property type. In the special case where the property type
                  * is a collection, this is the type of elements in that collection.
                  */
-                final Class<?> type = accessor.type(i);
+                final Class<?> type = accessor.type(i, TypeValuePolicy.ELEMENT_TYPE);
                 final Class<?> impl = getImplementation(type);
                 assertFalse(Collection.class.isAssignableFrom(type));
                 final Object example = accessor.get(i, dummyInstance);

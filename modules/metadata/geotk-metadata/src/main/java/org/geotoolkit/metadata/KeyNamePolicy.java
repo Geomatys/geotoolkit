@@ -32,12 +32,12 @@ package org.geotoolkit.metadata;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
  *
- * @see MetadataStandard#asMap(Object, MapContent, MetadataKeyName)
+ * @see MetadataStandard#asMap(Object, NullValuePolicy, KeyNamePolicy)
  *
  * @since 3.03
  * @module
  */
-public enum MetadataKeyName {
+public enum KeyNamePolicy {
     /**
      * The keys in the map are the {@linkplain org.opengis.annotation.UML#identifier() UML identifier}
      * of the metadata attributes. If an attribute has no UML annotation, then the Javabeans
