@@ -174,7 +174,6 @@ public class MetadataSource {
     {
         ensureNonNull("standard",   standard);
         ensureNonNull("dataSource", dataSource);
-        ensureNonNull("schema",     schema);
         this.standard = standard;
         this.schema = schema;
         statements  = new StatementPool<Object,StatementEntry>(10, dataSource);

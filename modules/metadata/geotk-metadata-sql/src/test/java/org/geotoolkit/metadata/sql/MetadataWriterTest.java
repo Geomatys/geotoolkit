@@ -20,6 +20,7 @@ package org.geotoolkit.metadata.sql;
 import java.io.File;
 import java.util.Collection;
 import java.sql.SQLException;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
@@ -28,6 +29,7 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.jdbc.DefaultDataSource;
 
 import org.junit.*;
@@ -49,15 +51,15 @@ public final class MetadataWriterTest {
     private MetadataWriter source;
 
     /**
-     * Runs all tests in the required order.
+     * Runs all tests on JavaDB in the required order.
      *
      * @throws SQLException If an error occured while writing or reading the database.
      */
     @Test
-    public void test() throws SQLException {
+    public void testDerby() throws SQLException {
         final File directory = new File(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit.org").getAbsoluteFile();
         final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:" + directory.getPath().replace('\\','/') + ";create=true");
-        source = new MetadataWriter(MetadataStandard.ISO_19115, ds, "public");
+        source = new MetadataWriter(MetadataStandard.ISO_19115, ds, null);
         try {
             write();
             search();
@@ -71,6 +73,32 @@ public final class MetadataWriterTest {
     }
 
     /**
+     * Runs all tests on PostgreSQL in the required order. This test is disabled by default
+     * because it requires manual setup of a test database.
+     *
+     * @throws SQLException If an error occured while writing or reading the database.
+     */
+    @Test
+    @Ignore
+    public void testPostgreSQL() throws SQLException {
+        final PGSimpleDataSource ds = new PGSimpleDataSource();
+        ds.setServerName("some.server.name");
+        ds.setDatabaseName("metadata-test");
+        ds.setUser("");
+        ds.setPassword("");
+        source = new MetadataWriter(MetadataStandard.ISO_19115, ds, "metadata");
+        try {
+            write();
+            writeHierarchical();
+            search();
+            read();
+        } finally {
+            source.close();
+            source = null;
+        }
+    }
+
+    /**
      * Creates a new temporary database and write elements in it.
      *
      * @throws SQLException If an error occured while writing or reading the database.
@@ -80,6 +108,17 @@ public final class MetadataWriterTest {
         assertEquals("EPSG",       source.add(Citations.EPSG));
         assertEquals("Geotoolkit", source.add(Citations.GEOTOOLKIT));
         assertEquals("JAI",        source.add(Citations.JAI));
+    }
+
+    /**
+     * Writes more complex elements, which require the support of table inheritance.
+     * PostgreSQL supports this feature but Derby does not.
+     *
+     * @throws SQLException If an error occured while writing or reading the database.
+     */
+    private void writeHierarchical() throws SQLException {
+        assertNotNull(source.add(AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED));
+        assertNotNull(source.add(AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED));
     }
 
     /**
@@ -118,6 +157,19 @@ public final class MetadataWriterTest {
          */
         assertNull(c.getCollectiveTitle());
         assertTrue(c.getDates().isEmpty());
+        /*
+         * Test the cache.
+         */
+        assertSame   (c, source.getEntry(Citation.class, "EPSG"));
+        assertNotSame(c, source.getEntry(Citation.class, "OGC" ));
+        /*
+         * Should return the identifier with no search. Actually the real test is the call
+         * to "proxy", since there is no way to ensure that the call to "search" tooks the
+         * short path (except by looking at the debugger). But if "proxy" succeed, then
+         * "search" should be okay.
+         */
+        assertEquals("EPSG", source.proxy (c));
+        assertEquals("EPSG", source.search(c));
     }
 
     /**

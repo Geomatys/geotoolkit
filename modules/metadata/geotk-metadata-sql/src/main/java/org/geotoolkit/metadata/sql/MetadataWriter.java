@@ -35,8 +35,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.TypeValuePolicy;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -45,6 +43,10 @@ import org.geotoolkit.internal.jdbc.IdentifierGenerator;
 import org.geotoolkit.internal.jdbc.StatementEntry;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.metadata.KeyNamePolicy.UML_IDENTIFIER;
+import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
+import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;
 
 
 /**
@@ -64,6 +66,14 @@ import org.geotoolkit.resources.Errors;
  */
 @ThreadSafe
 public class MetadataWriter extends MetadataSource {
+    /**
+     * {@code true} if child tables inherit the index of their parent tables.
+     * This feature is not yet supported in PostgreSQL 8.4.
+     *
+     * @see http://jira.geotoolkit.org/browse/GEOTK-30
+     */
+    private static final boolean INDEX_INHERITANCE_SUPPORTED = false;
+
     /**
      * The name of the column for code list.
      */
@@ -220,8 +230,9 @@ public class MetadataWriter extends MetadataSource {
         /*
          * Search the database for an existing metadata.
          */
-        final Class<?> metadataType = metadata.getClass();
-        final String table = getTableName(standard.getInterface(metadataType));
+        final Class<?> implementationType = metadata.getClass();
+        final Class<?> interfaceType = standard.getInterface(implementationType);
+        final String table = getTableName(interfaceType);
         final Set<String> columns = getColumns(table);
         String identifier = search(table, columns, asMap, stmt, buffer);
         if (identifier != null) {
@@ -243,37 +254,59 @@ public class MetadataWriter extends MetadataSource {
             }
         }
         /*
-         * Process to the table creation if it doesn't already exists, and add missing columns
-         * if there is any. If columns are added, we will keep trace of foreigner keys in this
-         * process but will not create the constraints now because the foreigner tables may
-         * not exist yet.
+         * Process to the table creation if it doesn't already exists. If the table has parents,
+         * they will be created first. The later will work only for database supporting table
+         * inheritance, like PostgreSQL. For other kind of database engine, we can not store
+         * metadata having parent interfaces.
          */
-        if (columns.isEmpty()) {
-            stmt.executeUpdate(createTable(table, ID_COLUMN));
-            columns.add(ID_COLUMN);
-        }
-        Map<String,Class<?>> foreigners = null;
-        final Map<String,Class<?>> elementTypes = standard.asTypeMap(metadataType,
-                TypeValuePolicy.ELEMENT_TYPE, KeyNamePolicy.UML_IDENTIFIER);
+        createTable(stmt, interfaceType, table, columns);
+        /*
+         * Add missing columns if there is any. If columns are added, we will keep trace of
+         * foreigner keys in this process but will not create the constraints now because the
+         * foreigner tables may not exist yet. They will be created later by recursive calls
+         * to this method a little bit below.
+         */
+        Map<String,Class<?>> foreigners=null, colTypes=null, colTables=null;
         for (final String column : asMap.keySet()) {
             if (!columns.contains(column)) {
+                if (colTypes == null) {
+                    colTypes  = standard.asTypeMap(implementationType, ELEMENT_TYPE,        UML_IDENTIFIER);
+                    colTables = standard.asTypeMap(implementationType, DECLARING_INTERFACE, UML_IDENTIFIER);
+                }
+                /*
+                 * We have found a column to add. Check if the column actually needs to be added
+                 * to the parent table (if such parent exists). In most case, the answer is "no"
+                 * and 'addTo' is equals to 'table'.
+                 */
+                String addTo = table;
+                final Class<?> declaring = colTables.get(column);
+                if (!interfaceType.isAssignableFrom(declaring)) {
+                    addTo = getTableName(declaring);
+                }
+                /*
+                 * Determine the column data type.
+                 */
                 int maxLength = VALUE_MAX_LENGTH;
-                Class<?> rt = elementTypes.get(column);
+                Class<?> rt = colTypes.get(column);
                 if (CodeList.class.isAssignableFrom(rt) || standard.isMetadata(rt)) {
                     /*
-                     * Found a foreigner key to an other metadata.
-                     * Keep reference for creating a constraint later.
+                     * Found a reference to an other metadata. Remind that
+                     * column for creating a foreign key constraint later.
                      */
                     maxLength = ID_MAX_LENGTH;
-                    if (foreigners == null) {
-                        foreigners = new LinkedHashMap<String,Class<?>>();
-                    }
-                    if (foreigners.put(column, rt) != null) {
-                        throw new AssertionError(column); // Should never happen.
+                    // Remove the "if" line (but not the lines inside the "if" block)
+                    // if INDEX_INHERITANCE_SUPPORTED is assumed true and removed.
+                    if (INDEX_INHERITANCE_SUPPORTED || table.equals(addTo)) {
+                        if (foreigners == null) {
+                            foreigners = new LinkedHashMap<String,Class<?>>();
+                        }
+                        if (foreigners.put(column, rt) != null) {
+                            throw new AssertionError(column); // Should never happen.
+                        }
                     }
                     rt = null; // For forcing VARCHAR type.
                 }
-                stmt.executeUpdate(buffer.createColumn(schema, table, column, rt, maxLength));
+                stmt.executeUpdate(buffer.createColumn(schema, addTo, column, rt, maxLength));
                 columns.add(column);
             }
         }
@@ -377,6 +410,51 @@ public class MetadataWriter extends MetadataSource {
             throw new SQLException(Errors.format(Errors.Keys.DATABASE_UPDATE_FAILURE));
         }
         return identifier;
+    }
+
+    /**
+     * Creates a table for the given type, if the table does not already exists. This method
+     * may call itself recursively for creating parent tables, if they do not exist neither.
+     *
+     * @param  stmt    The statement to use for creating tables.
+     * @param  type    The interface class.
+     * @param  table   The name of the table (should be consistent with the type).
+     * @param  columns The existing columns, as an empty set if the table does not exist yet.
+     * @throws SQLException If an error occured while creating the table.
+     */
+    private void createTable(final Statement stmt, final Class<?> type, final String table,
+            final Set<String> columns) throws SQLException
+    {
+        if (columns.isEmpty()) {
+            StringBuilder inherits = null;
+            for (final Class<?> candidate : type.getInterfaces()) {
+                if (standard.isMetadata(candidate)) {
+                    final String parent = getTableName(candidate);
+                    createTable(stmt, candidate, parent, getColumns(parent));
+                    if (inherits == null) {
+                        buffer.clear().append("CREATE TABLE ").appendIdentifier(schema, table);
+                        // Remove all the "if" block if INDEX_INHERITANCE_SUPPORTED
+                        // is assumed true and removed.
+                        if (!INDEX_INHERITANCE_SUPPORTED) {
+                            buffer.append("(CONSTRAINT ").appendIdentifier(table + "_pkey")
+                                  .append(" PRIMARY KEY (").append(ID_COLUMN).append(")) ");
+                        }
+                        inherits = new StringBuilder(buffer.append(" INHERITS (").toString());
+                    } else {
+                        inherits.append(", ");
+                    }
+                    inherits.append(buffer.clear().appendIdentifier(schema, parent));
+                }
+            }
+            final String sql;
+            if (inherits != null) {
+                sql = inherits.append(')').toString();
+            } else {
+                sql = createTable(table, ID_COLUMN);
+            }
+            stmt.executeUpdate(sql);
+            columns.add(ID_COLUMN);
+        }
     }
 
     /**
