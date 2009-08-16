@@ -201,6 +201,29 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
             codespace = null;
             authority = null;
         }
-        return ReferenceIdentifierMetadata.toString("RS", authority, codespace, code);
+        return toString("RS", authority, codespace, code);
+    }
+
+    /**
+     * Returns a pseudo-WKT representation.
+     *
+     * @param  type The WKT heading text.
+     * @param  authority The authority to write in the {@code "AUTHORITY"} element.
+     * @param  codespace Usually an abbreviation of the authority name.
+     * @param  code The code to write in the {@code "AUTHORITY"} element, or {@code null} if none.
+     * @return The pseudo-WKT.
+     */
+    public static String toString(final String type, final Citation authority,
+            final String codespace, final String code)
+    {
+        final StringBuilder buffer = new StringBuilder(type).append("[\"");
+        if (codespace != null) {
+            buffer.append(codespace).append(':');
+        }
+        buffer.append(code).append('"');
+        if (authority != null) {
+            buffer.append("AUTHORITY[\"").append(authority.getTitle()).append("\",\"").append(code).append("\"]");
+        }
+        return buffer.append(']').toString();
     }
 }

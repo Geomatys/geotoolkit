@@ -24,8 +24,8 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
-import org.geotoolkit.internal.jaxb.metadata.ReferenceIdentifierMetadata;
 
 
 /**
@@ -92,6 +92,6 @@ public class FRA_IndirectReferenceSystem extends ReferenceSystemMetadata {
      *          Identifier code or name, optionally from a controlled list or pattern defined by a code space.
      */
     public FRA_IndirectReferenceSystem(final Citation authority, final String codespace, final String code) {
-        super(new ReferenceIdentifierMetadata(authority, codespace, code));
+        super(new DefaultReferenceIdentifier(authority, codespace, code));
     }
 }

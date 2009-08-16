@@ -18,9 +18,12 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
+
 import org.opengis.metadata.Identifier;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.opengis.referencing.ReferenceIdentifier;
+
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 
 /**
@@ -93,13 +96,14 @@ public final class IdentifierAdapter extends MetadataAdapter<IdentifierAdapter,I
      * @return The metadata to be marshalled.
      */
     @XmlElement(name = "RS_Identifier")
-    public ReferenceIdentifierMetadata getReferenceIdentifier() {
+    public DefaultReferenceIdentifier getReferenceIdentifier() {
         final Identifier metadata = this.metadata;
         if (!(metadata instanceof ReferenceIdentifier)) {
             return null;
         }
-        return (metadata instanceof ReferenceIdentifierMetadata) ?
-            (ReferenceIdentifierMetadata) metadata : new ReferenceIdentifierMetadata((ReferenceIdentifier) metadata);
+        return (metadata instanceof DefaultReferenceIdentifier) ?
+            (DefaultReferenceIdentifier) metadata :
+            new DefaultReferenceIdentifier((ReferenceIdentifier) metadata);
     }
 
     /**
@@ -108,7 +112,7 @@ public final class IdentifierAdapter extends MetadataAdapter<IdentifierAdapter,I
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setReferenceIdentifier(final ReferenceIdentifierMetadata metadata) {
+    public void setReferenceIdentifier(final DefaultReferenceIdentifier metadata) {
         this.metadata = metadata;
     }
 }

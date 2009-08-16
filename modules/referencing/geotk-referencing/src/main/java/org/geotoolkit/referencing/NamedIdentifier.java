@@ -26,11 +26,8 @@ import java.util.Locale;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.io.Serializable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -56,7 +53,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -77,14 +73,13 @@ import org.geotoolkit.xml.Namespaces;
  * often contains abreviation (for example "DCW" as an alternative title for
  * "<cite>Digital Chart of the World</cite>").
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.02
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.0
  * @module
  */
-@XmlRootElement(name = "RS_Identifier", namespace = Namespaces.GMD)
-public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serializable {
+public class NamedIdentifier extends DefaultReferenceIdentifier implements GenericName {
     /**
      * Serial number for interoperability with different versions.
      */
@@ -110,33 +105,6 @@ public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serial
     }
 
     /**
-     * Identifier code or name, optionally from a controlled list or pattern
-     * defined by a code space.
-     *
-     * @see #getCode
-     */
-    @XmlElement(required = true)
-    private final String code;
-
-    /**
-     * Name or identifier of the person or organization responsible for namespace.
-     * This is often an abreviation of the authority name.
-     *
-     * @see #getCodeSpace
-     */
-    @XmlElement(required = true)
-    private final String codespace;
-
-    /**
-     * Organization or party responsible for definition and maintenance of the
-     * code space or code.
-     *
-     * @see #getAuthority
-     */
-    @XmlElement(required = true)
-    private final Citation authority;
-
-    /**
      * Identifier of the version of the associated code space or code, as specified
      * by the code space or code authority. This version is included only when the
      * {@linkplain #getCode code} uses versions. When appropriate, the edition is
@@ -144,14 +112,14 @@ public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serial
      *
      * @see #getVersion
      */
-    private final String version;
+    private String version;
 
     /**
      * Comments on or information about this identifier, or {@code null} if none.
      *
      * @see #getRemarks
      */
-    private final InternationalString remarks;
+    private InternationalString remarks;
 
     /**
      * The name of this identifier as a generic name. If {@code null}, will be constructed
@@ -164,11 +132,6 @@ public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serial
      * A private constructor used only by JAXB.
      */
     private NamedIdentifier() {
-        code      = null;
-        codespace = null;
-        authority = null;
-        version   = null;
-        remarks   = null;
     }
 
     /**
@@ -767,13 +730,13 @@ public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serial
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object == this) {
+            return true;
+        }
+        if (super.equals(object)) {
             final NamedIdentifier that = (NamedIdentifier) object;
-            return Utilities.equals(this.code,      that.code     ) &&
-                   Utilities.equals(this.codespace, that.codespace) &&
-                   Utilities.equals(this.version,   that.version  ) &&
-                   Utilities.equals(this.authority, that.authority) &&
-                   Utilities.equals(this.remarks,   that.remarks  );
+            return Utilities.equals(this.version, that.version) &&
+                   Utilities.equals(this.remarks, that.remarks);
         }
         return false;
     }
@@ -788,7 +751,7 @@ public class NamedIdentifier implements ReferenceIdentifier, GenericName, Serial
             hash ^= code.hashCode();
         }
         if (version != null) {
-            hash = hash*37 + version.hashCode();
+            hash = hash*31 + version.hashCode();
         }
         return hash;
     }

@@ -18,7 +18,7 @@
  *    This package contains documentation from OpenGIS specifications.
  *    OpenGIS consortium's work is fully acknowledged here.
  */
-package org.geotoolkit.internal.jaxb.metadata;
+package org.geotoolkit.referencing;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
@@ -29,23 +29,23 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 
 
 /**
- * An identification of a CRS object. This implementation duplicates
- * {@link org.geotoolkit.referencing.NamedIdentifier} with generic name
- * support removed. It is provided here for avoiding a direct dependency
- * to the referencing module.
+ * An identification of a CRS object.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
- * @since 2.6
+ * @since 3.03 (derived from 2.6)
  * @module
  */
-@XmlRootElement(name = "RS_Identifier")
-public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, Serializable {
+@XmlRootElement(name = "RS_Identifier", namespace = Namespaces.GMD)
+public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializable {
     /**
      * For cross-version compatibility.
      */
@@ -53,30 +53,36 @@ public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, S
 
     /**
      * Identifier code or name, optionally from a controlled list or pattern defined by a code space.
+     *
+     * @see #getCode
      */
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
-    private String code;
+    String code;
 
     /**
      * Name or identifier of the person or organization responsible for namespace.
      * This is often an abreviation of the authority name.
+     *
+     * @see #getCodeSpace
      */
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
-    private String codespace;
+    String codespace;
 
     /**
      * Organization or party responsible for definition and maintenance of the code space or code.
+     *
+     * @see #getAuthority
      */
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(CitationAdapter.class)
-    private Citation authority;
+    Citation authority;
 
     /**
      * Empty constructor for JAXB.
      */
-    private ReferenceIdentifierMetadata() {
+    DefaultReferenceIdentifier() {
     }
 
     /**
@@ -84,7 +90,7 @@ public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, S
      *
      * @param identifier The identifier to copy.
      */
-    public ReferenceIdentifierMetadata(final ReferenceIdentifier identifier) {
+    public DefaultReferenceIdentifier(final ReferenceIdentifier identifier) {
         code      = identifier.getCode();
         codespace = identifier.getCodeSpace();
         authority = identifier.getAuthority();
@@ -101,7 +107,7 @@ public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, S
      * @param code
      *          Identifier code or name, optionally from a controlled list or pattern defined by a code space.
      */
-    public ReferenceIdentifierMetadata(final Citation authority, final String codespace, final String code) {
+    public DefaultReferenceIdentifier(final Citation authority, final String codespace, final String code) {
         this.code      = code;
         this.codespace = codespace;
         this.authority = authority;
@@ -132,7 +138,8 @@ public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, S
     }
 
     /**
-     * Returns {@code null} since we do not marshall version numbers.
+     * Returns {@code null} by default, since this attribute is not part of the standard
+     * XML schema. Note that the {@link NamedIdentifier} subclass overrides this method.
      */
     @Override
     public String getVersion() {
@@ -158,8 +165,8 @@ public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, S
         if (object == this) {
             return true;
         }
-        if (object instanceof ReferenceIdentifierMetadata) {
-            final ReferenceIdentifierMetadata that = (ReferenceIdentifierMetadata) object;
+        if (object!=null && object.getClass().equals(getClass())) {
+            final DefaultReferenceIdentifier that = (DefaultReferenceIdentifier) object;
             return Utilities.equals(code,      that.code) &&
                    Utilities.equals(codespace, that.codespace) &&
                    Utilities.equals(authority, that.authority);
@@ -172,26 +179,6 @@ public final class ReferenceIdentifierMetadata implements ReferenceIdentifier, S
      */
     @Override
     public String toString() {
-        return toString("IDENTIFIER", authority, codespace, code);
-    }
-
-    /**
-     * Returns a pseudo-WKT representation.
-     *
-     * @param  type The WKT heading text.
-     * @param  code The code to write in the {@code "AUTHORITY"} element, or {@code null} if none.
-     * @param  authority The authority to write in the {@code "AUTHORITY"} element.
-     * @return The pseudo-WKT.
-     */
-    static String toString(final String type, final Citation authority, final String codespace, final String code) {
-        final StringBuilder buffer = new StringBuilder(type).append("[\"");
-        if (codespace != null) {
-            buffer.append(codespace).append(':');
-        }
-        buffer.append(code).append('"');
-        if (authority != null) {
-            buffer.append("AUTHORITY[\"").append(authority.getTitle()).append("\",\"").append(code).append("\"]");
-        }
-        return buffer.append(']').toString();
+        return ReferenceSystemMetadata.toString("IDENTIFIER", authority, codespace, code);
     }
 }
