@@ -121,5 +121,19 @@ public class BinaryTemporalOpType extends TemporalOpsType {
         this.propertyName = propertyName;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder('[').append(this.getClass().getSimpleName()).append("]\n");
+        if (propertyName != null)  {
+            sb.append("propertyName:").append(propertyName).append('\n');
+        }
+        if (rest != null) {
+            sb.append("rest:\n");
+            for (Object obj : rest) {
+                sb.append(obj).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }
 

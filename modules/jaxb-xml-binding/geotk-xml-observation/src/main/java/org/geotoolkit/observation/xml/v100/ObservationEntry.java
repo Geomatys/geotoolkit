@@ -384,10 +384,7 @@ public class ObservationEntry implements Observation {
      * {@inheritDoc}
      */
     public void setSamplingTime(AbstractTimeGeometricPrimitiveType value) {
-        if (samplingTime != null)
-            this.samplingTime.setTimeGeometricPrimitive(value);
-        else
-            this.samplingTime = new TimeGeometricPrimitivePropertyType(value);
+        this.samplingTime = new TimeGeometricPrimitivePropertyType(value);
     }
 
     /**
