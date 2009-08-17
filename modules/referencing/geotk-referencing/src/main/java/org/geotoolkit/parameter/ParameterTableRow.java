@@ -18,11 +18,13 @@
 package org.geotoolkit.parameter;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.Locale;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.io.Writer;
 import java.io.IOException;
@@ -36,14 +38,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.io.X364.*;
 import static org.geotoolkit.util.Utilities.spaces;
-import static org.geotoolkit.util.Utilities.hashMapCapacity;
 
 
 /**
  * A row in the table to be formatted by {@link ParameterWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -70,12 +71,11 @@ final class ParameterTableRow {
      * declared in the constructor. The authority element may be null, but the names should never
      * be null.
      * <p>
-     * Names are usually instance of {@link String}, but can also be arrays of strings
-     * if more than one name has been found for the same authority. In such case, the
-     * additional names are appended in the order they are declared in the identified
-     * object.
+     * Names are usually instance of {@link String}, but can also be {@link Identifier}
+     * if such identifier are defined. The names and identifiers appended in the order
+     * they are declared in the identified object.
      */
-    private final Map<String,Object> identifiers;
+    private final Map<String,Set<Object>> identifiers;
 
     /**
      * Creates a new row in a table to be formatted by {@link ParameterWriter}.
@@ -88,53 +88,54 @@ final class ParameterTableRow {
         this.value = value;
         /*
          * Creates a collection which will contain the identifier and all aliases
-         * found for the given IdentifiedObject. We begin with the unique identifier.
+         * found for the given IdentifiedObject. We begin with the primary name.
          */
-        final Collection<GenericName> alias = object.getAlias();
-        identifiers = new LinkedHashMap<String,Object>(
-                hashMapCapacity((alias != null) ? alias.size() : 0) + 1);
+        identifiers = new LinkedHashMap<String,Set<Object>>();
         final Identifier identifier = object.getName();
-        String authority = Citations.getIdentifier(identifier.getAuthority());
-        identifiers.put(authority, identifier.getCode());
-        if (authority != null) {
-            width = authority.length();
-        }
+        addIdentifier(getAuthority(identifier), identifier.getCode()); // Really want .getCode()
+        final Collection<GenericName> alias = object.getAlias();
         if (alias != null) {
             for (final GenericName candidate : alias) {
-                if (identifier.equals(candidate)) {
-                    // Do not duplicate the identifier.
-                    continue;
-                }
-                authority = null;
+                String authority = null;
                 if (candidate instanceof Identifier) {
-                    authority = Citations.getIdentifier(((Identifier) candidate).getAuthority());
-                    if (authority != null) {
-                        final int length = authority.length();
-                        if (length > width) {
-                            width = length;
-                        }
-                    }
+                    authority = getAuthority((Identifier) candidate);
                 }
-                /*
-                 * At this point the authority is known (it may be null). Now get the name.
-                 * If a name was already defined for the current authority, append to an array.
-                 */
-                final String name = candidate.tip().toInternationalString().toString(locale);
-                Object previous = identifiers.put(authority, name);
-                if (previous != null) {
-                    String[] array;
-                    if (previous instanceof String) {
-                        array = new String[] {(String) previous, name};
-                    } else {
-                        array = (String[]) previous;
-                        final int n = array.length;
-                        array = Arrays.copyOf(array, n+1);
-                        array[n] = name;
-                    }
-                    identifiers.put(authority, array);
-                }
+                addIdentifier(authority, candidate.tip().toInternationalString().toString(locale));
             }
         }
+        final Collection<? extends Identifier> ids = object.getIdentifiers();
+        if (ids != null) {
+            for (final Identifier id : ids) {
+                addIdentifier(getAuthority(id), id); // No .getCode() here.
+            }
+        }
+    }
+
+    /**
+     * Returns the authority of the given identifier, or {@code null} if none.
+     * As a side effect, this method remember the length of the widest identifier.
+     */
+    private String getAuthority(final Identifier identifier) {
+        String authority = Citations.getIdentifier(identifier.getAuthority());
+        if (authority != null) {
+            final int length = authority.length();
+            if (length > width) {
+                width = length;
+            }
+        }
+        return authority;
+    }
+
+    /**
+     * Adds an identifier for the given authority.
+     */
+    private void addIdentifier(final String authority, final Object identifier) {
+        Set<Object> ids = identifiers.get(authority);
+        if (ids == null) {
+            ids = new LinkedHashSet<Object>(8);
+            identifiers.put(authority, ids);
+        }
+        ids.add(identifier);
     }
 
     /**
@@ -199,7 +200,7 @@ final class ParameterTableRow {
             final boolean colorsForRows, final String lineSeparator) throws IOException
     {
         boolean continuing = false;
-        for (final Map.Entry<String,Object> entry : identifiers.entrySet()) {
+        for (final Map.Entry<String,Set<Object>> entry : identifiers.entrySet()) {
             if (continuing) {
                 out.write(lineSeparator);
             }
@@ -216,44 +217,40 @@ final class ParameterTableRow {
             }
             out.write(spaces(length));
             write(out, BOLD, colorsForTitle);
-            final Object identifier = entry.getValue();
-            if (identifier instanceof String[]) {
-                final String[] ids = (String[]) identifier;
-                out.write(ids[0]);
-                write(out, RESET, colorsForTitle);
-                for (int i=1; i<ids.length; i++) {
-                    final String id = ids[i];
-                    out.write(i == 1 ? " (" : ", ");
-                    final X364 color, normal;
-                    if (isNumeric(id)) {
-                        color  = FOREGROUND_YELLOW;
-                        normal = FOREGROUND_DEFAULT;
-                    } else {
-                        color  = FAINT;
-                        normal = NORMAL;
-                    }
-                    write(out, color, colorsForTitle);
-                    out.write(id);
-                    write(out, normal, colorsForTitle);
+            final Iterator<Object> it = entry.getValue().iterator();
+            out.write(toString(it.next()));
+            write(out, RESET, colorsForTitle);
+            boolean hasMore = false;
+            while (it.hasNext()) {
+                out.write(hasMore ? ", " : " (");
+                final Object id = it.next();
+                final X364 color, normal;
+                if (id instanceof Identifier) {
+                    color  = FOREGROUND_YELLOW;
+                    normal = FOREGROUND_DEFAULT;
+                } else {
+                    color  = FAINT;
+                    normal = NORMAL;
                 }
+                write(out, color, colorsForTitle);
+                out.write(toString(id));
+                write(out, normal, colorsForTitle);
+                hasMore = true;
+            }
+            if (hasMore) {
                 out.write(')');
-            } else {
-                out.write(identifier.toString());
             }
             write(out, RESET, colorsForTitle);
         }
     }
 
     /**
-     * Returns {@code true} if the given value is likely to be an EPSG code.
+     * Returns the string representation of the given parameter name.
      */
-    static boolean isNumeric(final String value) {
-        for (int i=value.length(); --i>=0;) {
-            final char c = value.charAt(i);
-            if (c < '0' || c > '9') {
-                return false;
-            }
+    private static String toString(Object parameter) {
+        if (parameter instanceof Identifier) {
+            parameter = ((Identifier) parameter).getCode();
         }
-        return true;
+        return parameter.toString();
     }
 }

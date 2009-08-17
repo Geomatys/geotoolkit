@@ -64,6 +64,8 @@ import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 
+import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
+
 
 /**
  * Low level factory for creating {@linkplain MathTransform math transforms}. Many high
@@ -93,8 +95,8 @@ import org.geotoolkit.util.XArrays;
  * is not necessary or desirable for a math transform object to keep information on its source
  * and target coordinate systems.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 1.2
  * @module
@@ -266,6 +268,25 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             provider = providers[i];
             if (provider.nameMatches(method)) {
                 return lastProvider = provider;
+            }
+        }
+        /*
+         * No matching name found. If the given method is of the form EPSG:9624, searchs among the
+         * identifiers. This is not the usual way to use this class (we rather use the names), but
+         * this approach is provided as a convenience and for backward compatibility.
+         */
+        for (int s=method.indexOf(DEFAULT_SEPARATOR); s>=0; s=method.indexOf(DEFAULT_SEPARATOR, s)) {
+            final String codespace = method.substring(0, s).trim();
+            final String code = method.substring(++s).trim();
+            provider = lastProvider;
+            if (provider!=null && provider.identifierMatches(codespace, code)) {
+                return provider;
+            }
+            for (int i=0; i<providers.length; i++) {
+                provider = providers[i];
+                if (provider.identifierMatches(codespace, code)) {
+                    return lastProvider = provider;
+                }
             }
         }
         throw new NoSuchIdentifierException(Errors.format(

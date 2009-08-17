@@ -33,6 +33,7 @@ import javax.measure.unit.UnitFormat;
 import org.opengis.parameter.*;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.OperationMethod;
 
 import org.geotoolkit.io.X364;
@@ -44,7 +45,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.Utilities.hashMapCapacity;
-import static org.geotoolkit.parameter.ParameterTableRow.isNumeric;
 
 
 /**
@@ -54,7 +54,7 @@ import static org.geotoolkit.parameter.ParameterTableRow.isNumeric;
  * drawing box characters (e.g. unicode).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -480,6 +480,7 @@ header: for (int i=0; ; i++) {
             String epsgName = null;
             String[] row = new String[header.size()];
             row[showEpsgCodes] = element.getName().getCode();
+            int numUnscoped = 0;
             final Collection<GenericName> aliases = element.getAlias();
             if (aliases != null) {
                 /*
@@ -487,7 +488,6 @@ header: for (int i=0; ; i++) {
                  * appropriate for its scope. If a name has no scope, we will create one using
                  * sequential number ("numUnscoped" is the count of such names without scope).
                  */
-                int numUnscoped = 0;
                 for (final GenericName alias : aliases) {
                     final GenericName scope = alias.scope().name();
                     final String name = alias.tip().toInternationalString().toString(locale);
@@ -497,39 +497,45 @@ header: for (int i=0; ; i++) {
                     } else {
                         columnName = ++numUnscoped;
                     }
-                    final boolean isEpsg = columnName.equals("EPSG");
-                    final boolean isEpsgCode = isEpsg && isNumeric(name);
-                    if (isEpsg && !isEpsgCode) {
+                    if (columnName.equals("EPSG")) {
                         epsgName = name;
                     }
-                    int columnIndex;
-                    if (showEpsgCodes != 0 && isEpsgCode) {
-                        columnIndex = 0;
-                    } else {
-                        if (scopes!=null && !scopes.contains(scope.toString())) {
-                            /*
-                             * The user requested only for a few authorities and the current alias
-                             * is not a member of this subset. Continue the search to other alias.
-                             */
-                            continue;
-                        }
-                        Integer position = header.get(columnName);
-                        if (position == null) {
-                            position = header.size();
-                            header.put(columnName, position);
-                        }
-                        columnIndex = position.intValue();
+                    if (scopes!=null && !scopes.contains(scope.toString())) {
+                        /*
+                         * The user requested only for a few authorities and the current alias
+                         * is not a member of this subset. Continue the search to other alias.
+                         */
+                        continue;
                     }
                     /*
                      * Now stores the alias name at the position we just determined above. If
                      * more than one value are assigned to the same column, keep the first one.
                      */
-                    if (columnIndex >= row.length) {
-                        row = Arrays.copyOf(row, columnIndex+1);
+                    row = putIfAbsent(row, getColumnIndex(header, columnName), name);
+                }
+            }
+            /*
+             * After the aliases, search for the identifiers. The code in this block is similar
+             * to the one we just did for aliases. By doing this operation after the aliases we
+             * ensure that if both an identifier and a name is defined for the same column, the
+             * name is given precedence.
+             */
+            final Collection<ReferenceIdentifier> identifiers = element.getIdentifiers();
+            if (identifiers != null) {
+                for (final ReferenceIdentifier identifier : identifiers) {
+                    final String scope = identifier.getCodeSpace();
+                    final String name = identifier.getCode();
+                    final Object columnName = (scope != null) ? scope : ++numUnscoped;
+                    int columnIndex;
+                    if (showEpsgCodes != 0 && columnName.equals("EPSG")) {
+                        columnIndex = 0;
+                    } else {
+                        if (scopes!=null && !scopes.contains(scope)) {
+                            continue;
+                        }
+                        columnIndex = getColumnIndex(header, columnName);
                     }
-                    if (row[columnIndex] == null) {
-                        row[columnIndex] = name;
-                    }
+                    row = putIfAbsent(row, columnIndex, name);
                 }
             }
             rows.add(row);
@@ -602,6 +608,33 @@ header: for (int i=0; ; i++) {
             table.writeHorizontalSeparator();
             table.flush();
         }
+    }
+
+    /**
+     * Returns the index of the column of the given name. If no such column
+     * exists, then a new column is appended at the right of the table.
+     */
+    private static int getColumnIndex(final Map<Object,Integer> header, final Object columnName) {
+        Integer position = header.get(columnName);
+        if (position == null) {
+            position = header.size();
+            header.put(columnName, position);
+        }
+        return position;
+    }
+
+    /**
+     * Stores a value at the given position in the given row, expanding the array if needed.
+     * This operation is performed only if no value already exists at the given index.
+     */
+    private static String[] putIfAbsent(String[] row, final int columnIndex, final String name) {
+        if (columnIndex >= row.length) {
+            row = Arrays.copyOf(row, columnIndex+1);
+        }
+        if (row[columnIndex] == null) {
+            row[columnIndex] = name;
+        }
+        return row;
     }
 
     /**

@@ -639,7 +639,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Returns an identifier according the given authority. This method first checks all
+     * Returns an identifier according the given authority. This method checks all
      * {@linkplain #getIdentifiers identifiers} in their iteration order. It returns the first
      * identifier with an {@linkplain ReferenceIdentifier#getAuthority authority} citation
      * {@linkplain Citations#identifierMatches(Citation,Citation) matching} the specified
