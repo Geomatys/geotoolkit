@@ -20,23 +20,38 @@
  */
 package org.geotoolkit.referencing;
 
+import java.util.Map;
+import java.util.Collection;
+import java.util.logging.Level;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.resources.Errors;
+
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
+import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 
 
 /**
- * An identification of a CRS object.
+ * An identification of a {@link org.opengis.referencing.crs.CoordinateReferenceSystem} object.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -58,7 +73,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
-    String code;
+    final String code;
 
     /**
      * Name or identifier of the person or organization responsible for namespace.
@@ -68,7 +83,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
-    String codespace;
+    final String codespace;
 
     /**
      * Organization or party responsible for definition and maintenance of the code space or code.
@@ -77,44 +92,359 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(CitationAdapter.class)
-    Citation authority;
+    final Citation authority;
+
+    /**
+     * Identifier of the version of the associated code space or code, as specified
+     * by the code space or code authority. This version is included only when the
+     * {@linkplain #getCode code} uses versions. When appropriate, the edition is
+     * identified by the effective date, coded using ISO 8601 date format.
+     *
+     * @see #getVersion
+     */
+    private final String version;
+
+    /**
+     * Comments on or information about this identifier, or {@code null} if none.
+     *
+     * @see #getRemarks
+     */
+    private final InternationalString remarks;
 
     /**
      * Empty constructor for JAXB.
      */
-    DefaultReferenceIdentifier() {
+    private DefaultReferenceIdentifier() {
+        code      = null;
+        codespace = null;
+        authority = null;
+        version   = null;
+        remarks   = null;
     }
 
     /**
-     * Creates a new identifier from the specified one.
+     * Creates a new identifier from the specified one. This is a copy constructor
+     * which will get the code, codespace, authority, version and (if available)
+     * the remarks from the given identifier.
      *
      * @param identifier The identifier to copy.
      */
     public DefaultReferenceIdentifier(final ReferenceIdentifier identifier) {
+        ensureNonNull("identifier", identifier);
         code      = identifier.getCode();
         codespace = identifier.getCodeSpace();
         authority = identifier.getAuthority();
+        version   = identifier.getVersion();
+        if (identifier instanceof DefaultReferenceIdentifier) {
+            final DefaultReferenceIdentifier df = (DefaultReferenceIdentifier) identifier;
+            remarks = df.getRemarks();
+        } else {
+            remarks = null;
+        }
     }
 
     /**
      * Creates a new identifier from the specified code and authority.
      *
      * @param authority
-     *          Organization or party responsible for definition and maintenance of the code space or code.
+     *          Organization or party responsible for definition and maintenance of the code
+     *          space or code.
      * @param codespace
      *          Name or identifier of the person or organization responsible for namespace.
      *          This is often an abreviation of the authority name.
      * @param code
-     *          Identifier code or name, optionally from a controlled list or pattern defined by a code space.
+     *          Identifier code or name, optionally from a controlled list or pattern defined by
+     *          a code space. The code can not be null.
      */
     public DefaultReferenceIdentifier(final Citation authority, final String codespace, final String code) {
+        ensureNonNull("code", code);
         this.code      = code;
         this.codespace = codespace;
         this.authority = authority;
+        this.version   = null;
+        this.remarks   = null;
     }
 
     /**
-     * Returns the identifier code or name.
+     * Constructs an identifier from a set of properties. Keys are strings from the table below.
+     * Keys are case-insensitive, and leading and trailing spaces are ignored. The map given in
+     * argument shall contains at least a {@code "code"} property. Other properties listed in
+     * the table below are optional.
+     * <p>
+     * <table border='1'>
+     *   <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+     *     <th nowrap>Property name</th>
+     *     <th nowrap>Value type</th>
+     *     <th nowrap>Value given to</th>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@value org.opengis.metadata.Identifier#CODE_KEY}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getCode}</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@value org.opengis.referencing.ReferenceIdentifier#CODESPACE_KEY}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getCodeSpace}</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@value org.opengis.metadata.Identifier#AUTHORITY_KEY}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link String} or {@link Citation}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getAuthority}</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@value org.opengis.referencing.ReferenceIdentifier#VERSION_KEY}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getVersion}</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@value org.opengis.referencing.IdentifiedObject#REMARKS_KEY}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link String} or {@link InternationalString}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getRemarks}</td>
+     *   </tr>
+     * </table>
+     * <p>
+     * {@code "remarks"} is a localizable attributes which may have a language and country
+     * code suffix. For example the {@code "remarks_fr"} property stands for remarks in
+     * {@linkplain Locale#FRENCH French} and the {@code "remarks_fr_CA"} property stands
+     * for remarks in {@linkplain Locale#CANADA_FRENCH French Canadian}.
+     *
+     * @param  properties The properties to be given to this identifier.
+     * @throws InvalidParameterValueException if a property has an invalid value.
+     * @throws IllegalArgumentException if a property is invalid for some other reason.
+     */
+    public DefaultReferenceIdentifier(final Map<String,?> properties) throws IllegalArgumentException {
+        this(properties, true);
+    }
+
+    /**
+     * Implementation of the constructor. The remarks in the {@code properties} map will be
+     * parsed only if the {@code standalone} argument is set to {@code true}, i.e. this
+     * identifier is being constructed as a standalone object. If {@code false}, then this
+     * identifier is assumed to be constructed from inside the {@link AbstractIdentifiedObject}
+     * constructor.
+     *
+     * @param  properties The properties to parse, as described in the public constructor.
+     * @param  standalone {@code true} for parsing "remarks" as well.
+     * @throws InvalidParameterValueException if a property has an invalid value.
+     * @throws IllegalArgumentException if a property is invalid for some other reason.
+     */
+    DefaultReferenceIdentifier(final Map<String,?> properties, final boolean standalone)
+            throws IllegalArgumentException
+    {
+        ensureNonNull("properties", properties);
+        Object code      = null;
+        Object codespace = null;
+        Object version   = null;
+        Object authority = null;
+        Object remarks   = null;
+        DefaultInternationalString localized = null;
+        /*
+         * Iterates through each map entry. This have two purposes:
+         *
+         *   1) Ignore case (a call to properties.get("foo") can't do that)
+         *   2) Find localized remarks.
+         *
+         * This algorithm is sub-optimal if the map contains a lot of entries of no interest to
+         * this identifier. Hopefully, most users will fill a map with only usefull entries.
+         */
+        String key   = null;
+        Object value = null;
+        for (final Map.Entry<String,?> entry : properties.entrySet()) {
+            key   = entry.getKey().trim().toLowerCase();
+            value = entry.getValue();
+            /*
+             * Note: String.hashCode() is part of J2SE specification,
+             *       so it should not change across implementations.
+             */
+            switch (key.hashCode()) {
+                case 3373707: {
+                    if (!standalone && key.equals(NAME_KEY)) {
+                        code = value;
+                        continue;
+                    }
+                    break;
+                }
+                case 3059181: {
+                    if (key.equals(CODE_KEY)) {
+                        code = value;
+                        continue;
+                    }
+                    break;
+                }
+                case -1108676807: {
+                    if (key.equals(CODESPACE_KEY)) {
+                        codespace = value;
+                        continue;
+                    }
+                    break;
+
+                }
+                case 351608024: {
+                    if (key.equals(VERSION_KEY)) {
+                        version = value;
+                        continue;
+                    }
+                    break;
+                }
+                case 1475610435: {
+                    if (key.equals(AUTHORITY_KEY)) {
+                        if (value instanceof String) {
+                            value = Citations.fromName(value.toString());
+                        }
+                        authority = value;
+                        continue;
+                    }
+                    break;
+                }
+                case 1091415283: {
+                    if (standalone && key.equals(REMARKS_KEY)) {
+                        if (value instanceof InternationalString) {
+                            remarks = value;
+                            continue;
+                        }
+                    }
+                    break;
+                }
+            }
+            /*
+             * Searches for additional locales (e.g. "remarks_fr").
+             */
+            if (standalone && value instanceof String) {
+                if (localized == null) {
+                    if (remarks instanceof DefaultInternationalString) {
+                        localized = (DefaultInternationalString) remarks;
+                    } else {
+                        localized = new DefaultInternationalString();
+                    }
+                }
+                localized.add(REMARKS_KEY, key, value.toString());
+            }
+        }
+        /*
+         * Gets the localized remarks, if it was not yet set. If a user specified remarks
+         * both as InternationalString and as String for some locales (which is a weird
+         * usage...), then current implementation discarts the later with a warning.
+         */
+        if (localized!=null && !localized.getLocales().isEmpty()) {
+            if (remarks == null) {
+                remarks = localized;
+            } else {
+                Logging.log(DefaultReferenceIdentifier.class,
+                    Loggings.format(Level.WARNING, Loggings.Keys.LOCALES_DISCARTED));
+            }
+        }
+        /*
+         * Completes the code space if it was not explicitly set. We take the first
+         * identifier if there is any, otherwise we take the shortest title.
+         */
+        if (codespace == null && authority instanceof Citation) {
+            codespace = getCodeSpace((Citation) authority);
+        }
+        /*
+         * Stores the definitive reference to the attributes. Note that casts are performed only
+         * there (not before). This is a wanted feature, since we want to catch ClassCastExceptions
+         * are rethrown them as more informative exceptions.
+         */
+        try {
+            key=      CODE_KEY; this.code      = (String)              (value = code);
+            key=   VERSION_KEY; this.version   = (String)              (value = version);
+            key= CODESPACE_KEY; this.codespace = (String)              (value = codespace);
+            key= AUTHORITY_KEY; this.authority = (Citation)            (value = authority);
+            key=   REMARKS_KEY; this.remarks   = (InternationalString) (value = remarks);
+        } catch (ClassCastException exception) {
+            InvalidParameterValueException e = new InvalidParameterValueException(
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, key, value), key, value);
+            e.initCause(exception);
+            throw e;
+        }
+        ensureNonNull(CODE_KEY, code);
+    }
+
+    /**
+     * Makes sure an argument is non-null. This is method duplicates
+     * {@link AbstractIdentifiedObject#ensureNonNull(String, Object)}
+     * except for the more accurate stack trace. It is duplicated there
+     * in order to avoid a dependency to {@link AbstractIdentifiedObject}.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws NullArgumentException if {@code object} is null.
+     */
+    private static void ensureNonNull(final String name, final Object object)
+            throws NullArgumentException
+    {
+        if (object == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
+    }
+
+    /**
+     * Returns the shortest title inferred from the specified authority.
+     * This is used both for creating a generic name, or for inferring a
+     * default identifier code space.
+     */
+    static InternationalString getShortestTitle(final Citation authority) {
+        InternationalString title = authority.getTitle();
+        int length = title.length();
+        final Collection<? extends InternationalString> alt = authority.getAlternateTitles();
+        if (alt != null) {
+            for (final InternationalString candidate : alt) {
+                final int candidateLength = candidate.length();
+                if (candidateLength > 0 && candidateLength < length) {
+                    title = candidate;
+                    length = candidateLength;
+                }
+            }
+        }
+        return title;
+    }
+
+    /**
+     * Tries to get a codespace from the specified authority. This method scans first
+     * through the identifier, then through the titles if no suitable identifier were found.
+     */
+    private static String getCodeSpace(final Citation authority) {
+        final Collection<? extends Identifier> identifiers = authority.getIdentifiers();
+        if (identifiers != null) {
+            for (final Identifier id : identifiers) {
+                final String identifier = id.getCode();
+                if (isValidCodeSpace(identifier)) {
+                    return identifier;
+                }
+            }
+        }
+        // The "null" locale argument is required for getting the unlocalized version.
+        final String title = getShortestTitle(authority).toString(null);
+        if (isValidCodeSpace(title)) {
+            return title;
+        }
+        return null;
+    }
+
+    /**
+     * Returns {@code true} if the specified string looks like a valid code space.
+     * This method, together with {@link #getShortestTitle}, uses somewhat heuristic
+     * rules that may change in future Geotoolkit versions.
+     */
+    private static boolean isValidCodeSpace(final String codespace) {
+        if (codespace == null) {
+            return false;
+        }
+        for (int i=codespace.length(); --i>=0;) {
+            if (!Character.isJavaIdentifierPart(codespace.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Identifier code or name, optionally from a controlled list or pattern.
+     *
+     * @return The code, never {@code null}.
+     *
+     * @see NamedIdentifier#tip
      */
     @Override
     public String getCode() {
@@ -122,7 +452,12 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     }
 
     /**
-     * Returns the identifier codespace.
+     * Name or identifier of the person or organization responsible for namespace.
+     *
+     * @return The codespace, or {@code null} if not available.
+     *
+     * @see NamedIdentifier#head
+     * @see NamedIdentifier#scope
      */
     @Override
     public String getCodeSpace() {
@@ -130,7 +465,12 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     }
 
     /**
-     * Returns the authority.
+     * Organization or party responsible for definition and maintenance of the
+     * {@linkplain #getCode code}.
+     *
+     * @return The authority, or {@code null} if not available.
+     *
+     * @see Citations#EPSG
      */
     @Override
     public Citation getAuthority() {
@@ -138,12 +478,25 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     }
 
     /**
-     * Returns {@code null} by default, since this attribute is not part of the standard
-     * XML schema. Note that the {@link NamedIdentifier} subclass overrides this method.
+     * Identifier of the version of the associated code space or code, as specified by the
+     * code authority. This version is included only when the {@linkplain #getCode code}
+     * uses versions. When appropriate, the edition is identified by the effective date,
+     * coded using ISO 8601 date format.
+     *
+     * @return The version, or {@code null} if not available.
      */
     @Override
     public String getVersion() {
-        return null;
+        return version;
+    }
+
+    /**
+     * Comments on or information about this identifier, or {@code null} if none.
+     *
+     * @return Optional comments about this identifier.
+     */
+    public InternationalString getRemarks() {
+        return remarks;
     }
 
     /**
@@ -151,7 +504,14 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(code, Utilities.hash(codespace, Utilities.hash(authority, 0)));
+        int hash = (int) serialVersionUID;
+        if (code != null) {
+            hash ^= code.hashCode();
+        }
+        if (codespace != null) {
+            hash = hash*31 + codespace.hashCode();
+        }
+        return hash;
     }
 
     /**
@@ -167,9 +527,11 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         }
         if (object!=null && object.getClass().equals(getClass())) {
             final DefaultReferenceIdentifier that = (DefaultReferenceIdentifier) object;
-            return Utilities.equals(code,      that.code) &&
+            return Utilities.equals(code,      that.code)      &&
                    Utilities.equals(codespace, that.codespace) &&
-                   Utilities.equals(authority, that.authority);
+                   Utilities.equals(authority, that.authority) &&
+                   Utilities.equals(version,   that.version)   &&
+                   Utilities.equals(remarks,   that.remarks);
         }
         return false;
     }
