@@ -173,7 +173,7 @@ public class DefaultPortrayalService implements PortrayalService{
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, Hints hints) throws PortrayalException{
         return portray(context,contextEnv,start,end,canvasDimension,
-                strechImage,azimuth,monitor,background,hints,null);
+                strechImage,azimuth,monitor,background,hints,new PortrayalExtension[0]);
     }
 
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
