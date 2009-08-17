@@ -157,12 +157,37 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *          a code space. The code can not be null.
      */
     public DefaultReferenceIdentifier(final Citation authority, final String codespace, final String code) {
+        this(authority, codespace, code, null, null);
+    }
+
+    /**
+     * Creates a new identifier from the specified code and authority, with an optional
+     * version number and remarks.
+     *
+     * @param authority
+     *          Organization or party responsible for definition and maintenance of the code
+     *          space or code.
+     * @param codespace
+     *          Name or identifier of the person or organization responsible for namespace.
+     *          This is often an abreviation of the authority name.
+     * @param code
+     *          Identifier code or name, optionally from a controlled list or pattern defined by
+     *          a code space. The code can not be null.
+     * @param version
+     *          The version of the associated code space or code as specified by the code authority,
+     *          or {@code null} if none.
+     * @param remarks
+     *          Comments on or information about this identifier, or {@code null} if none.
+     */
+    public DefaultReferenceIdentifier(final Citation authority, final String codespace, final String code,
+            final String version, final InternationalString remarks)
+    {
         ensureNonNull("code", code);
         this.code      = code;
         this.codespace = codespace;
         this.authority = authority;
-        this.version   = null;
-        this.remarks   = null;
+        this.version   = version;
+        this.remarks   = remarks;
     }
 
     /**
@@ -497,6 +522,18 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     public InternationalString getRemarks() {
         return remarks;
+    }
+
+    /**
+     * Returns {@code true} if the object represented by this identifier is deprecated. In such
+     * case, the {@linkplain #getRemarks remarks} may contains the new identifier to use.
+     * <p>
+     * The default implementation returns {@code false} in all cases.
+     *
+     * @return {@code true} if this code is deprecated.
+     */
+    public boolean isDeprecated() {
+        return false;
     }
 
     /**

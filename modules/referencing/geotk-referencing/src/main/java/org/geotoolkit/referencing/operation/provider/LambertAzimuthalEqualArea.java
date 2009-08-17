@@ -21,6 +21,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -104,12 +105,13 @@ public class LambertAzimuthalEqualArea extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Lambert_Azimuthal_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area"),
-            new NamedIdentifier(Citations.EPSG,    "9820"),
+            new IdentifierCode (Citations.EPSG,     9820),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
-            new NamedIdentifier(Citations.GEOTIFF, "10"),
+            new IdentifierCode (Citations.GEOTIFF,  10),
         },  new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                 LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
@@ -191,9 +193,10 @@ public class LambertAzimuthalEqualArea extends MapProjection {
         /**
          * The parameters group.
          */
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Lambert Azimuthal Equal Area (Spherical)"),
-                new NamedIdentifier(Citations.EPSG, "9821"),
+                new IdentifierCode (Citations.EPSG,  9821),
             },  new ParameterDescriptor<?>[] {
                     SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                     LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

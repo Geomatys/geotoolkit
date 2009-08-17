@@ -21,6 +21,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -82,12 +83,13 @@ public class PolarStereographic extends Stereographic {
      * The parameters group.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "Polar_Stereographic"),
             new NamedIdentifier(Citations.EPSG,     "Polar Stereographic (variant A)"),
-            new NamedIdentifier(Citations.EPSG,     "9810"),
+            new IdentifierCode (Citations.EPSG,      9810),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_PolarStereographic"),
-            new NamedIdentifier(Citations.GEOTIFF,  "15"),
+            new IdentifierCode (Citations.GEOTIFF,   15),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
@@ -123,7 +125,7 @@ public class PolarStereographic extends Stereographic {
 
 
     /**
-     * The provider for <cite>Polar Stereographic (Variant B)</cite> projection (EPSG:9829).
+     * The provider for "<cite>Polar Stereographic (Variant B)</cite>" projection (EPSG:9829).
      * This provider includes a {@code "Standard_Parallel_1"} parameter and determines
      * the hemisphere of the projection from the {@code Standard_Parallel_1} value.
      *
@@ -166,9 +168,9 @@ public class PolarStereographic extends Stereographic {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
-                new NamedIdentifier(Citations.EPSG, "9829"),
+                new IdentifierCode (Citations.EPSG,  9829),
                 sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
             }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
@@ -188,7 +190,7 @@ public class PolarStereographic extends Stereographic {
 
 
     /**
-     * The provider for a <cite>North Polar Stereographic</cite> projection. This provider sets the
+     * The provider for "<cite>North Polar Stereographic</cite>" projection. This provider sets the
      * {@linkplain PolarStereographic#LATITUDE_OF_ORIGIN latitude of origin} parameter to 90&deg;N.
      *
      * @author Rueben Schulz (UBC)
@@ -239,7 +241,7 @@ public class PolarStereographic extends Stereographic {
 
 
     /**
-     * The Provider for <cite>South Polar Stereographic</cite> projection. This provider sets the
+     * The Provider for "<cite>South Polar Stereographic</cite>" projection. This provider sets the
      * {@linkplain PolarStereographic#LATITUDE_OF_ORIGIN latitude of origin} parameter to 90&deg;S.
      *
      * @author Rueben Schulz (UBC)

@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -67,9 +68,9 @@ public class LongitudeRotation extends MathTransformProvider {
      * The parameters group.
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
-            new NamedIdentifier[] {
+            new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Longitude rotation"),
-                new NamedIdentifier(Citations.EPSG, "9601")
+                new IdentifierCode (Citations.EPSG,  9601)
             }, new ParameterDescriptor<?>[] {
                 OFFSET
             });

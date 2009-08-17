@@ -21,6 +21,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -105,13 +106,14 @@ public class CassiniSoldner extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Cassini_Soldner"),
-            new NamedIdentifier(Citations.EPSG,     "Cassini-Soldner"),
-            new NamedIdentifier(Citations.EPSG,     "9806"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_CassiniSoldner"),
-            new NamedIdentifier(Citations.GEOTIFF,  "18"),
-            new NamedIdentifier(Citations.ESRI,     "Cassini"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Cassini_Soldner"),
+            new NamedIdentifier(Citations.EPSG,    "Cassini-Soldner"),
+            new IdentifierCode (Citations.EPSG,     9806),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_CassiniSoldner"),
+            new IdentifierCode (Citations.GEOTIFF,  18),
+            new NamedIdentifier(Citations.ESRI,    "Cassini"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CASSINI_SOLDNER_PROJECTION))
         }, new ParameterDescriptor<?>[] {

@@ -93,7 +93,7 @@ public final class Recolor extends IndexColorOperation {
      */
     public Recolor() {
         super(new DefaultParameterDescriptorGroup(Citations.GEOTOOLKIT, "Recolor",
-                new ParameterDescriptor[] { SOURCE_0, COLOR_MAPS }));
+                new ParameterDescriptor<?>[] { SOURCE_0, COLOR_MAPS }));
     }
 
     /**

@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.provider;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
@@ -52,15 +53,15 @@ public class GeocentricTranslation extends PositionVector7Param {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-            new NamedIdentifier[] {
-                new NamedIdentifier(Citations.EPSG, "Geocentric translations"),
-                new NamedIdentifier(Citations.EPSG, "9603")
-            }, new ParameterDescriptor<?>[] {
-                DX, DY, DZ,
-                SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
-                TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
-                SRC_DIM, TGT_DIM
-            });
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.EPSG, "Geocentric translations"),
+            new IdentifierCode (Citations.EPSG,  9603)
+        }, new ParameterDescriptor<?>[] {
+            DX, DY, DZ,
+            SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
+            TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
+            SRC_DIM, TGT_DIM
+        });
 
     /**
      * Constructs the provider.

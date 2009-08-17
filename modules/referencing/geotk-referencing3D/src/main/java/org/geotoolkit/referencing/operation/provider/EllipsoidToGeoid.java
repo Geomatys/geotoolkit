@@ -41,7 +41,7 @@ import static org.geotoolkit.referencing.operation.transform.EarthGravitationalM
 
 
 /**
- * The provider for a "<cite>Ellipsoid to Geoid</cite>" vertical tranformation.
+ * The provider for "<cite>Ellipsoid to Geoid</cite>" vertical tranformation.
  * This tranformation uses a Earth Gravitational Model.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

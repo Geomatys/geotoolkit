@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.PlanarProjection;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -120,13 +121,14 @@ public class Orthographic extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Orthographic"),
-            new NamedIdentifier(Citations.ESRI,     "Orthographic"),
-            new NamedIdentifier(Citations.EPSG,     "Orthographic"),
-            new NamedIdentifier(Citations.EPSG,     "9840"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_Orthographic"),
-            new NamedIdentifier(Citations.GEOTIFF,  "21"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Orthographic"),
+            new NamedIdentifier(Citations.ESRI,    "Orthographic"),
+            new NamedIdentifier(Citations.EPSG,    "Orthographic"),
+            new IdentifierCode (Citations.EPSG,     9840),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_Orthographic"),
+            new IdentifierCode (Citations.GEOTIFF,  21),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ORTHOGRAPHIC_PROJECTION))
         }, new ParameterDescriptor<?>[] {

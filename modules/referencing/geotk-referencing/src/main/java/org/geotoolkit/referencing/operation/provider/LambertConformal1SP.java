@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -107,17 +108,18 @@ public class LambertConformal1SP extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
             /*
              * IMPORTANT:  Do not put any name that could be confused with the 2SP or
              * Belgium cases below, except for the Citations.GEOTOOLKIT authority which
              * is ignored. The LambertConformal constructor relies on those names for
              * distinguish the kind of projection being created.
              */
-            new NamedIdentifier(Citations.OGC,      "Lambert_Conformal_Conic_1SP"),
-            new NamedIdentifier(Citations.EPSG,     "Lambert Conic Conformal (1SP)"),
-            new NamedIdentifier(Citations.EPSG,     "9801"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_LambertConfConic_1SP"),
+            new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_1SP"),
+            new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (1SP)"),
+            new IdentifierCode (Citations.EPSG,     9801),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_1SP"),
             // Note: the GeoTIFF numerical code (9) is already used by the 2SP case.
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.LAMBERT_CONFORMAL_PROJECTION))

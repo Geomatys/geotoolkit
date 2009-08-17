@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -144,14 +145,15 @@ public class AlbersEqualArea extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Albers_Conic_Equal_Area"),
-            new NamedIdentifier(Citations.EPSG,     "Albers Equal Area"),
-            new NamedIdentifier(Citations.EPSG,     "9822"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_AlbersEqualArea"),
-            new NamedIdentifier(Citations.GEOTIFF,  "11"),
-            new NamedIdentifier(Citations.ESRI,     "Albers"),
-            new NamedIdentifier(Citations.ESRI,     "Albers_Equal_Area_Conic"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Albers_Conic_Equal_Area"),
+            new NamedIdentifier(Citations.EPSG,    "Albers Equal Area"),
+            new IdentifierCode (Citations.EPSG,     9822),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
+            new IdentifierCode (Citations.GEOTIFF,  11),
+            new NamedIdentifier(Citations.ESRI,    "Albers"),
+            new NamedIdentifier(Citations.ESRI,    "Albers_Equal_Area_Conic"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))
         }, new ParameterDescriptor<?>[] {

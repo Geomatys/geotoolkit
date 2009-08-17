@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -144,12 +145,13 @@ public class Krovak extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,     "Krovak"),
-            new NamedIdentifier(Citations.GEOTIFF, "Krovak"),
-            new NamedIdentifier(Citations.EPSG,    "Krovak Oblique Conformal Conic"),
-            new NamedIdentifier(Citations.EPSG,    "Krovak Oblique Conic Conformal"),
-            new NamedIdentifier(Citations.EPSG,    "9819"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,        "Krovak"),
+            new NamedIdentifier(Citations.GEOTIFF,    "Krovak"),
+            new NamedIdentifier(Citations.GEOTOOLKIT, "Krovak Oblique Conformal Conic"),
+            new NamedIdentifier(Citations.EPSG,       "Krovak Oblique Conic Conformal"),
+            new IdentifierCode (Citations.EPSG,        9819),
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

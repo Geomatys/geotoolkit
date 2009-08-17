@@ -45,7 +45,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS =
-            createDescriptorGroup("Coordinate Frame rotation", "9607");
+            createDescriptorGroup("Coordinate Frame rotation", 9607);
 
     /**
      * Constructs the provider.

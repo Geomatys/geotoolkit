@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -147,13 +148,14 @@ public class NewZealandMapGrid extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-                    new NamedIdentifier(Citations.OGC,     "New_Zealand_Map_Grid"),
-                    new NamedIdentifier(Citations.EPSG,    "New Zealand Map Grid"),
-                    new NamedIdentifier(Citations.EPSG,    "9811"),
-                    new NamedIdentifier(Citations.GEOTIFF, "CT_NewZealandMapGrid"),
-                    new NamedIdentifier(Citations.GEOTIFF, "26")
-        }, new ParameterDescriptor[] {
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "New_Zealand_Map_Grid"),
+            new NamedIdentifier(Citations.EPSG,    "New Zealand Map Grid"),
+            new IdentifierCode (Citations.EPSG,     9811),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_NewZealandMapGrid"),
+            new IdentifierCode (Citations.GEOTIFF,  26)
+        }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING

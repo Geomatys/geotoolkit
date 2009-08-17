@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -49,10 +50,13 @@ public class PlateCarree extends EquidistantCylindrical {
      * in the comment attached to the Equidistant Cylindrical case.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,  "Equirectangular"),
             new NamedIdentifier(Citations.ESRI, "Plate_Carree"),
-            new NamedIdentifier(Citations.EPSG, "Plate Carrée")
+            new NamedIdentifier(Citations.EPSG, "Pseudo Plate Carree"),
+            new IdentifierCode (Citations.EPSG,  9825),
+            new NamedIdentifier(Citations.GEOTOOLKIT, "Plate Carrée")
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,       SEMI_MINOR,
             ROLL_LONGITUDE,   CENTRAL_MERIDIAN,

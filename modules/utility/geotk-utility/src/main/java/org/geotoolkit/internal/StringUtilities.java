@@ -29,7 +29,7 @@ import org.geotoolkit.util.XArrays;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -40,6 +40,25 @@ public final class StringUtilities {
      * Do not allow instantiation of this class.
      */
     private StringUtilities() {
+    }
+
+    /**
+     * Counts the number of occurence of the given character.
+     *
+     * @param  text The text in which to count the number of occurence.
+     * @param  c The character to count.
+     * @return The number of occurences of the given character.
+     *
+     * @since 3.03
+     */
+    public static int count(final CharSequence text, final char c) {
+        int n = 0;
+        for (int i=text.length(); --i>=0;) {
+            if (text.charAt(i) == c) {
+                n++;
+            }
+        }
+        return n;
     }
 
     /**

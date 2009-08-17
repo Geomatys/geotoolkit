@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.LambertConformal;
@@ -139,13 +140,14 @@ public class LambertConformal2SP extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Lambert_Conformal_Conic_2SP"),
-            new NamedIdentifier(Citations.EPSG,     "Lambert Conic Conformal (2SP)"),
-            new NamedIdentifier(Citations.EPSG,     "9802"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_LambertConfConic_2SP"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_LambertConfConic"),
-            new NamedIdentifier(Citations.GEOTIFF,  "9"), // The same code is used for 1SP.
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_2SP"),
+            new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (2SP)"),
+            new IdentifierCode (Citations.EPSG,     9802),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_2SP"),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic"),
+            new IdentifierCode (Citations.GEOTIFF,  9), // The same code is used for 1SP.
                      sameNameAs(Citations.GEOTOOLKIT, LambertConformal1SP.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR,
@@ -213,16 +215,17 @@ public class LambertConformal2SP extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
                 /*
                  * IMPORTANT: Do not put any name that could be confused with the 1SP or
                  * 2SP cases below, except for the Citations.GEOTOOLKIT authority which is
                  * ignored. The LambertConformal constructor relies on those names for
                  * distinguish the kind of projection being created.
                  */
-                new NamedIdentifier(Citations.OGC,      "Lambert_Conformal_Conic_2SP_Belgium"),
-                new NamedIdentifier(Citations.EPSG,     "Lambert Conic Conformal (2SP Belgium)"),
-                new NamedIdentifier(Citations.EPSG,     "9803"),
+                new NamedIdentifier(Citations.OGC,  "Lambert_Conformal_Conic_2SP_Belgium"),
+                new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),
+                new IdentifierCode (Citations.EPSG,  9803),
                          sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
             }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,          SEMI_MINOR,
@@ -273,8 +276,9 @@ public class LambertConformal2SP extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-                new NamedIdentifier(Citations.ESRI,     "Lambert_Conformal_Conic"),
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
+                new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic"),
                          sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
             }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,          SEMI_MINOR,

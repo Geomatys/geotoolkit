@@ -27,7 +27,6 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
@@ -78,11 +77,8 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = EllipsoidToGeocentric.createDescriptorGroup(
-            "Geocentric_To_Ellipsoid",               // OGC name
-            "Geographic/geocentric conversions",     // EPSG name
-            "9602",                                  // EPSG identifier
-            Vocabulary.Keys.GEOCENTRIC_TRANSFORM);   // Geotoolkit name
+    public static final ParameterDescriptorGroup PARAMETERS =
+            EllipsoidToGeocentric.createDescriptorGroup("Geocentric_To_Ellipsoid");
 
     /**
      * If this provider is for the 3D case, then {@code complement} is the provider for the 2D case.

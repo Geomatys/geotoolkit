@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
@@ -113,12 +114,13 @@ public class Mercator2SP extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Mercator_2SP"),
-            new NamedIdentifier(Citations.EPSG,     "Mercator (2SP)"),
-            new NamedIdentifier(Citations.EPSG,     "9805"),
-            new NamedIdentifier(Citations.ESRI,     "Mercator"),
-                     sameNameAs(Citations.GEOTIFF,  Mercator1SP.PARAMETERS),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,  "Mercator_2SP"),
+            new NamedIdentifier(Citations.EPSG, "Mercator (2SP)"),
+            new IdentifierCode (Citations.EPSG,  9805),
+            new NamedIdentifier(Citations.ESRI, "Mercator"),
+                     sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,

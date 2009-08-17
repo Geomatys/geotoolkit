@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -143,14 +144,15 @@ public class ObliqueMercator extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Oblique_Mercator"),
-            new NamedIdentifier(Citations.EPSG,     "Oblique Mercator"),
-            new NamedIdentifier(Citations.EPSG,     "9815"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_ObliqueMercator"),
-            new NamedIdentifier(Citations.GEOTIFF,  "3"), // Also used by CT_ObliqueMercator_Hotine
-            new NamedIdentifier(Citations.ESRI,     "Hotine_Oblique_Mercator_Azimuth_Center"),
-            new NamedIdentifier(Citations.ESRI,     "Rectified_Skew_Orthomorphic_Center"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Oblique_Mercator"),
+            new NamedIdentifier(Citations.EPSG,    "Oblique Mercator"),
+            new IdentifierCode (Citations.EPSG,     9815),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
+            new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
+            new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Center"),
+            new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Center"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
         }, new ParameterDescriptor<?>[] {
@@ -245,7 +247,8 @@ public class ObliqueMercator extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Center"),
                 sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
             }, new ParameterDescriptor<?>[] {

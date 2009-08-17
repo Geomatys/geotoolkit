@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -79,14 +80,15 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * The parameters group.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Hotine_Oblique_Mercator"),
-            new NamedIdentifier(Citations.EPSG,     "Hotine Oblique Mercator"),
-            new NamedIdentifier(Citations.EPSG,     "9812"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_ObliqueMercator_Hotine"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Hotine_Oblique_Mercator"),
+            new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator"),
+            new IdentifierCode (Citations.EPSG,     9812),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator_Hotine"),
             // Note: The GeoTIFF numerical code (3) is already used by CT_ObliqueMercator.
-            new NamedIdentifier(Citations.ESRI,     "Hotine_Oblique_Mercator_Azimuth_Natural_Origin"),
-            new NamedIdentifier(Citations.ESRI,     "Rectified_Skew_Orthomorphic_Natural_Origin"),
+            new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Natural_Origin"),
+            new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Natural_Origin"),
             sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
@@ -169,7 +171,8 @@ public class HotineObliqueMercator extends ObliqueMercator {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                 sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
             }, new ParameterDescriptor<?>[] {

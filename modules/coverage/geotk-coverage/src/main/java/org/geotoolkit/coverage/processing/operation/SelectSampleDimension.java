@@ -130,7 +130,7 @@ public class SelectSampleDimension extends Operation2D {
      */
     public SelectSampleDimension() {
         super(new DefaultParameterDescriptorGroup("SelectSampleDimension",
-              new ParameterDescriptor[] {
+              new ParameterDescriptor<?>[] {
                     SOURCE_0,
                     SAMPLE_DIMENSIONS,
                     VISIBLE_SAMPLE_DIMENSION

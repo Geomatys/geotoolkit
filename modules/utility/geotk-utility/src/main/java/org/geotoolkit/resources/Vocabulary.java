@@ -1330,6 +1330,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int SUBSAMPLING = 255;
 
         /**
+         * Superseded by $1.
+         */
+        public static final int SUPERSEDED_BY_$1 = 300;
+
+        /**
          * System
          */
         public static final int SYSTEM = 256;

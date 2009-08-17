@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -75,10 +76,10 @@ public class Affine extends MathTransformProvider {
         final NamedIdentifier name = new NamedIdentifier(Citations.OGC, "Affine");
         final Map<String,Object> properties = new HashMap<String,Object>(4);
         properties.put(NAME_KEY,        name);
-        properties.put(IDENTIFIERS_KEY, name);
-        properties.put(ALIAS_KEY, new NamedIdentifier[] {name,
-            new NamedIdentifier(Citations.EPSG, "Affine general parametric transformation"),
-            new NamedIdentifier(Citations.EPSG, "9624"),
+        properties.put(IDENTIFIERS_KEY, new IdentifierCode(Citations.EPSG, 9624));
+        properties.put(ALIAS_KEY, new ReferenceIdentifier[] {
+            name,
+            new NamedIdentifier(Citations.EPSG, "Affine parametric transformation"),
             new NamedIdentifier(Citations.GEOTOOLKIT,
                     Vocabulary.formatInternational(Vocabulary.Keys.AFFINE_TRANSFORM))
         });

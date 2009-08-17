@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.provider;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
@@ -106,7 +107,7 @@ public class TransverseMercator extends MapProjection {
     /**
      * Returns a descriptor group for the specified parameters.
      */
-    static ParameterDescriptorGroup createDescriptorGroup(final NamedIdentifier[] identifiers) {
+    static ParameterDescriptorGroup createDescriptorGroup(final ReferenceIdentifier[] identifiers) {
         return Identifiers.createDescriptorGroup(identifiers, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
@@ -117,15 +118,16 @@ public class TransverseMercator extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
+        new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
             new NamedIdentifier(Citations.ESRI,     "Transverse_Mercator"),
             new NamedIdentifier(Citations.ESRI,     "Gauss_Kruger"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Kruger"),
-            new NamedIdentifier(Citations.EPSG,     "9807"),
+            new IdentifierCode (Citations.EPSG,      9807),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
-            new NamedIdentifier(Citations.GEOTIFF,  "1"),
+            new IdentifierCode (Citations.GEOTIFF,   1),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.TRANSVERSE_MERCATOR_PROJECTION))
         });
@@ -190,9 +192,9 @@ public class TransverseMercator extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
+        public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
-            new NamedIdentifier(Citations.EPSG, "9808"),
+            new IdentifierCode (Citations.EPSG,  9808),
             sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)
         });
 

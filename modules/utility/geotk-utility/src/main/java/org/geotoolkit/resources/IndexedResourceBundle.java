@@ -437,7 +437,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                     message = Classes.getShortClassName(element);
                 }
                 array[i] = message;
-            } else if (element instanceof Class) {
+            } else if (element instanceof Class<?>) {
                 array[i] = Classes.getShortName((Class<?>) element);
             }
         }

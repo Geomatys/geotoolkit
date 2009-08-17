@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 
@@ -59,17 +60,17 @@ public class AbridgedMolodensky extends Molodensky {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
-            new NamedIdentifier[] {
-                new NamedIdentifier(Citations.OGC,      "Abridged_Molodenski"),
-                new NamedIdentifier(Citations.EPSG,     "Abridged Molodensky"),
-                new NamedIdentifier(Citations.EPSG,     "9605"),
-                new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                    Vocabulary.Keys.ABRIDGED_MOLODENSKY_TRANSFORM))
-            }, new ParameterDescriptor<?>[] {
-                DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
-                SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
-                TGT_SEMI_MAJOR, TGT_SEMI_MINOR
-            });
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,  "Abridged_Molodenski"),
+            new NamedIdentifier(Citations.EPSG, "Abridged Molodensky"),
+            new IdentifierCode (Citations.EPSG,  9605),
+            new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
+                                Vocabulary.Keys.ABRIDGED_MOLODENSKY_TRANSFORM))
+        }, new ParameterDescriptor<?>[] {
+            DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
+            SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
+            TGT_SEMI_MAJOR, TGT_SEMI_MINOR
+        });
 
     /**
      * Constructs a provider.

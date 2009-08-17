@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.provider;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
@@ -31,7 +32,11 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
- * The provider for "<cite>Mercator (1SP)</cite>" projection (EPSG:9804).
+ * The provider for "<cite>Mercator (1SP)</cite>" projection (EPSG:9804, EPSG:1026, EPSG:1024).
+ * EPSG defines two codes for this projection, 1026 being the spherical case and 9804 the
+ * ellipsoidal case. The EPSG:1024 code is for the "Google projection", defined by popular
+ * demand but not considered a valid projection method.
+ * <p>
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_1sp.html">Mercator 1SP on
  * RemoteSensing.org</A>. The math transform implementations instantiated by this provider may
@@ -43,7 +48,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.2
  * @module
@@ -126,12 +131,17 @@ public class Mercator1SP extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Mercator_1SP"),
-            new NamedIdentifier(Citations.EPSG,     "Mercator (1SP)"),
-            new NamedIdentifier(Citations.EPSG,     "9804"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_Mercator"),
-            new NamedIdentifier(Citations.GEOTIFF,  "7"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
+            new NamedIdentifier(Citations.EPSG,    "Mercator (1SP)"),
+            new NamedIdentifier(Citations.EPSG,    "Mercator (Spherical)"),
+            new NamedIdentifier(Citations.EPSG,    "Popular Visualisation Pseudo Mercator"),
+            new IdentifierCode (Citations.EPSG,     9804), // The ellipsoidal case
+            new IdentifierCode (Citations.EPSG,     1026), // The spherical case
+            new IdentifierCode (Citations.EPSG,     1024), // The Google case
+            new NamedIdentifier(Citations.GEOTIFF, "CT_Mercator"),
+            new IdentifierCode (Citations.GEOTIFF,  7),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CYLINDRICAL_MERCATOR_PROJECTION))
         }, new ParameterDescriptor<?>[] {

@@ -29,6 +29,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -92,23 +93,19 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
-                    "Ellipsoid_To_Geocentric",               // OGC name
-                    "Geographic/geocentric conversions",     // EPSG name
-                    "9602",                                  // EPSG identifier
-                    Vocabulary.Keys.GEOCENTRIC_TRANSFORM);   // Geotoolkit name
+    public static final ParameterDescriptorGroup PARAMETERS =
+            createDescriptorGroup("Ellipsoid_To_Geocentric");
 
     /**
      * Constructs the parameters group.
      */
-    static ParameterDescriptorGroup createDescriptorGroup(final String ogc,
-            final String epsgName, final String epsgCode, final int geotoolkit)
-    {
-        return Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-                new NamedIdentifier(Citations.OGC,      ogc),
-                new NamedIdentifier(Citations.EPSG,     epsgName),
-                new NamedIdentifier(Citations.EPSG,     epsgCode),
-                new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(geotoolkit))
+    static ParameterDescriptorGroup createDescriptorGroup(final String ogc) {
+        return Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+                new NamedIdentifier(Citations.OGC,  ogc),
+                new NamedIdentifier(Citations.EPSG, "Geographic/geocentric conversions"),
+                new IdentifierCode (Citations.EPSG, 9602),
+                new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
+                                    Vocabulary.Keys.GEOCENTRIC_TRANSFORM))
             }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, DIM
             });

@@ -125,7 +125,7 @@ public class Interpolate extends Operation2D {
      */
     public Interpolate() {
         super(new DefaultParameterDescriptorGroup(Citations.OGC, "Interpolate",
-              new ParameterDescriptor[] {
+              new ParameterDescriptor<?>[] {
                     SOURCE_0,
                     TYPE
         }));

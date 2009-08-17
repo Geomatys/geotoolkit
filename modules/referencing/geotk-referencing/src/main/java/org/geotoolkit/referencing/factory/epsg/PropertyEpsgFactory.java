@@ -45,19 +45,17 @@ import org.geotoolkit.resources.Vocabulary;
  * Authority factory for {@linkplain CoordinateReferenceSystem Coordinate Reference Systems}
  * beyong the one defined in the EPSG database. This factory is used as a fallback when a
  * requested code is not found in the EPSG database, or when there is no connection at all
- * to the EPSG database. The additional CRS are defined as <cite>Well Known Text</cite> in
- * a property file located by default in the {@code org.geotoolkit.referencing.factory.epsg}
- * package, or in a directory given in the hints map, and whose name is {@value #FILENAME}.
- * More specifically, this class use the following search path:
+ * to the EPSG database. The CRS are defined as <cite>Well Known Text</cite> in a property
+ * file named {@value #FILENAME}. The search path is as below, in that order:
  *
- * <ul>
+ * <ol>
  *   <li><p>If a value for {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY} exists in the hints map
  *       given at construction time, then that value will be used as the directory where to
  *       search for the {@value #FILENAME} file.</p></li>
  *   <li><p>The {@value #FILENAME} files found in all {@code org/geotoolkit/referencing/factory/epsg}
  *       directories on the classpath are merged with the values found in previous step, if any.
  *       If the same value is defined twice, the value of previous step have precedence.</p></li>
- * </ul>
+ * </ol>
  *
  * This factory can also be used to provide custom extensions or overrides to a main EPSG
  * factory. In order to provide a custom extension, you can create a subclass that invoke the
@@ -68,7 +66,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * {@preformat java
  *     protected void setOrdering(Organizer organizer) {
- *         organizer.after(ThreadedEpsgFactory.class);
+ *         organizer.before(ThreadedEpsgFactory.class);
  *     }
  * }
  *

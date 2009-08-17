@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -75,14 +76,15 @@ public class ObliqueStereographic extends Stereographic {
      * The parameters group.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Oblique_Stereographic"),
-            new NamedIdentifier(Citations.EPSG,     "Oblique Stereographic"),
-            new NamedIdentifier(Citations.EPSG,     "Roussilhe"),
-            new NamedIdentifier(Citations.EPSG,     "9809"),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_ObliqueStereographic"),
-            new NamedIdentifier(Citations.GEOTIFF,  "16"),
-            new NamedIdentifier(Citations.ESRI,     "Double_Stereographic"),
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Oblique_Stereographic"),
+            new NamedIdentifier(Citations.EPSG,    "Oblique Stereographic"),
+            new NamedIdentifier(Citations.EPSG,    "Roussilhe"),
+            new IdentifierCode (Citations.EPSG,     9809),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueStereographic"),
+            new IdentifierCode (Citations.GEOTIFF,  16),
+            new NamedIdentifier(Citations.ESRI,    "Double_Stereographic"),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,

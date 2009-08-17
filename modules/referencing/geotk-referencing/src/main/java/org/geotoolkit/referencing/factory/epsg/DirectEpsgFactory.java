@@ -75,6 +75,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -693,6 +694,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             stmt = connection.prepareStatement(adaptSQL(sql));
             statements.put(key, stmt);
         }
+        // Partial check that the statement is for the right SQL query.
+        assert stmt.getParameterMetaData().getParameterCount() == StringUtilities.count(sql, '?');
         return stmt;
     }
 
@@ -932,13 +935,14 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * Returns the name for the {@link IdentifiedObject} to construct.
      * This method also search for alias.
      *
+     * @param  table The table on which a query has been executed.
      * @param  name The name for the {@link IndentifiedObject} to construct.
      * @param  code The EPSG code of the object to construct.
      * @param  remarks Remarks, or {@code null} if none.
      * @return The name together with a set of properties.
      */
-    private Map<String,Object> createProperties(final String name, final String code, String remarks)
-            throws SQLException, FactoryException
+    private Map<String,Object> createProperties(final String table, final String name, final String code,
+            String remarks) throws SQLException, FactoryException
     {
         properties.clear();
         final Citation authority = getAuthority();
@@ -961,13 +965,22 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         List<GenericName> alias = null;
         final PreparedStatement stmt;
         stmt = prepareStatement(
-                "Alias", "SELECT NAMING_SYSTEM_NAME, ALIAS" +
+                "[Alias]", "SELECT NAMING_SYSTEM_NAME, ALIAS, OBJECT_TABLE_NAME" +
                 " FROM [Alias] INNER JOIN [Naming System]" +
                   " ON [Alias].NAMING_SYSTEM_CODE =" +
                 " [Naming System].NAMING_SYSTEM_CODE" +
                 " WHERE OBJECT_CODE = ?");
         final ResultSet result = executeQuery(stmt, code);
         while (result.next()) {
+            String owner = result.getString(3);
+            if (owner != null) {
+                /*
+                 * We have found an alias for a object having the ID we are looking for,
+                 * but we need to check if it is really from the same table since a few
+                 * different tables have objects with the same ID.
+                 */
+                // TODO: compare the names here.
+            }
             final String scope = result.getString(1);
             final String local = getString(result, 2, code);
             final GenericName generic;
@@ -1000,6 +1013,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * Returns the name for the {@link IdentifiedObject} to construct.
      * This method also search for alias.
      *
+     * @param  table The table on which a query has been executed.
      * @param  name  The name for the {@link IndentifiedObject} to construct.
      * @param  code  The EPSG code of the object to construct.
      * @param  area  The area of use, or {@code null} if none.
@@ -1007,10 +1021,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  remarks Remarks, or {@code null} if none.
      * @return The name together with a set of properties.
      */
-    private Map<String,Object> createProperties(final String name, final String code,
+    private Map<String,Object> createProperties(final String table, final String name, final String code,
             String area, String scope, String remarks) throws SQLException, FactoryException
     {
-        final Map<String,Object> properties = createProperties(name, code, remarks);
+        final Map<String,Object> properties = createProperties(table, name, code, remarks);
         if (area != null  &&  (area=area.trim()).length() != 0) {
             final Extent extent = buffered.createExtent(area);
             properties.put(Datum.DOMAIN_OF_VALIDITY_KEY, extent);
@@ -1162,7 +1176,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String primaryKey = toPrimaryKey(Unit.class, code,
                     "[Unit of Measure]", "UOM_CODE", "UNIT_OF_MEAS_NAME");
             final PreparedStatement stmt;
-            stmt = prepareStatement("Unit",
+            stmt = prepareStatement("[Unit of Measure]",
                     "SELECT UOM_CODE," +
                           " FACTOR_B," +
                           " FACTOR_C," +
@@ -1220,7 +1234,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String primaryKey = toPrimaryKey(Ellipsoid.class, code,
                     "[Ellipsoid]", "ELLIPSOID_CODE", "ELLIPSOID_NAME");
             final PreparedStatement stmt;
-            stmt = prepareStatement("Ellipsoid",
+            stmt = prepareStatement("[Ellipsoid]",
                     "SELECT ELLIPSOID_CODE," +
                           " ELLIPSOID_NAME," +
                           " SEMI_MAJOR_AXIS," +
@@ -1245,7 +1259,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final String unitCode          = getString(result, 6, code);
                 final String remarks           = result.getString( 7);
                 final Unit<Length> unit        = buffered.createUnit(unitCode).asType(Length.class);
-                final Map<String,Object> properties = createProperties(name, epsg, remarks);
+                final Map<String,Object> properties = createProperties("[Ellipsoid]", name, epsg, remarks);
                 final Ellipsoid ellipsoid;
                 if (inverseFlattening == 0) {
                     if (semiMinorAxis == 0) {
@@ -1304,7 +1318,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String primaryKey = toPrimaryKey(PrimeMeridian.class, code,
                     "[Prime Meridian]", "PRIME_MERIDIAN_CODE", "PRIME_MERIDIAN_NAME");
             final PreparedStatement stmt;
-            stmt = prepareStatement("PrimeMeridian",
+            stmt = prepareStatement("[Prime Meridian]",
                     "SELECT PRIME_MERIDIAN_CODE," +
                           " PRIME_MERIDIAN_NAME," +
                           " GREENWICH_LONGITUDE," +
@@ -1320,7 +1334,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final String unit_code = getString(result, 4, code);
                 final String remarks   = result.getString( 5);
                 final Unit<Angle> unit = buffered.createUnit(unit_code).asType(Angle.class);
-                final Map<String,Object> properties = createProperties(name, epsg, remarks);
+                final Map<String,Object> properties = createProperties("[Prime Meridian]", name, epsg, remarks);
                 PrimeMeridian primeMeridian = factories.getDatumFactory().createPrimeMeridian(
                         properties, longitude, unit);
                 returnValue = ensureSingleton(primeMeridian, returnValue, code);
@@ -1354,7 +1368,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String primaryKey = toPrimaryKey(Extent.class, code,
                     "[Area]", "AREA_CODE", "AREA_NAME");
             final PreparedStatement stmt;
-            stmt = prepareStatement("Area",
+            stmt = prepareStatement("[Area]",
                     "SELECT AREA_OF_USE," +
                           " AREA_SOUTH_BOUND_LAT," +
                           " AREA_NORTH_BOUND_LAT," +
@@ -1547,7 +1561,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String primaryKey = toPrimaryKey(Datum.class, code,
                     "[Datum]", "DATUM_CODE", "DATUM_NAME");
             final PreparedStatement stmt;
-            stmt = prepareStatement("Datum",
+            stmt = prepareStatement("[Datum]",
                     "SELECT DATUM_CODE," +
                           " DATUM_NAME," +
                           " DATUM_TYPE," +
@@ -1570,7 +1584,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final String area    = result.getString( 6);
                 final String scope   = result.getString( 7);
                 final String remarks = result.getString( 8);
-                Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                Map<String,Object> properties = createProperties("[Datum]", name, epsg, area, scope, remarks);
                 if (anchor != null) {
                     properties.put(Datum.ANCHOR_POINT_KEY, anchor);
                 }
@@ -1642,7 +1656,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         AxisName returnValue = axisNames.get(code);
         if (returnValue == null) try {
             final PreparedStatement stmt;
-            stmt = prepareStatement("AxisName",
+            stmt = prepareStatement("[Coordinate Axis Name]",
                     "SELECT COORD_AXIS_NAME, DESCRIPTION, REMARKS" +
                     " FROM [Coordinate Axis Name]" +
                     " WHERE COORD_AXIS_NAME_CODE = ?");
@@ -1686,7 +1700,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         try {
             final String primaryKey = trimAuthority(code);
             final PreparedStatement stmt;
-            stmt = prepareStatement("Axis",
+            stmt = prepareStatement("[Coordinate Axis]",
                     "SELECT COORD_AXIS_CODE," +
                           " COORD_AXIS_NAME_CODE," +
                           " COORD_AXIS_ORIENTATION," +
@@ -1708,7 +1722,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     throw new FactoryException(exception);
                 }
                 final AxisName an = getAxisName(nameCode);
-                final Map<String,Object> properties = createProperties(an.name, epsg, an.description);
+                final Map<String,Object> properties = createProperties("[Coordinate Axis]", an.name, epsg, an.description);
                 final CSFactory factory = factories.getCSFactory();
                 final CoordinateSystemAxis axis = factory.createCoordinateSystemAxis(
                         properties, abbreviation, direction, buffered.createUnit(unit));
@@ -1786,7 +1800,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         try {
             final String primaryKey = toPrimaryKey(CoordinateSystem.class, code,
                     "[Coordinate System]", "COORD_SYS_CODE", "COORD_SYS_NAME");
-            stmt = prepareStatement("CoordinateSystem",
+            stmt = prepareStatement("[Coordinate System]",
                     "SELECT COORD_SYS_CODE," +
                           " COORD_SYS_NAME," +
                           " COORD_SYS_TYPE," +
@@ -1802,7 +1816,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final int  dimension = getInt   (result, 4, code);
                 final String remarks = result.getString( 5);
                 final CoordinateSystemAxis[] axis = createAxesForCoordinateSystem(primaryKey, dimension);
-                final Map<String,Object> properties = createProperties(name, epsg, remarks); // Must be after axis
+                final Map<String,Object> properties = createProperties("[Coordinate System]", name, epsg, remarks); // Must be after axis
                 final CSFactory factory = factories.getCSFactory();
                 CoordinateSystem cs = null;
                 if (type.equals("ellipsoidal")) {
@@ -1890,7 +1904,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         try {
             final String primaryKey = toPrimaryKeyCRS(code);
             final PreparedStatement stmt;
-            stmt = prepareStatement("CoordinateReferenceSystem",
+            stmt = prepareStatement("[Coordinate Reference System]",
                     "SELECT COORD_REF_SYS_CODE," +
                           " COORD_REF_SYS_NAME," +
                           " AREA_OF_USE_CODE," +
@@ -1938,7 +1952,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         final GeographicCRS baseCRS = buffered.createGeographicCRS(geoCode);
                         datum = baseCRS.getDatum(); // TODO: remove cast with J2SE 1.5.
                     }
-                    final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                    final Map<String,Object> properties = createProperties(
+                            "[Coordinate Reference System]", name, epsg, area, scope, remarks);
                     crs = factory.createGeographicCRS(properties, datum, cs);
                 }
                 /* ----------------------------------------------------------------------
@@ -1957,7 +1972,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final GeographicCRS  baseCRS = buffered.createGeographicCRS(geoCode);
                     final CoordinateOperation op = buffered.createCoordinateOperation(opCode);
                     if (op instanceof Conversion) {
-                        final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                        final Map<String,Object> properties = createProperties(
+                                "[Coordinate Reference System]", name, epsg, area, scope, remarks);
                         crs = factory.createProjectedCRS(properties, baseCRS, (Conversion)op, cs);
                     } else {
                          throw noSuchAuthorityCode(Projection.class, opCode);
@@ -1971,7 +1987,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final String        dmCode = getString(result, 8, code);
                     final VerticalCS    cs     = buffered.createVerticalCS   (csCode);
                     final VerticalDatum datum  = buffered.createVerticalDatum(dmCode);
-                    final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                    final Map<String,Object> properties = createProperties(
+                            "[Coordinate Reference System]", name, epsg, area, scope, remarks);
                     crs = factory.createVerticalCRS(properties, datum, cs);
                 }
                 /* ----------------------------------------------------------------------
@@ -1995,7 +2012,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         safetyGuard.remove(epsg);
                     }
                     // Note: Don't invoke 'createProperties' sooner.
-                    final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                    final Map<String,Object> properties = createProperties(
+                            "[Coordinate Reference System]", name, epsg, area, scope, remarks);
                     crs  = factory.createCompoundCRS(properties,
                            new CoordinateReferenceSystem[] {crs1, crs2});
                 }
@@ -2007,7 +2025,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final String           dmCode = getString(result, 8, code);
                     final CoordinateSystem cs     = buffered.createCoordinateSystem(csCode);
                     final GeodeticDatum    datum  = buffered.createGeodeticDatum   (dmCode);
-                    final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                    final Map<String,Object> properties = createProperties(
+                            "[Coordinate Reference System]", name, epsg, area, scope, remarks);
                     if (cs instanceof CartesianCS) {
                         crs = factory.createGeocentricCRS(properties, datum, (CartesianCS) cs);
                     } else if (cs instanceof SphericalCS) {
@@ -2027,7 +2046,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final String           dmCode = getString(result, 8, code);
                     final CoordinateSystem cs     = buffered.createCoordinateSystem(csCode);
                     final EngineeringDatum datum  = buffered.createEngineeringDatum(dmCode);
-                    final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                    final Map<String,Object> properties = createProperties(
+                            "[Coordinate Reference System]", name, epsg, area, scope, remarks);
                     crs = factory.createEngineeringCRS(properties, datum, cs);
                 }
                 /* ----------------------------------------------------------------------
@@ -2072,7 +2092,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         try {
             final String primaryKey = toPrimaryKey(ParameterDescriptor.class, code,
                     "[Coordinate_Operation Parameter]", "PARAMETER_CODE", "PARAMETER_NAME");
-            stmt = prepareStatement("ParameterDescriptor", // Must be singular form.
+            stmt = prepareStatement("[Coordinate_Operation Parameter]",
                     "SELECT PARAMETER_CODE," +
                           " PARAMETER_NAME," +
                           " DESCRIPTION" +
@@ -2113,7 +2133,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * Now creates the parameter descriptor.
                  */
                 final ParameterDescriptor<?> descriptor;
-                final Map<String,Object> properties = createProperties(name, epsg, remarks);
+                final Map<String,Object> properties = createProperties(
+                        "[Coordinate_Operation Parameter]", name, epsg, remarks);
                 @SuppressWarnings({"unchecked","rawtypes"})
                 final ParameterDescriptor<?> tmp = new DefaultParameterDescriptor(
                         properties, type, null, null, null, null, unit, true);
@@ -2140,7 +2161,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             throws FactoryException, SQLException
     {
         final PreparedStatement stmt;
-        stmt = prepareStatement("ParameterDescriptors", // Must be plural form.
+        stmt = prepareStatement("[Coordinate_Operation Parameter Usage]",
                 "SELECT PARAMETER_CODE" +
                 " FROM [Coordinate_Operation Parameter Usage]" +
                 " WHERE COORD_OP_METHOD_CODE = ?" +
@@ -2167,7 +2188,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final ParameterValueGroup parameters) throws FactoryException, SQLException
     {
         final PreparedStatement stmt;
-        stmt = prepareStatement("ParameterValues",
+        stmt = prepareStatement("[Coordinate_Operation Parameter Value]",
                 "SELECT CP.PARAMETER_NAME," +
                       " CV.PARAMETER_VALUE," +
                       " CV.PARAM_VALUE_FILE_REF," +
@@ -2254,7 +2275,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         try {
             final String primaryKey = toPrimaryKey(OperationMethod.class, code,
                     "[Coordinate_Operation Method]", "COORD_OP_METHOD_CODE", "COORD_OP_METHOD_NAME");
-            stmt = prepareStatement("OperationMethod",
+            stmt = prepareStatement("[Coordinate_Operation Method]",
                     "SELECT COORD_OP_METHOD_CODE," +
                           " COORD_OP_METHOD_NAME," +
                           " FORMULA," +
@@ -2272,7 +2293,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final int sourceDimensions = encoded >>> 16;
                 final int targetDimensions = encoded & 0xFFFF;
                 final ParameterDescriptor<?>[] descriptors = createParameterDescriptors(epsg);
-                final Map<String,Object> properties = createProperties(name, epsg, remarks);
+                final Map<String,Object> properties = createProperties(
+                        "[Coordinate_Operation Method]", name, epsg, remarks);
                 if (formula != null) {
                     properties.put(OperationMethod.FORMULA_KEY, formula);
                 }
@@ -2396,7 +2418,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String primaryKey = toPrimaryKey(CoordinateOperation.class, code,
                     "[Coordinate_Operation]", "COORD_OP_CODE", "COORD_OP_NAME");
             final PreparedStatement stmt;
-            stmt = prepareStatement("CoordinateOperation",
+            stmt = prepareStatement("[Coordinate_Operation]",
                     "SELECT COORD_OP_CODE," +
                           " COORD_OP_NAME," +
                           " COORD_OP_TYPE," +
@@ -2512,7 +2534,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  *       methods like createCoordinateReferenceSystem and createOperationMethod
                  *       overwrite the properties map.
                  */
-                final Map<String,Object> properties = createProperties(name, epsg, area, scope, remarks);
+                final Map<String,Object> properties = createProperties("[Coordinate_Operation]",
+                        name, epsg, area, scope, remarks);
                 if (version!=null && (version=version.trim()).length()!=0) {
                     properties.put(CoordinateOperation.OPERATION_VERSION_KEY, version);
                 }
@@ -2560,7 +2583,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      */
                     result.close();
                     result = null;
-                    final PreparedStatement cstmt = prepareStatement("ConcatenatedOperation",
+                    final PreparedStatement cstmt = prepareStatement("[Coordinate_Operation Path]",
                             "SELECT SINGLE_OPERATION_CODE" +
                              " FROM [Coordinate_Operation Path]" +
                             " WHERE (CONCAT_OPERATION_CODE = ?)" +
@@ -2745,7 +2768,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             return; // Nothing to sort.
         }
         final PreparedStatement stmt;
-        stmt = prepareStatement("Supersession",
+        stmt = prepareStatement("[Supersession]",
                 "SELECT SUPERSEDED_BY" +
                 " FROM [Supersession]" +
                 " WHERE OBJECT_CODE = ?" +
