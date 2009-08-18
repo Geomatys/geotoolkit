@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -32,31 +31,28 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
- * The provider for "<cite>Mercator (1SP)</cite>" projection (EPSG:9804, EPSG:1026).
- * EPSG defines two codes for this projection, 1026 being the spherical case and 9804 the
- * ellipsoidal case.
+ * The provider for "<cite>Popular Visualisation Pseudo Mercator</cite>" projection (EPSG:1024).
+ * This is also known as the "Google projection", defined by popular demand but not considered
+ * a valid projection method.
  * <p>
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_1sp.html">Mercator 1SP on
- * RemoteSensing.org</A>. The math transform implementations instantiated by this provider may
- * be any of the following classes:
+ * The math transform implementations instantiated by this provider may be any of the following
+ * classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.Mercator}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @author Rueben Schulz (UBC)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
  *
- * @since 2.2
+ * @since 3.03
  * @module
  */
-public class Mercator1SP extends MapProjection {
+public class PseudoMercator extends MapProjection {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -5886510621481710072L;
+    private static final long serialVersionUID = -8126827491349984471L;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -66,12 +62,7 @@ public class Mercator1SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(
-                "central_meridian",             // OGC
-                "Central_Meridian",             // ESRI
-                "Longitude of natural origin",  // EPSG
-                "NatOriginLong");               // GeoTIFF
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN = Mercator1SP.CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -81,25 +72,7 @@ public class Mercator1SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_origin",           // OGC
-                "Latitude of natural origin",   // EPSG
-                "Standard_Parallel_1",          // ESRI
-                "NatOriginLat");                // GeoTIFF
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
-     * scale factor} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is (0 &hellip; &infin;) and default value is 1.
-     */
-    public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(
-                "Scale factor at natural origin",   // EPSG
-                "ScaleAtNatOrigin");                // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator1SP.LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -109,10 +82,7 @@ public class Mercator1SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(
-                "False easting",    // EPSG
-                "FalseEasting");    // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -122,35 +92,26 @@ public class Mercator1SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(
-                "False northing",   // EPSG
-                "FalseNorthing");   // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
 
     /**
      * The parameters group.
      */
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
-            new NamedIdentifier(Citations.EPSG,    "Mercator (1SP)"),
-            new NamedIdentifier(Citations.EPSG,    "Mercator (Spherical)"),
-            new IdentifierCode (Citations.EPSG,     9804), // The ellipsoidal case
-            new IdentifierCode (Citations.EPSG,     1026), // The spherical case
-            new NamedIdentifier(Citations.GEOTIFF, "CT_Mercator"),
-            new IdentifierCode (Citations.GEOTIFF,  7),
-            new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.CYLINDRICAL_MERCATOR_PROJECTION))
+            new NamedIdentifier(Citations.EPSG, "Popular Visualisation Pseudo Mercator"),
+            new IdentifierCode (Citations.EPSG,  1024),
+            sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-            LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN, SCALE_FACTOR,
+            LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING
         });
 
     /**
      * Constructs a new provider.
      */
-    public Mercator1SP() {
+    public PseudoMercator() {
         super(PARAMETERS);
     }
 

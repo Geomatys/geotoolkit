@@ -35,7 +35,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  * Tests the {@link Mercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  */
@@ -246,6 +246,33 @@ public final class MercatorTest extends ProjectionTestCase {
         transform = mtFactory.createParameterizedTransform(parameters);
         tolerance = 12000;
         assertTrue(isSpherical());
+        verifyTransform(point, expected);
+    }
+
+    /**
+     * Tests the Google projection. The length of the semi-minor axis is ignored
+     * by definition of that particular projection. The point used here is given
+     * in the "example" section of EPSG documentation.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.03
+     */
+    @Test
+    public void testGoogle() throws FactoryException, TransformException {
+        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Popular Visualisation Pseudo Mercator");
+        parameters.parameter("semi-major axis").setValue(6378137.0);
+        parameters.parameter("semi-minor axis").setValue(6378137.0 * (1 - 1/298.2572236));
+        parameters.parameter("Latitude of natural origin").setValue(0.0);
+        parameters.parameter("Longitude of natural origin").setValue(0.0);
+        parameters.parameter("False easting").setValue(0.0);
+        parameters.parameter("False northing").setValue(0.0);
+        transform = mtFactory.createParameterizedTransform(parameters);
+        assertTrue(isSpherical());
+        final double[] point    = new double[] {-(100+20.0/60), 24+(22+54.433/60)/60};
+        final double[] expected = new double[] {-11169055.58, 2800000.00};
+        tolerance = 0.005;
         verifyTransform(point, expected);
     }
 }

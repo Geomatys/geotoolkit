@@ -34,6 +34,7 @@ import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 
 import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.referencing.operation.provider.PseudoMercator;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
@@ -79,7 +80,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.03
  *
  * @see TransverseMercator
  * @see ObliqueMercator
@@ -113,6 +114,8 @@ public class Mercator extends UnitaryProjection {
         final Parameters parameters = new Parameters(descriptor, values);
         if (parameters.isSpherical()) {
             projection = new Spherical(parameters);
+        } else if (parameters.nameMatches(PseudoMercator.PARAMETERS)) {
+            projection = new Spherical(parameters, true);
         } else {
             projection = new Mercator(parameters);
         }
@@ -294,7 +297,7 @@ public class Mercator extends UnitaryProjection {
      *
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
      * @author Rueben Schulz (UBC)
-     * @version 3.00
+     * @version 3.03
      *
      * @since 2.1
      * @module
@@ -306,13 +309,31 @@ public class Mercator extends UnitaryProjection {
         private static final long serialVersionUID = 2383414176395616561L;
 
         /**
+         * {@code true} if we are in the "Pseudo Mercator" case.
+         */
+        private final boolean pseudo;
+
+        /**
          * Constructs a new map projection from the suplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */
         protected Spherical(final Parameters parameters) {
+            this(parameters, false);
+        }
+
+        /**
+         * Constructs a new map projection from the suplied parameters.
+         *
+         * @param parameters The parameters of the projection to be created.
+         * @param pseudo {@code true} if we are in the "Pseudo Mercator" case.
+         */
+        Spherical(final Parameters parameters, final boolean pseudo) {
             super(parameters);
-            parameters.ensureSpherical();
+            this.pseudo = pseudo;
+            if (!pseudo) {
+                parameters.ensureSpherical();
+            }
         }
 
         /**
@@ -340,7 +361,7 @@ public class Mercator extends UnitaryProjection {
             } else {
                 y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
             }
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
+            assert pseudo || checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff] = x;
             dstPts[dstOff + 1] = y;
         }
@@ -370,7 +391,7 @@ public class Mercator extends UnitaryProjection {
             double y = srcPts[srcOff + 1];
             y = PI/2 - 2.0*atan(exp(-y));
 
-            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
+            assert pseudo || checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff] = x;
             dstPts[dstOff + 1] = y;
         }

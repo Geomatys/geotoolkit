@@ -162,6 +162,12 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertTrue(sourceCRS instanceof GeographicCRS);
         assertEquals("WGS 84 (deg)", sourceCRS.getName().getCode());
         assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
+
+        // Google projection
+        sourceCRS = factory.createCoordinateReferenceSystem("3857");
+        assertTrue(sourceCRS instanceof ProjectedCRS);
+        assertEquals("WGS 84 / Pseudo-Mercator", sourceCRS.getName().getCode());
+        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
     }
 
     /**
