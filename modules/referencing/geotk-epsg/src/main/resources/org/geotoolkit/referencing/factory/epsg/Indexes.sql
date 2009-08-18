@@ -47,3 +47,11 @@ CREATE INDEX ix_name_coord_op       ON epsg_coordoperation            (coord_op_
 CREATE INDEX ix_name_method         ON epsg_coordoperationmethod      (coord_op_method_name);
 CREATE INDEX ix_name_parameter      ON epsg_coordoperationparam       (parameter_name);
 CREATE INDEX ix_name_unit           ON epsg_unitofmeasure             (unit_of_meas_name);
+
+
+--------------------------------------------------------------------------------
+-- Index used by DirectEpsgFactory.Finder for reverse operation.              --
+--------------------------------------------------------------------------------
+CREATE INDEX ix_major_ellipsoid ON epsg_ellipsoid                 (semi_major_axis);
+CREATE INDEX ix_geogcrs_crs     ON epsg_coordinatereferencesystem (source_geogcrs_code);
+CREATE INDEX ix_ellipsoid_datum ON epsg_datum                     (ellipsoid_code);

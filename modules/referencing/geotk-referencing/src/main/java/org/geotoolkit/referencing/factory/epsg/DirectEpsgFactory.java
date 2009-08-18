@@ -2835,7 +2835,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         /**
          * Returns a set of authority codes that <strong>may</strong> identify the same object
          * than the specified one. This implementation tries to get a smaller set than what
-         * {@link DirectEpsgFactory#getAuthorityCodes} would produce.
+         * {@link DirectEpsgFactory#getAuthorityCodes} would produce. Deprecated objects must
+         * be last in iteration order.
          */
         @Override
         protected Set<String> getCodeCandidates(final IdentifiedObject object) throws FactoryException {
@@ -2861,15 +2862,19 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     from       = "[Datum]";
                     where      = "ELLIPSOID_CODE";
                 } else {
+                    // Not a supported type. Returns all codes.
                     return super.getCodeCandidates(object);
                 }
                 dependency = buffered.getIdentifiedObjectFinder(dependency.getClass()).find(dependency);
                 Identifier id = AbstractIdentifiedObject.getIdentifier(dependency, getAuthority());
                 if (id == null || (code = id.getCode()) == null) {
+                    // Dependency not found (malformed CRS object?).
+                    // Conservatively scans all objects.
                     return super.getCodeCandidates(object);
                 }
             }
-            String sql = "SELECT " + select + " FROM " + from + " WHERE " + where + '=' + code;
+            String sql = "SELECT " + select + " FROM " + from + " WHERE " + where + '=' + code +
+                    " ORDER BY ABS(DEPRECATED), " + select; // 'select' is only for making order determinist.
             sql = adaptSQL(sql);
             final Set<String> result = new LinkedHashSet<String>();
             try {

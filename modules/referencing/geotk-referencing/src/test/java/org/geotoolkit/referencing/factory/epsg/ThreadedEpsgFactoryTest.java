@@ -363,7 +363,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         }
 
         // Try a dummy type.
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final Class<? extends IdentifiedObject> wrong = (Class) String.class;
         assertTrue("Dummy type", factory.getAuthorityCodes(wrong).isEmpty());
 
@@ -406,7 +406,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
 
         // We are cheating here since we are breaking generic type check.
         // However in the particular case of our EPSG factory, it works.
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final Set<?> units = factory.getAuthorityCodes((Class) Unit.class);
         assertTrue (units instanceof AuthorityCodes);
         assertFalse(units.isEmpty());
@@ -792,13 +792,15 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
          * Both EPSG:2442 and EPSG:21463 defines the same projection with the same parameters
          * and the same base GeographicCRS (EPSG:4214). The only difference I found was the
          * area of validity...
+         *
+         * Note that there is also a EPSG:21483 code, but that one is deprecated and should
+         * not be selected in this test.
          */
         final String code = AbstractIdentifiedObject.getIdentifier(find, factory.getAuthority()).getCode();
-        assertTrue(code, "2442".equals(code) || "21463".equals(code));
+        assertEquals("2442", code); // Finder order should be determinist, so 2442 is the selected CRS.
 
         finder.setFullScanAllowed(false);
         assertEquals("The CRS should still in the cache.", "EPSG:"+code, finder.findIdentifier(crs));
-
     }
 
     /**

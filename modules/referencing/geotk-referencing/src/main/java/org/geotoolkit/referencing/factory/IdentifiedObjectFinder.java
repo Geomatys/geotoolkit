@@ -41,19 +41,28 @@ import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * Looks up an object from an {@linkplain AuthorityFactory authority factory} which is
+ * Lookups an object from an {@linkplain AuthorityFactory authority factory} which is
  * {@linkplain CRS#equalsIgnoreMetadata equal, ignoring metadata}, to the specified
  * object. The main purpose of this class is to get a fully {@linkplain IdentifiedObject
  * identified object} from an incomplete one, for example from an object without
- * {@linkplain IdentifiedObject#getIdentifiers identifiers} or "{@code AUTHORITY[...]}"
- * element in <cite>Well Known Text</cite> terminology.
+ * {@linkplain IdentifiedObject#getIdentifiers identifiers} ("{@code AUTHORITY[...]}"
+ * element in <cite>Well Known Text</cite> terminology).
  * <p>
- * Instances of {@code IdentifiedObjectFinder} are obtained by calling
- * {@link AbstractAuthorityFactory#getIdentifiedObjectFinder}. A new instance is obtained
- * on every call, which is <strong>not</strong> garanteed to be thread-safe even if the
- * underlying factory is thread-safe. Once an instance is obtained, it can be configured
- * by calling its setter methods. Finally searchs can be performed by invoking the
- * {@link #find} method. The same instance can be reused for many consecutive searchs.
+ * The steps for using {@code IdentifiedObjectFinder} are:
+ * <p>
+ * <ol>
+ *   <li>Get a new instance by calling
+ *       {@link AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)}.</li>
+ *   <li>Optionaly configure that instance calling its setter methods.</li>
+ *   <li>Perform a search by invoking the {@link #find(IdentifiedObject)} method.
+ *       The same {@code IdentifiedObjectFinder} instance can be reused for many
+ *       consecutive searchs.</li>
+ * </ol>
+ *
+ * {@section Thread safety}
+ * {@code IdentifiedObjectFinder} are <strong>not</strong> garanteed to be thread-safe
+ * even if the underlying factory is thread-safe. If concurrent searchs are desired,
+ * then a new instance should be created for each thread.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -82,7 +91,7 @@ public class IdentifiedObjectFinder {
     /**
      * Creates a finder using the specified factory. This constructor is
      * protected because instances of this class should not be created directly.
-     * Use {@link AbstractAuthorityFactory#getIdentifiedObjectFinder} instead.
+     * Use {@link AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)} instead.
      *
      * @param factory The factory to scan for the identified objects.
      * @param type    The type of objects to lookup.
@@ -393,15 +402,18 @@ public class IdentifiedObjectFinder {
 
     /**
      * Returns a set of authority codes that <strong>may</strong> identify the same object than
-     * the specified one. The returned set must contains the code of every objects that are
-     * {@linkplain CRS#equalsIgnoreMetadata equal, ignoring metadata}, to the specified one.
+     * the specified one. The returned set must contains <em>at least</em> the code of every objects
+     * that are {@linkplain CRS#equalsIgnoreMetadata equal, ignoring metadata}, to the specified one.
      * However the set is not required to contains only the codes of those objects; it may
      * conservatively contains the code for more objects if an exact search is too expensive.
      * <p>
      * This method is invoked by the default {@link #find find} method implementation. The caller
-     * may iterates through every returned codes, instantiate the objects and compare them with
-     * the specified one in order to determine which codes are really applicable.
-     * <p>
+     * iterates through the returned codes, instantiate the objects and compare them with the
+     * specified one in order to determine which codes are really applicable. The iteration
+     * stops as soon as a match is found (in other words, if more than one object is equals to
+     * the specified one, then the {@code find} method selects the first one in iteration order).
+     *
+     * {@section Default implementation}
      * The default implementation returns the same set than
      * <code>{@linkplain AuthorityFactory#getAuthorityCodes getAuthorityCodes}(type)</code>
      * where {@code type} is the interface specified at construction type. Subclasses should
