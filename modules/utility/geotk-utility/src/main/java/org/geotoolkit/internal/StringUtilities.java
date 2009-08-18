@@ -121,6 +121,86 @@ public final class StringUtilities {
     }
 
     /**
+     * Returns {@code true} if the second string is an acronym of the first string. An
+     * acronym is a sequence of {@linkplain Character#isLetterOrDigit letters or digits}
+     * built from at least one character of each word in the complete group. More than
+     * one character from the same word may appear in the acronym, but they must always
+     * be the first consecutive characters.
+     * <p>
+     * <b>Example:</b> Given the string {@code "Open Geospatial Consortium"}, the following
+     * strings are recognized as acronym: {@code "OGC"}, {@code "O.G.C."}, {@code "OpGeoCon"}.
+     * The comparison is case-insensitive.
+     *
+     * @param  complete The complete string.
+     * @param  acronym A possible acronym of the complete string.
+     * @return {@code true} if the second string is an acronym of the first one.
+     *
+     * @since 3.03
+     */
+    public static boolean equalsAcronym(final CharSequence complete, final CharSequence acronym) {
+        final int lgc = complete.length();
+        final int lga = acronym .length();
+        int ic=0, ia=0;
+        char ca, cc;
+        do if (ia >= lga) return false;
+        while (!Character.isLetterOrDigit(ca = acronym.charAt(ia++)));
+        do if (ic >= lgc) return false;
+        while (!Character.isLetterOrDigit(cc = complete.charAt(ic++)));
+        if (Character.toUpperCase(ca) != Character.toUpperCase(cc)) {
+            // The first letter must match.
+            return false;
+        }
+cmp:    while (ia < lga) {
+            if (ic >= lgc) {
+                // There is more letters in the acronym than in the complete name.
+                return false;
+            }
+            ca = acronym .charAt(ia++);
+            cc = complete.charAt(ic++);
+            if (Character.isLetterOrDigit(ca)) {
+                if (Character.toUpperCase(ca) == Character.toUpperCase(cc)) {
+                    // Acronym letter matches the letter from the complete name.
+                    // Continue the comparison with next letter of both strings.
+                    continue;
+                }
+                // Will search for the next word after the 'else' block.
+            } else do {
+                if (ia >= lga) break cmp;
+                ca = acronym.charAt(ia++);
+            } while (!Character.isLetterOrDigit(ca));
+            /*
+             * At this point, 'ca' is the next acronym letter to compare and we
+             * need to search for the next word in the complete name. We first
+             * skip remaining letters, then we skip non-letter characters.
+             */
+            boolean skipLetters = true;
+            do while (Character.isLetterOrDigit(cc) == skipLetters) {
+                if (ic >= lgc) {
+                    return false;
+                }
+                cc = complete.charAt(ic++);
+            } while ((skipLetters = !skipLetters) == false);
+            // Now that we are aligned on a new word, the first letter must match.
+            if (Character.toUpperCase(ca) != Character.toUpperCase(cc)) {
+                return false;
+            }
+        }
+        /*
+         * Now that we have processed all acronym letters, the complete name can not have
+         * any additional word. We can only finish the current word and skip trailing non-
+         * letter characters.
+         */
+        boolean skipLetters = true;
+        do {
+            do {
+                if (ic >= lgc) return true;
+                cc = complete.charAt(ic++);
+            } while (Character.isLetterOrDigit(cc) == skipLetters);
+        } while ((skipLetters = !skipLetters) == false);
+        return false;
+    }
+
+    /**
      * Returns {@code true} if the two given strings are equal, ignoring case. This method assumes
      * an ASCII character set, which is okay for simple needs like checking for a SQL keyword. For
      * comparaison that are valide in a wider range of Unicode character set, use the Java {@link

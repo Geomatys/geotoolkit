@@ -979,7 +979,12 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * but we need to check if it is really from the same table since a few
                  * different tables have objects with the same ID.
                  */
-                // TODO: compare the names here.
+                if (owner.startsWith(AnsiDialectEpsgFactory.TABLE_PREFIX)) {
+                    owner = owner.substring(AnsiDialectEpsgFactory.TABLE_PREFIX.length());
+                }
+                if (!StringUtilities.equalsAcronym(table, owner)) {
+                    continue;
+                }
             }
             final String scope = result.getString(1);
             final String local = getString(result, 2, code);

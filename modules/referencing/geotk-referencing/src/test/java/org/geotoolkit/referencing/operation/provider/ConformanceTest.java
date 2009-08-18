@@ -89,17 +89,17 @@ public final class ConformanceTest {
         final Map<String, Map<OperationMethod,OperationMethod>> names =
                 new LinkedHashMap<String, Map<OperationMethod,OperationMethod>>();
         final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
-        for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
+skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
             for (final ReferenceIdentifier id : method.getIdentifiers()) {
                 if (Citations.identifierMatches(authority, id.getAuthority())) {
                     final String code = id.getCode().trim();
-                    if (code.equals("9602")) {
+                    if (code.equals("9602") && codes.containsKey(code)) {
                         /*
                          * Exclude this special case because EPSG defines a single OperationMethod
                          * for both "Ellipsoid_To_Geocentric" and "Geocentric_To_Ellipsoid", while
                          * OGC and Geotk define two distinct operations. This name appears twice.
                          */
-                        continue;
+                        continue skip;
                     }
                     assertTrue("Not a code: "   + code, isNumber(code));
                     assertNull("Defined twice:" + code, codes.put(code, method));
@@ -128,7 +128,6 @@ public final class ConformanceTest {
         if (factory == null) {
             return;
         }
-        if (true) return; // Remaining is disabled until the search for aliases in DirectEpsgFactory has been fixed.
         /*
          * Now compares the method names with the one declared in the EPSG database.
          * We will run this block twice. This first execution performs the test without

@@ -70,4 +70,57 @@ public final class StringUtilitiesTest {
             ""
         }, splitted);
     }
+
+    /**
+     * Tests the {@link StringUtilities#equalsAcronym} method.
+     */
+    @Test
+    public void testEqualsAcronym() {
+        /*
+         * Following should be accepted as acronyms...
+         */
+        assertTrue(StringUtilities.equalsAcronym("Open Geospatial Consortium", "OGC"));
+        assertTrue(StringUtilities.equalsAcronym("Open Geospatial Consortium", "O.G.C."));
+        assertTrue(StringUtilities.equalsAcronym("Open Geospatial Consortium", "OpGeoCon"));
+        assertTrue(StringUtilities.equalsAcronym("Open Geospatial Consortium", "Open Geospatial Consortium"));
+        assertTrue(StringUtilities.equalsAcronym("Open Geospatial Consortium", "ogc"));
+        /*
+         * Following should be rejected...
+         */
+        assertFalse(StringUtilities.equalsAcronym("Open Geospatial Consortium", "ORC"));
+        assertFalse(StringUtilities.equalsAcronym("Open Geospatial Consortium", "O.C.G."));
+        assertFalse(StringUtilities.equalsAcronym("Open Geospatial Consortium", "OGC2"));
+        assertFalse(StringUtilities.equalsAcronym("Open Geospatial Consortium", "OG"));
+        assertFalse(StringUtilities.equalsAcronym("Open Geospatial Consortium", "GC"));
+        /*
+         * Following are mapping of EPSG table names from MS-Access to ANSI SQL.
+         * All those items must be recognized as acroynms - this is requred by DirectEpsgFactory.
+         */
+        assertTrue(StringUtilities.equalsAcronym("[Alias]",                                "alias"));
+        assertTrue(StringUtilities.equalsAcronym("[Area]",                                 "area"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate Axis]",                      "coordinateaxis"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate Axis Name]",                 "coordinateaxisname"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate_Operation]",                 "coordoperation"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate_Operation Method]",          "coordoperationmethod"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate_Operation Parameter]",       "coordoperationparam"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate_Operation Parameter Usage]", "coordoperationparamusage"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate_Operation Parameter Value]", "coordoperationparamvalue"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate_Operation Path]",            "coordoperationpath"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate Reference System]",          "coordinatereferencesystem"));
+        assertTrue(StringUtilities.equalsAcronym("[Coordinate System]",                    "coordinatesystem"));
+        assertTrue(StringUtilities.equalsAcronym("[Datum]",                                "datum"));
+        assertTrue(StringUtilities.equalsAcronym("[Ellipsoid]",                            "ellipsoid"));
+        assertTrue(StringUtilities.equalsAcronym("[Naming System]",                        "namingsystem"));
+        assertTrue(StringUtilities.equalsAcronym("[Prime Meridian]",                       "primemeridian"));
+        assertTrue(StringUtilities.equalsAcronym("[Supersession]",                         "supersession"));
+        assertTrue(StringUtilities.equalsAcronym("[Unit of Measure]",                      "unitofmeasure"));
+        assertTrue(StringUtilities.equalsAcronym("[Version History]",                      "versionhistory"));
+        assertTrue(StringUtilities.equalsAcronym("[Change]",                               "change"));
+        assertTrue(StringUtilities.equalsAcronym("[Deprecation]",                          "deprecation"));
+        /*
+         * It is important the the following is not recognized as an acronym,
+         * otherwise it leads to a confusion in DirectEpsgFactory.
+         */
+        assertFalse(StringUtilities.equalsAcronym("[Coordinate_Operation Method]", "coordoperation"));
+    }
 }

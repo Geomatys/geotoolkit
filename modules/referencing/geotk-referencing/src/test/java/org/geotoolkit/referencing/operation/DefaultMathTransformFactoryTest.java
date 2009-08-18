@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * Tests the regitration of transforms in {@link DefaultMathTransformFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  */
@@ -67,9 +67,15 @@ public class DefaultMathTransformFactoryTest {
         OperationMethod method = factory.getOperationMethod("Mercator_1SP");
         assertTrue(method instanceof Mercator1SP);
 
+        // Same than above, using EPSG code.
+        assertSame(method, factory.getOperationMethod("EPSG:9804"));
+
         // A conversion which is not a projection.
         method = factory.getOperationMethod("Affine");
         assertTrue(method instanceof Affine);
+
+        // Same than above, using EPSG code.
+        assertSame(method, factory.getOperationMethod("EPSG:9624"));
     }
 
     /**

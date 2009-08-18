@@ -125,6 +125,8 @@ public class TransverseMercator extends MapProjection {
             new NamedIdentifier(Citations.ESRI,     "Gauss_Kruger"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Kruger"),
+            new NamedIdentifier(Citations.EPSG,     "Gauss-Boaga"),
+            new NamedIdentifier(Citations.EPSG,     "TM"),
             new IdentifierCode (Citations.EPSG,      9807),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
             new IdentifierCode (Citations.GEOTIFF,   1),
