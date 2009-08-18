@@ -1013,9 +1013,14 @@ public final class Errors extends IndexedResourceBundle {
 
         /**
          * Authority "{0}" is unknown or doesn't match the supplied hints. Maybe it is defined in an
-         * unreachable JAR file, or one of its dependencies (for example a JDBC driver) is missing?
+         * unreachable JAR file?
          */
         public static final int UNKNOW_AUTHORITY_$1 = 190;
+
+        /**
+         * Authority "{0}" is not available. The cause is: {1}
+         */
+        public static final int UNKNOW_AUTHORITY_$2 = 221;
 
         /**
          * Unknow axis direction: "{0}".

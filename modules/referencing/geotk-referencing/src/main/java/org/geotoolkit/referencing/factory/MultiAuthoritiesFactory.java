@@ -485,31 +485,33 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
          * corresponding cause. Both the authority and cause may be null if the code didn't
          * had any authority part.
          */
-        throw noSuchAuthority(code, authority, cause);
-    }
-
-    /**
-     * Formats the exception to be throw when the user asked for a code from an unknown authority.
-     *
-     * @param  code      The code with an unknown authority.
-     * @param  authority The authority, or {@code null} if none.
-     * @param  cause     The cause for the exception to be formatted, or {@code null} if none.
-     * @return The formatted exception to be throw.
-     */
-    private NoSuchAuthorityCodeException noSuchAuthority(final String code, String authority,
-            final FactoryRegistryException cause)
-    {
-        final String message;
+        String message = null;
         if (authority == null) {
             authority = Vocabulary.format(Vocabulary.Keys.UNKNOW);
             message   = Errors.format(Errors.Keys.MISSING_AUTHORITY_$1, code);
         } else {
-            message = Errors.format(Errors.Keys.UNKNOW_AUTHORITY_$1, authority);
+            /*
+             * Gets the message of the very last cause, since it is often the most pertinent
+             * one. This is both a shortcut, and sometime the only information reported when
+             * the stack trace is trimmed by the logger. When the stack trace is available,
+             * the user can still looks at the complete "caused by" chain.
+             */
+            for (Throwable c=cause; c!=null; c=c.getCause()) {
+                final String candidate = c.getLocalizedMessage();
+                if (candidate != null) {
+                    message = candidate;
+                }
+            }
+            if (message != null) {
+                message = Errors.format(Errors.Keys.UNKNOW_AUTHORITY_$2, authority, message);
+            } else {
+                message = Errors.format(Errors.Keys.UNKNOW_AUTHORITY_$1, authority);
+            }
         }
         final NoSuchAuthorityCodeException exception;
         exception = new NoSuchAuthorityCodeException(message, authority, code);
         exception.initCause(cause);
-        return exception;
+        throw exception;
     }
 
     /**
