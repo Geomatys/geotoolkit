@@ -150,7 +150,9 @@ public class GetObservation extends RequestBaseType {
         this.offering          = offering;
         this.procedure         = procedure;
         this.responseFormat    = responseFormat;
-        this.responseMode      = responseMode.value();
+        if (responseMode != null) {
+            this.responseMode      = responseMode.value();
+        }
         this.result            = result;
         this.resultModel       = resultModel;
         this.srsName           = srsName;
