@@ -124,7 +124,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
     }
 
     /**
-     * Transforms target coordinates to source coordinates. This is done by itteratively
+     * Transforms target coordinates to source coordinates. This is done by iteratively
      * finding a target coordinate that shifts to the input coordinate. The input coordinate
      * is used as the first approximation.
      * <p>

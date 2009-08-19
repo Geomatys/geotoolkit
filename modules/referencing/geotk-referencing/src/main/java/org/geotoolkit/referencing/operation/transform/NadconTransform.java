@@ -41,8 +41,7 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  *
  * NADCON is a two dimentional datum shift method, created by the National Geodetic Survey (NGS),
  * that uses interpolated values from two grid shift files. This method is used to transform NAD27
- * (EPSG code 4267) datum coordinates (and some others) to NAD83 (EPSG code 4267) within the United
- * States.
+ * (EPSG:4267) datum coordinates (and some others) to NAD83 (EPSG:4269) within the United States.
  * <p>
  * There are two set of grid shift files: NADCON and High Accuracy Reference Networks (HARN).
  * NADCON shifts from NAD27 (and some others) to NAD83 while HARN shifts from the NADCON NAD83
@@ -59,9 +58,9 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  *   <tr><td>CONUS</td><td>Conterminous U S (lower 48 states)</td><td>NAD27</td><td>0.15</td></tr>
  *   <tr><td>ALASKA</td><td>Alaska, incl. Aleutian Islands</td><td>NAD27</td><td>0.5</td></tr>
  *   <tr><td>HAWAII</td><td>Hawaiian Islands</td><td>Old Hawaiian (4135)</td><td>0.2</td></tr>
- *   <tr><td>STLRNC</td><td>St. Lawrence Is., AK</td><td>St. Lawrence Island (4136)</td></tr>
- *   <tr><td>STPAUL </td><td>St. Paul Is., AK</td><td>St. Paul Island (4137)</td></tr>
- *   <tr><td>STGEORGE</td><td>St. George Is., AK</td><td>St. George Island (4138)</td></tr>
+ *   <tr><td>STLRNC</td><td>St. Lawrence Is., AK</td><td>St. Lawrence Island (4136)</td><td>-</td></tr>
+ *   <tr><td>STPAUL </td><td>St. Paul Is., AK</td><td>St. Paul Island (4137)</td><td>-</td></tr>
+ *   <tr><td>STGEORGE</td><td>St. George Is., AK</td><td>St. George Island (4138)</td><td>-</td></tr>
  *   <tr><td>PRVI</td><td>Puerto Rico and the Virgin Islands</td><td>Puerto Rico (4139)</td><td>0.05</td></tr>
  * </table>
  * <p>
@@ -93,7 +92,7 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -117,21 +116,20 @@ public class NadconTransform extends GridTransform2D {
     /**
      * Constructs a grid from the specified shift files. The arguments may be file paths and names,
      * or just file names. They are resolved as below:
-     *
+     * <p>
      * <ul>
-     *   <li><p>If an argument is a {@linkplain URL} or {@linkplain File#isAbsolute absolute}
-     *       file, then it is used directly.</p></li>
+     *   <li>If an argument is a {@linkplain URL} or {@linkplain File#isAbsolute absolute file},
+     *       then it is used directly.</li>
      *
-     *   <li><p>Otherwise if an argument is a single filename with no
-     *       {@linkplain File#getParent parent} directory, and if the file is found in a
+     *   <li>Otherwise if an argument is a single filename with no
+     *       {@linkplain File#getParent parent directory}, and if the file is found in a
      *       {@code org/geotoolkit/referencing/operation/transform/NADCON} directory on the
-     *       classpath (for example if it is a files bundled in some {@code geotk-nadcon}
-     *       module), then that later file is used.</p></li>
+     *       classpath, then that later file is used.</li>
      *
-     *   <li><p>Otherwise (i.e. the file is relative and not presents on the classpath), prepend
+     *   <li>Otherwise (i.e. the file is relative and not presents on the classpath), prepend
      *       the grid location set by the user, if any. This location can be set by the
      *       <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module,
-     *       which can also download and install the data.</p></li>
+     *       which can also download and install the data.</li>
      * </ul>
      *
      * @param  longitudeGridFile Path (optional) and name to the longitude difference file.
@@ -141,7 +139,7 @@ public class NadconTransform extends GridTransform2D {
      * @throws FactoryException If there is an error reading the grid files.
      */
     public NadconTransform(String longitudeGridFile, String latitudeGridFile) throws FactoryException {
-        this(NadconLoader.load(longitudeGridFile, latitudeGridFile));
+        this(NadconLoader.loadIfAbsent(longitudeGridFile, latitudeGridFile));
     }
 
     /**

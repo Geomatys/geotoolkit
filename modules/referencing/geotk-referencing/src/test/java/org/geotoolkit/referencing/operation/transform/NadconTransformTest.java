@@ -29,7 +29,7 @@ import org.geotoolkit.referencing.operation.provider.NADCON;
  * Tests {@link NadconTransform}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  */
@@ -56,5 +56,22 @@ public class NadconTransformTest extends TransformTestCase {
         transform = ascii;
         tolerance = 1E-10;
         stress(CoordinateDomain.GEOGRAPHIC, 426005043);
+    }
+
+    /**
+     * Ensures that the cache works properly.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @since 3.03
+     */
+    @Test
+    public void testCache() throws FactoryException {
+        Assume.assumeTrue(NADCON.isAvailable());
+        final NadconTransform nyhpgn = new NadconTransform("nyhpgn.los", "nyhpgn.las");
+        final NadconTransform cohpgn = new NadconTransform("cohpgn.los", "cohpgn.las");
+        assertNotSame(nyhpgn.grid, cohpgn.grid);
+        assertSame(nyhpgn.grid, new NadconTransform("nyhpgn.los", "nyhpgn.las").grid);
+        assertSame(cohpgn.grid, new NadconTransform("cohpgn.los", "cohpgn.las").grid);
     }
 }

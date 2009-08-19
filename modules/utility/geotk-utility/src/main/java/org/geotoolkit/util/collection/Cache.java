@@ -350,7 +350,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      *         method call.
      * @throws Exception If an exception occured during the execution of {@code creator.call()}.
      */
-    public V getOrCreate(final K key, final Callable<V> creator) throws Exception {
+    public V getOrCreate(final K key, final Callable<? extends V> creator) throws Exception {
         V value = peek(key);
         if (value == null) {
             final Handler<V> handler = lock(key);

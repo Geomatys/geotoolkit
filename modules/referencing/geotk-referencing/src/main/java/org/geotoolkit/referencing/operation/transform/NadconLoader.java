@@ -22,6 +22,7 @@ import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.concurrent.Callable;
 import java.util.StringTokenizer;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferFloat;
@@ -45,24 +46,18 @@ import static org.geotoolkit.internal.io.Installation.NADCON;
  * object used only at loading time and discarted once the transform is built.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
  */
-abstract class NadconLoader {
-    /**
-     * Longitude and latitude grid shift file names.
-     * The object type can be either {@link File} or {@link URL}.
-     */
-    Object longitudeGridFile, latitudeGridFile;
-
+abstract class NadconLoader extends GridLoader {
     /**
      * {@code true} if we are in process of reading longitude, or {@link #false}
      * if we are reading latitude. This is used only in order to format an error
      * message in case of failure.
      */
-    boolean rx;
+    transient boolean rx;
 
     /**
      * The number of columns (width) and rows (height) in the grid.
@@ -85,6 +80,37 @@ abstract class NadconLoader {
     float[] longitudeShift, latitudeShift;
 
     /**
+     * The buffer, created from the {@link #longitudeShift} and {@link #latitudeShift}
+     * when first needed.
+     */
+    private transient DataBuffer buffer;
+
+    /**
+     * Creates a new loader.
+     */
+    NadconLoader() {
+        super(NadconLoader.class);
+    }
+
+    /**
+     * If a loader already exists for the given files, returns it. Otherwise guess the format
+     * from the file extension, loads the data and returns a {@code NadconLoader} instance
+     * containing the data.
+     *
+     * @param  longitudeGrid Name or path to the longitude difference file.
+     * @param  latitudeGrid  Name or path to the latitude difference file.
+     * @return The data.
+     * @throws FactoryException If there is an error reading the grid files.
+     */
+    public static NadconLoader loadIfAbsent(final String longitudeGrid, final String latitudeGrid) throws FactoryException {
+        return loadIfAbsent(NadconLoader.class, longitudeGrid, latitudeGrid, new Callable<NadconLoader>() {
+            @Override public NadconLoader call() throws FactoryException {
+                return load(longitudeGrid, latitudeGrid);
+            }
+        });
+    }
+
+    /**
      * Guesses the format from the file extension, loads the data and returns a
      * {@code NadconLoader} instance containing the data.
      *
@@ -93,7 +119,7 @@ abstract class NadconLoader {
      * @return The data.
      * @throws FactoryException If there is an error reading the grid files.
      */
-    public static NadconLoader load(final String longitudeGrid, final String latitudeGrid)
+    private static NadconLoader load(final String longitudeGrid, final String latitudeGrid)
             throws FactoryException
     {
         boolean rx = false; // Same meaning than the rx field.
@@ -204,8 +230,11 @@ abstract class NadconLoader {
     /**
      * Creates and returns the data buffer.
      */
-    public final DataBuffer getDataBuffer() {
-        return new DataBufferFloat(new float[][] {longitudeShift, latitudeShift}, width*height);
+    public final synchronized DataBuffer getDataBuffer() {
+        if (buffer == null) {
+            buffer = new DataBufferFloat(new float[][] {longitudeShift, latitudeShift}, width*height);
+        }
+        return buffer;
     }
 
     /**
@@ -261,14 +290,14 @@ abstract class NadconLoader {
             String n = null;
             try {
                 return new Number[] {
-                    new Integer(n=tokens.nextToken()),
-                    new Integer(n=tokens.nextToken()),
-                    new Integer(n=tokens.nextToken()),
-                    new Float  (n=tokens.nextToken()),
-                    new Float  (n=tokens.nextToken()),
-                    new Float  (n=tokens.nextToken()),
-                    new Float  (n=tokens.nextToken()),
-                    new Float  (n=tokens.nextToken())
+                    Integer.parseInt(n=tokens.nextToken()),
+                    Integer.parseInt(n=tokens.nextToken()),
+                    Integer.parseInt(n=tokens.nextToken()),
+                    Float.parseFloat(n=tokens.nextToken()),
+                    Float.parseFloat(n=tokens.nextToken()),
+                    Float.parseFloat(n=tokens.nextToken()),
+                    Float.parseFloat(n=tokens.nextToken()),
+                    Float.parseFloat(n=tokens.nextToken())
                 };
             } catch (NumberFormatException e) {
                 throw new ContentFormatException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, n), e);

@@ -47,7 +47,7 @@ public enum GridType {
     /**
      * The grid values are offsets to add to source coordinates. The source and target
      * coordinates can be in any CRS. In the typical case where to source or the target
-     * CRS is {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84}),
+     * CRS is {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84},
      * then the offsets are in decimal degrees with longitude offset positive toward east
      * and latitude offset positive toward north.
      */
