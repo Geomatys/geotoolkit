@@ -150,7 +150,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
      */
     @Override
     public <T> T getServiceProvider(final Class<T> category, final Filter filter,
-            Hints hints, final Hints.Key key) throws FactoryRegistryException
+            Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
     {
         try {
             return getOrCreateServiceProvider(category, filter, hints, key);
@@ -164,7 +164,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
      * to encompass in a {@code try ... finally} block.
      */
     private <T> T getOrCreateServiceProvider(final Class<T> category, final Filter filter,
-            Hints hints, final Hints.Key key) throws FactoryRegistryException
+            Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
     {
         final FactoryNotFoundException notFound;
         try {

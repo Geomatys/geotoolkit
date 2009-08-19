@@ -190,13 +190,14 @@ public class FactoryFinder {
      *
      * @param  category The factory category.
      * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @param  key The hint key to use for searching an implementation.
      * @return Set of available factory implementations.
      */
-    static <T> Set<T> getFactories(final Class<T> category, Hints hints) {
+    static <T> Set<T> getFactories(final Class<T> category, Hints hints, final Hints.ClassKey key) {
         hints = mergeSystemHints(hints);
         final Iterator<T> iterator;
         synchronized (FactoryFinder.class) {
-            iterator = getServiceRegistry().getServiceProviders(category, null, hints);
+            iterator = getServiceRegistry().getServiceProviders(category, null, hints, key);
         }
         return new LazySet<T>(iterator);
     }
@@ -211,7 +212,7 @@ public class FactoryFinder {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         specified interface.
      */
-    private static <T> T getFactory(final Class<T> category, Hints hints, final Hints.Key key)
+    private static <T> T getFactory(final Class<T> category, Hints hints, final Hints.ClassKey key)
             throws FactoryRegistryException
     {
         hints = mergeSystemHints(hints);
@@ -247,7 +248,7 @@ public class FactoryFinder {
      * @category Metadata
      */
     public static Set<NameFactory> getNameFactories(final Hints hints) {
-        return getFactories(NameFactory.class, hints);
+        return getFactories(NameFactory.class, hints, Hints.NAME_FACTORY);
     }
 
     /**
@@ -277,7 +278,7 @@ public class FactoryFinder {
      * @category Metadata
      */
     public static Set<CitationFactory> getCitationFactories(final Hints hints) {
-        return getFactories(CitationFactory.class, hints);
+        return getFactories(CitationFactory.class, hints, Hints.CITATION_FACTORY);
     }
 
     /**
@@ -309,7 +310,7 @@ public class FactoryFinder {
      * @category Referencing
      */
     public static Set<DatumFactory> getDatumFactories(final Hints hints) {
-        return getFactories(DatumFactory.class, hints);
+        return getFactories(DatumFactory.class, hints, Hints.DATUM_FACTORY);
     }
 
     /**
@@ -341,7 +342,7 @@ public class FactoryFinder {
      * @category Referencing
      */
     public static Set<CSFactory> getCSFactories(final Hints hints) {
-        return getFactories(CSFactory.class, hints);
+        return getFactories(CSFactory.class, hints, Hints.CS_FACTORY);
     }
 
     /**
@@ -373,7 +374,7 @@ public class FactoryFinder {
      * @category Referencing
      */
     public static Set<CRSFactory> getCRSFactories(final Hints hints) {
-        return getFactories(CRSFactory.class, hints);
+        return getFactories(CRSFactory.class, hints, Hints.CRS_FACTORY);
     }
 
     /**
@@ -414,7 +415,7 @@ public class FactoryFinder {
      * @category Referencing
      */
     public static Set<CoordinateOperationFactory> getCoordinateOperationFactories(final Hints hints) {
-        return getFactories(CoordinateOperationFactory.class, hints);
+        return getFactories(CoordinateOperationFactory.class, hints, Hints.COORDINATE_OPERATION_FACTORY);
     }
 
     /**
@@ -449,7 +450,7 @@ public class FactoryFinder {
      * @category Referencing
      */
     public static Set<MathTransformFactory> getMathTransformFactories(final Hints hints) {
-        return getFactories(MathTransformFactory.class, hints);
+        return getFactories(MathTransformFactory.class, hints, Hints.MATH_TRANSFORM_FACTORY);
     }
 
     /**
@@ -479,7 +480,7 @@ public class FactoryFinder {
      * @category Geometry
      */
     public static Set<PositionFactory> getPositionFactories(final Hints hints) {
-        return getFactories(PositionFactory.class, hints);
+        return getFactories(PositionFactory.class, hints, Hints.POSITION_FACTORY);
     }
 
     /**
@@ -509,7 +510,7 @@ public class FactoryFinder {
      * @category Geometry
      */
     public static Set<PrimitiveFactory> getPrimitiveFactories(final Hints hints) {
-        return getFactories(PrimitiveFactory.class, hints);
+        return getFactories(PrimitiveFactory.class, hints, Hints.PRIMITIVE_FACTORY);
     }
 
     /**
@@ -539,7 +540,7 @@ public class FactoryFinder {
      * @category Geometry
      */
     public static Set<GeometryFactory> getGeometryFactories(final Hints hints) {
-        return getFactories(GeometryFactory.class, hints);
+        return getFactories(GeometryFactory.class, hints, Hints.GEOMETRY_FACTORY);
     }
 
     /**
@@ -569,7 +570,7 @@ public class FactoryFinder {
      * @category Geometry
      */
     public static Set<ComplexFactory> getComplexFactories(final Hints hints) {
-        return getFactories(ComplexFactory.class, hints);
+        return getFactories(ComplexFactory.class, hints, Hints.COMPLEX_FACTORY);
     }
 
     /**
@@ -599,7 +600,7 @@ public class FactoryFinder {
      * @category Geometry
      */
     public static Set<AggregateFactory> getAggregateFactories(final Hints hints) {
-        return getFactories(AggregateFactory.class, hints);
+        return getFactories(AggregateFactory.class, hints, Hints.AGGREGATE_FACTORY);
     }
 
     /**
@@ -629,7 +630,7 @@ public class FactoryFinder {
      * @category Feature
      */
     public static Set<FeatureFactory> getFeatureFactories(final Hints hints) {
-        return getFactories(FeatureFactory.class, hints);
+        return getFactories(FeatureFactory.class, hints, Hints.FEATURE_FACTORY);
     }
 
     /**
@@ -659,7 +660,7 @@ public class FactoryFinder {
      * @category Feature
      */
     public static Set<FilterFactory> getFilterFactories(final Hints hints) {
-        return getFactories(FilterFactory.class, hints);
+        return getFactories(FilterFactory.class, hints, Hints.FILTER_FACTORY);
     }
 
     /**
@@ -689,7 +690,7 @@ public class FactoryFinder {
      * @category Feature
      */
     public static Set<StyleFactory> getStyleFactories(final Hints hints) {
-        return getFactories(StyleFactory.class, hints);
+        return getFactories(StyleFactory.class, hints, Hints.STYLE_FACTORY);
     }
 
     /**

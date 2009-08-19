@@ -101,13 +101,14 @@ public final class CoverageFactoryFinder {
      *
      * @param  category The factory category.
      * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @param  key The hint key to use for searching an implementation.
      * @return Set of available factory implementations.
      */
-    private static <T> Set<T> getFactories(final Class<T> category, Hints hints) {
+    private static <T> Set<T> getFactories(final Class<T> category, Hints hints, final Hints.ClassKey key) {
         hints = mergeSystemHints(hints);
         final Iterator<T> iterator;
         synchronized (FactoryFinder.class) {
-            iterator = getServiceRegistry().getServiceProviders(category, null, hints);
+            iterator = getServiceRegistry().getServiceProviders(category, null, hints, key);
         }
         return new LazySet<T>(iterator);
     }
@@ -122,7 +123,7 @@ public final class CoverageFactoryFinder {
      * @throws FactoryRegistryException if no implementation was found or can be created for the
      *         specified interface.
      */
-    private static <T> T getFactory(final Class<T> category, Hints hints, final Hints.Key key)
+    private static <T> T getFactory(final Class<T> category, Hints hints, final Hints.ClassKey key)
             throws FactoryRegistryException
     {
         hints = mergeSystemHints(hints);
@@ -159,7 +160,7 @@ public final class CoverageFactoryFinder {
      * @since 2.4
      */
     public static synchronized Set<GridCoverageFactory> getGridCoverageFactories(Hints hints) {
-        return getFactories(GridCoverageFactory.class, hints);
+        return getFactories(GridCoverageFactory.class, hints, null);
     }
 
     /**
@@ -191,7 +192,7 @@ public final class CoverageFactoryFinder {
      * @since 3.00
      */
     public static synchronized Set<GridCoverageProcessor> getCoverageProcessors(Hints hints) {
-        return getFactories(GridCoverageProcessor.class, hints);
+        return getFactories(GridCoverageProcessor.class, hints, Hints.GRID_COVERAGE_PROCESSOR);
     }
 
     /**

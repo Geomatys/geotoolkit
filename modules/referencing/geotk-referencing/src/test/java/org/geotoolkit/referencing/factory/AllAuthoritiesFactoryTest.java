@@ -31,6 +31,9 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.factory.FactoryNotFoundException;
+import org.geotoolkit.internal.jdbc.DefaultDataSource;
+import org.geotoolkit.factory.Hints;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,8 +42,8 @@ import static org.junit.Assert.*;
 /**
  * Tests the {@link AllAuthoritiesFactory} implementation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.4
  */
@@ -160,5 +163,30 @@ public final class AllAuthoritiesFactoryTest {
         assertTrue(CRS.equalsIgnoreMetadata(find, DefaultGeographicCRS.WGS84));
         assertSame(all.createCoordinateReferenceSystem("CRS:84"), find);
         assertEquals("CRS:84", finder.findIdentifier(DefaultGeographicCRS.WGS84));
+    }
+
+    /**
+     * Tests that an appropriate error message is produced when the EPSG database is
+     * not available. The purpose of this test is to ensure that the message contains
+     * enough information for a diagnostic of the problem.
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void testConnectionFailure() throws FactoryException {
+        final Hints hints = new Hints(Hints.EPSG_DATA_SOURCE, new DefaultDataSource("jdbc:inexistant:dummy"));
+        hints.put(Hints.CRS_AUTHORITY_FACTORY, ThreadedAuthorityFactory.class);
+        AllAuthoritiesFactory factory = AllAuthoritiesFactory.getInstance(hints);
+        assertTrue("Because we asked for an inexistant driver, and because we have specified " +
+                "a hint that exclude other factories (WMS, etc.), we should get an empty set.",
+                factory.getFactories().isEmpty());
+        try {
+            assertNotNull(factory.createGeographicCRS("EPSG:4326"));
+            fail("The \"inexistant\" JDBC driver should not be found.");
+        } catch (NoSuchAuthorityCodeException e) {
+            // This is the expected exception. This exception is expected to have a cause.
+            Throwable cause = e.getCause();
+            assertTrue(cause instanceof FactoryNotFoundException);
+        }
     }
 }

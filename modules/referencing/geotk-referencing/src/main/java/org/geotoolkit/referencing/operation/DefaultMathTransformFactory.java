@@ -175,8 +175,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             synchronized (registry) {
                 methods = providers;
                 if (methods == null) {
-                    final Iterator<MathTransformProvider> it =
-                            registry.getServiceProviders(MathTransformProvider.class, null, HINTS);
+                    final Iterator<MathTransformProvider> it = registry.getServiceProviders(
+                            MathTransformProvider.class, null, HINTS, null);
                     int count = 0;
                     methods = new MathTransformProvider[64];
                     while (it.hasNext()) {

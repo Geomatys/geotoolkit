@@ -18,6 +18,7 @@
 package org.geotoolkit.factory;
 
 import java.util.List;
+import org.geotoolkit.internal.LazySet;
 import org.geotoolkit.util.collection.LazyList;
 
 import org.junit.*;
@@ -28,8 +29,8 @@ import org.geotoolkit.test.Depend;
 /**
  * Tests {@link FactoryRegistry} implementation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.1
  */
@@ -46,7 +47,7 @@ public final class FactoryRegistryTest {
 
     /**
      * Creates the factory registry to test. The tests performed in this method are more
-     * like JDK tests than Geotoolkit implementation tests. We basically just ensure that we
+     * like JDK tests than Geotk implementation tests. We basically just ensure that we
      * have setup the service registry properly.
      * <p>
      * Factories are specified in arguments as {@link Factory} objects in order to avoid
@@ -74,7 +75,7 @@ public final class FactoryRegistryTest {
         assertTrue(registry.setOrdering(DummyFactory.class, (DummyFactory)factory2, (DummyFactory)factory3));
         assertTrue(registry.setOrdering(DummyFactory.class, (DummyFactory)factory1, (DummyFactory)factory3));
 
-        final List<?> factories = new LazyList<Object>(registry.getServiceProviders(DummyFactory.class, null, null));
+        final List<?> factories = new LazyList<Object>(registry.getServiceProviders(DummyFactory.class, null, null, null));
         assertTrue(factories.contains(factory1));
         assertTrue(factories.contains(factory2));
         assertTrue(factories.contains(factory3));
@@ -84,7 +85,7 @@ public final class FactoryRegistryTest {
     }
 
     /**
-     * Tests the {@link FactoryRegistry#getProvider} method.
+     * Tests the {@link FactoryRegistry#getServiceProvider} method.
      * Note that the tested method do not create any new factory.
      * If no registered factory matching the hints is found, an exception is expected.
      * <p>
@@ -98,7 +99,7 @@ public final class FactoryRegistryTest {
      */
     @Test
     public void testGetProvider() {
-        final Hints.Key key     = DummyFactory.DUMMY_FACTORY;
+        final Hints.ClassKey key = DummyFactory.DUMMY_FACTORY;
         final Example1 factory1 = new Example1();
         final Example2 factory2 = new Example2();
         final Example3 factory3 = new Example3();
@@ -206,14 +207,14 @@ public final class FactoryRegistryTest {
     }
 
     /**
-     * Tests the {@link DynamicFactoryRegistry#getProvider} method.
+     * Tests the {@link DynamicFactoryRegistry#getServiceProvider} method.
      * This test tries again the cases that was expected to throws an exception in
      * {@link #testGetProvider}. But now, those cases are expected to creates automatically
      * new factory instances instead of throwing an exception.
      */
     @Test
     public void testDynamicGetProvider() {
-        final Hints.Key key     = DummyFactory.DUMMY_FACTORY;
+        final Hints.ClassKey key = DummyFactory.DUMMY_FACTORY;
         final Example1 factory1 = new Example1();
         final Example2 factory2 = new Example2();
         final Example3 factory3 = new Example3();
@@ -264,5 +265,55 @@ public final class FactoryRegistryTest {
         hints.put(DummyFactory.DUMMY_FACTORY, Example4.class);
         factory = registry.getServiceProvider(DummyFactory.class, null, hints, key);
         assertEquals("An instance of Factory #4 should have been created.", Example4.class, factory.getClass());
+    }
+
+    /**
+     * Tests the {@link FactoryRegistry#getServiceProviders} method.
+     *
+     * @since 3.03
+     */
+    @Test
+    public void testGetProviders() {
+        final Hints.ClassKey key = DummyFactory.DUMMY_FACTORY;
+        final Example1 factory1 = new Example1();
+        final Example2 factory2 = new Example2();
+        final Example3 factory3 = new Example3();
+        final FactoryRegistry registry = getRegistry(false, factory1, factory2, factory3);
+        Hints hints = new Hints();
+        LazySet<DummyFactory> c;
+
+        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        assertTrue(c.contains(factory1));
+        assertTrue(c.contains(factory2));
+        assertTrue(c.contains(factory3));
+        assertEquals(3, c.size());
+
+        hints.put(key, DummyFactory.class);
+        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        assertTrue(c.contains(factory1));
+        assertTrue(c.contains(factory2));
+        assertTrue(c.contains(factory3));
+        assertEquals(3, c.size());
+
+        hints.put(key, Example2.class);
+        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        assertFalse(c.contains(factory1));
+        assertTrue (c.contains(factory2));
+        assertFalse(c.contains(factory3));
+        assertEquals(1, c.size());
+
+        hints.put(key, new Class<?>[] {Example2.class, Example1.class});
+        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        assertTrue (c.contains(factory1));
+        assertTrue (c.contains(factory2));
+        assertFalse(c.contains(factory3));
+        assertEquals(2, c.size());
+
+        hints.put(key, factory3);
+        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        assertFalse(c.contains(factory1));
+        assertFalse(c.contains(factory2));
+        assertTrue (c.contains(factory3));
+        assertEquals(1, c.size());
     }
 }

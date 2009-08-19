@@ -432,7 +432,7 @@ public class Hints extends RenderingHints {
      *
      * @category Coverage
      */
-    public static final Key GRID_COVERAGE_PROCESSOR = new ClassKey("org.opengis.coverage.processing.GridCoverageProcessor");
+    public static final ClassKey GRID_COVERAGE_PROCESSOR = new ClassKey("org.opengis.coverage.processing.GridCoverageProcessor");
 
     /**
      * Forces the {@linkplain org.opengis.coverage.processing.GridCoverageProcessor grid coverage

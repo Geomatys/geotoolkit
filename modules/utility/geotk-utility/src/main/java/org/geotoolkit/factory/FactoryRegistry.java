@@ -64,7 +64,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Richard Gould
  * @author Jody Garnett (Refractions)
- * @version 3.01
+ * @version 3.03
  *
  * @see Factory
  * @see Hints
@@ -173,8 +173,60 @@ public class FactoryRegistry extends ServiceRegistry {
      * @return Factories ready to use for the specified category, filter and hints.
      *
      * @since 2.3
+     *
+     * @deprecated Replaced by the method of the same name with an additional
+     *             {@code Hints.ClassKey} argument, which can be null.
      */
+    @Deprecated
     public <T> Iterator<T> getServiceProviders(final Class<T> category, final Filter filter, final Hints hints) {
+        return getServiceProviders(category, filter, hints, null);
+    }
+
+    /**
+     * Returns the providers in the registry for the specified category, filter and hints.
+     * Providers that are not {@linkplain Factory#isAvailable available} will be ignored.
+     * This method will {@linkplain #scanForPlugins() scan for plugins} the first time it
+     * is invoked for the given category.
+     *
+     * @param <T>      The class represented by the {@code category} argument.
+     * @param category The category to look for. Usually an interface class
+     *                 (not the actual implementation class).
+     * @param filter   The optional filter, or {@code null}.
+     * @param hints    The optional user requirements, or {@code null}.
+     * @param key      The key to use for looking for a user-provided instance
+     *                 in the {@code hints} map, or {@code null} if none.
+     * @return Factories ready to use for the specified category, filter and hints.
+     *
+     * @since 3.03 (derived from 2.3)
+     */
+    public <T> Iterator<T> getServiceProviders(final Class<T> category,
+            final Filter filter, Hints hints, final Hints.ClassKey key)
+    {
+        final Class<?>[] requestedType;
+        if (hints != null && key != null && hints.get(key) != null) {
+            hints = hints.clone();
+            final Object value = hints.remove(key);
+            if (value instanceof Class<?>) {
+                requestedType = new Class<?>[] {(Class<?>) value};
+            } else if (value instanceof Class<?>[]) {
+                requestedType = ((Class<?>[]) value).clone();
+            } else {
+                /*
+                 * If the user gaves explicitly a factory, returns only that factory
+                 * provided that it meets other hints. Otherwise returns an empty set.
+                 */
+                Collection<T> values = Collections.emptySet();
+                if (key.getValueClass().isInstance(value)) {
+                    final T provider = category.cast(value);
+                    if (isAcceptable(provider, category, hints, filter)) {
+                        values = Collections.singleton(provider);
+                    }
+                }
+                return values.iterator();
+            }
+        } else {
+            requestedType = null;
+        }
         /*
          * The implementation of this method is very similar to the 'getUnfilteredProviders'
          * one except for filter handling. See the comments in 'getUnfilteredProviders' for
@@ -185,9 +237,15 @@ public class FactoryRegistry extends ServiceRegistry {
             // one thread to use the FactoryRegistry at a time.
             throw new RecursiveSearchException(category);
         }
+        final Hints userHints = hints;
         final Filter hintsFilter = new Filter() {
             @Override public boolean filter(final Object provider) {
-                return isAcceptable(category.cast(provider), category, hints, filter);
+                if (requestedType != null) {
+                    int i=0;
+                    do if (i == requestedType.length) return false;
+                    while (!requestedType[i++].isInstance(provider));
+                }
+                return isAcceptable(category.cast(provider), category, userHints, filter);
             }
         };
         synchronizeIteratorProviders();
@@ -255,7 +313,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * @see DynamicFactoryRegistry#getServiceProvider
      */
     public <T> T getServiceProvider(final Class<T> category, final Filter filter,
-            Hints hints, final Hints.Key key) throws FactoryRegistryException
+            Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
     {
         synchronizeIteratorProviders();
         final boolean debug = LOGGER.isLoggable(DEBUG_LEVEL);

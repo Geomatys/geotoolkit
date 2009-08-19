@@ -106,7 +106,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.1
  * @module

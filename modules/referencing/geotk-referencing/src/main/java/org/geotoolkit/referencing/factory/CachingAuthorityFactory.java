@@ -279,18 +279,17 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     final void unavailable(final FactoryException exception) {
         assert Thread.holdsLock(this);
         if (Boolean.FALSE.equals(isAvailable)) {
-            // Already marked as unavailable ) nothing to do.
+            // Already marked as unavailable - nothing to do.
             return;
         }
         isAvailable = Boolean.FALSE;
         final Level level;
         if (exception instanceof NoSuchFactoryException) {
             /*
-             * The factory is not available. This is error may be normal; it happens
-             * for example if no geotk-epsg-javadb.jar (or similar JAR) are found in the
-             * classpath.
+             * The factory is not available. This is error may be normal; it happens for
+             * example if no geotk-epsg.jar (or similar JAR) are found on the classpath.
              */
-            level = Level.FINER;
+            level = Level.CONFIG;
         } else {
             /*
              * The factory creation failed for an other reason, which may be more serious.

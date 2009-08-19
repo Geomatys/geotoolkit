@@ -47,7 +47,7 @@ public interface DummyFactory extends InternalFactory {
     /**
      * A hint key for a {@code DummyFactory} instance.
      */
-    Hints.Key DUMMY_FACTORY = new Hints.ClassKey(DummyFactory.class);
+    Hints.ClassKey DUMMY_FACTORY = new Hints.ClassKey(DummyFactory.class);
 
     /**
      * A hint key for a {@code DummyFactory2} instance.

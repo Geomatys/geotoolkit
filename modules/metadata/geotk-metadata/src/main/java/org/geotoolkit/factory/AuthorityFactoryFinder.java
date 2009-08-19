@@ -127,7 +127,7 @@ loop:       for (int i=0; ; i++) {
      *         specfied interface.
      */
     private static <T extends AuthorityFactory> T getAuthorityFactory(
-            final Class<T> category, final String authority, Hints hints, final Hints.Key key)
+            final Class<T> category, final String authority, Hints hints, final Hints.ClassKey key)
             throws FactoryRegistryException
     {
         hints = mergeSystemHints(hints);
@@ -155,8 +155,7 @@ loop:       for (int i=0; ; i++) {
     public static DatumAuthorityFactory getDatumAuthorityFactory(final String authority, final Hints hints)
             throws FactoryRegistryException
     {
-        return getAuthorityFactory(DatumAuthorityFactory.class, authority, hints,
-                Hints.DATUM_AUTHORITY_FACTORY);
+        return getAuthorityFactory(DatumAuthorityFactory.class, authority, hints, Hints.DATUM_AUTHORITY_FACTORY);
     }
 
     /**
@@ -169,7 +168,7 @@ loop:       for (int i=0; ; i++) {
      * @category Referencing
      */
     public static Set<DatumAuthorityFactory> getDatumAuthorityFactories(final Hints hints) {
-        return getFactories(DatumAuthorityFactory.class, hints);
+        return getFactories(DatumAuthorityFactory.class, hints, Hints.DATUM_AUTHORITY_FACTORY);
     }
 
     /**
@@ -196,8 +195,7 @@ loop:       for (int i=0; ; i++) {
     public static CSAuthorityFactory getCSAuthorityFactory(final String authority, final Hints hints)
             throws FactoryRegistryException
     {
-        return getAuthorityFactory(CSAuthorityFactory.class, authority, hints,
-                Hints.CS_AUTHORITY_FACTORY);
+        return getAuthorityFactory(CSAuthorityFactory.class, authority, hints, Hints.CS_AUTHORITY_FACTORY);
     }
 
     /**
@@ -209,7 +207,7 @@ loop:       for (int i=0; ; i++) {
      * @category Referencing
      */
     public static Set<CSAuthorityFactory> getCSAuthorityFactories(final Hints hints) {
-        return getFactories(CSAuthorityFactory.class, hints);
+        return getFactories(CSAuthorityFactory.class, hints, Hints.CS_AUTHORITY_FACTORY);
     }
 
     /**
@@ -246,8 +244,7 @@ loop:       for (int i=0; ; i++) {
     public static CRSAuthorityFactory getCRSAuthorityFactory(final String authority, final Hints hints)
             throws FactoryRegistryException
     {
-        return getAuthorityFactory(CRSAuthorityFactory.class, authority, hints,
-                Hints.CRS_AUTHORITY_FACTORY);
+        return getAuthorityFactory(CRSAuthorityFactory.class, authority, hints, Hints.CRS_AUTHORITY_FACTORY);
     }
 
     /**
@@ -263,7 +260,7 @@ loop:       for (int i=0; ; i++) {
      * @category Referencing
      */
     public static Set<CRSAuthorityFactory> getCRSAuthorityFactories(final Hints hints) {
-        return getFactories(CRSAuthorityFactory.class, hints);
+        return getFactories(CRSAuthorityFactory.class, hints, Hints.CRS_AUTHORITY_FACTORY);
     }
 
     /**
@@ -300,7 +297,8 @@ loop:       for (int i=0; ; i++) {
     public static Set<CoordinateOperationAuthorityFactory>
             getCoordinateOperationAuthorityFactories(final Hints hints)
     {
-        return getFactories(CoordinateOperationAuthorityFactory.class, hints);
+        return getFactories(CoordinateOperationAuthorityFactory.class, hints,
+                Hints.COORDINATE_OPERATION_AUTHORITY_FACTORY);
     }
 
     /**

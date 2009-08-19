@@ -331,7 +331,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * dynamically make new plug-ins available at runtime.
      */
     public synchronized void scanForPlugins() {
-        final Iterator<Operation> it = registry.getServiceProviders(Operation.class, null, null);
+        final Iterator<Operation> it = registry.getServiceProviders(Operation.class, null, null, null);
         while (it.hasNext()) {
             final Operation operation = it.next();
             final String name = operation.getName().trim();

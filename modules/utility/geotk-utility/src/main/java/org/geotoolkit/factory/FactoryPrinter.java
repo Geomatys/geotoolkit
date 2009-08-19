@@ -136,7 +136,7 @@ final class FactoryPrinter implements Comparator<Class<?>> {
              * authorities, but those ones need to be stored in a temporary buffer for now.
              */
             final FactoryRegistry registry = categories.get(category);
-            final Iterator<?> providers = registry.getServiceProviders(category, null, null);
+            final Iterator<?> providers = registry.getServiceProviders(category, null, null, null);
             int implementationsCount = 0;
             while (providers.hasNext()) {
                 if (implementationsCount++ != 0) {
