@@ -113,6 +113,63 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     public abstract Citation getAuthority();
 
     /**
+     * Tries to guess the authority for the given class. This is used only when we failed
+     * to get the authority from the public API and we still want something at least an
+     * approximative information. This is used only for formatting error message and should
+     * not be used for programmatic logic.
+     *
+     * @param  type The class of the factory.
+     * @return A guess of the authority for the given class.
+     *
+     * @since 3.03
+     */
+    static Citation getAuthority(final Class<? extends AuthorityFactory> type) {
+        if (type != null) {
+            final String cn = type.getName();
+            if (cn.contains(".epsg.")) {
+                return Citations.EPSG;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the vendor or the authority, or {@code null} if the information is not
+     * available. The default implementation is not allowed to invoke overrideable methods,
+     * because it is used by subclasses as a fallback when their own {@code getVendor()} or
+     * {@code getAuthority()} implementations failed.
+     *
+     * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
+     * @return The authority or the vendor, or {@code null}.
+     *
+     * @since 3.03
+     */
+    Citation getCitation(final String method) {
+        if (method.equals("getAuthority")) return getAuthority(getClass());
+        if (method.equals("getVendor"))    return super.getVendor();
+        return null;
+    }
+
+    /**
+     * Returns the vendor or authority citation of the given factory. This is a convenience
+     * method for implementations that perform the same non-trivial processing for both the
+     * vendor and the authority.
+     *
+     * @param  factory The factor from which to get the vendor or authority citation.
+     * @param  method  Either {@code "getVendor"} or {@code "getAuthority"}.
+     * @return The vendor or authority.
+     * @throws IllegalArgumentException If the given method is not
+     *         {@code "getVendor"} or {@code "getAuthority"}.
+     *
+     * @since 3.03
+     */
+    static Citation getCitation(final AuthorityFactory factory, final String method) {
+        if (method.equals("getAuthority")) return factory.getAuthority();
+        if (method.equals("getVendor"))    return factory.getVendor();
+        throw new IllegalArgumentException(method);
+    }
+
+    /**
      * Returns a description of the underlying backing store, or {@code null} if unknown.
      * This is for example the database software used for storing the data.
      * The default implementation returns always {@code null}.

@@ -65,7 +65,7 @@ import static org.geotoolkit.internal.FactoryUtilities.ATTEMPTS_DELAY;
  * {@link CRSAuthorityFactory} interfaces to implement.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.2
  * @module
@@ -508,6 +508,18 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
+     * Returns {@code true} if {@link #isAvailable()}, {@link #getAuthority()} or
+     * {@link #getVendor()} were attempted recently and failed.
+     *
+     * @param  currentTime The value of {@link System#currentTimeMillis()}.
+     * @return {@code true} if the last attempt failed recently.
+     */
+    private boolean failedRecently(final long currentTime) {
+        final long last = lastAttempt;
+        return last != 0 && (currentTime - last) < ATTEMPTS_DELAY;
+    }
+
+    /**
      * Returns {@code true} if this factory is ready for use. This default implementation
      * checks the availability of CRS, CS, datum and operation authority factories specified
      * at construction time.
@@ -515,14 +527,14 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * @return {@code true} if this factory is ready for use.
      */
     @Override
-    public boolean isAvailable() {
+    public synchronized boolean isAvailable() {
         if (!super.isAvailable()) {
             return false;
         }
-        final long time = System.currentTimeMillis();
-        if (lastAttempt != 0 && time - lastAttempt < ATTEMPTS_DELAY) {
-            // If the last uncessfull attempt was less than 200 milliseconds (arbitrary
-            // choice) before current attempt, assume that the situation didn't changed.
+        final long currentTime = System.currentTimeMillis();
+        if (failedRecently(currentTime)) {
+            // If the last uncessfull attempt was less than some arbitrary time
+            // before current attempt, assume that the situation didn't changed.
             return false;
         }
         try {
@@ -531,13 +543,13 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             // The two main exceptions of interest are FactoryRegistryException
             // and NullArgumentException.
             Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "isAvailable", e);
-            lastAttempt = time;
+            lastAttempt = currentTime;
             return false;
         }
         for (int f=0; f<TYPE_COUNT; f++) {
             final AuthorityFactory factory = getFactory(f);
             if (factory instanceof Factory && !((Factory) factory).isAvailable()) {
-                lastAttempt = time;
+                lastAttempt = currentTime;
                 return false;
             }
         }
@@ -655,18 +667,36 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
+     * Returns the vendor or the authority, or {@code null} if the information is not available.
+     * This methods fetches the citation only if the last attempt is older than some arbitrary
+     * delay, in order to avoid too many connection attempts and flooding the logger.
+     *
+     * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
+     * @return The authority or the vendor, or {@code null}.
+     *
+     * @see #isAvailable()
+     */
+    @Override
+    final synchronized Citation getCitation(final String method) {
+        final long currentTime = System.currentTimeMillis();
+        if (!failedRecently(currentTime)) try {
+            lastAttempt = 0;
+            return getCitation(getAuthorityFactory(), method);
+        } catch (FactoryNotFoundException e) {
+            lastAttempt = currentTime;
+            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, method, e);
+        }
+        return super.getCitation(method);
+    }
+
+    /**
      * Returns the vendor responsible for creating this factory implementation.
      * This implementation may return {@code null} if the factory is not
      * {@linkplain #isAvailable() available}.
      */
     @Override
     public Citation getVendor() {
-        try {
-            return getAuthorityFactory().getVendor();
-        } catch (FactoryNotFoundException e) {
-            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "getVendor", e);
-            return null;
-        }
+        return getCitation("getVendor");
     }
 
     /**
@@ -676,12 +706,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      */
     @Override
     public Citation getAuthority() {
-        try {
-            return getAuthorityFactory().getAuthority();
-        } catch (FactoryNotFoundException e) {
-            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "getAuthority", e);
-            return null;
-        }
+        return getCitation("getAuthority");
     }
 
     /**

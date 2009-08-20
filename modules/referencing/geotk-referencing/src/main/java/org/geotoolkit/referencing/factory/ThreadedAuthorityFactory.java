@@ -214,8 +214,9 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     @Override
     public Map<RenderingHints.Key, ?> getImplementationHints() {
         if (!hintsInitialized) {
+            AbstractAuthorityFactory factory = null;
             try {
-                final AbstractAuthorityFactory factory = getBackingStore();
+                factory = getBackingStore();
                 try {
                     final Map<RenderingHints.Key, ?> toAdd;
                     toAdd = factory.getImplementationHints();
@@ -237,7 +238,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                 }
             } catch (FactoryException exception) {
                 synchronized (this) {
-                    unavailable(exception);
+                    unavailable(exception, factory);
                     hintsInitialized = true; // For preventing other tries.
                 }
             }

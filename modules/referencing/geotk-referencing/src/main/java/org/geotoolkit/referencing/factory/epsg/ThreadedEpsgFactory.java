@@ -45,7 +45,6 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
@@ -253,17 +252,6 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         hints.put(Hints.EPSG_DATA_SOURCE, (userHints != null) ? userHints.get(Hints.EPSG_DATA_SOURCE) : null);
         setKeyCollisionAllowed(true);
         setTimeout(15000L); // Close the connection after 15 seconds of inactivity.
-    }
-
-    /**
-     * Returns the authority for this EPSG database.
-     * This authority will contains the database version in the {@linkplain Citation#getEdition
-     * edition} attribute, together with the {@linkplain Citation#getEditionDate edition date}.
-     */
-    @Override
-    public Citation getAuthority() {
-        final Citation authority = super.getAuthority();
-        return (authority != null) ? authority : Citations.EPSG;
     }
 
     /**

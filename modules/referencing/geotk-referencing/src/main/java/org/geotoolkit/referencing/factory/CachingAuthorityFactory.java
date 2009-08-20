@@ -49,6 +49,7 @@ import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.logging.Logging;
@@ -70,7 +71,7 @@ import org.geotoolkit.util.collection.Cache;
  * (and recreated on the fly if needed) otherwise.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -95,10 +96,11 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     private final AbstractAuthorityFactory backingStore;
 
     /**
-     * {@link Boolean#TRUE} if the backing store is available, {@link Boolean#FALSE} if
-     * it is not available or {@code null} if this status has not yet been determined.
+     * {@link Boolean#TRUE} if the backing store is available, {@link Boolean#FALSE} or a
+     * {@link Throwable} if it is not available or {@code null} if this status has not yet
+     * been determined.
      */
-    private volatile Boolean isAvailable;
+    private transient Object status;
 
     /**
      * The pool of cached objects. The keys are instances of {@link String} or {@link Pair}.
@@ -253,36 +255,36 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         if (!super.isAvailable()) {
             return false;
         }
-        Boolean isAvailable = this.isAvailable;
-        if (isAvailable == null) {
-            isAvailable = Boolean.FALSE;
+        Object status = this.status;
+        if (status == null) {
+            AbstractAuthorityFactory factory = null;
             try {
-                final AbstractAuthorityFactory factory = getBackingStore();
+                factory = getBackingStore();
                 try {
-                    isAvailable = factory.isAvailable();
+                    status = factory.isAvailable();
                 } finally {
                     release();
                 }
             } catch (FactoryException exception) {
-                unavailable(exception);
+                unavailable(exception, factory);
+                status = exception;
             }
-            this.isAvailable = isAvailable;
+            this.status = status;
         }
-        return isAvailable;
+        if (status instanceof Throwable) {
+            // TODO: report the cause.
+        }
+        return Boolean.TRUE.equals(status);
     }
 
     /**
      * Marks this factory as unavailable. This method logs a message with the given exception.
      *
      * @param exception The exception thrown in our attempt to use the backing store.
+     * @param factory The backing store, or {@code null} if we failed to get it.
      */
-    final void unavailable(final FactoryException exception) {
+    final void unavailable(final FactoryException exception, final AbstractAuthorityFactory factory) {
         assert Thread.holdsLock(this);
-        if (Boolean.FALSE.equals(isAvailable)) {
-            // Already marked as unavailable - nothing to do.
-            return;
-        }
-        isAvailable = Boolean.FALSE;
         final Level level;
         if (exception instanceof NoSuchFactoryException) {
             /*
@@ -296,20 +298,31 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
              */
             level = Level.WARNING;
         }
-        final Citation citation = getAuthority();
-        final Collection<? extends InternationalString> titles = citation.getAlternateTitles();
-        InternationalString title = citation.getTitle();
-        if (titles != null) {
-            for (final InternationalString candidate : titles) {
-                /*
-                 * Uses the longuest title instead of the main one. In Geotoolkit
-                 * implementation, the alternate title may contains usefull informations
-                 * like the EPSG database version number and the database engine.
-                 */
-                if (candidate.length() > title.length()) {
-                    title = candidate;
+        final Citation citation;
+        if (factory != null) {
+            citation = factory.getAuthority();
+        } else {
+            citation = getAuthority(getClass());
+        }
+        InternationalString title = null;
+        if (citation != null) {
+            title = citation.getTitle();
+            final Collection<? extends InternationalString> titles = citation.getAlternateTitles();
+            if (titles != null) {
+                for (final InternationalString candidate : titles) {
+                    /*
+                     * Uses the longuest title instead of the main one. In Geotoolkit
+                     * implementation, the alternate title may contains usefull informations
+                     * like the EPSG database version number and the database engine.
+                     */
+                    if (title == null || candidate.length() > title.length()) {
+                        title = candidate;
+                    }
                 }
             }
+        }
+        if (title == null) {
+            title = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
         }
         final LogRecord record = new LogRecord(level, Exceptions.formatChainedMessages(Loggings.getResources(null).
                 getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_$1, title), exception));
@@ -336,21 +349,34 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns the vendor responsible for creating the underlying factory implementation.
+     * Returns the vendor or the authority, or {@code null} if the information is not available.
+     *
+     * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
+     * @return The authority or the vendor, or {@code null}.
+     *
+     * @see #isAvailable()
      */
     @Override
-    public Citation getVendor() {
-        try {
+    final Citation getCitation(final String method) {
+        if (isAvailable()) try {
             final AbstractAuthorityFactory factory = getBackingStore();
             try {
-                return factory.getVendor();
+                return getCitation(factory, method);
             } finally {
                 release();
             }
         } catch (FactoryException e) {
-            Logging.recoverableException(LOGGER, CachingAuthorityFactory.class, "getVendor", e);
+            Logging.recoverableException(LOGGER, CachingAuthorityFactory.class, method, e);
         }
-        return super.getVendor();
+        return super.getCitation(method);
+    }
+
+    /**
+     * Returns the vendor responsible for creating the underlying factory implementation.
+     */
+    @Override
+    public Citation getVendor() {
+        return getCitation("getVendor");
     }
 
     /**
@@ -359,17 +385,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public Citation getAuthority() {
-        try {
-            final AbstractAuthorityFactory factory = getBackingStore();
-            try {
-                return factory.getAuthority();
-            } finally {
-                release();
-            }
-        } catch (FactoryException e) {
-            Logging.recoverableException(LOGGER, CachingAuthorityFactory.class, "getAuthority", e);
-        }
-        return null;
+        return getCitation("getAuthority");
     }
 
     /**
