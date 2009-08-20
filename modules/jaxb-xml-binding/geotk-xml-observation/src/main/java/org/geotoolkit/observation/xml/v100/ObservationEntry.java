@@ -268,8 +268,8 @@ public class ObservationEntry implements Observation {
             res = this.result.getValue();
             if (this.result.getValue() instanceof DataArrayPropertyType) {
                 DataArrayEntry d = ((DataArrayPropertyType)this.result.getValue()).getDataArray();
-            
-                LOGGER.info("encoding sent:" + d.getEncoding());
+                d.setElementCount(0);
+                d.setValues("");
             }
         }
         return new ObservationEntry(temporaryName,
