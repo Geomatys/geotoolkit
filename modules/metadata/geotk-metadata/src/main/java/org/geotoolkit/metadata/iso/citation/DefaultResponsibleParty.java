@@ -256,14 +256,14 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
-     * The <A HREF="http://www.geotoolkit.org">Geotoolkit</A> project.
+     * The <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      *
      * @see DefaultContact#GEOTOOLKIT
      */
     public static ResponsibleParty GEOTOOLKIT;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
-        r.setOrganisationName(new SimpleInternationalString("Geotoolkit"));
+        r.setOrganisationName(new SimpleInternationalString("Geotoolkit.org"));
         r.setContactInfo(DefaultContact.GEOTOOLKIT);
         r.freeze();
         GEOTOOLKIT = r;

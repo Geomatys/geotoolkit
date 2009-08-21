@@ -563,7 +563,10 @@ header: for (int i=0; ; i++) {
                     title = "EPSG";
                 } else if (element instanceof String) {
                     title = (String) element;
-                    if (title.equalsIgnoreCase("Geotoolkit")) {
+                    if (title.equalsIgnoreCase("geotk") ||
+                        title.equalsIgnoreCase("Geotoolkit.org") ||
+                        title.equalsIgnoreCase("Geotoolkit")) // Legacy
+                    {
                         geotoolkitColumn = column;
                         title = resources.getString(Vocabulary.Keys.DESCRIPTION);
                     }
@@ -660,9 +663,9 @@ header: for (int i=0; ; i++) {
      * <p>
      * <ul>
      *   <li>{@code "EPSG:#"} displays EPSG codes in the first column.</li>
-     *   <li>{@code "Geotoolkit"} displays Geotoolkit name if available, or EPSG names otherwise,
-     *       in a "Description" column. This is called "description" because the Geotoolkit
-     *       names are ambiguous and should not be used as identifiers.</li>
+     *   <li>{@code "Geotoolkit.org"} or {@code "Geotk"} displays Geotk name if available, or
+     *       EPSG names otherwise, in a "Description" column. This is called "description"
+     *       because the Geotk names are ambiguous and should not be used as identifiers.</li>
      * </ul>
      *
      * @param authorities The authorities to filter, or {@code null} for accepting all of them.

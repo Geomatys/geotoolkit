@@ -80,13 +80,13 @@ public class NullImageWriter extends GeographicImageWriter {
          * <ul>
          *   <li>{@link #names}           = {@code "null"}</li>
          *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.NullImageWriter"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit"}</li>
+         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
          * </ul>
          */
         public Spi() {
             names           = new String[] {"null"};
             pluginClassName = "org.geotoolkit.image.io.NullImageWriter";
-            vendorName      = "Geotoolkit";
+            vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
         }
 

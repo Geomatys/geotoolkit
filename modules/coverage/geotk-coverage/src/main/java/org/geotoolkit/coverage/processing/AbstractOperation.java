@@ -135,14 +135,14 @@ public abstract class AbstractOperation implements Operation, Serializable {
 
     /**
      * Returns the vendor name of the processing operation implementation.
-     * The default implementation returns "Geotoolkit".
+     * The default implementation returns "Geotoolkit.org".
      *
      * @deprecated To be replaced by {@code getName().getAuthority()}.
      */
     @Override
     @Deprecated
     public String getVendor() {
-        return "Geotoolkit";
+        return "Geotoolkit.org";
     }
 
     /**

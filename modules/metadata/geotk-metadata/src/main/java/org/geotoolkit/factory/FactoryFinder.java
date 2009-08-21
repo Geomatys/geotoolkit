@@ -189,7 +189,7 @@ public class FactoryFinder {
                  * may arise unless we specify which one should have precedence over the other.
                  */
                 @Override void pluginScanned(final Class<?> category) {
-                    final VendorFilter filter1 = new VendorFilter("Geotoolkit", true);
+                    final VendorFilter filter1 = new VendorFilter("Geotoolkit.org", true);
                     final VendorFilter filter2 = new VendorFilter("GeoTools", false);
                     setOrdering(category, filter1, filter2);
                 }
@@ -715,10 +715,10 @@ public class FactoryFinder {
      * and {@code false} is returned.
      * <p>
      * The example below said that an ESRI implementation (if available) is
-     * preferred over the Geotoolkit one:
+     * preferred over the Geotoolkit.org one:
      *
      * {@preformat java
-     *     FactoryFinder.setVendorOrdering("ESRI", "Geotoolkit");
+     *     FactoryFinder.setVendorOrdering("ESRI", "Geotoolkit.org");
      * }
      *
      * @param  vendor1 The preferred vendor.

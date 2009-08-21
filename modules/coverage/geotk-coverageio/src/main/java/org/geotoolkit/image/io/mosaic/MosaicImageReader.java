@@ -1550,7 +1550,7 @@ public class MosaicImageReader extends ImageReader {
          * Creates a default provider.
          */
         public Spi() {
-            vendorName      = "Geotoolkit";
+            vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             names           = NAMES;
             inputTypes      = INPUT_TYPES;

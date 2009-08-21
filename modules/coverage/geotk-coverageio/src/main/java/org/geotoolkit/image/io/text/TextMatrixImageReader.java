@@ -413,7 +413,7 @@ public class TextMatrixImageReader extends TextImageReader {
          *   <li>{@link #names}           = {@code "matrix"}</li>
          *   <li>{@link #MIMETypes}       = {@code "text/x-matrix"}</li>
          *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextMatrixImageReader"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit"}</li>
+         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
          * </ul>
          *
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
@@ -423,7 +423,7 @@ public class TextMatrixImageReader extends TextImageReader {
             names           = NAMES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.TextMatrixImageReader";
-            vendorName      = "Geotoolkit";
+            vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
         }
 

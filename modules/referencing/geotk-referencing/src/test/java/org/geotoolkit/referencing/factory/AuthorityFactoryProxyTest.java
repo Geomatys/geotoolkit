@@ -71,12 +71,12 @@ public class AuthorityFactoryProxyTest {
 
     /**
      * Asserts that the given class is of the expected type. If the test is allowed to create
-     * proxies target specifically the Geotoolkit implementation, then the expected type will
+     * proxies targeting specifically the Geotk implementation, then the expected type will
      * always be "Geotoolkit".
      */
     private void assertType(String expected, final AuthorityFactoryProxy proxy) {
         if (specific) {
-            expected = "Geotoolkit";
+            expected = "Geotoolkit"; // The inner class name, which is private.
         }
         assertEquals(expected, proxy.getClass().getSimpleName());
     }

@@ -95,7 +95,7 @@ public final class PropertyEpsgFactoryTest extends ReferencingTestCase {
     public void testVendor() {
         final Citation vendor = factory.getVendor();
         assertNotNull(vendor);
-        assertEquals("Geotoolkit", vendor.getTitle().toString());
+        assertEquals("Geotoolkit.org", vendor.getTitle().toString());
     }
 
     /**

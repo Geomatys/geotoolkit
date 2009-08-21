@@ -78,7 +78,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
      */
     public static void show(final Locale locale) {
         final Vocabulary resources = Vocabulary.getResources(locale);
-        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit"));
+        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit.org"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(new ControlPanel(resources));
         frame.pack();

@@ -135,7 +135,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
          *   <li>{@link #names}           = {@code "matrix"}</li>
          *   <li>{@link #MIMETypes}       = {@code "text/x-matrix"}</li>
          *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextMatrixImageWriter"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit"}</li>
+         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
          * </ul>
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
@@ -145,7 +145,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
             names           = TextMatrixImageReader.Spi.NAMES;
             MIMETypes       = TextMatrixImageReader.Spi.MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.TextMatrixImageWriter";
-            vendorName      = "Geotoolkit";
+            vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
         }
 

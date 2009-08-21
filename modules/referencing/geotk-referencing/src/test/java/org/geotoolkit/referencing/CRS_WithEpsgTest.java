@@ -243,7 +243,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         vendor  = factory.getVendor();
         assertNotNull(vendor);
-        assertEquals("Geotoolkit", vendor.getTitle().toString(Locale.US));
+        assertEquals("Geotoolkit.org", vendor.getTitle().toString(Locale.US));
         assertFalse(Citations.identifierMatches(vendor, "EPSG"));
     }
 

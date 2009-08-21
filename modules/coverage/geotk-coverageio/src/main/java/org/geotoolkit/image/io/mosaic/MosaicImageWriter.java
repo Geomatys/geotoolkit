@@ -1515,7 +1515,7 @@ search: for (final Tile tile : tiles) {
          * Creates a default provider.
          */
         public Spi() {
-            vendorName      = "Geotoolkit";
+            vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             names           = MosaicImageReader.Spi.NAMES;
             outputTypes     = MosaicImageReader.Spi.INPUT_TYPES;

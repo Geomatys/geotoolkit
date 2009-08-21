@@ -704,7 +704,7 @@ public class TextRecordImageReader extends TextImageReader {
          *   <li>{@link #names}           = {@code "records"}</li>
          *   <li>{@link #MIMETypes}       = {@code "text/x-records"}</li>
          *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextRecordImageReader"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit"}</li>
+         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
          *   <li>{@link #xColumn}         = {@code 0}</li>
          *   <li>{@link #yColumn}         = {@code 1}</li>
          * </ul>
@@ -716,7 +716,7 @@ public class TextRecordImageReader extends TextImageReader {
             names           = NAMES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.TextRecordImageReader";
-            vendorName      = "Geotoolkit";
+            vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             xColumn         = 0;
             yColumn         = 1;

@@ -179,7 +179,7 @@ final class SampleTranscoder extends PointOpImage {
         public Descriptor() {
             super(new String[][]{{"GlobalName",  OPERATION_NAME},
                                  {"LocalName",   OPERATION_NAME},
-                                 {"Vendor",      "Geotoolkit"},
+                                 {"Vendor",      "Geotoolkit.org"},
                                  {"Description", "Transformation from sample to geophysics values"},
                                  {"DocURL",      "http://www.geotoolkit.org/"},
                                  {"Version",     "1.0"}},

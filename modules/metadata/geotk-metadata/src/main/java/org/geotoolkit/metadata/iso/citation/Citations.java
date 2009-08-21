@@ -155,7 +155,7 @@ public final class Citations {
     }
 
     /**
-     * The <A HREF="http://www.geotoolkit.org">Geotoolkit</A> project.
+     * The <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      *
      * @see DefaultResponsibleParty#GEOTOOLKIT
      * @category Organisation
@@ -163,7 +163,7 @@ public final class Citations {
     public static final Citation GEOTOOLKIT;
     static {
         final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT");
-        c.addAuthority("Geotoolkit", false);
+        c.addAuthority("Geotoolkit.org", false);
         c.freeze();
         GEOTOOLKIT = c;
     }

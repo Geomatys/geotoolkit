@@ -67,7 +67,7 @@ public class UrlInputSpi extends ImageInputStreamSpi {
      * @since 2.5
      */
     public UrlInputSpi(final Proxy proxy) {
-        super("Geotoolkit", "3.00", URL.class);
+        super("Geotoolkit.org", "3.00", URL.class);
         this.proxy = proxy;
     }
 
