@@ -10,7 +10,7 @@
       <answer>
         <p>The Google projection is a Mercator projection that <em>pretends</em> to be defined on
         the WGS84 datum, but actually ignores the ellipsoid nature of that datum and uses the
-        simplier spherical formulas instead. In GeoToolkit this behavior can be obtained for any
+        simplier spherical formulas instead. In Geotk this behavior can be obtained for any
         projections (not only the Mercator one used by Google) with explicit declarations of
         <code>"semi_major"</code> and <code>"semi_minor"</code> parameter values, like in the
         example below. Those parameters are usually infered from the datum, but explicit
@@ -26,6 +26,12 @@
   <b>PARAMETER["semi_major", 6378137]</b>,
   <b>PARAMETER["semi_minor", 6378137]</b>,
   UNIT["m", 1]]</pre></blockquote>
+
+        <p>Since version 6.15 of the <a href="http://www.epsg.org">EPSG</a> database, it is also
+        possible to simply invoke <code>CRS.decode("EPSG:3857")</code>. The result of that method
+        call is slightly different in that the <code>"semi_minor"</code> parameter is not modified.
+        Instead EPSG handles that projection with a new Operation Method called "<cite>Popular
+        Visualisation Pseudo Mercator</cite>".</p>
       </answer>
     </faq>
     <faq id="lookupIdentifier">
@@ -83,13 +89,13 @@ if (identifier != null) {
 
         <p>There is many way to specify how to perform a datum shift, and most of them are only
         <em>approximation</em>. The Bursa-Wolf method is one of them, not the only one. However
-        it is the most frequently used method in GeoToolkit. In Well Known Text (WKT) format, the
+        it is the most frequently used method in Geotk. In Well Known Text (WKT) format, the
         Bursa-Wolf parameters are specified inside a <code>TOWGS84</code> element. If the CRS
         are parsed from a WKT string, make sure that the string contains the <code>TOWGS84</code>
         element.</p>
 
         <p>If there is no known Bursa-Wolf parameters that could be provided, it is possible to
-        instruct GeoToolkit to attempt the coordinate transformation despite that. However the
+        instruct Geotk to attempt the coordinate transformation despite that. However the
         results may be one kilometre away from the expected locations.</p>
 
         <ul>
@@ -136,7 +142,7 @@ System.out.println(targetCRS);</pre></blockquote>
   <b>AXIS</b>["Geodetic longitude", <b>EAST</b>],
   AUTHORITY["EPSG","4326"]]</pre></blockquote>
 
-        <p>If (<var>longitude</var>, <var>latitude</var>) axis order is really wanted, GeoToolkit can
+        <p>If (<var>longitude</var>, <var>latitude</var>) axis order is really wanted, Geotk can
         be forced to that order in two ways:</p>
 
         <ul>
@@ -164,17 +170,17 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         naming) are two different projections. But Oblique Mercator (<strong>not</strong> Hotine) in
         EPSG naming is also called "<cite>Hotine Oblique Mercator Azimuth Center</cite>" by ESRI,
         while <strong>Hotine</strong> Oblique Mercator (EPSG naming) is called "<cite>Hotine Oblique
-        Mercator Azimuth Natural Origin</cite> by ESRI.</p>
+        Mercator Azimuth Natural Origin</cite>" by ESRI.</p>
 
         <p>The "<cite>Oblique Stereographic</cite>" projection (EPSG name) is called "<cite>Double
         Stereographic</cite>" by ESRI. ESRI also defines a "<cite>Stereographic</cite>" projection,
         which is actually an oblique projection like the former but using different formulas.</p>
 
         <p>The "<cite>Krovak</cite>" projection in ESRI takes implicitly (<var>southing</var>,
-        <var>westing</var>) axis orientation, while all projections in GeoToolkit (including Krovak)
+        <var>westing</var>) axis orientation, while all projections in Geotk (including Krovak)
         default to (<var>easting</var>, <var>northing</var>) axis orientation, as required by the
         OGC 01-009 specification. In order to get the ESRI behavior with such projections, axis
-        orientation must be explicitly specified in GeoToolkit, for example with <code>AXIS</code>
+        orientation must be explicitly specified in Geotk, for example with <code>AXIS</code>
         elements in Well Known Text (WKT) format.</p>
       </answer>
     </faq>

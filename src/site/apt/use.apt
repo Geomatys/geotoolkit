@@ -26,7 +26,7 @@ Introduction to Geotoolkit.org
   {{{http://java.sun.com/javase/downloads/index.jsp}download page}}, update 7 or newer.
 
   The examples presume the user has downloaded the Referencing bundle available from the
-  {{{http://hudson.geomatys.com/job/Geotoolkit/}nightly build page}} and used the <<<unpack200>>>
+  {{{http://download.geotoolkit.org/}download page}} and used the <<<unpack200>>>
   command to expand the download into a JAR file named <<<geotk-referencing-bundle.jar>>>, for
   example, using the following command:
 
@@ -75,7 +75,7 @@ javac -cp geotk-referencing-bundle.jar FirstGeotk.java
   The compiled class can then be run with the command:
 
 -----------------------------------------------------------------------------------
-java -cp geotk-referencing-bundle.jar FirstGeotk
+java -cp geotk-referencing-bundle.jar:. FirstGeotk
 -----------------------------------------------------------------------------------
 
   which should result in a print out of a WKT representation of the WGS84 CRS:
@@ -125,8 +125,8 @@ public class SecondGeotk {
   which can be compiled and run with:
 
 -----------------------------------------------------------------------------------
-javac -cp geotk-referencing-bundle.jar SecondGeotk.java
-java  -cp geotk-referencing-bundle.jar SecondGeotk
+javac -cp geotk-referencing-bundle.jar   SecondGeotk.java
+java  -cp geotk-referencing-bundle.jar:. SecondGeotk
 -----------------------------------------------------------------------------------
 
 

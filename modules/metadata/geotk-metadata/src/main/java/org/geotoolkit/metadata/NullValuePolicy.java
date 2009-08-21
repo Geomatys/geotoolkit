@@ -19,8 +19,8 @@ package org.geotoolkit.metadata;
 
 
 /**
- * Whatever {@link java.util.Map} of metadata should contain entries for null values or empty
- * collections. By default the map returned by {@link AbstractMetadata#asMap()} does not provide
+ * Whatever {@link MetadataStandard#asMap(Object,NullValuePolicy,KeyNamePolicy) MetadataStandard.asMap(...)}
+ * should contain entries for null values or empty collections. By default the map does not provide
  * {@linkplain java.util.Map.Entry entries} for {@code null} metadata attributes or
  * {@linkplain java.util.Collection#isEmpty() empty} collections. This enumeration
  * allows control on this behavior.

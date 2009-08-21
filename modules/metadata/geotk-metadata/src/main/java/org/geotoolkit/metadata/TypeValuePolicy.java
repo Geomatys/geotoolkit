@@ -19,8 +19,9 @@ package org.geotoolkit.metadata;
 
 
 /**
- * Whatever {@link java.util.Map} of types should contain entries for the property type, the
- * element type or the declaring class.
+ * Whatever {@link MetadataStandard#asTypeMap MetadataStandard.asTypeMap(...)} should return values
+ * for the property types, the element types (same as property types except for collections) or the
+ * declaring classes.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -40,7 +41,7 @@ public enum TypeValuePolicy {
     PROPERTY_TYPE,
 
     /**
-     * The type of a property, or type of elements if the property is a collections. This is the
+     * The type of a property, or type of elements if the property is a collection. This is the
      * same than {@link #PROPERTY_TYPE} except that collections are handled in a special way: if
      * the property is a collection, then the value is the type of <em>elements</em> in that
      * collection.

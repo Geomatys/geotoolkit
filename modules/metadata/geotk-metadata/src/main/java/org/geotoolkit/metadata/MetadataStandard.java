@@ -257,7 +257,8 @@ public final class MetadataStandard {
      * }
      *
      * @param  implementation The implementation class.
-     * @param  types Whatever the values should be 
+     * @param  types Whatever the values should be property types, the element types
+     *         (same as property types except for collections) or the declaring class.
      * @param  keyNames The string representation of map keys.
      * @return The types for the given property.
      * @throws ClassCastException if the specified implementation class do
