@@ -39,6 +39,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;
@@ -520,22 +521,19 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns {@code true} if this factory is ready for use. This default implementation
-     * checks the availability of CRS, CS, datum and operation authority factories specified
-     * at construction time.
+     * Returns whatever this factory is ready for use. This default implementation checks the
+     * availability of CRS, CS, datum and operation authority factories specified at construction
+     * time.
      *
-     * @return {@code true} if this factory is ready for use.
+     * @since 3.03
      */
     @Override
-    public synchronized boolean isAvailable() {
-        if (!super.isAvailable()) {
-            return false;
-        }
+    public synchronized ConformanceResult availability() {
         final long currentTime = System.currentTimeMillis();
         if (failedRecently(currentTime)) {
             // If the last uncessfull attempt was less than some arbitrary time
             // before current attempt, assume that the situation didn't changed.
-            return false;
+            return new Unavailable(null);
         }
         try {
             ensureInitialized();
@@ -544,17 +542,49 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             // and NullArgumentException.
             Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "isAvailable", e);
             lastAttempt = currentTime;
-            return false;
+            return new Availability(e);
         }
         for (int f=0; f<TYPE_COUNT; f++) {
             final AuthorityFactory factory = getFactory(f);
-            if (factory instanceof Factory && !((Factory) factory).isAvailable()) {
-                lastAttempt = currentTime;
-                return false;
+            if (factory instanceof Factory) {
+                final ConformanceResult result = ((Factory) factory).availability();
+                if (!result.pass()) {
+                    lastAttempt = currentTime;
+                    return new Unavailable(result);
+                }
             }
         }
         lastAttempt = 0;
-        return true;
+        return super.availability();
+    }
+
+    /**
+     * The conformance result when one of the factory dependency is not available. This class
+     * wraps the result of the unavailable dependency and makes sure that {@link #pass()}
+     * returns {@code false} in all cases, even if the dependency become available at a
+     * later time, because we have not tested the other dependencies.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.03
+     *
+     * @since 3.03
+     * @module
+     */
+    private final class Unavailable extends Availability {
+        /**
+         * Creates a new wrapper for the result of the unavailable dependency.
+         */
+        Unavailable(final ConformanceResult result) {
+            super(result instanceof Availability ? ((Availability) result).getFailureCause() : null);
+        }
+
+        /**
+         * Returns {@code false} in every case.
+         */
+        @Override
+        public boolean pass() {
+            return false;
+        }
     }
 
     /**

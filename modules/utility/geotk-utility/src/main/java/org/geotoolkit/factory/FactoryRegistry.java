@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ServiceRegistry;
 
+import org.opengis.metadata.quality.ConformanceResult;
+
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -119,6 +121,12 @@ public class FactoryRegistry extends ServiceRegistry {
      * {@link #usesAcceptableHints} as a guard against infinite recursivity.
      */
     private final Set<Factory> testingHints = new HashSet<Factory>();
+
+    /**
+     * If a factory is not available because of some exception, the exception. Otherwise {@code null}.
+     * This is a temporary field used only during execution of {@code getServiceProvider} methods.
+     */
+    private transient Throwable failureCause;
 
     /**
      * Constructs a new registry for the specified category.
@@ -218,7 +226,7 @@ public class FactoryRegistry extends ServiceRegistry {
                 Collection<T> values = Collections.emptySet();
                 if (key.getValueClass().isInstance(value)) {
                     final T provider = category.cast(value);
-                    if (isAcceptable(provider, category, hints, filter)) {
+                    if (isAcceptable(provider, category, hints, filter, false)) {
                         values = Collections.singleton(provider);
                     }
                 }
@@ -245,7 +253,7 @@ public class FactoryRegistry extends ServiceRegistry {
                     do if (i == requestedType.length) return false;
                     while (!requestedType[i++].isInstance(provider));
                 }
-                return isAcceptable(category.cast(provider), category, userHints, filter);
+                return isAcceptable(category.cast(provider), category, userHints, filter, false);
             }
         };
         synchronizeIteratorProviders();
@@ -313,6 +321,33 @@ public class FactoryRegistry extends ServiceRegistry {
      * @see DynamicFactoryRegistry#getServiceProvider
      */
     public <T> T getServiceProvider(final Class<T> category, final Filter filter,
+            Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
+    {
+        // The current 'failureCause' should be null,
+        // except if this method is invoked recursively.
+        final Throwable old = failureCause;
+        try {
+            return getOrCreateServiceProvider(category, filter, hints, key);
+        } finally {
+            failureCause = old;
+            reset();
+        }
+    }
+
+    /**
+     * Makes this {@code FactoryRegistry} ready for next use. This method is
+     * overriden by {@link DynamicFactoryRegistry} with additional cleanup.
+     */
+    void reset() {
+    }
+
+    /**
+     * Implementation of {@link #getServiceProvider}, in a separated method for making easier to
+     * encompass in a {@code try ... finally} block.  The {@code FactoryRegistry} implementation
+     * does not create any new provider. However {@link DynamicFactoryRegistry} do override this
+     * method in a way that may create new objects.
+     */
+    <T> T getOrCreateServiceProvider(final Class<T> category, final Filter filter,
             Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
     {
         synchronizeIteratorProviders();
@@ -425,8 +460,32 @@ public class FactoryRegistry extends ServiceRegistry {
         if (debug) {
             debug("THROW", category, key, "could not find implementation.", null);
         }
-        throw new FactoryNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1,
-                implementationType!=null ? implementationType : category));
+        /*
+         * Before to thrown the exception, initialize its cause to 'failureCause' if the later
+         * is set. Note that we really need to invoke the constructor without Throwable argument,
+         * and we really needs to invoke 'Throwable.initCause(failureCause)' only if the failure
+         * cause is not-null, because the DynamicFactoryRegistry subclass may perform an other
+         * attempt to set the failure cause.
+         */
+        final String message = Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1,
+                (implementationType != null) ? implementationType : category);
+        final FactoryNotFoundException e = new FactoryNotFoundException(message);
+        initCause(e);
+        throw e;
+    }
+
+    /**
+     * Sets the failure cause of the given exception, if it is known. This method is invoked
+     * by {@code DynamicFactoryRegistry} when it failed to use a factory which was compliant
+     * with user-specified hints.
+     *
+     * @param e The exception for which to set the failure cause.
+     */
+    final void initCause(final FactoryNotFoundException e) {
+        final Throwable c = failureCause;
+        if (c!=null && e.getClass().equals(FactoryNotFoundException.class) && e.getCause()==null) {
+            e.initCause(c);
+        }
     }
 
     /**
@@ -491,7 +550,7 @@ public class FactoryRegistry extends ServiceRegistry {
             if (!isInstance(candidate, implementationType, wantSameClass)) {
                 continue;
             }
-            if (!isAcceptable(candidate, category, hints, filter)) {
+            if (!isAcceptable(candidate, category, hints, filter, true)) {
                 continue;
             }
             return candidate;
@@ -520,10 +579,10 @@ public class FactoryRegistry extends ServiceRegistry {
     }
 
     /**
-     * Returns {@code true} is the specified {@code factory} meets the requirements specified by
+     * Returns {@code true} if the specified {@code factory} meets the requirements specified by
      * a map of {@code hints} and the filter. This method is the entry point for the following
      * public methods:
-     *
+     * <p>
      * <ul>
      *   <li>Singleton {@link #getServiceProvider (Class category, Filter, Hints, Hints.Key)}</li>
      *   <li>Iterator  {@link #getServiceProviders(Class category, Filter, Hints)}</li>
@@ -533,16 +592,22 @@ public class FactoryRegistry extends ServiceRegistry {
      * @param category  The factory category. Usually an interface.
      * @param hints     The optional user requirements, or {@code null}.
      * @param filter    The optional filter, or {@code null}.
+     * @param wantCause {@code true} for storing the failure cause in the {@link #failureCause}
+     *          field, or {@code false} for discarting the cause. This argument is {@code true}
+     *          only when failure to find a factory will cause a {@link FactoryNotFoundException}
+     *          to be thrown, in which case we will want to add the cause to the exception to be
+     *          thrown.
      * @return {@code true} if the {@code factory} meets the user requirements.
      */
     final <T> boolean isAcceptable(final T candidate, final Class<T> category,
-            final Hints hints, final Filter filter)
+            final Hints hints, final Filter filter, final boolean wantCause)
     {
         /*
-         * Note: isAvailable() must be tested before checking the hints, because in current
-         * Geotoolkit implementation, some hints computation are deferred until a connection to
-         * the database is etablished (which 'isAvailable' does in order to test the connection).
+         * Note: availability() must be tested before checking the hints, because in current
+         * Geotk implementation some hints computation are deferred until a connection to the
+         * database is etablished (which availability() does in order to test the connection).
          */
+        ConformanceResult failure = null;
         if (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
             final Class<? extends Factory> type = factory.getClass();
@@ -550,9 +615,22 @@ public class FactoryRegistry extends ServiceRegistry {
                 throw new RecursiveSearchException(type);
             }
             try {
-                if (!factory.isAvailable()) {
+                failure = factory.availability();
+                if (failure.pass()) {
+                    failure = null; // Means "no failure".
+                } else {
                     unavailable(factory);
-                    return false;
+                    if (!wantCause || failureCause != null) {
+                        /*
+                         * If the caller is not interrested about the cause of the failure,
+                         * or if a cause has already been reported for a previous factory,
+                         * we can return immediately. Otherwise we need to remember that we
+                         * failed, but continue nevertheless for making sure that the cause
+                         * is pertinent (we don't want to report failures for factories that
+                         * the user didn't asked for).
+                         */
+                        return false;
+                    }
                 }
             } finally {
                 if (!testingAvailability.remove(type)) {
@@ -562,7 +640,8 @@ public class FactoryRegistry extends ServiceRegistry {
         }
         /*
          * Applies the user-provided filter only after having tested for availability,
-         * because some implementations may require a connection to a database.
+         * because some implementations may require a connection to a database. Note
+         * however that the filter should still work; they may just be less accurate.
          */
         if (filter!=null && !filter.filter(candidate)) {
             return false;
@@ -599,9 +678,17 @@ public class FactoryRegistry extends ServiceRegistry {
             }
         }
         /*
-         * Checks for optional user conditions supplied in FactoryRegistry subclasses.
+         * Checks for optional user conditions supplied in FactoryRegistry subclasses. If
+         * we pass this final test but the factory is not available (as detected sooner),
+         * now we can remember the cause.
          */
         if (!isAcceptable(candidate, category, hints)) {
+            return false;
+        }
+        if (failure != null) {
+            if (failure instanceof Factory.Availability) {
+                failureCause = ((Factory.Availability) failure).getFailureCause();
+            }
             return false;
         }
         return true;
@@ -778,15 +865,12 @@ public class FactoryRegistry extends ServiceRegistry {
          * again existing plugins, in which case their previous ordering have been lost and must
          * be reset.
          */
-        Factory.Organizer organizer = null;
         final Iterator<T> it = getServiceProviders(category, false);
         while (it.hasNext()) {
             final T candidate = it.next();
             if (candidate instanceof Factory) {
-                if (organizer == null) {
-                    organizer = new Factory.Organizer(this, category);
-                }
-                (organizer.factory = (Factory) candidate).setOrdering(organizer);
+                final Factory factory = (Factory) candidate;
+                factory.setOrdering(factory.new Organizer(this, category));
             }
         }
         pluginScanned(category);

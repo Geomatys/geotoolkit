@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  * wrappers.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.5
  * @module
@@ -815,14 +815,13 @@ compare:for (int i=0; i<c1.length; i++) {
         if (classe == null) {
             return "<*>";
         }
-        String name = classe.getSimpleName();
         Class<?> enclosing = classe.getEnclosingClass();
+        while (classe.isAnonymousClass()) {
+            classe = classe.getSuperclass();
+        }
+        String name = classe.getSimpleName();
         if (enclosing != null) {
-            final StringBuilder buffer = new StringBuilder();
-            do {
-                buffer.insert(0, '.').insert(0, enclosing.getSimpleName());
-            } while ((enclosing = enclosing.getEnclosingClass()) != null);
-            name = buffer.append(name).toString();
+            name = getShortName(enclosing) + '.' + name;
         }
         return name;
     }

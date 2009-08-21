@@ -29,20 +29,25 @@ import java.io.IOException;
 import java.awt.RenderingHints;
 import javax.imageio.spi.ServiceRegistry;
 
+import org.opengis.util.InternationalString;
 import org.opengis.referencing.AuthorityFactory;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.resources.Descriptions;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 
 /**
- * Base class for Geotoolkit factories. {@link FactoryRegistry} handles {@code Factory} subclasses
- * specially, but extending this class is not mandatory ({@code FactoryRegistry} will work with
- * arbitrary implementations as well}). This base class provides some convenience features for
- * subclasses:
+ * Base class for Geotoolkit.org factories. {@link FactoryRegistry} handles {@code Factory}
+ * subclasses specially, but extending this class is not mandatory ({@code FactoryRegistry}
+ * will work with arbitrary implementations as well}). This base class provides some convenience
+ * features for subclasses:
  * <p>
  * <ul>
  *   <li>An initially empty map of {@linkplain #hints hints} to be filled by subclasses
@@ -130,9 +135,9 @@ import org.geotoolkit.resources.Errors;
  * them to an application specific task.
  *
  * @author Ian Schneider
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.03
  *
  * @see Hints
  * @see FactoryRegistry
@@ -208,12 +213,12 @@ public abstract class Factory {
      * or {@linkplain #after(Class, boolean) after} an other factory.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.03
      *
      * @since 3.00
      * @module
      */
-    protected static final class Organizer {
+    protected final class Organizer {
         /**
          * The factory registry that created this {@code Organizer}.
          */
@@ -223,11 +228,6 @@ public abstract class Factory {
          * The category for which to set ordering.
          */
         private final Class<?> category;
-
-        /**
-         * The enclosing factory instance.
-         */
-        Factory factory;
 
         /**
          * Creates a new organizer.
@@ -243,7 +243,7 @@ public abstract class Factory {
          */
         @SuppressWarnings("unchecked")
         private void setOrdering(final Class<?> type, final boolean subclasses, final boolean before) {
-            final Factory factory = this.factory;
+            final Factory factory = Factory.this;
             assert category.isInstance(factory);
             if (!subclasses && !category.isAssignableFrom(type)) {
                 throw new ClassCastException(Errors.format(
@@ -553,9 +553,167 @@ public abstract class Factory {
      * {@linkplain #dispose disposed}.
      *
      * @return {@code true} if this factory is ready for use.
+     *
+     * @deprecated Replaced by {@link #availability()} in order to explain why a factory is not
+     *             available (<a href="http://jira.geotoolkit.org/browse/GEOTK-37">GEOTK-37</a>).
      */
+    @Deprecated
     public synchronized boolean isAvailable() {
         return !hints.containsKey(DISPOSED);
+    }
+
+    /**
+     * Returns whatever this factory is ready for use. The {@link ConformanceResult#pass} method
+     * shall returns {@code false} if this factory is not available in the current configuration,
+     * typically because some external resources were not found. Implementors are encouraged to
+     * provide an {@linkplain ConformanceResult#getExplanation() explanation} when the factory
+     * is not available.
+     * <p>
+     * This method can <strong>not</strong> be used as a manager for automatic download of external
+     * resources. It is just a way to tell to {@link FactoryRegistry} that this factory exists, but
+     * can't do its job for whatever reasons, so {@code FactoryRegistry} has to choose an other
+     * factory. In other words, this method is used only as a filter.
+     * <p>
+     * Note also that {@code FactoryRegistry} is not designed for factories with intermittent state
+     * (i.e. value of {@code availability().pass()} varying with time). The behavior is undetermined
+     * in such case.
+     * <p>
+     * In the default implementation, the conformance result passes as long as this factory
+     * has not been {@linkplain #dispose disposed}.
+     *
+     * @return A conformance result whith {@code pass() == true} if this factory is ready for use.
+     *
+     * @since 3.03
+     */
+    public ConformanceResult availability() {
+        return new Availability();
+    }
+
+    /**
+     * The default conformance result returned by {@link Factory#availability()}. This class
+     * is <cite>live</cite>, i.e. the {@link Factory#pass()} method will return {@code false}
+     * if the encloding factory has been {@linkplain Factory#dispose() disposed} without the
+     * need to create a new instance of {@code Availability}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.03
+     *
+     * @since 3.03
+     * @module
+     */
+    protected class Availability implements ConformanceResult {
+        /**
+         * The value returned by {@link #getExplanation()}.
+         * Will be created only when first needed.
+         */
+        private InternationalString explanation;
+
+        /**
+         * If the factory is not available because of some exception,
+         * the exception that caused the failure. Otherwise {@code null}.
+         */
+        private final Throwable failureCause;
+
+        /**
+         * Creates a default {@code Availability} object. The new conformance result
+         * will {@linkplain #pass() pass} as long as the enclosing factory has not
+         * been disposed.
+         */
+        public Availability() {
+            failureCause = null;
+        }
+
+        /**
+         * Creates a conformance result which declares that the factory is not
+         * available because of the given exception.
+         *
+         * @param failureCause The raison why the factory is not available.
+         */
+        public Availability(final Throwable failureCause) {
+            this.failureCause = failureCause;
+        }
+
+        /**
+         * Returns the requirement against which the factory is being evaluated.
+         * The default implementation returns {@code null}, which is a departure
+         * from ISO 19115 since this information is supposed to be mandatory.
+         * Subclasses are encouraged to provide a value.
+         */
+        @Override
+        public Citation getSpecification() {
+            return null;
+        }
+
+        /**
+         * Returns an explanation of the meaning of conformance for this result. If this
+         * {@code Availability} object has been constructed with a {@link Throwable}, then this
+         * method returns {@code "Error"} completed with the message of the <em>last</em> cause
+         * having a {@linkplain Throwable#getLocalizedMessage() localized message} (we pickup
+         * the last cause on the assumption that it is the root of the problem). Otherwise this
+         * method returns a text like "<cite>This result indicates if the factory is available
+         * for use</cite>".
+         */
+        @Override
+        public synchronized InternationalString getExplanation() {
+            if (explanation == null) {
+                String message = null;
+                for (Throwable cause=failureCause; cause!=null; cause=cause.getCause()) {
+                    final String candidate = cause.getLocalizedMessage();
+                    if (candidate != null) {
+                        message = candidate;
+                    }
+                }
+                if (message != null) {
+                    explanation = Vocabulary.formatInternational(Vocabulary.Keys.ERROR_$1, message);
+                } else {
+                    explanation = Descriptions.formatInternational(Descriptions.Keys.
+                            CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1, Factory.this.getClass());
+                }
+            }
+            return explanation;
+        }
+
+        /**
+         * If the factory is not available because of some exception, the exception that caused
+         * the failure. Otherwise {@code null}. Note that a {@code null} value doesn't mean that
+         * the factory is available - the {@link #pass()} method still need to be invoked.
+         *
+         * @return The exception which make the factory unavailable, or {@code null} if none.
+         */
+        public Throwable getFailureCause() {
+            return failureCause;
+        }
+
+        /**
+         * Returns {@code true) if the encloding factory is ready for use. The default
+         * implementation returns {@code true} if no throwable was given at constrution
+         * time and the enclosing factory has not been {@linkplain Factory#dispose() disposed}.
+         *
+         * @return {@code true) if the encloding factory is ready for use.
+         */
+        @Override
+        public boolean pass() {
+            if (failureCause != null) {
+                return false;
+            }
+            // TODO: copy implementation of Factory.isAvailable() here,
+            // incuding synchronization on the enclosing Factory object.
+            return isAvailable();
+        }
+
+        /**
+         * Returns a string representation of this conformance result.
+         * This is mostly for debugging purpose.
+         */
+        @Override
+        public String toString() {
+            Class<?> c = getClass();
+            while (c.isAnonymousClass()) {
+                c = c.getSuperclass();
+            }
+            return Classes.getShortClassName(Factory.this) + '.' + c.getSimpleName() +
+                    '[' + pass() + ": " + getExplanation() + ']';
+        }
     }
 
     /**

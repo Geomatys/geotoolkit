@@ -18,7 +18,10 @@
 package org.geotoolkit.resources;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import org.opengis.util.InternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 
 
 /**
@@ -65,6 +68,16 @@ public final class Descriptions extends IndexedResourceBundle {
          * Usage: {0} [OPTION...] [COMMAND] [PARAMETER...]
          */
         public static final int COMMAND_USAGE_$1 = 3;
+
+        /**
+         * This result indicates if a datum shift method has been applied.
+         */
+        public static final int CONFORMANCE_MEANS_DATUM_SHIFT = 10;
+
+        /**
+         * This result indicates if the factory "{0}" is available for use.
+         */
+        public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1 = 11;
 
         /**
          * Are the {0} data installed? Some optional data can be downloaded and installed by running
@@ -123,6 +136,56 @@ public final class Descriptions extends IndexedResourceBundle {
      */
     public static Descriptions getResources(Locale locale) throws MissingResourceException {
         return getBundle(Descriptions.class, locale);
+    }
+
+    /**
+     * The international string to be returned by {@link formatInternational}.
+     */
+    private static final class International extends ResourceInternationalString {
+        private static final long serialVersionUID = -2152214649387449859L;
+
+        International(final int key) {
+            super(Descriptions.class.getName(), String.valueOf(key));
+        }
+
+        @Override
+        protected ResourceBundle getBundle(final Locale locale) {
+            return getResources(locale);
+        }
+    }
+
+    /**
+     * Gets an international string for the given key. This method does not check for the key
+     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
+     * when a {@link InternationalString#toString} method is invoked.
+     *
+     * @param  key The key for the desired string.
+     * @return An international string for the given key.
+     *
+     * @since 3.03
+     */
+    public static InternationalString formatInternational(final int key) {
+        return new International(key);
+    }
+
+    /**
+     * Gets an international string for the given key. This method does not check for the key
+     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
+     * when a {@link InternationalString#toString} method is invoked.
+     *
+     * @param  key The key for the desired string.
+     * @param  arg0 Value to substitute to "{0}".
+     * @return An international string for the given key.
+     *
+     * @since 3.03
+     *
+     * @todo Current implementation just invokes {@link #format}. Need to format only when
+     *       {@code toString(Locale)} is invoked.
+     */
+    public static InternationalString formatInternational(final int    key,
+                                                          final Object arg0)
+    {
+        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg0));
     }
 
     /**

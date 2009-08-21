@@ -23,7 +23,9 @@ package org.geotoolkit.metadata.iso.quality;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
-import org.geotoolkit.util.SimpleInternationalString;
+
+import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.resources.Descriptions;
 
 
 /**
@@ -68,9 +70,8 @@ public class AbstractPositionalAccuracy extends AbstractElement implements Posit
      */
     public static final PositionalAccuracy DATUM_SHIFT_OMITTED;
     static {
-        // TODO: localize.
-        final InternationalString desc = new SimpleInternationalString("Transformation accuracy");
-        final InternationalString eval = new SimpleInternationalString("Is a datum shift method applied?");
+        final InternationalString desc = Vocabulary  .formatInternational(Vocabulary  .Keys.TRANSFORMATION_ACCURACY);
+        final InternationalString eval = Descriptions.formatInternational(Descriptions.Keys.CONFORMANCE_MEANS_DATUM_SHIFT);
         DATUM_SHIFT_APPLIED = new PositionalAccuracyConstant(desc, eval, true);
         DATUM_SHIFT_OMITTED = new PositionalAccuracyConstant(desc, eval, false);
     }

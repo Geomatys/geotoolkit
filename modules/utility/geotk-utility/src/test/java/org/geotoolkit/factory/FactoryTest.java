@@ -18,6 +18,7 @@
 package org.geotoolkit.factory;
 
 import java.awt.RenderingHints;
+import org.opengis.metadata.quality.ConformanceResult;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -27,8 +28,8 @@ import org.geotoolkit.test.Depend;
 /**
  * Tests {@link Factory}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.3
  */
@@ -63,8 +64,8 @@ public final class FactoryTest {
         final Factory f1 = new EmptyFactory();
         final Factory f2 = new EmptyFactory();
         final Factory f3 = new EmptyFactory();
-        f1.hints.put(key1,       "Value 1");
-        f2.hints.put(key2,       "Value 2");
+        f1.hints.put(key1, "Value 1");
+        f2.hints.put(key2, "Value 2");
         f3.hints.put(key3_reference_f1, f1);
         f2.hints.put(key2_reference_f3, f3);
         f1.hints.put(key1_reference_f2, f2);
@@ -91,5 +92,19 @@ public final class FactoryTest {
 
         f1b.hints.put(key1, "Different value");
         assertFalse(f2.equals(f2b));
+    }
+
+    /**
+     * Tests the {@link Factory#availability()} method.
+     */
+    @Test
+    public void testAvailability() {
+        final Factory factory = new EmptyFactory();
+        final ConformanceResult availability = factory.availability();
+        assertNotNull(availability);
+        assertTrue(availability.pass());
+        // The following tests getExplanation() as well, but we can't easily
+        // check the result since it is implementation and locale dependent.
+        assertNotNull(availability.toString());
     }
 }

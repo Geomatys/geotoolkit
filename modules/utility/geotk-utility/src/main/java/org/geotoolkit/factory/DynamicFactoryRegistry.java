@@ -34,8 +34,8 @@ import org.geotoolkit.resources.Errors;
  * are meet:
  * <p>
  * <ul>
- *   <li>{@link FactoryRegistry#getServiceProvider} found no suitable instance for the given
- *       hints.<li>
+ *   <li>{@link FactoryRegistry#getServiceProvider(Class, Filter, Hints, Hints.ClassKey)}
+ *       found no suitable instance for the given hints.<li>
  *   <li>At least one registered factory has a public constructor expecting a single
  *       {@link Hints} argument.</li>
  * </ul>
@@ -44,9 +44,9 @@ import org.geotoolkit.resources.Errors;
  * {@link #getServiceProvider getServiceProvider} first check if a previously created
  * factory can fit.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.1
  * @module
@@ -69,7 +69,8 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     private final Set<Class<?>> underConstruction = new HashSet<Class<?>>();
 
     /**
-     * The factories which have been declared unavailable.
+     * The factories which have been declared unavailable. Used in order to avoid
+     * trying the same factory twice when we already failed in a previous attempt.
      */
     private final Set<Class<? extends Factory>> unavailables = new HashSet<Class<? extends Factory>>();
 
@@ -132,6 +133,15 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     }
 
     /**
+     * Makes this {@code FactoryRegistry} ready for next use.
+     */
+    @Override
+    final void reset() {
+        super.reset();
+        unavailables.clear();
+    }
+
+    /**
      * Returns a provider for the specified category, using the specified map of hints (if any).
      * If a provider matching the requirements is found in the registry, it is returned. Otherwise,
      * a new provider is created and returned. This creation step is the only difference between
@@ -149,26 +159,12 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
      * @throws FactoryRegistryException if the factory can't be created for some other reason.
      */
     @Override
-    public <T> T getServiceProvider(final Class<T> category, final Filter filter,
-            Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
-    {
-        try {
-            return getOrCreateServiceProvider(category, filter, hints, key);
-        } finally {
-            unavailables.clear();
-        }
-    }
-
-    /**
-     * Implementation of {@link #getServiceProvider}, in a separated method for making easier
-     * to encompass in a {@code try ... finally} block.
-     */
-    private <T> T getOrCreateServiceProvider(final Class<T> category, final Filter filter,
+    final <T> T getOrCreateServiceProvider(final Class<T> category, final Filter filter,
             Hints hints, final Hints.ClassKey key) throws FactoryRegistryException
     {
         final FactoryNotFoundException notFound;
         try {
-            return super.getServiceProvider(category, filter, hints, key);
+            return super.getOrCreateServiceProvider(category, filter, hints, key);
         } catch (FactoryNotFoundException exception) {
             // Will be rethrown later in case of failure to create the factory.
             notFound = exception;
@@ -218,7 +214,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                             if (candidate == null) {
                                 continue;
                             }
-                            if (isAcceptable(candidate, category, hints, filter)) {
+                            if (isAcceptable(candidate, category, hints, filter, true)) {
                                 cache(category, candidate);
                                 return candidate;
                             }
@@ -270,12 +266,19 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             if (candidate == null) {
                 continue;
             }
-            if (isAcceptable(candidate, category, hints, filter)) {
+            if (isAcceptable(candidate, category, hints, filter, true)) {
                 cache(category, candidate);
                 return candidate;
             }
             dispose(candidate);
         }
+        /*
+         * Before to thrown the exception, check if a new cause is available. We may have a new
+         * cause because all factories were available when we didn't asked for any hints, but
+         * one of them failed when we tried to instantiate it with the user-supplied hints. It
+         * may be for example because the user supplied a different JDBC connection.
+         */
+        initCause(notFound);
         throw notFound;
     }
 
@@ -338,7 +341,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             if (!isInstance(candidate, implementation, wantSameClass)) {
                 continue;
             }
-            if (!isAcceptable(candidate, category, hints, filter)) {
+            if (!isAcceptable(candidate, category, hints, filter, true)) {
                 continue;
             }
             return candidate;

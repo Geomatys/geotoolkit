@@ -29,6 +29,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -66,7 +67,7 @@ import org.geotoolkit.resources.Errors;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 3.00
  * @module
@@ -164,13 +165,21 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
     }
 
     /**
-     * Returns {@code true} if this factory is ready for use. The default implementation
-     * returns {@code true} if this factory has not been {@linkplain #dispose disposed}
-     * and the map given at construction time is not empty.
+     * Returns whatever this factory is ready for use. The factory is considered ready if
+     * the map given at construction time is not empty and the factory has not yet been
+     * {@linkplain #dispose disposed}.
+     *
+     * @since 3.03
      */
     @Override
-    public synchronized boolean isAvailable() {
-        return super.isAvailable() && !definitions.isEmpty();
+    public ConformanceResult availability() {
+        return new Availability() {
+            @Override public boolean pass() {
+                synchronized (WKTParsingAuthorityFactory.this) {
+                    return super.pass() && !definitions.isEmpty();
+                }
+            }
+        };
     }
 
     /**

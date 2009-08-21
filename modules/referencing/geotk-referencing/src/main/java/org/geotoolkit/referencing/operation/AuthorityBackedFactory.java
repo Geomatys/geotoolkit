@@ -26,6 +26,7 @@ import java.util.logging.LogRecord;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -62,7 +63,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * process from the super-class is used as a fallback.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.2
  * @module
@@ -464,21 +465,23 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     }
 
     /**
-     * Returns {@code true} if this factory and its underlying
+     * Returns whatever this factory and its underlying
      * {@linkplain #getAuthorityFactory authority factory} are available for use.
+     *
+     * @since 3.03
      */
     @Override
-    public boolean isAvailable() {
+    public ConformanceResult availability() {
         try {
             final CoordinateOperationAuthorityFactory authorityFactory = getAuthorityFactory();
             if (authorityFactory instanceof Factory) {
-                return ((Factory) authorityFactory).isAvailable();
+                return ((Factory) authorityFactory).availability();
             }
-            return true;
         } catch (FactoryRegistryException exception) {
-            // No factory found. Ignore the exception since it is the
-            // purpose of this method to figure out this kind of case.
-            return false;
+            // Declares as not available for the given raison.
+            return new Availability(exception);
         }
+        // Declare as available if not disposed.
+        return super.availability();
     }
 }

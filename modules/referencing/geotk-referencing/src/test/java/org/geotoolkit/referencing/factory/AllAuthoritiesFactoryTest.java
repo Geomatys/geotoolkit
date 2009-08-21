@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.Collection;
+import java.sql.SQLException;
 
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.FactoryException;
@@ -31,7 +32,6 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.jdbc.DefaultDataSource;
 import org.geotoolkit.factory.Hints;
 
@@ -184,9 +184,19 @@ public final class AllAuthoritiesFactoryTest {
             assertNotNull(factory.createGeographicCRS("EPSG:4326"));
             fail("The \"inexistant\" JDBC driver should not be found.");
         } catch (NoSuchAuthorityCodeException e) {
-            // This is the expected exception. This exception is expected to have a cause.
-            Throwable cause = e.getCause();
-            assertTrue(cause instanceof FactoryNotFoundException);
+            /*
+             * This is the expected exception. If we iterate through the exception chain, we
+             * should found a SQLException which is thrown for the "No driver found" error.
+             * A failure to find this exception means that all the trouble we took for finding
+             * the cause of an error didn't worked.
+             */
+            boolean foundSQL = false;
+            for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+                if (cause instanceof SQLException) {
+                    foundSQL = true;
+                }
+            }
+            assertTrue(foundSQL);
         }
     }
 }

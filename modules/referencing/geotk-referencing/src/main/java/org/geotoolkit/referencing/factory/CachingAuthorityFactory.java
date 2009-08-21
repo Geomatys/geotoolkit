@@ -42,6 +42,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.factory.Hints;
@@ -245,40 +246,53 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns {@code true} if this factory is available. The default implementation returns
-     * {@code false} if this factory has been {@linkplain #dispose disposed}, or if no backing
-     * store was specified at construction time and
-     * {@link ThreadedAuthorityFactory#createBackingStore} threw an exception.
+     * Returns whatever this factory is available. The factory is considered unavailable if it has
+     * been {@linkplain #dispose disposed}, or if no backing store was specified at construction
+     * time and {@link ThreadedAuthorityFactory#createBackingStore} threw an exception.
+     *
+     * @since 3.03
      */
     @Override
-    public synchronized boolean isAvailable() {
-        if (!super.isAvailable()) {
-            return false;
-        }
-        Object status = this.status;
-        if (status == null) {
+    public synchronized ConformanceResult availability() {
+        Object s = status;
+        if (s == null) {
             AbstractAuthorityFactory factory = null;
             try {
                 factory = getBackingStore();
                 try {
-                    status = factory.isAvailable();
+                    final ConformanceResult result = factory.availability();
+                    if (result instanceof Availability) {
+                        s = ((Availability) result).getFailureCause(); // May be null.
+                    }
+                    if (s == null) {
+                        s = result.pass();
+                    }
+                    // Note that we can not let "result" escape from this scope,
+                    // because we are going to release the backing store below.
                 } finally {
                     release();
                 }
             } catch (FactoryException exception) {
                 unavailable(exception, factory);
-                status = exception;
+                s = exception;
             }
-            this.status = status;
+            status = s;
         }
-        if (status instanceof Throwable) {
-            // TODO: report the cause.
+        if (s instanceof Throwable) {
+            return new Availability((Throwable) s);
         }
-        return Boolean.TRUE.equals(status);
+        return new Availability() {
+            @Override public boolean pass() {
+                synchronized (CachingAuthorityFactory.class) {
+                    return Boolean.TRUE.equals(status) && super.pass();
+                }
+            }
+        };
     }
 
     /**
-     * Marks this factory as unavailable. This method logs a message with the given exception.
+     * Invoked when this factory has been determined unavailable.
+     * This method logs a message with the given exception.
      *
      * @param exception The exception thrown in our attempt to use the backing store.
      * @param factory The backing store, or {@code null} if we failed to get it.
@@ -358,7 +372,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     final Citation getCitation(final String method) {
-        if (isAvailable()) try {
+        if (availability().pass()) try {
             final AbstractAuthorityFactory factory = getBackingStore();
             try {
                 return getCitation(factory, method);

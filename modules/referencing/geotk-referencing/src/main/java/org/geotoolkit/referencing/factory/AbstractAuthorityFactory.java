@@ -62,8 +62,8 @@ import org.geotoolkit.resources.Errors;
  * {@link #createObject}, which may be the only method that a subclass need to override.
  * However, other methods may be overridden as well for better performances.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 1.2
  * @module
@@ -122,6 +122,11 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
      * @return A guess of the authority for the given class.
      *
      * @since 3.03
+     *
+     * @todo We need a better way to declare some kind of "default" authority. At the very
+     *       least, we should not accept hard-coded heuristic rules like this one... A
+     *       possible approach may be to declare a "public static final Citation AUTHORITY"
+     *       constant in the classes, to be fetched by reflection.
      */
     static Citation getAuthority(final Class<? extends AuthorityFactory> type) {
         if (type != null) {
