@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.text;
 
+import javax.imageio.spi.ServiceRegistry;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.opengis.util.LocalName;
@@ -25,7 +26,6 @@ import org.opengis.util.NameFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameFactory;
-import org.geotoolkit.internal.FactoryUtilities;
 
 
 /**
@@ -53,13 +53,22 @@ public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
     }
 
     /**
-     * Fetches the name factory. The returned factory should be an instance
-     * of {@link DefaultNameFactory}.
+     * Fetches the name factory. The returned factory shall be an instance
+     * of {@link DefaultNameFactory}, not a subclass, because we are going
+     * to cast the created {@code GenericName} to {@code AbstractName} for
+     * XML marshalling and we know that {@code DefaultNameFactory} creates
+     * the expected type. A subclass could create other types, so we are
+     * better to avoid them.
      */
     static NameFactory getNameFactory() {
-        return FactoryFinder.getNameFactory(
-                new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class,
-                          FactoryUtilities.EXACT_CLASS, Boolean.TRUE));
+        return FactoryFinder.getNameFactory(new Hints(
+                Hints.NAME_FACTORY,       DefaultNameFactory.class,
+                FactoryFinder.FILTER_KEY, new ServiceRegistry.Filter()
+        {
+            @Override public boolean filter(final Object provider) {
+                return provider.getClass().equals(DefaultNameFactory.class);
+            }
+        }));
     }
 
     /**

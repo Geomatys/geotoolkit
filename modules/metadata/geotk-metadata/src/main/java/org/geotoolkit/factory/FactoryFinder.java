@@ -93,12 +93,12 @@ import org.geotoolkit.lang.ThreadSafe;
  * <p>
  * Some methods like {@link #setVendorOrdering setVendorOrdering} have a system-wide effect. Most
  * applications should not need to invoke them. If an application needs to protect itself against
- * configuration changes that may be performed by an other application sharing the Geotoolkit library,
+ * configuration changes that may be performed by an other application sharing the Geotk library,
  * it shall manage its own instance of {@link FactoryRegistry}. This {@code FactoryFinder} class
  * itself is just a convenience wrapper around a {@code FactoryRegistry} instance.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.03
  *
  * @since 2.1
  * @level basic
@@ -107,6 +107,15 @@ import org.geotoolkit.lang.ThreadSafe;
 @Static
 @ThreadSafe
 public class FactoryFinder {
+    /**
+     * The key for a special hints specifying an additional {@link ServiceRegistry#Filter}.
+     * If a value is given to this key in a {@link Hints} map, then every factory candidate
+     * will be filtered by the given filter in addition of being checked for the other hints.
+     *
+     * @since 3.03
+     */
+    public static final Hints.Key FILTER_KEY = new Hints.Key(ServiceRegistry.Filter.class);
+
     /**
      * The service registry for this manager.
      * Will be initialized only when first needed.
@@ -124,9 +133,12 @@ public class FactoryFinder {
      * If a hint is specified in both user and default hints, then user hints have
      * precedence.
      * <p>
-     * In a previous Geotoolkit version, a somewhat convolved lookup was performed here.
+     * In a previous Geotk version, a somewhat convolved lookup was performed here.
      * Now that default hints are filled right at {@link Hints} creation time, this
      * method just needs to ensure that the given hints are non-null.
+     * <p>
+     * This method returns an object on which {@code hints.remove(FILTER_KEY)} can
+     * be invoked, assuming that the map is not modified in a background thread.
      *
      * @param  hints The user hints, or {@code null} for the default ones.
      * @return The hints to use (never {@code null}).
@@ -134,6 +146,8 @@ public class FactoryFinder {
     static Hints mergeSystemHints(Hints hints) {
         if (hints == null) {
             hints = new Hints();
+        } else if (hints.containsKey(FILTER_KEY) || !hints.getClass().equals(Hints.class)) {
+            hints = hints.clone();
         }
         return hints;
     }
@@ -195,9 +209,10 @@ public class FactoryFinder {
      */
     static <T> Set<T> getFactories(final Class<T> category, Hints hints, final Hints.ClassKey key) {
         hints = mergeSystemHints(hints);
+        final ServiceRegistry.Filter filter = (ServiceRegistry.Filter) hints.remove(FILTER_KEY);
         final Iterator<T> iterator;
         synchronized (FactoryFinder.class) {
-            iterator = getServiceRegistry().getServiceProviders(category, null, hints, key);
+            iterator = getServiceRegistry().getServiceProviders(category, filter, hints, key);
         }
         return new LazySet<T>(iterator);
     }
@@ -216,8 +231,9 @@ public class FactoryFinder {
             throws FactoryRegistryException
     {
         hints = mergeSystemHints(hints);
+        final ServiceRegistry.Filter filter = (ServiceRegistry.Filter) hints.remove(FILTER_KEY);
         synchronized (FactoryFinder.class) {
-            return getServiceRegistry().getServiceProvider(category, null, hints, key);
+            return getServiceRegistry().getServiceProvider(category, filter, hints, key);
         }
     }
 

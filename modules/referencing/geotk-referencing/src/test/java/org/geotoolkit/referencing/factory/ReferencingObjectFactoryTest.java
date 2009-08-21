@@ -63,7 +63,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-@Depend({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class})
+@Depend({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class, FactoryFinderTest.class})
 public final class ReferencingObjectFactoryTest extends ReferencingTestCase {
     /**
      * Convenience method creating a map with only the "{@code name"} property.

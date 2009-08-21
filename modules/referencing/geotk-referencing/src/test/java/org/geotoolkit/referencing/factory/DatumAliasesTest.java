@@ -28,6 +28,7 @@ import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PrimeMeridian;
 
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.datum.GeotoolsFactory;
@@ -47,6 +48,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
+@Depend(FactoryFinderTest.class)
 public final class DatumAliasesTest {
     /**
      * Tests the registration. {@link DatumAliases} should be before

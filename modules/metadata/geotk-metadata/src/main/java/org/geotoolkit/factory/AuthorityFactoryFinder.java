@@ -49,8 +49,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   </ul>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.1
  * @level basic
@@ -131,7 +131,8 @@ loop:       for (int i=0; ; i++) {
             throws FactoryRegistryException
     {
         hints = mergeSystemHints(hints);
-        final AuthorityFilter filter = new AuthorityFilter(authority);
+        ServiceRegistry.Filter filter = (ServiceRegistry.Filter) hints.remove(FILTER_KEY);
+        filter = new AuthorityFilter(authority, filter);
         synchronized (FactoryFinder.class) {
             return getServiceRegistry().getServiceProvider(category, filter, hints, key);
         }
@@ -321,8 +322,8 @@ loop:       for (int i=0; ; i++) {
      */
     @Configuration
     public static boolean setAuthorityOrdering(final String authority1, final String authority2) {
-        final AuthorityFilter filter1 = new AuthorityFilter(authority1);
-        final AuthorityFilter filter2 = new AuthorityFilter(authority2);
+        final AuthorityFilter filter1 = new AuthorityFilter(authority1, null);
+        final AuthorityFilter filter2 = new AuthorityFilter(authority2, null);
         final boolean changed;
         synchronized (FactoryFinder.class) {
             changed = getServiceRegistry().setOrdering(AuthorityFactory.class, filter1, filter2);
@@ -346,8 +347,8 @@ loop:       for (int i=0; ; i++) {
      */
     @Configuration
     public static boolean unsetAuthorityOrdering(final String authority1, final String authority2) {
-        final AuthorityFilter filter1 = new AuthorityFilter(authority1);
-        final AuthorityFilter filter2 = new AuthorityFilter(authority2);
+        final AuthorityFilter filter1 = new AuthorityFilter(authority1, null);
+        final AuthorityFilter filter2 = new AuthorityFilter(authority2, null);
         final boolean changed;
         synchronized (FactoryFinder.class) {
             changed = getServiceRegistry().unsetOrdering(AuthorityFactory.class, filter1, filter2);
@@ -368,23 +369,32 @@ loop:       for (int i=0; ; i++) {
         private final String authority;
 
         /**
+         * A user-provided filter, or {@code null} if none.
+         */
+        private final ServiceRegistry.Filter filter;
+
+        /**
          * Constructs a filter for the given authority.
          */
-        public AuthorityFilter(final String authority) {
+        public AuthorityFilter(final String authority, final ServiceRegistry.Filter filter) {
             this.authority = authority;
+            this.filter    = filter;
         }
 
         /**
          * Returns {@code true} if the specified provider is for the authority.
+         * The user hints are also verified.
          */
         @Override
         public boolean filter(final Object provider) {
-            if (authority == null) {
-                // If the user didn't specified an authority name, then the factory to use must
-                // be specified explicitly through a hint (e.g. Hints.CRS_AUTHORITY_FACTORY).
-                return false;
+            if (authority != null && Citations.identifierMatches(
+                    ((AuthorityFactory) provider).getAuthority(), authority))
+            {
+                return (filter == null) || filter.filter(provider);
             }
-            return Citations.identifierMatches(((AuthorityFactory) provider).getAuthority(), authority);
+            // If the user didn't specified an authority name, then the factory to use must
+            // be specified explicitly through a hint (e.g. Hints.CRS_AUTHORITY_FACTORY).
+            return false;
         }
     }
 

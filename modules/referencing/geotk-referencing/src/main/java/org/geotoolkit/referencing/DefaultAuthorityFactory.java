@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import javax.imageio.spi.ServiceRegistry;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.FactoryException;
@@ -32,11 +33,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
+import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.MultiAuthoritiesFactory;
+import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
@@ -48,7 +49,7 @@ import org.geotoolkit.resources.Loggings;
  * <p>
  * <ul>
  *   <li>Uses {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER} to swap ordinate order if needed.</li>
- *   <li>Uses {@link MultiAuthoritiesFactory} to select CRS Authorities from the code.</li>
+ *   <li>Uses {@link AllAuthoritiesFactory} to select CRS Authorities from the code.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
@@ -95,13 +96,14 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
          * needed. So instead, iterates over the default factories and derives factories from
          * them.
          */
+        final Filter filter = new Filter();
         final Hints hints = new Hints( // Default hints (system width) are inherited here.
-                FactoryUtilities.EXACT_CLASS, Boolean.TRUE,
+                AuthorityFactoryFinder.FILTER_KEY, filter,
                 Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
         for (int i=factories.size(); --i>=0;) {
             CRSAuthorityFactory factory = factories.get(i);
             final String authority = Citations.getIdentifier(factory.getAuthority());
-            hints.put(Hints.CRS_AUTHORITY_FACTORY, factory.getClass());
+            hints.put(Hints.CRS_AUTHORITY_FACTORY, filter.type = factory.getClass());
             try {
                 factory = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, hints);
             } catch (FactoryRegistryException e) {
@@ -127,7 +129,29 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
                 LOGGER.log(record);
             }
         }
-        return new DefaultAuthorityFactory(new MultiAuthoritiesFactory(factories));
+        hints.clear();
+        hints.put(AllAuthoritiesFactory.USER_FACTORIES_KEY, factories);
+        hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
+        return new DefaultAuthorityFactory(AllAuthoritiesFactory.getInstance(hints));
+    }
+
+    /**
+     * The filter for requesting factories that are exactly of the given type.
+     */
+    private static final class Filter implements ServiceRegistry.Filter {
+        /**
+         * The requested factory type. Must be assigned by the caller.
+         */
+        Class<?> type;
+
+        /**
+         * Returns {@code true} if the given factory is exactly of the given type
+         * (not a subclass).
+         */
+        @Override
+        public boolean filter(final Object provider) {
+            return provider.getClass().equals(type);
+        }
     }
 
     /**

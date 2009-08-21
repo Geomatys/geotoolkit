@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import org.opengis.referencing.AuthorityFactory;
@@ -34,6 +35,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
 
@@ -46,15 +48,30 @@ import org.geotoolkit.internal.FactoryUtilities;
  * get<var>Foo</var>AuthorityFactory}(<var>authority</var>, {@linkplain #hints hints})</code>.
  * <p>
  * This class is not registered in {@link AuthorityFactoryFinder}. If this "authority" factory
- * is wanted, then users need to invoke explicitly the {@link #getInstance} method.
+ * is wanted, then users need to invoke explicitly the {@link #getInstance(Hints)} method.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.2
  * @module
  */
 public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
+    /**
+     * The key for an optional value in the {@link Hints} map specifying custom factories
+     * in addition to the ones registered in {@link AuthorityFactoryFinder}. The value, if
+     * defined, must be an instance of {@code Collection<? extends AuthorityFactory>}.
+     * <p>
+     * If the {@code Hints} map given to the {@linkplain #AllAuthoritiesFactory(Hints) constructor}
+     * contains a value for {@code USER_FACTORIES_KEY}, then when a {@code create} method is invoked,
+     * {@code AllAuthoritiesFactory} will first search in the given collection of factories. If no
+     * factory is found in that collection, only then the usual {@link AuthorityFactoryFinder} will
+     * be used as a fallback.
+     *
+     * @since 3.03
+     */
+    public static final Hints.Key USER_FACTORIES_KEY = new Hints.Key(Collection.class);
+
     /**
      * Pool of existing instances.
      */
@@ -67,13 +84,22 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
     private Collection<String> authorityNames;
 
     /**
-     * Creates a new factory using the specified hints.
+     * Creates a new factory using the specified hints. This constructor is available for
+     * subclass constructors only. In order to instantiate a {@code AllAuthoritiesFactory}
+     * instance, use {@code getInstance(hints)} instead.
      *
      * @param userHints An optional set of hints, or {@code null} if none.
      */
     protected AllAuthoritiesFactory(final Hints userHints) {
         super(null);
         FactoryUtilities.addImplementationHints(userHints, hints);
+        Collection<?> factories = (Collection<?>) hints.get(USER_FACTORIES_KEY);
+        if (factories != null && !factories.isEmpty()) {
+            factories = UnmodifiableArrayList.wrap(factories.toArray(new AuthorityFactory[factories.size()]));
+        } else {
+            factories = Collections.EMPTY_LIST;
+        }
+        hints.put(USER_FACTORIES_KEY, factories);
     }
 
     /**
@@ -86,7 +112,13 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
      * @since 3.00
      */
     public static AllAuthoritiesFactory getInstance(final Hints hints) {
-        return POOL.unique(new AllAuthoritiesFactory(hints));
+        AllAuthoritiesFactory factory = new AllAuthoritiesFactory(hints);
+        if (factory.getUserFactories().isEmpty()) {
+            // Cache only the instances having no user-factories, because the probability
+            // to share AllAuthoritiesFactory having some user factories is lower.
+            factory = POOL.unique(factory);
+        }
+        return factory;
     }
 
     /**
@@ -98,6 +130,17 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
     public Set<String> getAuthorityNames() {
         // Do not use 'authorityNames' since it may be out-of-date.
         return AuthorityFactoryFinder.getAuthorityNames();
+    }
+
+    /**
+     * Returns the user factories. This is the list of factories stored under
+     * {@link #USER_FACTORIES_KEY}. This list may be empty but never {@code null}.
+     *
+     * @since 3.03
+     */
+    @SuppressWarnings("unchecked")
+    private List<AuthorityFactory> getUserFactories() {
+        return (List<AuthorityFactory>) hints.get(USER_FACTORIES_KEY);
     }
 
     /**
@@ -115,14 +158,14 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
         if (authorities != authorityNames) {
             authorityNames = authorities;
             final Hints hints = getHints();
-            final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>();
+            final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>(getUserFactories());
 typeLoop:   for (int i=0; ; i++) {
                 final Set<? extends AuthorityFactory> c;
                 switch (i) {
                     case 0: c = AuthorityFactoryFinder.getCoordinateOperationAuthorityFactories(hints); break;
-                    case 1: c = AuthorityFactoryFinder.getDatumAuthorityFactories              (hints); break;
-                    case 2: c = AuthorityFactoryFinder.getCSAuthorityFactories                 (hints); break;
-                    case 3: c = AuthorityFactoryFinder.getCRSAuthorityFactories                (hints); break;
+                    case 1: c = AuthorityFactoryFinder.getDatumAuthorityFactories(hints); break;
+                    case 2: c = AuthorityFactoryFinder.getCSAuthorityFactories(hints); break;
+                    case 3: c = AuthorityFactoryFinder.getCRSAuthorityFactories(hints); break;
                     default: break typeLoop;
                 }
                 // Add to the set only the factories that are not excluded.
@@ -189,7 +232,17 @@ typeLoop:   for (int i=0; ; i++) {
     }
 
     /**
-     * A {@link IdentifiedObjectFinder} which tests every factories.
+     * A {@link IdentifiedObjectFinder} which tests every factories. This {@code Finder}
+     * does the same work than the super-class except that if no CRS were found using the
+     * factories explicitly declared in the collection, then the factories registered in
+     * {@link AuthorityFactoryFinder} will be tried. A mechanism avoid trying the same
+     * factory twice.
+     *
+     * @author Martin Desruisseaux (IRD)
+     * @version 3.00
+     *
+     * @since 2.2
+     * @module
      */
     private static final class Finder extends MultiAuthoritiesFactory.Finder {
         /**

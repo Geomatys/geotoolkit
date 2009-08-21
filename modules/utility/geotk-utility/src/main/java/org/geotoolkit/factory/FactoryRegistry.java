@@ -30,7 +30,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.internal.FactoryUtilities;
 
 
 /**
@@ -533,21 +532,20 @@ public class FactoryRegistry extends ServiceRegistry {
      * This method is overridden by {@link DynamicFactoryRegistry} in order to search in its
      * cache if no instance was found by this method.
      *
-     * @param  category The category to look for. Usually an interface class.
+     * @param  category           The category to look for. Usually an interface class.
      * @param  implementationType The desired class for the implementation, or {@code null} if none.
-     * @param  filter An optional filter, or {@code null} if none.
-     * @param  hints A {@linkplain Hints map of hints}, or {@code null} if none.
+     * @param  filter             An optional filter, or {@code null} if none.
+     * @param  hints              A {@linkplain Hints map of hints}, or {@code null} if none.
      * @return A factory for the specified category and hints, or {@code null} if none.
      */
     <T> T getServiceImplementation(final Class<T> category, final Class<?> implementationType,
                                    final Filter filter, final Hints hints)
     {
-        final boolean wantSameClass = wantSameClass(hints);
         for (final Iterator<T> it=getUnfilteredProviders(category); it.hasNext();) {
             final T candidate = it.next();
             // Implementation class must be tested before 'isAcceptable'
             // in order to avoid StackOverflowError in some situations.
-            if (!isInstance(candidate, implementationType, wantSameClass)) {
+            if (implementationType != null && !implementationType.isInstance(candidate)) {
                 continue;
             }
             if (!isAcceptable(candidate, category, hints, filter, true)) {
@@ -556,26 +554,6 @@ public class FactoryRegistry extends ServiceRegistry {
             return candidate;
         }
         return null;
-    }
-
-    /**
-     * Returns {@code true} if the {@link FactoryUtilities#EXACT_CLASS} hint is set. This
-     * is the value that must be given to {@link #isInstance}, factored out of the loops.
-     */
-    static boolean wantSameClass(final Hints hints) {
-        return hints != null && Boolean.TRUE.equals(hints.get(FactoryUtilities.EXACT_CLASS));
-    }
-
-    /**
-     * Returns {@code true} if the given factory is an implementation of the given type.
-     * This method requires the exact same class if {@link FactoryUtilities#EXACT_CLASS}
-     * is set. Otherwise any subclass are accepted.
-     */
-    static boolean isInstance(final Object factory, final Class<?> type, final boolean wantSameClass) {
-        if (type == null) {
-            return true;
-        }
-        return wantSameClass ? (factory != null && type.equals(factory.getClass())) : type.isInstance(factory);
     }
 
     /**

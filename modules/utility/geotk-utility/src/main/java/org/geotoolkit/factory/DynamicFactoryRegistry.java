@@ -230,7 +230,6 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
          * Note: all Factory objects should be fully constructed by now,
          * since the super-class has already iterated over all factories.
          */
-        final boolean wantSameClass = wantSameClass(hints);
         for (final Iterator<T> it=getUnfilteredProviders(category); it.hasNext();) {
             final T factory = it.next();
             final Class<?> implementationType = factory.getClass();
@@ -238,7 +237,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                 // We already tried this factory before and failed.
                 continue;
             }
-            if (!isAssignableTo(implementationType, types, wantSameClass)) {
+            if (!isAssignableTo(implementationType, types)) {
                 continue;
             }
             if (filter!=null && !filter.filter(factory)) {
@@ -285,14 +284,12 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     /**
      * Returns {@code true} if the specified implementation is one of the specified types.
      */
-    private static boolean isAssignableTo(final Class<?> implementation, final Class<?>[] types,
-            final boolean wantSameClass)
-    {
+    private static boolean isAssignableTo(final Class<?> implementation, final Class<?>[] types) {
         if (types == null) {
             return true;
         }
         for (final Class<?> type : types) {
-            if (wantSameClass ? type.equals(implementation) : type.isAssignableFrom(implementation)) {
+            if (type.isAssignableFrom(implementation)) {
                 return true;
             }
         }
@@ -316,21 +313,20 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     /**
      * If no instance was found in the method from the parent class, searches in the cache.
      *
-     * @param  category       The category to look for. Usually an interface class.
-     * @param  implementation The desired class for the implementation, or {@code null} if none.
-     * @param  filter         An optional filter, or {@code null} if none.
-     * @param  hints          A {@linkplain Hints map of hints}, or {@code null} if none.
+     * @param  category           The category to look for. Usually an interface class.
+     * @param  implementationType The desired class for the implementation, or {@code null} if none.
+     * @param  filter             An optional filter, or {@code null} if none.
+     * @param  hints              A {@linkplain Hints map of hints}, or {@code null} if none.
      * @return A factory for the specified category and hints, or {@code null} if none.
      */
     @Override
-    final <T> T getServiceImplementation(final Class<T> category, final Class<?> implementation,
+    final <T> T getServiceImplementation(final Class<T> category, final Class<?> implementationType,
                                          final Filter filter, final Hints hints)
     {
-        T candidate = super.getServiceImplementation(category, implementation, filter, hints);
+        T candidate = super.getServiceImplementation(category, implementationType, filter, hints);
         if (candidate != null) {
             return candidate;
         }
-        final boolean wantSameClass = wantSameClass(hints);
         final List<Reference<T>> cached = getCachedProviders(category);
         for (final Iterator<Reference<T>> it=cached.iterator(); it.hasNext();) {
             candidate = it.next().get();
@@ -338,7 +334,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                 it.remove();
                 continue;
             }
-            if (!isInstance(candidate, implementation, wantSameClass)) {
+            if (implementationType != null && !implementationType.isInstance(candidate)) {
                 continue;
             }
             if (!isAcceptable(candidate, category, hints, filter, true)) {

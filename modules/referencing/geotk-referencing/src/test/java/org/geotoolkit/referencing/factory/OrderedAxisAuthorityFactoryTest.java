@@ -46,6 +46,7 @@ import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
@@ -61,7 +62,8 @@ import static org.junit.Assume.assumeTrue;
  *
  * @since 3.00
  */
-public class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
+@Depend(FactoryFinderTest.class)
+public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
     /**
      * {@code true} if metadata (especially identifiers) should be erased, or {@code false} if
      * they should be kepts. The {@code true} value matches the pre GEOT-854 state, while the

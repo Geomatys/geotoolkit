@@ -812,7 +812,14 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
     }
 
     /**
-     * A {@link IdentifiedObjectFinder} which tests every factories.
+     * A {@link IdentifiedObjectFinder} which tests every factories declared in the
+     * {@linkplain MultiAuthoritiesFactory#getFactories() collection of factories}.
+     *
+     * @author Martin Desruisseaux (IRD)
+     * @version 3.02
+     *
+     * @since 2.4
+     * @module
      */
     static class Finder extends IdentifiedObjectFinder {
         /**

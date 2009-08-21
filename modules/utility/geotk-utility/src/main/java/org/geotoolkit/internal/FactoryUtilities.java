@@ -29,25 +29,13 @@ import org.geotoolkit.util.Utilities;
  * A set of utilities for {@link org.geotoolkit.factory.FactoryRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 3.00
  * @module
  */
 @Static
 public final class FactoryUtilities {
-    /**
-     * If {@code true}, then {@code FactoryRegistry} must check the factory type
-     * using {@link Class#equals} rather than {@link Class#isAssignableFrom}.
-     * <p>
-     * This is not commited API because there is probably a better way to do that, for example
-     * specifying a {@link javax.imageio.spi.ServiceRegistry.Filter}. However this condition
-     * is handled especially because {@code ServiceRegistry} registers at most one instance of
-     * a given class for a given category, so the implementation class can be used as a key
-     * during factory search.
-     */
-    public static final Hints.Key EXACT_CLASS = new Hints.Key(Boolean.class);
-
     /**
      * The group of threads that dispose factories. This is used only when
      * {@link Factory#dispose} is invoked in a background thread.
