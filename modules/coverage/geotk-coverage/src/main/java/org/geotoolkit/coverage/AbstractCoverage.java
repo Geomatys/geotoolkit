@@ -1180,6 +1180,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
         @Override
         public void run() {
             frame.pack();
+            frame.setLocationByPlatform(true);
             frame.setVisible(true);
         }
 

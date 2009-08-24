@@ -12,8 +12,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>geotoolkit</artifactId>
+    <groupId>org.geotoolkit.demo</groupId>
+    <artifactId>demos</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -21,13 +21,13 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit</groupId>
-  <artifactId>modules</artifactId>
-  <packaging>pom</packaging>
-  <name>Modules</name>
+  <groupId>org.geotoolkit.demo</groupId>
+  <artifactId>geotk-simples</artifactId>
+  <packaging>jar</packaging>
+  <name>Simple demos</name>
 
   <description>
-    The modules that are components of the Geotoolkit.org library.
+    Simple demos, as small standalone classes executable from the command line.
   </description>
 
 
@@ -43,62 +43,38 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- =========================================================== -->
-  <!--     Dependencies to be inherited by all modules.            -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>net.java.dev.jsr-275</groupId>
-      <artifactId>jsr-275</artifactId>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.project</groupId>
-      <artifactId>geotk-test</artifactId>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-epsg</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
-
-
-  <!-- =========================================================== -->
-  <!--     Build Configuration                                     -->
-  <!--         copies all JARs in a single directory.              -->
-  <!-- =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-jar-collector</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>collect</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-
-  <!-- =========================================================== -->
-  <!--     Modules for the build in approximate dependency order   -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>utility</module>
-    <module>metadata</module>
-    <module>referencing</module>
-    <module>coverage</module>
-    <module>display</module>
-    <module>analytics</module>
-  </modules>
-
 
 </project>

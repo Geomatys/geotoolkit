@@ -1,0 +1,13 @@
+Simple demos of the Geotoolkit.org library
+
+  This module contains standalone classes that can be run from the command line.
+
+  * Referencing
+
+    * <<<CoordinateConversion>>>
+      converts a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
+
+  * Coverage
+
+    * <<<FloatRaster>>>
+      displays an image created from a matrix of floating point values.

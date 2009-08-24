@@ -21,13 +21,13 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit</groupId>
-  <artifactId>modules</artifactId>
+  <groupId>org.geotoolkit.demo</groupId>
+  <artifactId>demos</artifactId>
   <packaging>pom</packaging>
-  <name>Modules</name>
+  <name>Demos</name>
 
   <description>
-    The modules that are components of the Geotoolkit.org library.
+    Demonstrations of the Geotoolkit.org library.
   </description>
 
 
@@ -58,46 +58,17 @@
       <artifactId>jsr-275</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.project</groupId>
-      <artifactId>geotk-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi</artifactId>
     </dependency>
   </dependencies>
-
-
-  <!-- =========================================================== -->
-  <!--     Build Configuration                                     -->
-  <!--         copies all JARs in a single directory.              -->
-  <!-- =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-jar-collector</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>collect</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 
   <!-- =========================================================== -->
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
-    <module>utility</module>
-    <module>metadata</module>
-    <module>referencing</module>
-    <module>coverage</module>
-    <module>display</module>
-    <module>analytics</module>
+    <module>geotk-simples</module>
   </modules>
 
 
