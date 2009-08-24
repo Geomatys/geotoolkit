@@ -36,7 +36,7 @@ import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
-import com.ardor3d.scenegraph.ComplexSpatialController;
+import com.ardor3d.scenegraph.controller.ComplexSpatialController;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.extension.Skybox;
 import com.ardor3d.scenegraph.hint.DataMode;
