@@ -17,29 +17,41 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import org.geotoolkit.util.Utilities;
+
 
 /**
  * A counter for source and target dimensions (to be kept together).
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @since 2.1
  * @module
  */
 final class Dimensions {
     /**
-     * The dimensions as an encoded value.
+     * The source and target dimensions.
      */
-    int encoded;
+    Integer sourceDimensions, targetDimensions;
 
     /**
-     * The occurences of this dimensions.
+     * The occurences of this pair of dimensions.
      */
     int occurences;
 
-    Dimensions(final int e) {
-        encoded = e;
+    /**
+     * Creates an unitialized {@code Dimensions}.
+     */
+    Dimensions() {
+    }
+
+    /**
+     * Creates a dimensions initialized to the same value than the given one.
+     */
+    Dimensions(final Dimensions other) {
+        sourceDimensions = other.sourceDimensions;
+        targetDimensions = other.targetDimensions;
     }
 
     /**
@@ -48,7 +60,10 @@ final class Dimensions {
     @Override
     public int hashCode() {
         // MUST ignore 'occurences'.
-        return encoded;
+        int code = 0;
+        if (sourceDimensions != null) code  = sourceDimensions;
+        if (targetDimensions != null) code += targetDimensions * 31;
+        return code;
     }
 
     /**
@@ -57,7 +72,12 @@ final class Dimensions {
     @Override
     public boolean equals(final Object object) {
         // MUST ignore 'occurences'.
-        return (object instanceof Dimensions) && ((Dimensions) object).encoded == encoded;
+        if (object instanceof Dimensions) {
+            final Dimensions that = (Dimensions) object;
+            return Utilities.equals(sourceDimensions, that.sourceDimensions) &&
+                   Utilities.equals(targetDimensions, that.targetDimensions);
+        }
+        return false;
     }
 
     /**
@@ -65,6 +85,6 @@ final class Dimensions {
      */
     @Override
     public String toString() {
-        return "[(" + (encoded >>> 16) + ',' + (encoded & 0xFFFF) + ")\u00D7" + occurences + ']';
+        return "[(" + sourceDimensions + ',' + targetDimensions + ")\u00D7" + occurences + ']';
     }
 }

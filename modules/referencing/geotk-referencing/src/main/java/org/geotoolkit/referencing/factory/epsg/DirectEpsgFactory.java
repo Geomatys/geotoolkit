@@ -82,6 +82,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
 
 
@@ -369,7 +370,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      *
      * @see #getDimensionForCRS
      */
-    private final Map<String,Short> axisCounts = new HashMap<String,Short>();
+    private final Map<String,Integer> axisCounts = new HashMap<String,Integer>();
 
     /**
      * Cache for projection checks. This service is not provided by {@link CachingAuthorityFactory}
@@ -2294,16 +2295,15 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final String name    = getString(result, 2, code);
                 final String formula = result.getString( 3);
                 final String remarks = result.getString( 4);
-                final int encoded = getDimensionsForMethod(epsg);
-                final int sourceDimensions = encoded >>> 16;
-                final int targetDimensions = encoded & 0xFFFF;
+                final Dimensions dim = getDimensionsForMethod(epsg);
                 final ParameterDescriptor<?>[] descriptors = createParameterDescriptors(epsg);
                 final Map<String,Object> properties = createProperties(
                         "[Coordinate_Operation Method]", name, epsg, remarks);
                 if (formula != null) {
                     properties.put(OperationMethod.FORMULA_KEY, formula);
                 }
-                method = new DefaultOperationMethod(properties, sourceDimensions, targetDimensions,
+                method = new DefaultOperationMethod(properties,
+                         dim.sourceDimensions, dim.targetDimensions,
                          new DefaultParameterDescriptorGroup(properties, descriptors));
                 returnValue = ensureSingleton(method, returnValue, code);
             }
@@ -2317,13 +2317,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     }
 
     /**
-     * Returns the must common source and target dimensions for the specified method.
-     * Source dimension is encoded in the 16 highest bits and target dimension is encoded
-     * in the 16 lowest bits. If this method can't infers the dimensions from the "Coordinate
-     * Operation" table, then the operation method is probably a projection, which always have
-     * (2,2) dimensions in the EPSG database.
+     * Returns the most common source and target dimensions for the specified method.
+     * If this method can't infers the dimensions from the "Coordinate Operation" table,
+     * then the dimension is left to null.
      */
-    private int getDimensionsForMethod(final String code) throws NoSuchIdentifierException, SQLException {
+    private Dimensions getDimensionsForMethod(final String code) throws NoSuchIdentifierException, SQLException {
         final PreparedStatement stmt;
         stmt = prepareStatement("MethodDimensions",
                 "SELECT SOURCE_CRS_CODE," +
@@ -2334,15 +2332,14 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                   " AND TARGET_CRS_CODE IS NOT NULL");
         final ResultSet result = executeQuery(stmt, code);
         final Map<Dimensions,Dimensions> dimensions = new HashMap<Dimensions,Dimensions>();
-        final Dimensions  temp = new Dimensions((2 << 16) | 2); // Default to (2,2) dimensions.
+        final Dimensions temp = new Dimensions();
         Dimensions max = temp;
         while (result.next()) {
-            final short sourceDimensions = getDimensionForCRS(result.getString(1));
-            final short targetDimensions = getDimensionForCRS(result.getString(2));
-            temp.encoded = (sourceDimensions << 16) | (targetDimensions);
+            temp.sourceDimensions = getDimensionForCRS(result.getString(1));
+            temp.targetDimensions = getDimensionForCRS(result.getString(2));
             Dimensions candidate = dimensions.get(temp);
             if (candidate == null) {
-                candidate = new Dimensions(temp.encoded);
+                candidate = new Dimensions(temp);
                 dimensions.put(candidate, candidate);
             }
             if (++candidate.occurences > max.occurences) {
@@ -2350,19 +2347,17 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             }
         }
         result.close();
-        return max.encoded;
+        return max;
     }
 
     /**
-     * Returns the dimension of the specified CRS. If the CRS is not found (which should not
-     * happen, but we don't need to be strict here), then this method assumes a two-dimensional
-     * CRS.
+     * Returns the dimension of the specified CRS. If the CRS is not found, then this method
+     * returns {@code null}.
      */
-    private short getDimensionForCRS(final String code) throws NoSuchIdentifierException, SQLException {
+    private Integer getDimensionForCRS(final String code) throws NoSuchIdentifierException, SQLException {
         final PreparedStatement stmt;
-        final Short cached = axisCounts.get(code);
-        final short dimension;
-        if (cached == null) {
+        Integer dimension = axisCounts.get(code);
+        if (dimension == null) {
             stmt = prepareStatement("Dimension",
                     " SELECT COUNT(COORD_AXIS_CODE)" +
                      " FROM [Coordinate Axis]" +
@@ -2370,13 +2365,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      " FROM [Coordinate Reference System]" +
                      " WHERE COORD_REF_SYS_CODE = ?)");
             final ResultSet result = executeQuery(stmt, code);
-            dimension = result.next() ? result.getShort(1) : 2;
+            dimension = Integer.valueOf(result.next() ? result.getInt(1) : 0);
             axisCounts.put(code, dimension);
             result.close();
-        } else {
-            dimension = cached.shortValue();
         }
-        return dimension;
+        return (dimension.intValue() != 0) ? dimension : null;
     }
 
     /**
@@ -2474,7 +2467,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * of operation methods. For example the "Geocentric translation" operation
                  * method has 3-dimensional source and target.
                  */
-                final int sourceDimensions, targetDimensions;
+                final Integer sourceDimensions, targetDimensions;
                 final CoordinateReferenceSystem sourceCRS, targetCRS;
                 if (sourceCode != null) {
                     sourceCRS = buffered.createCoordinateReferenceSystem(sourceCode);
@@ -2495,8 +2488,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * (it was checked above in this method) but optional for concatenated operations.
                  * Fetching parameter values is part of this block.
                  */
-                final boolean             isBursaWolf;
-                OperationMethod           method;
+                final boolean isBursaWolf;
+                OperationMethod method;
                 final ParameterValueGroup parameters;
                 if (methodCode == null) {
                     isBursaWolf = false;
@@ -2514,8 +2507,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     // Reminder: The source and target dimensions MUST be computed when
                     //           the information is available. Dimension is not always 2!!
                     method = buffered.createOperationMethod(methodCode);
-                    if (method.getSourceDimensions() != sourceDimensions ||
-                        method.getTargetDimensions() != targetDimensions)
+                    if (!Utilities.equals(method.getSourceDimensions(), sourceDimensions) ||
+                        !Utilities.equals(method.getTargetDimensions(), targetDimensions))
                     {
                         method = new DefaultOperationMethod(method, sourceDimensions, targetDimensions);
                     }

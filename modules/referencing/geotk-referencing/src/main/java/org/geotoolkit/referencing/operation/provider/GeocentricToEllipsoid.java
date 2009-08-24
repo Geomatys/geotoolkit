@@ -120,7 +120,7 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
         final double semiMinor = doubleValue(SEMI_MINOR, values);
         final int    dimension = EllipsoidToGeocentric.dimension(values);
         MathTransform transform = new GeocentricTransform(semiMajor, semiMinor, SI.METRE, dimension != 2).inverse();
-        if (dimension != targetDimension) {
+        if (dimension != targetDimension.intValue()) {
             transform = new MathTransformDecorator(transform, complement);
         }
         return transform;

@@ -51,8 +51,8 @@ import org.geotoolkit.io.wkt.Formatter;
  * methods use a number of operation parameters, although some coordinate conversions
  * use none. Each coordinate operation using the method assigns values to these parameters.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.03
  *
  * @see DefaultSingleOperation
  *
@@ -63,7 +63,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -6576022858294547739L;
+    private static final long serialVersionUID = -6576022858294547740L;
 
     /**
      * List of localizable properties. To be given to {@link AbstractIdentifiedObject} constructor.
@@ -79,13 +79,17 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
 
     /**
      * Number of dimensions in the source CRS of this operation method.
+     * May be {@code null} if this method can work with any number of
+     * source dimensions (e.g. <cite>Affine Transform</cite>).
      */
-    protected final int sourceDimension;
+    protected final Integer sourceDimension;
 
     /**
      * Number of dimensions in the target CRS of this operation method.
+     * May be {@code null} if this method can work with any number of
+     * target dimensions (e.g. <cite>Affine Transform</cite>).
      */
-    protected final int targetDimension;
+    protected final Integer targetDimension;
 
     /**
      * The set of parameters, or {@code null} if none.
@@ -155,16 +159,17 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
     }
 
     /**
-     * Constructs a new operation method with the same values than the specified one
-     * except the dimensions.
+     * Constructs a new operation method with the same values than the specified one except the
+     * dimensions. The source and target dimensions may be {@code null} if this method can work
+     * with any number of dimensions (e.g. <cite>Affine Transform</cite>).
      *
      * @param method The operation method to copy.
      * @param sourceDimension Number of dimensions in the source CRS of this operation method.
      * @param targetDimension Number of dimensions in the target CRS of this operation method.
      */
     public DefaultOperationMethod(final OperationMethod method,
-                                  final int sourceDimension,
-                                  final int targetDimension)
+                                  final Integer sourceDimension,
+                                  final Integer targetDimension)
     {
         super(method);
         this.formula    = method.getFormula();
@@ -193,6 +198,9 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      *     <td nowrap>&nbsp;{@link #getFormula}</td>
      *   </tr>
      * </table>
+     * <p>
+     * The source and target dimensions may be {@code null} if this method can work
+     * with any number of dimensions (e.g. <cite>Affine Transform</cite>).
      *
      * @param properties Set of properties. Should contains at least {@code "name"}.
      * @param sourceDimension Number of dimensions in the source CRS of this operation method.
@@ -200,8 +208,8 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * @param parameters The set of parameters, or {@code null} if none.
      */
     public DefaultOperationMethod(final Map<String,?> properties,
-                                  final int sourceDimension,
-                                  final int targetDimension,
+                                  final Integer sourceDimension,
+                                  final Integer targetDimension,
                                   final ParameterDescriptorGroup parameters)
     {
         this(properties, new HashMap<String,Object>(), sourceDimension, targetDimension, parameters);
@@ -213,15 +221,15 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      */
     private DefaultOperationMethod(final Map<String,?> properties,
                                    final Map<String,Object> subProperties,
-                                   final int sourceDimension,
-                                   final int targetDimension,
+                                   final Integer sourceDimension,
+                                   final Integer targetDimension,
                                    ParameterDescriptorGroup parameters)
     {
         super(properties, subProperties, LOCALIZABLES);
         formula = (InternationalString) subProperties.get(FORMULA_KEY);
         // 'parameters' may be null, which is okay. A null value will
         // make serialization smaller and faster than an empty object.
-        this.parameters       = parameters;
+        this.parameters      = parameters;
         this.sourceDimension = sourceDimension;
         this.targetDimension = targetDimension;
         ensurePositive("sourceDimension", sourceDimension);
@@ -236,10 +244,10 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * @param value The parameter value.
      * @throws IllegalArgumentException if the specified value is not positive.
      */
-    private static void ensurePositive(final String name, final int value)
+    private static void ensurePositive(final String name, final Integer value)
             throws IllegalArgumentException
     {
-        if (value < 0) {
+        if (value != null && value < 0) {
             throw new IllegalArgumentException(Errors.format(
                 Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
         }
@@ -257,19 +265,20 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
 
     /**
      * Number of dimensions in the source CRS of this operation method.
+     * May be null if unknown, as in an <cite>Affine Transform</cite>.
      *
-     * @return The dimension of source CRS.
      */
     @Override
-    public int getSourceDimensions() {
+    public Integer getSourceDimensions() {
         return sourceDimension;
     }
 
     /**
      * Number of dimensions in the target CRS of this operation method.
+     * May be null if unknown, as in an <cite>Affine Transform</cite>.
      */
     @Override
-    public int getTargetDimensions() {
+    public Integer getTargetDimensions() {
         return targetDimension;
     }
 
@@ -310,8 +319,8 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
         }
         if (super.equals(object, compareMetadata)) {
             final DefaultOperationMethod that = (DefaultOperationMethod) object;
-            if (this.sourceDimension == that.sourceDimension &&
-                this.targetDimension == that.targetDimension &&
+            if (Utilities.equals(this.sourceDimension, that.sourceDimension) &&
+                Utilities.equals(this.targetDimension, that.targetDimension) &&
                 equals(this.parameters, that.parameters, compareMetadata))
             {
                 return !compareMetadata || Utilities.equals(this.formula, that.formula);
@@ -325,9 +334,15 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      */
     @Override
     public int hashCode() {
-        int code = sourceDimension + 31*targetDimension + (int) serialVersionUID;
+        int code = (int) serialVersionUID;
+        if (sourceDimension != null) {
+            code += sourceDimension;
+        }
+        if (targetDimension != null) {
+            code = code*31 + targetDimension;
+        }
         if (parameters != null) {
-            code = code * 31 + parameters.hashCode();
+            code = code*31 + parameters.hashCode();
         }
         return code;
     }
@@ -393,42 +408,50 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
     public static void checkDimensions(final OperationMethod method, MathTransform transform)
             throws MismatchedDimensionException
     {
-        if (method != null && transform != null) {
-            int actual, expected = method.getSourceDimensions();
-            while ((actual = transform.getSourceDimensions()) > expected) {
-                if (transform instanceof ConcatenatedTransform) {
-                    // Ignore axis switch and unit conversions.
-                    final ConcatenatedTransform c = (ConcatenatedTransform) transform;
-                    if (isTrivial(c.transform1)) {
-                        transform = c.transform2;
-                    } else if (isTrivial(c.transform2)) {
-                        transform = c.transform1;
-                    } else {
-                        // The transform is something more complex than an axis switch.
-                        // Stop the loop with the current illegal transform and let the
-                        // exception be thrown after the loop.
-                        break;
-                    }
-                } else if (transform instanceof PassThroughTransform) {
-                    transform = ((PassThroughTransform) transform).getSubTransform();
+        if (method == null || transform == null) {
+            return;
+        }
+        Integer expected = method.getSourceDimensions();
+        if (expected == null) {
+            return;
+        }
+        int actual;
+        while ((actual = transform.getSourceDimensions()) > expected.intValue()) {
+            if (transform instanceof ConcatenatedTransform) {
+                // Ignore axis switch and unit conversions.
+                final ConcatenatedTransform c = (ConcatenatedTransform) transform;
+                if (isTrivial(c.transform1)) {
+                    transform = c.transform2;
+                } else if (isTrivial(c.transform2)) {
+                    transform = c.transform1;
                 } else {
+                    // The transform is something more complex than an axis switch.
+                    // Stop the loop with the current illegal transform and let the
+                    // exception be thrown after the loop.
                     break;
                 }
-            }
-            final String name;
-            if (actual != expected) {
-                name = "sourceDimension";
+            } else if (transform instanceof PassThroughTransform) {
+                transform = ((PassThroughTransform) transform).getSubTransform();
             } else {
-                actual = transform.getTargetDimensions();
-                expected = method.getTargetDimensions();
-                if (actual != expected) {
-                    name = "targetDimension";
-                } else {
-                    return;
-                }
+                break;
             }
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, name, actual, expected));
         }
+        final String name;
+        if (actual != expected.intValue()) {
+            name = "sourceDimension";
+        } else {
+            expected = method.getTargetDimensions();
+            if (expected == null) {
+                return;
+            }
+            actual = transform.getTargetDimensions();
+            if (actual != expected.intValue()) {
+                name = "targetDimension";
+            } else {
+                return;
+            }
+        }
+        throw new IllegalArgumentException(Errors.format(
+                Errors.Keys.MISMATCHED_DIMENSION_$3, name, actual, expected));
     }
 }

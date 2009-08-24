@@ -48,7 +48,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * indirection level that it brings when performing coordinate transformations.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.2
  * @level hidden
@@ -86,11 +86,21 @@ public final class MathTransformDecorator implements MathTransform, Formattable,
         if (method == null) {
             throw new NullArgumentException("method");
         }
-        if (transform.getSourceDimensions() != method.getSourceDimensions() ||
-            transform.getTargetDimensions() != method.getTargetDimensions())
+        if (!equals(transform.getSourceDimensions(), method.getSourceDimensions()) ||
+            !equals(transform.getTargetDimensions(), method.getTargetDimensions()))
         {
             throw new MismatchedDimensionException();
         }
+    }
+
+    /**
+     * Returns {@code true} if the given dimension are equal. If the dimension of the
+     * operation method is {@code null}, then we will consider the dimensions as equal
+     * on the basis that a method having null source or target dimensions can work with
+     * any number of dimensions.
+     */
+    private static boolean equals(final int transform, final Integer method) {
+        return (method == null) || (transform == method.intValue());
     }
 
     /**

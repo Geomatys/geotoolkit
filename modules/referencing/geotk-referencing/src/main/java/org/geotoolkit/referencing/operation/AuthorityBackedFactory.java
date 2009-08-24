@@ -39,6 +39,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
@@ -421,10 +422,10 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         if (operation instanceof SingleOperation) {
             method = ((SingleOperation) operation).getMethod();
             if (method != null) {
-                final int sourceDimensions = transform.getSourceDimensions();
-                final int targetDimensions = transform.getTargetDimensions();
-                if (sourceDimensions != method.getSourceDimensions() ||
-                    targetDimensions != method.getTargetDimensions())
+                final Integer sourceDimensions = transform.getSourceDimensions();
+                final Integer targetDimensions = transform.getTargetDimensions();
+                if (!Utilities.equals(sourceDimensions, method.getSourceDimensions()) ||
+                    !Utilities.equals(targetDimensions, method.getTargetDimensions()))
                 {
                     method = new DefaultOperationMethod(method, sourceDimensions, targetDimensions);
                 }
