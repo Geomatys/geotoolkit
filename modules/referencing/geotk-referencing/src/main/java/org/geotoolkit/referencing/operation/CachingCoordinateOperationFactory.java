@@ -42,7 +42,7 @@ import org.geotoolkit.util.Utilities;
  * <p>
  * In most cases, users should not need to create an instance of this class explicitly. An instance
  * of {@code CachingCoordinateOperationFactory} should be automatically registered and returned
- * by {@link FactoryFinder} in default Geotoolkit configuration.
+ * by {@link FactoryFinder} in default Geotk configuration.
  *
  * @author Simone Giannecchini (Geosolutions)
  * @author Martin Desruisseaux (IRD)

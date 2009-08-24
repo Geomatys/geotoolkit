@@ -69,9 +69,9 @@ public final class JNDI {
     }
 
     /**
-     * Converts a Geotoolkit name to the syntax used by the {@linkplain #getInitialContext
-     * Geotoolkit JNDI context}. Names may be constructed in a variety of ways depending on
-     * the implementation of {@link InitialContext}. Geotoolkit uses {@code "jdbc/EPSG"}
+     * Converts a Geotk name to the syntax used by the {@linkplain #getInitialContext
+     * Geotk JNDI context}. Names may be constructed in a variety of ways depending on
+     * the implementation of {@link InitialContext}. Geotk uses {@code "jdbc/EPSG"}
      * internally, but some implementations use the form {@code "jdbc:EPSG"}. Calling
      * this method before use will set the name right.
      *
@@ -86,9 +86,9 @@ public final class JNDI {
     }
 
     /**
-     * Converts a Geotoolkit name to the syntax used by the specified JNDI context.
+     * Converts a Geotk name to the syntax used by the specified JNDI context.
      * This method is similar to {@link #fixName(String)}, but uses the specified
-     * context instead of the Geotoolkit one.
+     * context instead of the Geotk one.
      *
      * @param  context The context to use, or {@code null} if none.
      * @param  name Name of the form {@code "jdbc/EPSG"}, or {@code null}.
@@ -103,7 +103,7 @@ public final class JNDI {
 
     /**
      * Implementation of {@code fixName} method. If the context is {@code null}, then
-     * the {@linkplain #getInitialContext Geotoolkit initial context} will be fetch only
+     * the {@linkplain #getInitialContext Geotk initial context} will be fetch only
      * when first needed.
      */
     private static String fixName(Context context, final String name, final Hints hints) {

@@ -347,7 +347,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject
      *
      *   <li>Otherwise, if the operation is a {@linkplain Transformation transformation}, then
      *       checks if the datum shift were applied with the help of Bursa-Wolf parameters.
-     *       This procedure looks for Geotoolkit-specific
+     *       This procedure looks for Geotk-specific
      *       {@link AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED DATUM_SHIFT_APPLIED} and
      *       {@link AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED DATUM_SHIFT_OMITTED} metadata.
      *       If a datum shift has been applied, returns 25 meters. If a datum shift should have
@@ -415,7 +415,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject
         }
         /*
          * If the coordinate operation is actually a transformation, checks if Bursa-Wolf
-         * parameters were available for the datum shift. This is Geotoolkit-specific.
+         * parameters were available for the datum shift. This is Geotk-specific.
          * See javadoc for a rational about the return values choosen.
          */
         if (operation instanceof Transformation) {

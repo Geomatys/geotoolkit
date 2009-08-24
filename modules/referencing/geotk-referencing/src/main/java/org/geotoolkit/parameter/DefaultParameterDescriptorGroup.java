@@ -83,7 +83,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
 
     /**
      * Constructs a group with the same values than the specified one. This copy constructor
-     * may be used in order to wraps an arbitrary implementation into a Geotoolkit one.
+     * may be used in order to wraps an arbitrary implementation into a Geotk one.
      *
      * @param group The descriptor to copy.
      *

@@ -59,7 +59,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
  */
 public class ReferencingFactory extends org.geotoolkit.factory.Factory implements Factory {
     /**
-     * The logger for event related to Geotoolkit's factories.
+     * The logger for event related to Geotk's factories.
      */
     public static final Logger LOGGER = Logging.getLogger(ReferencingFactory.class);
 
@@ -87,7 +87,7 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
     /**
      * Returns the vendor responsible for creating this factory implementation. Many implementations
      * may be available for the same factory interface. The default implementation returns
-     * {@linkplain Citations#GEOTOOLKIT Geotoolkit}.
+     * {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
      *
      * @return The vendor for this factory implementation.
      */

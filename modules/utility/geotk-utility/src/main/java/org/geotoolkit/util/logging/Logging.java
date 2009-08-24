@@ -43,7 +43,7 @@ import org.geotoolkit.util.converter.Classes;
 /**
  * A set of utilities method for configuring loggings in Geotk.
  * <p>
- * <b>Example:</b> In order to redirect every Geotoolkit log events to
+ * <b>Example:</b> In order to redirect every Geotk log events to
  * <A HREF="http://jakarta.apache.org/commons/logging/">commons-logging</A>,
  * invoke the following once at application startup:
  *
@@ -83,7 +83,7 @@ public final class Logging {
     }
 
     /**
-     * Logging configuration that apply only to Geotoolkit packages.
+     * Logging configuration that apply only to {@code org.geotoolkit} packages.
      */
     public static final Logging GEOTOOLKIT = getLogging("org.geotoolkit");
 
@@ -181,7 +181,7 @@ public final class Logging {
     /**
      * Returns a logger for the specified name. If a {@linkplain LoggerFactory logger factory} has
      * been set, then this method first {@linkplain LoggerFactory#getLogger ask to the factory}.
-     * It gives Geotoolkit a chance to redirect logging events to
+     * It gives Geotk a chance to redirect logging events to
      * <A HREF="http://jakarta.apache.org/commons/logging/">commons-logging</A>
      * or some equivalent framework.
      * <p>

@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
 
 
 /**
- * Provides convenience methods for marshalling and unmarshalling Geotoolkit objects.
+ * Provides convenience methods for marshalling and unmarshalling Geotk objects.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)

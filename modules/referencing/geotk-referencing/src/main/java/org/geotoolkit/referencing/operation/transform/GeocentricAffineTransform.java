@@ -54,7 +54,7 @@ import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
  * </ul>
  * <p>
  * The conversion between geographic and geocentric coordinates is usually <strong>not</strong>
- * part of this transform. However the Geotoolkit implementation accepts the following extensions:
+ * part of this transform. However the Geotk implementation accepts the following extensions:
  * <p>
  * <ul>
  *   <li>If {@code "src_semi_major"} and {@code "src_semi_minor"} parameters are provided, then

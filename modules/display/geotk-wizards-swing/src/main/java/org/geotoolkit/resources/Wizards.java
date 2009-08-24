@@ -114,7 +114,7 @@ public final class Wizards extends IndexedResourceBundle {
         public static final int SETUP_DESC = 12;
 
         /**
-         * Geotoolkit Setup
+         * Geotoolkit.org Setup
          */
         public static final int SETUP_TITLE = 13;
 

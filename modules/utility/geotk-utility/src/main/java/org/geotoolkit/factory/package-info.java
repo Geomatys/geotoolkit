@@ -17,33 +17,33 @@
  */
 
 /**
- * Utility classes which enable dynamic binding to factory implementations at runtime. Because Geotoolkit
+ * Utility classes which enable dynamic binding to factory implementations at runtime. Because Geotk
  * core API consists mostly of interfaces (including <A HREF="http://geoapi.sourceforge.net">GeoAPI</A>),
  * factories play a role in how developers use the API. Although the interfaces that are declared in GeoAPI
- * are implemented in various Geotoolkit packages, they should not be used directly. Instead they should be
+ * are implemented in various Geotk packages, they should not be used directly. Instead they should be
  * obtained through factories.
  * <p>
  * Factories are some interfaces that define <cite>services</cite> (also called <cite>providers</cite>) for
- * instantiating other objects. In the Geotoolkit library they extend the {@link org.geotoolkit.factory.Factory}
+ * instantiating other objects. In the Geotk library they extend the {@link org.geotoolkit.factory.Factory}
  * class, but this is not mandatory. For example the {@link org.opengis.referencing.crs.CRSAuthorityFactory}
- * GeoAPI interface (implemented in Geotoolkit by {@link org.geotoolkit.referencing.factory.ReferencingObjectFactory})
+ * GeoAPI interface (implemented in Geotk by {@link org.geotoolkit.referencing.factory.ReferencingObjectFactory})
  * is a service allowing instantiation of {@link org.opengis.referencing.crs.CoordinateReferenceSystem}
  * objects from identifiers.
  * <p>
  * Factories are registered for use in a <cite>services registry</cite>, which acts as a container
- * for service implementations. Service registries don't need to be a Geotoolkit implementation. They
+ * for service implementations. Service registries don't need to be a Geotk implementation. They
  * can be (but are not limited to) instances of:
  * <p>
  * <ul>
  *   <li>{@link java.util.ServiceLoader} provided since Java 6</li>
  *   <li>{@link javax.imageio.spi.ServiceRegistry} provided since Java 4</li>
- *   <li>{@link org.geotoolkit.factory.FactoryRegistry} provided since Geotoolkit 2.1</li>
+ *   <li>{@link org.geotoolkit.factory.FactoryRegistry} provided since GeoTools 2.1</li>
  * </ul>
  *
  * {@section Getting started}
  * {@link org.geotoolkit.factory.FactoryFinder} and {@link org.geotoolkit.factory.AuthorityFactoryFinder}
  * provide convenience static methods for getting implementations of service interfaces. They are the
- * only methods for getting started with Geotoolkit factories.
+ * only methods for getting started with Geotk factories.
  *
  * {@section Registering a factory}
  * To declare a factory implementation, a {@code services} subdirectory is placed within the
@@ -82,7 +82,7 @@
  *     Iterator<DatumFactory> providers = registry.iterator();
  * }
  *
- * Following does the same using the Geotoolkit factory registry, which allows more control.
+ * Following does the same using the Geotk factory registry, which allows more control.
  *
  * {@preformat java
  *     Class<?>[] categories = new Class[] {
@@ -100,7 +100,7 @@
  * Users wanting a specific implementation can
  * {@linkplain javax.imageio.spi.ServiceRegistry#getServiceProviders iterates through registered ones}
  * and pickup the desired implementation themself. An alternative is to bundle the criterions in a map
- * of {@linkplain org.geotoolkit.factory.Hints hints} and lets the factory registry (Geotoolkit extension
+ * of {@linkplain org.geotoolkit.factory.Hints hints} and lets the factory registry (Geotk extension
  * only) selects an implementation accordingly. Note that the hints, if provided, don't need to apply
  * directly to the requested factory. They may apply indirectly through factory dependencies.
  *

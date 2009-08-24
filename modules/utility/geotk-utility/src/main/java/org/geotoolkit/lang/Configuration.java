@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 
 
 /**
- * Annotates methods having a system-wide impact on the configuration of the Geotoolkit library.
+ * Annotates methods having a system-wide impact on the configuration of the Geotk library.
  * See "Use" javadoc link for a list of annotated methods.
  *
  * @author Martin Desruisseaux (Geomatys)

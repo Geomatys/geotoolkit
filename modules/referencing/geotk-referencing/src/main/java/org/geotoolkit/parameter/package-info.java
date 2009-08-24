@@ -19,12 +19,12 @@
 /**
  * {@linkplain org.geotoolkit.parameter.Parameter Parameter} implementations. An explanation for this
  * package is provided in the {@linkplain org.opengis.parameter OpenGIS&reg; javadoc}. The remaining
- * discussion on this page is specific to the Geotoolkit implementation.
+ * discussion on this page is specific to the Geotk implementation.
  * <p>
  * The starting point is often {@link org.opengis.parameter.ParameterDescriptorGroup}.
  * Operation implementations need to defines one. Operation usages typically invoke its
  * {@link org.opengis.parameter.ParameterDescriptorGroup#createValue createValue} method
- * and fill the returned object with parameter values. This Geotoolkit package provides the
+ * and fill the returned object with parameter values. This Geotk package provides the
  * following implementations:
  *
  * <ul>

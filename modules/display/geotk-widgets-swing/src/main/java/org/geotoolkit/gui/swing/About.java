@@ -107,7 +107,7 @@ public class About extends JPanel implements Dialog {
     private final Vocabulary resources;
 
     /**
-     * Construct a new dialog box with the Geotoolkit's logo.
+     * Construct a new dialog box with the Geotk's logo.
      */
     public About() {
         this("org/geotoolkit/resources/Geotoolkit.png", About.class, null);

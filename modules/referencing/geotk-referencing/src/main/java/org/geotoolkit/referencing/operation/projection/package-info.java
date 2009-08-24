@@ -93,7 +93,7 @@
  * swap ordinates.
  * </blockquote>
  *
- * The Geotoolkit implementation extends this rule to axis directions as well, i.e. (<var>x</var>,
+ * The Geotk implementation extends this rule to axis directions as well, i.e. (<var>x</var>,
  * <var>y</var>) coordinates must be ({@linkplain org.opengis.referencing.cs.AxisDirection#EAST East},
  * {@linkplain org.opengis.referencing.cs.AxisDirection#NORTH North}) orientated.
  *

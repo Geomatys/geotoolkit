@@ -89,7 +89,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
 
     /**
      * The JDBC URL to the database. If {@code null}, a default URL to a JavaDB database on the
-     * local machine will be used. This default URL will point toward the Geotoolkit configuration
+     * local machine will be used. This default URL will point toward the Geotk configuration
      * directory, which is platform-dependent ({@code ".geotoolkit"} on Linux).
      */
     private String databaseUrl;

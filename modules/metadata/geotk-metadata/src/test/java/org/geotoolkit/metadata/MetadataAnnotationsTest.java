@@ -92,9 +92,9 @@ public final class MetadataAnnotationsTest {
         final DefaultDataIdentification dataIdent = new DefaultDataIdentification();
         dataIdent.setCitation(Citations.GEOTOOLKIT);
         final DefaultInternationalString localizedString = new DefaultInternationalString();
-        localizedString.add(Locale.ENGLISH, "Geotoolkit, OpenSource Project");
-        localizedString.add(Locale.FRENCH,  "Geotoolkit, projet OpenSource");
-        localizedString.add(Locale.ITALIAN, "Geotoolkit, progetto OpenSource");
+        localizedString.add(Locale.ENGLISH, "Geotoolkit.org, OpenSource Project");
+        localizedString.add(Locale.FRENCH,  "Geotoolkit.org, projet OpenSource");
+        localizedString.add(Locale.ITALIAN, "Geotoolkit.org, progetto OpenSource");
         dataIdent.setAbstract(localizedString);
         dataIdent.setLanguages(Arrays.asList(new Locale[] {
             Locale.FRENCH

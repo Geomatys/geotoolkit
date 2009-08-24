@@ -28,7 +28,7 @@ import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * Methods related to the Geotoolkit installation directory. This is provided for data that need
+ * Methods related to the Geotoolkit.org installation directory. This is provided for data that need
  * to be saved in a user-specified directory. If the user didn't specified any directory, they
  * will be saved in the temporary directory.
  * <p>
@@ -44,7 +44,7 @@ import org.geotoolkit.util.logging.Logging;
  */
 public enum Installation {
     /**
-     * The root directory of Geotoolkit installation.
+     * The root directory of Geotoolkit.org installation.
      */
     ROOT_DIRECTORY("org/geotoolkit", "Root directory", null),
 

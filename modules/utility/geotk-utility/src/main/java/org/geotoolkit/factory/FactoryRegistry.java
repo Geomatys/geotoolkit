@@ -311,7 +311,7 @@ public class FactoryRegistry extends ServiceRegistry {
      *                  {@code null} if none.
      * @return A factory {@linkplain Factory#isAvailable available} for use for the specified
      *         category and hints. The returns type is {@code Object} instead of {@link Factory}
-     *         because the factory implementation doesn't need to be a Geotoolkit one.
+     *         because the factory implementation doesn't need to be a Geotk one.
      * @throws FactoryNotFoundException if no factory was found for the specified category, filter
      *         and hints.
      * @throws FactoryRegistryException if a factory can't be returned for some other reason.
@@ -676,7 +676,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * Returns {@code true} if the specified {@code provider} meets the requirements specified by
      * a map of {@code hints}. The default implementation always returns {@code true}. There is no
      * need to override this method for {@link Factory} implementations, since their hints are
-     * automatically checked. Override this method for non-Geotoolkit implementations.
+     * automatically checked. Override this method for non-Geotk implementations.
      * For example a JTS geometry factory finder may overrides this method in order to check
      * if a {@link com.vividsolutions.jts.geom.GeometryFactory} uses the required
      * {@link com.vividsolutions.jts.geom.CoordinateSequenceFactory}. Such method should be

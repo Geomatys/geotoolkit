@@ -168,7 +168,7 @@ public class PaletteFactory {
      * Palette factories found are added to the chain of default factories. The next time that
      * a <code>{@linkplain #getDefault()}.getPalette(...)</code> method will be invoked, the
      * scanned factories will be tried first. If they can't create a given palette, then the
-     * Geotoolkit default factory will be tried last.
+     * Geotk default factory will be tried last.
      * <p>
      * It is usually not needed to invoke this method directly since it is invoked automatically
      * by {@link #getDefault()} when first needed. This method may be useful when a specific class

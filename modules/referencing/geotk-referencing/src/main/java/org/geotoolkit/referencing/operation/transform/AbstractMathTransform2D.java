@@ -184,8 +184,8 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * <cite>non-linear kernel</cite> &ndash; <cite>denormalize</cite>) transforms. The default
      * implementation returns {@code null} in all case, which means that there is no such tuple.
      * <p>
-     * This method is used mostly for Geotoolkit implementation of map projections.
-     * Most users should consider this method as internal to Geotoolkit mechanic.
+     * This method is used mostly for Geotk implementation of map projections.
+     * Most users should consider this method as internal to Geotk mechanic.
      *
      * @return The tuple of (<cite>normalize</cite> &ndash; <cite>non-linear kernel</cite>
      *         &ndash; <cite>denormalize</cite>) transforms, or {@code null} if none.
@@ -203,7 +203,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * this {@code Parameters} class does not keep a reference to the enclosing transform because
      * parameters are typically unmarshalled before the transform is instantiated.
      * <p>
-     * This object is used mostly for Geotoolkit implementation of map projections, where the
+     * This object is used mostly for Geotk implementation of map projections, where the
      * kernel is a {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection
      * unitary projection}. See the {@linkplain org.geotoolkit.referencing.operation.projection
      * projection package} for details.
@@ -427,7 +427,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
             /**
              * Process to the WKT formatting of the forward or inverse transform. This method is
              * synchronized in case the user provided some custom formatter doing some stuff with
-             * threads, but should not be needed with Geotoolkit implementation.
+             * threads, but should not be needed with Geotk implementation.
              */
             @Override
             public synchronized String formatWKT(final Formatter formatter) {

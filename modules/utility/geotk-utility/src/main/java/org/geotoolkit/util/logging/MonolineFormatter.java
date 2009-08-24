@@ -52,7 +52,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * {@preformat text
  *     ###########################################################################
- *     # Properties for the Geotoolkit's MonolineFormatter.
+ *     # Properties for the Geotoolkit.org's MonolineFormatter.
  *     # By default, the monoline formatter display only the level
  *     # and the message. Additional fields can be specified here:
  *     #

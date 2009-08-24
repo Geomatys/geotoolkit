@@ -141,7 +141,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
 
     /**
      * Constructs a descriptor with the same values than the specified one. This copy constructor
-     * can be used in order to wrap an arbitrary implementation into a Geotoolkit one.
+     * can be used in order to wrap an arbitrary implementation into a Geotk one.
      *
      * @param descriptor The descriptor to copy.
      *

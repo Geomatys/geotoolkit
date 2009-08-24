@@ -168,7 +168,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
              * for the same name.   Strictly speaking, this synchronization is not suffisient since
              * it doesn't apply to the creation of axis directions from outside this class.  But it
              * okay if this code is the only place where we create axis directions with name of the
-             * kind "South among 90°E". This assumption holds for Geotoolkit implementation.
+             * kind "South among 90°E". This assumption holds for Geotk implementation.
              */
             direction = Directions.find(name);
             if (direction == null) {

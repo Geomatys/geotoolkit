@@ -483,7 +483,7 @@ public class ReferencingParser extends MathTransformParser {
     /**
      * Creates an axis. If the name matches one of pre-defined axis, the pre-defined one
      * will be returned. This replacement help to get more success when comparing a CS
-     * built from WKT against a CS built from one of Geotoolkit's constants.
+     * built from WKT against a CS built from one of Geotk's constants.
      *
      * @param  properties Name and other properties to give to the new object.
      *         If {@code null}, the abbreviation will be used as the axis name.
@@ -782,7 +782,7 @@ public class ReferencingParser extends MathTransformParser {
      * @return The {@code "LOCAL_CS"} element as an {@link EngineeringCRS} object.
      * @throws ParseException if the {@code "LOCAL_CS"} element can't be parsed.
      *
-     * @todo The coordinate system used is always a Geotoolkit implementation, since we don't
+     * @todo The coordinate system used is always a Geotk implementation, since we don't
      *       know which method to invokes in the {@link CSFactory} (is it a cartesian
      *       coordinate system? a spherical one? etc.).
      */

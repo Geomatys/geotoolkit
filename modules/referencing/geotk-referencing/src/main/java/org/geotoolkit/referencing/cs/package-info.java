@@ -19,9 +19,9 @@
 /**
  * {@linkplain org.geotoolkit.referencing.cs.AbstractCS Coordinate system} implementations.
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing.cs OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotoolkit implementation.
+ * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
- * Geotoolkit provides some convenience methods for fetching specific coordinate values in standard
+ * Geotk provides some convenience methods for fetching specific coordinate values in standard
  * units. For example the {@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS} class provides a
  * {@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#getLongitude getLongitude} method that
  * returns the longitude value in a given set of coordinates. This convenience method free the user

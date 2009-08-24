@@ -29,7 +29,7 @@ import org.geotoolkit.lang.Static;
 
 
 /**
- * Static methods relative to the factories. There are many aspects in the way Geotoolkit manages
+ * Static methods relative to the factories. There are many aspects in the way Geotk manages
  * factories on a system-wide basis:
  *
  * <ul>
@@ -38,8 +38,8 @@ import org.geotoolkit.lang.Static;
  *   Hints#removeSystemDefault removeSystemDefault} methods. The default values can be provided
  *   in application code.</p></li>
  *
- *   <li><p><b>Integration plugins:</b> If hosting Geotoolkit in a alternate plugin system such as
- *   Spring or OSGi, application may needs to register additional "Factory Iterators" for Geotoolkit
+ *   <li><p><b>Integration plugins:</b> If hosting Geotk in a alternate plugin system such as
+ *   Spring or OSGi, application may needs to register additional "Factory Iterators" for Geotk
  *   to search using the {@link #addFactoryIteratorProvider addFactoryIteratorProvider} method.</p></li>
  * </ul>
  *

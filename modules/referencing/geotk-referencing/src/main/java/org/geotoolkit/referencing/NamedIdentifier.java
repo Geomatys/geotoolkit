@@ -239,7 +239,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
 
     /**
      * Returns the name factory to be used for creating default names when the user did not
-     * provides them explicitly. We use the Geotoolkit implementation for making sure that we
+     * provides them explicitly. We use the Geotk implementation for making sure that we
      * integrate well with the referencing module, and also for a few extra functionalities.
      *
      * @return The name factory.

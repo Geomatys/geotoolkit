@@ -48,7 +48,7 @@ public final class MatrixUtilities {
     }
 
     /**
-     * Converts the specified matrix to a Geotoolkit implementation. If {@code matrix} is already
+     * Converts the specified matrix to a Geotk implementation. If {@code matrix} is already
      * an instance of {@code XMatrix}, then it is returned unchanged. Otherwise all elements are
      * copied in a new {@code XMatrix} object.
      *
@@ -67,7 +67,7 @@ public final class MatrixUtilities {
     }
 
     /**
-     * Converts the specified matrix to the most suitable Geotoolkit implementation. This method
+     * Converts the specified matrix to the most suitable Geotk implementation. This method
      * copies the matrix elements in the specialized {@link Matrix1}, {@link Matrix2}, {@link
      * Matrix3} or {@link Matrix4} implementation if the matrix size fits and the given matrix
      * is not already one of those implementations. Otherwise it invokes {@link #toXMatrix}.
@@ -90,7 +90,7 @@ public final class MatrixUtilities {
     }
 
     /**
-     * Converts the specified matrix to a Geotoolkit implementation of {@link Matrix}.
+     * Converts the specified matrix to a Geotk implementation of {@link Matrix}.
      * If {@code matrix} is already an instance of {@code GeneralMatrix}, then it is
      * returned unchanged. Otherwise, all elements are copied in a new {@code GeneralMatrix} object.
      * <p>
@@ -144,9 +144,9 @@ public final class MatrixUtilities {
     private static AffineMatrix3 toAffineMatrix3(final Matrix matrix) throws IllegalStateException {
         final AffineTransform at = toAffineTransform(matrix);
         return (at instanceof AffineMatrix3) ? (AffineMatrix3) at : new AffineMatrix3(at);
-        // Geotoolkit implementation already returns instances of AffineMatrix3, so the
-        // above code should just cast in most cases. The "else" case which creates a
-        // new AffineMatrix3 is defensive code.
+        // Geotk implementation already returns instances of AffineMatrix3, so the
+        // above code should just cast in most cases. The "else" case which creates
+        // a new AffineMatrix3 is defensive code.
     }
 
     /**

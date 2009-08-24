@@ -46,7 +46,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
     private static final long serialVersionUID = -6793384507333713770L;
 
     /**
-     * The version of this Geotoolkit distribution.
+     * The version of this Geotoolkit.org distribution.
      */
     public static final Version GEOTOOLKIT = new Version("3.03-SNAPSHOT");
 

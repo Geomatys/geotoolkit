@@ -53,8 +53,8 @@ public final class ParameterGroupTest {
         p4 = new DefaultParameterDescriptor<Integer>(name("4"), I, null, ONE, null, null, null, false) {
             /**
              * We are cheating here:  {@code maximumOccurs} should always be 1 for
-             * {@code ParameterValue}. However, the Geotoolkit implementation should
-             * be robust enough to accept other values. We will test that.
+             * {@code ParameterValue}. However, the Geotk implementation should be
+             * robust enough to accept other values. We will test that.
              */
             @Override
             public int getMaximumOccurs() {

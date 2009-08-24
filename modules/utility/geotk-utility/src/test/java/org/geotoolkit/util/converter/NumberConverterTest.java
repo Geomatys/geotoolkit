@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Commons.*;
 public final class NumberConverterTest {
     /**
      * Tests conversions to boolean values.
-     * Adapted from Geotoolkit 2.5 {@code BooleanConverterFactoryTest}.
+     * Adapted from GeoTools 2.5 {@code BooleanConverterFactoryTest}.
      *
      * @throws NonconvertibleObjectException Should never happen.
      */
@@ -77,7 +77,7 @@ public final class NumberConverterTest {
 
     /**
      * Tests conversions to color values.
-     * Adapted from Geotoolkit 2.5 {@code ColorConverterFactoryTest}.
+     * Adapted from GeoTools 2.5 {@code ColorConverterFactoryTest}.
      *
      * @throws NonconvertibleObjectException Should never happen.
      */

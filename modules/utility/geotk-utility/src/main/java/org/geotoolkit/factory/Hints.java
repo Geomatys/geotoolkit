@@ -50,9 +50,9 @@ import org.geotoolkit.resources.Errors;
 /**
  * A set of hints providing control on factories to be used. They provides a way to control
  * low-level details. When hints are used in conjunction with {@linkplain FactoryRegistry
- * factory registry} (the Geotoolkit service discovery mechanism), we have the complete Geotoolkit
- * plugin system. By using hints to allow application code to effect service discovery, we allow
- * client code to retarget the geotoolkit library for their needs.
+ * factory registry} (the Geotk service discovery mechanism), we have the complete Geotk
+ * plugin system. By using hints to allow application code to effect service discovery,
+ * we allow client code to retarget the Geotk library for their needs.
  * <p>
  * The following example fetch a {@linkplain CoordinateOperationFactory coordinate operation factory}
  * which is tolerant to the lack of Bursa-Wolf parameters:
@@ -295,7 +295,7 @@ public class Hints extends RenderingHints {
      * <p>
      * This hint can be passed to the <code>{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
      * AuthorityFactoryFinder.getCRSAuthorityFactory}(...)</code> method. Whatever this hint is
-     * supported or not is authority dependent. In the default Geotoolkit configuration, this hint
+     * supported or not is authority dependent. In the default Geotk configuration, this hint
      * is honored for codes in the {@code "EPSG"} namespace but ignored for codes in the
      * {@code "urn:ogc"} namespace. See {@link #FORCE_AXIS_ORDER_HONORING} for changing this
      * behavior.
@@ -331,7 +331,7 @@ public class Hints extends RenderingHints {
      *
      * Lets stress again that the application of (<var>longitude</var>, <var>latitude</var>) axis
      * order to the {@code "urn:ogc"} name space is a clear violation of OGC specification, which
-     * is why Geotoolkit wants you to provide this additional hint meaning "I'm really sure". Note
+     * is why Geotk wants you to provide this additional hint meaning "I'm really sure". Note
      * also that {@code "epsg"} is implicit and doesn't need to be included in the above list,
      * but this example does so as a matter of principle.
      *
@@ -696,7 +696,7 @@ public class Hints extends RenderingHints {
     }
 
     /**
-     * Returns the system-wide default value for the given key. The Geotoolkit library
+     * Returns the system-wide default value for the given key. The Geotk library
      * initially contains no system default, so {@code getSystemDefault(key)} returns
      * null for all keys. Users can add default values using {@link #putSystemDefault
      * putSystemDefault}.

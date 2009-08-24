@@ -795,10 +795,9 @@ public class Formatter {
             final Collection<GenericName> aliases = info.getAlias();
             if (aliases != null) {
                 /*
-                 * The main name doesn't matches. Search in alias. We will first
-                 * check if alias implements Identifier (this is the case of
-                 * Geotoolkit implementation). Otherwise, we will look at the
-                 * scope in generic name.
+                 * The main name doesn't matches. Search in alias. We will first check
+                 if alias implements Identifier (this is the case of Geotk implementation).
+                 * Otherwise, we will look at the scope in generic name.
                  */
                 for (final GenericName alias : aliases) {
                     if (alias instanceof Identifier) {

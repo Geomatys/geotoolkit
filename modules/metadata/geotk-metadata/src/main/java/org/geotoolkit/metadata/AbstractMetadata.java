@@ -106,7 +106,7 @@ public abstract class AbstractMetadata {
      *   <li>this class do not contains any {@code set*(...)} method</li>
      *   <li>All {@code get*()} methods return a presumed immutable object.
      *       The maining of "<cite>presumed immutable</cite>" may vary in
-     *       different Geotoolkit versions.</li>
+     *       different Geotk versions.</li>
      * </ul>
      * <p>
      * Otherwise, this method conservatively returns {@code true}. Subclasses
@@ -149,7 +149,7 @@ public abstract class AbstractMetadata {
      * independent of Swing. It will not force class loading of Swing framework.
      * <p>
      * In current implementation, the tree is not live (i.e. changes in metadata are not
-     * reflected in the tree). However it may be improved in a future Geotoolkit implementation.
+     * reflected in the tree). However it may be improved in a future Geotk implementation.
      *
      * @return A view of this metadata object as a tree.
      */

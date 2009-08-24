@@ -457,7 +457,7 @@ public class TextMatrixImageReader extends TextImageReader {
          * Returns {@code true} if the specified row length is valid. The default implementation
          * returns {@code true} if the row seems "long", where "long" is arbitrary fixed to 10
          * columns. This is an arbitrary choice, which is why this method is not public. It may
-         * be changed in any future Geotoolkit version.
+         * be changed in any future Geotk version.
          */
         @Override
         boolean isValidColumnCount(final int count) {

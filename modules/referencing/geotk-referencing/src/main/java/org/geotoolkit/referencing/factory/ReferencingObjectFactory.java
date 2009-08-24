@@ -52,7 +52,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
 
 
 /**
- * Builds Geotoolkit implementations of {@linkplain CoordinateReferenceSystem CRS},
+ * Builds Geotk implementations of {@linkplain CoordinateReferenceSystem CRS},
  * {@linkplain CoordinateSystem CS} and {@linkplain Datum datum} objects. Most factory methods
  * expect properties given through a {@link Map} argument. The content of this map is described
  * in the {@link ObjectFactory} interface.
@@ -987,7 +987,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
         final MathTransformFactory mtFactory = getMathTransformFactory();
         if (existing != null && mtFactory instanceof DefaultMathTransformFactory) {
             /*
-             * In the particular case of Geotoolkit implementation, we use a shortcut which avoid
+             * In the particular case of Geotk implementation, we use a shortcut which avoid
              * the cost of creating a new parameterized transform; we use directly the existing
              * transform instance instead. It also avoid slight rounding errors as a side-effect.
              * This is because transforms are free to convert angular parameters from degrees to
@@ -1000,7 +1000,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
             mt = ((DefaultMathTransformFactory) mtFactory).createBaseToDerived(baseCRS, existing, derivedCS);
         } else {
             /*
-             * Non-Geotoolkit implementation, or no existing MathTransform instance.
+             * Non-Geotk implementation, or no existing MathTransform instance.
              * Creates the transform from the parameters.
              */
             final ParameterValueGroup parameters = conversionFromBase.getParameterValues();
@@ -1008,9 +1008,9 @@ public class ReferencingObjectFactory extends ReferencingFactory
             OperationMethod method = conversionFromBase.getMethod();
             if (!(method instanceof MathTransformProvider)) {
                 /*
-                 * Our Geotoolkit implementation of DefaultProjectedCRS may not be able to detect
+                 * Our Geotk implementation of DefaultProjectedCRS may not be able to detect
                  * the conversion type (PlanarProjection, CylindricalProjection, etc.)  because
-                 * we rely on the Geotoolkit-specific MathTransformProvider for that. We will try
+                 * we rely on the Geotk-specific MathTransformProvider for that. We will try
                  * to help it with the optional "conversionType" hint,  providing that the user
                  * does not already provide this hint.
                  */

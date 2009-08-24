@@ -185,7 +185,7 @@ public class FactoryFinder {
                     CoordinateOperationAuthorityFactory.class
             }) {
                 /*
-                 * Geotoolkit is a fork of GeoTools. If both appear on the classpath, conflicts
+                 * Geotoolkit.org is a fork of GeoTools. If both appear on the classpath, conflicts
                  * may arise unless we specify which one should have precedence over the other.
                  */
                 @Override void pluginScanned(final Class<?> category) {

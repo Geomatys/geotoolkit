@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 
 /**
- * Base class for adapters from GeoAPI interfaces to their Geotoolkit implementation.
+ * Base class for adapters from GeoAPI interfaces to their Geotk implementation.
  *
  * @param <ValueType> The adapter subclass.
  * @param <BoundType> The interface being adapted.

@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Commons.*;
 public final class StringConverterTest {
     /**
      * Tests conversions to boolean values.
-     * Adapted from Geotoolkit 2.5 {@code BooleanConverterFactoryTest}.
+     * Adapted from GeoTools 2.5 {@code BooleanConverterFactoryTest}.
      *
      * @throws NonconvertibleObjectException Should never happen.
      */
@@ -54,7 +54,7 @@ public final class StringConverterTest {
 
     /**
      * Tests conversions to color values.
-     * Adapted from Geotoolkit 2.5 {@code ColorConverterFactoryTest}.
+     * Adapted from GeoTools 2.5 {@code ColorConverterFactoryTest}.
      *
      * @throws NonconvertibleObjectException Should never happen.
      */
@@ -67,7 +67,7 @@ public final class StringConverterTest {
 
     /**
      * Tests conversions to charset values.
-     * Adapted from Geotoolkit 2.5 {@code CharsetConverterFactoryTest}.
+     * Adapted from GeoTools 2.5 {@code CharsetConverterFactoryTest}.
      *
      * @throws NonconvertibleObjectException Should never happen.
      */

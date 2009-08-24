@@ -156,7 +156,7 @@ public abstract class InteractiveConsole implements Runnable {
         if (console != null) {
             in  = null;
             out = err = console.writer();
-            prompt = "Geotoolkit \u25B6 ";
+            prompt = "Geotk \u25B6 ";
         } else if (commands != null) {
             in  = new LineNumberReader(commands.in);
             out = commands.out;

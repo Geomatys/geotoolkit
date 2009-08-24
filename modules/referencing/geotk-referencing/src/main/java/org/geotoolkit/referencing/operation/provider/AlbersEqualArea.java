@@ -64,7 +64,7 @@ public class AlbersEqualArea extends MapProjection {
      *
      * @todo According the <cite>remote-sensing</cite> web site, the OGC name for this parameter
      *       is <code>"longitude_of_center"</code>. However the <cite>spatial-reference</cite>
-     *       web site said <code>"central_meridian"</code>, which was also the usage in Geotoolkit
+     *       web site said <code>"central_meridian"</code>, which was also the usage in GeoTools
      *       2.x and is preserved for now.
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
@@ -84,7 +84,7 @@ public class AlbersEqualArea extends MapProjection {
      *
      * @todo According the <cite>remote-sensing</cite> web site, the OGC name for this parameter
      *       is <code>"latitude_of_center"</code>. However the <cite>spatial-reference</cite>
-     *       web site said <code>"latitude_of_origin"</code>, which was also the usage in Geotoolkit
+     *       web site said <code>"latitude_of_origin"</code>, which was also the usage in GeoTools
      *       2.x and is preserved for now.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =

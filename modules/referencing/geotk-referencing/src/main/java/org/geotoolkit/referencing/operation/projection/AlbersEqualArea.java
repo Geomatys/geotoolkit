@@ -89,7 +89,7 @@ public class AlbersEqualArea extends UnitaryProjection {
      * poles, while the formulas would still applicable, thus leading to results less accurate
      * than they could be.
      * <p>
-     * Note that Geotoolkit formulas are modified in such a way that the {@code rho} value which
+     * Note that Geotk formulas are modified in such a way that the {@code rho} value which
      * is compared to {@code EPSILON} is the equivalent of {@code rho/abs(n)} in Proj4, where
      * abs(n) is typically a number between 0.8 and 1.
      */
@@ -285,7 +285,7 @@ public class AlbersEqualArea extends UnitaryProjection {
          *         rho = -rho;
          *     }
          *
-         * This condition has disaspeared in Geotoolkit because (x,y) are premultiplied by n
+         * This condition has disaspeared in Geotk because (x,y) are premultiplied by n
          * (by the affine transform) before to enter in this method, so if n was negative
          * those values have already their sign reverted. In the case of rho, it was divided
          * further by n, so it got its sign reverted too.

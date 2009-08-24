@@ -105,9 +105,8 @@ public class FormattableObject implements Formattable {
      * A special citation for formatting objects as stored internally by Geotk. This citation
      * can be given to the {@code authority} argument of the {@link #toWKT(Citation,int)} method.
      * In the majority of cases, the result will be identical to the one we would get using the
-     * {@link #OGC} authority. However in the particular case of map projections, the result may
-     * be quite different because of the way Geotoolkit separates the linear from the
-     * non-linear parameters.
+     * {@link #OGC} authority. However in the particular case of map projections, the result may be
+     * quite different because of the way Geotk separates the linear from the non-linear parameters.
      * <p>
      * This citation is used only for debugging purpose.
      *
@@ -138,7 +137,7 @@ public class FormattableObject implements Formattable {
      * Prints a string representation of this object to the {@linkplain System#out standard
      * output stream}. If a {@linkplain Console console} is attached to the running JVM (i.e.
      * if the application is run from the command-line and the output is not redirected to a
-     * file) and if Geotoolkit thinks that the console supports the {@link X364 X3.64} standard,
+     * file) and if Geotk thinks that the console supports the {@link X364 X3.64} standard,
      * then a syntax coloring will be applied.
      * <p>
      * This is a convenience method for debugging purpose only.

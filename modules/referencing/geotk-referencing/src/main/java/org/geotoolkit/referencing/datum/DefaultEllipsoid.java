@@ -155,7 +155,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     /**
      * Constructs a new ellipsoid with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -294,7 +294,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * Wraps an arbitrary ellipsoid into a Geotoolkit implementation. This method is usefull if
+     * Wraps an arbitrary ellipsoid into a Geotk implementation. This method is usefull if
      * {@link #orthodromicDistance orthodromic distance computation} (for example) are desired.
      * If the supplied ellipsoid is already an instance of {@code DefaultEllipsoid} or is
      * {@code null}, then it is returned unchanged.

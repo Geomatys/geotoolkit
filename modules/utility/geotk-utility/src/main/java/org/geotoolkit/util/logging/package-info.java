@@ -32,10 +32,10 @@
  * </ul>
  *
  * {@section For developpers}
- * All Geotoolkit code should fetch their logger through a call to
+ * All Geotk code should fetch their logger through a call to
  * {@link org.geotoolkit.util.logging.Logging#getLogger(String)}, not
  * {@link java.util.logging.Logger#getLogger(String)}. This is necessary in
- * order to give Geotoolkit a chance to redirect log events to an other logging framework.
+ * order to give Geotk a chance to redirect log events to an other logging framework.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.01

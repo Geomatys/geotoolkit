@@ -415,7 +415,7 @@ final class Resampler2D extends GridCoverage2D {
         }
         allSteps2D = toMathTransform2D(allSteps, mtFactory, targetGG);
         if (!(allSteps2D instanceof MathTransform2D)) {
-            // Should not happen with Geotoolkit implementations. May happen
+            // Should not happen with Geotk implementations. May happen
             // with some external implementations, but should stay unusual.
             throw new TransformException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
         }

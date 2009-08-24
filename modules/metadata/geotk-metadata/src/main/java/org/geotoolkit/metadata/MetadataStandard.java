@@ -380,7 +380,7 @@ public final class MetadataStandard {
      * independent of Swing. It will not force class loading of Swing framework.
      * <p>
      * In current implementation, the tree is not live (i.e. changes in metadata are not
-     * reflected in the tree). However it may be improved in a future Geotoolkit implementation.
+     * reflected in the tree). However it may be improved in a future Geotk implementation.
      *
      * @param  metadata The metadata object to formats as a string.
      * @return A tree representation of the specified metadata.

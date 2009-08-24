@@ -154,7 +154,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
     /**
      * Returns the vendor responsible for creating this factory implementation. Many implementations
      * may be available for the same factory interface. The default implementation returns
-     * {@linkplain Citations#GEOTOOLKIT Geotoolkit}.
+     * {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
      *
      * @return The vendor for this factory implementation.
      */

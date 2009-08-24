@@ -681,7 +681,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject
     /**
      * Constructs a new coordinate system axis with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -1277,10 +1277,10 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject
         } else {
             /*
              * Checking the abbreviation is not suffisient. For example the polar angle and the
-             * spherical latitude have the same abbreviation (theta).  Geotoolkit extensions like
+             * spherical latitude have the same abbreviation (theta). Geotk extensions like
              * "Longitude" (in addition of ISO 19111 "Geodetic longitude") bring more potential
              * confusion. Furthermore, not all implementors will use the greek letters (even if
-             * they are part of ISO 19111).    For example most CRS in WKT format use the "Lat"
+             * they are part of ISO 19111). For example most CRS in WKT format use the "Lat"
              * abbreviation instead of the greek letter phi. For comparisons without metadata,
              * we ignore the unreliable abbreviation and check the axis name instead. These
              * names are constrained by ISO 19111 specification (see class javadoc), so they

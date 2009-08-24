@@ -112,7 +112,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  *
- * @deprecated The API of this class will change in a future Geotoolkit release. Do not rely on it.
+ * @deprecated The API of this class will change in a future Geotk release. Do not rely on it.
  */
 @Deprecated
 public class OperationJAI extends Operation2D {

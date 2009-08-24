@@ -18,7 +18,7 @@
 
 /**
  * JAXB adapters for metadata.
- * This package regroups all adapters mapping GeoAPI interfaces to their Geotoolkit
+ * This package regroups all adapters mapping GeoAPI interfaces to their Geotk
  * implementation. We must use adapters since JAXB can not annotate interfaces.
  * Consequently the purpose of these adapters is to replace interfaces.
  * <p>

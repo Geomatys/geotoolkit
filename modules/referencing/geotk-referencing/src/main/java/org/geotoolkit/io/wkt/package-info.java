@@ -19,7 +19,7 @@
 /**
  * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite> (WKT)</A> parsing and formatting. This package provides the internal mechanism
- * used by Geotoolkit implementation. Most users don't need to know about it, except if they want to
+ * used by Geotk implementation. Most users don't need to know about it, except if they want to
  * customize the WKT output. For example it is possible to:
  * <p>
  * <ul>

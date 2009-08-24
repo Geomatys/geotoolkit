@@ -307,7 +307,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
 
     /**
      * Returns the vendor responsible for creating this factory implementation.
-     * The default implementation returns {@linkplain Citations#GEOTOOLKIT Geotoolkit}.
+     * The default implementation returns {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
      */
     @Override
     public Citation getVendor() {

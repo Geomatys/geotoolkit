@@ -369,7 +369,7 @@ public class OperationTreeBrowser extends JPanel implements Dialog {
                 selection = path.getLastPathComponent();
                 /*
                  * Some of piece of code in the following block can work with the Swing's
-                 * TreeNode (i.e. it doesn't require the fixed Geotoolkit's TreeNode).
+                 * TreeNode (i.e. it doesn't require the fixed Geotk's TreeNode).
                  */
                 if (selection instanceof javax.swing.tree.TreeNode) {
                     javax.swing.tree.TreeNode node = (javax.swing.tree.TreeNode) selection;

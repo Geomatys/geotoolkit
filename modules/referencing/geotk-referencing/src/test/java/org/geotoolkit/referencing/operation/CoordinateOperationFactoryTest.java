@@ -207,7 +207,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         assertTransformEquals2_2(-180, -88.21076182660325, -180, -88.21076182655470);
         assertTransformEquals2_2(+180,  85.41283436546335, -180,  85.41283436531322);
 //      assertTransformEquals2_2(+180,  85.41283436546335, +180,  85.41283436548373);
-        // Note 1: Expected values above were computed with Geotoolkit (not an external library).
+        // Note 1: Expected values above were computed with Geotk (not an external library).
         // Note 2: The commented-out test it the one we get when using geocentric instead of
         //         Molodenski method.
     }
@@ -233,7 +233,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         tolerance = 1E-6;
         assertTransformEquals2_2( 0,   0,  2.3367521703619816, 0.0028940088671177986);
         assertTransformEquals2_2(20, -10, -6.663517606186469, 18.00134508026729);
-        // Note: Expected values above were computed with Geotoolkit (not an external library).
+        // Note: Expected values above were computed with Geotk (not an external library).
         //       However, it was tested with both Molodenski and Geocentric transformations.
 
         /*
@@ -279,7 +279,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         assertTransformEquals2_2(0,   0,  2.33722917, 0.0);
         assertTransformEquals2_2(20, -10, -6.66277083, 17.99814879585781);
 //      assertTransformEquals2_2(lenientTr, 20, -10, -6.66277083, 17.998143675921714);
-        // Note 1: Expected values above were computed with Geotoolkit (not an external library).
+        // Note 1: Expected values above were computed with Geotk (not an external library).
         // Note 2: The commented-out test is the one we get with "Abridged_Molodenski" method
         //         instead of "Molodenski".
     }
@@ -304,7 +304,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         validate();
         tolerance = 1E-6;
         assertTransformEquals2_2(168.1075, -21.597283333333, 822023.338884308, 7608648.67486555);
-        // Note: Expected values above were computed with Geotoolkit (not an external library).
+        // Note: Expected values above were computed with Geotk (not an external library).
 
         /*
          * Try again using lenient factory. The result should be identical, since we do have
@@ -325,7 +325,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         validate();
         tolerance = 1E-6;
         assertTransformEquals2_2(168.1075, -21.597283333333, 822023.338884308, 7608648.67486555);
-        // Note: Expected values above were computed with Geotoolkit (not an external library).
+        // Note: Expected values above were computed with Geotk (not an external library).
     }
 
     /**
@@ -348,7 +348,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         validate();
         if (usingDefaultFactory) {
             tolerance = 1E-6;
-            // Note: Expected values below were computed with Geotoolkit (not an external library).
+            // Note: Expected values below were computed with Geotk (not an external library).
             //       However, it was tested with both Molodenski and Geocentric transformations.
             assertTransformEquals2_2(0.0,                   0.0,
                                      0.001654978796746043,  0.0012755944235822696);
@@ -432,7 +432,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(op.getSourceCRS().equals(op.getTargetCRS()));
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotoolkit (not an external library).
+        // Note: Expected values below were computed with Geotk (not an external library).
         //       However, it was tested with both Molodenski and Geocentric transformations.
         tolerance = 1E-6;
         assertTransformEquals3_3(0,                    0,                      0,
@@ -467,7 +467,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(op.getSourceCRS().equals(op.getTargetCRS()));
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotoolkit (not an external library).
+        // Note: Expected values below were computed with Geotk (not an external library).
         //       However, it was tested with both Molodenski and Geocentric transformations.
         tolerance = 1E-6;
         assertTransformEquals3_3(0,                    0,                      0,
@@ -493,7 +493,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         }
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotoolkit (not an external library).
+        // Note: Expected values below were computed with Geotk (not an external library).
         //       However, it was tested with both Molodenski and Geocentric transformations.
         tolerance = 1E-6;
         assertTransformEquals3_2(0,                    0,                      0,
@@ -544,7 +544,7 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         }
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotoolkit (not an external library).
+        // Note: Expected values below were computed with Geotk (not an external library).
         //       However, it was tested with both Molodenski and Geocentric transformations.
         tolerance = 1E-6;
         assertTransformEquals2_3(0,                    0,

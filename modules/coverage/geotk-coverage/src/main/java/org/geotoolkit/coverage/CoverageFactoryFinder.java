@@ -67,7 +67,7 @@ public final class CoverageFactoryFinder {
      * If a hint is specified in both user and default hints, then user hints have
      * precedence.
      * <p>
-     * In a previous Geotoolkit version, a somewhat convolved lookup was performed here.
+     * In a previous GeoTools version, a somewhat convolved lookup was performed here.
      * Now that default hints are filled right at {@link Hints} creation time, this
      * method just needs to ensure that the given hints are not-null.
      *

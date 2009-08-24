@@ -223,7 +223,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 for (int i=0; i<array.length; i++) {
                     array[i] = unmodifiable(array[i]);
                 }
-                // Uses standard Java collections rather than Geotoolkit Checked* classes,
+                // Uses standard Java collections rather than Geotk Checked* classes,
                 // since we don't need anymore synchronization or type checking.
                 collection = UnmodifiableArrayList.wrap(array);
                 if (isSet) {
@@ -416,7 +416,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *        a central place where to decide the collection type. Current implementation
      *        creates a <code>Set</code> for immutable elements like <code>CodeList</code>,
      *        <code>Enum</code> or <code>String</code>, but this rule may evolve in future
-     *        Geotoolkit versions}.
+     *        Geotk versions}.
      *
      * @param  <E>         The type of elements in the collection.
      * @param  source      The source collection. {@code null} is synonymous to empty.
@@ -477,7 +477,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *        a central place where to decide the collection type. Current implementation
      *        creates a <code>Set</code> for immutable elements like <code>CodeList</code>,
      *        <code>Enum</code> or <code>String</code>, but this rule may evolve in future
-     *        Geotoolkit versions}.
+     *        Geotk versions}.
      *
      * @param  <E> The type of elements in the collection.
      * @param  c The collection to checks.

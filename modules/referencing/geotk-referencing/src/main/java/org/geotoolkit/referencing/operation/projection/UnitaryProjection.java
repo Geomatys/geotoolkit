@@ -1011,7 +1011,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         /**
          * Returns {@code true} if at least one identifier of the {@linkplain #descriptor}
          * matches the name of the given descriptor. The {@code reference} arguments must
-         * be the {@code PARAMETERS} constant of one of Geotoolkit provider implementations.
+         * be the {@code PARAMETERS} constant of one of Geotk provider implementations.
          * This method is not public because it make assumptions about the way those
          * {@code PARAMETERS} constants are constructed.
          */
@@ -1396,7 +1396,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
     /**
      * Returns {@code true} if this class is a {@code Spherical} nested class. This method is not
-     * public because the usage of those nested classes is specific to Geotoolkit implementation.
+     * public because the usage of those nested classes is specific to Geotk implementation.
      * This information is used sometime for selecting formulas, and for testing purpose.
      */
     boolean isSpherical() {

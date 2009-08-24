@@ -237,7 +237,7 @@ public class AbstractIdentifiedObject extends FormattableObject
     /**
      * Constructs a new identified object with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -946,7 +946,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Compares two Geotoolkit's {@code AbstractIdentifiedObject} objects for equality. This
+     * Compares two Geotk's {@code AbstractIdentifiedObject} objects for equality. This
      * method is equivalent to {@code object1.<b>equals</b>(object2, <var>compareMetadata</var>)}
      * except that one or both arguments may be null. This convenience method is provided for
      * implementation of {@code equals} in subclasses.

@@ -714,7 +714,7 @@ public class MosaicImageReader extends ImageReader {
 
     /**
      * Returns type image type specifier for policy of pre-defined types.
-     * More types may be added in future Geotoolkit versions.
+     * More types may be added in future Geotk versions.
      */
     private static ImageTypeSpecifier getPredefinedImageType(final ImageTypePolicy policy) {
         final int type;

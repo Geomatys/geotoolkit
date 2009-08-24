@@ -36,7 +36,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * A set of pre-defined constants and static methods working on {@linkplain Citation citations}.
  * Pre-defined metadata constants are usually declared in implementation classes like
  * {@link DefaultResponsibleParty}. But citations are an exception since they are extensively
- * referenced in the Geotoolkit library, and handling citations requires some convenience methods.
+ * referenced in the Geotk library, and handling citations requires some convenience methods.
  * They are factored out in this {@code Citations} class for clarity.
  * <p>
  * Citations may be about an <cite>organisation</cite> (e.g. {@linkplain #OPEN_GIS OpenGIS}),
@@ -195,7 +195,7 @@ public final class Citations {
     /**
      * The Web Map Service specification. {@linkplain Citation#getAlternateTitles Alternate titles}
      * for this citation are "WMS", "WMS 1.3.0", "OGC 04-024" and "ISO 19128". Note that the
-     * version numbers may be upgrated in future Geotoolkit versions.
+     * version numbers may be upgrated in future Geotk versions.
      *
      * @see <A HREF="http://www.opengeospatial.org/">Open Geospatial Consortium</A>
      * @see <A HREF="http://www.opengis.org/docs/01-068r3.pdf">WMS 1.1.1 specification</A>
@@ -277,7 +277,7 @@ public final class Citations {
      * This citation is used as an authority for
      * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate reference system}
      * identifiers. When searching an {@linkplain org.opengis.referencing.crs.CRSAuthorityFactory CRS
-     * authority factory} on EPSG data, Geotoolkit compares the {@code "EPSG"} string against the
+     * authority factory} on EPSG data, Geotk compares the {@code "EPSG"} string against the
      * {@linkplain Citation#getIdentifiers identifiers} (or against the {@linkplain Citation#getTitle
      * title} and {@linkplain Citation#getAlternateTitles alternate titles} if there is no identifier)
      * using the {@link #identifierMatches(Citation,String) identifierMatches} method.
@@ -308,7 +308,7 @@ public final class Citations {
      * This citation is used as an authority for
      * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate reference system}
      * identifiers. When searching an {@linkplain org.opengis.referencing.crs.CRSAuthorityFactory CRS
-     * authority factory} on AUTO data, Geotoolkit compares the {@code "AUTO"} string against the
+     * authority factory} on AUTO data, Geotk compares the {@code "AUTO"} string against the
      * {@linkplain Citation#getIdentifiers identifiers} (or against the {@linkplain Citation#getTitle
      * title} and {@linkplain Citation#getAlternateTitles alternate titles} if there is no identifier)
      * using the {@link #identifierMatches(Citation,String) identifierMatches} method.
@@ -352,7 +352,7 @@ public final class Citations {
      * This citation is used as an authority for
      * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate reference system}
      * identifiers. When searching an {@linkplain org.opengis.referencing.crs.CRSAuthorityFactory CRS
-     * authority factory} on AUTO2 data, Geotoolkit compares the {@code "AUTO2"} string against the
+     * authority factory} on AUTO2 data, Geotk compares the {@code "AUTO2"} string against the
      * {@linkplain Citation#getIdentifiers identifiers} (or against the {@linkplain Citation#getTitle
      * title} and {@linkplain Citation#getAlternateTitles alternate titles} if there is no identifier)
      * using the {@link #identifierMatches(Citation,String) identifierMatches} method.

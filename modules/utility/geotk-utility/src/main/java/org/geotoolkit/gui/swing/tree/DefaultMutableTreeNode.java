@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.tree;
 
 /**
  * General-purpose node in a tree data structure. This default implementation implements
- * Geotoolkit {@link MutableTreeNode} interface, which inherits a {@code getUserObject()}
+ * Geotk {@link MutableTreeNode} interface, which inherits a {@code getUserObject()}
  * method. This method is provided in Swing {@link javax.swing.tree.DefaultMutableTreeNode}
  * implementation but seems to have been forgotten in all Swing interfaces.
  *

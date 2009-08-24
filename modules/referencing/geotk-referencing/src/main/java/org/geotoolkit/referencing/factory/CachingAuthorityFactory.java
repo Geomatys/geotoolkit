@@ -325,7 +325,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             if (titles != null) {
                 for (final InternationalString candidate : titles) {
                     /*
-                     * Uses the longuest title instead of the main one. In Geotoolkit
+                     * Uses the longuest title instead of the main one. In Geotk
                      * implementation, the alternate title may contains usefull informations
                      * like the EPSG database version number and the database engine.
                      */

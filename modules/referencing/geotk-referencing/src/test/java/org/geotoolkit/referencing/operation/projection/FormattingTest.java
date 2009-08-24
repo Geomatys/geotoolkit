@@ -102,7 +102,7 @@ public final class FormattingTest extends ProjectionTestCase {
               "  PARAMETER[“false_northing”, 900000.0]]";
         wkt = assertWktEquals(wkt);
         /*
-         * Sets the Geotoolkit-specific "roll_longitude" parameter to false. This is needed
+         * Sets the Geotk-specific "roll_longitude" parameter to false. This is needed
          * for the final test performed at the end of this method (the whole concatenatation
          * simplified to a single affine transform).
          */

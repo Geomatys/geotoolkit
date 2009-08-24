@@ -103,7 +103,7 @@ final class BandSelector2D extends GridCoverage2D {
     static GridCoverage2D create(GridCoverage2D source, final ParameterValueGroup parameters, Hints hints) {
         /*
          * Fetches all parameters, clones them if needed. The "VisibleSampleDimension" parameter
-         * is Geotoolkit-specific and optional. We get it as an Integer both for catching null value,
+         * is Geotk-specific and optional. We get it as an Integer both for catching null value,
          * and also because it is going to be stored as an image's property anyway.
          */
         int[] bandIndices = parameters.parameter("SampleDimensions").intValueList();

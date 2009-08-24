@@ -46,7 +46,7 @@ public class InvalidGridGeometryException extends IllegalStateException {
 
     /**
      * Constructs an exception with a detail message from the specified error code.
-     * Should not be public because the Geotoolkit I18N framework is not a commited one.
+     * Should not be public because the Geotk I18N framework is not a commited one.
      */
     InvalidGridGeometryException(final int code) {
         super(Errors.format(code));

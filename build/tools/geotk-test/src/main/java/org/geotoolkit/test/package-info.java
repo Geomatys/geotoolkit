@@ -17,7 +17,7 @@
  */
 
 /**
- * Tools for Geotoolkit test suites.
+ * Tools for Geotk test suites.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

@@ -111,7 +111,7 @@ import org.geotoolkit.resources.Errors;
  *   </tr>
  * </table>
  *
- * {@section Geotoolkit extension}
+ * {@section Geotoolkit.org extension}
  * The {@code "Resample"} operation use the default
  * {@link org.opengis.referencing.operation.CoordinateOperationFactory} for creating a
  * transformation from the source to the destination coordinate reference systems.

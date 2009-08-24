@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Errors;
  * it can be seen as a data structure independent of Swing.
  * <p>
  * This class is called {@code PropertyTree} because it may implements
- * {@link javax.swing.tree.TreeModel} in some future Geotoolkit implementation.
+ * {@link javax.swing.tree.TreeModel} in some future Geotk implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.02
@@ -343,7 +343,7 @@ final class PropertyTree {
             asMap = (Map<?,?>) value;
         } else if (value instanceof AbstractMetadata) {
             /*
-             * The value is a metadata object (Geotoolkit implementation).
+             * The value is a metadata object (Geotk implementation).
              */
             asMap = ((AbstractMetadata) value).asMap();
         } else if ((accessor = standard.getAccessorOptional(value.getClass())) != null) {

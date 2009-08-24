@@ -135,7 +135,7 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
      *
      * @return The modified coordinates.
      *
-     * @todo Current version works only with Geotoolkit implementation.
+     * @todo Current version works only with Geotk implementation.
      */
     @Override
     public int[] getModifiedCoordinates() {

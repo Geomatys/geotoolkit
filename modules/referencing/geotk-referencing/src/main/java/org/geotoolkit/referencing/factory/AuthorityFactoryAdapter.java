@@ -324,7 +324,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
              *
              * Conclusion: if we do not remove those hints, it typically leads to failure to find
              * a CS authority factory using this specific CRS authority factory. We may argue that
-             * this is a Geotoolkit design problem. Maybe... this is not a trivial issue. So we are
+             * this is a Geotk design problem. Maybe... this is not a trivial issue. So we are
              * better to not document that in public API for now.
              */
             final Hints.Key keep = HINT_KEYS[f];
@@ -667,7 +667,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns one of the underlying factories as an instance of the Geotoolkit implementation. If
+     * Returns one of the underlying factories as an instance of the Geotk implementation. If
      * there is none of them, then returns {@code null} or throws an exception if {@code caller}
      * is not null.
      */

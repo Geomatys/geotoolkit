@@ -23,7 +23,7 @@ import org.geotoolkit.resources.Errors;
 /**
  * Throws when an operation can't use arbitrary implementation of an interface, and
  * a given instance doesn't meet the requirement. For example this exception may be
- * thrown when an operation requires a Geotoolkit implementation of a
+ * thrown when an operation requires a Geotoolkit.org implementation of a
  * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interface.
  *
  * @author Martin Desruisseaux (IRD)

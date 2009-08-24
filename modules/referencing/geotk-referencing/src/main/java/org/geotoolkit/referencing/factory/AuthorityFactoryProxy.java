@@ -172,7 +172,7 @@ abstract class AuthorityFactoryProxy {
 
     /**
      * An implementation that delegates to {@link AbstractAuthorityFactoryProxy}.
-     * This probably is most common case in Geotoolkit implementation.
+     * This probably is most common case in Geotk implementation.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.00

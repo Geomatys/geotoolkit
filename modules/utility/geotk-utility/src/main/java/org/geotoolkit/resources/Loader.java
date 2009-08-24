@@ -53,7 +53,7 @@ final class Loader extends ResourceBundle.Control {
     public static final Loader INSTANCE = new Loader();
 
     /**
-     * Creates the unique instance of the Geotoolkit resource bundle loader.
+     * Creates the unique instance of the Geotk resource bundle loader.
      */
     private Loader() {
     }

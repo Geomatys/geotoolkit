@@ -19,7 +19,7 @@
 /**
  * {@linkplain org.geotoolkit.referencing.crs.AbstractCRS Coordinate reference system} implementations.
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing.crs OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotoolkit implementation.
+ * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
  * {@link org.geotoolkit.referencing.crs.AbstractCRS} is the base class for all coordinate reference
  * systems (CRS). CRS can have an arbitrary number of dimensions. Some are two-dimensional (e.g.

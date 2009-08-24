@@ -58,7 +58,7 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
 
     /**
      * Constructs a descriptor with the same values than the specified one. This copy constructor
-     * may be used in order to wraps an arbitrary implementation into a Geotoolkit one.
+     * may be used in order to wraps an arbitrary implementation into a Geotk one.
      *
      * @param descriptor The descriptor to copy.
      *

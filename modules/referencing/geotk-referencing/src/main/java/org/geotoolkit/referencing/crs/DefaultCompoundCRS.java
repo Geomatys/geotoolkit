@@ -86,7 +86,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     /**
      * Constructs a new compound CRS with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -223,7 +223,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
 
     /**
      * Returns the ordered list of single coordinate reference systems for the specified CRS.
-     * The specified CRS doesn't need to be a Geotoolkit implementation.
+     * The specified CRS doesn't need to be a Geotk implementation.
      *
      * @param  crs The coordinate reference system.
      * @return The single coordinate reference systems.

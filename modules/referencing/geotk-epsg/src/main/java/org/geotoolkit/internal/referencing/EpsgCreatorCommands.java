@@ -79,7 +79,7 @@ public class EpsgCreatorCommands extends CommandLine {
      * <p>
      * <ul>
      *   <li>The JDBC URL to the database. If omitted, a default URL to a JavaDB database
-     *       will be used. This default URL will point toward the Geotoolkit configuration
+     *       will be used. This default URL will point toward the Geotk configuration
      *       directory, which is platform-dependent ({@code ".geotoolkit"} on Linux).</li>
      *   <li>The user for the database connection (optional).</li>
      *   <li>The password for the database connection. Ignored if no user has been specified.</li>

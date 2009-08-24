@@ -111,7 +111,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * <ul>
      *   <li><code>{@value}</code> in the current directory</li>
      *   <li><code>{@value}</code> in the user's home directory</li>
-     *   <li>{@code "EPSG/DataSource.properties"} in the Geotoolkit application data directory</li>
+     *   <li>{@code "EPSG/DataSource.properties"} in the Geotk application data directory</li>
      * </ul>
      * <p>
      * This file should contain the properties listed below.
@@ -267,7 +267,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * <a href="http://www.geotoolkit.org/modules/referencing/geotk-epsg">geotk-epsg</a>
      * module is reacheable on the classpath.
      * <p>
-     * Note that the directory may change in any Geotoolkit version. More specifically, every
+     * Note that the directory may change in any Geotk version. More specifically, every
      * upgrade of the embedded EPSG database may cause a change of the default directory.
      *
      * @return The default JDBC URL to use for the connection to the EPSG database.
@@ -381,7 +381,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *       <ul>
      *         <li>{@code "EPSG-DataSource.properties"} in the current directory</li>
      *         <li>{@code "EPSG-DataSource.properties"} in the user's home directory</li>
-     *         <li>{@code "EPSG/DataSource.properties"} in the Geotoolkit application data directory</li>
+     *         <li>{@code "EPSG/DataSource.properties"} in the Geotk application data directory</li>
      *       </ul></p>
      *   </li>
      *

@@ -200,7 +200,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      *
      * @param descriptor
      *          The expected parameter descriptor, or {@code null} for bypassing this check.
-     *          The descriptor is required to be strictly the same instance, since Geotoolkit
+     *          The descriptor is required to be strictly the same instance, since Geotk
      *          implementation returns constant values.
      * @param values
      *          The expected parameter values, or {@code null} for bypassing this check.

@@ -747,7 +747,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
     }
 
     /**
-     * Compares the specified objects for equality. If both objects are Geotoolkit
+     * Compares the specified objects for equality. If both objects are Geotk
      * implementations of class {@link AbstractIdentifiedObject}, then this method
      * will ignore the metadata during the comparison.
      *

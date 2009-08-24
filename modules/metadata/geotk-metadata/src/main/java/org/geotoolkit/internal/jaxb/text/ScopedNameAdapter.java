@@ -54,7 +54,7 @@ public final class ScopedNameAdapter extends XmlAdapter<DefaultScopedName,Scoped
 
     /**
      * Recreates a new name for the given name, using the given factory.
-     * This is used in order to get a Geotoolkit implementation from an
+     * This is used in order to get a Geotk implementation from an
      * arbitrary implementation.
      */
     static GenericName wrap(final GenericName value, final NameFactory factory) {

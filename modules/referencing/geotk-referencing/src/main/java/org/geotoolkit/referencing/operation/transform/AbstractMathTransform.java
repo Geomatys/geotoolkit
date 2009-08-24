@@ -274,7 +274,7 @@ public abstract class AbstractMathTransform extends FormattableObject
         } else {
             /*
              * Destination not set.  We are going to create the destination here.  Since we know
-             * that the destination will be the Geotoolkit implementation, write directly into the
+             * that the destination will be the Geotk implementation, write directly into the
              * 'ordinates' array.
              */
             final GeneralDirectPosition destination = new GeneralDirectPosition(dimTarget);
@@ -312,7 +312,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * {@note This method has protected access rather than public in the hope to encourage users
      *        to invoke the bulk methods with a number of points greater than 1, which is usually
      *        faster than invoking repeatidly this method. In addition this method may skip some
-     *        verifications that are performed by the public methods. This is the case of Geotoolkit
+     *        verifications that are performed by the public methods. This is the case of Geotk
      *        implementation of map projections.}
      *
      * @param srcPts The array containing the source point coordinates.

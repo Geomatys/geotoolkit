@@ -162,14 +162,14 @@ public class RegisteredOperationBrowser extends JPanel {
                     candidate = ((TreeNode) candidate).getUserObject();
                     /*
                      * Note: The missing 'getUserObject()' method is fixed
-                     *       in Geotoolkit TreeNode, not the Swing one...
+                     *       in Geotk TreeNode, not the Swing one...
                      */
                 }
                 if (candidate instanceof OperationDescriptor) {
                     int index = -1;
                     /*
                      * Fetch the parameter index. Note: the Swing TreeNode is suffisient
-                     * for this task (no need for the fixed Geotoolkit's TreeNode).
+                     * for this task (no need for the fixed Geotk's TreeNode).
                      */
                     if (component instanceof javax.swing.tree.TreeNode) {
                         final javax.swing.tree.TreeNode node = (javax.swing.tree.TreeNode)component;

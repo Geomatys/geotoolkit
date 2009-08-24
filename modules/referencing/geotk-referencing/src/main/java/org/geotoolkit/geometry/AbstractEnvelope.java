@@ -165,7 +165,7 @@ public abstract class AbstractEnvelope implements Envelope {
      *
      * @todo Current implementation requires that {@code object} is of the same class.
      *       We can not relax this rule before we ensure that every implementations in
-     *       the Geotoolkit code base follow the same contract.
+     *       the Geotk code base follow the same contract.
      */
     @Override
     public boolean equals(final Object object) {

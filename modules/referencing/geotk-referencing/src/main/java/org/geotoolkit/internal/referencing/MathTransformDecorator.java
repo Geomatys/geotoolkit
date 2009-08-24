@@ -235,7 +235,7 @@ public final class MathTransformDecorator implements MathTransform, Formattable,
 
     /**
      * Delegates the WKT formatting to the wrapped math transform. This class is usually used
-     * with Geotoolkit implementations of math transform, so the exception is unlikely to be thrown.
+     * with Geotk implementations of math transform, so the exception is unlikely to be thrown.
      */
     @Override
     public String formatWKT(final Formatter formatter) {

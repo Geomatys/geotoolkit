@@ -274,7 +274,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      *
      * {@note In the datum shift case, an operation version is mandatory but unknow at this time.
      *        However, we noticed that the EPSG database do not always defines a version neither.
-     *        Consequently, the Geotoolkit implementation relax the rule requirying an operation
+     *        Consequently, the Geotk implementation relax the rule requirying an operation
      *        version and we do not try to provide this information here for now.}
      */
     private static Map<String,Object> getProperties(final ReferenceIdentifier name) {

@@ -71,7 +71,7 @@ public final class UnitaryProjectionTest extends ProjectionTestCase {
 
     /**
      * Tests a few formulas used by the Mercator projection in the spherical case. This is a
-     * little bit more a Java test than a Geotoolkit test (or to be more accurate, a test of our
+     * little bit more a Java test than a Geotk test (or to be more accurate, a test of our
      * understanding of the {@code java.lang.Math} library).
      *
      * {@preformat math

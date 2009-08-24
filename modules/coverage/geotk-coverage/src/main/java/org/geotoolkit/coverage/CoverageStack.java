@@ -469,7 +469,7 @@ public class CoverageStack extends AbstractCoverage {
      * <strong>must</strong> specify their <var>z</var> range in the last dimension of
      * their {@linkplain Coverage#getEnvelope envelope}, and at least one of those envelopes
      * shall be {@linkplain Envelope#getCoordinateReferenceSystem associated with a CRS}
-     * (the later is always the case with Geotoolkit implementations of {@link Coverage}).
+     * (the later is always the case with Geotk implementations of {@link Coverage}).
      * The example below constructs two dimensional grid coverages (to be given as the
      * {@code coverages} argument) for the same geographic area, but at different elevations:
      *

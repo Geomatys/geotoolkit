@@ -366,7 +366,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * Returns {@code true} if the specified exception should be handled as a recoverable failure.
      * This method is invoked during the iteration process if the factory failed to create some
      * objects. If this method returns {@code true} for the given exception, then the exception
-     * will be logged in the {@linkplain AbstractAuthorityFactory#LOGGER Geotoolkit factory logger}
+     * will be logged in the {@linkplain AbstractAuthorityFactory#LOGGER Geotk factory logger}
      * with the {@link Level#FINE FINE} level. If this method returns {@code false}, then the
      * exception will be retrown as a {@link BackingStoreException}. The default implementation
      * returns {@code true} only for {@link NoSuchIdentifierException} (not to be confused with

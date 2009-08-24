@@ -23,7 +23,7 @@
 #   java -ea org.geotoolkit.referencing.operation.ScriptRunner LambertAzimuthalEqualArea.txt
 #
 #   A test is performed every time a "target pt" statement occurs. If the target point computed
-#   by Geotoolkit is different from the target point declared in this script by an amount greater
+#   by Geotk is different from the target point declared in this script by an amount greater
 #   than the value specified in the last "tolerance" statement, then a failure is reported.
 #   If some test fail, "print" statements can be added in this script for debugging purpose:
 #

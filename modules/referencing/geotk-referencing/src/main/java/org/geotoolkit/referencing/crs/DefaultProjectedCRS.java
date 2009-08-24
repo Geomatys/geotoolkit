@@ -89,7 +89,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
     /**
      * Constructs a new projected CRS with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -104,7 +104,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
     /**
      * Constructs a projected CRS from a name. A {@linkplain DefaultOperationMethod default
      * operation method} is inferred from the {@linkplain AbstractMathTransform math transform}.
-     * This is a convenience constructor that is not garanteed to work reliably for non-Geotoolkit
+     * This is a convenience constructor that is not garanteed to work reliably for non-Geotk
      * implementations. Use the constructor expecting a {@linkplain DefiningConversion defining
      * conversion} for more determinist result.
      *
@@ -130,10 +130,10 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
 
     /**
      * Constructs a projected CRS from a set of properties. A {@linkplain DefaultOperationMethod
-     * default operation method} is inferred from the {@linkplain AbstractMathTransform math
-     * transform}. This is a convenience constructor that is not garanteed to work reliably
-     * for non-Geotoolkit implementations. Use the constructor expecting a {@linkplain
-     * DefiningConversion defining conversion} for more determinist result.
+     * default operation method} is inferred from the {@linkplain AbstractMathTransform math transform}.
+     * This is a convenience constructor that is not garanteed to work reliably for non-Geotk
+     * implementations. Use the constructor expecting a {@linkplain DefiningConversion defining
+     * conversion} for more determinist result.
      * <p>
      * The properties are given unchanged to the
      * {@linkplain AbstractDerivedCRS#AbstractDerivedCRS(Map, CoordinateReferenceSystem,

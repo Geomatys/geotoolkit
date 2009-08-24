@@ -52,7 +52,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 
 /**
  * Build a tree of factory dependencies, usually for printing to the console. This is a
- * convenience utility for inspecting the dependencies between Geotoolkit referencing factories.
+ * convenience utility for inspecting the dependencies between Geotk referencing factories.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

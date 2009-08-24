@@ -17,7 +17,7 @@
  */
 
 /**
- * Geotoolkit installer. This module setup the directory where Geotoolkit stores some
+ * Geotoolkit.org installer. This module setup the directory where Geotk stores some
  * data, and optionally download free data required for some functionnalities, for
  * example the NADCON grids required for more accurate datum shifts over the United
  * States.

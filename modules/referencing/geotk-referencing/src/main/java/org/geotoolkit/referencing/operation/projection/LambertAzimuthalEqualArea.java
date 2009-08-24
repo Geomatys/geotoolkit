@@ -461,7 +461,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                 /*
                  * Attempt to project the opposite pole. Actually the above formula would works
                  * and returns an acceptable answer, but every points on a circle of radius 2
-                 * would fit. Proj4 was returning an error code; in Geotoolkit we said that no
+                 * would fit. Proj4 was returning an error code; in Geotk we said that no
                  * single point is the answer.
                  */
                 x = y = NaN;

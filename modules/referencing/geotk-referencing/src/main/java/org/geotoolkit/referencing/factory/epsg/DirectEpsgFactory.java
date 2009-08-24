@@ -2236,7 +2236,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * than parameters.  However, we are close in spirit here since we are setting
                  * up MathTransform's parameters. Using NoSuchIdentifierException allows users
                  * (including CoordinateOperationSet) to know that the failure is probably
-                 * caused by a MathTransform not yet supported in Geotoolkit (or only partially
+                 * caused by a MathTransform not yet supported in Geotk (or only partially
                  * supported) rather than some more serious failure in the database side.
                  * CoordinateOperationSet uses this information in order to determine if it
                  * should try the next coordinate operation or propagate the exception.
@@ -2581,9 +2581,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * Concatenated operation: we need to close the current result set, because
                      * we are going to invoke this method recursively in the following lines.
                      *
-                     * Note: we instantiate directly the Geotoolkit's implementation of
+                     * Note: we instantiate directly the Geotk's implementation of
                      * ConcatenatedOperation instead of using CoordinateOperationFactory in order
-                     * to avoid loading the quite large Geotoolkit's implementation of this factory,
+                     * to avoid loading the quite large Geotk's implementation of this factory,
                      * and also because it is not part of FactoryGroup anyway.
                      */
                     result.close();

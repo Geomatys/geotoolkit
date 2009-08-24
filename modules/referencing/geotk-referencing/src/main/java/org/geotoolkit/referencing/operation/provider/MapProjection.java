@@ -107,7 +107,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * is applied. If {@code false}, then longitude rolling is never applied. If not provided, then
      * the default behavior is to roll longitude only if the central meridian is different than zero.
      * <p>
-     * This is a Geotoolkit-specific parameter.
+     * This is a Geotk-specific parameter.
      *
      * @since 3.00
      */

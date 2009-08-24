@@ -54,8 +54,8 @@ import static java.awt.GridBagConstraints.*;
 
 /**
  * The panel displaying a configuration form for the connection parameters to the current
- * EPSG database. Geotoolkit can use either the embedded JavaDB database or an explicit
- * one selected by this form.
+ * EPSG database. Geotk can use either the embedded JavaDB database or an explicit one
+ * selected by this form.
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)

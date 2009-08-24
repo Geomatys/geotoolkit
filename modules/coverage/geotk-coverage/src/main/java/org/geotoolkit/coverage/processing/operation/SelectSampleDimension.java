@@ -76,7 +76,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
  *   </tr>
  * </table>
  *
- * {@section Geotoolkit extension}
+ * {@section Geotoolkit.org extension}
  * This operation can also be used for selecting a different "visible sample dimension". Some
  * images may contain useful data in more than one sample dimension, but renderer the content
  * using only 1 sample dimension at time. The {@code "VisibleSampleDimension"} parameter can be
@@ -113,7 +113,7 @@ public class SelectSampleDimension extends Operation2D {
 
     /**
      * The parameter descriptor for the visible dimension indice.
-     * This is a Geotoolkit-specific parameter.
+     * This is a Geotk-specific parameter.
      */
     public static final ParameterDescriptor<Integer> VISIBLE_SAMPLE_DIMENSION =
             new DefaultParameterDescriptor<Integer>(Citations.GEOTOOLKIT, "VisibleSampleDimension",

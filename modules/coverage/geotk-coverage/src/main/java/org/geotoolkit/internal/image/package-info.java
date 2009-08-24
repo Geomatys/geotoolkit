@@ -17,7 +17,7 @@
  */
 
 /**
- * A set of helper classes for image handling in the Geotoolkit implementation;
+ * A set of helper classes for image handling in the Geotk implementation;
  *
  * <STRONG>Do not use!</STRONG>.
  *

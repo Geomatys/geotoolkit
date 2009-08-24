@@ -42,10 +42,10 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
 /**
  * A dummy factory which declare itself as a GeoTools implementation. The purpose of this
- * factory is to test the cohabitation of GeoTools and Geotoolkit on the same classpath.
+ * factory is to test the cohabitation of GeoTools and Geotk on the same classpath.
  * <p>
  * Every methods in this class except {@link #getVendor} throw an {@link AssertionError}.
- * They should never been invoked, because the Geotoolkit implementation should always be
+ * They should never been invoked, because the Geotk implementation should always be
  * selected preferably to this one.
  *
  * @author Martin Desruisseaux (Geomatys)

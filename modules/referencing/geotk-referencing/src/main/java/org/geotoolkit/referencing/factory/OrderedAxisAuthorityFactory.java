@@ -73,7 +73,7 @@ import org.geotoolkit.resources.Errors;
  * <ul>
  *   <li>This class compares only the "{@linkplain AxisDirection#absolute absolute}" axis
  *       directions, so North and South are considered equivalent.</li>
- *   <li>The default direction order may changes in future Geotoolkit version in order
+ *   <li>The default direction order may changes in future Geotk version in order
  *       to fit what appears to be the most common usage on the market.</li>
  *   <li>The actual axis ordering is determined by the {@link #compare compare} method
  *       implementation. Subclasses may override this method if the want to provide a more

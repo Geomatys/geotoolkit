@@ -18,7 +18,7 @@
 
 /**
  * Localized resources for Geotk. This package is for internal purpose only
- * and may change in any Geotoolkit version without notice.
+ * and may change in any Geotk version without notice.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

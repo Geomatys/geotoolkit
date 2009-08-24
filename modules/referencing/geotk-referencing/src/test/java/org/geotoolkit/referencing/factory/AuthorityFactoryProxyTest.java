@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
 public class AuthorityFactoryProxyTest {
     /**
      * The argument to be given to {@link AuthorityFactoryProxy#getInstance}. It control whatever
-     * the proxies are allowed to target specifically the Geotoolkit implementation. The usual value
+     * the proxies are allowed to target specifically the Geotk implementation. The usual value
      * is {@code true}, but we set it to {@code false} here for the purpose of this test suite only.
      */
     protected boolean specific = false;

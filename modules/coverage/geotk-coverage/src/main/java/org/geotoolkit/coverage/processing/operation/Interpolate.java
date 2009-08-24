@@ -41,8 +41,8 @@ import org.geotoolkit.internal.image.ImageUtilities;
  * sample dimensions. Possible values for type are: {@code "NearestNeighbor"}, {@code "Bilinear"}
  * and {@code "Bicubic"} (the {@code "Optimal"} interpolation type is currently not supported).
  *
- * {@section Geotoolkit extension}
- * The Geotoolkit implementation provides two extensions to OpenGIS specification: First,
+ * {@section Geotoolkit.org extension}
+ * The Geotk implementation provides two extensions to OpenGIS specification: First,
  * it accepts also an {@link Interpolation} argument type, for interoperability with
  * <A HREF="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</A>.
  * Second, it accepts also an array of {@link String} or {@link Interpolation} objects.

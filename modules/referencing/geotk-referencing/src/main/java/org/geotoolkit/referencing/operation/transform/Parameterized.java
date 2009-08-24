@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.SingleOperation;
 
 
 /**
- * Interface for objects that can supply their parameters. Every Geotoolkit implementations
+ * Interface for objects that can supply their parameters. Every Geotk implementations
  * of {@link MathTransform} implement this interface, including {@link AffineTransform2D}
  * which does not extend {@link AbstractMathTransform}.
  *

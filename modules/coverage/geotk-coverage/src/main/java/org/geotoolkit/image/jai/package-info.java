@@ -40,7 +40,7 @@
  *
  * The JAI operations provided in this package should be registered automatically at JAI startup time,
  * since they are declared in the {@code META-INF/registryFile.jai} file. However, this default JAI
- * mechanism may fail in some occasions, for example when the Geotoolkit JAR file is unreachable from
+ * mechanism may fail in some occasions, for example when the Geotk JAR file is unreachable from
  * the JAI class loader. In such case, the {@link org.geotoolkit.image.jai.Registry#registerGeotoolkitServices
  * registerGeotoolkitServices} method may be invoked programmatically as a fallback. This is done
  * automatically by the {@link org.geotoolkit.coverage.processing} package; users need to care only

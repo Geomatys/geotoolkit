@@ -269,7 +269,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int REDIRECTED_TO_COMMONS_LOGGING = 42;
 
         /**
-         * Registered Geotoolkit extensions to JAI operations.
+         * Registered Geotoolkit.org extensions to JAI operations.
          */
         public static final int REGISTERED_JAI_OPERATIONS = 43;
 

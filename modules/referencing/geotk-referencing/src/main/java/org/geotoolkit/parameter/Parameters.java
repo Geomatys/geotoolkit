@@ -61,7 +61,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  *       is tedious.</p></li>
  *   <li><p>Parameter descriptors are implementation-dependent. For example if a user searches for
  *       the above-cited {@code "semi_major"} axis length using the {@linkplain
- *       org.geotoolkit.referencing.operation.provider.MapProjection#SEMI_MAJOR Geotoolkit's descriptor}
+ *       org.geotoolkit.referencing.operation.provider.MapProjection#SEMI_MAJOR Geotk's descriptor}
  *       for this parameter, we will fail to find this parameter in any alternative
  *       {@link ParameterValueGroup} implementations. This is against GeoAPI's inter-operability goal.</p></li>
  * </ul>

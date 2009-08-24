@@ -128,7 +128,7 @@ final class SampleTranscoder extends PointOpImage {
         final Rectangle bounds = destRect.intersection(source.getBounds());
         if (!destRect.equals(bounds)) {
             // TODO: Check if this case occurs sometime, and fill pixel values if it does.
-            //       If it happen to occurs, we will need to fix other Geotoolkit operations
+            //       If it happen to occurs, we will need to fix other Geotk operations
             //       as well.
             Logging.getLogger(SampleTranscoder.class).warning(
                     "Bounds mismatch: " + destRect + " and " + bounds);

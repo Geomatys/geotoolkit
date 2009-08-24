@@ -92,7 +92,7 @@ public abstract class Calculator2D extends GridCoverage2D {
     /**
      * Returns the class of the view returned by {@link #specialize}, or {@code null} if unknown.
      * Default implementation returns {@code null} because we don't know how the user will
-     * implement {@link #specialize}. Geotoolkit final subclasses like {@link Interpolator2D}
+     * implement {@link #specialize}. Geotk final subclasses like {@link Interpolator2D}
      * will return their class.
      */
     @Override

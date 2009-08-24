@@ -47,7 +47,7 @@ public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
     // IMPLEMENTATION NOTE:  The reason why this class exist is that we don't want "indirect"
     // factories like CachingAuthorityFactory to inherit the factories field.  If this field
     // existed in their super-class, then the super-class constructor could try to initialize
-    // it while in fact CachingAuthorityFactory doesn't need it. Experience with Geotoolkit 2.2
+    // it while in fact CachingAuthorityFactory doesn't need it. Experience with GeoTools 2.2
     // suggests that it can lead to tricky recursivity problems in FactoryFinder, because most
     // factories registered in META-INF/services are some kind of CachingAuthorityFactory.
 

@@ -153,7 +153,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
     /**
      * Constructs a new temporal CRS with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -210,7 +210,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
     }
 
     /**
-     * Wraps an arbitrary temporal CRS into a Geotoolkit implementation. This method is usefull
+     * Wraps an arbitrary temporal CRS into a Geotk implementation. This method is usefull
      * if the user wants to take advantage of {@link #toDate} and {@link #toValue} methods.
      * If the supplied CRS is already an instance of {@code DefaultTemporalCRS} or is {@code null},
      * then it is returned unchanged.

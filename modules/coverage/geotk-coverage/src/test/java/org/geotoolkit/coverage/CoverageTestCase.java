@@ -57,7 +57,7 @@ public abstract class CoverageTestCase {
 
     /**
      * Small value for comparaison of sample values. Since most grid coverage implementations in
-     * Geotoolkit 2 store geophysics values as {@code float} numbers, this {@code EPS} value must
+     * Geotk 2 store geophysics values as {@code float} numbers, this {@code EPS} value must
      * be of the order of {@code float} relative precision, not {@code double}.
      */
     protected static final float EPS = 1E-5f;
@@ -226,7 +226,7 @@ public abstract class CoverageTestCase {
             throw e;
         } catch (Exception e) {
             /*
-             * The OperationTreeBrowser is not part of Geotoolkit's core. It is optional and this
+             * The OperationTreeBrowser is not part of Geotk's core. It is optional and this
              * class should not fails if it is not presents. This is only a helper for debugging.
              */
             if (coverage instanceof GridCoverage2D) {

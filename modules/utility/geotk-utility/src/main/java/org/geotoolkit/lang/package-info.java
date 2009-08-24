@@ -17,7 +17,7 @@
  */
 
 /**
- * Annotations relative to Java language patterns applied in the Geotoolkit library.
+ * Annotations relative to Java language patterns applied in the Geotk library.
  * Those annotations are used mostly for documentation purpose. For example a click
  * on the "Use" javadoc link of {@link org.geotoolkit.lang.Static} gives the list of
  * all classes providing a set of static convenience methods.

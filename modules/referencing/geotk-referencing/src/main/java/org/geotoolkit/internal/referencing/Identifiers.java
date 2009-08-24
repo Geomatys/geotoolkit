@@ -61,7 +61,7 @@ import static org.geotoolkit.util.Utilities.hashMapCapacity;
  * each authority. If there is more than one name for the same authority, the only a given name
  * is retained and the other ones are removed.
  * <p>
- * This class is used as helper methods for Geotoolkit implementation of math transform provider.
+ * This class is used as helper methods for Geotk implementation of math transform provider.
  * The current approach is too specific to deserve a public API.
  *
  * @author Martin Desruisseaux (IRD)
@@ -462,7 +462,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
                      * If we have really found the identifier we were looking for, then we should
                      * have (search == identifier) because the collection given in argument shall
                      * always be derived from the select(String...) method (and consequently from
-                     * the same NamedIdentifier instances) in Geotoolkit implementation.
+                     * the same NamedIdentifier instances) in Geotk implementation.
                      *
                      * However we relax the check in case this class get a wider usage than we
                      * expected. Since we already checked the name, only the authorities need

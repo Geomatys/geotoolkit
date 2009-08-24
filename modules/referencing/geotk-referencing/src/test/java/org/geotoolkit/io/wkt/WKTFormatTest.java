@@ -278,7 +278,7 @@ public final class WKTFormatTest {
     public void testGeocentric() throws ParseException {
         final WKTFormat wktFormat = new WKTFormat();
         /*
-         * First try the formatting as internal WKT. Geotoolkit
+         * First try the formatting as internal WKT. Geotk
          * uses internally the ISO 19111 axis directions.
          */
         final String name = DefaultGeocentricCRS.CARTESIAN.getName().getCode();

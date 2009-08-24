@@ -71,7 +71,7 @@ public final class Trees {
 
     /**
      * Returns the user object from the given tree node. If the given node is an
-     * instance of Geotoolkit's {@link org.geotoolkit.gui.swing.tree.TreeNode}, then its
+     * instance of Geotk's {@link org.geotoolkit.gui.swing.tree.TreeNode}, then its
      * {@link org.geotoolkit.gui.swing.tree.TreeNode#getUserObject() getUserObject()}
      * method is invoked. Otherwise if the given node is an instance of Java's
      * {@link javax.swing.tree.DefaultMutableTreeNode}, then its {@link
@@ -96,7 +96,7 @@ public final class Trees {
     /**
      * Returns the path to the specified
      * {@linkplain org.geotoolkit.gui.swing.tree.TreeNode#getUserObject user object}. For each tree
-     * node which are actually instance of Geotoolkit {@link org.geotoolkit.gui.swing.tree.TreeNode},
+     * node which are actually instance of Geotk {@link org.geotoolkit.gui.swing.tree.TreeNode},
      * this method compares the specified {@code value} against the user object returned by the
      * {@link org.geotoolkit.gui.swing.tree.TreeNode#getUserObject} method.
      *

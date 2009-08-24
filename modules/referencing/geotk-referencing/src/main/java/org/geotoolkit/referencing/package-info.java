@@ -19,7 +19,7 @@
 /**
  * {@linkplain org.geotoolkit.referencing.AbstractReferenceSystem Reference system} implementations.
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing OpenGIS&reg;
- * javadoc}. The remaining discussion on this page is specific to the Geotoolkit implementation.
+ * javadoc}. The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
  * This package provides implementations for general positioning, coordinate reference systems (CRS),
  * and coordinate transformations. Coordinates can have any number of dimensions. So this implementation

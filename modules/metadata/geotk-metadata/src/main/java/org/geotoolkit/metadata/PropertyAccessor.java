@@ -46,7 +46,7 @@ import org.geotoolkit.internal.CollectionUtilities;
 
 /**
  * The getters declared in a GeoAPI interface, together with setters (if any)
- * declared in the Geotoolkit implementation.
+ * declared in the Geotk implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -504,7 +504,7 @@ final class PropertyAccessor {
 
     /**
      * Returns the type of the property at the given index. The returned type is usually
-     * a GeoAPI interface (at least in the case of Geotoolkit implementation). Primitive
+     * a GeoAPI interface (at least in the case of Geotk implementation). Primitive
      * types like {@code double} or {@code int} are converted to their wrapper types.
      * <p>
      * If the property is a collection, then this method returns the type of collection
@@ -750,7 +750,7 @@ final class PropertyAccessor {
                  */
                 if (addTo != null) {
                     /*
-                     * Unsafe addition into a collection. In Geotoolkit implementation, the
+                     * Unsafe addition into a collection. In Geotk implementation, the
                      * collection is actually an instance of CheckedCollection, so the check
                      * will be performed at runtime. However other implementations could use
                      * unchecked collection. There is not much we can do.

@@ -36,7 +36,7 @@ public interface Dialog {
      * the dialog box will appears as an internal frame.
      *
      * {@section Multi-threading}
-     * Geotoolkit implementations allow this method to be invoked from any thread. If the caller
+     * Geotk implementations allow this method to be invoked from any thread. If the caller
      * thread is not the <cite>Swing</cite> thread, then the execution of this method will be
      * registered in the AWT Event Queue and the caller thread will block until completion.
      *

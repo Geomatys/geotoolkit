@@ -162,7 +162,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
     }
 
     /**
-     * Contact informations for the <A HREF="http://www.geotoolkit.org">Geotoolkit</A> project.
+     * Contact informations for the <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      *
      * @see DefaultOnLineResource#GEOTOOLKIT
      */

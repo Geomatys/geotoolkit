@@ -19,10 +19,10 @@
 /**
  * {@linkplain org.geotoolkit.metadata.iso.extent.DefaultExtent Extent} implementation. An explanation
  * for this package is provided in the {@linkplain org.opengis.metadata.extent OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotoolkit implementation.
+ * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
  * In GeoAPI interfaces, most collections are typed with wildcards, for example
- * {@code Collection<? extends Citation>}. The Geotoolkit implementation removes the
+ * {@code Collection<? extends Citation>}. The Geotk implementation removes the
  * wildcards and declares {@code Collection<Citation>} instead. This allows collections
  * to be <cite>live</cite>. Consequently it is possible to add new elements directly in
  * an existing collection using code like {@code getCitations().add(myCitation)} instead

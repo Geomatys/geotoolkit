@@ -55,8 +55,8 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 @ThreadSafe
 public class ConverterRegistry {
     /**
-     * Returns the default system-wide instance. This register is initialized automatically with
-     * conversions between some basic Java and Geotoolkit object, like conversions between
+     * Returns the default system-wide instance. This register is initialized automatically
+     * with conversions between some basic Java and Geotk objects, like conversions between
      * {@link java.util.Date} and {@link java.lang.Long}. Those conversions are defined for
      * the lifetime of the JVM.
      * <p>

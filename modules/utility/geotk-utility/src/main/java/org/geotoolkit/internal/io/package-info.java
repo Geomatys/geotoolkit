@@ -17,7 +17,7 @@
  */
 
 /**
- * A set of helper classes for Geotoolkit implementation;
+ * A set of helper classes for Geotk implementation;
  *
  * <STRONG>Do not use!</STRONG>.
  *

@@ -19,7 +19,7 @@ package org.geotoolkit.internal;
 
 
 /**
- * The operation system on which Geotoolkit is running.
+ * The operation system on which Geotk is running.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -61,7 +61,7 @@ public enum OS {
     }
 
     /**
-     * Returns the operating system Geotoolkit is currently on.
+     * Returns the operating system Geotk is currently on.
      *
      * @return The operation system.
      */

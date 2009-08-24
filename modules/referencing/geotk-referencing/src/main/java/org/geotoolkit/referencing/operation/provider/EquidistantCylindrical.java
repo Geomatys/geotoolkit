@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * EPSG defines two codes for this projection, 1029 being the spherical case and 1028 the
  * ellipsoidal case. However the formulas are the same in both cases, with an additional
  * adjustement of Earth radius in the ellipsoidal case. Consequently they are implemented
- * in Geotoolkit by the same class.
+ * in Geotk by the same class.
  * <p>
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/equirectangular.html">Equirectangular

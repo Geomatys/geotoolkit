@@ -488,7 +488,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * <p>
      * However in the special case where we are formatting {@code PROJCS} element, this rule is
      * slightlty relaxed. More specifically we ignore affine transforms in order to accept axis
-     * swapping or unit conversions. This special case is internal to Geotoolkit implementation
+     * swapping or unit conversions. This special case is internal to Geotk implementation
      * and should be unknown to users.
      *
      * @return The parameterisable transform step, or {@code null} if none.
@@ -543,7 +543,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     /**
      * Returns the parameter values, or {@code null} if none. Concatenated transforms usually have
      * no parameters; instead the parameters of the individual components ({@link #transform1} and
-     * {@link #transform2}) need to be inspected. However map projections in Geotoolkit are implemented as
+     * {@link #transform2}) need to be inspected. However map projections in Geotk are implemented as
      * (<cite>normalize</cite> &ndash; <cite>non-linear kernel</cite> &ndash; <cite>denormalize</cite>)
      * tuples. This method detects such concatenation chains in order to return the parameter values
      * that describe the projection as a whole.

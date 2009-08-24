@@ -153,7 +153,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
     }
 
     /**
-     * The online resources for the <A HREF="http://www.geotoolkit.org">Geotoolkit</A> project.
+     * The online resources for the <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      */
     public static final OnLineResource GEOTOOLKIT;
     static {
@@ -174,8 +174,8 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
 
     /**
      * The download link for <A HREF="http://portal.opengis.org/files/?artifact_id=5316">Web Map
-     * Service</A> specification. The download link may change in future Geotoolkit versions in
-     * order to point toward the latest specification.
+     * Service</A> specification. The download link may change in future Geotk versions in order
+     * to point toward the latest specification.
      *
      * @since 2.2
      */

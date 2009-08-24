@@ -543,7 +543,7 @@ header: for (int i=0; ; i++) {
         }
         /*
          * Writes the table. The header will contains one column for each alias's scope
-         * (or authority) declared in 'titles', in the same order. The column for Geotoolkit
+         * (or authority) declared in 'titles', in the same order. The column for Geotk
          * names will treated especially, because cit ontains ambiguous names.
          */
         synchronized (lock) {

@@ -30,7 +30,7 @@ import org.geotoolkit.util.logging.Logging;
 
 /**
  * Base class of remote objects to be binded to the RMI {@linkplain Registry registry}.
- * In the context of Geotoolkit, those objects are typically services made available to
+ * In the context of Geotk, those objects are typically services made available to
  * other machines.
  *
  * @author Martin Desruisseaux (Geomatys)

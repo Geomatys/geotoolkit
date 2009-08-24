@@ -19,11 +19,11 @@
 /**
  * {@linkplain org.geotoolkit.referencing.operation.AbstractCoordinateOperation Coordinate operation} implementations.
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing.operation OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotoolkit implementation.
+ * The remaining discussion on this page is specific to the Geotk implementation.
  *
  * {@section Registering math transforms}
  * The {@linkplain org.geotoolkit.referencing.operation.DefaultMathTransformFactory math transform factory}
- * search for all math transforms in the class path, not just Geotoolkit implementations. To be found, math
+ * search for all math transforms in the class path, not just Geotk implementations. To be found, math
  * transforms must be registered as services in its JAR file, more specifically in the following JAR entry:
  *
  * {@preformat text

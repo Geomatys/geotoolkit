@@ -102,7 +102,7 @@ final class WarpAdapter extends Warp {
         try {
             inverse.transform(destRect, 0, destRect, 0, count);
         } catch (TransformException exception) {
-            // At least one transformation failed. In Geotoolkit MapProjection
+            // At least one transformation failed. In Geotk MapProjection
             // implementation, unprojected coordinates are set to (NaN,NaN).
             RasterFormatException e = new RasterFormatException(
                     Errors.format(Errors.Keys.CANT_REPROJECT_$1, name));

@@ -219,8 +219,8 @@ public class LambertConformal extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          *
-         * In Geotoolkit 2, rho0 was added or substracted in the tranform methods.
-         * In Geotoolkit, we move those linear operations to the affine transforms.
+         * In GeoTools 2, rho0 was added or substracted in the tranform methods.
+         * In Geotk, we move those linear operations to the affine transforms.
          * In addition of rho0, linear operations include the reversal of the sign
          * of y, etc.
          */
@@ -315,7 +315,7 @@ public class LambertConformal extends UnitaryProjection {
          */
         double rho = hypot(x, y);  // Zero when the latitude is 90 degrees.
         /*
-         * Proj4 explicitly tests if (rho > EPSILON) here. In Geotoolkit we skip this test,
+         * Proj4 explicitly tests if (rho > EPSILON) here. In Geotk we skip this test,
          * since Math functions are defined in such strict way that the correct answer is
          * produced (and even a better answer in the case of NaN input). This is verified
          * in LambertConformatTest.testExtremes().

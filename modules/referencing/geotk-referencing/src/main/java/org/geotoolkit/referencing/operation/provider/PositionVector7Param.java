@@ -77,7 +77,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the number of source geographic dimension (2 or 3).
-     * This is a Geotoolkit-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
+     * This is a Geotk-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
      * transform will be concatenated before the geocentric translation.
      */
     public static final ParameterDescriptor<Integer> SRC_DIM = DefaultParameterDescriptor.create(
@@ -86,7 +86,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the number of target geographic dimension (2 or 3).
-     * This is a Geotoolkit-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
+     * This is a Geotk-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
      * transform will be concatenated after the geocentric translation.
      */
     public static final ParameterDescriptor<Integer> TGT_DIM = DefaultParameterDescriptor.create(
@@ -95,7 +95,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the {@code "src_semi_major"} optional parameter value.
-     * This is a Geotoolkit-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
+     * This is a Geotk-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
      * transform will be concatenated before the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
@@ -108,7 +108,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the {@code "src_semi_minor"} optional parameter value.
-     * This is a Geotoolkit-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
+     * This is a Geotk-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
      * transform will be concatenated before the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
@@ -121,7 +121,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the {@code "tgt_semi_major"} optional parameter value.
-     * This is a Geotoolkit-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
+     * This is a Geotk-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
      * transform will be concatenated after the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
@@ -134,7 +134,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the {@code "tgt_semi_minor"} optional parameter value.
-     * This is a Geotoolkit-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
+     * This is a Geotk-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
      * transform will be concatenated after the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.

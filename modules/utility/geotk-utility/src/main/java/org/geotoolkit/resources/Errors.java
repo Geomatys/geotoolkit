@@ -337,7 +337,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int FILE_HAS_TOO_MANY_DATA = 56;
 
         /**
-         * Geotoolkit extension required for "{0}" operation.
+         * Geotoolkit.org extension required for "{0}" operation.
          */
         public static final int GEOTOOLKIT_EXTENSION_REQUIRED_$1 = 57;
 

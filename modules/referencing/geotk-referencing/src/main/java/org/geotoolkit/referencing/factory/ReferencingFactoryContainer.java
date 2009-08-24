@@ -97,9 +97,9 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     private MathTransformFactory mtFactory;
 
     // WARNING: Do NOT put a CoordinateOperationFactory field in this class. We tried that in
-    // Geotoolkit 2.2, and removed it in Geotoolkit 2.3 because it leads to very tricky recursivity
+    // GeoTools 2.2, and removed it in GeoTools 2.3 because it leads to very tricky recursivity
     // problems when we try to initialize it with FactoryFinder.getCoordinateOperationFactory.
-    // The Datum, CS, CRS and MathTransform factories above are standalone, while the Geotoolkit
+    // The Datum, CS, CRS and MathTransform factories above are standalone, while the Geotk
     // implementation of CoordinateOperationFactory has complex dependencies to all of those,
     // and even with authority factories.
 

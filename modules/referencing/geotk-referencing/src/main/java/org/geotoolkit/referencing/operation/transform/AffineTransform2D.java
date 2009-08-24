@@ -293,7 +293,7 @@ public class AffineTransform2D extends XAffineTransform
      * rule: if the other object is also an instance of {@code AffineTransform2D}, then the two
      * objects must be of the exact same class.
      * <p>
-     * Most Geotoolkit implementations require that the objects being compared are inconditionnaly of
+     * Most Geotk implementations require that the objects being compared are inconditionnaly of
      * the same class in order to be considered equal. However many JDK implementations, including
      * {@link AffineTransform}, do not have this requirement. Consequently the above condition
      * (i.e. require the same class only if the given object is an {@code AffineTransform2D} or

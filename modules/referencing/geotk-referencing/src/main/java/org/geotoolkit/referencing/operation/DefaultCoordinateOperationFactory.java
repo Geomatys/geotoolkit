@@ -383,7 +383,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * the specified operation will not be returned, then the exception is thrown.
      * <p>
      * Current implementation ignores the {@code method} argument.
-     * This behavior may change in a future Geotoolkit version.
+     * This behavior may change in a future Geotk version.
      *
      * @param  sourceCRS Input coordinate reference system.
      * @param  targetCRS Output coordinate reference system.
@@ -827,7 +827,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 parameters.parameter("dim").setValue(sourceDim);
                 boolean ready = true;
                 if (sourceDim != targetDim) try {
-                    // Following is Geotoolkit-specific, so it may not be supported
+                    // Following is Geotk-specific, so it may not be supported
                     // if the math transform provider come from an other library.
                     parameters.parameter("src_dim").setValue(sourceDim);
                     parameters.parameter("tgt_dim").setValue(targetDim);

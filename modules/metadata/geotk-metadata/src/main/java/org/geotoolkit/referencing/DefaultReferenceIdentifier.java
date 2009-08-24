@@ -451,7 +451,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     /**
      * Returns {@code true} if the specified string looks like a valid code space.
      * This method, together with {@link #getShortestTitle}, uses somewhat heuristic
-     * rules that may change in future Geotoolkit versions.
+     * rules that may change in future Geotk versions.
      */
     private static boolean isValidCodeSpace(final String codespace) {
         if (codespace == null) {

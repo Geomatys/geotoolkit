@@ -52,7 +52,7 @@ import org.geotoolkit.internal.SwingUtilities;
 
 
 /**
- * A panel displaying logging messages. The windows displaying Geotoolkit's logging messages
+ * A panel displaying logging messages. The windows displaying Geotk's logging messages
  * can be constructed with the following code:
  *
  * {@preformat java

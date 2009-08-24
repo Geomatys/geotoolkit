@@ -92,15 +92,15 @@ public class Molodensky extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the number of source geographic dimension (2 or 3).
-     * This is a Geotoolkit-specific argument. The standard parameter is {@link #DIM}, which set
-     * both the source and target dimension.
+     * This is a Geotk-specific argument. The standard parameter is {@link #DIM}, which set both
+     * the source and target dimension.
      */
     public static final ParameterDescriptor<Integer> SRC_DIM = PositionVector7Param.SRC_DIM;
 
     /**
      * The operation parameter descriptor for the number of target geographic dimension (2 or 3).
-     * This is a Geotoolkit-specific argument. The standard parameter is {@link #DIM}, which set
-     * both the source and target dimension.
+     * This is a Geotk-specific argument. The standard parameter is {@link #DIM}, which set both
+     * the source and target dimension.
      */
     public static final ParameterDescriptor<Integer> TGT_DIM = PositionVector7Param.TGT_DIM;
 

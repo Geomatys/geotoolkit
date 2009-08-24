@@ -84,9 +84,9 @@
  * default value.
  *
  *
- * {@section Geotoolkit extensions}
+ * {@section Geotoolkit.org extensions}
  *
- * Geotoolkit defines a
+ * Geotk defines a
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#ROLL_LONGITUDE ROLL_LONGITUDE}
  * boolean parameter. If this parameter is set to {@code TRUE}, then any longitude outside the
  * [-180 &hellip; 180)&deg; range (upper value is exclusive) will be forced to that range by the
@@ -99,13 +99,13 @@
  *
  * {@section ESRI extensions}
  *
- * In Geotoolkit, axis flips are inferred from the {@linkplain org.opengis.referencing.is.AxisOrientation
+ * In Geotk, axis flips are inferred from the {@linkplain org.opengis.referencing.is.AxisOrientation
  * axis orientation}. In <cite>Well Known Text</cite> (WKT), they are given by {@code AXIS} elements.
  * But ESRI ignores {@code AXIS} elements and uses intead some additional parameters:
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#X_SCALE X_SCALE},
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#Y_SCALE Y_SCALE} and
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#XY_PLANE_ROTATION XY_PLANE_ROTATION}.
- * Those parameters are not OGC standards, but are nevertheless provided in Geotoolkit for better
+ * Those parameters are not OGC standards, but are nevertheless provided in Geotk for better
  * interoperability with ESRI definitions of coordinate reference systems.
  *
  * @author Martin Desruisseaux (Geomatys)

@@ -816,9 +816,9 @@ public class GeodeticCalculator {
     }
 
     /**
-     * Computes the orthodromic distance using the algorithm implemented in the Geotoolkit's
-     * ellipsoid class (if available), and check if the error is smaller than some tolerance
-     * error.
+     * Computes the orthodromic distance using the algorithm implemented in the Geotk's
+     * ellipsoid class (if available), and check if the error is smaller than some
+     * tolerance error.
      */
     private boolean checkOrthodromicDistance() {
         if (ellipsoid instanceof DefaultEllipsoid) {

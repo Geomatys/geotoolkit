@@ -69,7 +69,7 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the number of geographic dimension (2 or 3).
-     * This is a Geotoolkit-specific argument. The default value is 3, which is the value
+     * This is a Geotk-specific argument. The default value is 3, which is the value
      * implied in OGC's WKT.
      */
     public static final ParameterDescriptor<Integer> DIM = EllipsoidToGeocentric.DIM;

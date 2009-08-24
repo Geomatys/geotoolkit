@@ -17,7 +17,7 @@
  */
 
 /**
- * Provides methods for marshalling and unmarshalling Geotoolkit objects in XML.
+ * Provides methods for marshalling and unmarshalling Geotk objects in XML.
  * The XML format is compliant with ISO 19139 specification for metadata, and
  * GML for referencing objects.
  *

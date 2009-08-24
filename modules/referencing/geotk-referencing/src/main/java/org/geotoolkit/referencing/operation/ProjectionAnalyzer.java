@@ -83,7 +83,7 @@ final class ProjectionAnalyzer {
 
     /**
      * The affine transform applied on geographic coordinates before the projection.
-     * In Geotoolkit {@code MapProjection} implementation, this is the axis swapping and
+     * In Geotk {@code MapProjection} implementation, this is the axis swapping and
      * scaling needed in order to get standard (<var>longitude</var>,<var>latitude</var>)
      * axis in degrees. Can be {@code null} if none.
      * <p>
@@ -94,7 +94,7 @@ final class ProjectionAnalyzer {
 
     /**
      * The affine transform applied on projected coordinates after the projection.
-     * In Geotoolkit {@code MapProjection} implementation, this is the axis swapping
+     * In Geotk {@code MapProjection} implementation, this is the axis swapping
      * and scaling needed in order to get standard (<var>x</var>,<var>y</var>) axis
      * in metres. Can be {@code null} if none.
      */
@@ -102,7 +102,7 @@ final class ProjectionAnalyzer {
 
     /**
      * The transform for the map projection alone, without the {@link #geographicScale}
-     * and {@link #projectedScale} parts. In Geotoolkit implementation, it should be an
+     * and {@link #projectedScale} parts. In Geotk implementation, it should be an
      * instance of {@code MapProjection}. May be {@code null} if we can't handle the
      * {@linkplain #projection}.
      */
@@ -158,7 +158,7 @@ final class ProjectionAnalyzer {
          * an accurate description of the map projection without the above geographic and projected
          * scale components). However if we are not able to query the math transform, we will query
          * the Conversion object as a fallback and hope that it describes only the map projection
-         * part, as in Geotoolkit implementation.
+         * part, as in Geotk implementation.
          */
         ParameterValueGroup group = null;
         if (candidate instanceof Parameterized) {
@@ -166,14 +166,14 @@ final class ProjectionAnalyzer {
         }
         if (group == null) {
             /*
-             * Fallback path only if we don't have a Geotoolkit MapProjection implementation.
+             * Fallback path only if we don't have a Geotk MapProjection implementation.
              * NOTE: it is uncertain that we should call 'swapAndScaleAxis'. If the CS has
              * standard axis, it will not hurt since we should get the identity transform.
              * If the CS doesn't have standard axis, then 'projectedScale' should be non-
              * null and 'swapAndScaleAxis' is not needed. But if none of the above hold,
              * then some axis swapping is probably done straight into the unknown 'transform'
              * implementation and we need to "guess" what it is. Those rules are somewhat
-             * heuristic; the previous "if" branch for Geotoolkit MapProjection implementations
+             * heuristic; the previous "if" branch for Geotk MapProjection implementations
              * should be more determinist.
              */
             group = projection.getParameterValues();
@@ -233,7 +233,7 @@ final class ProjectionAnalyzer {
          *
          * We need "false easting" and "false northing" offsets in either user's unit or
          * in metres, depending if the unit conversions are applied in 'transform' or in
-         * 'projectedScale' respectively. We assume the later, which stands for Geotoolkit
+         * 'projectedScale' respectively. We assume the later, which stands for Geotk
          * implementation and is closer to OGC 01-009 spirit. But we will log a warning
          * in case of doubt.
          */
@@ -399,7 +399,7 @@ search: for (final Iterator<GeneralParameterValue> targetIter=target.iterator();
              * In theory, we can not find a linear conversion if the operation method is
              * not the same. In practice, it still hapen in some occasions.  For example
              * "Transverse Mercator" and "Transverse Mercator (South Oriented)"  are two
-             * distinct operation methods in EPSG point of view, but in Geotoolkit the South
+             * distinct operation methods in EPSG point of view, but in Geotk the South
              * Oriented case is implemented as a "Transverse Mercator" concatenated with
              * an affine transform performing the axis flip, which is a linear conversion.
              *

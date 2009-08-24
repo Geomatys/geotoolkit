@@ -200,7 +200,7 @@ public class Plot2D extends ZoomPane {
      * The default cycle of colors. They are used only if the user added a series
      * without specifying explicitly the color to use for that series.
      * <p>
-     * Those default colors may change in future Geotoolkit versions. For safety, users are
+     * Those default colors may change in future Geotk versions. For safety, users are
      * encouraged to specify the desired color explicitly when adding a series to a plot.
      */
     protected static final List<Color> DEFAULT_COLORS = UnmodifiableArrayList.wrap(new Color[] {

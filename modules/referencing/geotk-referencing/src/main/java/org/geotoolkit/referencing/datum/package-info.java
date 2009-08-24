@@ -19,7 +19,7 @@
 /**
  * {@linkplain org.geotoolkit.referencing.datum.AbstractDatum Datum} implementations. An explanation
  * for this package is provided in the {@linkplain org.opengis.referencing.datum OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotoolkit implementation.
+ * The remaining discussion on this page is specific to the Geotk implementation.
  *
  * <p>Some useful constants defined in this package are:</p>
  *

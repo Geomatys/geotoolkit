@@ -72,10 +72,10 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * <code>{@linkplain CylindricalProjection}.class</code> or
      * <code>{@linkplain ConicProjection}.class</code>.
      * <p>
-     * This is a Geotoolkit specific property used as a hint for creating a
+     * This is a Geotk specific property used as a hint for creating a
      * {@linkplain DefaultProjection projection} of proper type from a
      * {@linkplain DefiningConversion defining conversion}. In many cases, this hint is not needed
-     * since Geotoolkit is often capable to infer it. This hint is used mostly by advanced factories
+     * since Geotk is often capable to infer it. This hint is used mostly by advanced factories
      * like the {@linkplain org.geotoolkit.referencing.factory.epsg EPSG backed} one.
      *
      * @see DefaultConversion#create
@@ -106,7 +106,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     /**
      * Constructs a new derived CRS with the same values than the specified one.
      * This copy constructor provides a way to wrap an arbitrary implementation into a
-     * Geotoolkit one or a user-defined one (as a subclass), usually in order to leverage
+     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
      *
@@ -165,7 +165,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * Constructs a derived CRS from a set of properties. A {@linkplain DefaultOperationMethod
      * default operation method} is inferred from the {@linkplain AbstractMathTransform math
      * transform}. This is a convenience constructor that is not garanteed to work reliably for
-     * non-Geotoolkit implementations. Use the constructor expecting a {@linkplain DefiningConversion
+     * non-Geotk implementations. Use the constructor expecting a {@linkplain DefiningConversion
      * defining conversion} for more determinist result.
      * <p>
      * The properties are given unchanged to the

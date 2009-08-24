@@ -248,7 +248,7 @@ public class LambertAzimuthalEqualAreaTest extends ProjectionTestCase {
     }
 
     /**
-     * Tests a point which is was known problematic in Geotoolkit 2.x.
+     * Tests a point which is was known problematic in GeoTools 2.x.
      *
      * @throws TransformException Should never happen.
      */

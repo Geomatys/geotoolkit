@@ -106,7 +106,7 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
     protected final Coverage coverage;
 
     /**
-     * The temporal coordinate system, as a Geotoolkit implementation in order to gets the
+     * The temporal coordinate system, as a Geotk implementation in order to gets the
      * {@link DefaultTemporalCRS#toDate} and {@link DefaultTemporalCRS#toValue} methods.
      */
     protected final DefaultTemporalCRS temporalCRS;

@@ -50,7 +50,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * system}. This coordinate operation thus uses an {@linkplain OperationMethod operation
  * method}, usually with associated parameter values.
  * <p>
- * In the Geotoolkit implementation, the {@linkplain #getParameterValues parameter values}
+ * In the Geotk implementation, the {@linkplain #getParameterValues parameter values}
  * are inferred from the {@linkplain #transform transform}. Other implementations may have
  * to overrides the {@link #getParameterValues} method.
  * <p>
@@ -262,13 +262,13 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
              * OperationMethod's point of view, but still result in the creation of identical
              * MathTransform.
              *
-             * An other rational for treating OperationMethod as metadata is that Geotoolkit
+             * An other rational for treating OperationMethod as metadata is that Geotk
              * MathTransformProvider extends DefaultOperationMethod. Consequently there is
              * a wide range of subclasses, which make the comparisons more difficult. For
              * example Mercator1SP and Mercator2SP providers are two different ways to describe
              * the same projection. The SQL-backed EPSG factory uses yet an other implementation.
              *
-             * NOTE: A previous Geotoolkit implementation made this final check:
+             * NOTE: A previous Geotk implementation made this final check:
              *
              *     return nameMatches(this.method, that.method);
              *

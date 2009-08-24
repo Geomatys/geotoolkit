@@ -307,7 +307,7 @@ public abstract class AbstractParameter extends FormattableObject
         if (this instanceof ParameterValue<?>) {
             /*
              * Provides a default implementation for parameter value. This implementation doesn't
-             * need to be a Geotoolkit's one. Putting a default implementation here avoid duplication
+             * need to be a Geotk's one. Putting a default implementation here avoid duplication
              * in all subclasses implementing the same interface.
              */
             table.write('=');

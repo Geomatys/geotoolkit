@@ -39,7 +39,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**
- * Base class for Geotoolkit implementation of grid coverage.
+ * Base class for Geotk implementation of grid coverage.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

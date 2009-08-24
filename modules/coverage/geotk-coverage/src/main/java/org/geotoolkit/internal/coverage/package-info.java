@@ -17,7 +17,7 @@
  */
 
 /**
- * For internal use by the Geotoolkit coverage implementations.
+ * For internal use by the Geotk coverage implementations.
  * <strong>Do not use</strong>.
  *
  * @author Martin Desruisseaux (IRD)

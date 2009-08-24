@@ -654,10 +654,10 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * Wraps the specified OpenGIS's sample dimension into a Geotoolkit's
+     * Wraps the specified OpenGIS's sample dimension into a Geotk's
      * implementation of {@code GridSampleDimension}.
      *
-     * @param sd The sample dimension to wrap into a Geotoolkit implementation.
+     * @param sd The sample dimension to wrap into a Geotk implementation.
      * @return The given sample dimension as a {@code GridSampleDimension} instance.
      */
     public static GridSampleDimension wrap(final SampleDimension sd) {
