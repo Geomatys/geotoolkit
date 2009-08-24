@@ -25,13 +25,15 @@ import java.util.HashMap;
 import java.util.Collections;
 
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.Formula;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.util.InternationalString;
+import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
@@ -63,7 +65,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -6576022858294547740L;
+    private static final long serialVersionUID = -8181774670648793964L;
 
     /**
      * List of localizable properties. To be given to {@link AbstractIdentifiedObject} constructor.
@@ -75,7 +77,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * publication. Note that the operation method may not be analytic, in which case this
      * attribute references or contains the procedure, not an analytic formula.
      */
-    private final InternationalString formula;
+    private final Formula formula;
 
     /**
      * Number of dimensions in the source CRS of this operation method.
@@ -194,7 +196,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.operation.OperationMethod#FORMULA_KEY}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link String} or {@link InternationalString}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link Formula}, {@link Citation} or {@link CharSequence}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link #getFormula}</td>
      *   </tr>
      * </table>
@@ -226,7 +228,18 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
                                    ParameterDescriptorGroup parameters)
     {
         super(properties, subProperties, LOCALIZABLES);
-        formula = (InternationalString) subProperties.get(FORMULA_KEY);
+        Object formula = subProperties.get(FORMULA_KEY);
+        if (formula != null) {
+            if (formula instanceof Citation) {
+                formula = new DefaultFormula((Citation) formula);
+            } else if (formula instanceof CharSequence) {
+                formula = new DefaultFormula((CharSequence) formula);
+            } else if (!(formula instanceof Formula)) {
+                throw new InvalidParameterValueException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+                        "formula", formula), "formula", formula);
+            }
+        }
+        this.formula = (Formula) formula;
         // 'parameters' may be null, which is okay. A null value will
         // make serialization smaller and faster than an empty object.
         this.parameters      = parameters;
@@ -259,7 +272,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * attribute references or contains the procedure, not an analytic formula.
      */
     @Override
-    public InternationalString getFormula() {
+    public Formula getFormula() {
         return formula;
     }
 
