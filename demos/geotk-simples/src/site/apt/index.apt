@@ -4,10 +4,10 @@ Simple demos of the Geotoolkit.org library
 
   * Referencing
 
-    * <<<CoordinateConversion>>>
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
       converts a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
   * Coverage
 
-    * <<<FloatRaster>>>
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
       displays an image created from a matrix of floating point values.

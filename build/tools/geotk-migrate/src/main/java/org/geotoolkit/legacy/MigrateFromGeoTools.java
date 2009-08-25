@@ -75,7 +75,7 @@ public class MigrateFromGeoTools {
         tmp.load(in);
         in.close();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final Map<String,String> copy = new LinkedHashMap<String,String>((Map) tmp);
         table = Collections.unmodifiableMap(copy);
         this.pretend = pretend;

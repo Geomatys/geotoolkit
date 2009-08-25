@@ -237,6 +237,11 @@ metadata.UnmodifiableMetadataException
 metadata.iso.MetadataEntity
 metadata.iso.citation.Citations
 metadata.iso.spatial.PixelTranslation
+metadata.sql.MetadataException
+metadata.sql.MetadataHandler
+metadata.sql.MetadataProxy
+metadata.sql.MetadataResult
+metadata.sql.MetadataSource
 nature.Calendar
 nature.SeaWater
 nature.SunRelativePosition

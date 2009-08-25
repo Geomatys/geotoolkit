@@ -15,7 +15,7 @@ Introduction to Geotoolkit.org
   classes provide convenience way to perform some common operations on those objects.
 
   The first few examples below, in order to remain simple and introduce only a few concepts at a
-  time, do not work through the factory system (why not!?).
+  time, do not work through the factory system.
 
 * Requirements
 
@@ -52,17 +52,12 @@ unpack200 geotk-referencing-SNAPSHOT.pack.gz geotk-referencing-bundle.jar
  * that anyone may desire but without warranty of any kind, neither expressed nor implied,
  * and no expression of merchantibility or fitness for any particular purpose.
  */
-
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 public class FirstGeotk {
-
     public static void main(String[] args){
-
         System.out.println(DefaultGeographicCRS.WGS84);
-
     }
-
 }
 -----------------------------------------------------------------------------------
 
@@ -95,12 +90,13 @@ GEOGCS["WGS84(DD)",
 
 * A Trivial Application
 
-  The first example application in this introduction will be quite simple.
-  This simple example uses the <<<org.geotoolkit.referencing.CRS>>> utility class to convert a
-  coordinate from the values for one Coordinate Reference System into another. The Java class given
-  below, which can be downloaded {{{}here}}, describes a location on the surface of the earth using
-  a <<<DirectPosition>>> and then converts that description of the location into a different
-  description of the same location but using a differnent coordinate system.
+  The first example application in this introduction will be quite simple. This simple example uses
+  the <<<org.geotoolkit.referencing.CRS>>> utility class to convert a coordinate from the values for
+  one Coordinate Reference System into another. The Java class given below, which can be downloaded
+  {{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}here}},
+  describes a location on the surface of the earth using a <<<DirectPosition>>> and then converts
+  that description of the location into a different description of the same location but using a
+  differnent coordinate system.
 
 -----------------------------------------------------------------------------------
 /*
@@ -108,17 +104,28 @@ GEOGCS["WGS84(DD)",
  * that anyone may desire but without warranty of any kind, neither expressed nor implied,
  * and no expression of merchantibility or fitness for any particular purpose.
  */
+import org.opengis.geometry.*;
+import org.opengis.referencing.crs.*;
+import org.opengis.referencing.operation.*;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.geometry.*;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.*;
 
 public class SecondGeotk {
-
-    public static void main(String[] args){
-
-        System.out.println("THIS CLASS IS NOT YET WRITTEN");
-
+    public static void main(String[] args) throws FactoryException, TransformException {
+        CoordinateReferenceSystem sourceCRS = DefaultGeocentricCRS.CARTESIAN;
+        CoordinateReferenceSystem targetCRS = DefaultGeographicCRS.WGS84_3D;
+        MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
+        /*
+         * From this point we can convert an arbitrary amount of coordinates using the
+         * same MathTransform object. It could be in concurrent threads if we wish.
+         */
+        DirectPosition sourcePt = new GeneralDirectPosition(302742.5, 5636029.0, 2979489.2);
+        DirectPosition targetPt = tr.transform(sourcePt, null);
+        System.out.println("Source point: " + sourcePt);
+        System.out.println("Target point: " + targetPt);
     }
-
 }
 -----------------------------------------------------------------------------------
 
