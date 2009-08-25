@@ -75,6 +75,9 @@
       <artifactId>derby</artifactId>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- Following is useful only for those who customize
+         their EPSG database connection parameters. -->
     <dependency>
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>

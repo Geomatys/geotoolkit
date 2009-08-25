@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <faqs title="Referencing FAQ" toplink="false">
+  <part id="intro">
+    <title>Getting started</title>
+    <faq id="Google">
+      <question>
+        How do I transform a coordinate?
+      </question>
+      <answer>
+        <p>See the referencing section in the <a href="../../demos/geotk-simples/">simple demos</a> page.</p>
+      </answer>
+    </faq>
+  </part>
+
+  <!-- ======================================================================================== -->
+
   <part id="crs">
     <title>Coordinate Reference Systems</title>
     <faq id="Google">
@@ -51,7 +65,7 @@
 
         <p>If the collection of identifiers is empty, the most effective fix is to make sure that
         the WKT contains an <code>AUTHORITY</code> declaration. If this is not possible, then the
-        <code>org.geotoolkit.referencing.CRS</code> class contains some <code>lookupIdentifier(&hellip;)</code>
+        <code>org.geotoolkit.referencing.CRS</code> class contains some <code>lookupIdentifier(...)</code>
         convenience methods which may help. Example:</p>
 
 <blockquote><pre>CoordinateReferenceSystem myCRS = ...;
