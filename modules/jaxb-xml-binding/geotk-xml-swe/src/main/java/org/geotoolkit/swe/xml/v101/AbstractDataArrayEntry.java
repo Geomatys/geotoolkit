@@ -211,5 +211,17 @@ public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry 
             hash = 23 * hash + (this.ref != null ? this.ref.hashCode() : 0);
             return hash;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ElementCount]\n");
+            if (count != null) {
+                sb.append("count:").append(count).append('\n');
+            }
+            if (ref != null) {
+                sb.append("ref:").append(ref).append('\n');
+            }
+            return sb.toString();
+        }
     }
 }

@@ -38,7 +38,7 @@ import org.geotoolkit.util.Utilities;
 public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements SimpleDataRecord {
     
     /**
-     * The databblock identifier containing this data record.
+     * The datablock identifier containing this data record.
      */
     @XmlTransient
     private String blockId;
@@ -92,6 +92,13 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     }
 
     /**
+     * set the block identifier containing this data record.
+     */
+    public void setBlockId(String blockId) {
+        this.blockId = blockId;
+    }
+
+    /**
      * Verify that the object is identical to the specified object.
      */
     @Override
@@ -116,7 +123,15 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
 
     @Override
     public int hashCode() {
-        return this.getId().hashCode() + 37 * this.getBlockId().hashCode();
+        int idHash = 7;
+        if (getId() != null) {
+            idHash = getId().hashCode();
+        }
+        int idBlockHash = 3;
+        if (getBlockId() != null) {
+            idBlockHash = this.getBlockId().hashCode();
+        }
+        return idHash + 37 * idBlockHash;
     }
     
     /**

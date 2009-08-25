@@ -266,12 +266,7 @@ public class UomPropertyType implements UomProperty {
             s.append("type:").append(type).append('\n');
         if(unitDefinition != null) 
             s.append("unitDefinition:").append(unitDefinition).append('\n');
-        
-        
-        
-        
-        
-        
+
         return s.toString();
     }
 

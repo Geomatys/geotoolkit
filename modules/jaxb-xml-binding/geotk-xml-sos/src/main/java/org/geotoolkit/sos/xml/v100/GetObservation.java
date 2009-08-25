@@ -296,8 +296,10 @@ public class GetObservation extends RequestBaseType {
              s.append("result model:").append('\n').append(resultModel.toString()).append('\n');
         
         s.append("observed properties:").append('\n');
-        for (String ss:observedProperty) {
-            s.append(ss).append('\n');
+        if (observedProperty != null) {
+            for (String ss:observedProperty) {
+                s.append(ss).append('\n');
+            }
         }
         s.append("procedures:").append('\n');
         for (String ss:procedure) {

@@ -110,13 +110,13 @@ public class TimeType extends AbstractDataComponentEntry {
         if (object == this) {
             return true;
         }
-        if (super.equals(object)) {
-        final TimeType that = (TimeType) object;
-        return Utilities.equals(this.localFrame,     that.localFrame)     &&
-               Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-               Utilities.equals(this.referenceTime,  that.referenceTime)  &&
-               Utilities.equals(this.uom,            that.uom)            &&
-               Utilities.equals(this.value,          that.value);
+        if (object instanceof TimeType && super.equals(object)) {
+            final TimeType that = (TimeType) object;
+            return Utilities.equals(this.localFrame,     that.localFrame)     &&
+                   Utilities.equals(this.referenceFrame, that.referenceFrame) &&
+                   Utilities.equals(this.referenceTime,  that.referenceTime)  &&
+                   Utilities.equals(this.uom,            that.uom)            &&
+                   Utilities.equals(this.value,          that.value);
         } 
         return false;
     }

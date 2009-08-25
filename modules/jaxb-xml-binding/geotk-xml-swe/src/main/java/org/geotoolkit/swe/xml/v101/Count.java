@@ -134,4 +134,23 @@ public class Count extends AbstractDataComponentEntry {
         hash = 47 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (constraint != null) {
+            sb.append("constraint:").append(constraint).append('\n');
+        }
+        if (quality != null) {
+            sb.append("quality:").append(quality).append('\n');
+        }
+        sb.append("value:").append(value).append('\n');
+        if (referenceFrame != null) {
+            sb.append("referenceFrame:").append(referenceFrame).append('\n');
+        }
+        if (axisID != null) {
+            sb.append("axisID:").append(axisID).append('\n');
+        }
+        return sb.toString();
+    }
 }
