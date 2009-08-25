@@ -62,6 +62,9 @@ public class LucenePropertyAccessor implements PropertyAccessor {
             //if the requested field is the geometry we must grab the crs field too
             //to generate the geometry
             final byte[] compact = doc.getBinaryValue(LuceneOGCFilter.GEOMETRY_FIELD_NAME);
+            if (compact == null) {
+                return null;
+            }
             final int srid = SRIDGenerator.toSRID(compact, 0);
 
             //skip the 5 crs byte;
