@@ -83,7 +83,7 @@ public class PackerSpecificMojo extends AbstractMojo {
             final String all         = "geotk-bundle-"             + VERSION + ".jar";
             final Packer packer = new Packer(targetDirectory, VERSION);
             packer.addPack(null, referencing, new String[] {
-                    "vecmath-1.3.1.jar",
+                    "vecmath-1.5.2.jar",
                     "jsr-275-1.0-beta-2.jar",
                     "geoapi-2.3-SNAPSHOT.jar",
                     "geoapi-pending-2.3-SNAPSHOT.jar",
@@ -98,7 +98,7 @@ public class PackerSpecificMojo extends AbstractMojo {
             });
             packer.addPack(coverage, all, new String[] {
                     "jlfgr-1.0.jar",
-                    "swingx-0.9.7.jar",
+                    "swingx-1.0.jar",
                     "wizard-0.998.1.jar",
                     "geotk-setup-" + VERSION + ".jar",
                     "geotk-display-" + VERSION + ".jar",
