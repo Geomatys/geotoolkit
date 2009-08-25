@@ -193,6 +193,12 @@
         <version>8.3-603.jdbc4</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.4.2.0</version>
+        <scope>provided</scope> <!-- Already included in JDK as JavaDB -->
+      </dependency>
+      <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
         <version>1.4.1</version>
