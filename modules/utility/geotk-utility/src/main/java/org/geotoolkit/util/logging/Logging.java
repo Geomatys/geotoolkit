@@ -33,9 +33,10 @@ import java.util.logging.SimpleFormatter;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.converter.Classes;
 
@@ -57,6 +58,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
+@Static
 public final class Logging {
     /**
      * Compares {@link Logging} or {@link String} objects for alphabetical order.

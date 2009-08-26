@@ -19,6 +19,7 @@ package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -30,6 +31,7 @@ import java.io.ObjectStreamException;
  * @since 2.4
  * @module
  */
+@Immutable
 abstract class LongConverter<T> extends SimpleConverter<Long,T> implements Serializable {
     /**
      * For cross-version compatibility.
@@ -52,6 +54,7 @@ abstract class LongConverter<T> extends SimpleConverter<Long,T> implements Seria
      *
      * @since 2.4
      */
+    @Immutable
     static final class Date extends LongConverter<java.util.Date> {
         private static final long serialVersionUID = 3999693055029959455L;
         public static final Date INSTANCE = new Date();

@@ -46,6 +46,7 @@ import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.ReferenceSystem;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 
 
@@ -60,6 +61,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "fileIdentifier",
     "language",

@@ -24,7 +24,10 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.opengis.metadata.citation.Telephone;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -39,6 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "voices",
     "facsimiles"

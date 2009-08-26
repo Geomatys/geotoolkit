@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.RelativeInternalPositionalAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Closeness of the relative positions of features in the scope to their respective
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.RelativeInternalPositionalAccuracy;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultRelativeInternalPositionalAccuracy extends AbstractPositionalAccuracy
         implements RelativeInternalPositionalAccuracy
 {

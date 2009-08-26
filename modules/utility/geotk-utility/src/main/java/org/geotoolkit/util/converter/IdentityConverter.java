@@ -18,6 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -31,6 +32,7 @@ import java.io.Serializable;
  * @since 3.01
  * @module
  */
+@Immutable
 final class IdentityConverter<T> extends SimpleConverter<T,T> implements Serializable {
     /**
      * For cross-version compatibility.

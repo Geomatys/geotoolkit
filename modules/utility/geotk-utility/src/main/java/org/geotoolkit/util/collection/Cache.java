@@ -137,7 +137,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.00
  * @module
  */
-@ThreadSafe
+@ThreadSafe(concurrent = true)
 public class Cache<K,V> extends AbstractMap<K,V> {
     /**
      * The map that contains the cached values. If a value is under the process of being

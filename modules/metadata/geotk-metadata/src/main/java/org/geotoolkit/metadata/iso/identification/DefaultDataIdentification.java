@@ -36,6 +36,8 @@ import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information required to identify a dataset.
@@ -48,6 +50,7 @@ import org.opengis.util.InternationalString;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_DataIdentification", propOrder={
     "spatialRepresentationTypes",
     "spatialResolutions",

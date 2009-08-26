@@ -24,10 +24,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.lineage.Algorithm;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -40,6 +42,7 @@ import org.opengis.util.InternationalString;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "citation",
     "description"

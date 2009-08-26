@@ -24,9 +24,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.lineage.ProcessStepReport;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -38,6 +40,7 @@ import org.opengis.util.InternationalString;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "name",
     "description",

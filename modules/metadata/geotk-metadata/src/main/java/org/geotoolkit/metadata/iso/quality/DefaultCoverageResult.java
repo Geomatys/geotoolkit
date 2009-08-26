@@ -31,6 +31,8 @@ import org.opengis.metadata.distribution.DataFile;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Result of a data quality measure organising the measured values as a coverage.
@@ -41,6 +43,7 @@ import org.opengis.metadata.spatial.SpatialRepresentationType;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "spatialRepresentationType",
     "resultSpatialRepresentation",

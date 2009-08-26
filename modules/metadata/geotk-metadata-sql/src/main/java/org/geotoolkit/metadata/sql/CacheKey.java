@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata.sql;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -29,6 +30,7 @@ import org.geotoolkit.util.Utilities;
  * @since 3.03
  * @module
  */
+@Immutable
 final class CacheKey {
     /**
      * The metadata interface to be implemented.

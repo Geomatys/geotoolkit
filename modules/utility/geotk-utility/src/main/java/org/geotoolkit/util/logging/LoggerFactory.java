@@ -18,6 +18,7 @@
 package org.geotoolkit.util.logging;
 
 import java.util.logging.Logger;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 
 
@@ -40,6 +41,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
  * @level advanced
  * @module
  */
+@ThreadSafe
 public abstract class LoggerFactory<L> {
     /**
      * The Apache's <A HREF="http://jakarta.apache.org/commons/logging/">Commons-logging</A> framework.

@@ -21,6 +21,7 @@ import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -36,6 +37,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
+@Immutable
 public class MeasurementRange<T extends Number & Comparable<? super T>> extends NumberRange<T> {
     /**
      * Serial number for interoperability with different versions.

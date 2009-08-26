@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.jaxb.RegisterableTypes;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
@@ -45,6 +46,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
  *
  * @todo Need a timeout for disposing marshallers that have been unused for a while.
  */
+@ThreadSafe
 public class MarshallerPool {
     /**
      * Maximal amount of marshaller and unmarshaller to keep.

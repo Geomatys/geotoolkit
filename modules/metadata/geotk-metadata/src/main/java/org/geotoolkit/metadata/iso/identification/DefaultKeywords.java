@@ -29,6 +29,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.identification.KeywordType;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -43,6 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "keywords",
     "type",

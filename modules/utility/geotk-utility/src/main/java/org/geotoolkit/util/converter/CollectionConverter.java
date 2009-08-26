@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -33,6 +34,7 @@ import java.io.ObjectStreamException;
  * @since 3.02
  * @module
  */
+@Immutable
 abstract class CollectionConverter<T> extends SimpleConverter<Collection<?>,T> implements Serializable {
     /**
      * For cross-version compatibility.
@@ -57,6 +59,7 @@ abstract class CollectionConverter<T> extends SimpleConverter<Collection<?>,T> i
      *
      * @since 3.02
      */
+    @Immutable
     static final class List extends CollectionConverter<java.util.List<?>> {
         private static final long serialVersionUID = 5492247760609833586L;
         public static final List INSTANCE = new List();
@@ -95,6 +98,7 @@ abstract class CollectionConverter<T> extends SimpleConverter<Collection<?>,T> i
      *
      * @since 3.02
      */
+    @Immutable
     static final class Set extends CollectionConverter<java.util.Set<?>> {
         private static final long serialVersionUID = -4200659837453206164L;
         public static final Set INSTANCE = new Set();

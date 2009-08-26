@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.constraint.SecurityConstraints;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
 
 
@@ -51,6 +53,7 @@ import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(name = "FRA_SecurityConstraints_Type")
 @XmlRootElement(name = "FRA_SecurityConstraints")
 public class FRA_SecurityConstraints extends DefaultSecurityConstraints {

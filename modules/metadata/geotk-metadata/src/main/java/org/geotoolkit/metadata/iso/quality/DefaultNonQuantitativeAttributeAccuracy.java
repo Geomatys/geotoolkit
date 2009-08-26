@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Accuracy of non-quantitative attributes.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public class DefaultNonQuantitativeAttributeAccuracy extends AbstractThematicAccuracy
         implements NonQuantitativeAttributeAccuracy
 {

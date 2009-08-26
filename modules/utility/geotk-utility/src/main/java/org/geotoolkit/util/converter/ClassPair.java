@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.util.converter;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Holds explicit {@link #sourceClass} and {@link #targetClass} values. Used as key in a hash
@@ -33,6 +35,7 @@ package org.geotoolkit.util.converter;
  * @since 3.00
  * @module
  */
+@Immutable
 class ClassPair<S,T> {
     /**
      * The source class.

@@ -19,6 +19,7 @@ package org.geotoolkit.util;
 
 import java.io.Serializable;
 import javax.measure.unit.Unit;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 
 
@@ -58,6 +59,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.5
  * @module
  */
+@Immutable
 public class Range<T extends Comparable<? super T>> implements Serializable  {
     /**
      * For cross-version compatibility.

@@ -34,6 +34,8 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.maintenance.ScopeDescription;
 import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -48,6 +50,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "maintenanceAndUpdateFrequency", "dateOfNextUpdate",
     "updateScopes", "updateScopeDescriptions", "maintenanceNotes", "contacts"

@@ -19,6 +19,7 @@ package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -31,6 +32,7 @@ import java.io.ObjectStreamException;
  * @since 2.4
  * @module
  */
+@Immutable
 abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements Serializable {
     /**
      * For cross-version compatibility.
@@ -63,6 +65,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.01
      */
+    @Immutable
     @SuppressWarnings("rawtypes")
     static final class Comparable extends NumberConverter<java.lang.Comparable> {
         private static final long serialVersionUID = 3716134638218072176L;
@@ -99,6 +102,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 2.4
      */
+    @Immutable
     static final class String extends NumberConverter<java.lang.String> {
         private static final long serialVersionUID = 1460382215827540172L;
         public static final String INSTANCE = new String();
@@ -130,6 +134,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Double extends NumberConverter<java.lang.Double> {
         private static final long serialVersionUID = 1643009985070268985L;
         public static final Double INSTANCE = new Double();
@@ -161,6 +166,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Float extends NumberConverter<java.lang.Float> {
         private static final long serialVersionUID = -5900985555014433974L;
         public static final Float INSTANCE = new Float();
@@ -192,6 +198,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Long extends NumberConverter<java.lang.Long> {
         private static final long serialVersionUID = -5320144566275003574L;
         public static final Long INSTANCE = new Long();
@@ -223,6 +230,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Integer extends NumberConverter<java.lang.Integer> {
         private static final long serialVersionUID = 2661178278691398269L;
         public static final Integer INSTANCE = new Integer();
@@ -254,6 +262,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Short extends NumberConverter<java.lang.Short> {
         private static final long serialVersionUID = -5943559376400249179L;
         public static final Short INSTANCE = new Short();
@@ -285,6 +294,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Byte extends NumberConverter<java.lang.Byte> {
         private static final long serialVersionUID = 1381038535870541045L;
         public static final Byte INSTANCE = new Byte();
@@ -318,6 +328,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 2.4
      */
+    @Immutable
     static final class Boolean extends NumberConverter<java.lang.Boolean> {
         private static final long serialVersionUID = -7522980351031833731L;
         public static final Boolean INSTANCE = new Boolean();
@@ -349,6 +360,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.02
      */
+    @Immutable
     static final class BigDecimal extends NumberConverter<java.math.BigDecimal> {
         private static final long serialVersionUID = -6318144992861058878L;
         public static final BigDecimal INSTANCE = new BigDecimal();
@@ -392,6 +404,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 3.02
      */
+    @Immutable
     static final class BigInteger extends NumberConverter<java.math.BigInteger> {
         private static final long serialVersionUID = 5940724099300523246L;
         public static final BigInteger INSTANCE = new BigInteger();
@@ -434,6 +447,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      *
      * @since 2.4
      */
+    @Immutable
     static final class Color extends NumberConverter<java.awt.Color> {
         private static final long serialVersionUID = 8866612442279600953L;
         public static final Color INSTANCE = new Color();

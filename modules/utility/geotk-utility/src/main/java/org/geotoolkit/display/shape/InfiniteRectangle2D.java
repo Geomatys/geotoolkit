@@ -22,6 +22,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import org.geotoolkit.lang.Immutable;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
@@ -41,6 +42,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
  * @since 2.3
  * @module
  */
+@Immutable
 final class InfiniteRectangle2D extends Rectangle2D implements Serializable {
     /**
      * Serial number for interoperability with different versions.

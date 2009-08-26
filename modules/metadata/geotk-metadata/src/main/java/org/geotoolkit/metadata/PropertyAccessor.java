@@ -54,7 +54,7 @@ import org.geotoolkit.internal.CollectionUtilities;
  * @since 2.4
  * @module
  */
-@ThreadSafe
+@ThreadSafe(concurrent = true)
 final class PropertyAccessor {
     /**
      * The locale to use for changing character case.

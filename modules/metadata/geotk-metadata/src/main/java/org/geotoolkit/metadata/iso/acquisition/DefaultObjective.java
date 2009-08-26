@@ -34,6 +34,7 @@ import org.opengis.metadata.acquisition.PlatformPass;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -47,6 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "identifiers",
     "priority",

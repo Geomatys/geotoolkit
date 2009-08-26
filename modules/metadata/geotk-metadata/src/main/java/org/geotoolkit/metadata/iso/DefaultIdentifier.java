@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Value uniquely identifying an object within a namespace.
@@ -39,6 +41,7 @@ import org.opengis.metadata.citation.Citation;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "code",
     "authority"

@@ -42,6 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
@@ -848,6 +849,7 @@ public class Hints extends RenderingHints {
      * @since 2.1
      * @module
      */
+    @Immutable
     public static class Key extends RenderingHints.Key {
         /**
          * The number of key created up to date.
@@ -970,6 +972,7 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
+    @Immutable
     public static final class ClassKey extends Key {
         /**
          * Constructs a new key for values of the given class.
@@ -1058,6 +1061,7 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
+    @Immutable
     public static final class FileKey extends Key {
         /**
          * {@code true} if write operations need to be allowed.
@@ -1120,6 +1124,7 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
+    @Immutable
     public static final class IntegerKey extends Key {
         /**
          * The default value.
@@ -1195,6 +1200,7 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
+    @Immutable
     public static final class OptionKey extends Key {
         /**
          * The set of options allowed.
@@ -1253,6 +1259,7 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
+    @Immutable
     static final class DataSourceKey extends Key {
         /**
          * Creates a new key for {@link javax.sql.DataSource} value.

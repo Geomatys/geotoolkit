@@ -35,6 +35,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
@@ -52,6 +53,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "EX_GeographicBoundingBox", propOrder={
     "westBoundLongitude",
     "eastBoundLongitude",

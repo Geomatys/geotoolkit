@@ -23,7 +23,10 @@ package org.geotoolkit.metadata.iso.content;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+
 import org.opengis.metadata.content.ContentInformation;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -38,6 +41,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_ContentInformation")
 @XmlSeeAlso({DefaultCoverageDescription.class, DefaultFeatureCatalogueDescription.class})
 @XmlRootElement(name = "MD_ContentInformation")

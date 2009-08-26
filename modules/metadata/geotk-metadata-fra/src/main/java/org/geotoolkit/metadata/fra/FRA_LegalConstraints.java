@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.constraint.LegalConstraints;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 
 
@@ -51,6 +53,7 @@ import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(name = "FRA_LegalConstraints_Type")
 @XmlRootElement(name="FRA_LegalConstraints")
 public class FRA_LegalConstraints extends DefaultLegalConstraints {

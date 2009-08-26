@@ -26,6 +26,8 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.quality.Scope;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.maintenance.ScopeDescription;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -39,6 +41,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultScope extends MetadataEntity implements Scope {
     /**
      * Serial number for interoperability with different versions.

@@ -24,6 +24,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 
@@ -38,6 +39,7 @@ import org.geotoolkit.resources.Descriptions;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class AbstractPositionalAccuracy extends AbstractElement implements PositionalAccuracy {
     /**
      * Serial number for interoperability with different versions.

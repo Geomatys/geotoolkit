@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.PortrayalCatalogueReference;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information identifying the portrayal catalogue used.
@@ -40,6 +42,7 @@ import org.opengis.metadata.PortrayalCatalogueReference;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlRootElement(name = "MD_PortrayalCatalogueReference")
 public class DefaultPortrayalCatalogueReference extends MetadataEntity
         implements PortrayalCatalogueReference

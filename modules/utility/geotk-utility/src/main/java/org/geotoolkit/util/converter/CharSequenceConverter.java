@@ -18,6 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -32,6 +33,7 @@ import java.io.Serializable;
  * @since 3.02
  * @module
  */
+@Immutable
 final class CharSequenceConverter<T> extends SimpleConverter<CharSequence,T> implements Serializable {
     /**
      * For cross-version compatibility.

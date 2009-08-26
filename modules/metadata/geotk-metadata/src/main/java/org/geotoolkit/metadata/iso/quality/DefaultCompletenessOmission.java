@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.CompletenessOmission;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Data absent from the dataset, as described by the scope.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.CompletenessOmission;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultCompletenessOmission extends AbstractCompleteness implements CompletenessOmission {
     /**
      * Serial number for interoperability with different versions.

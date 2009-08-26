@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.metadata.extent.VerticalExtent;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -40,6 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "minimumValue",
     "maximumValue",

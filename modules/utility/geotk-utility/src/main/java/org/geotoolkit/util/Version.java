@@ -19,6 +19,7 @@ package org.geotoolkit.util;
 
 import java.io.Serializable;
 import java.util.StringTokenizer;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -39,6 +40,7 @@ import java.util.StringTokenizer;
  * @since 2.4
  * @module
  */
+@Immutable
 public class Version implements CharSequence, Comparable<Version>, Serializable {
     /**
      * For cross-version compatibility.

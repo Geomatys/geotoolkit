@@ -35,6 +35,7 @@ import org.opengis.util.TypeName;
 import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -51,6 +52,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.4
  * @module
  */
+@Immutable
 @XmlType(name = "RecordType")
 public class DefaultRecordType implements RecordType, Serializable {
     /**

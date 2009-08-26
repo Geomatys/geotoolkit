@@ -30,6 +30,8 @@ import org.opengis.metadata.spatial.GCPCollection;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information about a control point collection.
@@ -40,6 +42,7 @@ import org.opengis.util.InternationalString;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "collectionIdentification",
     "collectionName",

@@ -32,6 +32,8 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.util.RecordType;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information about the content of a grid data cell.
@@ -44,6 +46,7 @@ import org.opengis.util.RecordType;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_CoverageDescription", propOrder={
 /// "attributeDescription",
     "contentType",

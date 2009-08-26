@@ -21,6 +21,7 @@
 package org.geotoolkit.naming;
 
 import java.io.ObjectStreamException;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -34,6 +35,7 @@ import java.io.ObjectStreamException;
  * @since 3.00
  * @module
  */
+@Immutable
 final class GlobalNameSpace extends DefaultNameSpace {
     /**
      * For cross-version compatibility.

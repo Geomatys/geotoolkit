@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.metadata.identification.RepresentativeFraction;
 import org.opengis.metadata.identification.Resolution;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.uom.DistanceAdapter;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -42,6 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "equivalentScale",
     "distance"

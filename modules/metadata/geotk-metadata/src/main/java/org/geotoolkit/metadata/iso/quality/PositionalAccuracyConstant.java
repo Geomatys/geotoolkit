@@ -27,6 +27,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -46,6 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 final class PositionalAccuracyConstant extends AbstractPositionalAccuracy
        implements AbsoluteExternalPositionalAccuracy
 {

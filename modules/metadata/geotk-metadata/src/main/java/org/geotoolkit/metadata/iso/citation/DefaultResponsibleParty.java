@@ -33,6 +33,7 @@ import org.opengis.metadata.citation.OnLineResource;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -50,6 +51,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "individualName",
     "organisationName",

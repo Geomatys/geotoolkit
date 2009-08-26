@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Locale;
 
+import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
 
@@ -37,6 +38,7 @@ import org.opengis.util.InternationalString;
  * @since 2.1
  * @module
  */
+@Immutable
 public class SimpleInternationalString extends AbstractInternationalString implements Serializable {
     /**
      * Serial number for interoperability with different versions.

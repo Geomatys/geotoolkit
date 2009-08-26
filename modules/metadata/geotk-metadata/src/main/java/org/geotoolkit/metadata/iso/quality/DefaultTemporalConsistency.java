@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.TemporalConsistency;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Correctness of ordered events or sequences, if reported.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.TemporalConsistency;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultTemporalConsistency extends DefaultTemporalAccuracy implements TemporalConsistency {
     /**
      * Serial number for interoperability with different versions.

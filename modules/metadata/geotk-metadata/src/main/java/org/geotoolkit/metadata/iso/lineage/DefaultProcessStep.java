@@ -34,6 +34,7 @@ import org.opengis.metadata.lineage.Source;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.metadata.citation.ResponsibleParty;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "description",
     "rationale",

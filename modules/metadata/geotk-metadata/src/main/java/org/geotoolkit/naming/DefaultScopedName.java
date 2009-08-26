@@ -32,6 +32,7 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.jaxb.text.LocalNameAdapter;
@@ -47,6 +48,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @since 2.1
  * @module
  */
+@Immutable
 @XmlRootElement(name = "ScopedName")
 public class DefaultScopedName extends AbstractName implements ScopedName {
     /**

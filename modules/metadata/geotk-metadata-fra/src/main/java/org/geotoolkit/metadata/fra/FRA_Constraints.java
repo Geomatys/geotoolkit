@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.constraint.Constraints;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
 
 
@@ -51,6 +53,7 @@ import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(name = "FRA_Constraints_Type")
 @XmlRootElement(name= "FRA_Constraints")
 public class FRA_Constraints extends DefaultConstraints {

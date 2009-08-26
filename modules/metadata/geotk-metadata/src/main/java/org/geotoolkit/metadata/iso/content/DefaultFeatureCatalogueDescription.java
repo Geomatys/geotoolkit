@@ -30,6 +30,8 @@ import org.opengis.util.GenericName;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information identifying the feature catalogue.
@@ -42,6 +44,7 @@ import org.opengis.metadata.content.FeatureCatalogueDescription;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_FeatureCatalogueDescription", propOrder={
     "compliant",
     "languages",

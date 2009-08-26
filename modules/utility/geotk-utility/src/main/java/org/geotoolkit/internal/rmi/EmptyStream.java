@@ -19,6 +19,7 @@ package org.geotoolkit.internal.rmi;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.io.ObjectStream;
 
 
@@ -33,6 +34,7 @@ import org.geotoolkit.internal.io.ObjectStream;
  * @since 3.00
  * @module
  */
+@Immutable
 final class EmptyStream<E> implements ObjectStream<E>, Serializable {
     /**
      * For cross-version compatibility.

@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.ThematicClassificationCorrectness;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Comparison of the classes assigned to features or their attributes to a universe of discourse.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.ThematicClassificationCorrectness;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultThematicClassificationCorrectness extends AbstractThematicAccuracy
         implements ThematicClassificationCorrectness
 {

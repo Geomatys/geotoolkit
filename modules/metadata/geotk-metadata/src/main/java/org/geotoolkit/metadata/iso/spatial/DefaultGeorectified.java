@@ -34,6 +34,8 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Grid whose cells are regularly spaced in a geographic (i.e., lat / long) or map
@@ -49,6 +51,7 @@ import org.opengis.util.InternationalString;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_Georectified", propOrder={
     "checkPointAvailable",
     "checkPointDescription",

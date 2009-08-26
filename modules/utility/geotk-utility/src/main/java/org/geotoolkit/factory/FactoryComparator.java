@@ -20,6 +20,7 @@ package org.geotoolkit.factory;
 import java.util.Set;
 import java.util.Map;
 import java.awt.RenderingHints;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -33,6 +34,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.1
  * @module
  */
+@Immutable
 final class FactoryComparator {
     /**
      * A pair of factory already compared.

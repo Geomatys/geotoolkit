@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.opengis.metadata.spatial.GeometricObjects;
 import org.opengis.metadata.spatial.GeometricObjectType;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -40,6 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "geometricObjectType",
     "geometricObjectCount"

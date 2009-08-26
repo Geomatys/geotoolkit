@@ -18,6 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -84,6 +85,7 @@ public class BaseClassFilter implements ClassFilter, Serializable {
      *
      * @since 3.00
      */
+    @Immutable
     private final class Negate implements ClassFilter, Serializable {
         /**
          * For cross-version compatibility.

@@ -24,10 +24,12 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.distribution.Format;
 import org.opengis.metadata.distribution.DataFile;
 import org.opengis.util.LocalName;
+
+import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -39,6 +41,7 @@ import org.opengis.util.LocalName;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "featureTypes",
     "fileFormat"

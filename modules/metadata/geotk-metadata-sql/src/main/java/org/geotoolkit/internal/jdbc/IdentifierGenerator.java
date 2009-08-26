@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Checks the existence of identifiers (usually primary keys) in a set of tables.
@@ -59,6 +61,7 @@ import java.sql.SQLNonTransientException;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     /**
      * The most straight forward implementation of {@link IdentifierGenerator}.
@@ -71,6 +74,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      * @since 3.03
      * @module
      */
+    @ThreadSafe
     public static final class Simple extends IdentifierGenerator<String,StatementEntry> {
         /**
          * Creates a new generator using the given pool of prepared statements.

@@ -30,6 +30,8 @@ import org.opengis.metadata.citation.OnLineResource;
 import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.metadata.MetadataExtensionInformation;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information describing metadata extensions.
@@ -42,6 +44,7 @@ import org.opengis.metadata.MetadataExtensionInformation;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "extensionOnLineResource",
     "extendedElementInformation"

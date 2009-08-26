@@ -22,7 +22,10 @@ package org.geotoolkit.metadata.iso.identification;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.identification.RepresentativeFraction;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 
 
@@ -37,6 +40,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 @XmlRootElement(name = "MD_RepresentativeFraction")
 public class DefaultRepresentativeFraction extends Number implements RepresentativeFraction {
     /**

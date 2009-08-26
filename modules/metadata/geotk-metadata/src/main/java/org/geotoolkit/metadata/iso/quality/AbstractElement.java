@@ -33,6 +33,7 @@ import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.resources.Errors;
 
@@ -47,6 +48,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class AbstractElement extends MetadataEntity implements Element {
     /**
      * Serial number for interoperability with different versions.

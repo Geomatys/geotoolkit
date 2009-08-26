@@ -25,6 +25,7 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -39,6 +40,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 class RemoteService extends UnicastRemoteObject {
     /**
      * For cross-version compatibility.

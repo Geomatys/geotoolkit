@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.LogicalConsistency;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Degree of adherence to logical rules of data structure, attribution and relationships (data
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.LogicalConsistency;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class AbstractLogicalConsistency extends AbstractElement implements LogicalConsistency {
     /**
      * Serial number for interoperability with different versions.

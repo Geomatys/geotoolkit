@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.TemporalAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Accuracy of the temporal attributes and temporal relationships of features.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.TemporalAccuracy;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultTemporalAccuracy extends AbstractElement implements TemporalAccuracy {
     /**
      * Serial number for interoperability with different versions.

@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.identification.BrowseGraphic;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.jaxb.text.URINameAdapter;
 
@@ -43,6 +45,7 @@ import org.geotoolkit.internal.jaxb.text.URINameAdapter;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "fileName",
     "fileDescription",

@@ -24,6 +24,8 @@ import java.util.concurrent.ExecutionException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * The pending result of a task submited to a {@link RemoteExecutor}.
@@ -36,6 +38,7 @@ import java.rmi.server.UnicastRemoteObject;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFuture<Output> {
     /**
      * For cross-version compatibility.

@@ -23,7 +23,10 @@ package org.geotoolkit.metadata.iso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.opengis.metadata.FeatureTypeList;
+
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -37,6 +40,7 @@ import org.opengis.metadata.FeatureTypeList;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "spatialObject",
     "spatialSchemaName"

@@ -105,7 +105,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @Static
-@ThreadSafe
+@ThreadSafe(concurrent = false)
 public class FactoryFinder {
     /**
      * The key for a special hints specifying an additional {@link ServiceRegistry#Filter}.

@@ -22,11 +22,12 @@ package org.geotoolkit.metadata.iso.extent;
 
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.extent.BoundingPolygon;
+
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -42,6 +43,7 @@ import org.opengis.metadata.extent.BoundingPolygon;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "EX_BoundingPolygon")
 @XmlRootElement(name = "EX_BoundingPolygon")
 public class DefaultBoundingPolygon extends AbstractGeographicExtent implements BoundingPolygon {

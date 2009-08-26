@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.ConceptualConsistency;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Adherence to rules of the conceptual schema.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.ConceptualConsistency;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultConceptualConsistency extends AbstractLogicalConsistency
         implements ConceptualConsistency
 {

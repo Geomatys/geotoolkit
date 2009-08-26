@@ -46,6 +46,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
@@ -60,6 +61,7 @@ import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
  * @since 3.03 (derived from 2.6)
  * @module
  */
+@Immutable
 @XmlRootElement(name = "RS_Identifier", namespace = Namespaces.GMD)
 public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializable {
     /**

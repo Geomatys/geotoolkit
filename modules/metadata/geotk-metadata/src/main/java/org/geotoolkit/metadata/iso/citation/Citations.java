@@ -29,6 +29,8 @@ import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.Role;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -53,6 +55,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.2
  * @module
  */
+@Static
 public final class Citations {
     /**
      * Do not allows instantiation of this class.

@@ -29,6 +29,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information about the value (or set of values) obtained from applying a data quality measure.
@@ -40,6 +42,7 @@ import org.opengis.util.RecordType;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultQuantitativeResult extends AbstractResult implements QuantitativeResult {
     /**
      * Serial number for compatibility with different versions.

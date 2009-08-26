@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 
 import org.opengis.util.CodeList;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
@@ -79,6 +80,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public abstract class ModifiableMetadata extends AbstractMetadata implements Cloneable {
     /**
      * A null implementation for the {@link #FREEZING} constant.

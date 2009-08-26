@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.ThematicAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Accuracy of quantitative attributes and the correctness of non-quantitative attributes
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.ThematicAccuracy;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class AbstractThematicAccuracy extends AbstractElement implements ThematicAccuracy {
     /**
      * Serial number for interoperability with different versions.

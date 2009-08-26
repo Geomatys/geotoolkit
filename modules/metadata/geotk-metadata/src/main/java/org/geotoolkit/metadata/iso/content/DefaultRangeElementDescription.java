@@ -26,10 +26,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
+
+import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -41,6 +43,7 @@ import org.opengis.util.Record;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "name",
     "definition"/*,

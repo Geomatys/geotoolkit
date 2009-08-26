@@ -32,6 +32,8 @@ import org.opengis.metadata.extent.BoundingPolygon;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -52,6 +54,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "description",
     "geographicElements",

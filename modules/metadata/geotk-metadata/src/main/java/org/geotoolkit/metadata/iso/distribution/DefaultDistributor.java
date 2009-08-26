@@ -30,6 +30,8 @@ import org.opengis.metadata.distribution.Format;
 import org.opengis.metadata.distribution.Distributor;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 import org.opengis.metadata.distribution.DigitalTransferOptions;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -44,6 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "distributorContact",
     "distributionOrderProcesses",

@@ -31,6 +31,7 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -48,6 +49,7 @@ import static org.geotoolkit.naming.AbstractName.ensureNonNull;
  * @since 3.00
  * @module
  */
+@Immutable
 public class DefaultNameSpace implements NameSpace, Serializable {
     /**
      * For cross-version compatibility.

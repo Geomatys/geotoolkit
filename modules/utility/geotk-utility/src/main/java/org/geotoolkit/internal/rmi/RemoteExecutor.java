@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Executes {@linkplain ShareableTask shareable tasks} on one or many remote machines.
@@ -34,6 +36,7 @@ import java.rmi.RemoteException;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 class RemoteExecutor extends RemoteService implements TaskExecutor {
     /**
      * For cross-version compatibility.

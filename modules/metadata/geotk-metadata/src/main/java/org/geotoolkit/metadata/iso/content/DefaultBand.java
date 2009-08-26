@@ -31,6 +31,8 @@ import org.opengis.metadata.content.BandDefinition;
 import org.opengis.metadata.content.PolarizationOrientation;
 import org.opengis.metadata.content.TransferFunctionType;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Range of wavelengths in the electromagnetic spectrum.
@@ -43,6 +45,7 @@ import org.opengis.metadata.content.TransferFunctionType;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_Band", propOrder={
     "maxValue",
     "minValue",

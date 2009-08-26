@@ -23,6 +23,8 @@ package org.geotoolkit.metadata.iso.quality;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Closeness of reported coordinate values to values accepted as or being true.
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultAbsoluteExternalPositionalAccuracy extends AbstractPositionalAccuracy
        implements AbsoluteExternalPositionalAccuracy
 {

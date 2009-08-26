@@ -23,8 +23,11 @@ package org.geotoolkit.metadata.iso.lineage;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.metadata.iso.MetadataEntity;
+
 import org.opengis.metadata.lineage.NominalResolution;
+
+import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -36,6 +39,7 @@ import org.opengis.metadata.lineage.NominalResolution;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "scanningResolution",
     "groundResolution"

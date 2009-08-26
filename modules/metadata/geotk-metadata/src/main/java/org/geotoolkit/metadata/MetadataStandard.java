@@ -27,6 +27,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.opengis.annotation.UML;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -58,6 +59,7 @@ import org.geotoolkit.util.NullArgumentException;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public final class MetadataStandard {
     /**
      * An instance working on ISO 19111 standard as defined by

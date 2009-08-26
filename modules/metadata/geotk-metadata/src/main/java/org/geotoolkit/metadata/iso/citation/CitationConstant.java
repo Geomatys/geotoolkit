@@ -20,7 +20,10 @@ package org.geotoolkit.metadata.iso.citation;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.io.InvalidObjectException;
+
 import org.opengis.metadata.citation.ResponsibleParty;
+
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -32,6 +35,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 final class CitationConstant extends DefaultCitation {
     /**
      * For cross-version compatibility.

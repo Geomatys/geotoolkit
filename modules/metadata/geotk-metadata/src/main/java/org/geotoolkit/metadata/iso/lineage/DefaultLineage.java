@@ -31,6 +31,7 @@ import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.metadata.maintenance.ScopeCode;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.metadata.iso.quality.DefaultScope;
 
@@ -50,6 +51,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultScope;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "statement",
     "processSteps",

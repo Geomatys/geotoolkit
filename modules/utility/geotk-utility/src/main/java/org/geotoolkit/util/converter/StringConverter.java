@@ -23,6 +23,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -38,6 +39,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.4
  * @module
  */
+@Immutable
 abstract class StringConverter<T> extends SimpleConverter<String,T> implements Serializable {
     /**
      * For cross-version compatibility.
@@ -78,6 +80,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Number extends StringConverter<java.lang.Number> {
         private static final long serialVersionUID = 1557277544742023571L;
         public static final Number INSTANCE = new Number();
@@ -117,6 +120,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Double extends StringConverter<java.lang.Double> {
         private static final long serialVersionUID = -9094071164371643060L;
         public static final Double INSTANCE = new Double();
@@ -156,6 +160,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Float extends StringConverter<java.lang.Float> {
         private static final long serialVersionUID = -2815192289550338333L;
         public static final Float INSTANCE = new Float();
@@ -195,6 +200,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Long extends StringConverter<java.lang.Long> {
         private static final long serialVersionUID = -2171263041723939779L;
         public static final Long INSTANCE = new Long();
@@ -234,6 +240,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Integer extends StringConverter<java.lang.Integer> {
         private static final long serialVersionUID = 763211364703205967L;
         public static final Integer INSTANCE = new Integer();
@@ -273,6 +280,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Short extends StringConverter<java.lang.Short> {
         private static final long serialVersionUID = -1770870328699572960L;
         public static final Short INSTANCE = new Short();
@@ -312,6 +320,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class Byte extends StringConverter<java.lang.Byte> {
         private static final long serialVersionUID = 2084870859391804185L;
         public static final Byte INSTANCE = new Byte();
@@ -351,6 +360,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.02
      */
+    @Immutable
     static final class BigDecimal extends StringConverter<java.math.BigDecimal> {
         private static final long serialVersionUID = -8597497425876120213L;
         public static final BigDecimal INSTANCE = new BigDecimal();
@@ -390,6 +400,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.02
      */
+    @Immutable
     static final class BigInteger extends StringConverter<java.math.BigInteger> {
         private static final long serialVersionUID = 8658903031519526466L;
         public static final BigInteger INSTANCE = new BigInteger();
@@ -443,6 +454,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 2.4
      */
+    @Immutable
     static final class Boolean extends StringConverter<java.lang.Boolean> {
         private static final long serialVersionUID = -27525398425996373L;
         public static final Boolean INSTANCE = new Boolean();
@@ -499,6 +511,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 2.4
      */
+    @Immutable
     static final class Color extends StringConverter<java.awt.Color> {
         private static final long serialVersionUID = 5294622747871370401L;
         public static final Color INSTANCE = new Color();
@@ -539,6 +552,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 2.0
      */
+    @Immutable
     static final class Locale extends StringConverter<java.util.Locale> {
         private static final long serialVersionUID = -2888932450292616036L;
         public static final Locale INSTANCE = new Locale();
@@ -584,6 +598,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 2.4
      */
+    @Immutable
     static final class Charset extends StringConverter<java.nio.charset.Charset> {
         private static final long serialVersionUID = 4539755855992944656L;
         public static final Charset INSTANCE = new Charset();
@@ -624,6 +639,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.02
      */
+    @Immutable
     static final class InternationalString extends StringConverter<org.opengis.util.InternationalString> {
         private static final long serialVersionUID = 730809620191573819L;
         public static final InternationalString INSTANCE = new InternationalString();
@@ -663,6 +679,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class File extends StringConverter<java.io.File> {
         private static final long serialVersionUID = 6445208470928432376L;
         public static final File INSTANCE = new File();
@@ -697,6 +714,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class URI extends StringConverter<java.net.URI> {
         private static final long serialVersionUID = -2804405634789179706L;
         public static final URI INSTANCE = new URI();
@@ -735,6 +753,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.00
      */
+    @Immutable
     static final class URL extends StringConverter<java.net.URL> {
         private static final long serialVersionUID = 2303928306635765592L;
         public static final URL INSTANCE = new URL();
@@ -775,6 +794,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @since 3.02
      */
+    @Immutable
     static final class CodeList<T extends org.opengis.util.CodeList<T>> extends StringConverter<T> {
         private static final long serialVersionUID = 3289083947166861278L;
 

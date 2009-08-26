@@ -23,6 +23,8 @@ import java.lang.reflect.Method;
 import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * The comparator for sorting method order. This comparator put mandatory methods first,
@@ -34,6 +36,7 @@ import org.opengis.annotation.Obligation;
  * @since 2.4
  * @module
  */
+@Immutable
 final class PropertyComparator implements Comparator<Method> {
     /**
      * The singleton instance.

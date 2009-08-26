@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.DataIdentification;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 
 
@@ -50,6 +52,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(name = "FRA_DataIdentification_Type")
 @XmlRootElement(name ="FRA_DataIdentification")
 public class FRA_DataIdentification extends DefaultDataIdentification {

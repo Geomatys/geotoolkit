@@ -24,9 +24,12 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.opengis.metadata.spatial.GeometricObjects;
 import org.opengis.metadata.spatial.TopologyLevel;
 import org.opengis.metadata.spatial.VectorSpatialRepresentation;
+
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -40,6 +43,7 @@ import org.opengis.metadata.spatial.VectorSpatialRepresentation;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_VectorSpatialRepresentation", propOrder={
     "topologyLevel",
     "geometricObjects"

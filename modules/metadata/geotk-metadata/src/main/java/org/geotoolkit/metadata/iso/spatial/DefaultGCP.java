@@ -29,6 +29,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.spatial.GCP;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -41,6 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     //"geographicCoordinates",
     "accuracyReports"

@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.DomainConsistency;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Adherence of values to the value domains.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.DomainConsistency;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultDomainConsistency extends AbstractLogicalConsistency implements DomainConsistency {
     /**
      * Serial number for interoperability with different versions.

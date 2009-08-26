@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import static org.geotoolkit.util.converter.Classes.finestClass;
@@ -36,6 +37,7 @@ import static org.geotoolkit.util.converter.Classes.widestClass;
  * @since 2.0
  * @module
  */
+@Immutable
 public class NumberRange<T extends Number & Comparable<? super T>> extends Range<T> {
     //
     // IMPLEMENTATION NOTE: This class is full of @SuppressWarnings("unchecked") annotations.

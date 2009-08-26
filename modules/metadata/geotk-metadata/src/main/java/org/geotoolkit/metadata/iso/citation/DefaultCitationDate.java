@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -42,6 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "date",
     "dateType"

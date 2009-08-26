@@ -24,6 +24,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 
@@ -48,6 +49,7 @@ import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(name = "FRA_IndirectReferenceSystem_Type")
 @XmlRootElement(name= "FRA_IndirectReferenceSystem")
 public class FRA_IndirectReferenceSystem extends ReferenceSystemMetadata {

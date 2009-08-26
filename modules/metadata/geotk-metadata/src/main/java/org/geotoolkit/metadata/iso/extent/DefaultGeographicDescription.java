@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.extent.GeographicDescription;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Description of the geographic area using identifiers.
@@ -39,6 +41,7 @@ import org.opengis.metadata.extent.GeographicDescription;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "EX_GeographicDescription")
 @XmlRootElement(name = "EX_GeographicDescription")
 public class DefaultGeographicDescription extends AbstractGeographicExtent

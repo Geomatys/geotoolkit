@@ -36,6 +36,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Progress;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "description",
     "citation",

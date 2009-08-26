@@ -21,6 +21,8 @@
 package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.Result;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -34,6 +36,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class AbstractResult extends MetadataEntity implements Result {
     /**
      * Serial number for interoperability with different versions.

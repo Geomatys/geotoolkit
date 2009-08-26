@@ -29,6 +29,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.constraint.Restriction;
 import org.opengis.metadata.constraint.LegalConstraints;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Restrictions and legal prerequisites for accessing and using the resource.
@@ -41,6 +43,7 @@ import org.opengis.metadata.constraint.LegalConstraints;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_LegalConstraints", propOrder={
     "accessConstraints",
     "useConstraints",

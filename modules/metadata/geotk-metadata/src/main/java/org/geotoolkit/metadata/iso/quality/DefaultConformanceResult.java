@@ -24,6 +24,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information about the outcome of evaluating the obtained value (or set of values) against
@@ -36,6 +38,7 @@ import org.opengis.metadata.quality.ConformanceResult;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultConformanceResult extends AbstractResult implements ConformanceResult {
 
     /**

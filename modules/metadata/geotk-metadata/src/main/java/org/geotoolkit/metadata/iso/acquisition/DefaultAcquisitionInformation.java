@@ -34,6 +34,7 @@ import org.opengis.metadata.acquisition.Plan;
 import org.opengis.metadata.acquisition.Platform;
 import org.opengis.metadata.acquisition.Requirement;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -47,6 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder = {
     "acquisitionPlans",
     "acquisitionRequirements",

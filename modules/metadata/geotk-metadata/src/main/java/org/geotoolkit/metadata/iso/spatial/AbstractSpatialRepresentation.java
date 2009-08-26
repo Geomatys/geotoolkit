@@ -22,7 +22,10 @@ package org.geotoolkit.metadata.iso.spatial;
 
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+
 import org.opengis.metadata.spatial.SpatialRepresentation;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -37,6 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_SpatialRepresentation")
 @XmlSeeAlso({DefaultGridSpatialRepresentation.class, DefaultVectorSpatialRepresentation.class})
 public class AbstractSpatialRepresentation extends MetadataEntity implements SpatialRepresentation {

@@ -34,6 +34,8 @@ import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.Georeferenceable;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Grid with cells irregularly spaced in any given geographic/map projection coordinate
@@ -48,6 +50,7 @@ import org.opengis.metadata.spatial.Georeferenceable;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_Georeferenceable", propOrder={
     "controlPointAvailable",
     "orientationParameterAvailable",

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.internal.Threads;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -33,6 +34,7 @@ import org.geotoolkit.internal.Threads;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 final class ShutdownHook extends Thread {
     /**
      * The single shutdown hook instance.

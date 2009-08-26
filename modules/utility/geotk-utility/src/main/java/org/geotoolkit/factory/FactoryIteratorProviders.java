@@ -20,6 +20,7 @@ package org.geotoolkit.factory;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -31,6 +32,7 @@ import org.geotoolkit.util.XArrays;
  * @version 3.00
  * @module
  */
+@ThreadSafe
 final class FactoryIteratorProviders {
     /**
      * The system-wide configuration. This is the instance configured by

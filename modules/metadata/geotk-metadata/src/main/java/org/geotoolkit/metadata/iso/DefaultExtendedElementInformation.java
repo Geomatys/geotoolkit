@@ -32,6 +32,8 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * New metadata element, not found in ISO 19115, which is required to describe geographic data.
@@ -44,6 +46,7 @@ import org.opengis.util.InternationalString;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "name",
     "shortName",

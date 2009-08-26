@@ -34,6 +34,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.Series;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -50,6 +51,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "title",
     "alternateTitles",

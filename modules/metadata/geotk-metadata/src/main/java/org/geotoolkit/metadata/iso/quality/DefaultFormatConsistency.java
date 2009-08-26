@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.FormatConsistency;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Degree to which data is stored in accordance with the physical structure of
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.FormatConsistency;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public class DefaultFormatConsistency extends AbstractLogicalConsistency implements FormatConsistency {
     /**
      * Serial number for interoperability with different versions.

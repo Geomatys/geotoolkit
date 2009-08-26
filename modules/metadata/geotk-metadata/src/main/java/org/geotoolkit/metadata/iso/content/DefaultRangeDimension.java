@@ -29,6 +29,7 @@ import org.opengis.util.MemberName;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.content.RangeDimension;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -43,6 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_RangeDimension", propOrder={
     "descriptor"
 })

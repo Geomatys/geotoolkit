@@ -30,6 +30,8 @@ import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Basic information required to uniquely identify a resource or resources.
@@ -42,6 +44,7 @@ import org.opengis.metadata.spatial.GridSpatialRepresentation;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_GridSpatialRepresentation", propOrder={
     "numberOfDimensions",
     "axisDimensionsProperties",

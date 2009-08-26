@@ -22,6 +22,7 @@ import java.io.ObjectStreamException;
 import java.net.MalformedURLException;
 import java.net.URI;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 
 
@@ -34,6 +35,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.01
  * @module
  */
+@Immutable
 abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Serializable {
     /**
      * For cross-version compatibility.
@@ -65,6 +67,7 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
      *
      * @since 3.01
      */
+    @Immutable
     static final class String extends URIConverter<java.lang.String> {
         private static final long serialVersionUID = -1745990349642467147L;
         public static final String INSTANCE = new String();
@@ -96,6 +99,7 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
      *
      * @since 3.01
      */
+    @Immutable
     static final class File extends URIConverter<java.io.File> {
         private static final long serialVersionUID = 5289256237146366469L;
         public static final File INSTANCE = new File();
@@ -135,6 +139,7 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
      *
      * @since 3.01
      */
+    @Immutable
     static final class URL extends URIConverter<java.net.URL> {
         private static final long serialVersionUID = -7866572007304228474L;
         public static final URL INSTANCE = new URL();

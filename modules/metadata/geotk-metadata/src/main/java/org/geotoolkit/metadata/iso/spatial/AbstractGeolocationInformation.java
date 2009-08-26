@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.GeolocationInformation;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -41,6 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "qualityInfo"
 })

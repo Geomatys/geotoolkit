@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.GriddedDataPositionalAccuracy;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Closeness of gridded data position values to values accepted as or being true.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.GriddedDataPositionalAccuracy;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultGriddedDataPositionalAccuracy extends AbstractPositionalAccuracy
         implements GriddedDataPositionalAccuracy
 {

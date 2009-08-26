@@ -29,6 +29,8 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.AggregateInformation;
 import org.opengis.metadata.identification.AssociationType;
 import org.opengis.metadata.identification.InitiativeType;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -41,6 +43,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_AggregateInformation", propOrder={
     "aggregateDataSetName", "aggregateDataSetIdentifier", "associationType", "initiativeType"
 })

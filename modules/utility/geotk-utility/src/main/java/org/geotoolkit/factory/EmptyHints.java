@@ -19,6 +19,7 @@ package org.geotoolkit.factory;
 
 import java.util.Map;
 import java.awt.RenderingHints;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -30,6 +31,7 @@ import java.awt.RenderingHints;
  * @since 2.4
  * @module
  */
+@Immutable
 final class EmptyHints extends Hints {
     /**
      * Creates an empty instance.

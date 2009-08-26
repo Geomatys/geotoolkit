@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.TopologicalConsistency;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Correctness of the explicitly encoded topological characteristics of the dataset as
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.TopologicalConsistency;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultTopologicalConsistency extends AbstractLogicalConsistency
         implements TopologicalConsistency
 {

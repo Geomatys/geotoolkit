@@ -22,7 +22,10 @@ package org.geotoolkit.metadata.iso.identification;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.identification.ServiceIdentification;
+
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -37,6 +40,7 @@ import org.opengis.metadata.identification.ServiceIdentification;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_ServiceIdentification")
 @XmlRootElement(name = "MD_ServiceIdentification")
 public class DefaultServiceIdentification extends AbstractIdentification implements ServiceIdentification {

@@ -34,6 +34,7 @@ import org.opengis.metadata.acquisition.Requirement;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -46,6 +47,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "citation",
     "identifier",

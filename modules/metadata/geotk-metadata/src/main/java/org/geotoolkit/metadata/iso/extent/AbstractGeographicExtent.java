@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.extent.GeographicExtent;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -40,6 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "EX_GeographicExtent")
 @XmlSeeAlso({DefaultGeographicBoundingBox.class, DefaultBoundingPolygon.class, DefaultGeographicDescription.class})
 @XmlRootElement(name = "EX_GeographicExtent")

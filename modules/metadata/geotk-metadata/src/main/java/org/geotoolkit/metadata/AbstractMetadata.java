@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -37,6 +39,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public abstract class AbstractMetadata {
     /**
      * The logger for metadata implementation.

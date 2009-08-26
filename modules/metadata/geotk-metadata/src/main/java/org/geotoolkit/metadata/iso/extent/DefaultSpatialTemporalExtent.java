@@ -24,8 +24,11 @@ import java.util.Collection;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.extent.SpatialTemporalExtent;
+
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -41,6 +44,7 @@ import org.opengis.metadata.extent.SpatialTemporalExtent;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlRootElement(name = "EX_SpatialTemporalExtent")
 public class DefaultSpatialTemporalExtent extends DefaultTemporalExtent implements SpatialTemporalExtent {
     /**

@@ -32,6 +32,7 @@ import org.opengis.util.LocalName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
@@ -47,6 +48,7 @@ import org.geotoolkit.xml.Namespaces;
  * @since 2.1
  * @module
  */
+@Immutable
 @XmlRootElement(name = "LocalName")
 public class DefaultLocalName extends AbstractName implements LocalName {
     /**

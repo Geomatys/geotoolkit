@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.ApplicationSchemaInformation;
 import org.opengis.metadata.citation.Citation;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information about the application schema used to build the dataset.
@@ -41,6 +43,7 @@ import org.opengis.metadata.citation.Citation;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder = {
     "name",
     "schemaLanguage",

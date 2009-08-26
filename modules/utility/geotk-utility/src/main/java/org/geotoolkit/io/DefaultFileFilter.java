@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.regex.Pattern;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultFileFilter extends javax.swing.filechooser.FileFilter
         implements FileFilter, FilenameFilter
 {

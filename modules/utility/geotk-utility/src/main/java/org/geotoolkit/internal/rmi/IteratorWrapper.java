@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.geotoolkit.internal.io.ObjectStream;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -42,6 +43,7 @@ import org.geotoolkit.internal.io.ObjectStream;
  * @since 3.00
  * @module
  */
+@ThreadSafe
 final class IteratorWrapper<E> implements ObjectStream<E> { // Must NOT implement Serializable
     /**
      * The wrapped iterator.

@@ -30,6 +30,8 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.jaxb.uom.MeasureInPixelAdapter;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Axis properties.
@@ -42,6 +44,7 @@ import org.geotoolkit.internal.jaxb.uom.MeasureInPixelAdapter;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "dimensionName", "dimensionSize", "resolution"
 })

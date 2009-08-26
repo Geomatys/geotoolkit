@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.Usability;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Degree of adherence of a dataset to a specific set of user requirements.
@@ -34,6 +36,7 @@ import org.opengis.metadata.quality.Usability;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlRootElement(name = "QE_Usability")
 public class DefaultUsability extends AbstractElement implements Usability {
     /**

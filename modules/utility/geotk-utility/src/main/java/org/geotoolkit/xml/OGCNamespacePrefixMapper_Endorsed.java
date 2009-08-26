@@ -18,6 +18,7 @@
 package org.geotoolkit.xml;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -31,6 +32,7 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
  * @since 2.5
  * @module
  */
+@Immutable
 final class OGCNamespacePrefixMapper_Endorsed extends NamespacePrefixMapper {
     /**
      * If set, this namespace will be the root of the document with no prefix.

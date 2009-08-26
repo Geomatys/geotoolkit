@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.Completeness;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Presence and absence of features, their attributes and their relationships.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.Completeness;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class AbstractCompleteness extends AbstractElement implements Completeness {
     /**
      * Serial number for interoperability with different versions.

@@ -57,7 +57,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @module
  */
 @Static
-@ThreadSafe
+@ThreadSafe(concurrent = false)
 public final class AuthorityFactoryFinder extends FactoryFinder {
     /**
      * The authority names. Will be created only when first needed.

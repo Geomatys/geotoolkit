@@ -28,6 +28,8 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Information about an image's suitability for use.
@@ -40,6 +42,7 @@ import org.opengis.metadata.content.ImagingCondition;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_ImageDescription", propOrder={
     "illuminationElevationAngle",
     "illuminationAzimuthAngle",

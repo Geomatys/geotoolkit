@@ -32,6 +32,7 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
@@ -280,6 +281,7 @@ public abstract class AbstractName implements GenericName, Serializable {
      *
      * @since 2.1
      */
+    @Immutable
     private static final class International extends SimpleInternationalString {
         /**
          * Serial number for interoperability with different versions.

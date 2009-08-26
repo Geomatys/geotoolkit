@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.metadata.maintenance.ScopeDescription;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -42,6 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "dataset",
     "other"

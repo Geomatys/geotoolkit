@@ -38,6 +38,8 @@ import org.opengis.metadata.identification.Progress;
 import org.opengis.metadata.identification.Usage;
 import org.opengis.metadata.maintenance.MaintenanceInformation;
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -52,6 +54,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_Identification", propOrder={
     "citation", "abstract", "purpose", "credits", "status", "pointOfContacts",
     "resourceMaintenances", "graphicOverviews", "resourceFormats", "descriptiveKeywords",

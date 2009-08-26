@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.metadata.extent.TemporalExtent;
+
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -44,6 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "EX_TemporalExtent")
 @XmlSeeAlso({DefaultSpatialTemporalExtent.class})
 @XmlRootElement(name = "EX_TemporalExtent")

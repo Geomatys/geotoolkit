@@ -28,6 +28,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.constraint.Classification;
 import org.opengis.metadata.constraint.SecurityConstraints;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Handling restrictions imposed on the resource for national security or similar security concerns.
@@ -40,6 +42,7 @@ import org.opengis.metadata.constraint.SecurityConstraints;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(name = "MD_SecurityConstraints", propOrder={
     "classification",
     "userNote",

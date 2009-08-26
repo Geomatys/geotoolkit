@@ -26,6 +26,8 @@ import org.opengis.util.TypeName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.MemberName;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * The name of an {@linkplain MemberName attribute} type.
@@ -37,6 +39,7 @@ import org.opengis.util.MemberName;
  * @since 3.00
  * @module
  */
+@Immutable
 @XmlRootElement(name = "TypeName")
 public class DefaultTypeName extends DefaultLocalName implements TypeName {
     /**

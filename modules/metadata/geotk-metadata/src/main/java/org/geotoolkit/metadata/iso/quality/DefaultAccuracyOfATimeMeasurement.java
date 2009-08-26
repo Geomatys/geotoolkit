@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.AccuracyOfATimeMeasurement;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Correctness of the temporal references of an item (reporting of error in time measurement).
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.AccuracyOfATimeMeasurement;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultAccuracyOfATimeMeasurement extends DefaultTemporalAccuracy
         implements AccuracyOfATimeMeasurement
 {

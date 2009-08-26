@@ -22,6 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import org.opengis.metadata.quality.TemporalValidity;
 
+import org.geotoolkit.lang.ThreadSafe;
+
 
 /**
  * Validity of data specified by the scope with respect to time.
@@ -33,6 +35,7 @@ import org.opengis.metadata.quality.TemporalValidity;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DefaultTemporalValidity extends DefaultTemporalAccuracy implements TemporalValidity {
     /**
      * Serial number for interoperability with different versions.

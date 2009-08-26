@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 
@@ -45,6 +46,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "fees",
     "plannedAvailableDateTime",

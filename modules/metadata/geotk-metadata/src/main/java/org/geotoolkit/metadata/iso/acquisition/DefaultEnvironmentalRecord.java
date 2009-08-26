@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -39,6 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 @XmlType(propOrder={
     "averageAirTemperature",
     "maxRelativeHumidity",

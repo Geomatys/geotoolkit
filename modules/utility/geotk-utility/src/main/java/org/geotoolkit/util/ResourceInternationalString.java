@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
+import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
 
@@ -56,6 +57,7 @@ import org.opengis.util.InternationalString;
  * @since 2.1
  * @module
  */
+@Immutable
 public class ResourceInternationalString extends AbstractInternationalString implements Serializable {
     /**
      * Serial number for interoperability with different versions.
