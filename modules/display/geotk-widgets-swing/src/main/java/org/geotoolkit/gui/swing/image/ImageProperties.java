@@ -49,6 +49,7 @@ import javax.media.jai.PropertyChangeEmitter;
 import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.OperationDescriptor;
 
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -56,9 +57,9 @@ import static java.awt.GridBagConstraints.*;
 
 
 /**
- * A panel showing image properties. An image can actually be any instance of
+ * A panel showing the properties of an image. An image can actually be any instance of
  * {@link PropertySource}, {@link RenderedImage} or {@link RenderableImage} interfaces.
- * The method {@link PropertySource#getProperty} will be invoked only when a property
+ * The method {@link PropertySource#getProperty(String)} will be invoked only when a property
  * is first required, in order to avoid the computation of deferred properties before
  * needed. If the source implements also the {@link PropertyChangeEmitter} interface,
  * then this widget will register a listener for property changes. The changes can be
@@ -287,7 +288,7 @@ public class ImageProperties extends JPanel {
     }
 
     /**
-     * Set the {@linkplain PropertySource property source} for this widget. If the source is a
+     * Sets the {@linkplain PropertySource property source} for this widget. If the source is a
      * {@linkplain RenderedImage rendered} or a {@linkplain RenderableImage renderable} image,
      * then the widget will be set as if the most specific flavor of {@code setImage(...)}
      * was invoked.
@@ -311,7 +312,7 @@ public class ImageProperties extends JPanel {
     }
 
     /**
-     * Set the specified {@linkplain RenderableImage renderable image} as the properties source.
+     * Sets the specified {@linkplain RenderableImage renderable image} as the properties source.
      *
      * @param image The image, or {@code null} if none.
      */
@@ -329,7 +330,7 @@ public class ImageProperties extends JPanel {
     }
 
     /**
-     * Set the specified {@linkplain RenderedImage rendered image} as the properties source.
+     * Sets the specified {@linkplain RenderedImage rendered image} as the properties source.
      *
      * @param image The image, or {@code null} if none.
      */
@@ -435,23 +436,7 @@ public class ImageProperties extends JPanel {
             return resources.getString(Vocabulary.Keys.UNDEFINED);
         }
         final String name = Classes.getShortClassName(object);
-        final int length = name.length();
-        final StringBuilder buffer = new StringBuilder(length + 8);
-        int last = 0;
-        for (int i=1; i<=length; i++) {
-            if (i==length ||
-                (Character.isUpperCase(name.charAt(i  )) &&
-                 Character.isLowerCase(name.charAt(i-1))))
-            {
-                final int pos = buffer.length();
-                buffer.append(name.substring(last, i));
-                buffer.append(' ');
-                if (pos!=0 && last<length-1 && Character.isLowerCase(name.charAt(last+1))) {
-                    buffer.setCharAt(pos, Character.toLowerCase(buffer.charAt(pos)));
-                }
-                last = i;
-            }
-        }
+        final StringBuilder buffer = StringUtilities.separateWords(name);
         long numColors = 0;
         if (object instanceof IndexColorModel) {
             numColors = ((IndexColorModel) object).getMapSize();

@@ -53,6 +53,15 @@ public final class StringUtilitiesTest {
     }
 
     /**
+     * Tests the {@link StringUtilities#separateWords} method.
+     */
+    @Test
+    public void testSeparateWords() {
+        assertEquals("Pixel interleaved sample model ",
+                StringUtilities.separateWords("PixelInterleavedSampleModel").toString());
+    }
+
+    /**
      * Tests the {@link StringUtilities#splitLines} method.
      */
     @Test

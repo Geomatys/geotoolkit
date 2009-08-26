@@ -100,6 +100,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int APPLY = 9;
 
         /**
+         * Attribut
+         */
+        public static final int ATTRIBUT = 301;
+
+        /**
          * Authority
          */
         public static final int AUTHORITY = 10;
@@ -920,6 +925,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int MESSAGE = 173;
 
         /**
+         * Metadata
+         */
+        public static final int METADATA = 302;
+
+        /**
          * Method
          */
         public static final int METHOD = 174;
@@ -1003,6 +1013,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Oblique Mercator projection
          */
         public static final int OBLIQUE_MERCATOR_PROJECTION = 190;
+
+        /**
+         * Occurence
+         */
+        public static final int OCCURENCE = 303;
 
         /**
          * Ok
@@ -1483,6 +1498,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Universal Time (UTC)
          */
         public static final int UTC = 285;
+
+        /**
+         * Valid values
+         */
+        public static final int VALID_VALUES = 304;
 
         /**
          * Value

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import java.util.Enumeration;
+
 
 /**
  * Defines the requirements for an object that can be used as a tree node in a
@@ -24,7 +26,7 @@ package org.geotoolkit.gui.swing.tree;
  * Swing's interface, which seems to have been forgotten in J2SE.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.0
  * @module
@@ -36,4 +38,12 @@ public interface TreeNode extends javax.swing.tree.TreeNode {
      * @return the Object stored at this node by the user
      */
     Object getUserObject();
+
+    /**
+     * Returns the children of this node as an {@code Enumeration}.
+     *
+     * @return The childrens.
+     */
+    @Override
+    Enumeration<? extends javax.swing.tree.TreeNode> children();
 }

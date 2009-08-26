@@ -121,6 +121,37 @@ public final class StringUtilities {
     }
 
     /**
+     * Returns the given identifier (e.g. a class name) with spaces inserted after words.
+     * A word begin with a upper-case character following a lower-case character. For
+     * example if the given identifier is {@code "PixelInterleavedSampleModel"}, then this
+     * method returns {@code "Pixel interleaved sample model "} (note the trailing space).
+     *
+     * @param  identifier An identifier with no space, words beging with an upper-case character.
+     * @return The identifier with spaces inserted after what looks like words.
+     *
+     * @since 3.03
+     */
+    public static StringBuilder separateWords(final CharSequence identifier) {
+        final int length = identifier.length();
+        final StringBuilder buffer = new StringBuilder(length + 8);
+        int last = 0;
+        for (int i=1; i<=length; i++) {
+            if (i == length ||
+                (Character.isUpperCase(identifier.charAt(i  )) &&
+                 Character.isLowerCase(identifier.charAt(i-1))))
+            {
+                final int pos = buffer.length();
+                buffer.append(identifier, last, i).append(' ');
+                if (pos!=0 && last<length-1 && Character.isLowerCase(identifier.charAt(last+1))) {
+                    buffer.setCharAt(pos, Character.toLowerCase(buffer.charAt(pos)));
+                }
+                last = i;
+            }
+        }
+        return buffer;
+    }
+
+    /**
      * Returns {@code true} if the second string is an acronym of the first string. An
      * acronym is a sequence of {@linkplain Character#isLetterOrDigit letters or digits}
      * built from at least one character of each word in the complete group. More than

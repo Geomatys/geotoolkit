@@ -90,7 +90,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     private Double cloudCoverPercentage;
 
     /**
-     * Image distributors code that identifies the level of radiometric and geometric
+     * Image distributor's code that identifies the level of radiometric and geometric
      * processing that has been applied.
      */
     private Identifier processingLevelCode;
@@ -211,7 +211,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * Returns the specifies the image quality.
+     * Returns the identifier that specifies the image quality.
      */
     @Override
     @XmlElement(name = "imageQualityCode")
@@ -220,7 +220,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * Sets the specifies the image quality.
+     * Sets the identifier that specifies the image quality.
      *
      * @param newValue The new image quality code.
      */
@@ -251,7 +251,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * Returns the image distributors code that identifies the level of radiometric and geometric
+     * Returns the image distributor's code that identifies the level of radiometric and geometric
      * processing that has been applied.
      */
     @Override
@@ -261,7 +261,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * Sets the image distributors code that identifies the level of radiometric and geometric
+     * Sets the image distributor's code that identifies the level of radiometric and geometric
      * processing that has been applied.
      *
      * @param newValue The new processing level code.
@@ -312,7 +312,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * Returns theiIndication of whether or not the radiometric calibration information for
+     * Returns the indication of whether or not the radiometric calibration information for
      * generating the radiometrically calibrated standard data product is available.
      */
     @Override

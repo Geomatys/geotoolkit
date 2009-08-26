@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import java.util.Enumeration;
+
 
 /**
  * General-purpose node in a tree data structure. This default implementation implements
@@ -25,7 +27,7 @@ package org.geotoolkit.gui.swing.tree;
  * implementation but seems to have been forgotten in all Swing interfaces.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.03
  *
  * @since 2.0
  * @module
@@ -65,5 +67,14 @@ public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeN
      */
     public DefaultMutableTreeNode(Object userObject, boolean allowsChildren) {
         super(userObject, allowsChildren);
+    }
+
+    /**
+     * Returns the children of this node as an {@code Enumeration}.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Enumeration<? extends javax.swing.tree.TreeNode> children() {
+        return super.children();
     }
 }

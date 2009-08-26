@@ -196,7 +196,7 @@ public final class Trees {
             target = new NamedTreeNode(label, userObject, allowsChildren);
         }
         @SuppressWarnings("unchecked")
-        final Enumeration<TreeNode> children = node.children();
+        final Enumeration<? extends TreeNode> children = node.children();
         if (children != null) {
             while (children.hasMoreElements()) {
                 target.add(copy(children.nextElement()));

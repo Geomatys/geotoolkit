@@ -256,23 +256,26 @@ public final class MetadataStandard {
      *   ISO_19115.asTypeMap(DefaultCitation.class, ELEMENT_TYPE, UML_IDENTIFIER).get("alternateTitle");
      * }
      *
-     * @param  implementation The implementation class.
-     * @param  types Whatever the values should be property types, the element types
+     * @param  type The interface or implementation class.
+     * @param  typeValues Whatever the values should be property types, the element types
      *         (same as property types except for collections) or the declaring class.
      * @param  keyNames The string representation of map keys.
      * @return The types for the given property.
-     * @throws ClassCastException if the specified implementation class do
-     *         not implements a metadata interface of the expected package.
+     * @throws ClassCastException if the specified interface or implementation class does
+     *         not extend or implement a metadata interface of the expected package.
      *
      * @since 3.03
      */
-    public Map<String,Class<?>> asTypeMap(final Class<?> implementation,
-            final TypeValuePolicy types, final KeyNamePolicy keyNames)
+    public Map<String,Class<?>> asTypeMap(Class<?> type,
+            final TypeValuePolicy typeValues, final KeyNamePolicy keyNames)
     {
-        ensureNonNull("implementation", implementation);
-        ensureNonNull("types",          types);
+        ensureNonNull("implementation", type);
+        ensureNonNull("typeValues",     typeValues);
         ensureNonNull("keyNames",       keyNames);
-        return new TypeMap(getAccessor(implementation), types, keyNames);
+        if (type.isInterface()) {
+            type = getImplementation(type);
+        }
+        return new TypeMap(getAccessor(type), typeValues, keyNames);
     }
 
     /**
