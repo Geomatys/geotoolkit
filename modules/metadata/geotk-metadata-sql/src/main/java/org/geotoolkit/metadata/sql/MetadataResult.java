@@ -25,7 +25,7 @@ import java.util.logging.LogRecord;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.internal.jdbc.StatementEntry;
+import org.geotoolkit.internal.sql.StatementEntry;
 
 
 /**

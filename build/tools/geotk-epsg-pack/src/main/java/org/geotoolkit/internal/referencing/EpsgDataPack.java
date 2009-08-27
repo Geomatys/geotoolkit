@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.internal.StringUtilities;
-import org.geotoolkit.internal.jdbc.ScriptRunner;
+import org.geotoolkit.internal.sql.ScriptRunner;
 
 
 /**

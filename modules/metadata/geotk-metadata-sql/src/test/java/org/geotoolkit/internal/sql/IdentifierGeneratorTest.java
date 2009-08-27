@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jdbc;
+package org.geotoolkit.internal.sql;
 
 import java.io.File;
 import java.sql.Statement;
@@ -25,7 +25,7 @@ import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.internal.jdbc.IdentifierGenerator.SEPARATOR;
+import static org.geotoolkit.internal.sql.IdentifierGenerator.SEPARATOR;
 
 
 /**

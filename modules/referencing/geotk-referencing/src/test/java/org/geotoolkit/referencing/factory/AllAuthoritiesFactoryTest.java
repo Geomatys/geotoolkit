@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.jdbc.DefaultDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.factory.Hints;
 
 import org.junit.*;

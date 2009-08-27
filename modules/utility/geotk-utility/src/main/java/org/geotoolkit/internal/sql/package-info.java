@@ -30,4 +30,4 @@
  * @since 3.00
  * @module
  */
-package org.geotoolkit.internal.jdbc;
+package org.geotoolkit.internal.sql;

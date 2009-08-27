@@ -38,9 +38,9 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.jdbc.DefaultDataSource;
-import org.geotoolkit.internal.jdbc.IdentifierGenerator;
-import org.geotoolkit.internal.jdbc.StatementEntry;
+import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.internal.sql.IdentifierGenerator;
+import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 

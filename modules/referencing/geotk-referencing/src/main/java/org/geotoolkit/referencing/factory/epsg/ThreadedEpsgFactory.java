@@ -53,8 +53,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.JNDI;
-import org.geotoolkit.internal.jdbc.Dialect;
-import org.geotoolkit.internal.jdbc.DefaultDataSource;
+import org.geotoolkit.internal.sql.Dialect;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.lang.ThreadSafe;
 

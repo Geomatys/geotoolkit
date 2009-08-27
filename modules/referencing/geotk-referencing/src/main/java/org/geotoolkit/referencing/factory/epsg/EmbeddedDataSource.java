@@ -26,7 +26,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
 
-import org.geotoolkit.internal.jdbc.DefaultDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 
 
 /**

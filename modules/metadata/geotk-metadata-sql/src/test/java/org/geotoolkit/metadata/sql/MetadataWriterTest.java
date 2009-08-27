@@ -30,7 +30,7 @@ import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
-import org.geotoolkit.internal.jdbc.DefaultDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 
 import org.junit.*;
 import static org.junit.Assert.*;
