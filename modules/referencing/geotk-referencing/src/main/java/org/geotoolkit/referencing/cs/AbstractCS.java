@@ -42,6 +42,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -79,6 +80,7 @@ import org.geotoolkit.xml.Namespaces;
  * @since 2.0
  * @module
  */
+@Immutable
 public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSystem {
     /**
      * Serial number for interoperability with different versions.

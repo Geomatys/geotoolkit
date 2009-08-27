@@ -24,6 +24,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.PlanarProjection;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -56,6 +57,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.4
  * @module
  */
+@Immutable
 public class Stereographic extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.

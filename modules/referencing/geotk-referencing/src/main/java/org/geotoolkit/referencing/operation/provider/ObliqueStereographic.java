@@ -21,6 +21,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -44,6 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.4
  * @module
  */
+@Immutable
 public class ObliqueStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.

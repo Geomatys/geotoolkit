@@ -32,6 +32,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
@@ -67,6 +68,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * @since 2.1
  * @module
  */
+@Immutable
 public class Molodensky extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

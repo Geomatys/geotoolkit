@@ -22,7 +22,10 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.awt.geom.AffineTransform;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
+
 import static java.lang.Math.*;
 
 
@@ -38,6 +41,7 @@ import static java.lang.Math.*;
  * @since 3.00
  * @module
  */
+@Immutable
 abstract class CassiniOrMercator extends UnitaryProjection {
     /**
      * For cross-version compatibility.

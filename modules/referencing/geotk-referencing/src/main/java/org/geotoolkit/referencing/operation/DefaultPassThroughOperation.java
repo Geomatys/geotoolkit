@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.PassThroughOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
@@ -43,6 +44,7 @@ import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultPassThroughOperation extends DefaultSingleOperation implements PassThroughOperation {
     /**
      * Serial number for interoperability with different versions.

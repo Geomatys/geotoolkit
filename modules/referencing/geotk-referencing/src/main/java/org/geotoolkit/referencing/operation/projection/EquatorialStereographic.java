@@ -21,6 +21,8 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import org.geotoolkit.lang.Immutable;
+
 import static java.lang.Math.*;
 
 
@@ -40,6 +42,7 @@ import static java.lang.Math.*;
  * @since 2.0
  * @module
  */
+@Immutable
 public class EquatorialStereographic extends Stereographic {
     /**
      * For cross-version compatibility.
@@ -104,6 +107,7 @@ public class EquatorialStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
+    @Immutable
     static final class Spherical extends EquatorialStereographic {
         /**
          * For cross-version compatibility.

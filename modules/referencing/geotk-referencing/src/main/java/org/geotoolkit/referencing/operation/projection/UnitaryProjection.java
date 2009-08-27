@@ -41,6 +41,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.measure.Latitude;
@@ -110,6 +111,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @since 3.00
  * @module
  */
+@Immutable
 public abstract class UnitaryProjection extends AbstractMathTransform2D implements Serializable {
     /**
      * For cross-version compatibility.

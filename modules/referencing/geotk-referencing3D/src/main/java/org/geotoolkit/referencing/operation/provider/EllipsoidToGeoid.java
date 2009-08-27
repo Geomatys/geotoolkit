@@ -27,6 +27,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
@@ -50,6 +51,7 @@ import static org.geotoolkit.referencing.operation.transform.EarthGravitationalM
  * @since 2.3
  * @module
  */
+@Immutable
 public class EllipsoidToGeoid extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

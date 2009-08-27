@@ -37,6 +37,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -56,6 +57,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         implements ParameterDescriptorGroup
 {

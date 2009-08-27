@@ -42,6 +42,7 @@ import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -63,6 +64,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultSingleOperation extends AbstractCoordinateOperation implements SingleOperation {
     /**
      * Serial number for interoperability with different versions.

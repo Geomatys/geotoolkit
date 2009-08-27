@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Base class for conical map projections.
@@ -41,6 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.1
  * @module
  */
+@Immutable
 public class DefaultConicProjection extends DefaultProjection implements ConicProjection {
     /**
      * Serial number for interoperability with different versions.

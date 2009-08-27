@@ -30,6 +30,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
@@ -90,6 +91,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 1.0
  * @module
  */
+@Immutable
 public class LambertConformal extends UnitaryProjection {
     /**
      * For cross-version compatibility.
@@ -358,6 +360,7 @@ public class LambertConformal extends UnitaryProjection {
      * @since 2.1
      * @module
      */
+    @Immutable
     static final class Spherical extends LambertConformal {
         /**
          * For cross-version compatibility.

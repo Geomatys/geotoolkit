@@ -758,7 +758,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
      */
     @Override
     public CompoundCRS createCompoundCRS(final Map<String,?> properties,
-            final CoordinateReferenceSystem[] elements) throws FactoryException
+            final CoordinateReferenceSystem... elements) throws FactoryException
     {
         CompoundCRS crs;
         try {

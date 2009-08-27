@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.CylindricalProjection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Base class for cylindrical map projections.
@@ -41,6 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultCylindricalProjection extends DefaultProjection implements CylindricalProjection {
     /**
      * Serial number for interoperability with different versions.

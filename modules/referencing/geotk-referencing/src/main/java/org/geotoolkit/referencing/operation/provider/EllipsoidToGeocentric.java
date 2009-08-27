@@ -31,6 +31,7 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -60,6 +61,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @since 2.0
  * @module
  */
+@Immutable
 public class EllipsoidToGeocentric extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

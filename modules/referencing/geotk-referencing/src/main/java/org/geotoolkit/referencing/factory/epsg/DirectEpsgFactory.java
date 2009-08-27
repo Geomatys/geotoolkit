@@ -84,6 +84,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -116,6 +117,7 @@ import org.geotoolkit.util.Version;
  * @since 1.2
  * @module
  */
+@ThreadSafe(concurrent = false)
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

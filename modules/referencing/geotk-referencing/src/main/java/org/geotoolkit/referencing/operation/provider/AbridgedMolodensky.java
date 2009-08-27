@@ -23,6 +23,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.transform.MolodenskyTransform;
@@ -49,6 +50,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * @since 2.1
  * @module
  */
+@Immutable
 public class AbridgedMolodensky extends Molodensky {
     /**
      * Serial number for interoperability with different versions.

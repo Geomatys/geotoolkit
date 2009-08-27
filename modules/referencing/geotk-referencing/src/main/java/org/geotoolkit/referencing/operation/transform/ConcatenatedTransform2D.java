@@ -21,6 +21,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Concatenated transform in which the resulting transform is two-dimensional.
@@ -31,6 +33,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @since 1.2
  * @module
  */
+@Immutable
 final class ConcatenatedTransform2D extends ConcatenatedTransform implements MathTransform2D {
     /**
      * Serial number for interoperability with different versions.

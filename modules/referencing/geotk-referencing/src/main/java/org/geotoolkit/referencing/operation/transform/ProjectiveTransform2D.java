@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.geotoolkit.lang.Immutable;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -31,6 +32,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @since 2.5
  * @module
  */
+@Immutable
 final class ProjectiveTransform2D extends ProjectiveTransform implements MathTransform2D {
     /**
      * For cross-version compatibility.

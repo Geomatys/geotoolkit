@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -85,6 +86,7 @@ import org.geotoolkit.util.XArrays;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class DatumAliases extends ReferencingFactory implements DatumFactory {
     /**
      * The default file for alias table.

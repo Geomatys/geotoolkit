@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -43,9 +44,8 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * @since 2.0
  * @module
  */
-public class IdentityTransform extends AbstractMathTransform
-        implements LinearTransform, Serializable
-{
+@Immutable
+public class IdentityTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
      * Serial number for interoperability with different versions.
      */

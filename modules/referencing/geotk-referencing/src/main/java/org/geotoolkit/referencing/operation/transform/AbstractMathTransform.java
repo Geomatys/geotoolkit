@@ -84,7 +84,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @since 1.2
  * @module
  */
-@ThreadSafe
+@ThreadSafe(concurrent = true)
 public abstract class AbstractMathTransform extends FormattableObject
         implements MathTransform, Parameterized
 {

@@ -40,6 +40,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -72,9 +73,8 @@ import org.geotoolkit.xml.Namespaces;
  * @since 2.0
  * @module
  */
-public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject
-        implements CoordinateSystemAxis
-{
+@Immutable
+public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implements CoordinateSystemAxis {
     /**
      * Serial number for interoperability with different versions.
      */

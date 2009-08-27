@@ -31,6 +31,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.geometry.DirectPosition2D;
 
@@ -49,6 +50,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
  * @since 3.00
  * @module
  */
+@Immutable
 public class GridTransform2D extends GridTransform implements MathTransform2D {
     /**
      * Serial number for interoperability with different versions.
@@ -137,6 +139,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
      * @since 3.00
      * @module
      */
+    @Immutable
     private final class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {
         /**
          * Serial number for interoperability with different versions.

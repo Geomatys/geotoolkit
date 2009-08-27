@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.MatrixParameters;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -103,6 +104,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @since 1.2
  * @module
  */
+@Immutable
 public class ProjectiveTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
      * Serial number for interoperability with different versions.

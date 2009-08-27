@@ -32,6 +32,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.FactoryException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
@@ -68,6 +69,7 @@ import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
  * @since 2.3
  * @module
  */
+@Immutable
 public class EarthGravitationalModel extends VerticalTransform {
     /**
      * Pre-computed values of some square roots.

@@ -27,6 +27,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 
@@ -62,6 +64,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
+@Immutable
 abstract class AuthorityFactoryProxy {
     /**
      * Creates a new proxy.
@@ -180,6 +183,7 @@ abstract class AuthorityFactoryProxy {
      * @since 3.00
      * @module
      */
+    @Immutable
     private static final class Geotoolkit extends AuthorityFactoryProxy {
         /**
          * The authority factory on which to delegates.
@@ -230,6 +234,7 @@ abstract class AuthorityFactoryProxy {
      * @since 2.4
      * @module
      */
+    @Immutable
     private static final class Default extends AuthorityFactoryProxy {
         /**
          * The argument types of {@code createFoo} methods.
@@ -316,6 +321,7 @@ abstract class AuthorityFactoryProxy {
      * @since 2.4
      * @module
      */
+    @Immutable
     private static class CRS extends AuthorityFactoryProxy {
         /**
          * The authority factory on which to delegates.
@@ -349,6 +355,7 @@ abstract class AuthorityFactoryProxy {
      * @since 2.4
      * @module
      */
+    @Immutable
     private static final class Geographic extends CRS {
         protected Geographic(final CRSAuthorityFactory factory) {
             super(factory);
@@ -373,6 +380,7 @@ abstract class AuthorityFactoryProxy {
      * @since 2.4
      * @module
      */
+    @Immutable
     private static final class Projected extends CRS {
         protected Projected(final CRSAuthorityFactory factory) {
             super(factory);

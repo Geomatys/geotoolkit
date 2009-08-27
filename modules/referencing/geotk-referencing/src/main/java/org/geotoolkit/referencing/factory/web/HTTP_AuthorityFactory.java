@@ -26,6 +26,7 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -48,6 +49,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

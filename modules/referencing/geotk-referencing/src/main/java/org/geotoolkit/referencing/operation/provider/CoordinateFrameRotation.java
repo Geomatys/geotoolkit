@@ -19,6 +19,8 @@ package org.geotoolkit.referencing.operation.provider;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 
 
@@ -33,6 +35,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
  * @since 2.2
  * @module
  */
+@Immutable
 public class CoordinateFrameRotation extends PositionVector7Param {
     /**
      * Serial number for interoperability with different versions.

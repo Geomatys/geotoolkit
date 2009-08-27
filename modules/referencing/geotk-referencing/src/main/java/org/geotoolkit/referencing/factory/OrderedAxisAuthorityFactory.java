@@ -32,6 +32,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -105,6 +106,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
+@ThreadSafe
 public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         implements CSAuthorityFactory, CRSAuthorityFactory, Comparator<CoordinateSystemAxis>
 {

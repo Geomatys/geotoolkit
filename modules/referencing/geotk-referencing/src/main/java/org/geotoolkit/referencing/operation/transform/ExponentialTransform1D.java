@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -59,9 +60,8 @@ import static java.lang.Double.doubleToLongBits;
  * @since 2.0
  * @module
  */
-public class ExponentialTransform1D extends AbstractMathTransform
-        implements MathTransform1D, Serializable
-{
+@Immutable
+public class ExponentialTransform1D extends AbstractMathTransform implements MathTransform1D, Serializable {
     /**
      * Serial number for interoperability with different versions.
      */

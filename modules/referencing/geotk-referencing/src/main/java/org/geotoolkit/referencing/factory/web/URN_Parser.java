@@ -25,6 +25,7 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.util.Version;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -32,7 +33,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 
 
 /**
- * Split a URN into its {@link #type} and {@link #version} parts for {@link URN_AuthorityFactory}.
+ * Splits a URN into its {@link #type} and {@link #version} parts for {@link URN_AuthorityFactory}.
  * This class must be immutable in order to avoid the need for synchronization in the authority
  * factory.
  *
@@ -42,6 +43,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  * @since 2.4
  * @module
  */
+@Immutable
 final class URN_Parser {
     /**
      * The begining parts of the URN, typically {@code "urn:ogc:def:"} and {@code "urn:x-ogc:def:"}.

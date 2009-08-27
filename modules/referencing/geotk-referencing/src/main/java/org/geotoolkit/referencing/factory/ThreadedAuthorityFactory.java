@@ -28,6 +28,7 @@ import org.opengis.referencing.FactoryException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.FactoryUtilities;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -49,6 +50,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * @since 2.1
  * @module
  */
+@ThreadSafe(concurrent = true)
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created

@@ -25,6 +25,8 @@ import org.opengis.referencing.cs.PolarCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A two-dimensional coordinate system in which position is specified by the distance from the
@@ -45,6 +47,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultPolarCS extends AbstractCS implements PolarCS {
     /**
      * Serial number for interoperability with different versions.

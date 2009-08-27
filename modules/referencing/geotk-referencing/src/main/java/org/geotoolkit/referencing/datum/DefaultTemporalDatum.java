@@ -26,8 +26,10 @@ import java.util.Map;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.datum.TemporalDatum;
+
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -39,6 +41,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum {
     /**
      * Serial number for interoperability with different versions.

@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.ReferenceSystem;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -44,6 +46,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.1
  * @module
  */
+@Immutable
 public class AbstractReferenceSystem extends AbstractIdentifiedObject implements ReferenceSystem {
     /**
      * Serial number for interoperability with different versions.

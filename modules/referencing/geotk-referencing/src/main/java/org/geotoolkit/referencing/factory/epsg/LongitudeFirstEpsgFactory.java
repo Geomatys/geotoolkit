@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.3
  * @module
  */
+@ThreadSafe
 public class LongitudeFirstEpsgFactory extends OrderedAxisAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, CoordinateOperationAuthorityFactory, DatumAuthorityFactory
 {

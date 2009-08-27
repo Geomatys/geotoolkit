@@ -24,6 +24,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
+
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
 
@@ -36,9 +38,8 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @since 1.2
  * @module
  */
-final class ConcatenatedTransformDirect2D extends ConcatenatedTransformDirect
-        implements MathTransform2D
-{
+@Immutable
+final class ConcatenatedTransformDirect2D extends ConcatenatedTransformDirect implements MathTransform2D {
     /**
      * Serial number for interoperability with different versions.
      */

@@ -30,6 +30,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 
@@ -77,6 +78,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 2.1
  * @module
  */
+@Immutable
 public class AlbersEqualArea extends UnitaryProjection {
     /**
      * For cross-version compatibility.

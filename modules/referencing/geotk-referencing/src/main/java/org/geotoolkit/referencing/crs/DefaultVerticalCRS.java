@@ -28,6 +28,7 @@ import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.VerticalDatum;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
@@ -59,6 +60,7 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS {
     /**
      * Serial number for interoperability with different versions.

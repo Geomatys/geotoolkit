@@ -21,6 +21,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A pass-through transform in the two-dimensional case.
@@ -31,6 +33,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @since 3.00
  * @module
  */
+@Immutable
 final class PassThroughTransform2D extends PassThroughTransform implements MathTransform2D {
     /**
      * Serial number for interoperability with different versions.

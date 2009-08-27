@@ -30,6 +30,7 @@ import org.opengis.referencing.datum.PrimeMeridian;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -44,6 +45,7 @@ import org.geotoolkit.util.Utilities;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements PrimeMeridian {
     /**
      * Serial number for interoperability with different versions.

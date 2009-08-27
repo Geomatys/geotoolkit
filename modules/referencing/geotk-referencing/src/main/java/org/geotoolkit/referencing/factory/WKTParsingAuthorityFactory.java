@@ -48,6 +48,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -72,6 +73,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.00
  * @module
  */
+@ThreadSafe(concurrent = false)
 public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
         implements CRSAuthorityFactory, CSAuthorityFactory, DatumAuthorityFactory
 {

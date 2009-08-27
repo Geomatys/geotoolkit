@@ -30,6 +30,8 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Lambert Azimuthal Equal Area projection (EPSG codes 9820, 9821). See the
@@ -56,6 +58,7 @@ import org.opengis.referencing.operation.MathTransform2D;
  * @since 2.4
  * @module
  */
+@Immutable
 public class LambertAzimuthalEqualArea extends UnitaryProjection {
     /**
      * For cross-version compatibility.
@@ -381,6 +384,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      * @since 2.4
      * @module
      */
+    @Immutable
     static final class Spherical extends LambertAzimuthalEqualArea {
         /**
          * For cross-version compatibility.

@@ -41,6 +41,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     /**
      * Serial number for interoperability with different versions.

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation.projection;
 
 import static java.lang.Math.*;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 
 
@@ -65,6 +66,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.4
  * @module
  */
+@Immutable
 public class ObliqueStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.

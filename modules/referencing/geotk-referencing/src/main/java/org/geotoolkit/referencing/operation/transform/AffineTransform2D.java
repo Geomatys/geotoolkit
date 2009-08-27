@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
@@ -64,6 +65,7 @@ import org.geotoolkit.util.Cloneable;
  * @since 1.2
  * @module
  */
+@Immutable
 public class AffineTransform2D extends XAffineTransform
         implements MathTransform2D, LinearTransform, Parameterized, Formattable, Cloneable
 {

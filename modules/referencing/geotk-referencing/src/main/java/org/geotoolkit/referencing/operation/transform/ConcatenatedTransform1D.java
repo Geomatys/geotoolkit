@@ -17,12 +17,14 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.geotoolkit.geometry.DirectPosition1D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+
+import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.geometry.DirectPosition1D;
 
 
 /**
@@ -34,6 +36,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @since 2.0
  * @module
  */
+@Immutable
 final class ConcatenatedTransform1D extends ConcatenatedTransform implements MathTransform1D {
     /**
      * Serial number for interoperability with different versions.

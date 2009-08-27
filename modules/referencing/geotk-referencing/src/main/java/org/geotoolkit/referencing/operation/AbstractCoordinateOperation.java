@@ -37,6 +37,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
@@ -70,9 +71,8 @@ import org.geotoolkit.internal.referencing.Semaphores;
  * @since 1.2
  * @module
  */
-public class AbstractCoordinateOperation extends AbstractIdentifiedObject
-        implements CoordinateOperation
-{
+@Immutable
+public class AbstractCoordinateOperation extends AbstractIdentifiedObject implements CoordinateOperation {
     /**
      * Serial number for interoperability with different versions.
      */

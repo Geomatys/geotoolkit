@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.PlanarProjection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Base class for for azimuthal (or planar) map projections.
@@ -41,6 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultPlanarProjection extends DefaultProjection implements PlanarProjection {
     /**
      * Serial number for interoperability with different versions.

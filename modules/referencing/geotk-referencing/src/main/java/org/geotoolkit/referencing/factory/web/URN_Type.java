@@ -27,6 +27,8 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * An "object type" in a URN.
@@ -37,6 +39,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
  * @since 2.4
  * @module
  */
+@Immutable
 final class URN_Type {
     /**
      * List of object types. An object type is for example {@code "crs"} in

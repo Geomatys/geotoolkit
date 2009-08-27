@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 
 import static java.util.Collections.singletonMap;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
@@ -72,6 +73,7 @@ import static org.geotoolkit.resources.Vocabulary.formatInternational;
  * @level advanced
  * @module
  */
+@ThreadSafe
 public abstract class AbstractCoordinateOperationFactory extends ReferencingFactory
         implements CoordinateOperationFactory
 {

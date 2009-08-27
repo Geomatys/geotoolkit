@@ -42,6 +42,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -59,6 +60,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
+@Immutable
 public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDerivedCRS {
     /**
      * Serial number for interoperability with different versions.

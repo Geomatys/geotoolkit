@@ -34,6 +34,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
@@ -162,6 +163,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * @since 2.1
  * @module
  */
+@Immutable
 public class ObliqueMercator extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.

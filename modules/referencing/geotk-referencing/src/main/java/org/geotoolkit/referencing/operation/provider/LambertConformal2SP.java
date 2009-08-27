@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.LambertConformal;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.2
  * @module
  */
+@Immutable
 public class LambertConformal2SP extends MapProjection {
     /**
      * For cross-version compatibility.
@@ -205,7 +207,8 @@ public class LambertConformal2SP extends MapProjection {
      * @since 2.2
      * @module
      */
-     public static class Belgium extends LambertConformal2SP {
+    @Immutable
+    public static class Belgium extends LambertConformal2SP {
         /**
          * For cross-version compatibility.
          */
@@ -256,7 +259,8 @@ public class LambertConformal2SP extends MapProjection {
      * @since 2.2
      * @module
      */
-     public static class ESRI extends LambertConformal2SP {
+    @Immutable
+    public static class ESRI extends LambertConformal2SP {
         /**
          * For cross-version compatibility.
          */

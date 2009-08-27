@@ -24,6 +24,8 @@ import java.util.Map;
 import org.opengis.referencing.cs.LinearCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
 
 
@@ -46,6 +48,7 @@ import org.geotoolkit.measure.Measure;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultLinearCS extends AbstractCS implements LinearCS {
     /**
      * Serial number for interoperability with different versions.

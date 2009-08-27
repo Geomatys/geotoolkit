@@ -32,12 +32,13 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Projection;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
-
 import org.geotoolkit.internal.referencing.Identifiers;
+
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
 import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDescriptor;
 /*
@@ -63,6 +64,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
  * @since 2.0
  * @module
  */
+@Immutable
 public abstract class MapProjection extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

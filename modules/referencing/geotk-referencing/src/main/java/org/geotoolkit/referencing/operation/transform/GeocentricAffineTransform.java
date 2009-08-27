@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.Matrix;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -69,6 +70,7 @@ import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
  * @since 2.2
  * @module
  */
+@Immutable
 public class GeocentricAffineTransform extends ProjectiveTransform {
     /**
      * Serial number for interoperability with different versions.

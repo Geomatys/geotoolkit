@@ -31,6 +31,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.metadata.extent.Extent;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -51,6 +52,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.4
  * @module
  */
+@Immutable
 abstract class AbstractAuthorityFactoryProxy<T> {
     /**
      * The type of objects to be created.

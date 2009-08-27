@@ -27,6 +27,8 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * An operation on coordinates that usually includes a change of
@@ -45,6 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultTransformation extends DefaultSingleOperation implements Transformation {
     /**
      * Serial number for interoperability with different versions.

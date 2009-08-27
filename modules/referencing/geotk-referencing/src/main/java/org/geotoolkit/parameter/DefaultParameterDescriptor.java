@@ -33,6 +33,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -63,6 +64,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         implements ParameterDescriptor<T>
 {

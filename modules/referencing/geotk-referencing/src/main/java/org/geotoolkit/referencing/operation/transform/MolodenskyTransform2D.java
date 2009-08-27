@@ -19,6 +19,8 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A Molodensky transforms in 2D. This implementation is identical to
@@ -31,6 +33,7 @@ import org.opengis.referencing.operation.MathTransform2D;
  * @since 2.1
  * @module
  */
+@Immutable
 final class MolodenskyTransform2D extends MolodenskyTransform implements MathTransform2D {
     /**
      * Serial number for compatibility with different versions.

@@ -35,6 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -54,6 +55,7 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
  * @since 2.2
  * @module
  */
+@ThreadSafe(concurrent = true)
 public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorityFactory {
     /**
      * An optional prefix put in front of code. For example a code may be {@code "CRS84"}

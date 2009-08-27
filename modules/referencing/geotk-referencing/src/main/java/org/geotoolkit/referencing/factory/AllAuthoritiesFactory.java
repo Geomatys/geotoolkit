@@ -38,6 +38,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.internal.FactoryUtilities;
  * @since 2.2
  * @module
  */
+@ThreadSafe
 public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
     /**
      * The key for an optional value in the {@link Hints} map specifying custom factories

@@ -30,6 +30,7 @@ import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
@@ -50,6 +51,7 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS {
     /**
      * Serial number for interoperability with different versions.

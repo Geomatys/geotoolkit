@@ -24,6 +24,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -50,6 +51,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  * @since 2.2
  * @module
  */
+@Immutable
 public class NewZealandMapGrid extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.

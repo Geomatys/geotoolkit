@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A {@linkplain DefaultConversion conversion} transforming
@@ -55,6 +57,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultProjection extends DefaultConversion implements Projection {
     /**
      * Serial number for interoperability with different versions.

@@ -30,11 +30,12 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
-
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.referencing.operation.provider.PseudoMercator;
+
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
@@ -88,6 +89,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 1.0
  * @module
  */
+@Immutable
 public class Mercator extends UnitaryProjection {
     /**
      * For cross-version compatibility.
@@ -302,6 +304,7 @@ public class Mercator extends UnitaryProjection {
      * @since 2.1
      * @module
      */
+    @Immutable
     static final class Spherical extends Mercator {
         /**
          * For cross-version compatibility.

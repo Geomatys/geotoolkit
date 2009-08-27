@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import org.geotoolkit.lang.Static;
 import org.opengis.referencing.cs.AxisDirection;
 import static org.opengis.referencing.cs.AxisDirection.*;
 
+import org.geotoolkit.lang.Static;
 
 
 /**

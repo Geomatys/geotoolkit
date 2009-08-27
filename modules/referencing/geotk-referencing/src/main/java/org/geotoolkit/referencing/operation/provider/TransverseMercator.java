@@ -24,6 +24,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.1
  * @module
  */
+@Immutable
 public class TransverseMercator extends MapProjection {
     /**
      * For cross-version compatibility.
@@ -184,6 +186,7 @@ public class TransverseMercator extends MapProjection {
      * @since 2.2
      * @module
      */
+    @Immutable
     public static class SouthOrientated extends TransverseMercator {
         /**
          * For cross-version compatibility.

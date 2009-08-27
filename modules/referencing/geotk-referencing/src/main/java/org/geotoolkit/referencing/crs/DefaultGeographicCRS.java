@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 
 
@@ -64,6 +65,7 @@ import org.geotoolkit.measure.Units;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultGeographicCRS extends AbstractSingleCRS implements GeographicCRS {
     /**
      * Serial number for interoperability with different versions.

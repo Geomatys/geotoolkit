@@ -25,6 +25,8 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.opengis.referencing.cs.*;
+
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 
 
@@ -42,6 +44,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
+@Static
 final class PredefinedCS implements Comparator<CoordinateSystem> {
     /**
      * An instance of {@link PredefinedCS}. Will be created only when first needed.

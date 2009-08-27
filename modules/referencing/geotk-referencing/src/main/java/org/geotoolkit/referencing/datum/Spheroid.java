@@ -25,6 +25,8 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import static java.lang.Math.*;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A ellipsoid which is spherical. This ellipsoid implements a faster
@@ -36,6 +38,7 @@ import static java.lang.Math.*;
  * @since 2.0
  * @module
  */
+@Immutable
 final class Spheroid extends DefaultEllipsoid {
     /**
      * Serial number for interoperability with different versions.

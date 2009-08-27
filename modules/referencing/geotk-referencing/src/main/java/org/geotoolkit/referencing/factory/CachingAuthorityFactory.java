@@ -48,6 +48,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -78,6 +79,7 @@ import org.geotoolkit.util.collection.Cache;
  * @module
  */
 @Buffered
+@ThreadSafe(concurrent = true)
 @Decorator(AbstractAuthorityFactory.class)
 public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     /**

@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -66,6 +67,7 @@ import org.geotoolkit.util.Utilities;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultEngineeringCRS extends AbstractSingleCRS implements EngineeringCRS {
     /**
      * Serial number for interoperability with different versions.

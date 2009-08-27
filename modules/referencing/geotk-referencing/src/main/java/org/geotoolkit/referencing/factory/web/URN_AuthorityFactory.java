@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.AuthorityFactoryAdapter;
@@ -59,6 +60,7 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.remov
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

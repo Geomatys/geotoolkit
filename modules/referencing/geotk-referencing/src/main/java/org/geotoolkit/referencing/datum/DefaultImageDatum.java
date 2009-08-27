@@ -29,6 +29,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -42,6 +43,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
     /**
      * Serial number for interoperability with different versions.

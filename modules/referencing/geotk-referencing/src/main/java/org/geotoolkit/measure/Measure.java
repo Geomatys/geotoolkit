@@ -19,6 +19,7 @@ package org.geotoolkit.measure;
 
 import javax.measure.unit.Unit;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -30,6 +31,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.1
  * @module
  */
+@Immutable
 public final class Measure extends Number {
     /**
      * For compatibility with different versions.

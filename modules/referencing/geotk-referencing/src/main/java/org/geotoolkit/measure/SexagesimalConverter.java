@@ -21,6 +21,8 @@ import java.io.ObjectStreamException;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A converter from fractional degrees to sexagesimal degrees.
@@ -37,6 +39,7 @@ import javax.measure.converter.ConversionException;
  * @since 2.1
  * @module
  */
+@Immutable
 class SexagesimalConverter extends UnitConverter {
     /**
      * Serial number for compatibility with different versions.
@@ -164,6 +167,7 @@ class SexagesimalConverter extends UnitConverter {
     /**
      * The inverse of {@link SexagesimalConverter}.
      */
+    @Immutable
     private static final class Inverse extends SexagesimalConverter {
         /**
          * Serial number for compatibility with different versions.

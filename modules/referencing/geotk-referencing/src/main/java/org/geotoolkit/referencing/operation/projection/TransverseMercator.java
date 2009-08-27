@@ -27,6 +27,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.opengis.parameter.ParameterNotFoundException;
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*;
@@ -87,6 +88,7 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  * @since 1.0
  * @module
  */
+@Immutable
 public class TransverseMercator extends CassiniOrMercator {
     /**
      * For cross-version compatibility.
@@ -367,6 +369,7 @@ public class TransverseMercator extends CassiniOrMercator {
      * @since 2.1
      * @module
      */
+    @Immutable
     static final class Spherical extends TransverseMercator {
         /**
          * For cross-version compatibility.

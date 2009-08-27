@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.math.Complex;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -52,6 +53,7 @@ import org.geotoolkit.math.Complex;
  * @since 2.2
  * @module
  */
+@Immutable
 public class NewZealandMapGrid extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.

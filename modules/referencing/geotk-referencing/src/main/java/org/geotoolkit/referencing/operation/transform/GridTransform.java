@@ -36,6 +36,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -85,6 +86,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * @since 3.00
  * @module
  */
+@Immutable
 public class GridTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for interoperability with different versions.

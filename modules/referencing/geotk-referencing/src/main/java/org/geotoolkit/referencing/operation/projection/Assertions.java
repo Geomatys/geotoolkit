@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import static java.lang.Math.*;
-import static java.lang.Double.POSITIVE_INFINITY;
-
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
+
+import static java.lang.Math.*;
+import static java.lang.Double.POSITIVE_INFINITY;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.*;
 
 
@@ -37,6 +38,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 2.0
  * @module
  */
+@Static
 final class Assertions {
     /**
      * Maximum difference allowed when comparing the result of an inverse projections,

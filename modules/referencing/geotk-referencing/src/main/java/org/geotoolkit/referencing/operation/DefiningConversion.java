@@ -27,6 +27,8 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 
 
@@ -44,6 +46,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 2.1
  * @module
  */
+@Immutable
 public class DefiningConversion extends DefaultConversion {
     /**
      * Serial number for interoperability with different versions.

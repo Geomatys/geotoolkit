@@ -38,6 +38,7 @@ import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -60,6 +61,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.1
  * @module
  */
+@ThreadSafe(concurrent = false)
 public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
     /*
      * It is technically possible to add or remove elements after they have been

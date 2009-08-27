@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Private structure for {@link DirectEpsgFactory#createBursaWolfParameters} usage.
@@ -27,6 +29,7 @@ package org.geotoolkit.referencing.factory.epsg;
  * @since 2.1
  * @module
  */
+@Immutable
 final class BursaWolfInfo {
     /**
      * The value of {@code CO.COORD_OP_CODE}.

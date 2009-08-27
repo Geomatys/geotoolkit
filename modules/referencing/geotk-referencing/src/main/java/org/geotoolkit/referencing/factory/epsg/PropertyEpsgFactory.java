@@ -39,6 +39,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -85,6 +86,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.1
  * @module
  */
+@ThreadSafe(concurrent = false)
 public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The default filename to read. The default {@code PropertyEpsgFactory}

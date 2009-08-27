@@ -25,6 +25,8 @@ import java.util.Map;
 import org.opengis.referencing.operation.*; // We use almost all of them.
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * An operation on coordinates that does not include any change of
@@ -42,6 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultConversion extends DefaultSingleOperation implements Conversion {
     /**
      * Serial number for interoperability with different versions.

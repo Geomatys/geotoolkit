@@ -25,6 +25,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
+
 import static java.lang.Math.*;
 
 
@@ -54,6 +56,7 @@ import static java.lang.Math.*;
  * @since 3.00
  * @module
  */
+@Immutable
 public class CassiniSoldner extends CassiniOrMercator {
     /**
      * For cross-version compatibility.
@@ -161,6 +164,7 @@ public class CassiniSoldner extends CassiniOrMercator {
      * @since 3.00
      * @module
      */
+    @Immutable
     static final class Spherical extends CassiniSoldner {
         /**
          * For cross-version compatibility.

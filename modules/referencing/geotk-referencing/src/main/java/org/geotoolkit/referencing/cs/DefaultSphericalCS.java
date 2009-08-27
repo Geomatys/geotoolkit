@@ -24,6 +24,8 @@ import java.util.Map;
 import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -46,6 +48,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultSphericalCS extends AbstractCS implements SphericalCS {
     /**
      * Serial number for interoperability with different versions.

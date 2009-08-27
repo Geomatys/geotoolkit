@@ -25,9 +25,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
+
 import static org.geotoolkit.internal.referencing.Identifiers.*;
 
 
@@ -63,6 +65,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.*;
  * @since 2.2
  * @module
  */
+@Immutable
 public class Equirectangular extends UnitaryProjection {
     /**
      * For cross-version compatibility.

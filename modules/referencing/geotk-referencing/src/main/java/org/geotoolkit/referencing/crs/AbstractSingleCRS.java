@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -62,6 +63,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 2.1
  * @module
  */
+@Immutable
 public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     /**
      * Serial number for interoperability with different versions.

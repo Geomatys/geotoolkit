@@ -27,6 +27,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -73,6 +74,7 @@ import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
  * @since 1.2
  * @module
  */
+@Immutable
 public class MolodenskyTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for interoperability with different versions.

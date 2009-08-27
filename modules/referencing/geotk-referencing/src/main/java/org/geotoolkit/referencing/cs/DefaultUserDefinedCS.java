@@ -24,6 +24,8 @@ import java.util.Map;
 import org.opengis.referencing.cs.UserDefinedCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A two- or three-dimensional coordinate system that consists of any combination of coordinate
@@ -40,6 +42,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
     /**
      * Serial number for interoperability with different versions.

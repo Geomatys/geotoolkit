@@ -27,6 +27,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
@@ -60,6 +61,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @since 2.4
  * @module
  */
+@ThreadSafe
 public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

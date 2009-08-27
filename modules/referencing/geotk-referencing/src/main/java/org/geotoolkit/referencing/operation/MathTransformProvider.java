@@ -38,6 +38,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.io.wkt.Formatter;
@@ -65,6 +66,7 @@ import org.geotoolkit.io.wkt.Formatter;
  *
  * @see org.geotoolkit.referencing.operation.provider
  */
+@Immutable
 public abstract class MathTransformProvider extends DefaultOperationMethod {
     /**
      * Serial number for interoperability with different versions.

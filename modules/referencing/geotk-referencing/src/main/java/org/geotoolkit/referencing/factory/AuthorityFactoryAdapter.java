@@ -51,6 +51,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Decorator;
 
 import static org.geotoolkit.internal.FactoryUtilities.ATTEMPTS_DELAY;
@@ -71,6 +72,7 @@ import static org.geotoolkit.internal.FactoryUtilities.ATTEMPTS_DELAY;
  * @since 2.2
  * @module
  */
+@ThreadSafe
 @Decorator(AuthorityFactory.class)
 public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**

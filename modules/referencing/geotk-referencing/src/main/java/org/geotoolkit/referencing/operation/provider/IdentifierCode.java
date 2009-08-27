@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.provider;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
@@ -34,6 +35,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @since 3.03
  * @module
  */
+@Immutable
 final class IdentifierCode extends DefaultReferenceIdentifier {
     /**
      * For cross-version compatibility.

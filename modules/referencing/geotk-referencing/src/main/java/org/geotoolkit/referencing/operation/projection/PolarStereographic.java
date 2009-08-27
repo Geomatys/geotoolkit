@@ -28,6 +28,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*;
 
@@ -49,6 +50,7 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @since 2.0
  * @module
  */
+@Immutable
 public class PolarStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.
@@ -275,6 +277,7 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
+    @Immutable
     static final class Spherical extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -388,6 +391,7 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
+    @Immutable
     static final class Series extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -29,6 +30,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.3
  * @module
  */
+@Immutable
 final class AxisName {
     /**
      * The coordinate system axis name (never {@code null}).

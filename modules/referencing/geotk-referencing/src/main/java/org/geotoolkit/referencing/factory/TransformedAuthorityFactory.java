@@ -45,6 +45,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -70,6 +71,7 @@ import org.geotoolkit.lang.Decorator;
  * @since 2.3
  * @module
  */
+@ThreadSafe
 @Decorator(AuthorityFactory.class)
 public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     /**

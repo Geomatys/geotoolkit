@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * The set of symbols to use for <cite>Well Known Text</cite> (WKT) parsing and formatting.
@@ -36,6 +38,7 @@ import java.text.DecimalFormat;
  * @level advanced
  * @module
  */
+@Immutable
 public class Symbols implements Serializable {
     /**
      * For cross-version compatibility.

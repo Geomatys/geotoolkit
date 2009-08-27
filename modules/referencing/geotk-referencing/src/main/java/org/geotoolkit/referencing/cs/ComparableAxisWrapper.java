@@ -21,6 +21,8 @@ import java.util.Arrays;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Wraps a {@linkplain CoordinateSystemAxis coordinate system axis} for comparison purpose.
@@ -34,6 +36,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @since 2.4
  * @module
  */
+@Immutable
 final class ComparableAxisWrapper implements Comparable<ComparableAxisWrapper> {
     /**
      * The wrapped axis.

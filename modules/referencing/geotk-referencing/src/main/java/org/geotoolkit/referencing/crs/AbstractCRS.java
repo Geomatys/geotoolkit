@@ -42,6 +42,7 @@ import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.xml.Namespaces;
  * @since 1.2
  * @module
  */
+@Immutable
 public abstract class AbstractCRS extends AbstractReferenceSystem implements CoordinateReferenceSystem {
     /**
      * Serial number for interoperability with different versions.

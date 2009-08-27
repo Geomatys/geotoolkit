@@ -27,6 +27,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
@@ -49,6 +50,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @since 2.0
  * @module
  */
+@Immutable
 public class GeocentricToEllipsoid extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

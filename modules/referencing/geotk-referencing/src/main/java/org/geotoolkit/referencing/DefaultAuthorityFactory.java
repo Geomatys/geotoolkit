@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -59,6 +60,7 @@ import org.geotoolkit.resources.Loggings;
  * @since 2.3
  * @module
  */
+@ThreadSafe(concurrent = true)
 final class DefaultAuthorityFactory extends CachingAuthorityFactory implements CRSAuthorityFactory {
     /**
      * List of codes without authority space. We can not defines them in an ordinary

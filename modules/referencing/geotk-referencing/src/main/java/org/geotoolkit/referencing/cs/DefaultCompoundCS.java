@@ -26,6 +26,8 @@ import java.util.Collections;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 
@@ -44,6 +46,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultCompoundCS extends AbstractCS {
     /**
      * Serial number for interoperability with different versions.

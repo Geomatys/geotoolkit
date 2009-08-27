@@ -31,6 +31,8 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Specification of the coordinate operation method formula.
@@ -41,6 +43,7 @@ import org.geotoolkit.util.Utilities;
  * @since 3.03
  * @module
  */
+@Immutable
 public class DefaultFormula implements Formula, Serializable {
     /**
      * For cross-version compatibility.

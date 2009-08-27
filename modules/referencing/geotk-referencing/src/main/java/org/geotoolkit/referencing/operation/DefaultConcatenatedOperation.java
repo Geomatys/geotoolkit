@@ -45,6 +45,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -61,6 +62,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
         implements ConcatenatedOperation
 {
@@ -99,7 +101,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
     public DefaultConcatenatedOperation(final Map<String,?> properties,
                                         final CoordinateOperation... operations)
     {
-        this(properties, new ArrayList<SingleOperation>(operations!=null ? operations.length : 4),
+        this(properties, new ArrayList<SingleOperation>(operations != null ? operations.length : 4),
              operations);
     }
 
@@ -121,7 +123,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                                         final MathTransformFactory factory)
             throws FactoryException
     {
-        this(properties, new ArrayList<SingleOperation>(operations!=null ? operations.length : 4),
+        this(properties, new ArrayList<SingleOperation>(operations != null ? operations.length : 4),
              operations, factory);
     }
 

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.measure;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A latitude angle. Positive latitudes are North, while negative
@@ -31,6 +33,7 @@ package org.geotoolkit.measure;
  * @since 1.0
  * @module
  */
+@Immutable
 public final class Latitude extends Angle {
     /**
      * Serial number for interoperability with different versions.

@@ -30,6 +30,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -56,6 +57,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
  * @since 2.2
  * @module
  */
+@Immutable
 public class PositionVector7Param extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

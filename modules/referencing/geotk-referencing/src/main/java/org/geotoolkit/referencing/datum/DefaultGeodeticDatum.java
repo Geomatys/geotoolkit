@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum {
     /**
      * Serial number for interoperability with different versions.

@@ -21,6 +21,8 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Concatenated transform where both transforms are one-dimensional.
@@ -31,9 +33,8 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @since 2.0
  * @module
  */
-final class ConcatenatedTransformDirect1D extends ConcatenatedTransformDirect
-        implements MathTransform1D
-{
+@Immutable
+final class ConcatenatedTransformDirect1D extends ConcatenatedTransformDirect implements MathTransform1D {
     /**
      * Serial number for interoperability with different versions.
      */

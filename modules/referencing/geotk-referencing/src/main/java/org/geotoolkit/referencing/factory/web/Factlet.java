@@ -24,6 +24,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.ProjectedCRS;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -41,6 +42,7 @@ import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
  * @since 2.2
  * @module
  */
+@Immutable
 abstract class Factlet {
     /**
      * Returns the {@code AUTO} code for this plugin.

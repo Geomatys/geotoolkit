@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -59,6 +60,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.1
  * @module
  */
+@Immutable
 public class NADCON extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

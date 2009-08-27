@@ -24,6 +24,8 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.geotoolkit.lang.Immutable;
+
 import static org.geotoolkit.referencing.operation.provider.NADCON.*;
 
 
@@ -97,6 +99,7 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  * @since 2.1
  * @module
  */
+@Immutable
 public class NadconTransform extends GridTransform2D {
     /**
      * Serial number for interoperability with different versions.

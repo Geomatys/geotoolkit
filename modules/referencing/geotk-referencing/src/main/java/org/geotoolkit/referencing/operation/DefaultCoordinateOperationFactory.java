@@ -37,6 +37,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -74,6 +75,7 @@ import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLine
  * @since 1.2
  * @module
  */
+@ThreadSafe(concurrent = true)
 public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**
      * Small number for floating point comparisons.

@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -58,6 +59,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
     /**
      * Serial number for interoperability with different versions.

@@ -63,6 +63,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
 
@@ -101,6 +102,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
  * @since 1.2
  * @module
  */
+@ThreadSafe
 public class DefaultMathTransformFactory extends ReferencingFactory implements MathTransformFactory {
     /**
      * The hints to provide to math transform providers. Null for now, but may be non-null

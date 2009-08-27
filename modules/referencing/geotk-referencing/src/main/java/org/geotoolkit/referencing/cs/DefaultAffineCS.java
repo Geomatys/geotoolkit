@@ -28,6 +28,8 @@ import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A two- or three-dimensional coordinate system with straight axes that are not necessarily
@@ -48,6 +50,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultAffineCS extends AbstractCS implements AffineCS {
     /**
      * Serial number for interoperability with different versions.

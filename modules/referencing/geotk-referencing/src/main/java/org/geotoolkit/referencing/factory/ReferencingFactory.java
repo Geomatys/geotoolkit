@@ -29,6 +29,7 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
@@ -57,6 +58,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class ReferencingFactory extends org.geotoolkit.factory.Factory implements Factory {
     /**
      * The logger for event related to Geotk's factories.

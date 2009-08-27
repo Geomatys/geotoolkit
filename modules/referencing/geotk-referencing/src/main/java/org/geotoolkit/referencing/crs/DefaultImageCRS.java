@@ -27,6 +27,8 @@ import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.datum.ImageDatum;
 import org.opengis.referencing.crs.ImageCRS;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 
 
@@ -48,6 +50,7 @@ import org.geotoolkit.referencing.AbstractReferenceSystem;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
     /**
      * Serial number for interoperability with different versions.

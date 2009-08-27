@@ -41,6 +41,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Decorator;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.collection.WeakValueHashMap;
@@ -60,6 +61,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  * @todo Needs a mechanism for avoiding to query the same factory twice when the fallback is the
  *       same instance than the primary factory for some {@link AuthorityFactory} interfaces.
  */
+@ThreadSafe
 @Decorator(AuthorityFactory.class)
 public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     /**

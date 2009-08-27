@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -46,6 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.4
  * @module
  */
+@Immutable
 public class Krovak extends MapProjection {
     /**
      * For cross-version compatibility.

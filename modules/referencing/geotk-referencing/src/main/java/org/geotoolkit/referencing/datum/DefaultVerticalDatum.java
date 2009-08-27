@@ -31,6 +31,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -47,6 +48,7 @@ import org.geotoolkit.util.Utilities;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum {
     /**
      * Serial number for interoperability with different versions.

@@ -35,6 +35,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.citation.Citation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -61,6 +62,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultOperationMethod extends AbstractIdentifiedObject implements OperationMethod {
     /**
      * Serial number for interoperability with different versions.

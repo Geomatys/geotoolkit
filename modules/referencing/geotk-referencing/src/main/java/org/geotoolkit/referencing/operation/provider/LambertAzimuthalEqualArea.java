@@ -23,6 +23,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -46,6 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.4
  * @module
  */
+@Immutable
 public class LambertAzimuthalEqualArea extends MapProjection {
     /**
      * For cross-version compatibility.
@@ -152,6 +154,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * @since 3.00
      * @module
      */
+    @Immutable
     public static class Spherical extends LambertAzimuthalEqualArea {
         /**
          * For cross-version compatibility.

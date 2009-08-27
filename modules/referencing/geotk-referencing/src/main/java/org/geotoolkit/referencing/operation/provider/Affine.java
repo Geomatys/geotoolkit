@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.MatrixParameterDescriptors;
@@ -55,6 +56,7 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * @since 2.0
  * @module
  */
+@Immutable
 public class Affine extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

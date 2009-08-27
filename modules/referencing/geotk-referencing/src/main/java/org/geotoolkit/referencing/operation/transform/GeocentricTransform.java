@@ -39,6 +39,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
@@ -70,6 +71,7 @@ import static java.lang.Double.doubleToLongBits;
  * @since 1.2
  * @module
  */
+@Immutable
 public class GeocentricTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for interoperability with different versions.

@@ -24,8 +24,10 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.referencing.Identifiers;
+
 import static org.geotoolkit.referencing.operation.provider.Krovak.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.*;
 
@@ -89,6 +91,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 2.4
  * @module
  */
+@Immutable
 public class Krovak extends UnitaryProjection {
     /**
      * For cross-version compatibility.

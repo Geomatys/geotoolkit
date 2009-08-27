@@ -56,6 +56,7 @@ import org.geotoolkit.internal.JNDI;
 import org.geotoolkit.internal.jdbc.Dialect;
 import org.geotoolkit.internal.jdbc.DefaultDataSource;
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -94,6 +95,7 @@ import org.geotoolkit.internal.io.Installation;
  * @since 2.1
  * @module
  */
+@ThreadSafe(concurrent = true)
 public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.2
  * @module
  */
+@Immutable
 public class Mercator2SP extends MapProjection {
     /**
      * For cross-version compatibility.

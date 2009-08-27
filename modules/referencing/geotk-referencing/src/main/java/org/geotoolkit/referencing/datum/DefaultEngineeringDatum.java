@@ -27,6 +27,7 @@ import org.opengis.referencing.datum.EngineeringDatum;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -41,6 +42,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultEngineeringDatum extends AbstractDatum implements EngineeringDatum {
     /**
      * Serial number for interoperability with different versions.

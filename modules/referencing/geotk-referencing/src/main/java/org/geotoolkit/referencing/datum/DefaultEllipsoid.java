@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellipsoid {
     /**
      * Serial number for interoperability with different versions.

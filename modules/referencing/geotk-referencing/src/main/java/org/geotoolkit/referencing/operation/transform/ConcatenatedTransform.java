@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
@@ -56,6 +57,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @since 1.2
  * @module
  */
+@Immutable
 public class ConcatenatedTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for interoperability with different versions.

@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.util.InternationalString;
@@ -38,8 +37,10 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.internal.jaxb.uom.DateAsLongAdapter;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -67,6 +68,7 @@ import org.geotoolkit.xml.Namespaces;
  * @since 1.2
  * @module
  */
+@Immutable
 public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
     /**
      * Serial number for interoperability with different versions.

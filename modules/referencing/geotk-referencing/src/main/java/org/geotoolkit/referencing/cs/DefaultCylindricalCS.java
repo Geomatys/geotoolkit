@@ -25,6 +25,8 @@ import org.opengis.referencing.cs.CylindricalCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A three-dimensional coordinate system consisting of a
@@ -46,6 +48,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultCylindricalCS extends AbstractCS implements CylindricalCS {
     /**
      * Serial number for interoperability with different versions.

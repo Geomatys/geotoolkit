@@ -43,6 +43,7 @@ import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -70,6 +71,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.0
  * @module
  */
+@Immutable
 public class NamedIdentifier extends DefaultReferenceIdentifier implements GenericName {
     /**
      * Serial number for interoperability with different versions.

@@ -46,6 +46,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -66,6 +67,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultProjectedCRS extends AbstractDerivedCRS implements ProjectedCRS {
     /**
      * Serial number for interoperability with different versions.

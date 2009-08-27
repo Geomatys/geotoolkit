@@ -19,6 +19,8 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A one dimensional, constant transform. Output values are set to a constant value regardless
@@ -32,6 +34,7 @@ import java.util.Arrays;
  * @since 2.0
  * @module
  */
+@Immutable
 final class ConstantTransform1D extends LinearTransform1D {
     /**
      * Serial number for interoperability with different versions.

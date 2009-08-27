@@ -31,6 +31,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.operation.Matrix;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -66,6 +67,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @since 2.0
  * @module
  */
+@Immutable
 public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup {
     /**
      * Serial number for interoperability with different versions.

@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.WktUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -56,6 +57,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * @since 1.2
  * @module
  */
+@Immutable
 public class DefaultGeocentricCRS extends AbstractSingleCRS implements GeocentricCRS {
     /**
      * Serial number for interoperability with different versions.

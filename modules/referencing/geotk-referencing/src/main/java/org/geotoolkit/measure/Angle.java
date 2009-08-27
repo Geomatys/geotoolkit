@@ -22,6 +22,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.util.Locale;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 
@@ -40,6 +41,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
  * @since 1.0
  * @module
  */
+@Immutable
 public class Angle implements Comparable<Angle>, Serializable {
     /**
      * Serial number for interoperability with different versions.

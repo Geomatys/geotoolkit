@@ -28,6 +28,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic.PARAMETERS;
 
@@ -135,6 +136,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * @since 1.0
  * @module
  */
+@Immutable
 public class Stereographic extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
@@ -346,6 +348,7 @@ public class Stereographic extends UnitaryProjection {
      * @since 2.1
      * @module
      */
+    @Immutable
     static final class Spherical extends Stereographic {
         /**
          * For compatibility with different versions during deserialization.

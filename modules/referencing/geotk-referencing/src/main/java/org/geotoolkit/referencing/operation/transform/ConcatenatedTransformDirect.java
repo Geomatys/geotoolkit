@@ -21,6 +21,8 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Concatenated transform where the transfert dimension is the same than source and target
@@ -33,6 +35,7 @@ import org.opengis.referencing.operation.TransformException;
  * @since 1.2
  * @module
  */
+@Immutable
 class ConcatenatedTransformDirect extends ConcatenatedTransform {
     /**
      * Serial number for interoperability with different versions.

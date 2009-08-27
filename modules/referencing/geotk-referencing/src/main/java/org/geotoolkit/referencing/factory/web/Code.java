@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.factory.web;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.resources.Errors;
@@ -36,6 +37,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
+@Immutable
 final class Code {
     /**
      * The authority name. Should usually be {@code AUTO}.

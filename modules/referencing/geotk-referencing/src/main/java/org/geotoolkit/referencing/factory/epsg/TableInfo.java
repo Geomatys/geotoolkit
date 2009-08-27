@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Information about a specific table. This class also provides some utility methods
@@ -29,6 +31,7 @@ package org.geotoolkit.referencing.factory.epsg;
  * @since 2.2
  * @module
  */
+@Immutable
 final class TableInfo {
     /**
      * The class of object to be created.

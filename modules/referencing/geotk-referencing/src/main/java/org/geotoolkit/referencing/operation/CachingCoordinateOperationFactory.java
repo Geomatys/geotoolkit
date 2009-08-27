@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
@@ -53,6 +54,7 @@ import org.geotoolkit.util.Utilities;
  * @module
  */
 @Buffered
+@ThreadSafe(concurrent = true)
 @Decorator(CoordinateOperationFactory.class)
 public class CachingCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**

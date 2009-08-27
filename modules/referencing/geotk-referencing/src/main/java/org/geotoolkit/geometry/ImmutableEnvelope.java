@@ -20,6 +20,7 @@ package org.geotoolkit.geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.MismatchedDimensionException;
 
@@ -36,6 +37,7 @@ import org.opengis.geometry.MismatchedDimensionException;
  * @since 3.00
  * @module
  */
+@Immutable
 public final class ImmutableEnvelope extends AbstractEnvelope {
     /**
      * The coordinate reference system for this envelope.

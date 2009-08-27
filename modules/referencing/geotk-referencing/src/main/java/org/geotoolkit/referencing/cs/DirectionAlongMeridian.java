@@ -20,7 +20,10 @@ package org.geotoolkit.referencing.cs;
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.opengis.referencing.cs.AxisDirection;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.CodeLists;
 
 
@@ -35,6 +38,7 @@ import org.geotoolkit.internal.CodeLists;
  * @since 2.4
  * @module
  */
+@Immutable
 final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>, Serializable {
     /**
      * For cross-version compatibility.

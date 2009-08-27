@@ -30,6 +30,7 @@ import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.CoordinateOperation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import static org.geotoolkit.util.Utilities.hashMapCapacity;
 
@@ -44,6 +45,7 @@ import static org.geotoolkit.util.Utilities.hashMapCapacity;
  * @since 2.0
  * @module
  */
+@Immutable
 final class Properties extends AbstractMap<String,Object> {
     /**
      * The object where all properties come from.

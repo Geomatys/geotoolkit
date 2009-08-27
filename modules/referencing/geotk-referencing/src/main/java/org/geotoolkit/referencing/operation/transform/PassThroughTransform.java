@@ -18,8 +18,8 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.io.Serializable;
-
 import java.util.Arrays;
+
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -27,6 +27,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
@@ -51,6 +52,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @since 1.2
  * @module
  */
+@Immutable
 public class PassThroughTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for interoperability with different versions.

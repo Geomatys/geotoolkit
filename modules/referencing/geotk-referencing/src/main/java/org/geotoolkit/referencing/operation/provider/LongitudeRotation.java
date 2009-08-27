@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
@@ -49,6 +50,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * @since 2.0
  * @module
  */
+@Immutable
 public class LongitudeRotation extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

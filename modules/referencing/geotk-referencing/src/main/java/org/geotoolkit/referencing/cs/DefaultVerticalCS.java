@@ -25,6 +25,8 @@ import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
 
 
@@ -48,6 +50,7 @@ import org.geotoolkit.measure.Measure;
  * @since 2.0
  * @module
  */
+@Immutable
 public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
     /**
      * Serial number for interoperability with different versions.

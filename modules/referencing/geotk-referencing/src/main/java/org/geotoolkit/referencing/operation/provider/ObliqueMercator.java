@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.1
  * @module
  */
+@Immutable
 public class ObliqueMercator extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.
@@ -209,6 +211,7 @@ public class ObliqueMercator extends MapProjection {
      * @since 2.1
      * @module
      */
+    @Immutable
     public static class TwoPoint extends ObliqueMercator {
         /**
          * For compatibility with different versions during deserialization.

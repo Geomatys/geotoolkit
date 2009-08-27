@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * A one dimensional, identity transform. Output values are identical to input values.
@@ -28,6 +30,7 @@ package org.geotoolkit.referencing.operation.transform;
  * @since 2.0
  * @module
  */
+@Immutable
 final class IdentityTransform1D extends LinearTransform1D {
     /**
      * Serial number for interoperability with different versions.

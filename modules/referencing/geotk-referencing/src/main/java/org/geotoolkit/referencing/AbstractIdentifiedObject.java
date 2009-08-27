@@ -58,6 +58,7 @@ import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -82,10 +83,9 @@ import org.geotoolkit.lang.ThreadSafe;
  * @since 1.2
  * @module
  */
-@ThreadSafe
-public class AbstractIdentifiedObject extends FormattableObject
-        implements IdentifiedObject, Serializable
-{
+@Immutable
+@ThreadSafe(concurrent = true)
+public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject, Serializable {
     /**
      * Serial number for interoperability with different versions.
      */

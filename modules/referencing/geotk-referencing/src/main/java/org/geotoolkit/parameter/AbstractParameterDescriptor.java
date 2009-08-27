@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -42,6 +43,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * @since 2.0
  * @module
  */
+@Immutable
 public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObject
            implements GeneralParameterDescriptor
 {

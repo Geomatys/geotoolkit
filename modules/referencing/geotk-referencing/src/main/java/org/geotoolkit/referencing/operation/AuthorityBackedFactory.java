@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
@@ -69,6 +70,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * @since 2.2
  * @module
  */
+@ThreadSafe(concurrent = true)
 public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     /**
      * The default authority factory to use.

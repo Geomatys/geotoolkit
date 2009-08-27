@@ -21,6 +21,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -38,6 +39,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.2
  * @module
  */
+@Immutable
 public class PlateCarree extends EquidistantCylindrical {
     /**
      * For compatibility with different versions during deserialization.

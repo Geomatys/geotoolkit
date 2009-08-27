@@ -29,6 +29,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 
 
@@ -63,6 +64,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.0
  * @module
  */
+@Immutable
 public class Orthographic extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
