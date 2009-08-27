@@ -17,6 +17,10 @@
  */
 package org.geotoolkit.internal;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
+
 import org.opengis.util.CodeList;
 import org.geotoolkit.lang.Static;
 
@@ -48,6 +52,58 @@ public final class CodeLists implements CodeList.Filter {
         codename = name.trim();
     }
 
+    /**
+     * Returns the list of UML identifiers for the given code list type.
+     * If a code has no UML identifier, then the programmatic name is used as a fallback.
+     *
+     * @param  codeType The type of code list.
+     * @return The list of UML identifiers or programmatic names for the given
+     *         code list, or an empty array if none.
+     *
+     * @since 3.03
+     */
+    public static String[] identifiers(final Class<CodeList<?>> codeType) {
+        final CodeList<?>[] codes = values(codeType);
+        final String[] ids = new String[codes.length];
+        for (int i=0; i<codes.length; i++) {
+            final CodeList<?> code = codes[i];
+            String id = code.identifier();
+            if (id == null) {
+                id = code.name();
+            }
+            ids[i] = id;
+        }
+        return ids;
+    }
+
+    /**
+     * Returns the list of values for the given code list type.
+     *
+     * @param <T> The compile-time type given as the {@code codeType} parameter.
+     * @param codeType The type of code list.
+     * @return The list of values for the given code list, or an empty array if none.
+     *
+     * @since 3.03
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends CodeList<?>> T[] values(final Class<T> codeType) {
+        Object values;
+        try {
+            values = codeType.getMethod("values", (Class<?>[]) null).invoke(null, (Object[]) null);
+        } catch (InvocationTargetException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            }
+            if (cause instanceof Error) {
+                throw (Error) cause;
+            }
+            throw new UndeclaredThrowableException(cause);
+        } catch (Exception e) { // Multi catch: NoSuchMethodException, IllegalAccessException
+            values = Array.newInstance(codeType, 0);
+        }
+        return (T[]) values;
+    }
 
     /**
      * Returns the code of the given type that matches the given name, or returns a new one if none

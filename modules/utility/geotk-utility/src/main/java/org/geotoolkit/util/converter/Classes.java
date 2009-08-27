@@ -62,15 +62,15 @@ public final class Classes {
     static {
         new Classes(BigDecimal.class, true, false, (byte) (DOUBLE+2)); // Undocumented enum.
         new Classes(BigInteger.class, false, true, (byte) (DOUBLE+1));  // Undocumented enum.
-        new Classes(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE   );
-        new Classes(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT    );
-        new Classes(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG     );
-        new Classes(Integer  .TYPE, Integer  .class, false, true,  (byte) Integer  .SIZE, INTEGER  );
-        new Classes(Short    .TYPE, Short    .class, false, true,  (byte) Short    .SIZE, SHORT    );
-        new Classes(Byte     .TYPE, Byte     .class, false, true,  (byte) Byte     .SIZE, BYTE     );
-        new Classes(Character.TYPE, Character.class, false, false, (byte) Character.SIZE, CHARACTER);
-        new Classes(Boolean  .TYPE, Boolean  .class, false, false, (byte) 1,              BOOLEAN  );
-        new Classes(Void     .TYPE, Void     .class, false, false, (byte) 0,              OTHER    );
+        new Classes(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE,    'D');
+        new Classes(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT,     'F');
+        new Classes(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG,      'J');
+        new Classes(Integer  .TYPE, Integer  .class, false, true,  (byte) Integer  .SIZE, INTEGER,   'I');
+        new Classes(Short    .TYPE, Short    .class, false, true,  (byte) Short    .SIZE, SHORT,     'S');
+        new Classes(Byte     .TYPE, Byte     .class, false, true,  (byte) Byte     .SIZE, BYTE,      'B');
+        new Classes(Character.TYPE, Character.class, false, false, (byte) Character.SIZE, CHARACTER, 'C');
+        new Classes(Boolean  .TYPE, Boolean  .class, false, false, (byte) 1,              BOOLEAN,   'Z');
+        new Classes(Void     .TYPE, Void     .class, false, false, (byte) 0,              OTHER,     'V');
     }
 
     /** The primitive type.                     */ private final Class<?> primitive;
@@ -79,6 +79,7 @@ public final class Classes {
     /** {@code true} for integer number.        */ private final boolean  isInteger;
     /** The size in bytes.                      */ private final byte     size;
     /** Constant to be used in switch statement.*/ private final byte     ordinal;
+    /** The internal form of the primitive name.*/ private final char     internal;
 
     /**
      * Creates an entry for a type which is not a primitive type.
@@ -89,6 +90,7 @@ public final class Classes {
         this.isInteger = isInteger;
         this.size      = -1;
         this.ordinal   = ordinal;
+        this.internal  = 'L';
         if (MAPPING.put(type, this) != null) {
             throw new AssertionError(); // Should never happen.
         }
@@ -99,7 +101,8 @@ public final class Classes {
      */
     private Classes(final Class<?> primitive, final Class<?> wrapper,
                     final boolean  isFloat,   final boolean  isInteger,
-                    final byte     size,      final byte     ordinal)
+                    final byte     size,      final byte     ordinal,
+                    final char     internal)
     {
         this.primitive = primitive;
         this.wrapper   = wrapper;
@@ -107,9 +110,70 @@ public final class Classes {
         this.isInteger = isInteger;
         this.size      = size;
         this.ordinal   = ordinal;
+        this.internal  = internal;
         if (MAPPING.put(primitive, this) != null || MAPPING.put(wrapper, this) != null) {
             throw new AssertionError(); // Should never happen.
         }
+    }
+
+    /**
+     * Changes the array dimension by the given amount. The given class can be a primitive type,
+     * a Java object, or an array of the above. If the given {@code dimension} is positive, then
+     * the array dimension will be increased by that amount. For example a change of dimension 1
+     * will change a {@code int} class into {@code int[]}, and a {@code String[]} class into
+     * {@code String[][]}. A change of dimension 2 is like applying a change of dimension 1 two
+     * times.
+     * <p>
+     * The change of dimension can also be negative. For example a change of dimension -1 will
+     * change a {@code String[]} class into a {@code String}. More specifically:
+     * <p>
+     * <ul>
+     *   <li>If the given {@code element} is null, then this method returns {@code null}.</li>
+     *   <li>Otherwise if the given {@code dimension} change is 0, then the given {@code element}
+     *       is returned unchanged.</li>
+     *   <li>Otherwise if the given {@code dimension} change is negative, then
+     *       {@link Class#getComponentType()} is invoked {@code abs(dimension)} times.
+     *       The result is a {@code null} value if {@code abs(dimension)} is greater
+     *       than the array dimension.</li>
+     *   <li>Otherwise if {@code element} is {@link Void#TYPE}, then this method returns
+     *       {@code Void.TYPE} since arrays of {@code void} don't exist.</li>
+     *   <li>Otherwise this method returns a class that represents an array of the given
+     *       class augmented by the given amount of dimensions.</li>
+     * </ul>
+     *
+     * @param  element The type of elements in the array.
+     * @param  dimension The change of dimension, as a negative or positive number.
+     * @return The type of an array of the given element type augmented by the given
+     *         number of dumensions.
+     *
+     * @since 3.03
+     */
+    public static Class<?> changeArrayDimension(Class<?> element, int dimension) {
+        if (dimension != 0 && element != null) {
+            if (dimension < 0) {
+                do element = element.getComponentType();
+                while (element!=null && ++dimension != 0);
+            } else if (!element.equals(Void.TYPE)) {
+                final StringBuilder buffer = new StringBuilder();
+                do buffer.insert(0, '[');
+                while (--dimension != 0);
+                if (element.isPrimitive()) {
+                    buffer.append(MAPPING.get(element).internal);
+                } else if (element.isArray()) {
+                    buffer.append(element.getName());
+                } else {
+                    buffer.append('L').append(element.getName()).append(';');
+                }
+                final String name = buffer.toString();
+                try {
+                    element = Class.forName(name);
+                } catch (ClassNotFoundException e) {
+                    throw new AssertionError(e);
+                    // Should never happen because we are creating an array of an existing class.
+                }
+            }
+        }
+        return element;
     }
 
     /**

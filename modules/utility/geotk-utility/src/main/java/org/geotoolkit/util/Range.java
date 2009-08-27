@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.measure.unit.Unit;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -615,12 +616,30 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
     }
 
     /**
-     * Returns a string representation of this range.
+     * Returns a string representation of this range. The string representation is defined
+     * as below:
+     * <p>
+     * <ul>
+     *   <li>If the range is empty, then this method returns {@code "[]"}.</li>
+     *   <li>Otherwise if the minimal value is equals to the maximal values, then
+     *       the string representation of that value is returned directly.</li>
+     *   <li>Otherwise the string representation of the minimal and maximal values
+     *       are formatted like {@code [min \u2026 max]} for inclusive bounds or
+     *       {@code (min \u2026 max)} for exclusive bounds, or a mix of both styles.
+     *       The \u221E symbol is used in place of {@code min} or {@code max} for
+     *       unbounded ranges.</li>
+     * </ul>
+     * <p>
+     * If this range is a {@link MeasurementRange}, then the unit of measurement is
+     * appended to the above string representation.
      */
     @Override
     public String toString() {
         if (isEmpty()) {
             return "[]";
+        }
+        if (minValue != null && minValue.equals(maxValue)) {
+            return minValue.toString();
         }
         final StringBuilder buffer = new StringBuilder();
         buffer.append(isMinIncluded ? '[' : '(');
@@ -629,7 +648,12 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
         } else {
             buffer.append(minValue);
         }
-        buffer.append(", ");
+        // Compact representation for integers, more space for real numbers.
+        if (Classes.isInteger(elementClass)) {
+            buffer.append('\u2026');   // "..."
+        } else {
+            buffer.append(" \u2026 "); // " ... "
+        }
         if (maxValue == null) {
             buffer.append('\u221E'); // Infinity
         } else {

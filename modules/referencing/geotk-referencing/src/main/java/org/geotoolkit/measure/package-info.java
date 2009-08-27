@@ -20,6 +20,10 @@
  * Measures (like {@linkplain org.geotoolkit.measure.Angle angles}) and their
  * formatter.
  *
+ * {@note <code>MeasurementRange</code> is a class closely related to measurements, but
+ *        defined in the <code>org.geotoolkit.util</code> package for consistency with
+ *        the <code>Range</code> base class.}
+ *
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.00
  *

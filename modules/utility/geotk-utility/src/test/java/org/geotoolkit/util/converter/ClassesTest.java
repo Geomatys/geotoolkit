@@ -33,11 +33,34 @@ import static org.junit.Assert.*;
  * Tests the {@link Classes} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.03
  *
  * @since 2.5
  */
 public final class ClassesTest {
+    /**
+     * Tests {@link Classes#changeArrayDimension}.
+     */
+    @Test
+    public void testChangeArrayDimension() {
+        assertEquals(float    .class, Classes.changeArrayDimension(float    .class,  0));
+        assertEquals(Float    .class, Classes.changeArrayDimension(Float    .class,  0));
+        assertEquals(float[]  .class, Classes.changeArrayDimension(float    .class,  1));
+        assertEquals(Float[]  .class, Classes.changeArrayDimension(Float    .class,  1));
+        assertEquals(float[][].class, Classes.changeArrayDimension(float    .class,  2));
+        assertEquals(Float[][].class, Classes.changeArrayDimension(Float    .class,  2));
+        assertEquals(float[][].class, Classes.changeArrayDimension(float[]  .class,  1));
+        assertEquals(Float[][].class, Classes.changeArrayDimension(Float[]  .class,  1));
+        assertEquals(float[]  .class, Classes.changeArrayDimension(float[][].class, -1));
+        assertEquals(Float[]  .class, Classes.changeArrayDimension(Float[][].class, -1));
+        assertEquals(float    .class, Classes.changeArrayDimension(float[][].class, -2));
+        assertEquals(Float    .class, Classes.changeArrayDimension(Float[][].class, -2));
+        assertNull  (                 Classes.changeArrayDimension(float[][].class, -3));
+        assertNull  (                 Classes.changeArrayDimension(Float[][].class, -3));
+        assertNull  (                 Classes.changeArrayDimension(Void.TYPE,       -1));
+        assertEquals(Void.TYPE,       Classes.changeArrayDimension(Void.TYPE,        1));
+    }
+
     /**
      * Tests {@link Classes#getAllInterfaces}.
      */

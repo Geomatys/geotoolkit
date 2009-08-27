@@ -34,6 +34,8 @@ import org.geotoolkit.util.converter.Classes;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
  *
+ * @see org.geotoolkit.measure
+ *
  * @since 2.4
  * @module
  */
