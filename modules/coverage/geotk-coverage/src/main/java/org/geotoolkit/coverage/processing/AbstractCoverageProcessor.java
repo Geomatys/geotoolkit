@@ -50,6 +50,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -90,6 +91,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.2
  * @module
  */
+@ThreadSafe
 public abstract class AbstractCoverageProcessor extends Factory implements GridCoverageProcessor {
     /**
      * The logger for coverage processing operations.

@@ -26,6 +26,8 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.ComponentSampleModel;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * An {@link IndexColorModel} tolerant with image having more than one band.
@@ -42,6 +44,7 @@ import java.awt.image.ComponentSampleModel;
  * @since 2.0
  * @module
  */
+@Immutable
 final class MultiBandsIndexColorModel extends IndexColorModel {
     /**
      * The number of bands.

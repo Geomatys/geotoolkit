@@ -45,6 +45,7 @@ import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -66,6 +67,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
+@Immutable
 public class GridGeometry2D extends GeneralGridGeometry {
     /**
      * Serial number for interoperability with different versions.

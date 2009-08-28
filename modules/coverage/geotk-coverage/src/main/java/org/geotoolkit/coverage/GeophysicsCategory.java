@@ -28,6 +28,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -41,6 +42,7 @@ import org.geotoolkit.util.NumberRange;
  * @since 2.0
  * @module
  */
+@Immutable
 final class GeophysicsCategory extends Category {
     /**
      * Serial number for interoperability with different versions.

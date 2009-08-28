@@ -22,6 +22,7 @@ import java.awt.Color;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.coverage.processing.IndexColorOperation;
@@ -67,7 +68,8 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
  * @since 1.2
  * @module
  */
-public final class Recolor extends IndexColorOperation {
+@Immutable
+public class Recolor extends IndexColorOperation {
     /**
      * For cross-version compatibility.
      */

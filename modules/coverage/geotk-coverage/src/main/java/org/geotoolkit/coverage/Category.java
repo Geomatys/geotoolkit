@@ -25,6 +25,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
@@ -78,6 +79,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
  * @since 1.2
  * @module
  */
+@Immutable
 public class Category implements Serializable {
     /**
      * Serial number for interoperability with different versions.

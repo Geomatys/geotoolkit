@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
+import javax.media.jai.operator.ExpDescriptor;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
-import javax.media.jai.operator.ExpDescriptor;
 
 
 /**
@@ -54,6 +56,7 @@ import javax.media.jai.operator.ExpDescriptor;
  * @since 2.2
  * @module
  */
+@Immutable
 public class Exp extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

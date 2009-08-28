@@ -40,6 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.GeneralParameterValue;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
@@ -72,6 +73,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
+@ThreadSafe
 public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
     /**
      * Augments the amout of memory allocated for the JAI tile cache.

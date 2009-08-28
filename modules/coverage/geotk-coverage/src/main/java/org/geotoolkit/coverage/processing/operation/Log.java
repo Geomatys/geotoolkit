@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.LogDescriptor;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
@@ -55,6 +56,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * @since 2.2
  * @module
  */
+@Immutable
 public class Log extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

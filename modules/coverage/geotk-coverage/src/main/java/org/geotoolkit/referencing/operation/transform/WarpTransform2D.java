@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
@@ -74,6 +75,7 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * @since 1.2
  * @module
  */
+@Immutable
 public class WarpTransform2D extends AbstractMathTransform implements MathTransform2D, Serializable {
     /**
      * Serial number for interoperability with different versions.

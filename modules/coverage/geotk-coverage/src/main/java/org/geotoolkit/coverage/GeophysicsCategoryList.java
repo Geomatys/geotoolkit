@@ -21,6 +21,8 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Locale;
 import javax.measure.unit.Unit;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -39,6 +41,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.0
  * @module
  */
+@Immutable
 final class GeophysicsCategoryList extends CategoryList {
     /**
      * Serial number for interoperability with different versions.

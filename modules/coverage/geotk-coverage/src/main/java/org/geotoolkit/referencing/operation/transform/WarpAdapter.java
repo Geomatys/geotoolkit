@@ -23,6 +23,8 @@ import javax.media.jai.Warp;
 
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 
 
@@ -37,6 +39,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
+@Immutable
 final class WarpAdapter extends Warp {
     /**
      * For cross-version compatibility.

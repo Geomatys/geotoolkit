@@ -25,6 +25,7 @@ import java.io.Serializable;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
@@ -50,6 +51,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
  * @since 2.5
  * @module
  */
+@Immutable
 public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
     /**
      * For cross-version compatibility.

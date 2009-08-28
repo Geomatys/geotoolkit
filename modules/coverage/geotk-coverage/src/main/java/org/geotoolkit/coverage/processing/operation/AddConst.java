@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.AddConstDescriptor;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
@@ -68,6 +69,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * @todo Should operates on {@code sampleToGeophysics} transform when possible.
  *       See <A HREF="http://jira.codehaus.org/browse/GEOT-610">GEOT-610</A>.
  */
+@Immutable
 public class AddConst extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

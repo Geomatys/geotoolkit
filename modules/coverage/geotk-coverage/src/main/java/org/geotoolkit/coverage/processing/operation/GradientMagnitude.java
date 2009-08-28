@@ -27,6 +27,7 @@ import javax.measure.unit.Unit;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -120,6 +121,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * @since 1.2
  * @module
  */
+@Immutable
 public class GradientMagnitude extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

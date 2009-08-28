@@ -19,6 +19,8 @@ package org.geotoolkit.internal.image.jai;
 
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
+
+import org.geotoolkit.lang.Immutable;
 import static org.geotoolkit.image.jai.Hysteresis.OPERATION_NAME;
 
 
@@ -31,6 +33,7 @@ import static org.geotoolkit.image.jai.Hysteresis.OPERATION_NAME;
  * @since 2.1
  * @module
  */
+@Immutable
 public final class HysteresisDescriptor extends OperationDescriptorImpl {
     /**
      * For cross-version compatibility.

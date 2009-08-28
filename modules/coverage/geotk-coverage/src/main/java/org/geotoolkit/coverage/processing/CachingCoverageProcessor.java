@@ -30,6 +30,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 
@@ -48,6 +49,7 @@ import org.geotoolkit.coverage.grid.RenderedCoverage;
  * @module
  */
 @Buffered
+@ThreadSafe(concurrent = true)
 @Decorator(AbstractCoverageProcessor.class)
 public class CachingCoverageProcessor extends AbstractCoverageProcessor {
     /**

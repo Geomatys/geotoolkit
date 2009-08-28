@@ -29,6 +29,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
@@ -57,6 +58,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @deprecated The API of this class will change in a future Geotk release. Do not rely on it.
  */
+@Immutable
 @Deprecated
 public abstract class Operation2D extends AbstractOperation {
     /**

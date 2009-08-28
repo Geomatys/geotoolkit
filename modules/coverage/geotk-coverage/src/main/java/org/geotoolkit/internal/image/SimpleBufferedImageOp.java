@@ -32,7 +32,6 @@ import java.io.Serializable;
 import javax.media.jai.PlanarImage;
 
 
-
 /**
  * An implementation of {@link BufferedImageOp} where the result is expected to be an image of
  * the same size than the input. This class is not public because we rely on JAI when we can.

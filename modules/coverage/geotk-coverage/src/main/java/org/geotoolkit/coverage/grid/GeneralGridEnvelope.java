@@ -28,6 +28,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.referencing.datum.PixelInCell;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
@@ -50,6 +51,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  * @since 1.2
  * @module
  */
+@Immutable
 public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
      * Serial number for interoperability with different versions.

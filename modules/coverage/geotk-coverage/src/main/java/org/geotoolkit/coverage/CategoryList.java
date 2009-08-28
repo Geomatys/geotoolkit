@@ -40,12 +40,13 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -62,6 +63,7 @@ import org.geotoolkit.util.Utilities;
  * @since 1.2
  * @module
  */
+@Immutable
 class CategoryList extends AbstractList<Category> implements MathTransform1D, Comparator<Category>, Serializable {
     /**
      * Serial number for interoperability with different versions.

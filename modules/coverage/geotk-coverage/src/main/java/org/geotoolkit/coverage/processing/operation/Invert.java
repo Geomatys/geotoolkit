@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.InvertDescriptor;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
@@ -60,6 +61,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * @since 2.2
  * @module
  */
+@Immutable
 public class Invert extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

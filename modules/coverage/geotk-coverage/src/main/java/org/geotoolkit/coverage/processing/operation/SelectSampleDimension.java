@@ -24,6 +24,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.Operation2D;
@@ -92,6 +93,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
  * @since 2.0
  * @module
  */
+@Immutable
 public class SelectSampleDimension extends Operation2D {
     /**
      * Serial number for interoperability with different versions.

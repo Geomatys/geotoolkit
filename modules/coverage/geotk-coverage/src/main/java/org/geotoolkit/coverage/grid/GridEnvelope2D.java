@@ -19,6 +19,8 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.Rectangle;
 import org.opengis.coverage.grid.GridEnvelope;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Cloneable;
 
 
@@ -40,6 +42,7 @@ import org.geotoolkit.util.Cloneable;
  * @since 2.5
  * @module
  */
+@Immutable
 public class GridEnvelope2D extends Rectangle implements GridEnvelope, Cloneable {
     /**
      * For cross-version interoperability.

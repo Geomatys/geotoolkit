@@ -31,6 +31,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -121,6 +122,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.0
  * @module
  */
+@ThreadSafe
 public class LocalizationGrid {
     /**
      * Number of grid's columns.

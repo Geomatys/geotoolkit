@@ -53,6 +53,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -80,6 +81,7 @@ import org.geotoolkit.util.NullArgumentException;
  * @since 2.2
  * @module
  */
+@Immutable
 public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup {
     /**
      * Serial number for interoperability with different versions.

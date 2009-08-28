@@ -48,6 +48,7 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -129,6 +130,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
+@Immutable
 public class Resample extends Operation2D {
     /**
      * Serial number for interoperability with different versions.

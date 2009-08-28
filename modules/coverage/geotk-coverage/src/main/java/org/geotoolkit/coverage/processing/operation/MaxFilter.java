@@ -19,6 +19,8 @@ package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.MaxFilterShape;
 import javax.media.jai.operator.MaxFilterDescriptor;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.processing.FilterOperation;
 
 
@@ -66,6 +68,7 @@ import org.geotoolkit.coverage.processing.FilterOperation;
  * @since 2.3
  * @module
  */
+@Immutable
 public class MaxFilter extends FilterOperation {
     /**
      * Serial number for interoperability with different versions.

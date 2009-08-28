@@ -46,6 +46,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -78,6 +79,7 @@ import org.geotoolkit.util.Utilities;
  * @since 1.2
  * @module
  */
+@Immutable
 public class GridSampleDimension implements SampleDimension, Serializable {
     /**
      * Serial number for interoperability with different versions.

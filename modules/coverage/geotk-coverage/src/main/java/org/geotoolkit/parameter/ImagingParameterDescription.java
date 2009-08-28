@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 import javax.media.jai.OperationDescriptor;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.AbstractInternationalString;
 
@@ -38,6 +39,7 @@ import org.geotoolkit.util.AbstractInternationalString;
  * @since 2.2
  * @module
  */
+@Immutable
 final class ImagingParameterDescription extends AbstractInternationalString implements Serializable {
     /**
      * Serial number for interoperability with different versions.

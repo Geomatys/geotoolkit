@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.opengis.coverage.Coverage;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
@@ -66,6 +67,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @since 2.1
  * @module
  */
+@ThreadSafe(concurrent = true)
 public class CoverageReferences {
     /**
      * The thread for removal {@link #pool} entries in which the coverage

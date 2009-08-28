@@ -70,6 +70,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -114,6 +115,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @deprecated The API of this class will change in a future Geotk release. Do not rely on it.
  */
+@Immutable
 @Deprecated
 public class OperationJAI extends Operation2D {
     /**

@@ -26,6 +26,7 @@ import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.coverage.CoverageReferences;
@@ -42,6 +43,7 @@ import org.geotoolkit.coverage.CoverageReferences;
  * @since 2.1
  * @module
  */
+@Immutable
 final class CachedOperationParameters {
     /**
      * The operation to apply on grid coverages.

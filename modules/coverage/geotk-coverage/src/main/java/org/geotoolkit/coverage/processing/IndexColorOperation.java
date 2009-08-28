@@ -37,6 +37,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -51,6 +52,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
+@Immutable
 public abstract class IndexColorOperation extends Operation2D {
     /**
      * Constructs an operation. The operation name will be the same than the

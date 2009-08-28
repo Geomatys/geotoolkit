@@ -36,6 +36,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.processing.operation.Resample;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -55,6 +56,7 @@ import org.geotoolkit.coverage.processing.operation.Resample;
  * @since 2.2
  * @module
  */
+@ThreadSafe
 public class Operations {
     /**
      * The default instance.

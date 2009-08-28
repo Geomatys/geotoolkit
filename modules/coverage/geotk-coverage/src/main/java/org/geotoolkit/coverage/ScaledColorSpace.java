@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage;
 
 import java.awt.color.ColorSpace;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -36,6 +37,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @todo Consider extending {@link javax.media.jai.ColorSpaceJAI}.
  */
+@Immutable
 final class ScaledColorSpace extends ColorSpace {
     /**
      * For cross-version compatibility.

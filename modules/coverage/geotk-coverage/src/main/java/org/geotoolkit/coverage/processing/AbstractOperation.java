@@ -32,6 +32,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
@@ -63,6 +64,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
+@Immutable
 public abstract class AbstractOperation implements Operation, Serializable {
     /**
      * Serial number for interoperability with different versions.

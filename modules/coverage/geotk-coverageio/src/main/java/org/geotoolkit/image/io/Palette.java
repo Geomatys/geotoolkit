@@ -27,6 +27,7 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageTypeSpecifier;
 import javax.swing.JFrame;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
@@ -49,6 +50,7 @@ import org.geotoolkit.util.NullArgumentException;
  * @since 2.4
  * @module
  */
+@Immutable
 public abstract class Palette {
     /**
      * The originating factory.

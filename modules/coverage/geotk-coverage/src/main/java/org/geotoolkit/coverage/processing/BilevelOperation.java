@@ -22,6 +22,7 @@ import javax.media.jai.operator.BinarizeDescriptor;
 
 import org.opengis.coverage.processing.OperationNotFoundException;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 
@@ -36,6 +37,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * @since 2.0
  * @module
  */
+@Immutable
 public class BilevelOperation extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

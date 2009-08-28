@@ -32,6 +32,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.ColorInterpretation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.coverage.Category;
@@ -51,6 +52,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.1
  * @module
  */
+@Immutable
 final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * Serial number for interoperability with different versions.

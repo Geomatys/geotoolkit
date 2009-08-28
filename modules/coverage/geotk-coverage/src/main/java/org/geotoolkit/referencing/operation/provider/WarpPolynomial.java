@@ -30,6 +30,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -51,6 +52,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * @since 2.1
  * @module
  */
+@Immutable
 public class WarpPolynomial extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.

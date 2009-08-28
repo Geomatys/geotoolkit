@@ -22,6 +22,7 @@ import java.awt.image.renderable.ParameterBlock;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 
@@ -41,6 +42,7 @@ import static org.geotoolkit.image.jai.Combine.OPERATION_NAME;
  * @since 2.1
  * @module
  */
+@Immutable
 public final class CombineDescriptor extends OperationDescriptorImpl {
     /**
      * For cross-version compatibility.

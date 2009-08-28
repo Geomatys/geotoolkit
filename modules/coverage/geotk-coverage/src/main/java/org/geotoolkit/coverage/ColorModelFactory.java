@@ -25,6 +25,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.util.collection.WeakValueHashMap;
@@ -41,6 +42,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
  * @since 2.1
  * @module
  */
+@Static
 final class ColorModelFactory {
     /**
      * A pool of color models previously created by {@link #getColorModel}.

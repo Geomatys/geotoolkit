@@ -36,6 +36,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -72,6 +73,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
+@Immutable
 public class GeneralGridGeometry implements GridGeometry, Serializable {
     /**
      * Serial number for interoperability with different versions.

@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.operation.transform.IterationStrategy;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -55,6 +56,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.0
  * @module
  */
+@Immutable
 final class LocalizationGridTransform2D extends GridTransform implements MathTransform2D {
     /**
      * Serial number for interoperability with different versions.

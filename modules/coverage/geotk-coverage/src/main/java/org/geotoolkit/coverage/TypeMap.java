@@ -38,6 +38,7 @@ import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;
+import org.geotoolkit.lang.Static;
 
 
 /**
@@ -52,6 +53,7 @@ import org.geotoolkit.util.Range;
  * @since 2.1
  * @module
  */
+@Static
 public final class TypeMap {
     /**
      * The mapping of {@link SampleDimensionType} to {@link DataBuffer} types.

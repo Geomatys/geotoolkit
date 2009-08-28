@@ -24,6 +24,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.RenderingHints;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.image.jai.NodataFilter;
 
 
@@ -36,6 +37,7 @@ import org.geotoolkit.image.jai.NodataFilter;
  * @since 2.1
  * @module
  */
+@Immutable
 public final class NodataFilterCRIF extends CRIFImpl {
     /**
      * Constructs a default factory.

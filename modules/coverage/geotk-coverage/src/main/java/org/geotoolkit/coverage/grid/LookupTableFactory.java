@@ -25,6 +25,7 @@ import javax.media.jai.LookupTableJAI;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 
 import static java.lang.Math.*;
@@ -40,6 +41,7 @@ import static java.lang.Math.*;
  * @since 2.0
  * @module
  */
+@Static
 final class LookupTableFactory {
     /**
      * The pool of {@link LookupTableJAI} objects already created.

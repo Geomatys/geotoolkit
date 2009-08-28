@@ -19,6 +19,8 @@ package org.geotoolkit.display.axis;
 
 import java.awt.RenderingHints;
 
+import org.geotoolkit.lang.Immutable;
+
 
 /**
  * Rendering hints for tick's graduation.
@@ -29,6 +31,7 @@ import java.awt.RenderingHints;
  * @since 2.0
  * @module
  */
+@Immutable
 final class RenderingHintKey extends RenderingHints.Key {
     /**
      * The required base class.

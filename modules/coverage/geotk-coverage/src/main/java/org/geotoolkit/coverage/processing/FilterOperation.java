@@ -18,6 +18,8 @@
 package org.geotoolkit.coverage.processing;
 
 import org.opengis.coverage.processing.OperationNotFoundException;
+
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.GridSampleDimension;
 
 
@@ -53,6 +55,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * @since 2.2
  * @module
  */
+@Immutable
 public class FilterOperation extends OperationJAI {
     /**
      * Serial number for interoperability with different versions.

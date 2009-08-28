@@ -49,6 +49,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -93,6 +94,7 @@ import org.geotoolkit.util.Utilities;
  * @since 2.1
  * @module
  */
+@ThreadSafe(concurrent = true)
 public class GridCoverageFactory extends Factory {
     /**
      * The hints to be given to coverage constructor.

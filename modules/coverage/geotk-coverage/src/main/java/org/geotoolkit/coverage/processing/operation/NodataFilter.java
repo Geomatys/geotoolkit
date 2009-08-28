@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.processing.FilterOperation;
 
 
@@ -71,6 +72,7 @@ import org.geotoolkit.coverage.processing.FilterOperation;
  * @since 2.2
  * @module
  */
+@Immutable
 public class NodataFilter extends FilterOperation {
     /**
      * Serial number for interoperability with different versions.

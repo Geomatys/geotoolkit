@@ -25,6 +25,7 @@ import java.awt.RenderingHints;
 import java.util.List;
 import java.util.Vector;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.jai.Combine;
 
@@ -41,6 +42,7 @@ import static org.geotoolkit.image.jai.Combine.Transform;
  * @since 2.1
  * @module
  */
+@Immutable
 public final class CombineCRIF extends CRIFImpl {
     /**
      * Constructs a default factory.
