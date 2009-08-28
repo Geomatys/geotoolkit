@@ -6,7 +6,7 @@ Downloading Geotoolkit.org Binaries
   of users who are not using the maven build tool, Geotk is also distributed as bundles which
   combine components of the library into a single JAR file. Finally, users can download the source
   code and build Geotk themselves to obtain all of the pieces in one shot as explained on the
-  {{{build.html}building from source}} page.
+  {{{build/index.html}building from source}} page.
 
   To run this code, Geotk requires a properly configured runtime environment as described in
   the {{{run.html}running Geotoolkit.org}} page.
@@ -37,16 +37,22 @@ Downloading Geotoolkit.org Binaries
   Geotk referencing module and redirect all Geotk loggings to the Log4J framework:
 
 -----------------------------------------------------------------------------------
+<properties>
+  <!-- Define the version that we want to use here, so
+       we have a single line to change when upgrating. -->
+  <geotk.version>3.02</geotk.version>
+</properties>
+
 <dependencies>
   <dependency>
     <groupId>org.geotoolkit</groupId>
     <artifactId>geotk-referencing</artifactId>
-    <version>SNAPSHOT</version>
+    <version>${geotk.version}</version>
   </dependency>
   <dependency>
     <groupId>org.geotoolkit</groupId>
     <artifactId>geotk-logging-log4j</artifactId>
-    <version>SNAPSHOT</version>
+    <version>${geotk.version}</version>
   </dependency>
 </dependencies>
 -----------------------------------------------------------------------------------
@@ -118,11 +124,11 @@ Downloading Geotoolkit.org Binaries
   installation directory.
 
   For example, users who wish to use the georeferencing functionality of Geotk can select the
-  <<<geotk-bundle-referencing-SNAPSHOT.pack.gz>>> archive for download. Once downloaded, the archive
+  <<<geotk-bundle-referencing-3.02.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 
 -----------------------------------------------------------------------------------
-unpack200 geotk-bundle-referencing-SNAPSHOT.pack.gz geotk-bundle-referencing.jar
+unpack200 geotk-bundle-referencing-3.02.pack.gz geotk-bundle-referencing.jar
 -----------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any
