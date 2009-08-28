@@ -144,7 +144,7 @@ public final class Classes {
      * @param  element The type of elements in the array.
      * @param  dimension The change of dimension, as a negative or positive number.
      * @return The type of an array of the given element type augmented by the given
-     *         number of dumensions.
+     *         number of dimensions (which may be negative), or {@code null}.
      *
      * @since 3.03
      */

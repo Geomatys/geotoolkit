@@ -591,9 +591,9 @@ public abstract class Factory {
 
     /**
      * The default conformance result returned by {@link Factory#availability()}. This class
-     * is <cite>live</cite>, i.e. the {@link Factory#pass()} method will return {@code false}
-     * if the encloding factory has been {@linkplain Factory#dispose() disposed} without the
-     * need to create a new instance of {@code Availability}.
+     * is <cite>live</cite>, i.e. the {@link #pass()} method will return {@code false} if the
+     * encloding factory has been {@linkplain Factory#dispose disposed} without the need to
+     * create a new instance of {@code Availability}.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.03
@@ -685,11 +685,11 @@ public abstract class Factory {
         }
 
         /**
-         * Returns {@code true) if the encloding factory is ready for use. The default
+         * Returns {@code true} if the encloding factory is ready for use. The default
          * implementation returns {@code true} if no throwable was given at constrution
-         * time and the enclosing factory has not been {@linkplain Factory#dispose() disposed}.
+         * time and the enclosing factory has not been {@linkplain Factory#dispose disposed}.
          *
-         * @return {@code true) if the encloding factory is ready for use.
+         * @return {@code true} if the encloding factory is ready for use.
          */
         @Override
         public boolean pass() {

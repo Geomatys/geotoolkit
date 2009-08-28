@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Errors;
  * are meet:
  * <p>
  * <ul>
- *   <li>{@link FactoryRegistry#getServiceProvider(Class, Filter, Hints, Hints.ClassKey)}
+ *   <li>{@link FactoryRegistry#getServiceProvider FactoryRegistry.getServiceProvider(...)}
  *       found no suitable instance for the given hints.<li>
  *   <li>At least one registered factory has a public constructor expecting a single
  *       {@link Hints} argument.</li>

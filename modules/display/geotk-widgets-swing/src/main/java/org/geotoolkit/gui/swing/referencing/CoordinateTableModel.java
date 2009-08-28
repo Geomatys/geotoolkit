@@ -286,7 +286,7 @@ public class CoordinateTableModel extends AbstractTableModel {
      * {@linkplain CoordinateReferenceSystem#getDomainOfValidity domain of validity}.
      * Coordinate validity is determined by invoking {@link CoordinateTableModel#isValidCoordinate}.
      *
-     * @author Cédric Briançon (Geomaty)
+     * @author Cédric Briançon (Geomatys)
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.00
      *

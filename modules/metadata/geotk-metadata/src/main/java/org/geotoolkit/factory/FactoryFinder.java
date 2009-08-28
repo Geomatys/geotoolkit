@@ -108,7 +108,8 @@ import org.geotoolkit.lang.ThreadSafe;
 @ThreadSafe(concurrent = false)
 public class FactoryFinder {
     /**
-     * The key for a special hints specifying an additional {@link ServiceRegistry#Filter}.
+     * The key for a special hints specifying an additional
+     * {@link javax.imageio.spi.ServiceRegistry.Filter Filter}.
      * If a value is given to this key in a {@link Hints} map, then every factory candidate
      * will be filtered by the given filter in addition of being checked for the other hints.
      *

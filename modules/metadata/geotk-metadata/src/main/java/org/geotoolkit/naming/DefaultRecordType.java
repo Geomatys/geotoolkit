@@ -45,7 +45,7 @@ import org.geotoolkit.util.Utilities;
  * The "keys" are strictly controlled {@link MemberName}s and are usually defined in the
  * context of a schema.
  *
- * @author Jody Garnet (Refractions)
+ * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00
  *
