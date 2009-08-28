@@ -224,7 +224,7 @@ public abstract class CommandLine implements Runnable {
     protected CommandLine(String command, final String[] arguments) {
         this.arguments = arguments;
         if (command == null) {
-            command = "java " + getClass().getName();
+            command = "java " + getClass().getCanonicalName();
         }
         this.command = command;
     }

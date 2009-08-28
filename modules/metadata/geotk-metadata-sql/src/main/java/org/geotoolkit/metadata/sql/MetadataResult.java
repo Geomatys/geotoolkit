@@ -90,7 +90,7 @@ final class MetadataResult extends StatementEntry {
         if (hasNext) {
             final LogRecord record = Errors.getResources(null).getLogRecord(
                     Level.WARNING, Errors.Keys.DUPLICATED_VALUES_$1, identifier);
-            record.setSourceClassName(type.getName());
+            record.setSourceClassName(type.getCanonicalName());
             record.setSourceMethodName("<init>");
             Logging.getLogger(MetadataResult.class).log(record);
         }

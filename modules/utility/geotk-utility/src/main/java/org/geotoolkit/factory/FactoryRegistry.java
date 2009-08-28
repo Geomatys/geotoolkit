@@ -957,7 +957,7 @@ public class FactoryRegistry extends ServiceRegistry {
                  * all factories together in a single log event because some registration (e.g.
                  * MathTransformProviders) would be otherwise quite verbose.
                  */
-                message.append(lineSeparator).append("  \u2022 ").append(factoryClass.getName());
+                message.append(lineSeparator).append("  \u2022 ").append(factoryClass.getCanonicalName());
                 newServices = true;
             }
         }

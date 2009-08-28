@@ -643,7 +643,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
              * Catching Exception is usually a bad practice, but there is
              * way too much exceptions to handle in the above reflections.
              */
-            NotSerializableException exception = new NotSerializableException(type.getName());
+            NotSerializableException exception = new NotSerializableException(type.getCanonicalName());
             exception.initCause(e);
             throw exception;
         }

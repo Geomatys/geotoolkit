@@ -1273,7 +1273,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         if (input2 instanceof Comparable<?> && input2.getClass().isInstance(input1)) {
             return -((Comparable) input2).compareTo(input1);
         }
-        int c = input1.getClass().getName().compareTo(input2.getClass().getName());
+        int c = input1.getClass().getCanonicalName().compareTo(input2.getClass().getCanonicalName());
         if (c != 0) {
             return c;
         }
@@ -1616,13 +1616,13 @@ public class Tile implements Comparable<Tile>, Serializable {
             type = (Class<?>) candidate;
             provider = (ImageReaderSpi) registry.getServiceProviderByClass(type);
         } catch (ClassCastException cause) {
-            InvalidClassException e = new InvalidClassException(type.getName(),
+            InvalidClassException e = new InvalidClassException(type.getCanonicalName(),
                     Errors.format(Errors.Keys.ILLEGAL_CLASS_$2, type, ImageReaderSpi.class));
             e.initCause(cause);
             throw e;
         }
         if (provider == null) {
-            throw new ClassNotFoundException(type.getName());
+            throw new ClassNotFoundException(type.getCanonicalName());
         }
     }
 }

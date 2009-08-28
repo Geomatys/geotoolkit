@@ -342,7 +342,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         }
         final LogRecord record = new LogRecord(level, Exceptions.formatChainedMessages(Loggings.getResources(null).
                 getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_$1, title), exception));
-        record.setSourceClassName(getClass().getName());
+        record.setSourceClassName(getClass().getCanonicalName());
         record.setSourceMethodName("isAvailable");
         record.setThrown(exception);
         record.setLoggerName(LOGGER.getName());

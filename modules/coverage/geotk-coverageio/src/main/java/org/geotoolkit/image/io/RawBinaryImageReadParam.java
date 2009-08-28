@@ -389,7 +389,7 @@ public class RawBinaryImageReadParam extends ImageReadParam {
                 model = new SinglePixelPackedSampleModel(dataType, width, height,
                                                          scanlineStride, bitMasks);
             } else {
-                throw new IllegalStateException(model.getClass().getName());
+                throw new IllegalStateException(model.getClass().getCanonicalName());
             }
         }
         if (model.getWidth() != width || model.getHeight() != height) {

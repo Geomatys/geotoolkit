@@ -268,7 +268,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                 final Class<? extends UnitaryProjection> c = getClass();
                 final LogRecord record = Loggings.format(Level.WARNING,
                         Loggings.Keys.CANT_ROLL_LONGITUDE_$1, c);
-                record.setSourceClassName(c.getName());
+                record.setSourceClassName(c.getCanonicalName());
                 record.setSourceMethodName("<init>");
                 Logging.log(UnitaryProjection.class, record);
             }
@@ -358,9 +358,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         }
         final String classe;
         if (transform instanceof Inverse) {
-            classe = ((Inverse) transform).inverse().getClass().getName() + ".Inverse";
+            classe = ((Inverse) transform).inverse().getClass().getCanonicalName() + ".Inverse";
         } else {
-            classe = transform.getClass().getName();
+            classe = transform.getClass().getCanonicalName();
         }
         final LogRecord record = new LogRecord(Level.WARNING, buffer.toString());
         record.setSourceClassName(classe);

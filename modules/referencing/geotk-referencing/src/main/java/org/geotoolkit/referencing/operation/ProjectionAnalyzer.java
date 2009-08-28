@@ -276,7 +276,7 @@ final class ProjectionAnalyzer {
         if (warning != null) {
             final LogRecord record = Loggings.format(Level.WARNING,
                     Loggings.Keys.APPLIED_UNIT_CONVERSION_$3, warning, unit, SI.METRE);
-            record.setSourceClassName(getClass().getName());
+            record.setSourceClassName(getClass().getCanonicalName());
             record.setSourceMethodName("createLinearConversion"); // This is the public method.
             final Logger logger = ReferencingFactory.LOGGER;
             record.setLoggerName(logger.getName());

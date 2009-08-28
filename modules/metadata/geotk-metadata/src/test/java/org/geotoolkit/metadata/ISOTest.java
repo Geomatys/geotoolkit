@@ -181,7 +181,7 @@ public final class ISOTest {
     public void testNoCodeList() {
         for (int i=0; i<TEST.length; i++) {
             final Class<?> type = TEST[i];
-            assertFalse(type.getName(), CodeList.class.isAssignableFrom(type));
+            assertFalse(type.getCanonicalName(), CodeList.class.isAssignableFrom(type));
         }
     }
 
@@ -198,7 +198,7 @@ public final class ISOTest {
             final Class<?> impl = getImplementation(type);
             if (impl == null) {
                 if (isImplemented(type)) {
-                    fail(type.getName() + " is not implemented.");
+                    fail(type.getCanonicalName() + " is not implemented.");
                 }
                 continue;
             }
@@ -272,7 +272,7 @@ public final class ISOTest {
      */
     private static Class<?> getImplementation(final Class<?> type) {
         if (!CodeList.class.isAssignableFrom(type)) {
-            String name = type.getName();
+            String name = type.getCanonicalName();
             if (name.startsWith(INTERFACE_PACKAGE)) {
                 ClassNotFoundException failure = null;
                 final int nameStart = name.lastIndexOf('.') + 1;

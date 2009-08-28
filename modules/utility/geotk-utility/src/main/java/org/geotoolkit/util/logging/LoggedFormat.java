@@ -149,7 +149,7 @@ public class LoggedFormat<T> extends Format {
      * @param method The method to declare as the warning emitter, or {@code null} if none.
      */
     public void setCaller(final Class<?> caller, final String method) {
-        this.className  = (caller != null) ? caller.getName() : null;
+        this.className  = (caller != null) ? caller.getCanonicalName() : null;
         this.methodName = method;
     }
 

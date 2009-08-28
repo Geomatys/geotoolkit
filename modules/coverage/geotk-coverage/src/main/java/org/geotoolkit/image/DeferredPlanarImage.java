@@ -429,7 +429,7 @@ public final class DeferredPlanarImage extends PlanarImage
                         message = Classes.getShortClassName(cause);
                     }
                     final LogRecord record = new LogRecord(Level.WARNING, message);
-                    record.setSourceClassName(observers[i].getClass().getName());
+                    record.setSourceClassName(observers[i].getClass().getCanonicalName());
                     record.setSourceMethodName("tileUpdate");
                     record.setThrown(cause);
                     record.setLoggerName(LOGGER.getName());

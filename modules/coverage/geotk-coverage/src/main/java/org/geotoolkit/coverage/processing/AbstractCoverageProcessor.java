@@ -198,7 +198,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
                     OPERATION, Loggings.Keys.APPLIED_OPERATION_$4,
                      getName((source != null) ? source : result, locale),
                     operationName, interp, Integer.valueOf(fromCache ? 1 : 0));
-            record.setSourceClassName(getClass().getName());
+            record.setSourceClassName(getClass().getCanonicalName());
             record.setSourceMethodName("doOperation");
             record.setLoggerName(LOGGER.getName());
             LOGGER.log(record);

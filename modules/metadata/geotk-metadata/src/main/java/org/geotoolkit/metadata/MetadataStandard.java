@@ -172,7 +172,7 @@ public final class MetadataStandard {
         final PropertyAccessor accessor = getAccessorOptional(implementation);
         if (accessor == null) {
             throw new ClassCastException(Errors.format(
-                    Errors.Keys.UNKNOW_TYPE_$1, implementation.getName()));
+                    Errors.Keys.UNKNOW_TYPE_$1, implementation.getCanonicalName()));
         }
         return accessor;
     }

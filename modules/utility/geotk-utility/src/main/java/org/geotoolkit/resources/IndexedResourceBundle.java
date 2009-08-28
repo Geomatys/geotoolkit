@@ -218,7 +218,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                  * the synchronized block, otherwise there is dead locks!
                  */
                 record = new LogRecord(Level.FINER, "Loaded resources for {0} from bundle \"{1}\".");
-                record.setSourceClassName(getClass().getName());
+                record.setSourceClassName(getClass().getCanonicalName());
                 record.setSourceMethodName((key != null) ? "getObject" : "getKeys");
                 /*
                  * Loads resources from the UTF file.
@@ -255,7 +255,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                 if (language == null || language.length() == 0) {
                     language = "<default>";
                 }
-                record.setParameters(new String[] {language, getClass().getName()});
+                record.setParameters(new String[] {language, getClass().getCanonicalName()});
             }
             Logging.log(IndexedResourceBundle.class, record);
             return values;
@@ -265,7 +265,7 @@ public class IndexedResourceBundle extends ResourceBundle {
             record.setThrown (exception);
             Logging.log(IndexedResourceBundle.class, record);
             final MissingResourceException error = new MissingResourceException(
-                    exception.getLocalizedMessage(), getClass().getName(), key);
+                    exception.getLocalizedMessage(), getClass().getCanonicalName(), key);
             error.initCause(exception);
             throw error;
         }

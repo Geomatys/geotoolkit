@@ -81,7 +81,7 @@ public class OperationFactoryTest extends EpsgFactoryTestCase {
     public final void testGeographicBacked() throws FactoryException {
         assumeNotNull(factory);
 
-        assertTrue("Expected a caching factory but got " + opFactory.getClass().getName(),
+        assertTrue("Expected a caching factory but got " + opFactory.getClass().getCanonicalName(),
                 opFactory instanceof CachingCoordinateOperationFactory);
         assertTrue("EPSG authority factory not found.",
                 ((CachingCoordinateOperationFactory) opFactory).getImplementationHints().
