@@ -46,9 +46,11 @@ public enum TypeValuePolicy {
      * the property is a collection, then the value is the type of <em>elements</em> in that
      * collection.
      *
-     * {@note Current implementation has an additional slight difference, in that if the metadata
-     *        implementation has setter methods, then <code>ELEMENT_TYPE</code> favor a type which
-     *        is consistent with both the getter and setter methods, if such type is found.}
+     * {@note Current implementation has an additional slight difference: if the getter method
+     *        in the implementation class declares a more specific return value than the getter
+     *        method in the interface, and if the setter method (if any) expects the same specialized
+     *        type, then <code>ELEMENT_TYPE</code> will use that specialized type. This is different
+     *        than <code>PROPERTY_TYPE</code> which always use the type declared in the interface.}
      */
     ELEMENT_TYPE,
 

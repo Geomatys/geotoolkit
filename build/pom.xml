@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.project</groupId>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
-  <name>Build tools</name>
+  <name>Build</name>
   <description>
     Build tools for the Geotk project. They define Maven plugins and command-line
     tools for building Geotk but are not part of the distribution. Many of those

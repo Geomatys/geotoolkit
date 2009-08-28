@@ -616,6 +616,20 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
     }
 
     /**
+     * Returns {@code true} if the given number is formatted with only one character.
+     * We will use less space if the minimum and maximum values are formatted using
+     * only one digit. This method assumes that we have verified that the element type
+     * is an integer type before to invoke this method.
+     */
+    private static boolean isCompact(final Comparable<?> value, final boolean ifNull) {
+        if (value == null) {
+            return ifNull;
+        }
+        final long n = ((Number) value).longValue();
+        return n >= 0 && n < 10;
+    }
+
+    /**
      * Returns a string representation of this range. The string representation is defined
      * as below:
      * <p>
@@ -638,6 +652,8 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
         if (isEmpty()) {
             return "[]";
         }
+        final T minValue = this.minValue;
+        final T maxValue = this.maxValue;
         if (minValue != null && minValue.equals(maxValue)) {
             return minValue.toString();
         }
@@ -649,7 +665,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
             buffer.append(minValue);
         }
         // Compact representation for integers, more space for real numbers.
-        if (Classes.isInteger(elementClass)) {
+        if (Classes.isInteger(elementClass) && isCompact(minValue, false) && isCompact(maxValue, true)) {
             buffer.append('\u2026');   // "..."
         } else {
             buffer.append(" \u2026 "); // " ... "

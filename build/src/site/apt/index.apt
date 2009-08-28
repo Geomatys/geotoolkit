@@ -1,0 +1,87 @@
+Building Geotoolkit.org
+
+  Users generally don't need to build Geotk themself since snapshots are built and deployed on the
+  {{{http://maven.geotoolkit.org}Maven repository}} every day, and monthly releases are deployed
+  both on the Maven repository and on the {{{http://download.geotoolkit.org}download area}}. If
+  nevertheless there is a need to build Geotk on a local machine, then this page describes the steps.
+
+* Requirements
+
+  The following free softwares must be installed on the local machine:
+
+  * Java Development Kit (JDK) version 6.
+
+  * {{{https://jai.dev.java.net/binary-builds.html}Java Advanced Imaging}} (JAI) version 1.1.3 or later.
+
+  * {{{https://jai-imageio.dev.java.net/binary-builds.html}Image I/O extensions for JAI}} version 1.1 or later.
+
+  * {{{http://maven.apache.org}Maven 2.1}} or later.
+
+  * {{{http://mercurial.selenic.com}Mercurial}} (if Geotk is going to be fetched from the source code repository).
+
+
+* Building the JAR files
+
+  Gets the source code from the above-cited download area (if monthly releases are suffisient)
+  or from the Mercurial repository if the development version (snapshot) is wanted. In the later
+  case, see the {{{../source-repository.html}Source Repository}} page for more information.
+
+  Make sure that the current directory is the project root directory, the one which contains
+  the topermost <<<pom.xml>>> file. From this directory, execute the following commands:
+
+-----------
+mvn install
+-----------
+
+  If the build fails with compilation errors, or if the execution fails with a throwable
+  of kind <<<java.lang.Error>>> (for example <<<NoSuchMethodError>>>), or if you just want
+  to be safe, try again with the following command:
+
+------------------------------------
+mvn clean install --update-snapshots
+------------------------------------
+
+  If there is some test failures, or if you want to skip tests for a faster build, use:
+
+-----------------------
+mvn install -DskipTests
+-----------------------
+
+  After a successful build, a copy of the Geotk JAR files will be located in the
+  <<<target/binaries>>> directory together with every dependencies that are required
+  at runtime.
+
+
+* Building the javadoc
+
+  Execute the following command from the same directory than above. It is recommanded to run
+  this command only after a successful build.
+
+---------------------
+mvn javadoc:aggregate
+---------------------
+
+  After a successful javadoc generation, the generated HTML pages will be located
+  in the <<<target/site/apidocs>>> directory.
+
+
+* Building the PACK200 bundles
+
+  Execute the following command after a successful build of JAR files and javadoc:
+
+----------------------------------------------------------------------------
+mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
+----------------------------------------------------------------------------
+
+
+* Updating the source code
+
+  This work only if the source code was obtained from the Mercurial repository.
+  The recommand steps are as below, in that order (note that the clean is performed
+  before the update):
+
+----------------
+mvn clean
+hg pull --update
+mvn install
+----------------

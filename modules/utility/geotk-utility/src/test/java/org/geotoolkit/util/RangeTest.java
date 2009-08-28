@@ -120,12 +120,12 @@ public final class RangeTest {
      */
     @Test
     public void testToString(){
-        assertEquals("[-1…1]",  UNIT    .toString());
-        assertEquals("0",       ZERO    .toString());
-        assertEquals("[A … B)", A       .toString());
-        assertEquals("(-∞…∞)",  INTEGERS.toString());
-        assertEquals("(0…∞)",   POSITIVE.toString());
-        assertEquals("(-∞…0)",  NEGATIVE.toString());
+        assertEquals("[-1 … 1]", UNIT    .toString());
+        assertEquals("0",        ZERO    .toString());
+        assertEquals("[A … B)",  A       .toString());
+        assertEquals("(-∞ … ∞)", INTEGERS.toString());
+        assertEquals("(0…∞)",    POSITIVE.toString());
+        assertEquals("(-∞ … 0)", NEGATIVE.toString());
     }
 
     /**

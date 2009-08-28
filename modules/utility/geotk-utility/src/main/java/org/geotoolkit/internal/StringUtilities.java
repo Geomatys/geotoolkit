@@ -124,7 +124,7 @@ public final class StringUtilities {
      * Returns the given identifier (e.g. a class name) with spaces inserted after words.
      * A word begin with a upper-case character following a lower-case character. For
      * example if the given identifier is {@code "PixelInterleavedSampleModel"}, then this
-     * method returns {@code "Pixel interleaved sample model "} (note the trailing space).
+     * method returns {@code "Pixel interleaved sample model"}.
      *
      * @param  identifier An identifier with no space, words beging with an upper-case character.
      * @return The identifier with spaces inserted after what looks like words.
@@ -147,6 +147,13 @@ public final class StringUtilities {
                 }
                 last = i;
             }
+        }
+        /*
+         * Removes the trailing space, if any.
+         */
+        int lg = buffer.length();
+        if (lg != 0 && Character.isSpaceChar(buffer.charAt(--lg))) {
+            buffer.setLength(lg);
         }
         return buffer;
     }

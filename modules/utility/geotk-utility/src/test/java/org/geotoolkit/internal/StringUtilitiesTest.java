@@ -57,7 +57,7 @@ public final class StringUtilitiesTest {
      */
     @Test
     public void testSeparateWords() {
-        assertEquals("Pixel interleaved sample model ",
+        assertEquals("Pixel interleaved sample model",
                 StringUtilities.separateWords("PixelInterleavedSampleModel").toString());
     }
 
