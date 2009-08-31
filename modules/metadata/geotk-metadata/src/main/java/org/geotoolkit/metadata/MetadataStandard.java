@@ -166,9 +166,7 @@ public final class MetadataStandard {
      * @throws ClassCastException if the specified implementation class do
      *         not implements a metadata interface of the expected package.
      */
-    private PropertyAccessor getAccessor(final Class<?> implementation)
-            throws ClassCastException
-    {
+    private PropertyAccessor getAccessor(final Class<?> implementation) throws ClassCastException {
         final PropertyAccessor accessor = getAccessorOptional(implementation);
         if (accessor == null) {
             throw new ClassCastException(Errors.format(
@@ -210,15 +208,20 @@ public final class MetadataStandard {
      * If this method returns {@code true}, then invoking {@link #getInterface(Class)} is
      * garanteed to succeed without throwing an exception.
      *
-     * @param  implementation The implementation class.
+     * @param  implementation The implementation class (can be {@code null}).
      * @return {@code true} if the given class implements an interface of this standard.
      *
      * @since 3.03
      */
     public boolean isMetadata(final Class<?> implementation) {
-        if (implementation != null && implementation.getName().startsWith(interfacePackage)) {
+        if (implementation == null) {
+            return false;
+        }
+        // Checks if the class is an interface from the metadata package.
+        if (implementation.getName().startsWith(interfacePackage)) {
             return true;
         }
+        // Checks if the class is an implementation of the metadata package.
         return getAccessorOptional(implementation) != null;
     }
 

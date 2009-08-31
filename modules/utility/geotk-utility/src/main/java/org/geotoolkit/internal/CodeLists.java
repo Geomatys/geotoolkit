@@ -122,6 +122,13 @@ public final class CodeLists implements CodeList.Filter {
             return null;
         }
         name = name.trim();
+        try {
+            // Forces initialization of the given class in order
+            // to register its list of static final constants.
+            Class.forName(codeType.getName(), true, codeType.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e); // Should never happen.
+        }
         return CodeList.valueOf(codeType, new CodeLists(name));
     }
 
