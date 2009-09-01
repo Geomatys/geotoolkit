@@ -786,14 +786,14 @@ public class Formatter {
      * name is returned. Otherwise, the first name found is returned.
      *
      * @param  info The object to looks for a preferred name.
-     * @return The preferred name.
+     * @return The preferred name, or {@code null} if the given object has no name.
      */
     public String getName(final IdentifiedObject info) {
-        final Citation authority = getEffectiveAuthority();
         final Identifier name = info.getName();
         if (name == null) {
             return null;
         }
+        final Citation authority = getEffectiveAuthority();
         if (!authorityMatches(authority, name.getAuthority())) {
             final Collection<GenericName> aliases = info.getAlias();
             if (aliases != null) {

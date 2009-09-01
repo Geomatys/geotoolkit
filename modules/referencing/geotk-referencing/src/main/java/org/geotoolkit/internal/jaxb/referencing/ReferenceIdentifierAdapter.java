@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
-import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
@@ -61,12 +60,12 @@ public final class ReferenceIdentifierAdapter extends
         if (adapter != null) {
             final Citation authority;
             final String codeSpace = adapter.codeSpace;
-            if (codeSpace != null && !codeSpace.equals("")) {
+            if (codeSpace != null && codeSpace.length() != 0) {
                 authority = Citations.fromName(codeSpace);
             } else {
                 authority = null;
             }
-            return new DefaultReferenceIdentifier(authority, null, adapter.value);
+            return new DefaultReferenceIdentifier(authority, Citations.getIdentifier(authority), adapter.value);
         }
         return null;
     }

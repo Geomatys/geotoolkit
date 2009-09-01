@@ -88,7 +88,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * <strong>This is not a valid object.</strong> This constructor is strictly
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
-    public DefaultVerticalCS() {
+    private DefaultVerticalCS() {
         this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
     }
 
