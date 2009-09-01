@@ -47,6 +47,14 @@ public class DefaultPosition implements Position {
      */
     private final Object position;
 
+    /**
+     * An Empty constructor that will be removed later.
+     * This constructor mustn't ber used.
+     */
+    public DefaultPosition() {
+        this.position = null;
+    }
+
     public DefaultPosition(final Date date) {
         this.position = date;
     }

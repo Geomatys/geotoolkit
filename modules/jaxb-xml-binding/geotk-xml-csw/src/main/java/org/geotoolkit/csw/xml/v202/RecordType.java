@@ -172,7 +172,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
     }
 
-    public void setBoundingBox(List<BoundingBoxType> bbox) {
+    public void setSimpleBoundingBox(List<BoundingBoxType> bbox) {
         if (boundingBox == null) {
             this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         }
@@ -187,7 +187,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
     }
     
-    public void setJBBoundingBox(List<JAXBElement<? extends BoundingBoxType>> bboxes) {
+    public void setBoundingBox(List<JAXBElement<? extends BoundingBoxType>> bboxes) {
         this.boundingBox = bboxes;
     }
     
