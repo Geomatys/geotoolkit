@@ -177,29 +177,6 @@ public class FactoryRegistry extends ServiceRegistry {
      *                 (not the actual implementation class).
      * @param filter   The optional filter, or {@code null}.
      * @param hints    The optional user requirements, or {@code null}.
-     * @return Factories ready to use for the specified category, filter and hints.
-     *
-     * @since 2.3
-     *
-     * @deprecated Replaced by the method of the same name with an additional
-     *             {@code Hints.ClassKey} argument, which can be null.
-     */
-    @Deprecated
-    public <T> Iterator<T> getServiceProviders(final Class<T> category, final Filter filter, final Hints hints) {
-        return getServiceProviders(category, filter, hints, null);
-    }
-
-    /**
-     * Returns the providers in the registry for the specified category, filter and hints.
-     * Providers that are not {@linkplain Factory#isAvailable available} will be ignored.
-     * This method will {@linkplain #scanForPlugins() scan for plugins} the first time it
-     * is invoked for the given category.
-     *
-     * @param <T>      The class represented by the {@code category} argument.
-     * @param category The category to look for. Usually an interface class
-     *                 (not the actual implementation class).
-     * @param filter   The optional filter, or {@code null}.
-     * @param hints    The optional user requirements, or {@code null}.
      * @param key      The key to use for looking for a user-provided instance
      *                 in the {@code hints} map, or {@code null} if none.
      * @return Factories ready to use for the specified category, filter and hints.

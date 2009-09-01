@@ -534,35 +534,6 @@ public abstract class Factory {
     }
 
     /**
-     * Returns {@code true} if this factory is ready for use. This method may returns {@code false}
-     * if this factory is an optional factory not available in the current configuration. It may be
-     * because some external resources were not found. For example the
-     * {@linkplain org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory EPSG factory}
-     * needs a database installed on the client machine.
-     * <p>
-     * This method can <strong>not</strong> be used as a manager for automatic download of external
-     * resources. It is just a way to tell to {@link FactoryRegistry} that this factory exists, but
-     * can't do its job for whatever reasons, so {@code FactoryRegistry} has to choose an other
-     * factory. In other words, this method is used only as a filter.
-     * <p>
-     * Note also that {@code FactoryRegistry} is not designed for factories with intermittent state
-     * (i.e. return value of {@code isAvailable()} varying with time). The behavior is undetermined
-     * in such case.
-     * <p>
-     * The default implementation returns {@code true} as long as this factory has not been
-     * {@linkplain #dispose disposed}.
-     *
-     * @return {@code true} if this factory is ready for use.
-     *
-     * @deprecated Replaced by {@link #availability()} in order to explain why a factory is not
-     *             available (<a href="http://jira.geotoolkit.org/browse/GEOTK-37">GEOTK-37</a>).
-     */
-    @Deprecated
-    public synchronized boolean isAvailable() {
-        return !hints.containsKey(DISPOSED);
-    }
-
-    /**
      * Returns whatever this factory is ready for use. The {@link ConformanceResult#pass} method
      * shall returns {@code false} if this factory is not available in the current configuration,
      * typically because some external resources were not found. Implementors are encouraged to
@@ -696,9 +667,9 @@ public abstract class Factory {
             if (failureCause != null) {
                 return false;
             }
-            // TODO: copy implementation of Factory.isAvailable() here,
-            // incuding synchronization on the enclosing Factory object.
-            return isAvailable();
+            synchronized (Factory.this) {
+                return !hints.containsKey(DISPOSED);
+            }
         }
 
         /**

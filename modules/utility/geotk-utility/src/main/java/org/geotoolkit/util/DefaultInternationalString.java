@@ -163,11 +163,10 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      *   <li>Otherwise, the characters after the {@code prefix} are parsed as an ISO language
      *       and country code, and the {@link #add(Locale,String)} method is invoked.</li>
      * </ul>
-     *
-     * <P>For example if the prefix is <code>"remarks"</code>, then the <code>"remarks_fr"</code>
-     * property key stands for remarks in {@linkplain Locale#FRENCH French} while the
-     * <code>"remarks_fr_CA"</code> property key stands for remarks in
-     * {@linkplain Locale#CANADA_FRENCH French Canadian}.</P>
+     * <p>
+     * For example if the prefix is {@code "remarks"}, then the {@code "remarks_fr"} property key
+     * stands for remarks in {@linkplain Locale#FRENCH French} while the {@code "remarks_fr_CA"}
+     * property key stands for remarks in {@linkplain Locale#CANADA_FRENCH French Canadian}.
      *
      * @param  prefix The prefix to skip at the begining of the {@code key}.
      * @param  key The property key.
@@ -179,47 +178,20 @@ public class DefaultInternationalString extends AbstractInternationalString impl
     public boolean add(final String prefix, final String key, final String string)
             throws IllegalArgumentException
     {
-        if (false) { // TODO: This code needs more investigation (test with IdentifiedObjectTest).
-            if (key.startsWith(prefix)) {
-                final int offset = prefix.length();
-                if (key.length() > offset && key.charAt(offset) == '_') {
-                    final Locale locale = Locales.parse(key.substring(offset + 1));
-                    add(locale, string);
-                    return true;
+        if (key.startsWith(prefix)) {
+            Locale locale = null;
+            final int offset = prefix.length();
+            if (key.length() != offset) {
+                if (key.charAt(offset) == '_') {
+                    locale = Locales.parse(key.substring(offset + 1));
+                } else {
+                    return false;
                 }
             }
-            return false;
+            add(locale, string);
+            return true;
         }
-        if (!key.startsWith(prefix)) {
-            return false;
-        }
-        int position  = prefix.length();
-        final int length = key.length();
-        final String[] parts = new String[] {"", "", ""};
-        for (int i=0; /*break condition inside*/; i++) {
-            if (position == length) {
-                final Locale locale = (i==0) ? (Locale)null :
-                       unique(new Locale(parts[0] /* language */,
-                                         parts[1] /* country  */,
-                                         parts[2] /* variant  */));
-                add(locale, string);
-                return true;
-            }
-            if (key.charAt(position)!='_' || i==parts.length) {
-                // Unknow character, or two many characters
-                break;
-            }
-            int next = key.indexOf('_', ++position);
-            if (next < 0) {
-                next = length;
-            } else if (next == position) {
-                // Found two consecutive '_' characters
-                break;
-            }
-            parts[i] = key.substring(position, position=next);
-        }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
-                                           "locale", key.substring(prefix.length())));
+        return false;
     }
 
     /**
