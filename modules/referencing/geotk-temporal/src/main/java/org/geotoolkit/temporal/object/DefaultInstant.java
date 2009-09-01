@@ -47,6 +47,13 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      */
     private Position position;
 
+    /**
+     * An Empty constructor that will be removed later.
+     * This constructor mustn't ber used.
+     */
+    public DefaultInstant() {
+    }
+
     public DefaultInstant(Position position) {
         this.position = position;
     }

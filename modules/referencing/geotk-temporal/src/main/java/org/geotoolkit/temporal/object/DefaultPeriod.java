@@ -39,6 +39,10 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      */
     private Instant ending;
 
+    public DefaultPeriod() {
+
+    }
+    
     public DefaultPeriod(Instant begining, Instant ending) {
         if (begining != null && RelativePosition.BEFORE.equals(begining.relativePosition(ending))) {
             this.begining = begining;
