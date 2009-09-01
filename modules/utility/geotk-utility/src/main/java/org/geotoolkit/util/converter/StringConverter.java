@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.SimpleInternationalString;
 
@@ -573,12 +574,10 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
                 return null;
             }
             source = source.trim();
-            final String[] s = source.split("_");
-            switch (s.length) {
-                case 1:  return new java.util.Locale(s[0]);
-                case 2:  return new java.util.Locale(s[0], s[1]);
-                case 3:  return new java.util.Locale(s[0], s[1], s[2]);
-                default: throw new NonconvertibleObjectException(Errors.format(Errors.Keys.BAD_LOCALE_$1, source));
+            try {
+                return Locales.parse(source);
+            } catch (IllegalArgumentException e) {
+                throw new NonconvertibleObjectException(Errors.format(Errors.Keys.BAD_LOCALE_$1, source), e);
             }
         }
 

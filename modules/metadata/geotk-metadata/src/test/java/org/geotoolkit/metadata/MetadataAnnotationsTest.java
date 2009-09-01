@@ -58,7 +58,7 @@ import org.geotoolkit.test.Depend;
  * fields of this object are compared with the original value.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  */
@@ -66,7 +66,7 @@ import org.geotoolkit.test.Depend;
 public final class MetadataAnnotationsTest {
     /**
      * Generates an XML tree from the annotations on the {@link DefaultMetaData} class,
-     * and writes it in a temporary file. This file is then read by the unmarshaller.
+     * and writes it in a temporary buffer. This file is then read by the unmarshaller.
      * Some assertions about the validity of the unmarshalled data are checked.
      *
      * @throws JAXBException If an error occured during the creation of the JAXB context,
@@ -75,8 +75,7 @@ public final class MetadataAnnotationsTest {
      */
     @Test
     public void testMetadataAnnotations() throws JAXBException, IOException {
-        final MarshallerPool pool =
-                new MarshallerPool(Namespaces.GMD, DefaultMetaData.class);
+        final MarshallerPool pool = new MarshallerPool(Namespaces.GMD, DefaultMetaData.class);
         final Marshaller marshaller = pool.acquireMarshaller();
         /*
          * Fill metadata values.
@@ -85,23 +84,23 @@ public final class MetadataAnnotationsTest {
         metadata.setLanguage(Locale.FRENCH);
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setDateStamp(new Date());
-        metadata.setContacts(Arrays.asList(new ResponsibleParty[] {
+        metadata.setContacts(Arrays.asList(
             DefaultResponsibleParty.GEOTOOLKIT, DefaultResponsibleParty.OPEN_GIS
-        }));
+        ));
         metadata.setMetadataStandardVersion("ISO-19115");
         final DefaultDataIdentification dataIdent = new DefaultDataIdentification();
         dataIdent.setCitation(Citations.GEOTOOLKIT);
-        final DefaultInternationalString localizedString = new DefaultInternationalString();
-        localizedString.add(Locale.ENGLISH, "Geotoolkit.org, OpenSource Project");
-        localizedString.add(Locale.FRENCH,  "Geotoolkit.org, projet OpenSource");
-        localizedString.add(Locale.ITALIAN, "Geotoolkit.org, progetto OpenSource");
-        dataIdent.setAbstract(localizedString);
-        dataIdent.setLanguages(Arrays.asList(new Locale[] {
+        final DefaultInternationalString localizedAbstract = new DefaultInternationalString();
+        localizedAbstract.add(Locale.ENGLISH, "Geotoolkit.org, OpenSource Project");
+        localizedAbstract.add(Locale.FRENCH,  "Geotoolkit.org, projet OpenSource");
+        localizedAbstract.add(Locale.ITALIAN, "Geotoolkit.org, progetto OpenSource");
+        dataIdent.setAbstract(localizedAbstract);
+        dataIdent.setLanguages(Arrays.asList(
             Locale.FRENCH
-        }));
-        metadata.setIdentificationInfo(Arrays.asList(new Identification[] {
+        ));
+        metadata.setIdentificationInfo(Arrays.asList(
             dataIdent
-        }));
+        ));
         final DefaultDimension dimension = new DefaultDimension();
         dimension.setDimensionName(DimensionNameType.COLUMN);
         dimension.setDimensionSize(830);
@@ -110,9 +109,9 @@ public final class MetadataAnnotationsTest {
         gridSpatialRepres.setAxisDimensionsProperties(Arrays.asList(dimension));
         metadata.setSpatialRepresentationInfo(Arrays.asList(gridSpatialRepres));
         final DefaultDistribution distrib = new DefaultDistribution();
-        distrib.setDistributors(Arrays.asList(new Distributor[] {
+        distrib.setDistributors(Arrays.asList(
             new DefaultDistributor(DefaultResponsibleParty.GEOTOOLKIT)
-        }));
+        ));
         metadata.setDistributionInfo(distrib);
         final StringWriter writer = new StringWriter();
         /*

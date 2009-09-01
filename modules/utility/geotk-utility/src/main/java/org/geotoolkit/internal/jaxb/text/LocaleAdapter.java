@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.text;
 import java.util.Locale;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.geotoolkit.resources.Locales;
 
 
 /**
@@ -61,23 +62,17 @@ public final class LocaleAdapter extends XmlAdapter<LocaleAdapter, Locale> {
      */
     @XmlElement(name = "CharacterString")
     public String getLocale() {
-        return locale.getISO3Language();
+        return Locales.getLanguage(locale);
     }
 
     /**
-     * Sets the value for the metadata date. This method is systematically called at
+     * Sets the value for the metadata locale. This method is systematically called at
      * unmarshalling time by JAXB.
      *
-     * @param locale The unmarshalled locale.
+     * @param language The unmarshalled locale.
      */
-    public void setLocale(final String locale) {
-        for (Locale candidate : Locale.getAvailableLocales()) {
-            if (candidate.getISO3Language().equalsIgnoreCase(locale)) {
-                this.locale = candidate;
-                return;
-            }
-        }
-        this.locale = new Locale(locale);
+    public void setLocale(final String language) {
+        locale = Locales.parse(language);
     }
 
     /**

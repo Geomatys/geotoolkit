@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import java.util.Locale;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.geotoolkit.resources.Locales;
 
 
 /**
@@ -79,7 +80,7 @@ public abstract class CodeListLocaleAdapter<ValueType extends CodeListLocaleAdap
         if (value == null) {
             return null;
         }
-        return new Locale(value.proxy.codeListValue);
+        return Locales.parse(value.proxy.codeListValue);
     }
 
     /**
@@ -94,6 +95,6 @@ public abstract class CodeListLocaleAdapter<ValueType extends CodeListLocaleAdap
         if (value == null) {
             return null;
         }
-        return wrap(new CodeListProxy("LanguageCode", value.getISO3Language()));
+        return wrap(new CodeListProxy("LanguageCode", Locales.getLanguage(value)));
     }
 }

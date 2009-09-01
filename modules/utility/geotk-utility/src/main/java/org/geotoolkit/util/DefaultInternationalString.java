@@ -20,8 +20,6 @@ package org.geotoolkit.util;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,9 +28,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.resources.Errors;
+
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Locales;
+
+import static org.geotoolkit.resources.Locales.unique;
 
 
 /**
@@ -54,12 +55,6 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * Serial number for interoperability with different versions.
      */
     private static final long serialVersionUID = 5760033376627376937L;
-
-    /**
-     * The set of locales created in this virtual machine through methods of this class.
-     * Used in order to get a {@linkplain #unique unique} instance of {@link Locale} objects.
-     */
-    private static final Map<Locale,Locale> LOCALES = new HashMap<Locale,Locale>();
 
     /**
      * The string values in different locales (never {@code null}).
@@ -166,8 +161,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      *   <li>If the {@code key} do not starts with the specified {@code prefix}, then
      *       this method do nothing and returns {@code false}.</li>
      *   <li>Otherwise, the characters after the {@code prefix} are parsed as an ISO language
-     *       and country code, and the {@link #add(Locale,String)} method is
-     *       invoked.</li>
+     *       and country code, and the {@link #add(Locale,String)} method is invoked.</li>
      * </ul>
      *
      * <P>For example if the prefix is <code>"remarks"</code>, then the <code>"remarks_fr"</code>
@@ -185,6 +179,17 @@ public class DefaultInternationalString extends AbstractInternationalString impl
     public boolean add(final String prefix, final String key, final String string)
             throws IllegalArgumentException
     {
+        if (false) { // TODO: This code needs more investigation (test with IdentifiedObjectTest).
+            if (key.startsWith(prefix)) {
+                final int offset = prefix.length();
+                if (key.length() > offset && key.charAt(offset) == '_') {
+                    final Locale locale = Locales.parse(key.substring(offset + 1));
+                    add(locale, string);
+                    return true;
+                }
+            }
+            return false;
+        }
         if (!key.startsWith(prefix)) {
             return false;
         }
@@ -215,46 +220,6 @@ public class DefaultInternationalString extends AbstractInternationalString impl
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
                                            "locale", key.substring(prefix.length())));
-    }
-
-    /**
-     * Returns a canonical instance of the given locale.
-     *
-     * @param  locale The locale to canonicalize.
-     * @return The canonical instance of {@code locale}.
-     */
-    private static synchronized Locale unique(final Locale locale) {
-        /**
-         * Initialize the LOCALES map with the set of locales defined in the Locale class.
-         * This operation is done only once.
-         */
-        if (LOCALES.isEmpty()) try {
-            final Field[] fields = Locale.class.getFields();
-            for (int i=0; i<fields.length; i++) {
-                final Field field = fields[i];
-                if (Modifier.isStatic(field.getModifiers())) {
-                    if (Locale.class.isAssignableFrom(field.getType())) {
-                        final Locale toAdd = (Locale) field.get(null);
-                        LOCALES.put(toAdd, toAdd);
-                    }
-                }
-            }
-        } catch (Exception exception) {
-            /*
-             * Not a big deal if this operation fails (this is actually just an
-             * optimization for reducing memory usage). Log a warning and continue.
-             */
-            Logging.unexpectedException(DefaultInternationalString.class, "unique", exception);
-        }
-        /*
-         * Now canonicalize the locale.
-         */
-        final Locale candidate = LOCALES.get(locale);
-        if (candidate != null) {
-            return candidate;
-        }
-        LOCALES.put(locale, locale);
-        return locale;
     }
 
     /**

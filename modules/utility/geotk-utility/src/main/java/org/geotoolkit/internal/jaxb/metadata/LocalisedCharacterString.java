@@ -32,7 +32,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see TextGroup
  *
@@ -41,7 +41,7 @@ import org.geotoolkit.util.converter.Classes;
  */
 final class LocalisedCharacterString {
     /**
-     * A prefix to concatenate with the {@linkplain Locale#getLanguage() language code}
+     * A prefix to concatenate with the {@linkplain Locale#getISO3Language() language code}
      * in order to get the attribute value specified in ISO-19139 for this elements.
      */
     private static final String LOCALE = "#locale-";
@@ -83,7 +83,7 @@ final class LocalisedCharacterString {
      */
     @XmlAttribute(name = "locale", required = true)
     public String getLocale() {
-        return (locale != null) ? LOCALE.concat(locale.getLanguage()) : null;
+        return (locale != null) ? LOCALE.concat(Locales.getLanguage(locale)) : null;
     }
 
     /**
@@ -93,7 +93,7 @@ final class LocalisedCharacterString {
      * @param locale The new locale.
      */
     public void setLocale(final String locale) {
-        this.locale = Locales.unique(new Locale(locale.substring(locale.indexOf('-') + 1)));
+        this.locale = Locales.parse(locale.substring(locale.indexOf('-') + 1));
     }
 
     /**
@@ -124,8 +124,8 @@ final class LocalisedCharacterString {
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append('[')
-                .append((locale != null) ? locale.getLanguage() : null);
+        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this))
+                .append('[').append((locale != null) ? Locales.getLanguage(locale) : null);
         if (text != null) {
             buffer.append(", \"").append(text).append('"');
         }
