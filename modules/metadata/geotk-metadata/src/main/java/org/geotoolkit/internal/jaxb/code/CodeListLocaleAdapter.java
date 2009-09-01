@@ -94,6 +94,6 @@ public abstract class CodeListLocaleAdapter<ValueType extends CodeListLocaleAdap
         if (value == null) {
             return null;
         }
-        return wrap(new CodeListProxy("LanguageCode", value.getLanguage()));
+        return wrap(new CodeListProxy("LanguageCode", value.getISO3Language()));
     }
 }

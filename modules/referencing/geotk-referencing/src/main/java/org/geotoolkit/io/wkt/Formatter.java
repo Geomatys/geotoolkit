@@ -791,6 +791,9 @@ public class Formatter {
     public String getName(final IdentifiedObject info) {
         final Citation authority = getEffectiveAuthority();
         final Identifier name = info.getName();
+        if (name == null) {
+            return null;
+        }
         if (!authorityMatches(authority, name.getAuthority())) {
             final Collection<GenericName> aliases = info.getAlias();
             if (aliases != null) {

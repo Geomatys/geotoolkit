@@ -73,7 +73,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
      * Creates a reference system without identifier.
      * This constructor is mainly for JAXB.
      */
-    protected ReferenceSystemMetadata() {
+    public ReferenceSystemMetadata() {
     }
 
     /**

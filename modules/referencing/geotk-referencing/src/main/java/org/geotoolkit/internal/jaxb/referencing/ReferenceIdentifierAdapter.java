@@ -23,6 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 
 /**
@@ -60,12 +61,12 @@ public final class ReferenceIdentifierAdapter extends
         if (adapter != null) {
             final Citation authority;
             final String codeSpace = adapter.codeSpace;
-            if (codeSpace != null) {
+            if (codeSpace != null && !codeSpace.equals("")) {
                 authority = Citations.fromName(codeSpace);
             } else {
                 authority = null;
             }
-            return new NamedIdentifier(authority, adapter.value);
+            return new DefaultReferenceIdentifier(authority, null, adapter.value);
         }
         return null;
     }

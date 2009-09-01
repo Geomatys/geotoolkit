@@ -117,7 +117,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     /**
      * Empty constructor for JAXB.
      */
-    private DefaultReferenceIdentifier() {
+    public DefaultReferenceIdentifier() {
         code      = null;
         codespace = null;
         authority = null;

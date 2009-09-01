@@ -674,7 +674,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * <strong>This is not a valid object.</strong> This constructor is strictly
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
-    private DefaultCoordinateSystemAxis() {
+    public DefaultCoordinateSystemAxis() {
         this(UNDEFINED);
     }
 

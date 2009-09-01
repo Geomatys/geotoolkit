@@ -96,7 +96,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * <strong>This is not a valid object.</strong> This constructor is strictly
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
-    private DefaultVerticalCRS() {
+    public DefaultVerticalCRS() {
         this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
     }
 

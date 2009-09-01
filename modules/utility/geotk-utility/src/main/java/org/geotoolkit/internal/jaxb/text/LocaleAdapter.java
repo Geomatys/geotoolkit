@@ -61,7 +61,7 @@ public final class LocaleAdapter extends XmlAdapter<LocaleAdapter, Locale> {
      */
     @XmlElement(name = "CharacterString")
     public String getLocale() {
-        return locale.getLanguage();
+        return locale.getISO3Language();
     }
 
     /**
