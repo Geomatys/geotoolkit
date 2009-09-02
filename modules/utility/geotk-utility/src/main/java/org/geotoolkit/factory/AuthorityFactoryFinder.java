@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.Citations;
 
 
 /**

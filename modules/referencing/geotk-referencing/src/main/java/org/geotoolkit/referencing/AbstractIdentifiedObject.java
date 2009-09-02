@@ -53,7 +53,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.DefaultInternationalString;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -642,8 +642,8 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * Returns an identifier according the given authority. This method checks all
      * {@linkplain #getIdentifiers identifiers} in their iteration order. It returns the first
      * identifier with an {@linkplain ReferenceIdentifier#getAuthority authority} citation
-     * {@linkplain Citations#identifierMatches(Citation,Citation) matching} the specified
-     * authority.
+     * {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
+     * Citation) matching} the specified authority.
      *
      * @param  authority The authority for the identifier to return, or {@code null} for
      *         the first identifier regarless its authority.

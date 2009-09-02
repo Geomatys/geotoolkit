@@ -47,7 +47,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.factory.FactoryNotFoundException;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;

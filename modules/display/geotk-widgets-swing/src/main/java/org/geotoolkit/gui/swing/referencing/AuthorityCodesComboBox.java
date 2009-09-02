@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;

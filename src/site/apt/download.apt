@@ -53,6 +53,7 @@ Downloading Geotoolkit.org Binaries
     <groupId>org.geotoolkit</groupId>
     <artifactId>geotk-logging-log4j</artifactId>
     <version>${geotk.version}</version>
+    <scope>runtime</scope>
   </dependency>
 </dependencies>
 -----------------------------------------------------------------------------------

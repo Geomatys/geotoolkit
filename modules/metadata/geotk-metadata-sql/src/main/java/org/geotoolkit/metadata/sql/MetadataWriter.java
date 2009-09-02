@@ -37,7 +37,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
 import org.geotoolkit.internal.sql.StatementEntry;

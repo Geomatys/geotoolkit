@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
  *
  * <ul>
  *   <li><p>First, if a collection of factories has been given to the constructor,
- *       then this method will search for a {@code create(Map, ...} method returning
+ *       then this method will search for a {@code create(Map, ...)} method returning
  *       an object assignable to the requested one. For example if the user requests a
  *       {@link org.opengis.referencing.crs.VerticalCRS} and this {@code MetadataFactory} has been
  *       given a {@link org.opengis.referencing.crs.CRSFactory} at construction time, then the

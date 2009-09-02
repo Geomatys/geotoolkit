@@ -35,7 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.wkt.Symbols;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.lang.ThreadSafe;
