@@ -31,6 +31,7 @@ import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -38,6 +39,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.metadata.quality.ConformanceResult;
 
 /**
  * 
@@ -199,8 +201,11 @@ public class DataAccessFinderTest extends TestCase {
      */
     public static class MockDataAccessFactory extends Factory implements DataAccessFactory {
 
-        public boolean isAvailable() {
-            return true;
+        @Override
+        public ConformanceResult availability() {
+            DefaultConformanceResult result = new DefaultConformanceResult();
+            result.setPass(true);
+            return result;
         }
 
         /**
@@ -244,8 +249,11 @@ public class DataAccessFinderTest extends TestCase {
      */
     public static class MockDataStoreFactory extends Factory implements DataStoreFactorySpi {
 
-        public boolean isAvailable() {
-            return true;
+        @Override
+        public ConformanceResult availability() {
+            DefaultConformanceResult result = new DefaultConformanceResult();
+            result.setPass(true);
+            return result;
         }
 
         /**
@@ -292,8 +300,10 @@ public class DataAccessFinderTest extends TestCase {
     public static class MockUnavailableDataStoreFactory extends MockDataStoreFactory {
 
         @Override
-        public boolean isAvailable() {
-            return false;
+        public ConformanceResult availability() {
+            DefaultConformanceResult result = new DefaultConformanceResult();
+            result.setPass(false);
+            return result;
         }
     }
     /**

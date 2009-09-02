@@ -30,6 +30,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.util.InternationalString;
 
 /**
@@ -233,7 +234,7 @@ public interface DataAccessFactory {
      * @return <tt>true</tt> if and only if this factory has all the
      *         appropriate jars on the classpath to create DataStores.
      */
-    boolean isAvailable();
+    ConformanceResult availability();
 
     /**
      * Data class used to capture Parameter requirements.

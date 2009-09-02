@@ -116,7 +116,7 @@ public class FileDataStoreFinder {
         Set<FileDataStoreFactorySpi> all = FILE_FACTORIES;
 
         for (FileDataStoreFactorySpi dsFactory : all) {
-            if (dsFactory.isAvailable()) {
+            if (dsFactory.availability().pass()) {
                 availableDS.add(dsFactory);
             }
         }

@@ -33,9 +33,11 @@ import org.geotoolkit.data.FileDataStoreFactorySpi;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.factory.Factory;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.metadata.quality.ConformanceResult;
 
 /**
  * Implementation of the DataStore service provider interface for Shapefiles.
@@ -329,16 +331,17 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      *         create DataStores.
      */
     @Override
-    public boolean isAvailable() {
+    public ConformanceResult availability() {
+        DefaultConformanceResult result = new DefaultConformanceResult();
         try {
             ShapefileDataStore.class.getName();
             IndexedShapefileDataStore.class.getName();
             Geometry.class.getName();
+            result.setPass(true);
         } catch (Exception e) {
-            return false;
+            result.setPass(false);
         }
-
-        return true;
+        return result;
     }
 
     /**

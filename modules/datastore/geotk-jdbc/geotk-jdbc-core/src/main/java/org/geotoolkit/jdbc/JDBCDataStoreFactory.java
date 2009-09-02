@@ -30,10 +30,12 @@ import org.geotoolkit.data.Parameter;
 import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.data.DataAccessFactory.Param;
+import org.opengis.metadata.quality.ConformanceResult;
 
 
 /**
@@ -244,14 +246,15 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      * </p>
      */
     @Override
-    public boolean isAvailable() {
+    public ConformanceResult availability() {
+        DefaultConformanceResult result = new DefaultConformanceResult();
         try {
             Class.forName(getDriverClassName());
-
-            return true;
+            result.setPass(true);
         } catch (ClassNotFoundException e) {
-            return false;
+            result.setPass(false);
         }
+        return result;
     }
 
     /**

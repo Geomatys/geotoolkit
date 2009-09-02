@@ -112,7 +112,7 @@ public final class DataAccessFinder {
             if (canProcess) {
                 boolean isAvailable = false;
                 try {
-                    isAvailable = fac.isAvailable();
+                    isAvailable = fac.availability().pass();
                 } catch (Throwable t) {
                     LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
                     // Protect against DataStores that don't carefully code
@@ -199,7 +199,7 @@ public final class DataAccessFinder {
         while (it.hasNext()) {
             dsFactory = it.next();
 
-            if (dsFactory.isAvailable()) {
+            if (dsFactory.availability().pass()) {
                 availableDS.add(dsFactory);
             }
         }

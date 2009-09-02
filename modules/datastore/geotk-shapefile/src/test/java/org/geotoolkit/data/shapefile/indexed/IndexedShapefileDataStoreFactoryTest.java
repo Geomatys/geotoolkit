@@ -140,7 +140,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.isAvailable()'
      */
     public void testIsAvailable() {
-        assertTrue(factory.isAvailable());
+        assertTrue(factory.availability().pass());
     }
 
     /*
