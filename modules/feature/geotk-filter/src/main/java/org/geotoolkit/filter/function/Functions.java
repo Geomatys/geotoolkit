@@ -38,7 +38,7 @@ public class Functions {
 
     static{
         final FactoryRegistry fr = new FactoryRegistry(FunctionFactory.class);
-        final Iterator<FunctionFactory> factories = fr.getServiceProviders(FunctionFactory.class, null, null);
+        final Iterator<FunctionFactory> factories = fr.getServiceProviders(FunctionFactory.class, null, null, null);
 
         while(factories.hasNext()){
             final FunctionFactory ff = factories.next();

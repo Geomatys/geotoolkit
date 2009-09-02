@@ -33,7 +33,7 @@ public class Accessors {
 
     static{
         final FactoryRegistry fr = new FactoryRegistry(PropertyAccessorFactory.class);
-        final Iterator<PropertyAccessorFactory> factories = fr.getServiceProviders(PropertyAccessorFactory.class, null, null);
+        final Iterator<PropertyAccessorFactory> factories = fr.getServiceProviders(PropertyAccessorFactory.class, null, null, null);
 
         final List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
         while(factories.hasNext()){

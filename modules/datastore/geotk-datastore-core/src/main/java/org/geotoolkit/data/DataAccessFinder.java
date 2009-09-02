@@ -166,7 +166,7 @@ public final class DataAccessFinder {
 
     static synchronized <T extends DataAccessFactory> Iterator<T> getAllDataStores(
             FactoryRegistry registry, Class<T> category) {
-        return registry.getServiceProviders(category, null, null);
+        return registry.getServiceProviders(category, null, null, null);
     }
 
     /**
@@ -194,7 +194,7 @@ public final class DataAccessFinder {
     static synchronized <T extends DataAccessFactory> Set<T> getAvailableDataStores(
             FactoryRegistry registry, Class<T> targetClass) {
         Set<T> availableDS = new HashSet<T>(5);
-        Iterator<T> it = registry.getServiceProviders(targetClass, null, null);
+        Iterator<T> it = registry.getServiceProviders(targetClass, null, null, null);
         T dsFactory;
         while (it.hasNext()) {
             dsFactory = it.next();

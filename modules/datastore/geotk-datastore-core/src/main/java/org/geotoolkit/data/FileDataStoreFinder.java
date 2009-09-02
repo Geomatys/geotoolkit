@@ -47,7 +47,7 @@ public class FileDataStoreFinder {
 
     static {
         final FactoryRegistry fr = new FactoryRegistry(FileDataStoreFactorySpi.class);
-        final Iterator<FileDataStoreFactorySpi> factories = fr.getServiceProviders(FileDataStoreFactorySpi.class, null, null);
+        final Iterator<FileDataStoreFactorySpi> factories = fr.getServiceProviders(FileDataStoreFactorySpi.class, null, null, null);
 
         while (factories.hasNext()) {
             final FileDataStoreFactorySpi ff = factories.next();

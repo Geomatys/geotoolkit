@@ -72,7 +72,7 @@ public final class DynamicSymbolFactoryFinder {
      *         factories, and whose available method returns true.
      */
     public static synchronized Iterator<MarkFactory> getMarkFactories() {
-        return getServiceRegistry().getServiceProviders(MarkFactory.class, null, null);
+        return getServiceRegistry().getServiceProviders(MarkFactory.class, null, null, null);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class DynamicSymbolFactoryFinder {
      *         factories, and whose available method returns true.
      */
     public static synchronized Iterator<ExternalGraphicFactory> getExternalGraphicFactories() {
-        return getServiceRegistry().getServiceProviders(ExternalGraphicFactory.class, null, null);
+        return getServiceRegistry().getServiceProviders(ExternalGraphicFactory.class, null, null, null);
     }
 
     /**
