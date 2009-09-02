@@ -18,8 +18,8 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.List;
-
 import org.opengis.referencing.FactoryException;
+import org.geotoolkit.util.logging.Logging;
 
 import org.junit.*;
 
@@ -31,7 +31,7 @@ import static org.geotoolkit.referencing.factory.ThreadedAuthorityFactory.TIMEOU
  * Tests {@link ThreadedAuthorityFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 3.00
  */
@@ -66,7 +66,7 @@ public final class ThreadedAuthorityFactoryTest {
 
         Thread.sleep(TIMEOUT_RESOLUTION * 3);
         assertEquals("Expected no new worker.",    factories, threaded.factories());
-        assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
+        assertDisposed(threaded);
         assertTrue  ("Worker should be disposed.", factories.get(0).isDisposed());
         /*
          * Ask again for the same object and check that no new backing
@@ -102,9 +102,25 @@ public final class ThreadedAuthorityFactoryTest {
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
 
-        Thread.sleep(TIMEOUT_RESOLUTION * 5);
+        Thread.sleep(TIMEOUT_RESOLUTION * 3);
         assertEquals("Expected no new worker.",    factories, threaded.factories());
-        assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
+        assertDisposed(threaded);
         assertTrue  ("Worker should be disposed.", factories.get(1).isDisposed());
+    }
+
+    /**
+     * Asserts that the given worker is disposed. It should be disposed right at the time this
+     * method is invoked. However if it is not, we will be lenient, give some time and try again.
+     */
+    private static void assertDisposed(final ThreadedAuthorityFactory factory) throws InterruptedException {
+        for (int i=0; i<10; i++) {
+            if (factory.countBackingStores() == 0) {
+                return;
+            }
+            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning("Worker should be disposed.");
+            Thread.sleep(TIMEOUT_RESOLUTION);
+            System.gc();
+        }
+        fail("Worker should be disposed.");
     }
 }
