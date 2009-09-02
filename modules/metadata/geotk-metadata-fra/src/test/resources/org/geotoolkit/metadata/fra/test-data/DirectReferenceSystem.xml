@@ -24,9 +24,6 @@
                           <gmd:linkage>
                             <gmd:URL>http://www.epsg.org</gmd:URL>
                           </gmd:linkage>
-                          <gmd:protocol>
-                            <gco:CharacterString>http</gco:CharacterString>
-                          </gmd:protocol>
                           <gmd:function>
                             <gmd:CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
                           </gmd:function>

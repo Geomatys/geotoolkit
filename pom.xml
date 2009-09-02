@@ -251,14 +251,26 @@
 
 
   <!-- ======================================================= -->
-  <!--     Compilation.                                        -->
+  <!--     Build setting.                                      -->
   <!--                                                         -->
-  <!-- Note: experimentation suggests that <debug>false</..>   -->
-  <!-- is equivalent to <compilerArgument>-g:source,lines</..> -->
-  <!-- which is what we actually want.                         -->
+  <!-- Note: replace the properties by the following when      -->
+  <!-- we will be allowed to use Maven 3:                      -->
+  <!--                                                         -->
+  <!-- <sourceEncoding>UTF-8</sourceEncoding>                  -->
+  <!--                                                         -->
   <!-- ======================================================= -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <build>
     <plugins>
+      <!-- ======================================================= -->
+      <!--     Compilation.                                        -->
+      <!--                                                         -->
+      <!-- Note: experimentation suggests that <debug>false</..>   -->
+      <!-- is equivalent to <compilerArgument>-g:source,lines</..> -->
+      <!-- which is what we actually want.                         -->
+      <!-- ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

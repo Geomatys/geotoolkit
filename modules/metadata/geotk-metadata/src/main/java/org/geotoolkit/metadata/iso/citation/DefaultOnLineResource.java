@@ -196,6 +196,11 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
     private String applicationProfile;
 
     /**
+     * Name of the online resources.
+     */
+    private String name;
+
+    /**
      * Detailed text description of what the online resource is/does.
      */
     private InternationalString description;
@@ -212,9 +217,9 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
     private URI linkage;
 
     /**
-     * Name of the online resources.
+     * The connection protocol to be used.
      */
-    private String name;
+    private String protocol;
 
     /**
      * Creates an initially empty on line resource.
@@ -369,7 +374,18 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
     @Override
     @XmlElement(name = "protocol")
     public synchronized String getProtocol() {
-        final URI linkage = this.linkage;
-        return (linkage!=null) ? linkage.getScheme() : null;
+        return protocol;
+    }
+
+    /**
+     * Returns the connection protocol to be used.
+     *
+     * @param newValue The new protocol.
+     *
+     * @since 3.04
+     */
+    public synchronized void setProtocol(final String newValue) {
+        checkWritePermission();
+        protocol = newValue;
     }
 }
