@@ -265,6 +265,11 @@
         <artifactId>geotk-widgets-swing</artifactId>
         <version>${geotoolkit.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.geotoolkit.project</groupId>
+        <artifactId>geotk-provided</artifactId>
+	<version>${geotoolkit.version}</version>      
+      </dependency>
 
       <!-- Batik SVG -->
       <dependency>
