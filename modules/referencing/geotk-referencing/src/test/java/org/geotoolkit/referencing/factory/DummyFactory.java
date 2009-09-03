@@ -67,6 +67,7 @@ final class DummyFactory extends AbstractAuthorityFactory {
          */
         @Override
         protected AbstractAuthorityFactory createBackingStore() {
+            assertTrue("Should be invoked in a synchronized block.", Thread.holdsLock(this));
             final DummyFactory factory = new DummyFactory();
             assertTrue(factories.add(factory));
             return factory;
@@ -76,7 +77,7 @@ final class DummyFactory extends AbstractAuthorityFactory {
          * Returns a copy of the factories queue. This is returned as a list in order
          * to allows comparisons with {@link List#equals}.
          */
-        final List<DummyFactory> factories() {
+        final synchronized List<DummyFactory> factories() {
             return new ArrayList<DummyFactory>(factories);
         }
     }
@@ -85,7 +86,7 @@ final class DummyFactory extends AbstractAuthorityFactory {
      * {@code true} if this factory has been disposed by
      * an explicit call to the {@link #dispose} method.
      */
-    private volatile boolean disposed;
+    private boolean disposed;
 
     /**
      * Creates a new dummy factory.
@@ -98,7 +99,7 @@ final class DummyFactory extends AbstractAuthorityFactory {
      * Returns {@code true} if this factory has been disposed
      * by an explicit call to the {@link #dispose} method.
      */
-    public boolean isDisposed() {
+    public synchronized boolean isDisposed() {
         return disposed;
     }
 
@@ -106,9 +107,9 @@ final class DummyFactory extends AbstractAuthorityFactory {
      * Flags this factory as disposed.
      */
     @Override
-    protected void dispose(boolean shutdown) {
-        disposed = true;
+    protected synchronized void dispose(boolean shutdown) {
         super.dispose(shutdown);
+        disposed = true;
     }
 
     /**
@@ -139,8 +140,10 @@ final class DummyFactory extends AbstractAuthorityFactory {
      * Returned value is not relevant for our tests.
      */
     @Override
-    public IdentifiedObject createObject(String code) throws FactoryException {
-        if (disposed) throw new FactoryException();
+    public synchronized IdentifiedObject createObject(String code) throws FactoryException {
+        if (disposed) {
+            throw new FactoryException("Factory has been disposed.");
+        }
         return DefaultGeographicCRS.WGS84;
     }
 }
