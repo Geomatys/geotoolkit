@@ -208,7 +208,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
                 maxRecords = 1;
             }
 
-            final String field       = "Title";
+            final String field       = "title";
             final QueryParser parser = new QueryParser(field, analyzer);
             parser.setDefaultOperator(Operator.AND);
 
