@@ -41,6 +41,10 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.provider.Stereographic}</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic}</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic.North}</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic.South}</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic.VariantB}</li>
  * </ul>
  *
  * {@section Description}

@@ -22,12 +22,12 @@ package org.geotoolkit.naming;
 
 import java.util.Set;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlType;
 
+import org.opengis.util.Type;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
 import org.opengis.util.RecordSchema;
@@ -47,7 +47,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.4
  * @module
@@ -58,7 +58,7 @@ public class DefaultRecordType implements RecordType, Serializable {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -1700658916139547638L;
+    private static final long serialVersionUID = -116458723163877388L;
 
     /**
      * The schema that contains this record type.
@@ -71,9 +71,9 @@ public class DefaultRecordType implements RecordType, Serializable {
     private final TypeName name;
 
     /**
-     * The members and their values.
+     * The members and their types.
      */
-    private final Map<MemberName,TypeName> attributeTypes;
+    private final Map<MemberName,Type> memberTypes;
 
     /**
      * Empty constructor only used by JAXB.
@@ -81,7 +81,7 @@ public class DefaultRecordType implements RecordType, Serializable {
     private DefaultRecordType() {
         parent = null;
         name   = null;
-        attributeTypes = Collections.emptyMap();
+        memberTypes = Collections.emptyMap();
     }
 
     /**
@@ -94,27 +94,22 @@ public class DefaultRecordType implements RecordType, Serializable {
     public DefaultRecordType(final RecordType recordType) {
         parent = recordType.getContainer();
         name = recordType.getTypeName();
-        attributeTypes = recordType.getAttributeTypes();
+        memberTypes = recordType.getMemberTypes();
     }
 
     /**
-     * Creates a record with all attribute types specified.
+     * Creates a record with all member types specified.
      *
      * @param parent  The schema that contains this record type.
      * @param name    The name that identifies this record type.
      * @param members The name of the members to be included in this record type.
      */
     public DefaultRecordType(final RecordSchema parent, final TypeName name,
-                             final Collection<MemberName> members)
+                             final Map<MemberName,Type> members)
     {
         this.parent = parent;
         this.name = name;
-        final Map<MemberName,TypeName> attributeTypes =
-                new HashMap<MemberName,TypeName>(Utilities.hashMapCapacity(members.size()));
-        for (final MemberName member : members) {
-            attributeTypes.put(member, member.getAttributeType());
-        }
-        this.attributeTypes = Collections.unmodifiableMap(attributeTypes);
+        memberTypes = Collections.unmodifiableMap(new LinkedHashMap<MemberName,Type>(members));
     }
 
     /**
@@ -148,10 +143,28 @@ public class DefaultRecordType implements RecordType, Serializable {
      * pairs in this record type.
      *
      * @return The dictionary of (<var>name</var>, <var>type</var>) pairs.
+     *
+     * @deprecated Replaced by {@link #getMemberTypes()}.
      */
     @Override
+    @Deprecated
     public Map<MemberName,TypeName> getAttributeTypes() {
+        final Map<MemberName,TypeName> attributeTypes = new LinkedHashMap<MemberName,TypeName>();
+        for (final Map.Entry<MemberName,Type> entry : memberTypes.entrySet()) {
+            attributeTypes.put(entry.getKey(), entry.getValue().getTypeName());
+        }
         return attributeTypes;
+    }
+
+    /**
+     * Returns the unmodifiable dictionary of all (<var>name</var>, <var>type</var>)
+     * pairs in this record type.
+     *
+     * @return The dictionary of (<var>name</var>, <var>type</var>) pairs.
+     */
+    @Override
+    public Map<MemberName,Type> getMemberTypes() {
+        return memberTypes;
     }
 
     /**
@@ -161,14 +174,14 @@ public class DefaultRecordType implements RecordType, Serializable {
      * This method is functionally equivalent to:
      *
      * {@preformat java
-     *     getAttributeTypes().keySet()
+     *     getAttributeTypes().keySet();
      * }
      *
      * @return The set of attribute names.
      */
     @Override
     public Set<MemberName> getMembers() {
-        return attributeTypes.keySet();
+        return memberTypes.keySet();
     }
 
     /**
@@ -178,7 +191,7 @@ public class DefaultRecordType implements RecordType, Serializable {
      * This method is functionnaly equivalent to:
      *
      * {@preformat java
-     *     getAttributeTypes().get(name)
+     *     getAttributeTypes().get(name).getTypeName();
      * }
      *
      * @param  memberName The attribute name for which to get the associated type name.
@@ -186,7 +199,8 @@ public class DefaultRecordType implements RecordType, Serializable {
      */
     @Override
     public TypeName locate(final MemberName memberName) {
-        return attributeTypes.get(memberName);
+        final Type type = memberTypes.get(memberName);
+        return (type != null) ? type.getTypeName() : null;
     }
 
     /**
@@ -202,7 +216,7 @@ public class DefaultRecordType implements RecordType, Serializable {
      */
     @Override
     public boolean isInstance(final Record record) {
-        return attributeTypes.keySet().containsAll(record.getAttributes().keySet());
+        return memberTypes.keySet().containsAll(record.getAttributes().keySet());
     }
 
     /**
@@ -210,7 +224,7 @@ public class DefaultRecordType implements RecordType, Serializable {
      */
     @Override
     public int hashCode() {
-        int code = attributeTypes.hashCode();
+        int code = memberTypes.hashCode();
         if (name   != null) code = 31*code + name.hashCode();
         if (parent != null) code = 31*code + parent.hashCode();
         return code;
@@ -231,7 +245,7 @@ public class DefaultRecordType implements RecordType, Serializable {
             final DefaultRecordType that = (DefaultRecordType) other;
             return Utilities.equals(name, that.name) &&
                    Utilities.equals(parent, that.parent) &&
-                   Utilities.equals(attributeTypes, that.attributeTypes);
+                   Utilities.equals(memberTypes, that.memberTypes);
         }
         return false;
     }

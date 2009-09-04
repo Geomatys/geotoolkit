@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.opengis.util.TypeName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
 import org.opengis.util.GenericName;
@@ -151,6 +152,25 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      */
     public NameSpace createNameSpace(final GenericName name) {
         return createNameSpace(name, null);
+    }
+
+    /**
+     * Creates a type name from the given character sequence. The default implementation
+     * returns a new {@linkplain DefaultTypeName} instance.
+     *
+     * @param  scope The {@linkplain GenericName#scope scope} of the type
+     *         name to be created, or {@code null} for a global namespace.
+     * @param  name The type name as a string or an international string.
+     * @return The type name for the given character sequence.
+     * @throws IllegalArgumentException If the {@code name} argument is null.
+     *
+     * @since 3.04
+     */
+    @Override
+    public TypeName createTypeName(NameSpace scope, CharSequence name)
+            throws IllegalArgumentException
+    {
+        return new DefaultTypeName(scope, name);
     }
 
     /**
