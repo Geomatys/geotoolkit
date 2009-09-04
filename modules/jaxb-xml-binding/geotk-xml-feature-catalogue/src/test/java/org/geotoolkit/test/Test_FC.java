@@ -1,9 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008 - 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
-
-package org.geotools.test;
+package org.geotoolkit.test;
 
 import java.io.File;
 import java.io.FileReader;
@@ -15,61 +26,38 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
-import net.seagis.cat.csw.v202.Capabilities;
-import net.seagis.cat.csw.v202.DescribeRecordResponseType;
-import net.seagis.cat.csw.v202.DescribeRecordType;
-import net.seagis.cat.csw.v202.DistributedSearchType;
-import net.seagis.cat.csw.v202.ElementSetNameType;
-import net.seagis.cat.csw.v202.ElementSetType;
-import net.seagis.cat.csw.v202.GetCapabilities;
-import net.seagis.cat.csw.v202.GetDomainResponseType;
-import net.seagis.cat.csw.v202.GetDomainType;
-import net.seagis.cat.csw.v202.GetRecordByIdResponseType;
-import net.seagis.cat.csw.v202.GetRecordByIdType;
-import net.seagis.cat.csw.v202.GetRecordsResponseType;
-import net.seagis.cat.csw.v202.GetRecordsType;
-import net.seagis.cat.csw.v202.HarvestResponseType;
-import net.seagis.cat.csw.v202.HarvestType;
-import net.seagis.cat.csw.v202.QueryConstraintType;
-import net.seagis.cat.csw.v202.QueryType;
-import net.seagis.cat.csw.v202.ResultType;
-import net.seagis.cat.csw.v202.TransactionResponseType;
-import net.seagis.cat.csw.v202.TransactionType;
-import net.seagis.ws.rs.NamespacePrefixMapperImpl;
-import net.seagis.ows.v100.ExceptionReport;
-import org.geotools.feature.catalog.AssociationRoleImpl;
-import org.geotools.feature.catalog.BindingImpl;
-import org.geotools.feature.catalog.BoundFeatureAttributeImpl;
-import org.geotools.feature.catalog.ConstraintImpl;
-import org.geotools.feature.catalog.DefinitionReferenceImpl;
-import org.geotools.feature.catalog.DefinitionSourceImpl;
-import org.geotools.feature.catalog.FeatureAssociationImpl;
-import org.geotools.feature.catalog.FeatureAttributeImpl;
-import org.geotools.feature.catalog.FeatureCatalogueImpl;
-import org.geotools.feature.catalog.FeatureOperationImpl;
-import org.geotools.feature.catalog.FeatureTypeImpl;
-import org.geotools.feature.catalog.InheritanceRelationImpl;
-import org.geotools.feature.catalog.ListedValueImpl;
-import org.geotools.feature.catalog.PropertyTypeImpl;
-import org.geotools.metadata.iso.MetaDataImpl;
-import org.geotools.metadata.iso.citation.AddressImpl;
-import org.geotools.metadata.iso.citation.CitationDateImpl;
-import org.geotools.metadata.iso.citation.CitationImpl;
-import org.geotools.metadata.iso.citation.ContactImpl;
-import org.geotools.metadata.iso.citation.ResponsiblePartyImpl;
-import org.geotools.metadata.iso.citation.TelephoneImpl;
-import org.geotools.service.ServiceIdentificationImpl;
-import org.geotools.util.LocalName;
-import org.geotools.util.SimpleInternationalString;
+import org.geotoolkit.feature.catalog.AssociationRoleImpl;
+import org.geotoolkit.feature.catalog.BindingImpl;
+import org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl;
+import org.geotoolkit.feature.catalog.ConstraintImpl;
+import org.geotoolkit.feature.catalog.DefinitionReferenceImpl;
+import org.geotoolkit.feature.catalog.DefinitionSourceImpl;
+import org.geotoolkit.feature.catalog.FeatureAssociationImpl;
+import org.geotoolkit.feature.catalog.FeatureAttributeImpl;
+import org.geotoolkit.feature.catalog.FeatureCatalogueImpl;
+import org.geotoolkit.feature.catalog.FeatureOperationImpl;
+import org.geotoolkit.feature.catalog.FeatureTypeImpl;
+import org.geotoolkit.feature.catalog.InheritanceRelationImpl;
+import org.geotoolkit.feature.catalog.ListedValueImpl;
+import org.geotoolkit.feature.catalog.PropertyTypeImpl;
+import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.citation.DefaultAddress;
+import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.citation.DefaultContact;
+import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.citation.DefaultTelephone;
+import org.geotoolkit.naming.DefaultNameFactory;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.Role;
-import org.geotools.util.Multiplicity;
-import org.geotools.util.MultiplicityRange;
-import org.geotools.util.TypeName;
+import org.geotoolkit.util.Multiplicity;
+import org.geotoolkit.util.MultiplicityRange;
+import org.junit.Ignore;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -82,6 +70,7 @@ import org.opengis.util.UnlimitedInteger;
  *
  * @author guilhem
  */
+@Ignore
 public class Test_FC {
     
      /**
@@ -100,19 +89,8 @@ public class Test_FC {
         // Unmarshalles the given XML file to objects
         JAXBContext context;
         
-        context = JAXBContext.newInstance(Capabilities.class, DescribeRecordType.class
-                        ,DistributedSearchType.class, ElementSetNameType.class, ElementSetType.class
-                        ,GetCapabilities.class, GetDomainType.class, GetRecordByIdType.class
-                        ,GetRecordsType.class, HarvestType.class, QueryConstraintType.class
-                        ,QueryType.class, ResultType.class, TransactionType.class
-                        ,GetRecordsResponseType.class, GetRecordByIdResponseType.class
-                        ,DescribeRecordResponseType.class, GetDomainResponseType.class
-                        ,TransactionResponseType.class, HarvestResponseType.class
-                        ,ExceptionReport.class, net.seagis.ows.v110.ExceptionReport.class
-                        ,net.seagis.dublincore.v2.terms.ObjectFactory.class,
-                        
-                         ServiceIdentificationImpl.class, 
-                         MetaDataImpl.class,
+        context = JAXBContext.newInstance(
+                         DefaultMetaData.class,
                          AssociationRoleImpl.class, BindingImpl.class, BoundFeatureAttributeImpl.class,
                          ConstraintImpl.class, DefinitionReferenceImpl.class, DefinitionSourceImpl.class,
                          FeatureAssociationImpl.class, FeatureAttributeImpl.class, FeatureCatalogueImpl.class,
@@ -124,7 +102,6 @@ public class Test_FC {
          try {
             //unmarshaller.setProperty("com.sun.xml.bind.IDResolver", new DocumentIDResolver()); 
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapperImpl("http://www.isotc211.org/2005/srv"));
         } catch (PropertyException e) {
             System.out.println("prefix non trouv");
         }
@@ -133,8 +110,7 @@ public class Test_FC {
         if (true){
 
             request = unmarshaller.unmarshal(new FileReader(fileName));
-           // System.out.println("unmarshalled:" + request.getClass().getSimpleName() +" \n " +  request.toString());
-       //} else {
+           
         
             String name = "Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)";
             List<String> scopes = new ArrayList<String>();
@@ -143,17 +119,17 @@ public class Test_FC {
             Date versionDate = new Date(2000, 9, 30);
             
             // producer
-            ResponsiblePartyImpl producer = new ResponsiblePartyImpl();
+            DefaultResponsibleParty producer = new DefaultResponsibleParty();
             producer.setIndividualName("John Q.Public");
             producer.setOrganisationName(new SimpleInternationalString("US National Geospatial-Intelligence Agency (NGA)"));
-            ContactImpl contact = new ContactImpl();
-            TelephoneImpl phone = new TelephoneImpl();
+            DefaultContact contact = new DefaultContact();
+            DefaultTelephone phone = new DefaultTelephone();
             List<String> facsmiles = new ArrayList<String>();
             facsmiles.add("1 703 XXX XXX");
             phone.setFacsimiles(facsmiles);
             phone.setVoices(facsmiles);
             contact.setPhone(phone);
-            AddressImpl address = new AddressImpl();
+            DefaultAddress address = new DefaultAddress();
             List<String> dps = new ArrayList<String>();
             dps.add("12310 Sunrise Valley Drive");
             address.setDeliveryPoints(dps);
@@ -169,17 +145,17 @@ public class Test_FC {
             
             //definition source
             List<DefinitionSource> defSources = new ArrayList<DefinitionSource>();
-            CitationImpl source = new CitationImpl();
+            DefaultCitation source = new DefaultCitation();
             source.setTitle(new SimpleInternationalString("International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English"));
             List<CitationDate> dates = new ArrayList<CitationDate>();
-            CitationDateImpl date = new CitationDateImpl();
+            DefaultCitationDate date = new DefaultCitationDate();
             date.setDate(new Date(1994,1,1));
             date.setDateType(DateType.PUBLICATION);
             dates.add(date);
             source.setDates(dates);
             source.setEdition(new SimpleInternationalString("Fifth"));
             List<ResponsibleParty> rps = new ArrayList<ResponsibleParty>();
-            ResponsiblePartyImpl rp = new ResponsiblePartyImpl();
+            DefaultResponsibleParty rp = new DefaultResponsibleParty();
             rp.setOrganisationName(new SimpleInternationalString("International Hydrographic Bureau"));
             rp.setRole(Role.PUBLISHER);
             rps.add(rp);
@@ -195,7 +171,9 @@ public class Test_FC {
             String def = "An excavation made in the earth for the purpose of extracting natural deposit. (see also AQ090)";
             String code = "DEP";
             List<org.opengis.util.LocalName> aliases = new ArrayList<org.opengis.util.LocalName>();
-            aliases.add(new LocalName("Extraction Mine"));
+            DefaultNameFactory factory = new DefaultNameFactory();
+
+            aliases.add(factory.createLocalName(null, "Extraction Mine"));
             List<PropertyType> cof = new ArrayList<PropertyType>();
             
             
@@ -206,14 +184,14 @@ public class Test_FC {
             
             // feature attribute 1 with constraint
             FeatureAttributeImpl attr = new FeatureAttributeImpl("attribute-1",
-                                                                 new LocalName("Depth"),
+                                                                 factory.createLocalName(null, "Depth"),
                                                                  "Distance measured from the highest",
                                                                  new Multiplicity(new MultiplicityRange(1, new UnlimitedInteger(1))),
                                                                  null,
                                                                  consts,
                                                                  code,
                                                                  null,
-                                                                 new TypeName("Real"));
+                                                                 factory.createTypeName(null, "Real"));
             cof.add(attr);
             
             // listed values
@@ -250,18 +228,18 @@ public class Test_FC {
             
             // feature attribute 2 with listed value
             FeatureAttributeImpl attr2 = new FeatureAttributeImpl("attribute-2",
-                                                                 new LocalName("Pier/Wharf/Quay classification"),
+                                                                 factory.createLocalName(null, "Pier/Wharf/Quay classification"),
                                                                  "Classification of decked berthing structure, based on configuration and structure",
                                                                  new Multiplicity(new MultiplicityRange(1, new UnlimitedInteger(1))),
                                                                  null,
                                                                  null,
                                                                  code,
                                                                  values,
-                                                                 new TypeName("Real"));
+                                                                 factory.createTypeName(null,"Real"));
             cof.add(attr2);
             
             code = "AA010";
-            FeatureTypeImpl ft1 = new FeatureTypeImpl(new LocalName("Mine"), 
+            FeatureTypeImpl ft1 = new FeatureTypeImpl(factory.createLocalName(null, "Mine"),
                                                       def, 
                                                       code, 
                                                       false, 
@@ -303,7 +281,7 @@ public class Test_FC {
             //feature type 2
             List<PropertyType> cof2 = new ArrayList<PropertyType>();
             
-            FeatureTypeImpl ft2 = new FeatureTypeImpl(new LocalName("Road"), 
+            FeatureTypeImpl ft2 = new FeatureTypeImpl(factory.createLocalName(null,"Road"),
                                                       "An open way maintained for vehicular use.", 
                                                       "AP030", 
                                                       false, 
@@ -314,7 +292,7 @@ public class Test_FC {
             //feature type 3
             List<PropertyType> cof3 = new ArrayList<PropertyType>();
             
-            FeatureTypeImpl ft3 = new FeatureTypeImpl(new LocalName("Bidge"), 
+            FeatureTypeImpl ft3 = new FeatureTypeImpl(factory.createLocalName(null,"Bidge"),
                                                       "A man made structure spanning and providing passage over a body of water", 
                                                       "AQ040", 
                                                       false, 
@@ -324,7 +302,7 @@ public class Test_FC {
             
             // Assoication role
             AssociationRoleImpl role1 = new AssociationRoleImpl("role-1",
-                                                            new LocalName("Over"),
+                                                            factory.createLocalName(null,"Over"),
                                                             "Bridge whitch the road crosses over ...",
                                                             new Multiplicity(new MultiplicityRange(1, new UnlimitedInteger(Integer.MAX_VALUE))),
                                                             ft2,
@@ -339,7 +317,7 @@ public class Test_FC {
             
              // Assoication role
             AssociationRoleImpl role2 = new AssociationRoleImpl("role-2",
-                                                            new LocalName("Under"),
+                                                            factory.createLocalName(null,"Under"),
                                                             "Roads which cross this bridge.",
                                                            new Multiplicity(new MultiplicityRange(0, new UnlimitedInteger(1))),
                                                             ft3,
@@ -355,7 +333,7 @@ public class Test_FC {
             // Feature association
             List<AssociationRole> roles = new ArrayList<AssociationRole>();
             
-            FeatureAssociationImpl fassoc = new FeatureAssociationImpl(new LocalName("Stacked On"),
+            FeatureAssociationImpl fassoc = new FeatureAssociationImpl(factory.createLocalName(null,"Stacked On"),
                                                                     "An object is over another object",
                                                                     "101",
                                                                     false,
@@ -375,7 +353,7 @@ public class Test_FC {
             
             //feature type 4
             
-            FeatureTypeImpl ft4 = new FeatureTypeImpl(new LocalName("Building"), 
+            FeatureTypeImpl ft4 = new FeatureTypeImpl(factory.createLocalName(null,"Building"),
                                                       "A relatively permanent structure, roofed and usually walled and designed for some particular use.", 
                                                       "AL015", 
                                                       false, 
@@ -384,7 +362,7 @@ public class Test_FC {
                                                       null);
              //feature type 5
             
-            FeatureTypeImpl ft5 = new FeatureTypeImpl(new LocalName("Lighthouse"), 
+            FeatureTypeImpl ft5 = new FeatureTypeImpl(factory.createLocalName(null,"Lighthouse"),
                                                       "A distinctive structure exhibiting light(s) designed to serve as an aid to navigation.", 
                                                       "BC050", 
                                                       false, 
@@ -407,7 +385,7 @@ public class Test_FC {
             // feature operation
             FeatureOperationImpl operation = new FeatureOperationImpl();
             operation.setId("operation-1");
-            operation.setMemberName(new LocalName("Raise dam"));
+            operation.setMemberName(factory.createLocalName(null,"Raise dam"));
             operation.setDefinition("The action of raising the dam causes changes in the discharge from the dam....");
             operation.setCardinality(new Multiplicity(new MultiplicityRange(1, new UnlimitedInteger(1))));
             operation.setFeatureType(ft5);

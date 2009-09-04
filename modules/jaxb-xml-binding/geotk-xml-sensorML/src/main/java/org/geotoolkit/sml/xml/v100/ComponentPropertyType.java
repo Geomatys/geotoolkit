@@ -58,7 +58,7 @@ public class ComponentPropertyType implements ComponentProperty {
 
     @XmlElementRef(name = "AbstractProcess", namespace = "http://www.opengis.net/sensorML/1.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractProcessType> process;
-    @XmlAttribute(required = true)
+    @XmlAttribute // (required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String name;
     @XmlAttribute
@@ -310,6 +310,9 @@ public class ComponentPropertyType implements ComponentProperty {
         StringBuilder sb = new StringBuilder("[Components]").append("\n");
         if (process != null) {
             sb.append("process: ").append(process.getValue()).append('\n');
+        }
+        if (name != null) {
+            sb.append("name: ").append(name).append('\n');
         }
         if (nilReason != null) {
             sb.append("nilReason:").append('\n');

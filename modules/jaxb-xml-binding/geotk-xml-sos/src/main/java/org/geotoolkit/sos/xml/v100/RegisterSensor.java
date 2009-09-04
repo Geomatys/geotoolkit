@@ -78,7 +78,7 @@ public class RegisterSensor extends RequestBaseType {
      /**
      * Build a new registerSensor request.
      */
-     public RegisterSensor(String version, String sensorDescription, ObservationTemplate observationTemplate){
+     public RegisterSensor(String version, Object sensorDescription, ObservationTemplate observationTemplate){
          super(version);
          this.observationTemplate = observationTemplate;
          this.sensorDescription = new SensorDescription(sensorDescription);
@@ -167,9 +167,9 @@ public class RegisterSensor extends RequestBaseType {
         }
         
         /**
-         * Build a new Sensor description with a string.
+         * Build a new Sensor description with an object.
          */
-        public SensorDescription(String description){
+        public SensorDescription(Object description){
             any = description;
         }
         

@@ -1,9 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008 - 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
-package org.geotools.test;
+package org.geotoolkit.test;
 
 import java.io.File;
 import java.io.FileReader;
@@ -11,15 +23,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
-import net.seagis.ws.rs.NamespacePrefixMapperImpl;
-import org.geotools.util.Multiplicity;
-import org.geotools.util.MultiplicityRange;
+import org.geotoolkit.util.Multiplicity;
+import org.geotoolkit.util.MultiplicityRange;
+import org.junit.Ignore;
 import org.opengis.util.UnlimitedInteger;
 
 /**
  *
  * @author guilhem
  */
+@Ignore
 public class Test_Multiplicity {
     
     public static void main(String[] args) throws Exception {
@@ -33,7 +46,6 @@ public class Test_Multiplicity {
         Marshaller marshaller     = context.createMarshaller();
         try {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapperImpl("http://www.isotc211.org/2005/srv"));
         } catch (PropertyException e) {
             System.out.println("prefix non trouv");
         }
