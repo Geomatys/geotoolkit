@@ -128,7 +128,7 @@ final class Loader extends ResourceBundle.Control {
             throw instantiationFailure(e);
         }
         final ResourceBundle bundle;
-        c.setAccessible(true);
+        // Do not call c.setAccessible(true) - this is not allowed in Applet.
         try {
             bundle = (ResourceBundle) c.newInstance(filename);
         } catch (InvocationTargetException e) {

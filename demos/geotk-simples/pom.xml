@@ -66,6 +66,11 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-widgets-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-epsg</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
