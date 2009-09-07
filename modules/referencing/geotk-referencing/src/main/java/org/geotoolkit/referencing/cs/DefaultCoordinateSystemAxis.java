@@ -22,7 +22,6 @@ package org.geotoolkit.referencing.cs;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;  // For javadoc
 import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.measure.converter.UnitConverter;
@@ -46,7 +45,6 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xml.Namespaces;
 
@@ -65,7 +63,7 @@ import org.geotoolkit.xml.Namespaces;
  * Conversely, these names shall not be used in any other context.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see AbstractCS
  * @see Unit
@@ -566,6 +564,14 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             Vocabulary.Keys.UNDEFINED, "?", AxisDirection.OTHER, Unit.ONE);
 
     /**
+     * Same as {@link #UNDEFINED}, except that this axis is not localized and have no alias.
+     * It is used by JAXB constructor only, and the most important point is that it must not
+     * have any alias.
+     */
+    private static final DefaultCoordinateSystemAxis UNITIALIZED = new DefaultCoordinateSystemAxis(
+            "Undefined", "?", AxisDirection.OTHER, Unit.ONE);
+
+    /**
      * Some names to be treated as equivalent. This is needed because axis names are the primary
      * way to distinguish between {@link CoordinateSystemAxis} instances. Those names are strictly
      * defined by ISO 19111 as "Geodetic latitude" and "Geodetic longitude" among others, but the
@@ -628,7 +634,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     @XmlID
     @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
     @XmlJavaTypeAdapter(StringConverter.class)
-    private String getID() {
+    final String getID() {
         return "coordinate-system-axis";
     }
 
@@ -675,7 +681,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultCoordinateSystemAxis() {
-        this(UNDEFINED);
+        this(UNITIALIZED);
     }
 
     /**
@@ -808,12 +814,19 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     }
 
     /**
-     * Constructs an axis with a name as an {@linkplain InternationalString international string}
-     * and an abbreviation. The {@linkplain #getName name of this identified object} is set to the
-     * unlocalized version of the {@code name} argument, as given by
-     * <code>name.{@linkplain InternationalString#toString(Locale) toString}(null)</code>. The
-     * same {@code name} argument is also stored as an {@linkplain #getAlias alias}, which
-     * allows fetching localized versions of the name.
+     * Constructs an axis with the given name and abbreviation. Special case:
+     *
+     * <ul>
+     *   <li><p>If the given name is an {@linkplain InternationalString international string},
+     *   then the {@linkplain #getName name of this identified object} is set to the unlocalized
+     *   version of the {@code name} argument, as given by
+     *   <code>name.{@linkplain InternationalString#toString(java.util.Locale) toString}(null)</code>.
+     *   The same {@code name} argument is also stored as an {@linkplain #getAlias alias},
+     *   which allows fetching localized versions of the name.</p></li>
+     *
+     *   <li><p>Otherwise, <code>name.toString()</code> is used as the primary name and
+     *   no alias is defined.</p></li>
+     * </ul>
      *
      * @param name         The name of this axis. Also stored as an alias for localization purpose.
      * @param abbreviation The {@linkplain #getAbbreviation abbreviation} used for this
@@ -822,7 +835,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * @param unit         The {@linkplain #getUnit unit of measure} used for this coordinate
      *                     system axis.
      */
-    public DefaultCoordinateSystemAxis(final InternationalString name,
+    public DefaultCoordinateSystemAxis(final CharSequence  name,
                                        final String        abbreviation,
                                        final AxisDirection direction,
                                        final Unit<?>       unit)
@@ -834,12 +847,16 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * Work around for RFE #4093999 in Sun's bug database
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
-    private static Map<String,Object> toMap(final InternationalString name) {
+    private static Map<String,Object> toMap(final CharSequence name) {
         final Map<String,Object> properties = new HashMap<String,Object>(4);
         if (name != null) {
-            // The "null" locale argument is required for getting the unlocalized version.
-            properties.put(NAME_KEY,  name.toString(null));
-            properties.put(ALIAS_KEY, name);
+            if (name instanceof InternationalString) {
+                // The "null" locale argument is required for getting the unlocalized version.
+                properties.put(NAME_KEY, ((InternationalString) name).toString(null));
+                properties.put(ALIAS_KEY, name);
+            } else {
+                properties.put(NAME_KEY, name.toString());
+            }
         }
         return properties;
     }
@@ -860,8 +877,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                                         final AxisDirection direction,
                                         final Unit<?>       unit)
     {
-        this(name >= 0 ? Vocabulary.formatInternational(name) :
-                new SimpleInternationalString(abbreviation), abbreviation, direction, unit);
+        this(name >= 0 ? Vocabulary.formatInternational(name) : abbreviation, abbreviation, direction, unit);
         PREDEFINED[PREDEFINED_COUNT++] = this;
     }
 

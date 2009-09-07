@@ -32,9 +32,8 @@ import javax.measure.converter.ConversionException;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
-
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
+
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -52,6 +51,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.text.StringConverter;
 
 
 /**
@@ -70,7 +70,7 @@ import org.geotoolkit.xml.Namespaces;
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see DefaultCoordinateSystemAxis
  * @see javax.measure.unit.Unit
@@ -104,7 +104,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     @XmlID
     @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
     @XmlJavaTypeAdapter(StringConverter.class)
-    private String getID() {
+    final String getID() {
         return "coordinate-system";
     }
 

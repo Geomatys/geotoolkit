@@ -23,6 +23,8 @@ package org.geotoolkit.referencing.crs;
 import java.util.Collections;
 import java.util.Map;
 import javax.measure.unit.SI;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
@@ -62,12 +64,13 @@ import org.geotoolkit.lang.Immutable;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlRootElement(name = "EngineeringCRS")
 public class DefaultEngineeringCRS extends AbstractSingleCRS implements EngineeringCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -216,8 +219,16 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * Returns the datum.
      */
     @Override
+    @XmlElement(name="engineeringDatum")
     public EngineeringDatum getDatum() {
         return (EngineeringDatum) super.getDatum();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setDatum(final EngineeringDatum datum) {
+        super.setDatum(datum);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
  *    (C) 2008-2009, Open Source Geospatial Foundation (OSGeo)
@@ -15,71 +15,71 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jaxb.referencing;
+package org.geotoolkit.internal.jaxb.referencing.datum;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.opengis.referencing.datum.VerticalDatum;
+import org.opengis.referencing.datum.ImageDatum;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
-import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
+import org.geotoolkit.referencing.datum.DefaultImageDatum;
 
 
 /**
- * JAXB adapter for {@link VerticalDatum}, in order to integrate the value in an element
+ * JAXB adapter for {@link ImageDatum}, in order to integrate the value in an element
  * complying with OGC/ISO standard.
  *
- * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @author Cédric Briançon (Geomatys)
+ * @version 3.04
  *
- * @since 3.00
+ * @since 3.04
  * @module
  */
-public final class VerticalDatumAdapter extends MetadataAdapter<VerticalDatumAdapter,VerticalDatum> {
+public final class ImageDatumAdapter extends MetadataAdapter<ImageDatumAdapter,ImageDatum> {
     /**
      * Empty constructor for JAXB only.
      */
-    public VerticalDatumAdapter() {
+    public ImageDatumAdapter() {
     }
 
     /**
-     * Wraps a Vertical Datum value with a {@code gml:VerticalDatum} element at marshalling-time.
+     * Wraps a Vertical Datum value with a {@code gml:imageDatum} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
-    private VerticalDatumAdapter(final VerticalDatum metadata) {
+    private ImageDatumAdapter(final ImageDatum metadata) {
         super(metadata);
     }
 
     /**
-     * Returns the VerticalDatum value wrapped by a {@code gml:VerticalDatum} element.
+     * Returns the ImageDatum value wrapped by a {@code gml:imageDatum} element.
      *
      * @param  value The value to marshall.
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected VerticalDatumAdapter wrap(final VerticalDatum value) {
-        return new VerticalDatumAdapter(value);
+    protected ImageDatumAdapter wrap(final ImageDatum value) {
+        return new ImageDatumAdapter(value);
     }
 
     /**
-     * Returns the {@link DefaultVerticalDatum} generated from the metadata value.
+     * Returns the {@link DefaultImageDatum} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
-    @XmlElement(name = "VerticalDatum")
-    public DefaultVerticalDatum getVerticalDatum() {
-        final VerticalDatum metadata = this.metadata;
-        return (metadata instanceof DefaultVerticalDatum) ?
-            (DefaultVerticalDatum) metadata : new DefaultVerticalDatum(metadata);
+    @XmlElement(name = "ImageDatum")
+    public DefaultImageDatum getImageDatum() {
+        final ImageDatum metadata = this.metadata;
+        return (metadata instanceof DefaultImageDatum) ?
+            (DefaultImageDatum) metadata : new DefaultImageDatum(metadata);
     }
 
     /**
-     * Sets the value for the {@link DefaultVerticalDatum}.
+     * Sets the value for the {@link DefaultImageDatum}.
      * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setVerticalDatum(final DefaultVerticalDatum metadata) {
+    public void setImageDatum(final DefaultImageDatum metadata) {
         this.metadata = metadata;
     }
 }

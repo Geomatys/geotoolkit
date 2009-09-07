@@ -222,7 +222,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
         }
         buffer.append(code).append('"');
         if (authority != null) {
-            buffer.append("AUTHORITY[\"").append(authority.getTitle()).append("\",\"").append(code).append("\"]");
+            buffer.append(", AUTHORITY[\"").append(authority.getTitle()).append("\",\"").append(code).append("\"]");
         }
         return buffer.append(']').toString();
     }

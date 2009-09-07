@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Date;
 import java.util.Collections;
 import javax.measure.converter.UnitConverter;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -46,12 +48,13 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlRootElement(name = "TemporalCRS")
 public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -231,24 +234,40 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      * Initialize the fields required for {@link #toDate} and {@link #toValue} operations.
      */
     private void initializeConverter() {
-        origin   = ((TemporalDatum)datum).getOrigin().getTime();
-        toMillis = coordinateSystem.getAxis(0).getUnit().getConverterTo(Units.MILLISECOND);
+        origin   = getDatum().getOrigin().getTime();
+        toMillis = getAxis(0).getUnit().getConverterTo(Units.MILLISECOND);
     }
 
     /**
      * Returns the coordinate system.
      */
     @Override
+    @XmlElement(name="temporalCS")
     public TimeCS getCoordinateSystem() {
         return (TimeCS) super.getCoordinateSystem();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setCoordinateSystem(final TimeCS cs) {
+        super.setCoordinateSystem(cs);
     }
 
     /**
      * Returns the datum.
      */
     @Override
+    @XmlElement(name="temporalDatum")
     public TemporalDatum getDatum() {
         return (TemporalDatum) super.getDatum();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setDatum(final TemporalDatum datum) {
+        super.setDatum(datum);
     }
 
     /**

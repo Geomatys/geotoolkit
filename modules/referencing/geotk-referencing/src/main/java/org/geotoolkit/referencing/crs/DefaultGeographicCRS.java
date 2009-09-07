@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.quantity.Angle;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -60,12 +62,13 @@ import org.geotoolkit.measure.Units;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlRootElement(name = "GeographicCRS")
 public class DefaultGeographicCRS extends AbstractSingleCRS implements GeographicCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -184,16 +187,32 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * Returns the coordinate system.
      */
     @Override
+    @XmlElement(name="ellipsoidalCS")
     public EllipsoidalCS getCoordinateSystem() {
         return (EllipsoidalCS) super.getCoordinateSystem();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setCoordinateSystem(final EllipsoidalCS cs) {
+        super.setCoordinateSystem(cs);
     }
 
     /**
      * Returns the datum.
      */
     @Override
+    @XmlElement(name="geodeticDatum")
     public GeodeticDatum getDatum() {
         return (GeodeticDatum) super.getDatum();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setDatum(final GeodeticDatum datum) {
+        super.setDatum(datum);
     }
 
     /**
@@ -213,10 +232,11 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     {
         final DefaultEllipsoidalCS cs;
         final DefaultEllipsoid e;
+        final CoordinateSystem coordinateSystem = getCoordinateSystem();
         if (!(coordinateSystem instanceof DefaultEllipsoidalCS)) {
             throw new UnsupportedImplementationException(coordinateSystem.getClass());
         }
-        final Ellipsoid ellipsoid = ((GeodeticDatum) datum).getEllipsoid();
+        final Ellipsoid ellipsoid = getDatum().getEllipsoid();
         if (!(ellipsoid instanceof DefaultEllipsoid)) {
             throw new UnsupportedImplementationException(ellipsoid.getClass());
         }
@@ -276,14 +296,15 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     @Override
     public String formatWKT(final Formatter formatter) {
         final Unit<Angle> oldUnit = formatter.getAngularUnit();
-        final Unit<Angle> unit = getAngularUnit(coordinateSystem);
+        final Unit<Angle> unit = getAngularUnit(getCoordinateSystem());
+        final GeodeticDatum datum = getDatum();
         formatter.setAngularUnit(unit);
         formatter.append(datum);
-        formatter.append(((GeodeticDatum) datum).getPrimeMeridian());
+        formatter.append(datum.getPrimeMeridian());
         formatter.append(unit);
-        final int dimension = coordinateSystem.getDimension();
+        final int dimension = getDimension();
         for (int i=0; i<dimension; i++) {
-            formatter.append(coordinateSystem.getAxis(i));
+            formatter.append(getAxis(i));
         }
         if (!unit.equals(getUnit())) {
             formatter.setInvalidWKT(GeographicCRS.class);

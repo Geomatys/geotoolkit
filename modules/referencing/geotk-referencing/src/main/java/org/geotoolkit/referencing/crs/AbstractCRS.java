@@ -25,9 +25,8 @@ import java.util.HashMap;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlAttribute;
-
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
+
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -39,17 +38,19 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.util.UnsupportedImplementationException;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.jaxb.text.StringConverter;
+import org.geotoolkit.internal.referencing.NullReferencingObject;
 
 
 /**
  * Abstract coordinate reference system, usually defined by a coordinate system and a datum.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
@@ -70,7 +71,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     @XmlID
     @XmlAttribute(name = "id", namespace = Namespaces.GML ,required = true)
     @XmlJavaTypeAdapter(StringConverter.class)
-    private String getID() {
+    final String getID() {
         return "coordinate-reference-system";
     }
 
@@ -78,7 +79,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * The coordinate system. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
      */
-    CoordinateSystem coordinateSystem;
+    private CoordinateSystem coordinateSystem;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -86,7 +87,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(NullReferencingObject.INSTANCE);
     }
 
     /**
@@ -145,6 +146,20 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     @Override
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
+    }
+
+    /**
+     * Sets the coordinate system to the given value. This method is invoked only by JAXB at
+     * unmarshalling time and can be invoked only if the coordinate system has never been set.
+     *
+     * @throws IllegalStateException If the coordinate system has already been set.
+     */
+    final void setCoordinateSystem(final CoordinateSystem cs) {
+        if (coordinateSystem != NullReferencingObject.INSTANCE) {
+            throw new IllegalStateException();
+        }
+        ensureNonNull("cs", cs);
+        coordinateSystem = cs;
     }
 
     /**

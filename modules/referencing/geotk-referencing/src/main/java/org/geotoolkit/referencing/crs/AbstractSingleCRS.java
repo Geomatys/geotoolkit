@@ -26,6 +26,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.internal.referencing.NullReferencingObject;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.io.wkt.Formatter;
@@ -55,7 +56,7 @@ import org.geotoolkit.lang.Immutable;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
@@ -74,7 +75,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * The datum. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
      */
-    Datum datum;
+    private Datum datum;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -82,7 +83,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractSingleCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(NullReferencingObject.INSTANCE);
     }
 
     /**
@@ -130,6 +131,20 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     }
 
     /**
+     * Sets the datum. This method is invoked only by JAXB at unmarshalling time
+     * and can be invoked only if the datum has never been set.
+     *
+     * @throws IllegalStateException If the datum has already been set.
+     */
+    final void setDatum(final Datum datum) {
+        if (this.datum != NullReferencingObject.INSTANCE) {
+            throw new IllegalStateException();
+        }
+        ensureNonNull("datum", datum);
+        this.datum = datum;
+    }
+
+    /**
      * Returns the dimension of the underlying {@linkplain CoordinateSystem coordinate system}.
      * This is equivalent to <code>{@linkplain #coordinateSystem}.{@linkplain
      * CoordinateSystem#getDimension getDimension}()</code>.
@@ -137,7 +152,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * @return The dimension of this coordinate reference system.
      */
     public int getDimension() {
-        return coordinateSystem.getDimension();
+        return super.getCoordinateSystem().getDimension();
     }
 
     /**
@@ -150,7 +165,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * @throws IndexOutOfBoundsException if {@code dimension} is out of bounds.
      */
     public CoordinateSystemAxis getAxis(int dimension) throws IndexOutOfBoundsException {
-        return coordinateSystem.getAxis(dimension);
+        return super.getCoordinateSystem().getAxis(dimension);
     }
 
     /**

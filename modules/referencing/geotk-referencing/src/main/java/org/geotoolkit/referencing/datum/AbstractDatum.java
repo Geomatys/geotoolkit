@@ -60,7 +60,7 @@ import org.geotoolkit.lang.Immutable;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.crs.AbstractCRS
@@ -87,7 +87,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
     @XmlID
     @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
     @XmlJavaTypeAdapter(StringConverter.class)
-    private String getID() {
+    final String getID() {
         return "datum";
     }
 
@@ -95,6 +95,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * Description, possibly including coordinates, of the point or points used to anchor the datum
      * to the Earth. Also known as the "origin", especially for Engineering and Image Datums.
      */
+    @XmlElement
     private final InternationalString anchorPoint;
 
     /**
@@ -102,20 +103,21 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * (e.g. 1997 for IRTF97) or merely a year (e.g. 1983 for NAD83). If the time is
      * not defined, then the value is {@link Long#MIN_VALUE}.
      */
-    @XmlElement(required = true)
+    @XmlElement
     @XmlJavaTypeAdapter(value=DateAsLongAdapter.class, type=long.class)
     private final long realizationEpoch;
 
     /**
      * Area or region in which this datum object is valid.
      */
+    @XmlElement(name = "validArea")
     private final Extent domainOfValidity;
 
     /**
      * Description of domain of usage, or limitations of usage, for which this
      * datum object is valid.
      */
-    @XmlElement(required = true)
+    @XmlElement
     private final InternationalString scope;
 
     /**

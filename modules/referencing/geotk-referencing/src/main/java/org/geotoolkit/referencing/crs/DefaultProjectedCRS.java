@@ -25,6 +25,8 @@ import java.util.Collections;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
@@ -62,12 +64,13 @@ import org.geotoolkit.lang.Immutable;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlRootElement(name = "ProjectedCRS")
 public class DefaultProjectedCRS extends AbstractDerivedCRS implements ProjectedCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -191,16 +194,32 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
      * Returns the coordinate system.
      */
     @Override
+    @XmlElement(name="cartesianCS")
     public CartesianCS getCoordinateSystem() {
         return (CartesianCS) super.getCoordinateSystem();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setCoordinateSystem(final CartesianCS cs) {
+        super.setCoordinateSystem(cs);
     }
 
     /**
      * Returns the datum.
      */
     @Override
+    @XmlElement(name="geodeticDatum")
     public GeodeticDatum getDatum() {
         return (GeodeticDatum) super.getDatum();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setDatum(final GeodeticDatum datum) {
+        super.setDatum(datum);
     }
 
     /**
@@ -252,8 +271,8 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
      */
     @Override
     public String formatWKT(final Formatter formatter) {
-        final Ellipsoid ellipsoid = ((GeodeticDatum) datum).getEllipsoid();
-        @SuppressWarnings("unchecked") // Formatter.setLinearUnit(...) will do the check for us.
+        final Ellipsoid ellipsoid = getDatum().getEllipsoid();
+        @SuppressWarnings({"unchecked","rawtypes"}) // Formatter.setLinearUnit(...) will do the check for us.
         final Unit<Length> unit        = (Unit) getUnit();
         final Unit<Length> linearUnit  = formatter.getLinearUnit();
         final Unit<Angle>  angularUnit = formatter.getAngularUnit();
@@ -271,7 +290,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
                  * informations are provided in the ellipsoid. An exception to this rule occurs if
                  * the lengths are different from the ones declared in the datum.
                  */
-                if (param instanceof ParameterValue) {
+                if (param instanceof ParameterValue<?>) {
                     final double value = ((ParameterValue<?>) param).doubleValue(axisUnit);
                     final double expected = (name == SEMI_MINOR) ? // using '==' is okay here.
                             ellipsoid.getSemiMinorAxis() : ellipsoid.getSemiMajorAxis();
@@ -283,9 +302,9 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
             formatter.append(param);
         }
         formatter.append(unit);
-        final int dimension = coordinateSystem.getDimension();
+        final int dimension = getDimension();
         for (int i=0; i<dimension; i++) {
-            formatter.append(coordinateSystem.getAxis(i));
+            formatter.append(getAxis(i));
         }
         if (unit == null) {
             formatter.setInvalidWKT(ProjectedCRS.class);

@@ -21,7 +21,7 @@ import java.io.PrintStream;
 
 
 /**
- * A set of utility methods for provided as a help for developpers writing test suite.
+ * A set of utility methods provided as a help for developpers writing test suite.
  * This utility class is not used during the tests; only during the writing of those tests.
  *
  * @author Martin Desruisseaux (Geomatys)

@@ -26,17 +26,24 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 
 import org.opengis.referencing.datum.Ellipsoid;
+
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -52,7 +59,8 @@ import org.geotoolkit.lang.Immutable;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @author Cédric Briançon (Geomatys)
+ * @version 3.04
  *
  * @since 1.2
  * @module
@@ -112,10 +120,21 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             createEllipsoid("SPHERE", 6371000, 6371000, SI.METRE);
 
     /**
+     * The {@code gml:id}, which is mandatory.
+     */
+    @XmlID
+    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
+    @XmlJavaTypeAdapter(StringConverter.class)
+    final String getID() {
+        return "meridian";
+    }
+
+    /**
      * The equatorial radius.
      *
      * @see #getSemiMajorAxis
      */
+    @XmlElement(required = true)
     private final double semiMajorAxis;
 
     /**
@@ -131,6 +150,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      *
      * @see #getInverseFlattening
      */
+    @XmlElement
     private final double inverseFlattening;
 
     /**

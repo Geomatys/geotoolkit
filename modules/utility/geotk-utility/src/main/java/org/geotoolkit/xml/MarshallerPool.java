@@ -18,10 +18,12 @@
 package org.geotoolkit.xml;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Deque;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ServiceLoader;
+import java.util.Collections;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -39,7 +41,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 3.00
  * @module
@@ -52,6 +54,14 @@ public class MarshallerPool {
      * Maximal amount of marshaller and unmarshaller to keep.
      */
     private static final int CAPACITY = 16;
+
+    /**
+     * The key to be used in the map given to the constructors for specifying the root namespace.
+     * An example of value for this key is {@code "http://www.isotc211.org/2005/gmd"}.
+     *
+     * @since 3.04
+     */
+    public static final String ROOT_NAMESPACE_KEY = "org.geotoolkit.xml.rootNamespace";
 
     /**
      * Root objects to be marshalled. They are the objects to be given by default to the
@@ -124,7 +134,7 @@ public class MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public MarshallerPool(final Class<?>... classesToBeBound) throws JAXBException {
-        this("", classesToBeBound);
+        this(Collections.<String,String>emptyMap(), classesToBeBound);
     }
 
     /**
@@ -133,9 +143,26 @@ public class MarshallerPool {
      * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetaData.class}.
      * @throws JAXBException    If the JAXB context can not be created.
+     *
+     * @deprecated Replaced by the constructor expecting a {@code Map} argument.
      */
+    @Deprecated
     public MarshallerPool(final String rootNamespace, final Class<?>... classesToBeBound) throws JAXBException {
-        this(rootNamespace, JAXBContext.newInstance(classesToBeBound));
+        this(Collections.singletonMap(ROOT_NAMESPACE_KEY, rootNamespace), classesToBeBound);
+    }
+
+    /**
+     * Creates a new factory for the given class to be bound. The keys in the {@code properties} map
+     * shall be one or many of the constants defined in this class like {@link #ROOT_NAMESPACE_KEY}.
+     *
+     * @param  properties       The set of properties to be given to the pool.
+     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetaData.class}.
+     * @throws JAXBException    If the JAXB context can not be created.
+     *
+     * @since 3.04
+     */
+    public MarshallerPool(final Map<String,String> properties, final Class<?>... classesToBeBound) throws JAXBException {
+        this(properties, JAXBContext.newInstance(classesToBeBound));
     }
 
     /**
@@ -147,7 +174,7 @@ public class MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public MarshallerPool(final String packages) throws JAXBException {
-        this("", packages);
+        this(Collections.<String,String>emptyMap(), packages);
     }
 
     /**
@@ -157,9 +184,28 @@ public class MarshallerPool {
      * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
      *                          for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
      * @throws JAXBException    If the JAXB context can not be created.
+     *
+     * @deprecated Replaced by the constructor expecting a {@code Map} argument.
      */
+    @Deprecated
     public MarshallerPool(final String rootNamespace, final String packages) throws JAXBException {
-        this(rootNamespace, JAXBContext.newInstance(packages));
+        this(Collections.singletonMap(ROOT_NAMESPACE_KEY, rootNamespace), packages);
+    }
+
+    /**
+     * Creates a new factory for the given packages. The separator character for the packages is the
+     * colon. The keys in the {@code properties} map shall be one or many of the constants defined
+     * in this class like {@link #ROOT_NAMESPACE_KEY}.
+     *
+     * @param  properties    The set of properties to be given to the pool.
+     * @param  packages      The packages in which JAXB will search for annotated classes to be bound,
+     *                       for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
+     * @throws JAXBException If the JAXB context can not be created.
+     *
+     * @since 3.04
+     */
+    public MarshallerPool(final Map<String,String> properties, final String packages) throws JAXBException {
+        this(properties, JAXBContext.newInstance(packages));
     }
 
     /**
@@ -169,8 +215,12 @@ public class MarshallerPool {
      * @param  context          The JAXB context.
      * @throws JAXBException    If the OGC namespace prefix mapper can not be created.
      */
-    private MarshallerPool(final String rootNamespace, final JAXBContext context) throws JAXBException {
+    private MarshallerPool(final Map<String,String> properties, final JAXBContext context) throws JAXBException {
         this.context = context;
+        String rootNamespace = properties.get(ROOT_NAMESPACE_KEY);
+        if (rootNamespace == null) {
+            rootNamespace = "";
+        }
         /*
          * Detects if we are using the endorsed JAXB implementation (i.e. the one provided in
          * separated JAR files).  If not, we will assume that we are using the implementation

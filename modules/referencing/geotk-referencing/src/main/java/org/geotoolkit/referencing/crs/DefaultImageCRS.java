@@ -22,6 +22,8 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.Collections;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -45,12 +47,13 @@ import org.geotoolkit.referencing.AbstractReferenceSystem;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.0
  * @module
  */
 @Immutable
+@XmlRootElement(name = "ImageCRS")
 public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -114,16 +117,32 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
      * Returns the coordinate system.
      */
     @Override
+    @XmlElement(name="cartesianCS")
     public AffineCS getCoordinateSystem() {
         return (AffineCS) super.getCoordinateSystem();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setCoordinateSystem(final AffineCS cs) {
+        super.setCoordinateSystem(cs);
     }
 
     /**
      * Returns the datum.
      */
     @Override
+    @XmlElement(name="imageDatum")
     public ImageDatum getDatum() {
         return (ImageDatum) super.getDatum();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setDatum(final ImageDatum datum) {
+        super.setDatum(datum);
     }
 
     /**

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.crs;
 import java.util.Map;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.crs.VerticalCRS;
@@ -55,12 +56,13 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlRootElement(name = "VerticalCRS")
 public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -161,7 +163,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * Returns the coordinate system.
      */
     @Override
-    @XmlElement(name = "verticalCSProperty")
+    @XmlElement(name = "verticalCS")
     public VerticalCS getCoordinateSystem() {
         return (VerticalCS) super.getCoordinateSystem();
     }
@@ -169,15 +171,15 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
     /**
      * Used by JAXB only (invoked by reflection).
      */
-    private void setCoordinateSystem(final VerticalCS cs) {
-        this.coordinateSystem = cs;
+    final void setCoordinateSystem(final VerticalCS cs) {
+        super.setCoordinateSystem(cs);
     }
 
     /**
      * Returns the datum.
      */
     @Override
-    @XmlElement(name = "verticalDatumProperty")
+    @XmlElement(name = "verticalDatum")
     public VerticalDatum getDatum() {
         return (VerticalDatum) super.getDatum();
     }
@@ -185,8 +187,8 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
     /**
      * Used by JAXB only (invoked by reflection).
      */
-    private void setDatum(final VerticalDatum datum) {
-        this.datum = datum;
+    final void setDatum(final VerticalDatum datum) {
+        super.setDatum(datum);
     }
 
     /**

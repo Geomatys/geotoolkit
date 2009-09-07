@@ -64,7 +64,8 @@
  * </table></blockquote>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @author Cédric Briançon (Geomatys)
+ * @version 3.04
  *
  * @since 1.2
  * @module
@@ -77,6 +78,13 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(StringAdapter.class),
+    @XmlJavaTypeAdapter(AffineCSAdapter.class),
+    @XmlJavaTypeAdapter(CartesianCSAdapter.class),
+    @XmlJavaTypeAdapter(EllipsoidalCSAdapter.class),
+    @XmlJavaTypeAdapter(GeodeticDatumAdapter.class),
+    @XmlJavaTypeAdapter(ImageDatumAdapter.class),
+    @XmlJavaTypeAdapter(TemporalDatumAdapter.class),
+    @XmlJavaTypeAdapter(TimeCSAdapter.class),
     @XmlJavaTypeAdapter(VerticalCSAdapter.class),
     @XmlJavaTypeAdapter(VerticalDatumAdapter.class)
 })
@@ -92,5 +100,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.text.StringAdapter;
-import org.geotoolkit.internal.jaxb.referencing.VerticalCSAdapter;
-import org.geotoolkit.internal.jaxb.referencing.VerticalDatumAdapter;
+import org.geotoolkit.internal.jaxb.referencing.cs.AffineCSAdapter;
+import org.geotoolkit.internal.jaxb.referencing.cs.CartesianCSAdapter;
+import org.geotoolkit.internal.jaxb.referencing.cs.EllipsoidalCSAdapter;
+import org.geotoolkit.internal.jaxb.referencing.cs.TimeCSAdapter;
+import org.geotoolkit.internal.jaxb.referencing.cs.VerticalCSAdapter;
+import org.geotoolkit.internal.jaxb.referencing.datum.GeodeticDatumAdapter;
+import org.geotoolkit.internal.jaxb.referencing.datum.ImageDatumAdapter;
+import org.geotoolkit.internal.jaxb.referencing.datum.TemporalDatumAdapter;
+import org.geotoolkit.internal.jaxb.referencing.datum.VerticalDatumAdapter;

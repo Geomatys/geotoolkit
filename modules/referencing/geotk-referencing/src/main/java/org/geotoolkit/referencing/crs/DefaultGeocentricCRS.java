@@ -23,9 +23,12 @@ package org.geotoolkit.referencing.crs;
 import java.util.Collections;
 import java.util.Map;
 import javax.measure.unit.Unit;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.SphericalCS;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 
@@ -52,12 +55,13 @@ import org.geotoolkit.lang.Immutable;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlRootElement(name = "GeocentricCRS")
 public class DefaultGeocentricCRS extends AbstractSingleCRS implements GeocentricCRS {
     /**
      * Serial number for interoperability with different versions.
@@ -172,8 +176,16 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
      * Returns the datum.
      */
     @Override
+    @XmlElement(name="geodeticDatum")
     public GeodeticDatum getDatum() {
         return (GeodeticDatum) super.getDatum();
+    }
+
+    /**
+     * Used by JAXB only (invoked by reflection).
+     */
+    final void setDatum(final GeodeticDatum datum) {
+        super.setDatum(datum);
     }
 
     /**
@@ -198,12 +210,17 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
     @Override
     public String formatWKT(final Formatter formatter) {
         final Unit<?> unit = getUnit();
+        final GeodeticDatum datum = getDatum();
         formatter.append(datum);
-        formatter.append(((GeodeticDatum) datum).getPrimeMeridian());
+        formatter.append(datum.getPrimeMeridian());
         formatter.append(unit);
-        CartesianCS cs = (CartesianCS) coordinateSystem;
-        if (!formatter.isInternalWKT()) {
-            cs = WktUtilities.replace(cs, true);
+        CoordinateSystem cs = getCoordinateSystem();
+        if (cs instanceof CartesianCS) {
+            if (!formatter.isInternalWKT()) {
+                cs = WktUtilities.replace((CartesianCS) cs, true);
+            }
+        } else {
+            formatter.setInvalidWKT(CoordinateSystem.class);
         }
         final int dimension = cs.getDimension();
         for (int i=0; i<dimension; i++) {

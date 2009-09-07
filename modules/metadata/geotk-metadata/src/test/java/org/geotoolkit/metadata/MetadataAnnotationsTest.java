@@ -39,10 +39,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.xml.Namespaces;
 
-import org.opengis.metadata.citation.ResponsibleParty;
-import org.opengis.metadata.distribution.Distributor;
 import org.opengis.metadata.identification.CharacterSet;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.spatial.DimensionNameType;
 
 import org.junit.*;

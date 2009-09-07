@@ -61,7 +61,7 @@ import java.util.zip.ZipFile;
  * @author James McGill (Leeds)
  * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.4
  */
@@ -245,6 +245,28 @@ public class TestData implements Runnable {
             return new RandomAccessFile(file, "r").getChannel();
         }
         return Channels.newChannel(url.openStream());
+    }
+
+    /**
+     * Reads the given resources as a text file, assuming a UTF-8 encoding.
+     * The returned text uses always the Unix style of EOL.
+     *
+     * @param  caller The class of the object associated with named data.
+     * @param  name of test data to load.
+     * @return The loaded test data as a text.
+     * @throws IOException if an error occurs during an input operation.
+     *
+     * @since 3.04
+     */
+    public static String readText(final Object caller, final String name) throws IOException {
+        final LineNumberReader in = openReader(caller, name);
+        final StringBuilder buffer = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null) {
+            buffer.append(line).append('\n');
+        }
+        in.close();
+        return buffer.toString();
     }
 
     /**

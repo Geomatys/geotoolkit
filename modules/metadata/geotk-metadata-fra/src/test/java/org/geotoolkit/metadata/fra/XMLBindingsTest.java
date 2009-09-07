@@ -70,19 +70,11 @@ public final class XMLBindingsTest {
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
         metadata.setReferenceSystemInfo(Arrays.asList(refSys));
 
-        final BufferedReader in = TestData.openReader(this, RESOURCE_FILE);
-        final StringBuilder out = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null) {
-            out.append(line).append('\n');
-        }
-        in.close();
-
-        String expected = out.toString();
+        String expected = TestData.readText(this, RESOURCE_FILE);
         String actual = XML.marshal(metadata);
+
         expected = skipHeader(expected);
         actual   = skipHeader(actual);
-
         assertMultilinesEquals(expected, actual);
     }
 

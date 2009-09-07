@@ -100,6 +100,8 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
         final Map<String,Object> properties = name(Vocabulary.Keys.TEMPORAL);
         CoordinateSystemAxis axis = DefaultCoordinateSystemAxis.TIME;
         DAYS = new DefaultTimeCS(properties, axis);
+        // Recycle the InternationalString instance created by DefaultCoordinateSystemAxis.TIME.
+        // Its value is "Time" (English) or "Temps" (French).
         final InternationalString name = axis.getAlias().iterator().next().toInternationalString();
         axis = new DefaultCoordinateSystemAxis(name, "t", AxisDirection.FUTURE, SI.SECOND);
         SECONDS = new DefaultTimeCS(properties, axis);
