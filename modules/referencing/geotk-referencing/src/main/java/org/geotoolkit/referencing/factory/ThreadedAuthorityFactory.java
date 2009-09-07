@@ -21,13 +21,14 @@ import java.util.Map;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.awt.RenderingHints;
 
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.lang.ThreadSafe;
 
 
@@ -45,13 +46,18 @@ import org.geotoolkit.lang.ThreadSafe;
  * needed, some of the threads will block until an instance become available.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe(concurrent = true)
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
+    /**
+     * The threads which will dispose the factories used as backing store.
+     */
+    private static Executor DISPOSERS = Executors.newCachedThreadPool();
+
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created
      * everytime a backing factory is {@linkplain ThreadedAuthorityFactory#release released}.
@@ -295,7 +301,8 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             while (remainingBackingStores == 0) try {
                 wait(2000);
             } catch (InterruptedException e) {
-                // Someone doesn't want to let us sleep. Checks again the status.
+                // Someone doesn't want to let us sleep.
+                throw new FactoryException(e.getLocalizedMessage(), e);
             }
             /*
              * Reuses the most recently used factory, if available. If there is no factory
@@ -423,15 +430,13 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * run the user-code while we hold a synchronization lock on this factory.
      */
     private void dispose(final AbstractAuthorityFactory factory, final boolean shutdown) {
-        final Thread thread = new Thread(FactoryUtilities.DISPOSER_THREADS, (Runnable) null) {
+        DISPOSERS.execute(new Runnable() {
             @Override public void run() {
                 if (shutdown || canDisposeBackingStore(factory)) {
                     factory.dispose(shutdown);
                 }
             }
-        };
-        thread.setDaemon(true);
-        thread.start();
+        });
     }
 
     /**

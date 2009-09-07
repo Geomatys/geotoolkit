@@ -29,19 +29,13 @@ import org.geotoolkit.util.Utilities;
  * A set of utilities for {@link org.geotoolkit.factory.FactoryRegistry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 3.00
  * @module
  */
 @Static
 public final class FactoryUtilities {
-    /**
-     * The group of threads that dispose factories. This is used only when
-     * {@link Factory#dispose} is invoked in a background thread.
-     */
-    public static final ThreadGroup DISPOSER_THREADS = new ThreadGroup(Threads.PARENT, "FactoryDisposers");
-
     /**
      * The minimal delay (in miliseconds) between uncessfull calls to {@link Factory#isAvailable}.
      * If a first call failed, then all subsequent calls before the end of this delay will returns

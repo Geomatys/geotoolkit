@@ -66,7 +66,8 @@ public final class ThreadedAuthorityFactoryTest {
 
         Thread.sleep(TIMEOUT_RESOLUTION * 3);
         assertEquals("Expected no new worker.",    factories, threaded.factories());
-        assertDisposed(threaded);
+        waitIfAlive (threaded, factories.get(0));
+        assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
         assertTrue  ("Worker should be disposed.", factories.get(0).isDisposed());
         /*
          * Ask again for the same object and check that no new backing
@@ -104,23 +105,48 @@ public final class ThreadedAuthorityFactoryTest {
 
         Thread.sleep(TIMEOUT_RESOLUTION * 3);
         assertEquals("Expected no new worker.",    factories, threaded.factories());
-        assertDisposed(threaded);
+        waitIfAlive (threaded, factories.get(1));
+        assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
         assertTrue  ("Worker should be disposed.", factories.get(1).isDisposed());
+        assertTrue  ("Worker should be disposed.", factories.get(0).isDisposed());
     }
 
     /**
      * Asserts that the given worker is disposed. It should be disposed right at the time this
      * method is invoked. However if it is not, we will be lenient, give some time and try again.
      */
-    private static void assertDisposed(final ThreadedAuthorityFactory factory) throws InterruptedException {
-        for (int i=0; i<10; i++) {
-            if (factory.countBackingStores() == 0) {
-                return;
+    private static void waitIfAlive(final ThreadedAuthorityFactory threaded, final DummyFactory worker)
+            throws InterruptedException
+    {
+        /*
+         * First, wait that ThreadedAuthorityFactory declares that it has no more backing store.
+         * The removal of backing store is performed by the StoreDisposer daemon thread,  which
+         * invoke factory.disposeExpired(). Because it is invoked in a background thread, it is
+         * exposed to the hazard of thread scheduling.
+         */
+        int n = 4;
+        while (threaded.countBackingStores() != 0) {
+            if (--n == 0) {
+                fail("ThreadedAuthorityFactory should have discarted its worker factory.");
             }
-            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning("Worker should be disposed.");
+            Logging.getLogger(ThreadedAuthorityFactoryTest.class)
+                    .warning("ThreadedAuthorityFactory should have discarted its worker factory.");
             Thread.sleep(TIMEOUT_RESOLUTION);
             System.gc();
         }
-        fail("Worker should be disposed.");
+        /*
+         * Now the worker factory has been discarted by ThreadedAuthorityFactory, but maybe
+         * not yet disposed because the call to worker.dispose() is performed in yet an other
+         * background thread. So we need again to be lenient because of thread scheduling hazard.
+         */
+        n = 4;
+        while (!worker.isDisposed()) {
+            if (--n == 0) {
+                fail("Worker should be disposed.");
+            }
+            Logging.getLogger(ThreadedAuthorityFactoryTest.class)
+                    .warning("Worker should be disposed.");
+            Thread.sleep(TIMEOUT_RESOLUTION);
+        }
     }
 }
