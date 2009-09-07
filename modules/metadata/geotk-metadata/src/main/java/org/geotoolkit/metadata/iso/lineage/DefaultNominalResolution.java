@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.opengis.metadata.lineage.NominalResolution;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -83,6 +84,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      * adjacent pixels in the scan plane.
      */
     @Override
+    @ValueRange(minimum=0, isMinIncluded=false)
     @XmlElement(name = "scanningResolution")
     public synchronized Double getScanningResolution() {
         return scanningResolution;
@@ -104,6 +106,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      * pixels in the object space.
      */
     @Override
+    @ValueRange(minimum=0, isMinIncluded=false)
     @XmlElement(name = "groundResolution")
     public synchronized Double getGroundResolution() {
         return groundResolution;

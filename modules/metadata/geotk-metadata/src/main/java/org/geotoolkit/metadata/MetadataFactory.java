@@ -28,11 +28,12 @@ import org.opengis.referencing.FactoryException;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
  * Create metadata objects of the given {@link Class} using the properties given in a {@link Map}.
- * This class tries to instantiate the metadata object in two way:
+ * For any given type, this class tries to instantiate the metadata object in two ways:
  *
  * <ul>
  *   <li><p>First, if a collection of factories has been given to the constructor,
@@ -58,6 +59,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.03
  * @module
  */
+@ThreadSafe
 public class MetadataFactory extends Factory {
     /**
      * An optional set of factories to try before to create the metadata objects directly.

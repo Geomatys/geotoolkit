@@ -54,7 +54,7 @@ import org.geotoolkit.util.NullArgumentException;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.4
  * @module
@@ -258,7 +258,7 @@ public final class MetadataStandard {
      * <b>Example:</b> The following code returns {@code InternationalString.class}.
      *
      * {@preformat java
-     *   ISO_19115.asTypeMap(DefaultCitation.class, ELEMENT_TYPE, UML_IDENTIFIER).get("alternateTitle");
+     *   ISO_19115.asTypeMap(Citation.class, ELEMENT_TYPE, UML_IDENTIFIER).get("alternateTitle");
      * }
      *
      * @param  type The interface or implementation class.

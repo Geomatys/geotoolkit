@@ -60,7 +60,7 @@ final class TypeMap extends AbstractMap<String,Class<?>> {
      * Creates a type map for the specified accessor.
      *
      * @param accessor The accessor to use for the metadata.
-     * @param type     The kind of values in this map.
+     * @param types    The kind of values in this map.
      * @param keyNames Determines the string representation of keys in the map..
      */
     TypeMap(final PropertyAccessor accessor, final TypeValuePolicy types, final KeyNamePolicy keyNames) {

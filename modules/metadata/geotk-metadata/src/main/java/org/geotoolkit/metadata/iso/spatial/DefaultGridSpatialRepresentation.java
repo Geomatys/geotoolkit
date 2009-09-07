@@ -31,6 +31,7 @@ import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 
 
 /**
@@ -123,6 +124,7 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      * Returns the number of independent spatial-temporal axes.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "numberOfDimensions", required = true)
     public synchronized Integer getNumberOfDimensions() {
         return numberOfDimensions;

@@ -31,6 +31,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.jaxb.uom.MeasureInPixelAdapter;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 
 
 /**
@@ -121,6 +122,7 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
      * Returns the number of elements along the axis.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "dimensionSize", required = true)
     public synchronized Integer getDimensionSize() {
         return dimensionSize;
@@ -140,6 +142,7 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
      * Returns the degree of detail in the grid dataset.
      */
     @Override
+    @ValueRange(minimum=0, isMinIncluded=false)
     @XmlJavaTypeAdapter(MeasureInPixelAdapter.class)
     @XmlElement(name = "resolution")
     public synchronized Double getResolution() {

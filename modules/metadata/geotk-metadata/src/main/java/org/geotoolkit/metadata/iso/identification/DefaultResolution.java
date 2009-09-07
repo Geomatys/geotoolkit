@@ -29,6 +29,7 @@ import org.opengis.metadata.identification.RepresentativeFraction;
 import org.opengis.metadata.identification.Resolution;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.internal.jaxb.uom.DistanceAdapter;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -117,6 +118,7 @@ public class DefaultResolution extends MetadataEntity implements Resolution {
      * {@linkplain #getDistance ground sample distance} may be provided.
      */
     @Override
+    @ValueRange(minimum=0, isMinIncluded=false)
     @XmlJavaTypeAdapter(DistanceAdapter.class)
     @XmlElement(name = "distance")
     public synchronized Double getDistance() {

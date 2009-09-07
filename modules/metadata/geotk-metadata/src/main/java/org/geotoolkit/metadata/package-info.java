@@ -34,7 +34,7 @@
  * </UL>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.0
  * @module

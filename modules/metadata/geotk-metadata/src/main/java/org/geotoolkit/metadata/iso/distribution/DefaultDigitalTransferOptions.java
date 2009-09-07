@@ -31,6 +31,7 @@ import org.opengis.metadata.distribution.DigitalTransferOptions;
 import org.opengis.metadata.distribution.Medium;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -122,6 +123,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      * The transfer size is &gt; 0.0. Returns {@code null} if the transfer size is unknown.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "transferSize")
     public synchronized Double getTransferSize() {
         return transferSize;

@@ -29,6 +29,7 @@ import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 
 
 /**
@@ -153,8 +154,11 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      * Returns the illumination elevation measured in degrees clockwise from the target plane at
      * intersection of the optical line of sight with the Earth's surface. For images from a
      * scanning device, refer to the centre pixel of the image.
+     * <p>
+     * The horizon is at 0°, straight up has an elevation of 90°.
      */
     @Override
+    @ValueRange(minimum=0, maximum=180)
     @XmlElement(name = "illuminationElevationAngle")
     public synchronized Double getIlluminationElevationAngle() {
         return illuminationElevationAngle;
@@ -178,6 +182,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      * image.
      */
     @Override
+    @ValueRange(minimum=0, maximum=360)
     @XmlElement(name = "illuminationAzimuthAngle")
     public synchronized Double getIlluminationAzimuthAngle() {
         return illuminationAzimuthAngle;
@@ -237,6 +242,7 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
      * extent.
      */
     @Override
+    @ValueRange(minimum=0, maximum=100)
     @XmlElement(name = "cloudCoverPercentage")
     public synchronized Double getCloudCoverPercentage() {
         return cloudCoverPercentage;
@@ -275,10 +281,11 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * Returns the count of the number the number of lossy compression cycles performed on the
+     * Returns the count of the number of lossy compression cycles performed on the
      * image. Returns {@code null} if the information is not provided.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "compressionGenerationQuantity")
     public synchronized Integer getCompressionGenerationQuantity() {
         return compressionGenerationQuantity;

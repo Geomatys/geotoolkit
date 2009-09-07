@@ -32,6 +32,7 @@ import org.opengis.metadata.distribution.MediumName;
 import org.opengis.metadata.distribution.MediumFormat;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -154,6 +155,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
      * Returns {@code null} if unknown.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "volumes")
     public synchronized Integer getVolumes() {
         return volumes;

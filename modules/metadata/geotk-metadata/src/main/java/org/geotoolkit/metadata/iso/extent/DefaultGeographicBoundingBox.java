@@ -36,6 +36,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
@@ -268,6 +269,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @return The western-most longitude between -180 and +180°.
      */
     @Override
+    @ValueRange(minimum=-180, maximum=180)
     @XmlElement(name = "westBoundLongitude", required = true)
     public synchronized double getWestBoundLongitude() {
         return westBoundLongitude;
@@ -293,6 +295,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @return The eastern-most longitude between -180 and +180°.
      */
     @Override
+    @ValueRange(minimum=-180, maximum=180)
     @XmlElement(name = "eastBoundLongitude", required = true)
     public synchronized double getEastBoundLongitude() {
         return eastBoundLongitude;
@@ -318,6 +321,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @return The southern-most latitude between -90 and +90°.
      */
     @Override
+    @ValueRange(minimum=-90, maximum=90)
     @XmlElement(name = "southBoundLatitude", required = true)
     public synchronized double getSouthBoundLatitude()  {
         return southBoundLatitude;
@@ -343,6 +347,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @return The northern-most latitude between -90 and +90°.
      */
     @Override
+    @ValueRange(minimum=-90, maximum=90)
     @XmlElement(name = "northBoundLatitude", required = true)
     public synchronized double getNorthBoundLatitude()   {
         return northBoundLatitude;

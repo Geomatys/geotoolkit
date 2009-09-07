@@ -33,6 +33,7 @@ import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 
 
 /**
@@ -341,6 +342,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      * code list element}.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "maximumOccurrence")
     public synchronized Integer getMaximumOccurrence() {
         return maximumOccurrence;

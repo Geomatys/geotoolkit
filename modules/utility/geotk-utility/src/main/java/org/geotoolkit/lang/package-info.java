@@ -19,14 +19,13 @@
 /**
  * Annotations relative to Java language patterns applied in the Geotk library.
  * Those annotations are used mostly for documentation purpose. For example a click
- * on the "Use" javadoc link of {@link org.geotoolkit.lang.Static} gives the list of
- * all classes providing a set of static convenience methods.
+ * on the "Use" javadoc link of {@link org.geotoolkit.lang.Configuration} gives the
+ * list of all static methods having a system-wide effect on the Geotk library.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 3.00
  * @module
  */
 package org.geotoolkit.lang;
-

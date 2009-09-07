@@ -28,6 +28,7 @@ import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -112,6 +113,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      * Returns the maximum relative humidity along the flight pass during the photo flight.
      */
     @Override
+    @ValueRange(minimum=0, maximum=100)
     @XmlElement(name = "maxRelativeHumidity")
     public synchronized Double getMaxRelativeHumidity() {
         return maxRelativeHumidity;

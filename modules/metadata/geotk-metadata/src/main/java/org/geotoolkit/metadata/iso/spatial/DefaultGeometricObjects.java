@@ -28,6 +28,7 @@ import org.opengis.metadata.spatial.GeometricObjects;
 import org.opengis.metadata.spatial.GeometricObjectType;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -114,6 +115,7 @@ public class DefaultGeometricObjects extends MetadataEntity implements Geometric
      * Returns the total number of the point or vector object type occurring in the dataset.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "geometricObjectCount", required = true)
     public synchronized Integer getGeometricObjectCount() {
         return geometricObjectCount;

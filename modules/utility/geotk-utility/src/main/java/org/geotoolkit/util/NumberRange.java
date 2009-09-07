@@ -18,6 +18,7 @@
 package org.geotoolkit.util;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import static org.geotoolkit.util.converter.Classes.finestClass;
@@ -32,7 +33,7 @@ import static org.geotoolkit.util.converter.Classes.widestClass;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.0
  * @module
@@ -269,6 +270,20 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
                        final T maximum, final boolean isMaxIncluded)
     {
         super(type, minimum, isMinIncluded, maximum, isMaxIncluded);
+    }
+
+    /**
+     * Creates a new range from the given annotation.
+     *
+     * @param type  The element class, usually one of {@link Byte}, {@link Short},
+     *              {@link Integer}, {@link Long}, {@link Float} or {@link Double}.
+     * @param range The range of value.
+     *
+     * @since 3.04
+     */
+    public NumberRange(final Class<T> type, final ValueRange range) {
+        super(type, Classes.cast(range.minimum(), type), range.isMinIncluded(),
+                    Classes.cast(range.maximum(), type), range.isMaxIncluded());
     }
 
     /**

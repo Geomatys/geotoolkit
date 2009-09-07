@@ -33,9 +33,11 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.opengis.annotation.UML;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -49,7 +51,7 @@ import org.geotoolkit.internal.CollectionUtilities;
  * declared in the Geotk implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.4
  * @module
@@ -536,6 +538,26 @@ final class PropertyAccessor {
                         throw new AssertionError(error);
                     }
                     return getter.getDeclaringClass();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the restriction for the property at the given index, or {@code null} if none.
+     * The restriction, if any, is typically a {@link NumberRange} object. More types may be
+     * added in future versions.
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    final Object restriction(final int index) {
+        if (index >= 0 && index < getters.length) {
+            final Method getter = getters[index];
+            final ValueRange vr = getter.getAnnotation(ValueRange.class);
+            if (vr != null) {
+                final Class<?> type = elementTypes[index];
+                if (Number.class.isAssignableFrom(type) && Comparable.class.isAssignableFrom(type)) {
+                    return new NumberRange((Class) type, vr);
                 }
             }
         }

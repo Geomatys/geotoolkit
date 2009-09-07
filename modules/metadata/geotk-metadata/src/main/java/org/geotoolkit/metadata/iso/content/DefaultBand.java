@@ -32,6 +32,7 @@ import org.opengis.metadata.content.PolarizationOrientation;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.ValueRange;
 
 
 /**
@@ -251,6 +252,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * Returns {@code null} if unspecified.
      */
     @Override
+    @ValueRange(minimum=1)
     @XmlElement(name = "bitsPerValue")
     public synchronized Integer getBitsPerValue() {
         return bitsPerValue;
@@ -272,6 +274,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * Returns {@code null} if unspecified.
      */
     @Override
+    @ValueRange(minimum=0)
     @XmlElement(name = "toneGradation")
     public synchronized Integer getToneGradation() {
         return toneGradation;
@@ -359,6 +362,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * @since 3.03
      */
     @Override
+    @ValueRange(minimum=0, isMinIncluded=false)
     @XmlElement(name = "nominalSpatialResolution")
     public synchronized Double getNominalSpatialResolution() {
         return nominalSpatialResolution;
