@@ -164,7 +164,7 @@ final class StoreDisposer extends Thread {
      */
     @Override
     public String toString() {
-        return "Next in " + getDelay() + " ms.";
+        return "Next in " + getDelay() + " µs.";
     }
 
     /**

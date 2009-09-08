@@ -255,6 +255,14 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     }
 
     /**
+     * Returns the number of backing stores that can still be created.
+     * This method is used only for debuging purpose.
+     */
+    final synchronized int remainingBackingStores() {
+        return remainingBackingStores;
+    }
+
+    /**
      * Returns the number of backing stores. This count does not include the backing stores
      * that are currently under execution. This method is used only for testing purpose.
      */

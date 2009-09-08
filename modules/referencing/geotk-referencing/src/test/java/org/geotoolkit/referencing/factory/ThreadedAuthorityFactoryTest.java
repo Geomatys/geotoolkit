@@ -124,13 +124,19 @@ public final class ThreadedAuthorityFactoryTest {
          * invoke factory.disposeExpired(). Because it is invoked in a background thread, it is
          * exposed to the hazard of thread scheduling.
          */
-        int n = 4;
-        while (threaded.countBackingStores() != 0) {
+        int n = 10, c;
+        while ((c = threaded.countBackingStores()) != 0) {
+            final long delay = StoreDisposer.INSTANCE.getDelay();
+            String message = "ThreadedAuthorityFactory should have discarted its worker factory.\n"
+                    + "The factory active flag is '" + threaded.isActive() + "' (expected 'false').\n"
+                    + "Maximum number of additional workers is " + threaded.remainingBackingStores() + ".\n"
+                    + "There is " + c + "workers in the factory cache, " + (delay == 0
+                    ? "but the StoreDisposer queue is empty (PROBLEM!)."
+                    : "and StoreDisposer next job is scheduled in " + delay + " µs.");
             if (--n == 0) {
-                fail("ThreadedAuthorityFactory should have discarted its worker factory.");
+                fail(message);
             }
-            Logging.getLogger(ThreadedAuthorityFactoryTest.class)
-                    .warning("ThreadedAuthorityFactory should have discarted its worker factory.");
+            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning(message);
             Thread.sleep(TIMEOUT_RESOLUTION);
             System.gc();
         }
@@ -139,7 +145,7 @@ public final class ThreadedAuthorityFactoryTest {
          * not yet disposed because the call to worker.dispose() is performed in yet an other
          * background thread. So we need again to be lenient because of thread scheduling hazard.
          */
-        n = 4;
+        n = 10;
         while (!worker.isDisposed()) {
             if (--n == 0) {
                 fail("Worker should be disposed.");
