@@ -307,21 +307,56 @@ public final class MetadataStandard {
      * @param  type The interface or implementation class.
      * @param  typeValues Whatever the values should be property types, the element types
      *         (same as property types except for collections) or the declaring class.
-     * @param  keyNames The string representation of map keys.
+     * @param  keyNames Determines the string representation of map keys.
      * @return The types for the given property.
      * @throws ClassCastException if the specified interface or implementation class does
      *         not extend or implement a metadata interface of the expected package.
      *
      * @since 3.03
      */
-    public Map<String,Class<?>> asTypeMap(Class<?> type,
-            final TypeValuePolicy typeValues, final KeyNamePolicy keyNames) throws ClassCastException
+    public Map<String,Class<?>> asTypeMap(Class<?> type, final TypeValuePolicy typeValues,
+            final KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",       type);
         ensureNonNull("typeValues", typeValues);
         ensureNonNull("keyNames",   keyNames);
         type = getImplementation(type);
         return new TypeMap(getAccessor(type), typeValues, keyNames);
+    }
+
+    /**
+     * Returns a view as a {@linkplain Map map} of the property names for the specified metadata type.
+     * The keys are the property names as determined by the list of {@code getFoo()} methods declared
+     * in the {@linkplain #getInterface metadata interface}, or the {@linkplain UML} identifier
+     * associated to those methods. The values are determined by the {@link KeyNamePolicy} argument.
+     * <p>
+     * <b>Example:</b> The following code returns {@code "alternateTitles"} (note the plural).
+     *
+     * {@preformat java
+     *   ISO_19115.asNameMap(Citation.class, JAVABEANS_PROPERTY, UML_IDENTIFIER).get("alternateTitle");
+     * }
+     *
+     * {@note The <code>KeyNamePolicy</code> type may seem a bit strange for the
+     *        <code>valueNames</code> parameter, but this method is used for mapping a
+     *        namespace to an other namespace. In each namespace, the names are unique.}
+     *
+     * @param  type The interface or implementation class.
+     * @param  valueNames Determines the string representation of map values.
+     * @param  keyNames Determines the string representation of map keys.
+     * @return The types for the given property.
+     * @throws ClassCastException if the specified interface or implementation class does
+     *         not extend or implement a metadata interface of the expected package.
+     *
+     * @since 3.04
+     */
+    public Map<String,String> asNameMap(Class<?> type, final KeyNamePolicy valueNames,
+            final KeyNamePolicy keyNames) throws ClassCastException
+    {
+        ensureNonNull("type",       type);
+        ensureNonNull("typeValues", valueNames);
+        ensureNonNull("keyNames",   keyNames);
+        type = getImplementation(type);
+        return new NameMap(getAccessor(type), valueNames, keyNames);
     }
 
     /**
@@ -344,7 +379,7 @@ public final class MetadataStandard {
      * @param metadata The metadata intance for which to get the restriction that are violated,
      *                 or the {@link Class} of a metadata object for listing all restrictions.
      * @param  content Whatever the entries having null values should be included in the map.
-     * @param  keyNames The string representation of map keys.
+     * @param  keyNames Determines the string representation of map keys.
      * @return The restrictions that are violated by the given metadata instance,
      *         or all restrictions if {@code metadata} is a {@link Class}.
      * @throws ClassCastException if the metadata object doesn't implement a metadata
@@ -385,7 +420,7 @@ public final class MetadataStandard {
      * @param  metadata The metadata object to view as a map.
      * @param  content Whatever the entries having null values or empty collections should
      *         be included in the map. The default is {@link NullValuePolicy#NON_EMPTY NON_EMPTY}.
-     * @param  keyNames The string representation of map keys. The default is
+     * @param  keyNames Determines the string representation of map keys. The default is
      *         {@link KeyNamePolicy#JAVABEANS_PROPERTY JAVABEANS_PROPERTY}.
      * @return A map view over the metadata object.
      * @throws ClassCastException if the metadata object doesn't implement a metadata

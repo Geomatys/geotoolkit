@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.metadata;
 
-import java.util.Set;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -112,14 +111,6 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
             return restriction(accessor.indexOf((String) key));
         }
         return null;
-    }
-
-    /**
-     * Creates the entry set.
-     */
-    @Override
-    final Set<Map.Entry<String,ValueRestriction>> entries() {
-        return new Entries();
     }
 
     /**

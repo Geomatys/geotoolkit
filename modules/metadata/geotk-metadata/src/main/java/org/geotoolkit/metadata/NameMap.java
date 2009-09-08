@@ -23,30 +23,30 @@ import java.util.NoSuchElementException;
 
 
 /**
- * Map of property types for a given implementation class. This map is read-only.
+ * Map of property names for a given implementation class. This map is read-only.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.04
  *
- * @since 3.03
+ * @since 3.04
  * @module
  */
-final class TypeMap extends MetadataMap<Class<?>> {
+final class NameMap extends MetadataMap<String> {
     /**
-     * The kind of values in this map.
+     * Determines the string representation of values in this map.
      */
-    final TypeValuePolicy types;
+    final KeyNamePolicy valueNames;
 
     /**
      * Creates a type map for the specified accessor.
      *
-     * @param accessor The accessor to use for the metadata.
-     * @param types    The kind of values in this map.
-     * @param keyNames Determines the string representation of keys in the map..
+     * @param accessor   The accessor to use for the metadata.
+     * @param valueNames Determines the string representation of values in this map.
+     * @param keyNames   Determines the string representation of keys in the map.
      */
-    TypeMap(final PropertyAccessor accessor, final TypeValuePolicy types, final KeyNamePolicy keyNames) {
+    NameMap(final PropertyAccessor accessor, final KeyNamePolicy valueNames, final KeyNamePolicy keyNames) {
         super(accessor, keyNames);
-        this.types = types;
+        this.valueNames = valueNames;
     }
 
     /**
@@ -70,10 +70,10 @@ final class TypeMap extends MetadataMap<Class<?>> {
      * if this map contains no mapping for the key.
      */
     @Override
-    public Class<?> get(final Object key) {
+    public String get(final Object key) {
         if (key instanceof String) {
             final int index = accessor.indexOf((String) key);
-            return (index >= 0) ? accessor.type(index, types) : null;
+            return (index >= 0) ? accessor.name(index, valueNames) : null;
         }
         return null;
     }
@@ -82,7 +82,7 @@ final class TypeMap extends MetadataMap<Class<?>> {
      * Returns an iterator over the entries contained in this map.
      */
     @Override
-    final Iterator<Map.Entry<String,Class<?>>> iterator() {
+    final Iterator<Map.Entry<String,String>> iterator() {
         return new Iter();
     }
 
@@ -94,7 +94,7 @@ final class TypeMap extends MetadataMap<Class<?>> {
      *
      * @since 3.03
      */
-    private final class Iter extends MetadataMap<Class<?>>.Iter {
+    private final class Iter extends MetadataMap<String>.Iter {
         /**
          * Index of the next element (initially 0).
          */
@@ -118,14 +118,14 @@ final class TypeMap extends MetadataMap<Class<?>> {
          * Returns the next element in the iteration.
          */
         @Override
-        public Map.Entry<String,Class<?>> next() {
+        public Map.Entry<String,String> next() {
             final PropertyAccessor pa = accessor;
             final int n = next;
             if (n >= pa.count()) {
                 throw new NoSuchElementException();
             }
             next++;
-            return new SimpleEntry<String,Class<?>>(pa.name(n, keyNames), pa.type(n, types));
+            return new SimpleEntry<String,String>(pa.name(n, keyNames), pa.name(n, valueNames));
         }
     }
 }

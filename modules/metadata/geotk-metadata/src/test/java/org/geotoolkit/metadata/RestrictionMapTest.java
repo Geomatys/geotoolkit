@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public class RestrictionMapTest {
+public final class RestrictionMapTest {
     /**
      * Tests a simple case with no mandatory property.
      * Only a range of value restriction is expected.

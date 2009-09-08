@@ -32,7 +32,7 @@ import org.opengis.annotation.UML;
  * {@code UML_IDENTIFIER} usually stay singular no matter the property cardinality.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @see MetadataStandard#asMap(Object, NullValuePolicy, KeyNamePolicy)
  *
@@ -58,5 +58,16 @@ public enum KeyNamePolicy {
     /**
      * The keys in the map are the plain {@linkplain java.lang.reflect.Method#getName() method names}.
      */
-    METHOD_NAME
+    METHOD_NAME,
+
+    /**
+     * The keys in the map are sentences inferred from the UML identifiers. This policy starts
+     * with the same names than {@link #UML_IDENTIFIER}, searchs for word boundaries (defined
+     * as a lower case letter followed by a upper case letter) and inserts a space between the
+     * words found. The first letter in the sentence is made upper-case. The first letters of
+     * following words are made lower-case.
+     *
+     * @since 3.04
+     */
+    SENTENCE
 }

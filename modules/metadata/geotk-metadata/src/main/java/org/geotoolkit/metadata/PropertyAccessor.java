@@ -36,13 +36,13 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.internal.CollectionUtilities;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -122,6 +122,11 @@ final class PropertyAccessor {
     private final Method[] setters;
 
     /**
+     * The JavaBeans property names.
+     */
+    private final String[] names;
+
+    /**
      * The types of elements for the corresponding getter and setter methods. If a getter
      * method returns a collection, then this is the type of elements in that collection.
      * Otherwise this is the type of the returned value itself.
@@ -134,14 +139,13 @@ final class PropertyAccessor {
     private final Class<?>[] elementTypes;
 
     /**
-     * Index of getter or setter for a given name. The name must be all lower cases with
-     * conversion done using {@link #LOCALE}. This map must be considered as immutable
-     * after construction.
+     * Index of getter or setter for a given name. Original names are duplicated with the same name
+     * converted to lower cases according {@link #LOCALE} conventions, for case-insensitive searchs.
+     * This map must be considered as immutable after construction.
      * <p>
-     * The keys in this map are both inferred from the method names (without {@code get} or
-     * {@code is} prefix), and fetched from the UML annotations. Consequently the map may
-     * contains two entries for the same value if some method names are different than the
-     * UML identifiers.
+     * The keys in this map are both inferred from the method names and fetched from the UML
+     * annotations. Consequently the map may contains many entries for the same value if some
+     * method names are different than the UML identifiers.
      */
     private final Map<String,Integer> mapping;
 
@@ -174,6 +178,7 @@ final class PropertyAccessor {
         assert type.isAssignableFrom(implementation) : implementation;
         getters = getGetters(type);
         mapping = new HashMap<String,Integer>(Utilities.hashMapCapacity(getters.length));
+        names   = new String[getters.length];
         elementTypes = new Class<?>[getters.length];
         Method[] setters = null;
         final Class<?>[] arguments = new Class<?>[1];
@@ -186,7 +191,8 @@ final class PropertyAccessor {
             Method getter  = getters[i];
             String name    = getter.getName();
             final int base = prefix(name).length();
-            addMapping(name.substring(base), index);
+            addMapping(names[i] = toPropertyName(name, base), index);
+            addMapping(name, index);
             final UML annotation = getter.getAnnotation(UML.class);
             if (annotation != null) {
                 addMapping(annotation.identifier(), index);
@@ -265,12 +271,16 @@ final class PropertyAccessor {
     private void addMapping(String name, final Integer index) throws IllegalArgumentException {
         name = name.trim();
         if (name.length() != 0) {
-            final String lower = name.toLowerCase(LOCALE);
-            final Integer old = mapping.put(lower, index);
-            if (old != null && !old.equals(index)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.PARAMETER_NAME_CLASH_$4, name, index, lower, old));
-            }
+            String original;
+            do {
+                final Integer old = mapping.put(name, index);
+                if (old != null && !old.equals(index)) {
+                    throw new IllegalArgumentException(Errors.format(
+                            Errors.Keys.PARAMETER_NAME_CLASH_$4, name, index, name, old));
+                }
+                original = name;
+                name = name.toLowerCase(LOCALE);
+            } while (!name.equals(original));
         }
     }
 
@@ -411,6 +421,48 @@ final class PropertyAccessor {
     }
 
     /**
+     * Returns {@code true} if the specified string starting at the specified index contains
+     * no lower case characters. The characters don't have to be in upper case however (e.g.
+     * non-alphabetic characters)
+     */
+    private static boolean isAcronym(final String name, int offset) {
+        final int length = name.length();
+        while (offset < length) {
+            if (Character.isLowerCase(name.charAt(offset++))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Removes the {@code "get"} or {@code "is"} prefix and turn the first character after the
+     * prefix into lower case. For example the method name {@code "getTitle"} will be replaced
+     * by the property name {@code "title"}. We will performs this operation only if there is
+     * at least 1 character after the prefix.
+     *
+     * @param  name The method name.
+     * @param  base Must be the result of {@code prefix(name).length()}.
+     * @return The property name.
+     */
+    private static String toPropertyName(String name, final int base) {
+        if (name.length() > base) {
+            if (isAcronym(name, base)) {
+                name = name.substring(base);
+            } else {
+                final char up = name.charAt(base);
+                final char lo = Character.toLowerCase(up);
+                if (up != lo) {
+                    name = lo + name.substring(base + 1);
+                } else {
+                    name = name.substring(base);
+                }
+            }
+        }
+        return name;
+    }
+
+    /**
      * Returns the number of properties that can be read.
      */
     final int count() {
@@ -424,10 +476,20 @@ final class PropertyAccessor {
      * @param  key The property to search.
      * @return The index of the given key, or -1 if none.
      */
-    final int indexOf(String key) {
-        key = key.trim().replace(" ", "").toLowerCase(LOCALE);
-        final Integer index = mapping.get(key);
-        return (index != null) ? index.intValue() : -1;
+    final int indexOf(final String name) {
+        Integer index = mapping.get(name);
+        if (index == null) {
+            /*
+             * Make a second try with lower cases only if the first try failed, because
+             * most of the time the key name will have exactly the expected case and using
+             * directly the given String instance allow usage of its cached hash code value.
+             */
+            final String key = name.trim().replace(" ", "").toLowerCase(LOCALE);
+            if (key == name || (index = mapping.get(key)) == null) {
+                return -1;
+            }
+        }
+        return index;
     }
 
     /**
@@ -447,21 +509,6 @@ final class PropertyAccessor {
     }
 
     /**
-     * Returns {@code true} if the specified string starting at the specified index contains
-     * no lower case characters. The characters don't have to be in upper case however (e.g.
-     * non-alphabetic characters)
-     */
-    private static boolean isAcronym(final String name, int offset) {
-        final int length = name.length();
-        while (offset < length) {
-            if (Character.isLowerCase(name.charAt(offset++))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Returns the name of the property at the given index, or {@code null} if none.
      *
      * @param  index The index of the property for which to get the name.
@@ -472,41 +519,24 @@ final class PropertyAccessor {
     @SuppressWarnings("fallthrough")
     final String name(final int index, final KeyNamePolicy keyName) {
         if (index >= 0 && index < getters.length) {
-            final Method getter = getters[index];
             switch (keyName) {
                 case UML_IDENTIFIER: {
-                    final UML uml = getter.getAnnotation(UML.class);
+                    final UML uml = getters[index].getAnnotation(UML.class);
                     if (uml != null) {
                         return uml.identifier();
                     }
                     // Fallthrough
                 }
                 case JAVABEANS_PROPERTY: {
-                    String name = getter.getName();
-                    final int base = prefix(name).length();
-                    /*
-                     * Remove the "get" or "is" prefix and turn the first character after the
-                     * prefix into lower case. For example the method name "getTitle" will be
-                     * replaced by the property name "title". We will performs this operation
-                     * only if there is at least 1 character after the prefix.
-                     */
-                    if (name.length() > base) {
-                        if (isAcronym(name, base)) {
-                            name = name.substring(base);
-                        } else {
-                            final char up = name.charAt(base);
-                            final char lo = Character.toLowerCase(up);
-                            if (up != lo) {
-                                name = lo + name.substring(base + 1);
-                            } else {
-                                name = name.substring(base);
-                            }
-                        }
-                    }
-                    return name;
+                    return names[index];
                 }
                 case METHOD_NAME: {
-                    return getter.getName();
+                    return getters[index].getName();
+                }
+                case SENTENCE: {
+                    final StringBuilder buffer = StringUtilities.separateWords(names[index]);
+                    buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
+                    return buffer.toString();
                 }
             }
         }
@@ -555,7 +585,7 @@ final class PropertyAccessor {
 
     /**
      * Returns the restriction for the property at the given index, or {@code null} if none.
-     * The restriction, if any, typically contains a {@link NumberRange} object. More types
+     * The restriction, if any, typically contains a {@code NumberRange} object. More types
      * may be added in future versions.
      */
     final synchronized ValueRestriction restriction(final int index) {

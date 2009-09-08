@@ -38,6 +38,8 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.04
  *
+ * @see MetadataStandard#asRestrictionMap(Object, NullValuePolicy, KeyNamePolicy)
+ *
  * @since 3.04
  * @module
  */
@@ -60,9 +62,16 @@ public final class ValueRestriction implements Serializable {
 
     /**
      * Whatever the property is {@linkplain Obligation#MANDATORY mandatory} or
-     * {@linkplain Obligation#FORBIDDEN forbidden}, or {@code null} if unknown.
-     * The {@linkplain Obligation#OPTIONAL optional} obligation is equivalent to
-     * no obligation.
+     * {@linkplain Obligation#FORBIDDEN forbidden}, or {@code null} if there is
+     * no known restriction.
+     * <p>
+     * The {@linkplain Obligation#OPTIONAL optional} obligation is considered
+     * equivalent to an absence of restriction and is replaced by {@code null}
+     * if {@link MetadataStandard#asRestrictionMap MetadataStandard.asRestrictionMap(...)}
+     * has been invoked with a metadata instance, since the metadata is not violating this
+     * obligation. If {@code asRestrictionMap(...)} has been invoked with a {@link Class}
+     * argument instead, then the obligation is provided verbatism since we are not testing
+     * violation of restrictions.
      */
     public final Obligation obligation;
 

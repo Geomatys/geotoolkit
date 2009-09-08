@@ -147,11 +147,14 @@ final class PropertyMap extends MetadataMap<Object> {
     }
 
     /**
-     * Creates the entry set.
+     * Returns a view of the mappings contained in this map.
      */
     @Override
-    final Set<Map.Entry<String,Object>> entries() {
-        return new Entries();
+    public synchronized Set<Map.Entry<String,Object>> entrySet() {
+        if (entrySet == null) {
+            entrySet = new Entries();
+        }
+        return entrySet;
     }
 
     /**

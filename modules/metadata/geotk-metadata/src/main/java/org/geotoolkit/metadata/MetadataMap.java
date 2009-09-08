@@ -49,7 +49,7 @@ abstract class MetadataMap<V> extends AbstractMap<String,V> {
     /**
      * A view of the mappings contained in this map.
      */
-    private transient Set<Map.Entry<String,V>> entrySet;
+    transient Set<Map.Entry<String,V>> entrySet;
 
     /**
      * Creates a new map backed by the given accessor.
@@ -66,20 +66,16 @@ abstract class MetadataMap<V> extends AbstractMap<String,V> {
     public abstract int size();
 
     /**
-     * Returns a view of the mappings contained in this map.
+     * Returns a view of the mappings contained in this map. Subclasses shall override this method
+     * if they define a different entries set class than the default {@link Entries} inner class.
      */
     @Override
-    public final synchronized Set<Map.Entry<String,V>> entrySet() {
+    public synchronized Set<Map.Entry<String,V>> entrySet() {
         if (entrySet == null) {
-            entrySet = entries();
+            entrySet = new Entries();
         }
         return entrySet;
     }
-
-    /**
-     * Creates the entry set.
-     */
-    abstract Set<Map.Entry<String,V>> entries();
 
     /**
      * Returns an iterator over the entries in this map.
