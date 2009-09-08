@@ -511,7 +511,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns {@code true} if {@link #isAvailable()}, {@link #getAuthority()} or
+     * Returns {@code true} if {@link #availability()}, {@link #getAuthority()} or
      * {@link #getVendor()} were attempted recently and failed.
      *
      * @param  currentTime The value of {@link System#currentTimeMillis()}.
@@ -542,7 +542,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         } catch (RuntimeException e) {
             // The two main exceptions of interest are FactoryRegistryException
             // and NullArgumentException.
-            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "isAvailable", e);
+            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "availability", e);
             lastAttempt = currentTime;
             return new Availability(e);
         }
@@ -706,7 +706,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
      * @return The authority or the vendor, or {@code null}.
      *
-     * @see #isAvailable()
+     * @see #availability
      */
     @Override
     final synchronized Citation getCitation(final String method) {
@@ -724,7 +724,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**
      * Returns the vendor responsible for creating this factory implementation.
      * This implementation may return {@code null} if the factory is not
-     * {@linkplain #isAvailable() available}.
+     * {@linkplain #availability available}.
      */
     @Override
     public Citation getVendor() {
@@ -734,7 +734,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**
      * Returns the organization or party responsible for definition and maintenance of
      * the database. This implementation may return {@code null} if the factory is not
-     * {@linkplain #isAvailable() available}.
+     * {@linkplain #availability available}.
      */
     @Override
     public Citation getAuthority() {

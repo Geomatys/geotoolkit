@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  * <ul>
  *   <li>An initially empty map of {@linkplain #hints hints} to be filled by subclasses
  *       constructors.</li>
- *   <li>An opportunity to said whatever this factory {@linkplain #isAvailable is available}.</li>
+ *   <li>An opportunity to said whatever this factory {@linkplain #availability is available}.</li>
  *   <li>An opportunity to {@linkplain #setOrdering set the ordering} of this factory relative
  *       to other factories.</li>
  *   <li>An opportunity to {@linkplain #dispose dispose} resources.</li>

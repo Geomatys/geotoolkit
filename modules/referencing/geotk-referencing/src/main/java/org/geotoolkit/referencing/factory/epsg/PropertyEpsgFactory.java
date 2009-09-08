@@ -101,7 +101,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      *
      * @throws IOException If an error occured while reading the definition files.
      *         Note that do exception is thrown if there is no file - in this case
-     *         the factory is only considered not {@linkplain #isAvailable() available}.
+     *         the factory is only considered not {@linkplain #availability available}.
      */
     public PropertyEpsgFactory() throws IOException {
         this(EMPTY_HINTS);
@@ -123,7 +123,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * @param userHints An optional set of hints, or {@code null} if none.
      * @throws IOException If an error occured while reading the definition files.
      *         Note that do exception is thrown if there is no file - in this case
-     *         the factory is only considered not {@linkplain #isAvailable() available}.
+     *         the factory is only considered not {@linkplain #availability available}.
      */
     public PropertyEpsgFactory(final Hints userHints) throws IOException {
         this(userHints, FILENAME, Citations.EPSG);
@@ -147,7 +147,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      *          database. Should contains at least {@link Citations#EPSG}.
      * @throws IOException If an error occured while reading the definition files.
      *         Note that do exception is thrown if there is no file - in this case
-     *         the factory is only considered not {@linkplain #isAvailable() available}.
+     *         the factory is only considered not {@linkplain #availability available}.
      *
      * @since 3.00
      */

@@ -110,7 +110,7 @@ public class FactoryRegistry extends ServiceRegistry {
 
     /**
      * Factories under testing for availability. This is used by
-     * {@link #isAvailable} as a guard against infinite recursivity.
+     * {@link #isAcceptable} as a guard against infinite recursivity.
      */
     private final Set<Class<? extends Factory>> testingAvailability =
             new HashSet<Class<? extends Factory>>();
@@ -168,7 +168,7 @@ public class FactoryRegistry extends ServiceRegistry {
 
     /**
      * Returns the providers in the registry for the specified category, filter and hints.
-     * Providers that are not {@linkplain Factory#isAvailable available} will be ignored.
+     * Providers that are not {@linkplain Factory#availability available} will be ignored.
      * This method will {@linkplain #scanForPlugins() scan for plugins} the first time it
      * is invoked for the given category.
      *
@@ -286,7 +286,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * @param  hints    A {@linkplain Hints map of hints}, or {@code null} if none.
      * @param  key      The key to use for looking for a user-provided instance in the hints, or
      *                  {@code null} if none.
-     * @return A factory {@linkplain Factory#isAvailable available} for use for the specified
+     * @return A factory {@linkplain Factory#availability available} for use for the specified
      *         category and hints. The returns type is {@code Object} instead of {@link Factory}
      *         because the factory implementation doesn't need to be a Geotk one.
      * @throws FactoryNotFoundException if no factory was found for the specified category, filter
@@ -684,7 +684,7 @@ public class FactoryRegistry extends ServiceRegistry {
      *
      * @param factory The factory which declares itself as unavailable.
      *
-     * @see Factory#isAvailable()
+     * @see Factory#availability
      *
      * @since 3.01
      */

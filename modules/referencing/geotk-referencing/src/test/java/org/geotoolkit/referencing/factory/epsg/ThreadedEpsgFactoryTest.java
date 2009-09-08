@@ -349,12 +349,12 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         assertTrue (datum.containsAll(geodeticDatum));
 
         if (!((ThreadedAuthorityFactory) factory).isActive()) {
-            ThreadedAuthorityFactory.LOGGER.warning(
-                "A test has been skipped because the backing store (DirectEpsgFactory) has been " +
-                "disposed after its timeout. The cache content is lost, causing \"assertSame\" to " +
-                "fail. Testing with \"assertEquals\" and a new backing store would be slow since " +
-                "it would imply a new scan of the database. If you are testing a database through " +
-                "a network, try to run the test when there is no network latency.");
+            ThreadedAuthorityFactory.LOGGER.warning("SKIPPED THREADED TEST\n" +
+                "A test has been skipped because the backing store (DirectEpsgFactory) has been\n" +
+                "disposed after its timeout. The cache content is lost, causing 'assertSame' to\n" +
+                "fail.  Testing with 'assertEquals' and a new backing store would be slow since\n" +
+                "it would trig a new scan of the database. If you are testing a database through\n" +
+                "the network, try to run the test when there is no network latency.");
             // Note: the above check is not always suffisient for preventing test failure since
             //       there is a window of vulnerability between that check and the execution of
             //       factory.getAuthorityCodes(...) method.
