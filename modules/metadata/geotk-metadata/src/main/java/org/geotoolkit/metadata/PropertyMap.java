@@ -88,7 +88,7 @@ final class PropertyMap extends AbstractMap<String,Object> {
      */
     @Override
     public boolean isEmpty() {
-        return entrySet().isEmpty();
+        return entrySet.isEmpty();
     }
 
     /**

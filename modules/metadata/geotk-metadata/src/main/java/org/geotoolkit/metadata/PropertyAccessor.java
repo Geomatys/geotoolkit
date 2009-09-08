@@ -33,7 +33,6 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.opengis.annotation.UML;
 
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
@@ -47,8 +46,10 @@ import org.geotoolkit.internal.CollectionUtilities;
 
 
 /**
- * The getters declared in a GeoAPI interface, together with setters (if any)
- * declared in the Geotk implementation.
+ * The getter methods declared in a GeoAPI interface, together with setter methods (if any)
+ * declared in the Geotk implementation. An instace of {@code PropertyAccessor} gives access
+ * to all public attributes of an instance of a metadata object. It uses reflection for this
+ * purpose, a little bit like the <cite>Java Beans</cite> framework.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.04
@@ -59,7 +60,7 @@ import org.geotoolkit.internal.CollectionUtilities;
 @ThreadSafe(concurrent = true)
 final class PropertyAccessor {
     /**
-     * The locale to use for changing character case.
+     * The locale to use for changing the case of characters.
      */
     private static final Locale LOCALE = Locale.US;
 
@@ -146,14 +147,22 @@ final class PropertyAccessor {
 
     /**
      * The last converter used. This is remembered on the assumption that the same converter
-     * will often be reused for the same attribute. This optimization can reduce the cost of
+     * will often be reused for the same property. This optimization can reduce the cost of
      * looking for a converter, and also reduce thread contention since it reduce the number
      * of calls to the synchronized {@link ConverterRegistry#converter} method.
      */
     private transient volatile ObjectConverter<?,?> converter;
 
     /**
-     * Creates a new property reader for the specified metadata implementation.
+     * The restrictions that apply on property values. The array will be created when first
+     * needed. A {@link ValueRestriction#PENDING} element means that the restriction at that
+     * index has not yet been computed. If a property has been determined to have no
+     * restriction, then its corresponding element in this array is set to {@code null}.
+     */
+    private transient ValueRestriction[] restrictions;
+
+    /**
+     * Creates a new property accessor for the specified metadata implementation.
      *
      * @param  metadata The metadata implementation to wrap.
      * @param  type The interface implemented by the metadata.
@@ -215,7 +224,7 @@ final class PropertyAccessor {
                     getter = implementation.getMethod(getter.getName(), (Class<?>[]) null);
                 } catch (NoSuchMethodException error) {
                     // Should never happen, since the implementation class
-                    // implements the the interface where the getter come from.
+                    // implements the interface where the getter come from.
                     throw new AssertionError(error);
                 }
                 if (!returnType.equals(returnType = getter.getReturnType())) {
@@ -340,7 +349,7 @@ final class PropertyAccessor {
                 int count = 0;
                 for (int i=0; i<getters.length; i++) {
                     final Method candidate = getters[i];
-                    if (candidate.getAnnotation(Deprecated.class) != null) {
+                    if (candidate.isAnnotationPresent(Deprecated.class)) {
                         // Ignores deprecated methods.
                         continue;
                     }
@@ -546,22 +555,32 @@ final class PropertyAccessor {
 
     /**
      * Returns the restriction for the property at the given index, or {@code null} if none.
-     * The restriction, if any, is typically a {@link NumberRange} object. More types may be
-     * added in future versions.
+     * The restriction, if any, typically contains a {@link NumberRange} object. More types
+     * may be added in future versions.
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    final Object restriction(final int index) {
-        if (index >= 0 && index < getters.length) {
-            final Method getter = getters[index];
-            final ValueRange vr = getter.getAnnotation(ValueRange.class);
-            if (vr != null) {
-                final Class<?> type = elementTypes[index];
-                if (Number.class.isAssignableFrom(type) && Comparable.class.isAssignableFrom(type)) {
-                    return new NumberRange((Class) type, vr);
-                }
-            }
+    final synchronized ValueRestriction restriction(final int index) {
+        ValueRestriction[] restrictions = this.restrictions;
+        if (restrictions == null) {
+            this.restrictions = restrictions = new ValueRestriction[getters.length];
+            Arrays.fill(restrictions, ValueRestriction.PENDING);
         }
-        return null;
+        if (index < 0 || index >= restrictions.length) {
+            return null;
+        }
+        ValueRestriction restriction = restrictions[index];
+        if (restriction == ValueRestriction.PENDING) {
+            final Method impl, getter=getters[index];
+            try {
+                impl = implementation.getMethod(getter.getName(), (Class<?>[]) null);
+            } catch (NoSuchMethodException error) {
+                // Should never happen, since the implementation class
+                // implements the interface where the getter come from.
+                throw new AssertionError(error);
+            }
+            restriction = ValueRestriction.create(elementTypes[index], getter, impl);
+            restrictions[index] = restriction;
+        }
+        return restriction;
     }
 
     /**
@@ -735,7 +754,7 @@ final class PropertyAccessor {
                  *
                  *   - If the user gives a single value, it will be added to the existing
                  *     collection (if any). The previous values are not discarted. This
-                 *     allow for incremental filling of an attribute.
+                 *     allow for incremental filling of a property.
                  *
                  * The code below prepares an array of elements to be converted and wraps that
                  * array in a List (to be converted to a Set after this block if required). It
@@ -835,7 +854,7 @@ final class PropertyAccessor {
      * <p>
      * This method can optionaly excludes null values from the comparison. In metadata,
      * null value often means "don't know", so in some occasion we want to consider two
-     * metadata as different only if an attribute value is know for sure to be different.
+     * metadata as different only if a property value is know for sure to be different.
      *
      * @param metadata1 The first metadata object to compare.
      * @param metadata2 The second metadata object to compare.

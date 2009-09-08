@@ -149,12 +149,12 @@ public class MetadataFactory extends Factory {
     }
 
     /**
-     * Creates a new metadata of the given type, initialized with the attribute values given in the
+     * Creates a new metadata of the given type, initialized with the property values given in the
      * properties map.
      *
      * @param  <T> The parameterized type of the {@code type} argument.
      * @param  type The interface or implementation type of the metadata object to be created.
-     * @param  properties The attribute values to be given to the metadata object.
+     * @param  properties The property values to be given to the metadata object.
      * @return A new metadata object of the given class or implementation, filled with the given values.
      * @throws FactoryException If the metadata object can not be created.
      */

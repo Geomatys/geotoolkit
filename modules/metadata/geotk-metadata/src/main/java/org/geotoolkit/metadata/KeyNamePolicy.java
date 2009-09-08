@@ -26,8 +26,8 @@ package org.geotoolkit.metadata;
  * <p>
  * In GeoAPI implementation of ISO 19115, {@code UML_IDENTIFIER} and {@code JAVA_PROPERTY}
  * are usually identical except for {@linkplain java.util.Collection collections}:
- * {@code JAVA_PROPERTY} names are plural when the attribute is a collection while
- * {@code UML_IDENTIFIER} usually stay singular no matter the attribute cardinality.
+ * {@code JAVA_PROPERTY} names are plural when the property is a collection while
+ * {@code UML_IDENTIFIER} usually stay singular no matter the property cardinality.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -40,7 +40,7 @@ package org.geotoolkit.metadata;
 public enum KeyNamePolicy {
     /**
      * The keys in the map are the {@linkplain org.opengis.annotation.UML#identifier() UML identifier}
-     * of the metadata attributes. If an attribute has no UML annotation, then the Javabeans
+     * of the metadata attributes. If a property has no UML annotation, then the Javabeans
      * property name is used as a fallback.
      */
     UML_IDENTIFIER,

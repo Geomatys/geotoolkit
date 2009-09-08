@@ -165,7 +165,7 @@ public abstract class AbstractMetadata {
      * this metadata object. The value of the root node is ignored (it is typically just the
      * name of this metadata class).
      * <p>
-     * If the given metadata object already contains attribute values, then the parsing will be
+     * If the given metadata object already contains property values, then the parsing will be
      * merged with the existing values: attributes not defined in the tree will be left unchanged,
      * and collections will be augmented with new entries without change in the previously existing
      * entries.

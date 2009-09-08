@@ -90,13 +90,13 @@ public final class PropertyAccessorTest {
                 accessor.name(accessor.indexOf("alternateTitle"), METHOD_NAME));
         /*
          * Note that at the opposite of UML_IDENTIFIER, the value returned
-         * by identifier(int) for this property end with a "s".
+         * by identifier(int) for this property ends with a "s".
          */
         assertEquals("getAlternateTitles() property", "alternateTitles",
                 accessor.name(accessor.indexOf("alternatetitle"), JAVABEANS_PROPERTY));
         /*
          * Note that at the opposite of JAVABEANS_PROPERTY, the value returned
-         * by identifier(int) for this property do not have a "s".
+         * by identifier(int) for this property does not have a "s".
          */
         assertEquals("getAlternateTitles() property", "alternateTitle",
                 accessor.name(accessor.indexOf("alternate title"), UML_IDENTIFIER));

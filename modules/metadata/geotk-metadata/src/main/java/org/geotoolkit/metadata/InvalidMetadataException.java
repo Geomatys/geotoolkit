@@ -20,7 +20,7 @@ package org.geotoolkit.metadata;
 
 /**
  * Thrown when a {@linkplain org.geotoolkit.metadata.iso.MetadataEntity metadata entity}
- * is in a invalid state, usually because a mandatory attribute is missing.
+ * is in a invalid state, usually because a mandatory property is missing.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

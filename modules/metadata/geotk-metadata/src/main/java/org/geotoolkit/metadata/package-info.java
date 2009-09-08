@@ -24,13 +24,13 @@
  * <p>
  * Possible metadata implementations (already available or planed in a future Geotk version) are:
  * <UL>
- *   <LI><P>{@link org.geotoolkit.metadata.iso}: concrete implementation of ISO
- *       interfaces, including ISO&nbsp;19115 and ISO&nbsp;19115-2.</P></LI>
- *   <LI><P>{@code org.geotoolkit.metadata.dublin}: concrete implementation of
- *       Dublin core interfaces. <EM>Not yet implemented.</EM></P></LI>
- *   <LI><P>{@link org.geotoolkit.metadata.sql}: implementation of metadata interfaces
+ *   <LI>{@link org.geotoolkit.metadata.iso}: concrete implementation of ISO
+ *       interfaces, including ISO&nbsp;19115 and ISO&nbsp;19115-2.</LI>
+ *   <LI>{@code org.geotoolkit.metadata.dublin}: concrete implementation of
+ *       Dublin core interfaces. <EM>Not yet implemented.</EM></LI>
+ *   <LI>{@link org.geotoolkit.metadata.sql}: implementation of metadata interfaces
  *       backed by a SQL database. The metadata interfaces doesn't need to be ISO ones,
- *       which is why this package is not a sub-package of the ISO's one.</P></LI>
+ *       which is why this package is not a sub-package of the ISO's one.</LI>
  * </UL>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

@@ -282,8 +282,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * @since 3.04
      */
     public NumberRange(final Class<T> type, final ValueRange range) {
-        super(type, Classes.cast(range.minimum(), type), range.isMinIncluded(),
-                    Classes.cast(range.maximum(), type), range.isMaxIncluded());
+        super(type, Classes.cast(valueOf(range.minimum(), Double.NEGATIVE_INFINITY), type), range.isMinIncluded(),
+                    Classes.cast(valueOf(range.maximum(), Double.POSITIVE_INFINITY), type), range.isMaxIncluded());
     }
 
     /**
@@ -325,6 +325,14 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
                           final T maxValue, final boolean isMaxIncluded)
     {
         return new NumberRange<T>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
+    }
+
+    /**
+     * Returns the {@code Double} wrapper of the given primitive {@code double},
+     * or {@code null} if it equals to the infinity value.
+     */
+    private static Double valueOf(final double value, final double infinity) {
+        return (value != infinity) ? Double.valueOf(value) : null;
     }
 
     /**

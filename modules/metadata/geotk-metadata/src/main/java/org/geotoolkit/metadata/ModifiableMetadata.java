@@ -142,7 +142,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * Returns an unmodifiable copy of this metadata. Any attempt to modify an attribute of the
+     * Returns an unmodifiable copy of this metadata. Any attempt to modify a property of the
      * returned object will throw an {@link UnmodifiableMetadataException}. If this metadata is
      * already unmodifiable, then this method returns {@code this}.
      * <p>

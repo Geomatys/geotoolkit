@@ -119,7 +119,7 @@ final class PropertyTree {
      * the given metadata object. The value of the root node is ignored (it is typically
      * just the name of the metadata class).
      * <p>
-     * If the given metadata object already contains attribute values, then the parsing will be
+     * If the given metadata object already contains property values, then the parsing will be
      * merged with the existing values: attributes not defined in the tree will be left unchanged,
      * and collections will be augmented with new entries without change in the previously existing
      * entries.
@@ -188,7 +188,7 @@ final class PropertyTree {
                  * has many "Individual Name" (if it was allowed by ISO), since in such case every
                  * names would be childs under the same "Individual Name" child.
                  *
-                 * This approach is ambiguous (unless the first child is always a mandatory attribute)
+                 * This approach is ambiguous (unless the first child is always a mandatory property)
                  * and actually not needed for parsing the trees formatted by this class. However this
                  * method applies this lenient approach anyway in order to still be able to parse trees
                  * that are not properly formatted, but still understandable in some way.

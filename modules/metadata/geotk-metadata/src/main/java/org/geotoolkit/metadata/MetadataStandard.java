@@ -249,41 +249,6 @@ public final class MetadataStandard {
     }
 
     /**
-     * Returns a view of the property types for the specified metadata type as a {@linkplain Map map}.
-     * The keys are the property names as determined by the list of {@code getFoo()} methods declared
-     * in the {@linkplain #getInterface metadata interface}, or the {@linkplain UML} identifier
-     * associated to those methods. The values are determined by the {@link TypeValuePolicy}
-     * argument.
-     * <p>
-     * <b>Example:</b> The following code returns {@code InternationalString.class}.
-     *
-     * {@preformat java
-     *   ISO_19115.asTypeMap(Citation.class, ELEMENT_TYPE, UML_IDENTIFIER).get("alternateTitle");
-     * }
-     *
-     * @param  type The interface or implementation class.
-     * @param  typeValues Whatever the values should be property types, the element types
-     *         (same as property types except for collections) or the declaring class.
-     * @param  keyNames The string representation of map keys.
-     * @return The types for the given property.
-     * @throws ClassCastException if the specified interface or implementation class does
-     *         not extend or implement a metadata interface of the expected package.
-     *
-     * @since 3.03
-     */
-    public Map<String,Class<?>> asTypeMap(Class<?> type,
-            final TypeValuePolicy typeValues, final KeyNamePolicy keyNames)
-    {
-        ensureNonNull("implementation", type);
-        ensureNonNull("typeValues",     typeValues);
-        ensureNonNull("keyNames",       keyNames);
-        if (type.isInterface()) {
-            type = getImplementation(type);
-        }
-        return new TypeMap(getAccessor(type), typeValues, keyNames);
-    }
-
-    /**
      * Returns the implementation class for the given interface. If no implementation is found,
      * then the given type is returned unchanged. This method is not public because returning
      * the type unchanged is not consistent with the usual public API.
@@ -293,13 +258,13 @@ public final class MetadataStandard {
      */
     final Class<?> getImplementation(final Class<?> type) {
         if (type != null && implementations != null) {
-            synchronized (implementations) {
-                Class<?> candidate = implementations.get(type);
-                if (candidate != null) {
-                    return candidate;
-                }
-                String name = type.getName();
-                if (name.startsWith(interfacePackage)) {
+            String name = type.getName();
+            if (name.startsWith(interfacePackage)) {
+                synchronized (implementations) {
+                    Class<?> candidate = implementations.get(type);
+                    if (candidate != null) {
+                        return candidate;
+                    }
                     final StringBuilder buffer = new StringBuilder(implementationPackage)
                             .append(name.substring(interfacePackage.length()));
                     final int prefixPosition = buffer.lastIndexOf(".") + 1;
@@ -325,27 +290,80 @@ public final class MetadataStandard {
     }
 
     /**
-     * Returns a view of the specified metadata object as a {@linkplain Map map}.
-     * The map is backed by the metadata object using Java reflection, so changes
-     * in the underlying metadata object are immediately reflected in the map.
-     * The keys are the property names as determined by the list of {@code getFoo()}
-     * methods declared in the {@linkplain #getInterface metadata interface}, and
-     * only the entries with a non-null or non-{@linkplain Collection#isEmpty empty}
-     * value are listed.
+     * Returns a view as a {@linkplain Map map} of the property types for the specified metadata type.
+     * The keys are the property names as determined by the list of {@code getFoo()} methods declared
+     * in the {@linkplain #getInterface metadata interface}, or the {@linkplain UML} identifier
+     * associated to those methods. The values are determined by the {@link TypeValuePolicy}
+     * argument.
      * <p>
-     * The map supports the {@link Map#put put} operations if the underlying metadata
-     * object contains {@code setFoo(...)} methods. The keys are case-insensitive and
-     * can be either the javabeans property name, or the UML identifier.
+     * <b>Example:</b> The following code returns {@code InternationalString.class}.
      *
-     * @param  metadata The metadata object to view as a map.
-     * @return A map view over the metadata object.
+     * {@preformat java
+     *   ISO_19115.asTypeMap(Citation.class, ELEMENT_TYPE, UML_IDENTIFIER).get("alternateTitle");
+     * }
+     *
+     * @param  type The interface or implementation class.
+     * @param  typeValues Whatever the values should be property types, the element types
+     *         (same as property types except for collections) or the declaring class.
+     * @param  keyNames The string representation of map keys.
+     * @return The types for the given property.
+     * @throws ClassCastException if the specified interface or implementation class does
+     *         not extend or implement a metadata interface of the expected package.
+     *
+     * @since 3.03
+     */
+    public Map<String,Class<?>> asTypeMap(Class<?> type,
+            final TypeValuePolicy typeValues, final KeyNamePolicy keyNames) throws ClassCastException
+    {
+        ensureNonNull("type",       type);
+        ensureNonNull("typeValues", typeValues);
+        ensureNonNull("keyNames",   keyNames);
+        type = getImplementation(type);
+        return new TypeMap(getAccessor(type), typeValues, keyNames);
+    }
+
+    /**
+     * Returns a view as a {@linkplain Map map} of the restrictions for the specified metadata.
+     * The restrictions are inferred from the {@link org.opengis.annotation.Obligation} and
+     * {@link org.geotoolkit.lang.ValueRange} annotated on the getter methods.
+     * <p>
+     * The {@code metadata} argument can be either a {@link Class}, or an instance of a
+     * metadata object:
+     * <p>
+     * <ul>
+     *   <li>If the {@code metadata} argument is a {@link Class}, then this method returns all
+     *       restrictions that applied on metadata of the given type.</li>
+     *   <li>Otherwise if {@code metadata} is an instance of a metadata object, then this method
+     *       returns only the restrictions that are violated by the given instance. The returned
+     *       map is <cite>live</cite>: changes to any metadata value will be immediately reflected
+     *       in the restriction map.</li>
+     * </ul>
+     *
+     * @param metadata The metadata intance for which to get the restriction that are violated,
+     *                 or the {@link Class} of a metadata object for listing all restrictions.
+     * @param  content Whatever the entries having null values should be included in the map.
+     * @param  keyNames The string representation of map keys.
+     * @return The restrictions that are violated by the given metadata instance,
+     *         or all restrictions if {@code metadata} is a {@link Class}.
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      *
-     * @see AbstractMetadata#asMap
+     * @since 3.04
      */
-    public Map<String,Object> asMap(final Object metadata) throws ClassCastException {
-        return asMap(metadata, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
+    public Map<String,ValueRestriction> asRestrictionMap(Object metadata,
+            final NullValuePolicy content, final KeyNamePolicy keyNames) throws ClassCastException
+    {
+        ensureNonNull("metadata", metadata);
+        ensureNonNull("content",  content);
+        ensureNonNull("keyNames", keyNames);
+        final Class<?> type;
+        if (metadata instanceof Class<?>) {
+            type = getImplementation((Class<?>) metadata);
+            metadata = null;
+        } else {
+            type = metadata.getClass();
+        }
+        return new RestrictionMap(getAccessor(type), metadata, content, keyNames);
     }
 
     /**
@@ -383,6 +401,30 @@ public final class MetadataStandard {
     }
 
     /**
+     * Returns a view as a {@linkplain Map map} of the specified metadata object.
+     * The map is backed by the metadata object using Java reflection, so changes
+     * in the underlying metadata object are immediately reflected in the map.
+     * The keys are the property names as determined by the list of {@code getFoo()}
+     * methods declared in the {@linkplain #getInterface metadata interface}, and
+     * only the entries with a non-null or non-{@linkplain Collection#isEmpty empty}
+     * value are listed.
+     * <p>
+     * The map supports the {@link Map#put put} operations if the underlying metadata
+     * object contains {@code setFoo(...)} methods. The keys are case-insensitive and
+     * can be either the javabeans property name, or the UML identifier.
+     *
+     * @param  metadata The metadata object to view as a map.
+     * @return A map view over the metadata object.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
+     *
+     * @see AbstractMetadata#asMap
+     */
+    public Map<String,Object> asMap(final Object metadata) throws ClassCastException {
+        return asMap(metadata, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
+    }
+
+    /**
      * Returns a view of the specified metadata as a tree. Note that while {@link TreeModel}
      * is defined in the {@link javax.swing.tree} package, it can be seen as a data structure
      * independent of Swing. It will not force class loading of Swing framework.
@@ -407,7 +449,7 @@ public final class MetadataStandard {
      * the given metadata object. The value of the root node is ignored (it is typically
      * just the name of the metadata class).
      * <p>
-     * If the given metadata object already contains attribute values, then the parsing will be
+     * If the given metadata object already contains property values, then the parsing will be
      * merged with the existing values: attributes not defined in the tree will be left unchanged,
      * and collections will be augmented with new entries without change in the previously existing
      * entries.
@@ -485,7 +527,7 @@ public final class MetadataStandard {
      * <p>
      * This method can optionaly excludes null values from the comparison. In metadata,
      * null value often means "don't know", so in some occasion we want to consider two
-     * metadata as different only if an attribute value is know for sure to be different.
+     * metadata as different only if a property value is know for sure to be different.
      * <p>
      * The first arguments must be an implementation of a metadata interface, otherwise an
      * exception will be thrown. The two argument do not need to be the same implementation
