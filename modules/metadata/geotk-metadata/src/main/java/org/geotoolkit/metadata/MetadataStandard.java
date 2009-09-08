@@ -257,7 +257,9 @@ public final class MetadataStandard {
      * @return The implementation class.
      */
     final Class<?> getImplementation(final Class<?> type) {
-        if (type != null && implementations != null) {
+        // We require the type to be an interface in order to exclude
+        // CodeLists, Enums and Exceptions.
+        if (type != null && type.isInterface() && implementations != null) {
             String name = type.getName();
             if (name.startsWith(interfacePackage)) {
                 synchronized (implementations) {

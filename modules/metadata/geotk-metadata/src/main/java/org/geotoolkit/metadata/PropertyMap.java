@@ -20,8 +20,6 @@ package org.geotoolkit.metadata;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.util.Utilities;
@@ -39,31 +37,16 @@ import org.geotoolkit.util.Utilities;
  *
  * @see MetadataStandard#asMap
  */
-final class PropertyMap extends AbstractMap<String,Object> {
+final class PropertyMap extends MetadataMap<Object> {
     /**
      * The metadata object to wrap.
      */
     private final Object metadata;
 
     /**
-     * The accessor to use for the metadata.
-     */
-    private final PropertyAccessor accessor;
-
-    /**
-     * A view of the mappings contained in this map.
-     */
-    private final Set<Map.Entry<String,Object>> entrySet;
-
-    /**
      * The behavior of this map toward null or empty values.
      */
     final NullValuePolicy content;
-
-    /**
-     * Determines the string representation of keys in the map.
-     */
-    final KeyNamePolicy keyNames;
 
     /**
      * Creates a property map for the specified metadata and accessor.
@@ -76,11 +59,9 @@ final class PropertyMap extends AbstractMap<String,Object> {
     PropertyMap(final Object metadata, final PropertyAccessor accessor,
             final NullValuePolicy content, final KeyNamePolicy keyNames)
     {
+        super(accessor, keyNames);
         this.metadata = metadata;
-        this.accessor = accessor;
         this.content  = content;
-        this.keyNames = keyNames;
-        entrySet = new Entries();
     }
 
     /**
@@ -88,7 +69,15 @@ final class PropertyMap extends AbstractMap<String,Object> {
      */
     @Override
     public boolean isEmpty() {
-        return entrySet.isEmpty();
+        return accessor.count(metadata, 1) == 0;
+    }
+
+    /**
+     * Returns the number of elements in this map.
+     */
+    @Override
+    public int size() {
+        return accessor.count(metadata, Integer.MAX_VALUE);
     }
 
     /**
@@ -158,11 +147,19 @@ final class PropertyMap extends AbstractMap<String,Object> {
     }
 
     /**
-     * Returns a view of the mappings contained in this map.
+     * Creates the entry set.
      */
     @Override
-    public Set<Map.Entry<String,Object>> entrySet() {
-        return entrySet;
+    final Set<Map.Entry<String,Object>> entries() {
+        return new Entries();
+    }
+
+    /**
+     * Returns an iterator over the entries contained in this map.
+     */
+    @Override
+    final Iterator<Map.Entry<String,Object>> iterator() {
+        return new Iter();
     }
 
 
@@ -272,11 +269,11 @@ final class PropertyMap extends AbstractMap<String,Object> {
      * The iterator over the {@link Property} elements contained in a {@link Entries} set.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.04
      *
      * @since 2.4
      */
-    private final class Iter implements Iterator<Map.Entry<String,Object>> {
+    private final class Iter extends MetadataMap<Object>.Iter {
         /**
          * The current and the next property, or {@code null} if the iteration is over.
          */
@@ -367,39 +364,15 @@ final class PropertyMap extends AbstractMap<String,Object> {
      * View of the entries contained in the map.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.04
      *
      * @since 2.4
      */
-    private final class Entries extends AbstractSet<Map.Entry<String,Object>> {
+    private final class Entries extends MetadataMap<Object>.Entries {
         /**
          * Creates an entry set.
          */
         Entries() {
-        }
-
-        /**
-         * Returns an iterator over the elements contained in this collection.
-         */
-        @Override
-        public Iterator<Map.Entry<String,Object>> iterator() {
-            return new Iter();
-        }
-
-        /**
-         * Returns the number of elements in this collection.
-         */
-        @Override
-        public int size() {
-            return accessor.count(metadata, Integer.MAX_VALUE);
-        }
-
-        /**
-         * Returns true if this collection contains no elements.
-         */
-        @Override
-        public boolean isEmpty() {
-            return accessor.count(metadata, 1) == 0;
         }
 
         /**

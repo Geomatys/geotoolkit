@@ -19,8 +19,6 @@ package org.geotoolkit.metadata;
 
 import java.util.Set;
 import java.util.Map;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -37,32 +35,17 @@ import java.util.NoSuchElementException;
  * @since 3.04
  * @module
  */
-final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
-    /**
-     * The accessor to use for the metadata.
-     */
-    final PropertyAccessor accessor;
-
+final class RestrictionMap extends MetadataMap<ValueRestriction> {
     /**
      * The behavior of this map toward null or empty values.
      */
     final NullValuePolicy content;
 
     /**
-     * Determines the string representation of keys in the map.
-     */
-    final KeyNamePolicy keyNames;
-
-    /**
      * If non-null, the metadata instance to validate. This map will contain only
      * the restrictions that are violated by a property value of this metadata.
      */
     private final Object metadata;
-
-    /**
-     * A view of the mappings contained in this map.
-     */
-    private final Set<Map.Entry<String,ValueRestriction>> entrySet;
 
     /**
      * Creates a restriction map for the specified accessor.
@@ -75,11 +58,9 @@ final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
     RestrictionMap(final PropertyAccessor accessor, final Object metadata,
             final NullValuePolicy content, final KeyNamePolicy keyNames)
     {
-        this.accessor = accessor;
+        super(accessor, keyNames);
         this.metadata = metadata;
         this.content  = content;
-        this.keyNames = keyNames;
-        entrySet = new Entries();
     }
 
     /**
@@ -96,7 +77,7 @@ final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
     }
 
     /**
-     * Returns the number of elements in this collection.
+     * Returns the number of elements in this map.
      */
     @Override
     public int size() {
@@ -134,11 +115,19 @@ final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
     }
 
     /**
-     * Returns a view of the mappings contained in this map.
+     * Creates the entry set.
      */
     @Override
-    public Set<Map.Entry<String,ValueRestriction>> entrySet() {
-        return entrySet;
+    final Set<Map.Entry<String,ValueRestriction>> entries() {
+        return new Entries();
+    }
+
+    /**
+     * Returns an iterator over the entries contained in this map.
+     */
+    @Override
+    final Iterator<Map.Entry<String,ValueRestriction>> iterator() {
+        return new Iter();
     }
 
 
@@ -152,7 +141,7 @@ final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
      *
      * @since 3.04
      */
-    private final class Iter implements Iterator<Map.Entry<String,ValueRestriction>> {
+    private final class Iter extends MetadataMap<ValueRestriction>.Iter {
         /**
          * The next property, or {@code null} if the iteration is over.
          */
@@ -202,7 +191,7 @@ final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
                     }
                 }
                 if (!skip) {
-                    next = new AbstractMap.SimpleEntry<String,ValueRestriction>(accessor.name(index, keyNames), restriction);
+                    next = new SimpleEntry<String,ValueRestriction>(accessor.name(index, keyNames), restriction);
                     hasNext = true;
                     return true;
                 }
@@ -222,49 +211,6 @@ final class RestrictionMap extends AbstractMap<String,ValueRestriction> {
             } else {
                 throw new NoSuchElementException();
             }
-        }
-
-        /**
-         * Unsupported operation since the underlying map is unmodifiable.
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-
-
-
-    /**
-     * View of the entries contained in the map.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.04
-     *
-     * @since 3.04
-     */
-    private final class Entries extends AbstractSet<Map.Entry<String,ValueRestriction>> {
-        /**
-         * Creates an entry set.
-         */
-        Entries() {
-        }
-
-        /**
-         * Returns an iterator over the elements contained in this collection.
-         */
-        @Override
-        public Iterator<Map.Entry<String,ValueRestriction>> iterator() {
-            return new Iter();
-        }
-
-        /**
-         * Returns the number of elements in this collection.
-         */
-        @Override
-        public int size() {
-            return RestrictionMap.this.size();
         }
     }
 }

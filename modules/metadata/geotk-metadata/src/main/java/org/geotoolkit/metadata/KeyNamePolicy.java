@@ -17,12 +17,14 @@
  */
 package org.geotoolkit.metadata;
 
+import org.opengis.annotation.UML;
+
 
 /**
  * The name of the keys included in a {@link java.util.Map} of metadata. Those maps are created
  * by the {@link AbstractMetadata#asMap()} method. The keys in those map are {@link String}s which
- * can be inferred from the {@linkplain org.opengis.annotation.UML#identifier() UML identifier}, the
- * name of the Javabeans property, or the {@linkplain java.lang.reflect.Method#getName() method name}.
+ * can be inferred from the {@linkplain UML#identifier() UML identifier}, the name of the Javabeans
+ * property, or the {@linkplain java.lang.reflect.Method#getName() method name}.
  * <p>
  * In GeoAPI implementation of ISO 19115, {@code UML_IDENTIFIER} and {@code JAVA_PROPERTY}
  * are usually identical except for {@linkplain java.util.Collection collections}:
@@ -39,9 +41,9 @@ package org.geotoolkit.metadata;
  */
 public enum KeyNamePolicy {
     /**
-     * The keys in the map are the {@linkplain org.opengis.annotation.UML#identifier() UML identifier}
-     * of the metadata attributes. If a property has no UML annotation, then the Javabeans
-     * property name is used as a fallback.
+     * The keys in the map are the {@linkplain UML#identifier() UML identifier} of the metadata
+     * properties. If a property has no UML annotation, then the Javabeans property name is used
+     * as a fallback.
      */
     UML_IDENTIFIER,
 

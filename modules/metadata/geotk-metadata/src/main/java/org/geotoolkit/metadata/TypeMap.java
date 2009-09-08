@@ -19,8 +19,6 @@ package org.geotoolkit.metadata;
 
 import java.util.Set;
 import java.util.Map;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -29,32 +27,16 @@ import java.util.NoSuchElementException;
  * Map of types for a given implementation class. This map is read-only.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 3.03
  * @module
  */
-final class TypeMap extends AbstractMap<String,Class<?>> {
-    /**
-     * The accessor to use for the metadata.
-     */
-    final PropertyAccessor accessor;
-
+final class TypeMap extends MetadataMap<Class<?>> {
     /**
      * The kind of values in this map.
      */
     final TypeValuePolicy types;
-
-    /**
-     * Determines the string representation of keys in the map.
-     */
-    final KeyNamePolicy keyNames;
-
-    /**
-     * A view of the mappings contained in this map.
-     * Creates only if needed (typically it is not).
-     */
-    private transient Set<Map.Entry<String,Class<?>>> entrySet;
 
     /**
      * Creates a type map for the specified accessor.
@@ -64,9 +46,8 @@ final class TypeMap extends AbstractMap<String,Class<?>> {
      * @param keyNames Determines the string representation of keys in the map..
      */
     TypeMap(final PropertyAccessor accessor, final TypeValuePolicy types, final KeyNamePolicy keyNames) {
-        this.accessor = accessor;
-        this.types    = types;
-        this.keyNames = keyNames;
+        super(accessor, keyNames);
+        this.types = types;
     }
 
     /**
@@ -99,57 +80,30 @@ final class TypeMap extends AbstractMap<String,Class<?>> {
     }
 
     /**
-     * Returns a view of the mappings contained in this map.
+     * Creates the entry set.
      */
     @Override
-    public synchronized Set<Map.Entry<String,Class<?>>> entrySet() {
-        if (entrySet == null) {
-            entrySet = new Entries();
-        }
-        return entrySet;
+    final Set<Map.Entry<String,Class<?>>> entries() {
+        return new Entries();
     }
 
     /**
-     * View of the entries contained in the map.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.03
-     *
-     * @since 3.03
+     * Returns an iterator over the entries contained in this map.
      */
-    private final class Entries extends AbstractSet<Map.Entry<String,Class<?>>> {
-        /**
-         * Creates an entry set.
-         */
-        Entries() {
-        }
-
-        /**
-         * Returns the number of elements in this collection.
-         */
-        @Override
-        public int size() {
-            return TypeMap.this.size();
-        }
-
-        /**
-         * Returns an iterator over the elements contained in this collection.
-         */
-        @Override
-        public Iterator<Map.Entry<String,Class<?>>> iterator() {
-            return new Iter();
-        }
+    @Override
+    final Iterator<Map.Entry<String,Class<?>>> iterator() {
+        return new Iter();
     }
 
     /**
      * The iterator over the entries contained in a {@link Entries} set.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.03
+     * @version 3.04
      *
      * @since 3.03
      */
-    private final class Iter implements Iterator<Map.Entry<String,Class<?>>> {
+    private final class Iter extends MetadataMap<Class<?>>.Iter {
         /**
          * Index of the next element (initially 0).
          */
@@ -181,14 +135,6 @@ final class TypeMap extends AbstractMap<String,Class<?>> {
             }
             next++;
             return new SimpleEntry<String,Class<?>>(pa.name(n, keyNames), pa.type(n, types));
-        }
-
-        /**
-         * Unsupported operation since the map is read-only.
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
         }
     }
 }
