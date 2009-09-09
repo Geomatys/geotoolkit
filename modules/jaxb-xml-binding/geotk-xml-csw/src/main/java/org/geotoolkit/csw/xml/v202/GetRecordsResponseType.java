@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordsResponse;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -140,5 +141,30 @@ public class GetRecordsResponseType implements GetRecordsResponse {
             s.append("searchResult: ").append(searchResults).append('\n');
         }
         return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof GetRecordsResponseType) {
+            final GetRecordsResponseType that = (GetRecordsResponseType) object;
+            return Utilities.equals(this.requestId,     that.requestId)     &&
+                   Utilities.equals(this.searchResults, that.searchResults) &&
+                   Utilities.equals(this.searchStatus,  that.searchStatus)  &&
+                   Utilities.equals(this.version,       that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
+        hash = 59 * hash + (this.searchStatus != null ? this.searchStatus.hashCode() : 0);
+        hash = 59 * hash + (this.searchResults != null ? this.searchResults.hashCode() : 0);
+        hash = 59 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
     }
 }

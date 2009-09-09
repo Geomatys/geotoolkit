@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.SearchResults;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -332,4 +333,57 @@ public class SearchResultsType implements SearchResults {
         }
         return s.toString();
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SearchResultsType) {
+            SearchResultsType that  = (SearchResultsType) object;
+            boolean abstractRecordB = false;
+            if (this.abstractRecord != null && that.abstractRecord != null) {
+                if (this.abstractRecord.size() == that.abstractRecord.size()) {
+                    abstractRecordB = true;
+                    for (int i = 0; i < this.abstractRecord.size(); i++) {
+                        if (!this.abstractRecord.get(i).getValue().equals(that.abstractRecord.get(i).getValue())) {
+                            abstractRecordB = false;
+                            break;
+                        }
+                    }
+                }
+            
+            } else if (this.abstractRecord == null && that.abstractRecord == null) {
+                abstractRecordB = true;
+            }
+
+            
+            return abstractRecordB                                                              &&
+                   Utilities.equals(this.any,                     that.any)                     &&
+                   Utilities.equals(this.elementSet,              that.elementSet)              &&
+                   Utilities.equals(this.expires,                 that.expires)                 &&
+                   Utilities.equals(this.nextRecord,              that.nextRecord)              &&
+                   Utilities.equals(this.numberOfRecordsMatched,  that.numberOfRecordsMatched)  &&
+                   Utilities.equals(this.numberOfRecordsReturned, that.numberOfRecordsReturned) &&
+                   Utilities.equals(this.recordSchema,            that.recordSchema)            &&
+                   Utilities.equals(this.resultSetId,             that.resultSetId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.abstractRecord != null ? this.abstractRecord.hashCode() : 0);
+        hash = 53 * hash + (this.any != null ? this.any.hashCode() : 0);
+        hash = 53 * hash + (this.resultSetId != null ? this.resultSetId.hashCode() : 0);
+        hash = 53 * hash + this.elementSet.hashCode();
+        hash = 53 * hash + (this.recordSchema != null ? this.recordSchema.hashCode() : 0);
+        hash = 53 * hash + this.numberOfRecordsMatched;
+        hash = 53 * hash + this.numberOfRecordsReturned;
+        hash = 53 * hash + this.nextRecord;
+        hash = 53 * hash + (this.expires != null ? this.expires.hashCode() : 0);
+        return hash;
+    }
+        
 }

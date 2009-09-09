@@ -29,6 +29,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.RequestStatus;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -118,6 +119,25 @@ public class RequestStatusType implements RequestStatus {
         if (timestamp != null)
             s.append("timeStamp:").append(timestamp);
         return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof RequestStatusType) {
+            RequestStatusType that = (RequestStatusType) object;
+            return Utilities.equals(this.timestamp, that.timestamp);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);
+        return hash;
     }
 
 }
