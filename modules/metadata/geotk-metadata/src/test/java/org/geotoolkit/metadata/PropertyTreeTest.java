@@ -27,6 +27,7 @@ import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -46,6 +47,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.00
  */
+@Depend(MetadataStandard.class)
 public final class PropertyTreeTest {
     /**
      * Creates a tree from a metadata object and verifies that the tree contains

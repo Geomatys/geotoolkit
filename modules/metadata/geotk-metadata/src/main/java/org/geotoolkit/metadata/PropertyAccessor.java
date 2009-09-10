@@ -122,7 +122,10 @@ final class PropertyAccessor {
     private final Method[] setters;
 
     /**
-     * The JavaBeans property names.
+     * The JavaBeans property names. They are computed at construction time,
+     * {@linkplain String#intern interned} then cached. Those names are often
+     * the same than field names (at least in Geotk implementation), so it is
+     * raisonable to intern them in order to share {@code String} instances.
      */
     private final String[] names;
 
@@ -269,7 +272,6 @@ final class PropertyAccessor {
      * overwrite an existing entry with different value.
      */
     private void addMapping(String name, final Integer index) throws IllegalArgumentException {
-        name = name.trim();
         if (name.length() != 0) {
             String original;
             do {
@@ -279,7 +281,7 @@ final class PropertyAccessor {
                             Errors.Keys.PARAMETER_NAME_CLASH_$4, name, index, name, old));
                 }
                 original = name;
-                name = name.toLowerCase(LOCALE);
+                name = name.toLowerCase(LOCALE).trim();
             } while (!name.equals(original));
         }
     }
@@ -459,7 +461,7 @@ final class PropertyAccessor {
                 }
             }
         }
-        return name;
+        return name.trim().intern();
     }
 
     /**
@@ -484,7 +486,7 @@ final class PropertyAccessor {
              * most of the time the key name will have exactly the expected case and using
              * directly the given String instance allow usage of its cached hash code value.
              */
-            final String key = name.trim().replace(" ", "").toLowerCase(LOCALE);
+            final String key = name.replace(" ", "").toLowerCase(LOCALE).trim();
             if (key == name || (index = mapping.get(key)) == null) {
                 return -1;
             }
@@ -518,7 +520,7 @@ final class PropertyAccessor {
      */
     @SuppressWarnings("fallthrough")
     final String name(final int index, final KeyNamePolicy keyName) {
-        if (index >= 0 && index < getters.length) {
+        if (index >= 0 && index < names.length) {
             switch (keyName) {
                 case UML_IDENTIFIER: {
                     final UML uml = getters[index].getAnnotation(UML.class);

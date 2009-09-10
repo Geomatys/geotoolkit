@@ -28,6 +28,7 @@ import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.extent.GeographicDescription;
 
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -46,6 +47,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
+@Depend(MetadataStandard.class)
 public final class PropertyMapTest {
     /**
      * Tests {@link TestMap} on a well known metadata type.
