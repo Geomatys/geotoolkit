@@ -149,12 +149,6 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     static final long TIMEOUT_RESOLUTION = 100;
 
     /**
-     * The delay (in milliseconds) after which to make a check even if no factory has been
-     * reported as expired. This check is performed in case of bug and should not be costly.
-     */
-    private static final long SAFETY_CHECK_DELAY = 60 * 60 * 1000L;
-
-    /**
      * {@code true} if this factory contains at least one active backing stores.
      * Note that a {@code ThreadedAuthorityFactory} may be active while having an
      * empty queue of {@linkplain #stores} if all backing stores are currently in
@@ -306,18 +300,24 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
              * example someone else is waiting on this monitor or because the release(...) method
              * threw an exception.
              */
-            while (remainingBackingStores == 0) try {
-                wait(2000);
-            } catch (InterruptedException e) {
-                // Someone doesn't want to let us sleep.
-                throw new FactoryException(e.getLocalizedMessage(), e);
+            while (remainingBackingStores == 0) {
+                if (!isActive) {
+                    // Factory has been disposed.
+                    throw new IllegalStateException();
+                }
+                try {
+                    wait(2000);
+                } catch (InterruptedException e) {
+                    // Someone doesn't want to let us sleep.
+                    throw new FactoryException(e.getLocalizedMessage(), e);
+                }
             }
             /*
              * Reuses the most recently used factory, if available. If there is no factory
              * available for reuse, creates a new one. We don't add it to the queue now;
              * it will be done by the release(...) method.
              */
-            Store store = stores.pollLast();
+            final Store store = stores.pollLast();
             if (store != null) {
                 factory = store.factory;
             } else {
@@ -331,8 +331,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                  */
                 if (!isActive) {
                     isActive = true;
-                    StoreDisposer.INSTANCE.schedule(this,
-                            System.currentTimeMillis() + Math.min(timeout, SAFETY_CHECK_DELAY));
+                    StoreDisposer.INSTANCE.schedule(this, System.currentTimeMillis() + timeout);
                 }
             }
             assert usage.count == 0;
@@ -449,7 +448,8 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
 
     /**
      * Releases resources immediately instead of waiting for the garbage collector.
-     * This method disposes all backing stores.
+     * This method disposes all backing stores. This instance should not be used
+     * anymore after this method has been invoked.
      *
      * @param shutdown {@code false} for normal disposal, or {@code true} if
      *        this method is invoked during the process of a JVM shutdown.
@@ -462,6 +462,8 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
         while ((store = stores.pollFirst()) != null) {
             dispose(store.factory, shutdown);
         }
+        isActive = false;
+        remainingBackingStores = 0;
         super.dispose(shutdown);
     }
 
@@ -469,7 +471,8 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * Disposes the expired entries. This method should be invoked from the
      * {@link StoreDisposer} thread only.
      *
-     * @return When (in milliseconds) to run the next check for disposal.
+     * @return When (in milliseconds) to run the next check for disposal,
+     *         or {@link Long#MIN_VALUE} if there is no remaining worker.
      */
     final synchronized long disposeExpired() {
         final long currentTimeMillis = System.currentTimeMillis();
@@ -485,7 +488,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             if (delay > TIMEOUT_RESOLUTION) {
                 // Found a factory which is not expired. Stop the search,
                 // since the iteration is expected to be ordered.
-                return currentTimeMillis + Math.min(delay, SAFETY_CHECK_DELAY);
+                return currentTimeMillis + delay;
             }
             // Found an expired factory. Dispose it and
             // search for other factories to dispose.
@@ -494,6 +497,6 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
         }
         // If we reach this point, then all factories have been disposed.
         isActive = false;
-        return currentTimeMillis + SAFETY_CHECK_DELAY;
+        return Long.MIN_VALUE;
     }
 }

@@ -130,9 +130,9 @@ public final class ThreadedAuthorityFactoryTest {
             String message = "ThreadedAuthorityFactory should have discarted its worker factory.\n"
                     + "The factory active flag is '" + threaded.isActive() + "' (expected 'false').\n"
                     + "Maximum number of additional workers is " + threaded.remainingBackingStores() + ".\n"
-                    + "There is " + c + "workers in the factory cache, " + (delay == 0
+                    + "There is " + c + " workers in the factory cache, " + (delay == 0
                     ? "but the StoreDisposer queue is empty (PROBLEM!)."
-                    : "and StoreDisposer next job is scheduled in " + delay + " µs.");
+                    : "and StoreDisposer next job is scheduled in " + delay + " ms.");
             if (--n == 0) {
                 fail(message);
             }

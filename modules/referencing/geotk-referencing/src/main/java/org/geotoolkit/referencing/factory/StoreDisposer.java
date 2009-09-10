@@ -91,7 +91,10 @@ final class StoreDisposer extends Thread {
             }
             final ThreadedAuthorityFactory factory = ref.get();
             if (factory != null) {
-                queue.add(new Ref(factory, factory.disposeExpired()));
+                final long schedule = factory.disposeExpired();
+                if (schedule != Long.MIN_VALUE) {
+                    queue.add(new Ref(factory, schedule));
+                }
             }
         }
         Logging.getLogger(StoreDisposer.class).severe("Daemon stopped."); // Should never happen.
@@ -108,29 +111,10 @@ final class StoreDisposer extends Thread {
     final void schedule(final ThreadedAuthorityFactory factory, final long schedule) {
         assert Thread.holdsLock(factory);
         queue.add(new Ref(factory, schedule));
-        /*
-         * Keep only the first reference and remove the other ones. Duplicated values may exist
-         * because this method is invoked by ThreadedEpsgFactory after it has been inactive, so
-         * a task registered for execution after SAFETY_CHECK_DELAY may be in the queue.
-         */
-        boolean found = false;
-        for (final Iterator<Ref> it=queue.iterator(); it.hasNext();) {
-            final ThreadedAuthorityFactory ref = it.next().get();
-            if (ref != null) {
-                if (ref != factory) {
-                    continue;
-                }
-                if (!found) {
-                    found = true;
-                    continue;
-                }
-            }
-            it.remove();
-        }
     }
 
     /**
-     * Return in how much time (in microseconds) the next factory will be disposed.
+     * Return in how much time (in milliseconds) the next factory will be disposed.
      * If there is no factory waiting for being disposed, returns {@code 0}. This is
      * used for debugging purpose only.
      */
@@ -139,7 +123,7 @@ final class StoreDisposer extends Thread {
         if (next == null) {
             return 0;
         }
-        return next.getDelay(TimeUnit.MICROSECONDS);
+        return next.getDelay(TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -164,7 +148,7 @@ final class StoreDisposer extends Thread {
      */
     @Override
     public String toString() {
-        return "Next in " + getDelay() + " µs.";
+        return "Next in " + getDelay() + " ms.";
     }
 
     /**
