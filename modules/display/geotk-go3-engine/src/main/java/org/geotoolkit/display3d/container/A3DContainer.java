@@ -139,7 +139,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         final Node group = new Node("planes");
         group.setTranslation(0, 200, 0);
 
-        final Node plane1 = ColladaImporter.readColladaScene(A3DContainer.class.getResource("/models/mirage.dae"));
+        final Node plane1 = ColladaImporter.readColladaScene("/models/mirage.dae");
         plane1.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
         plane1.setScale(0.2,0.2,0.2);
 
