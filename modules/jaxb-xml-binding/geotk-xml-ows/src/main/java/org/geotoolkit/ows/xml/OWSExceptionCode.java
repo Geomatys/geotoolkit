@@ -88,7 +88,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
     /**
      * Invalid CRS.
      */
-    public static final OWSExceptionCode INVALID_CRS = new OWSExceptionCode("InvalidCrs");
+    public static final OWSExceptionCode INVALID_CRS = new OWSExceptionCode("InvalidCRS");
 
     /**
      * Layer not defined.
@@ -142,6 +142,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
     /**
      * Returns the list of exception codes.
      */
+    @Override
     public OWSExceptionCode[] family() {
         return values();
     }
