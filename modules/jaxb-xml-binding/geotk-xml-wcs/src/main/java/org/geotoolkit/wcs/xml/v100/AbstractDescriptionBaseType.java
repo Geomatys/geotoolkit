@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 
 
 /**
@@ -56,7 +55,7 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 @XmlSeeAlso({
     AbstractDescriptionType.class
 })
-public abstract class AbstractDescriptionBaseType extends AbstractGMLEntry {
+public abstract class AbstractDescriptionBaseType {
 
     private List<MetadataLinkType> metadataLink;
     
