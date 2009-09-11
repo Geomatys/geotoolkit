@@ -35,13 +35,14 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.test.Commons.*;
 
 
 /**
  * Tests {@link WebCRSFactory}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.2
  */
@@ -65,9 +66,12 @@ public final class WebCRSFactoryTest {
     @Test
     public void testFactoryFinder() {
         final Collection<String> authorities = AuthorityFactoryFinder.getAuthorityNames();
-        assertTrue(authorities.contains("CRS"));
+        assertTrue("Missing the CRS authority.", authorities.contains("CRS"));
+        assertTrue("Missing the OGC authority.", authorities.contains("OGC"));
         CRSAuthorityFactory found = AuthorityFactoryFinder.getCRSAuthorityFactory("CRS", null);
         assertEquals(WebCRSFactory.class, found.getClass());
+        assertSame("The factory should be cached.",   found, AuthorityFactoryFinder.getCRSAuthorityFactory("CRS", null));
+        assertSame("OGC shall be synonymous of CRS.", found, AuthorityFactoryFinder.getCRSAuthorityFactory("OGC", null));
     }
 
     /**
@@ -112,6 +116,40 @@ public final class WebCRSFactoryTest {
         assertSame   (crs,  factory.createGeographicCRS("CRS:CRS83"));
         assertNotSame(crs,  factory.createGeographicCRS("CRS:84"));
         assertFalse(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+    }
+
+    /**
+     * Tests the OGC:CRS84 code. We have to perform this test from {@link CRS#decode}.
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void testOGC() throws FactoryException {
+        GeographicCRS crs = factory.createGeographicCRS("CRS:84");
+        assertSame(crs, CRS.decode("CRS:84"));
+        assertSame(crs, CRS.decode("CRS:CRS84"));
+        assertSame(crs, CRS.decode("OGC:84")); // Not in real use as far as I know.
+        assertSame(crs, CRS.decode("OGC:CRS84"));
+    }
+
+    /**
+     * Tests the WKT formatting. The main purpose of this test is to ensure that
+     * the authority name is "CRS" and not "Web Map Service CRS".
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void tesWKT() throws FactoryException {
+        GeographicCRS crs = factory.createGeographicCRS("CRS:84");
+        assertMultilinesEquals(decodeQuotes(
+            "GEOGCS[“WGS84”, \n" +
+            "  DATUM[“WGS84”, \n" +
+            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]], \n" +
+            "  PRIMEM[“Greenwich”, 0.0], \n" +
+            "  UNIT[“degree”, 0.017453292519943295], \n" +
+            "  AXIS[“Geodetic longitude”, EAST], \n" +
+            "  AXIS[“Geodetic latitude”, NORTH], \n" +
+            "  AUTHORITY[“CRS”,“84”]]"), crs.toWKT());
     }
 
     /**

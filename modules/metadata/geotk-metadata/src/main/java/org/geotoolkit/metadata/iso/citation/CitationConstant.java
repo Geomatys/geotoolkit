@@ -24,13 +24,15 @@ import java.io.InvalidObjectException;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
  * A citation to be declared as a public static final constant.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 3.00
  * @module
@@ -78,6 +80,19 @@ final class CitationConstant extends DefaultCitation {
     public CitationConstant(final ResponsibleParty party, final String name) {
         super(party);
         replacement = new Serialized(name);
+    }
+
+    /**
+     * Adds the specified identifier as a CRS authority factory. This is used as a convenience
+     * method for the creation of constants, and for making sure that all of them use the same
+     * identifier type.
+     */
+    final void addAuthority(final String identifier, final boolean asTitle) {
+        if (asTitle) {
+            assert !identifier.equals(getTitle().toString(null)) : identifier;
+            getAlternateTitles().add(new SimpleInternationalString(identifier));
+        }
+        getIdentifiers().add(new DefaultIdentifier(identifier));
     }
 
     /**

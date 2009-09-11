@@ -36,7 +36,6 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -46,7 +45,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.1
  * @module
@@ -203,19 +202,6 @@ public class DefaultCitation extends MetadataEntity implements Citation {
         }
         setTitle(title);
         getCitedResponsibleParties().add(party);
-    }
-
-    /**
-     * Adds the specified identifier as a CRS authority factory. This is used as a convenience
-     * method for the creation of constants, and for making sure that all of them use the same
-     * identifier type.
-     */
-    final void addAuthority(final String identifier, final boolean asTitle) {
-        if (asTitle) {
-            assert !identifier.equals(getTitle().toString(null)) : identifier;
-            getAlternateTitles().add(new SimpleInternationalString(identifier));
-        }
-        getIdentifiers().add(new DefaultIdentifier(identifier));
     }
 
     /**

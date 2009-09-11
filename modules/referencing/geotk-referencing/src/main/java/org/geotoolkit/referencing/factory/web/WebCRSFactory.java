@@ -46,8 +46,19 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 
 
 /**
- * The factory for {@linkplain CoordinateReferenceSystem coordinate reference systems}
- * in the {@code CRS} space.
+ * The factory for {@linkplain CoordinateReferenceSystem coordinate reference systems} in the
+ * {@code CRS} namespace. The format is usually <code>"CRS:</code><var>n</var><code>"</code>
+ * where <var>n</var> is a number like 27, 83 or 84. However this factory is lenient and allows
+ * the {@code CRS} part to be repeated as in {@code "CRS:CRS84"}. It also accepts {@code "OGC")
+ * as a synonymous of the {@code "CRS"} namespace. Examples:
+ * <p>
+ * <ul>
+ *   <li>{@code "CRS:27"}</li>
+ *   <li>{@code "CRS:83"}</li>
+ *   <li>{@code "CRS:84"}</li>
+ *   <li>{@code "CRS:CRS84"}</li>
+ *   <li>{@code "OGC:CRS84"}</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

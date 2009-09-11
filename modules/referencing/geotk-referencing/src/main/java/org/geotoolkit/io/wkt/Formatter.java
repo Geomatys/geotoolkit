@@ -45,7 +45,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.CodeList;
 import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.math.XMath;
@@ -406,23 +405,7 @@ public class Formatter {
         if (identifier!=null && isAuthorityAllowed(info)) {
             final Citation authority = identifier.getAuthority();
             if (authority != null) {
-                /*
-                 * Since WKT often use abbreviations, search for the shortest
-                 * title or alternate title. If one is found, it will be used
-                 * as the authority name (e.g. "EPSG").
-                 */
-                InternationalString inter = authority.getTitle();
-                String title = (inter!=null) ? inter.toString(symbols.locale) : null;
-                for (final InternationalString alt : authority.getAlternateTitles()) {
-                    if (alt != null) {
-                        final String candidate = alt.toString(symbols.locale);
-                        if (candidate != null) {
-                            if (title==null || candidate.length() < title.length()) {
-                                title = candidate;
-                            }
-                        }
-                    }
-                }
+                final String title = Citations.getIdentifier(authority);
                 if (title != null) {
                     appendSeparator(lineChanged);
                     buffer.append("AUTHORITY")

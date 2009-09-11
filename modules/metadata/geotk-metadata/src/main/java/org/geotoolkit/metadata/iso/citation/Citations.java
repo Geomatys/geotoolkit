@@ -82,7 +82,7 @@ public final class Citations {
      */
     public static final Citation OGC;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC");
         c.addAuthority("OGC", false);
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
@@ -102,7 +102,7 @@ public final class Citations {
      */
     public static final Citation OPEN_GIS;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS");
         c.addAuthority("OpenGIS", false);
         c.getAlternateTitles()  .addAll(OGC.getAlternateTitles());
         c.getIdentifiers()      .addAll(OGC.getIdentifiers());
@@ -119,7 +119,7 @@ public final class Citations {
      */
     public static final Citation ESRI;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.ESRI, "ESRI");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ESRI, "ESRI");
         c.addAuthority("ESRI", false);
         c.freeze();
         ESRI = c;
@@ -133,7 +133,7 @@ public final class Citations {
      */
     public static final Citation ORACLE;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.ORACLE, "ORACLE");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ORACLE, "ORACLE");
         c.addAuthority("Oracle", false);
         c.freeze();
         ORACLE = c;
@@ -149,7 +149,7 @@ public final class Citations {
      */
     public static final Citation POSTGIS;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.POSTGIS, "POSTGIS");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.POSTGIS, "POSTGIS");
         c.addAuthority("PostGIS", false);
         c.freeze();
         POSTGIS = c;
@@ -163,7 +163,7 @@ public final class Citations {
      */
     public static final Citation GEOTOOLKIT;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT");
         c.addAuthority("Geotoolkit.org", false);
         c.freeze();
         GEOTOOLKIT = c;
@@ -177,7 +177,7 @@ public final class Citations {
      */
     public static final Citation GEOTOOLS;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.GEOTOOLS, "GEOTOOLS");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLS, "GEOTOOLS");
         c.addAuthority("GeoTools", false);
         c.freeze();
         GEOTOOLS = c;
@@ -207,7 +207,7 @@ public final class Citations {
      */
     public static final Citation WMS;
     static {
-        final DefaultCitation c = new CitationConstant("Web Map Service", "WMS");
+        final CitationConstant c = new CitationConstant("Web Map Service", "WMS");
         c.addAuthority("WMS", false);
         final Collection<InternationalString> titles = c.getAlternateTitles();
         titles.add(new SimpleInternationalString("WMS 1.3.0"));
@@ -236,7 +236,7 @@ public final class Citations {
      */
     public static final Citation GEOTIFF;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.GEOTIFF, "GEOTIFF");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTIFF, "GEOTIFF");
         c.addAuthority("GeoTIFF", false);
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
@@ -253,7 +253,7 @@ public final class Citations {
      */
     public static final Citation JAI;
     static {
-        final DefaultCitation c = new CitationConstant("Java Advanced Imaging", "JAI");
+        final CitationConstant c = new CitationConstant("Java Advanced Imaging", "JAI");
         c.addAuthority("JAI", true);
         c.getCitedResponsibleParties().add(DefaultResponsibleParty.SUN_MICROSYSTEMS);
         c.freeze();
@@ -291,7 +291,7 @@ public final class Citations {
      */
     public static final Citation EPSG;
     static {
-        final DefaultCitation c = new CitationConstant(DefaultResponsibleParty.EPSG, "EPSG");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.EPSG, "EPSG");
         c.addAuthority("EPSG", true);
         c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
         c.freeze();
@@ -324,7 +324,7 @@ public final class Citations {
      */
     public static final Citation AUTO;
     static { // Sanity check ensure that all @see tags are actually available in the metadata
-        final DefaultCitation c = new CitationConstant("Automatic Projections", "AUTO");
+        final CitationConstant c = new CitationConstant("Automatic Projections", "AUTO");
         c.addAuthority("AUTO", false);
         /*
          * Do not put "WMS 1.1.1" and "OGC 01-068r3" as alternative titles. They are alternative
@@ -334,7 +334,7 @@ public final class Citations {
         final Collection<ResponsibleParty> parties = c.getCitedResponsibleParties();
         parties.add(DefaultResponsibleParty.OGC);
         parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, OnLineFunction.DOWNLOAD,
-                                             "http://www.opengis.org/docs/01-068r3.pdf"));
+                "http://www.opengis.org/docs/01-068r3.pdf"));
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO = c;
@@ -368,7 +368,7 @@ public final class Citations {
      */
     public static final Citation AUTO2;
     static {
-        final DefaultCitation c = new CitationConstant("Automatic Projections", "AUTO2");
+        final CitationConstant c = new CitationConstant("Automatic Projections", "AUTO2");
         c.addAuthority("AUTO2", false);
         /*
          * Do not put "WMS 1.3.0" and "OGC 04-024" as alternative titles. They are alternative
@@ -386,6 +386,8 @@ public final class Citations {
     // Do not put the ...files/?artifact... link in the head sentence: it break javadoc formatting.
     /**
      * The WMS 1.3.0 "CRS" authority. This is defined in the same document than {@link #AUTO2}.
+     * This citation declares both {@code "CRS"} and {@code "OGC"} identifiers, because we see
+     * both {@code "CRS:84"} and {@code "OGC:CRS84"} in practice.
      *
      * @see #WMS
      * @see #AUTO
@@ -396,8 +398,9 @@ public final class Citations {
      */
     public static final Citation CRS;
     static {
-        final DefaultCitation c = new CitationConstant("Web Map Service CRS", "CRS");
+        final CitationConstant c = new CitationConstant("Web Map Service CRS", "CRS");
         c.addAuthority("CRS", false);
+        c.addAuthority("OGC", false);
         c.getCitedResponsibleParties().addAll(AUTO2.getCitedResponsibleParties());
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
@@ -413,7 +416,7 @@ public final class Citations {
      */
     public static final Citation URN_OGC;
     static {
-        final DefaultCitation c = new CitationConstant("URN in OGC namespace", "URN_OGC");
+        final CitationConstant c = new CitationConstant("URN in OGC namespace", "URN_OGC");
         c.addAuthority("urn:ogc:def", false);
         c.addAuthority("urn:x-ogc:def", false);
         c.getCitedResponsibleParties().add(DefaultResponsibleParty.OGC);
@@ -431,7 +434,7 @@ public final class Citations {
      */
     public static final Citation HTTP_OGC;
     static {
-        final DefaultCitation c = new CitationConstant("URL in OGC namespace", "HTTP_OGC");
+        final CitationConstant c = new CitationConstant("URL in OGC namespace", "HTTP_OGC");
         c.addAuthority("http://www.opengis.net", false);
         c.getCitedResponsibleParties().add(DefaultResponsibleParty.OGC);
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);

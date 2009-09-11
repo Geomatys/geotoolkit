@@ -105,8 +105,11 @@ public final class URN_AuthorityFactoryTest {
         assertSame(crs, factory.createGeographicCRS("URN:OGC:DEF:CRS:CRS:1.3:84"));
         assertSame(crs, factory.createGeographicCRS("URN:OGC:DEF:CRS:CRS:84"));
         assertSame(crs, factory.createGeographicCRS("urn:x-ogc:def:crs:CRS:1.3:84"));
+        assertSame(crs, factory.createGeographicCRS("urn:ogc:def:crs:OGC:1.3:CRS84"));
         assertSame(crs, CRS.decode("urn:ogc:def:crs:CRS:1.3:84"));
+        assertSame(crs, CRS.decode("urn:ogc:def:crs:OGC:1.3:CRS84"));
         assertSame(crs, CRS.decode("CRS:84"));
+        assertSame(crs, CRS.decode("OGC:CRS84"));
         assertNotSame(crs, DefaultGeographicCRS.WGS84);
         assertFalse(DefaultGeographicCRS.WGS84.equals(crs));
         assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
