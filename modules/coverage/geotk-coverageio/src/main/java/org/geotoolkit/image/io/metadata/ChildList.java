@@ -32,7 +32,12 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by the standard metadata objects defined by ISO 19115-2. The
+ *   {@link SpatialMetadata} class can convert automatically those metadata objects
+ *   to {@code IIOMetadata}.
  */
+@Deprecated
 abstract class ChildList<T extends MetadataAccessor> extends MetadataAccessor {
     /**
      * The list of childs.
@@ -104,6 +109,7 @@ abstract class ChildList<T extends MetadataAccessor> extends MetadataAccessor {
     /**
      * A list of {@linkplain Band bands}.
      */
+    @Deprecated
     static final class Bands extends ChildList<Band> {
         /** Creates a parser for bands. */
         public Bands(final GeographicMetadata metadata) {
@@ -126,6 +132,7 @@ abstract class ChildList<T extends MetadataAccessor> extends MetadataAccessor {
     /**
      * A list of {@linkplain Axis axis}.
      */
+    @Deprecated
     static final class Axes extends ChildList<Axis> {
         /** Creates a parser for axis. */
         public Axes(final GeographicMetadata metadata) {
@@ -142,6 +149,7 @@ abstract class ChildList<T extends MetadataAccessor> extends MetadataAccessor {
     /**
      * A list of {@linkplain Parameter parameters}.
      */
+    @Deprecated
     static final class Parameters extends ChildList<Parameter> {
         /** Creates a parser for parameters. */
         public Parameters(final GeographicMetadata metadata) {

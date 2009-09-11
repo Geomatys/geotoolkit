@@ -32,7 +32,12 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @module
  *
  * @see CoordinateSystemAxis
+ *
+ * @deprecated Replaced by the standard metadata objects defined by ISO 19115-2. The
+ *   {@link SpatialMetadata} class can convert automatically those metadata objects
+ *   to {@code IIOMetadata}.
  */
+@Deprecated
 public class Axis extends MetadataAccessor {
     /**
      * Creates a parser for an axis. This constructor should not be invoked

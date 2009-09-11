@@ -64,7 +64,11 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by {@link SpatialMetadataFormat}, which provide a view over the standard
+ *   metadata objects defined in ISO 19115-2.
  */
+@Deprecated
 public class GeographicMetadataFormat extends IIOMetadataFormatImpl {
     /**
      * The metadata format name.

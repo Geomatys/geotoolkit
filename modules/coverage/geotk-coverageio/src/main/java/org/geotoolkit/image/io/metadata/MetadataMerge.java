@@ -36,8 +36,11 @@ import org.geotoolkit.util.XArrays;
  *
  * @since 2.5
  * @module
+ *
+ * @deprecated Static methods moved to {@link SpatialMetadata}.
  */
 @Static
+@Deprecated
 public final class MetadataMerge {
     /**
      * Do not allow instantiation of this class.

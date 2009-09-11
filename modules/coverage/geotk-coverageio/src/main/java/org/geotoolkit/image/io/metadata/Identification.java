@@ -29,7 +29,12 @@ import org.geotoolkit.util.Utilities;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by the standard metadata objects defined by ISO 19115-2. The
+ *   {@link SpatialMetadata} class can convert automatically those metadata objects
+ *   to {@code IIOMetadata}.
  */
+@Deprecated
 public class Identification implements CharSequence, Serializable {
     /**
      * For cross-version compatibility.

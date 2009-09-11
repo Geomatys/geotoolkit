@@ -33,7 +33,12 @@ import org.opengis.coverage.SampleDimension;
  * @module
  *
  * @see SampleDimension
+ *
+ * @deprecated Replaced by the standard metadata objects defined by ISO 19115-2. The
+ *   {@link SpatialMetadata} class can convert automatically those metadata objects
+ *   to {@code IIOMetadata}.
  */
+@Deprecated
 public class Band extends MetadataAccessor {
     /**
      * Creates a parser for a band. This constructor should not be invoked

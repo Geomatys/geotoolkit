@@ -56,7 +56,11 @@ import org.geotoolkit.image.io.GeographicImageWriter;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by {@link SpatialMetadata}, which provide a view over the standard
+ *   metadata objects defined in ISO 19115-2.
  */
+@Deprecated
 public class GeographicMetadata extends IIOMetadata {
     /**
      * The {@link ImageReader} or {@link ImageWriter} that holds the metadata,
