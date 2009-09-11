@@ -19,10 +19,11 @@ package org.geotoolkit.util.converter;
 
 
 /**
- * An abstract class for simple converter. The default implementation assumes that simple converters
- * have no restriction (i.e. they can convert every values) and preserve order (i.e. if <var>A</var>
- * is smaller than <var>B</var> before conversion, the same holds after conversion). However
- * subclasses can change this default by overriding the methods defined in this abstract class.
+ * An abstract class for simple {@linkplain ObjectConverter Object Converters}. The default
+ * implementation assumes that simple converters have no restriction (i.e. they can convert
+ * every values) and preserve order (i.e. if <var>A</var> is smaller than <var>B</var> before
+ * conversion, the same holds after conversion). However subclasses can change this default
+ * by overriding the methods defined in this abstract class.
  *
  * @param <S> The base type of source objects.
  * @param <T> The base type of converted objects.

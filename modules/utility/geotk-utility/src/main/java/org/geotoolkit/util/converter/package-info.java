@@ -47,7 +47,7 @@
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Justin Deoliveira (TOPP)
- * @version 3.02
+ * @version 3.04
  *
  * @since 2.5
  * @module

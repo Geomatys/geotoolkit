@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A set of miscellaneous methods working on {@link Class} objects. Some methods are specialized
+ * Miscellaneous static methods working on {@link Class} objects. Some methods are specialized
  * on primitive types, sometime more specifically on numeric types and their {@link Number}
  * wrappers.
  *

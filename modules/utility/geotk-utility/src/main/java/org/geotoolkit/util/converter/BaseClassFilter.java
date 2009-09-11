@@ -22,7 +22,7 @@ import org.geotoolkit.lang.Immutable;
 
 
 /**
- * A {@linkplain ClassFilter class filter} accepting only classes that are
+ * A {@linkplain ClassFilter Class Filter} implementation accepting only classes that are
  * {@linkplain Class#isAssignableFrom assignable to} a given base class.
  *
  * @author Martin Desruisseaux (Geomatys)

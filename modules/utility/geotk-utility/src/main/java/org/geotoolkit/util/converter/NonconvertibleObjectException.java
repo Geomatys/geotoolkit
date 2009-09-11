@@ -22,8 +22,8 @@ import java.util.LinkedList;
 
 
 /**
- * Throws when an object can not be {@linkplain ObjectConverter#convert converted}
- * from one type to an other.
+ * Thrown when an object can not be {@linkplain ObjectConverter#convert converted}
+ * from the <cite>source</cite> type the <cite>target</cite> type.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

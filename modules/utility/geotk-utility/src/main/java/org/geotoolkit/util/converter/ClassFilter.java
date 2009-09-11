@@ -19,7 +19,8 @@ package org.geotoolkit.util.converter;
 
 
 /**
- * A filter for {@link Class} instances. This is used in iterations over a set of classes.
+ * A filter to be given as parameter to methods that apply filtering on {@link Class} instances.
+ * An example of such method is {@link org.geotoolkit.io.LineFormat#getElementType(ClassFilter)}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

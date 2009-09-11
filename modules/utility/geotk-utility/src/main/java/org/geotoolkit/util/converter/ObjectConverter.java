@@ -19,7 +19,8 @@ package org.geotoolkit.util.converter;
 
 
 /**
- * Performs conversions between instances of different classes.
+ * Performs conversions from instances of a <cite>source</cite> class to instances of a
+ * <cite>target</cite> class.
  * <p>
  * <b>Implementation note:</b> The current design relies on parameterized types erasure.
  * For example a unique converter instance:
