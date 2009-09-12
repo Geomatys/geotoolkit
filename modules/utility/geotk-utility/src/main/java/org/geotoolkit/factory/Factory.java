@@ -19,6 +19,7 @@ package org.geotoolkit.factory;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collections;
@@ -153,8 +154,13 @@ public abstract class Factory {
 
     /**
      * An internal hint meaning that a factory has been disposed.
+     * The value is the disposal time, used for debugging purpose.
      */
-    private static final Hints.Key DISPOSED = new Hints.Key(Boolean.class);
+    private static final Hints.Key DISPOSED = new Hints.Key(Date.class) {
+        @Override public String toString() {
+            return "DISPOSED";
+        }
+    };
 
     /**
      * An immutable empty set of hints. This is different than a {@code null} hints, which means
@@ -447,7 +453,7 @@ public abstract class Factory {
             // Factory was bad and did not meet contract - assume it used no Hints.
             return true;
         }
-        if (Boolean.TRUE.equals(implementationHints.get(DISPOSED))) {
+        if (implementationHints.containsKey(DISPOSED)) {
             // Factory has been disposed, so it is not available anymore for any use.
             return false;
         }
@@ -713,7 +719,7 @@ public abstract class Factory {
      */
     protected synchronized void dispose(boolean shutdown) {
         hints.clear();
-        hints.put(DISPOSED, Boolean.TRUE);
+        hints.put(DISPOSED, new Date());
     }
 
     /**

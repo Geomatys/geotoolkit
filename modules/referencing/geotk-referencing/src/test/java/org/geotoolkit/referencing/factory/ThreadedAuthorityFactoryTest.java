@@ -37,6 +37,11 @@ import static org.geotoolkit.referencing.factory.ThreadedAuthorityFactory.TIMEOU
  */
 public final class ThreadedAuthorityFactoryTest {
     /**
+     * The timeout used for this test.
+     */
+    private static final long TIMEOUT = TIMEOUT_RESOLUTION * 4;
+
+    /**
      * Tests the disposal of backing factories after a timeout.
      *
      * @throws FactoryException Should never happen.
@@ -45,7 +50,7 @@ public final class ThreadedAuthorityFactoryTest {
     @Test
     public void testTimeout() throws FactoryException, InterruptedException {
         final DummyFactory.Threaded threaded = new DummyFactory.Threaded();
-        threaded.setTimeout(TIMEOUT_RESOLUTION * 4);
+        threaded.setTimeout(TIMEOUT);
         /*
          * Ask for one element, wait for the timeout and
          * check that the backing store is disposed.
@@ -97,11 +102,19 @@ public final class ThreadedAuthorityFactoryTest {
         assertNotNull(threaded.createObject("WGS84-new2"));
         Thread.sleep(TIMEOUT_RESOLUTION);
         assertNotNull(threaded.createObject("WGS84-new3"));
+        final long timestamp = System.currentTimeMillis();
         Thread.sleep(TIMEOUT_RESOLUTION * 2);
 
-        assertEquals("Expected no new worker.",     factories, threaded.factories());
-        assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
-        assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
+        if (factories.equals(threaded.factories())) {
+            assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
+            assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
+        } else if (System.currentTimeMillis() - timestamp >= TIMEOUT - TIMEOUT_RESOLUTION) {
+            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning(
+                    "Expected no new worker, but the test has been slower than expected.\n" +
+                    "Maybe the server is under heavy load?");
+        } else {
+            fail("Expected no new worker.");
+        }
 
         Thread.sleep(TIMEOUT_RESOLUTION * 3);
         assertEquals("Expected no new worker.",    factories, threaded.factories());

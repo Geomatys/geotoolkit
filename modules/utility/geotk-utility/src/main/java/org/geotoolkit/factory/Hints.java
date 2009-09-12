@@ -950,8 +950,8 @@ public class Hints extends RenderingHints {
             while (true) {
                 final Class<?> type;
                 switch (t++) {
-                    case 0:  type = Hints.class;      break;
-                    case 1:  type = getValueClass();  break;
+                    case 0:  type = Hints.class;     break;
+                    case 1:  type = getValueClass(); break;
                     default: return super.toString();
                 }
                 final String name = nameOf(type, this);
