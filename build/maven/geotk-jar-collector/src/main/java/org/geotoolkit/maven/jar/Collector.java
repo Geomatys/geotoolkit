@@ -18,6 +18,8 @@
 package org.geotoolkit.maven.jar;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Set;
 
@@ -25,7 +27,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.util.FileUtils;
 
 
 /**
@@ -152,7 +153,7 @@ public class Collector extends AbstractMojo {
                 throw new MojoExecutionException("Failed to create binaries directory.");
             }
         }
-        FileUtils.copyFileToDirectory(jarFile, collect);
+        copyFileToDirectory(jarFile, collect);
         if (dependencies != null) {
             for (final Artifact artifact : dependencies) {
                 final String scope = artifact.getScope();
@@ -174,9 +175,24 @@ public class Collector extends AbstractMojo {
                             continue;
                         }
                     }
-                    FileUtils.copyFileToDirectory(file, collect);
+                    copyFileToDirectory(file, collect);
                 }
             }
         }
+    }
+
+    /**
+     * Copies the given file to the given directory.
+     */
+    private static void copyFileToDirectory(final File file, final File directory) throws IOException {
+        final FileInputStream in = new FileInputStream(file);
+        final FileOutputStream out = new FileOutputStream(new File(directory, file.getName()));
+        final byte[] buffer = new byte[4096];
+        int c;
+        while ((c = in.read(buffer)) >= 0) {
+            out.write(buffer, 0, c);
+        }
+        out.close();
+        in.close();
     }
 }
