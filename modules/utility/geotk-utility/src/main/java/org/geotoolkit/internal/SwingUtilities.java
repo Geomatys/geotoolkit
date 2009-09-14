@@ -63,7 +63,7 @@ public final class SwingUtilities {
      */
     public static final ThreadGroup WORKER_THREADS = new ThreadGroup(Threads.PARENT, "SwingWorkers");
     static {
-        WORKER_THREADS.setMaxPriority(Thread.NORM_PRIORITY - 1);
+        WORKER_THREADS.setMaxPriority(Thread.NORM_PRIORITY - 2);
     }
 
     /**

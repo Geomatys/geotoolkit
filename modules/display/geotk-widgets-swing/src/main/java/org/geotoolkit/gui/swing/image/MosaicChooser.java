@@ -382,7 +382,7 @@ public class MosaicChooser extends JPanel implements Dialog {
             while (!cancel) {
                 final int s = stage;
                 final boolean isDispatchThread = ((s & 1) != 0);
-                assert EventQueue.isDispatchThread() == isDispatchThread;
+                assert EventQueue.isDispatchThread() == isDispatchThread : s;
                 switch (s) {
                     /*
                      * Background thread: creates the Tile objects from the list of files selected

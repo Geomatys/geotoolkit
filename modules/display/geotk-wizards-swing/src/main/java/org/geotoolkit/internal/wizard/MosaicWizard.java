@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.util.Locale;
 import java.util.logging.Level;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
@@ -268,7 +269,8 @@ public final class MosaicWizard extends AbstractWizard {
     @Override
     @SuppressWarnings("rawtypes")
     protected Object finish(final Map settings) {
-        ((JXLabel) settings.get(CONFIRM_LABEL)).setText("Creating the mosaic...");
+        final Wizards resources = Wizards.getResources(null);
+        ((JXLabel) settings.get(CONFIRM_LABEL)).setText(resources.getMenuLabel(Wizards.Keys.CREATING_MOSAIC));
         return new MosaicCreator();
     }
 

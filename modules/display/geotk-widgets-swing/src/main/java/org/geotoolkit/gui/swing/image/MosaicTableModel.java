@@ -300,6 +300,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             progress.started();
         }
         final List<Tile> toAdd = new ArrayList<Tile>(files.length);
+        Class<? extends Exception> lastFailureType = null;
         DefaultTableModel failures = null;
         for (int i=0; i<files.length; i++) {
             final File file = files[i];
@@ -310,11 +311,21 @@ public class MosaicTableModel extends ListTableModel<Tile> {
                 size = tile.getSize(); // This is mostly for forcing immediate loading of image header.
             } catch (Exception e) {
                 if (progress != null) {
-                    String message = e.getLocalizedMessage();
-                    if (message == null) {
-                        message = Classes.getShortClassName(e);
+                    /*
+                     * Report the failure in the progress windows only if it is a new kind of
+                     * failure, otherwise we are at risk of flooding the ProgressWindows and
+                     * make Swing unresponsive. Note that the warnings reported here are only for
+                     * getting user's attention, since a full table of failures is built anyway.
+                     */
+                    final Class<? extends Exception> failureType = e.getClass();
+                    if (!failureType.equals(lastFailureType)) {
+                        lastFailureType = failureType;
+                        String message = e.getLocalizedMessage();
+                        if (message == null) {
+                            message = Classes.getShortClassName(e);
+                        }
+                        progress.warningOccurred(file.getName(), null, message);
                     }
-                    progress.warningOccurred(file.getName(), null, message);
                 }
                 /*
                  * The error was reported in the ProgressWindow above, if it was non-null.

@@ -535,6 +535,7 @@ public class ProgressWindow implements ProgressListener {
                     break; // Need further action below.
                 }
                 case COMPLETE: {
+                    progressBar.setIndeterminate(false);
                     model.setRangeProperties(100, 1, 0, 100, false);
                     window.setVisible(warningArea != null);
                     cancel.setEnabled(false);
