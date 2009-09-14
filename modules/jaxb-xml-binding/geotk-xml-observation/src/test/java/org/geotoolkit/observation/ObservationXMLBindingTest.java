@@ -28,6 +28,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
+import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
@@ -90,7 +92,7 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location     = new PointType("point-ID", pos);
-        SamplingPointEntry sp  = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", "urn:sampling:sampledFeature", location);
+        SamplingPointEntry sp  = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(null), new PointPropertyType(location));
 
         PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessEntry procedure           = new ProcessEntry("urn:sensor:007");
@@ -116,12 +118,11 @@ public class ObservationXMLBindingTest {
         result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
         result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
         result = result.replace(" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"", "");
-        result = result.replace(" xmlns:sa=\"http://www.opengis.net/sa/1.0\"", "");
+        result = result.replace(" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"", "");
         result = result.replace(" xmlns:om=\"http://www.opengis.net/om/1.0\"", "");
 
         String expResult = "<om:Observation>" + '\n' +
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
-                           "    <om:definition>observation definition</om:definition>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
                            "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
                            "            <gml:beginPosition>2007-01-01</gml:beginPosition>" + '\n' +
@@ -135,17 +136,19 @@ public class ObservationXMLBindingTest {
                            "        </swe:Phenomenon>" + '\n' +
                            "    </om:observedProperty>" + '\n' +
                            "    <om:featureOfInterest>" + '\n' + 
-                           "        <sa:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
+                           "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                            "            <gml:description>a sampling Test</gml:description>" + '\n' +
                            "            <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
                            "            <gml:boundedBy>" + '\n' +
                            "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                            "            </gml:boundedBy>" + '\n' +
-                           "            <sa:sampledFeature>urn:sampling:sampledFeature</sa:sampledFeature>" + '\n' +
-                           "            <sa:position gml:id=\"point-ID\">" + '\n' +
-                           "                <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
-                           "            </sa:position>" + '\n' +
-                           "        </sa:SamplingPoint>" + '\n' +
+                           "            <sampling:sampledFeature/>" + '\n' +
+                           "            <sampling:position>" + '\n' +
+                           "                <gml:Point gml:id=\"point-ID\">" + '\n' +
+                           "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
+                           "                </gml:Point>" + '\n' +
+                           "            </sampling:position>" + '\n' +
+                           "        </sampling:SamplingPoint>" + '\n' +
                            "    </om:featureOfInterest>" + '\n' +
                            "    <om:result xsi:type=\"swe:DataArrayPropertyType\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                            "        <swe:DataArray gml:id=\"array-001\">" + '\n' +
@@ -187,12 +190,11 @@ public class ObservationXMLBindingTest {
         result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
         result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
         result = result.replace(" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"", "");
-        result = result.replace(" xmlns:sa=\"http://www.opengis.net/sa/1.0\"", "");
+        result = result.replace(" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"", "");
         result = result.replace(" xmlns:om=\"http://www.opengis.net/om/1.0\"", "");
 
         expResult =        "<om:Measurement>" + '\n' +
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
-                           "    <om:definition>observation definition</om:definition>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
                            "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
                            "            <gml:beginPosition>2007-01-01</gml:beginPosition>" + '\n' +
@@ -206,17 +208,19 @@ public class ObservationXMLBindingTest {
                            "        </swe:Phenomenon>" + '\n' +
                            "    </om:observedProperty>" + '\n' +
                            "    <om:featureOfInterest>" + '\n' +
-                           "        <sa:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
+                           "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                            "            <gml:description>a sampling Test</gml:description>" + '\n' +
                            "            <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
                            "            <gml:boundedBy>" + '\n' +
                            "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                            "            </gml:boundedBy>" + '\n' +
-                           "            <sa:sampledFeature>urn:sampling:sampledFeature</sa:sampledFeature>" + '\n' +
-                           "            <sa:position gml:id=\"point-ID\">" + '\n' +
-                           "                <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
-                           "            </sa:position>" + '\n' +
-                           "        </sa:SamplingPoint>" + '\n' +
+                           "            <sampling:sampledFeature/>" + '\n' +
+                           "            <sampling:position>" + '\n' +
+                           "                <gml:Point gml:id=\"point-ID\">" + '\n' +
+                           "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
+                           "                </gml:Point>" + '\n' +
+                           "            </sampling:position>" + '\n' +
+                           "        </sampling:SamplingPoint>" + '\n' +
                            "    </om:featureOfInterest>" + '\n' +
                            "    <om:result xsi:type=\"om:Measure\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                            "        <om:name>result-1</om:name>" + '\n' +
@@ -246,7 +250,6 @@ public class ObservationXMLBindingTest {
         marshaller.marshal(collection, sw);
 
         result = sw.toString();
-        System.out.println(result);
         
     }
 
@@ -264,10 +267,9 @@ public class ObservationXMLBindingTest {
 
         String xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-                "<om:Observation xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:sa=\"http://www.opengis.net/sa/1.0\" " +
+                "<om:Observation xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\" " +
                 " xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\">" + '\n' +
                 "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
-                "    <om:definition>observation definition</om:definition>" + '\n' +
                 "    <om:samplingTime>" + '\n' +
                 "        <gml:TimePeriod>" + '\n' +
                 "            <gml:beginPosition>2007-01-01</gml:beginPosition>" + '\n' +
@@ -281,17 +283,19 @@ public class ObservationXMLBindingTest {
                 "        </swe:Phenomenon>" + '\n' +
                 "    </om:observedProperty>" + '\n' +
                 "    <om:featureOfInterest>" + '\n' +
-                "        <sa:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
+                "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                 "            <gml:description>a sampling Test</gml:description>" + '\n' +
                 "            <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
                 "            <gml:boundedBy>" + '\n' +
                 "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                 "            </gml:boundedBy>" + '\n' +
-                "            <sa:sampledFeature>urn:sampling:sampledFeature</sa:sampledFeature>" + '\n' +
-                "            <sa:position gml:id=\"point-ID\">" + '\n' +
-                "                <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
-                "            </sa:position>" + '\n' +
-                "        </sa:SamplingPoint>" + '\n' +
+                "            <sampling:sampledFeature/>" + '\n' +
+                "            <sampling:position gml:id=\"point-ID\">" + '\n' +
+                "                <gml:Point gml:id=\"point-ID\">" + '\n' +
+                "                   <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
+                "                </gml:Point>" + '\n' +
+                "            </sampling:position>" + '\n' +
+                "        </sampling:SamplingPoint>" + '\n' +
                 "    </om:featureOfInterest>" + '\n' +
                 "    <om:result xsi:type=\"swe:DataArrayPropertyType\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                "        <swe:DataArray gml:id=\"array-001\">" + '\n' +
@@ -324,7 +328,7 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", "urn:sampling:sampledFeature", location);
+        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(null), new PointPropertyType(location));
 
         PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessEntry procedure = new ProcessEntry("urn:sensor:007");
@@ -338,7 +342,7 @@ public class ObservationXMLBindingTest {
         DataArrayEntry array               = new DataArrayEntry("array-001", 1, record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
         
-        ObservationEntry expResult = new ObservationEntry("urn:Observation-007", "observation definition", sp, observedProperty, procedure, arrayProp, samplingTime);
+        ObservationEntry expResult = new ObservationEntry("urn:Observation-007", null, sp, observedProperty, procedure, arrayProp, samplingTime);
 
         assertEquals(expResult.getFeatureOfInterest(), result.getFeatureOfInterest());
         assertEquals(expResult.getDefinition(), result.getDefinition());
@@ -362,10 +366,9 @@ public class ObservationXMLBindingTest {
          */
 
         xml =  "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-               "<om:Measurement xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:sa=\"http://www.opengis.net/sa/1.0\" " + 
+               "<om:Measurement xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\" " +
                " xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\">" + '\n' +
                "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
-               "    <om:definition>observation definition</om:definition>" + '\n' +
                "    <om:samplingTime>" + '\n' +
                "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
                "            <gml:beginPosition>2007-01-01</gml:beginPosition>" + '\n' +
@@ -379,17 +382,19 @@ public class ObservationXMLBindingTest {
                "        </swe:Phenomenon>" + '\n' +
                "    </om:observedProperty>" + '\n' +
                "    <om:featureOfInterest>" + '\n' +
-               "        <sa:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
+               "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                "            <gml:description>a sampling Test</gml:description>" + '\n' +
                "            <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
                "            <gml:boundedBy>" + '\n' +
                "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                "            </gml:boundedBy>" + '\n' +
-               "            <sa:sampledFeature>urn:sampling:sampledFeature</sa:sampledFeature>" + '\n' +
-               "            <sa:position gml:id=\"point-ID\">" + '\n' +
-               "                <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
-               "            </sa:position>" + '\n' +
-               "        </sa:SamplingPoint>" + '\n' +
+               "            <sampling:sampledFeature>urn:sampling:sampledFeature</sampling:sampledFeature>" + '\n' +
+               "            <sampling:position gml:id=\"point-ID\">" + '\n' +
+               "                <gml:Point gml:id=\"point-ID\">" + '\n' +
+               "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
+               "                </gml:Point>" + '\n' +
+               "            </sampling:position>" + '\n' +
+               "        </sampling:SamplingPoint>" + '\n' +
                "    </om:featureOfInterest>" + '\n' +
                "    <om:result xsi:type=\"om:Measure\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                "        <om:name>result-1</om:name>" + '\n' +
@@ -409,7 +414,7 @@ public class ObservationXMLBindingTest {
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
         MeasureEntry meas       = new MeasureEntry("result-1", uom, 7);
 
-        MeasurementEntry expResult2 = new MeasurementEntry("urn:Observation-007", "observation definition", sp, observedProperty, procedure, meas, samplingTime);
+        MeasurementEntry expResult2 = new MeasurementEntry("urn:Observation-007", null, sp, observedProperty, procedure, meas, samplingTime);
 
         assertEquals(expResult2.getFeatureOfInterest(), result2.getFeatureOfInterest());
         assertEquals(expResult2.getDefinition(), result2.getDefinition());
@@ -428,7 +433,7 @@ public class ObservationXMLBindingTest {
 
 
         xml =  "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-               "<om:ObservationCollection xmlns:swe=\"http://www.opengis.net/swe/1.0.1\" xmlns:sa=\"http://www.opengis.net/sa/1.0\" xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+               "<om:ObservationCollection xmlns:swe=\"http://www.opengis.net/swe/1.0.1\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\" xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                "    <gml:boundedBy>" + '\n' +
                "        <gml:Envelope srsName=\"urn:ogc:crs:espg:4326\">" + '\n' +
                "            <gml:lowerCorner>-180.0 -90.0</gml:lowerCorner>" + '\n' +
@@ -438,7 +443,6 @@ public class ObservationXMLBindingTest {
                "    <om:member>" + '\n' +
                "        <om:Measurement>" + '\n' +
                "            <gml:name>urn:ogc:object:observationTemplate:SunSpot:0014.4F01.0000.2626-12</gml:name>" + '\n' +
-               "            <om:definition>une observation test</om:definition>" + '\n' +
                "            <om:samplingTime>" + '\n' +
                "                <gml:TimePeriod>" + '\n' +
                "                    <gml:beginPosition>2009-08-03 11:18:06</gml:beginPosition>" + '\n' +
@@ -452,16 +456,18 @@ public class ObservationXMLBindingTest {
                "                </swe:Phenomenon>" + '\n' +
                "            </om:observedProperty>" + '\n' +
                "            <om:featureOfInterest>" + '\n' +
-               "                <sa:SamplingPoint gml:id=\"sampling-point-001\">" + '\n' +
+               "                <sampling:SamplingPoint gml:id=\"sampling-point-001\">" + '\n' +
                "                    <gml:name>sampling-point-001</gml:name>" + '\n' +
                "                    <gml:boundedBy>" + '\n' +
                "                        <gml:Null>not_bounded</gml:Null>" + '\n' +
                "                    </gml:boundedBy>" + '\n' +
-               "                <sa:sampledFeature>sampling-point-001</sa:sampledFeature>" + '\n' +
-               "                    <sa:position>" + '\n' +
-               "                        <gml:pos srsDimension=\"0\">0.0 0.0</gml:pos>" + '\n' +
-               "                    </sa:position>" + '\n' +
-               "                </sa:SamplingPoint>" + '\n' +
+               "                <sampling:sampledFeature>sampling-point-001</sampling:sampledFeature>" + '\n' +
+               "                    <sampling:position>" + '\n' +
+               "                        <gml:Point gml:id=\"point-ID\">" + '\n' +
+               "                            <gml:pos srsDimension=\"0\">0.0 0.0</gml:pos>" + '\n' +
+               "                        </gml:Point>" + '\n' +
+               "                    </sampling:position>" + '\n' +
+               "                </sampling:SamplingPoint>" + '\n' +
                "            </om:featureOfInterest>" + '\n' +
                "            <om:result xsi:type=\"om:Measure\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                "                <om:name>mesure-027</om:name>" + '\n' +
@@ -475,6 +481,5 @@ public class ObservationXMLBindingTest {
 
         ObservationCollectionEntry result3 =  (ObservationCollectionEntry) unmarshaller.unmarshal(sr);
 
-        System.out.println("RES3:" + result3.getMember().get(0).getName());
     }
 }

@@ -22,11 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 // Geotools dependencies
 import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.observation.xml.v100.ObservationEntry;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
 import org.geotoolkit.util.Utilities;
@@ -49,7 +51,7 @@ import org.opengis.observation.sampling.SamplingFeatureRelation;
  *       moment de la <cite>deserialization</cite>.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SamplingFeature", namespace="http://www.opengis.net/sa/1.0")
+@XmlType(name = "SamplingFeature", namespace="http://www.opengis.net/sampling/1.0")
 @XmlSeeAlso({ SamplingPointEntry.class})
 public class SamplingFeatureEntry extends AbstractFeatureEntry implements SamplingFeature {
     /**
@@ -70,7 +72,8 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
     /**
      * Les features designé
      */
-    private Collection<String> sampledFeature; 
+    @XmlElement(required = true)
+    private Collection<FeaturePropertyType> sampledFeature;
     
     /**
      * Connexion vers la table des "survey details"
@@ -95,13 +98,13 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
      * @param description Une description de la station.
      * @param le
      */
-    public SamplingFeatureEntry(   final String            id,
-                                   final String            name,
-                                   final String            description,
-                                   final String            sampledFeature)
+    public SamplingFeatureEntry(   final String               id,
+                                   final String               name,
+                                   final String               description,
+                                   final FeaturePropertyType sampledFeature)
     {
         super(id, name, description);
-        this.sampledFeature         = new ArrayList<String>();
+        this.sampledFeature         = new ArrayList<FeaturePropertyType>();
         this.sampledFeature.add(sampledFeature);
         
     }
@@ -111,7 +114,7 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
                                    final String                 description,
                                    final List<SamplingFeatureRelationEntry> relatedSamplingFeature,
                                    final List<ObservationEntry> relatedObservation,
-                                   final List<String>           sampledFeature,
+                                   final List<FeaturePropertyType> sampledFeature,
                                    final SurveyProcedureEntry   surveyDetail)
     {
         super(id, name, description);
@@ -140,7 +143,7 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
      /**
      * {@inheritDoc}
      */
-    public synchronized Collection<String> getSampledFeatures() {
+    public synchronized Collection<FeaturePropertyType> getSampledFeatures() {
         
         return sampledFeature;
     }

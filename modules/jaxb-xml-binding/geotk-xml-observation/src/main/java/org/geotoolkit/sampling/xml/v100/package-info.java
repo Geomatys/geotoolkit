@@ -14,8 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/sa/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/sampling/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
 xmlns = { @javax.xml.bind.annotation.XmlNs(prefix = "gml", namespaceURI= "http://www.opengis.net/gml"),
           @javax.xml.bind.annotation.XmlNs(prefix = "om", namespaceURI= "http://www.opengis.net/om/1.0"),
-          @javax.xml.bind.annotation.XmlNs(prefix = "sa", namespaceURI= "http://www.opengis.net/sa/1.0")})
+          @javax.xml.bind.annotation.XmlNs(prefix = "sa", namespaceURI= "http://www.opengis.net/sampling/1.0")})
 package org.geotoolkit.sampling.xml.v100;

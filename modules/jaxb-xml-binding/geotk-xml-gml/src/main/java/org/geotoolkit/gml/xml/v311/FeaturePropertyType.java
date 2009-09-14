@@ -389,7 +389,7 @@ public class FeaturePropertyType {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[featurePropertyType]");
+        StringBuilder s = new StringBuilder("[FeaturePropertyType]");
         if (abstractFeature != null && abstractFeature.getValue() != null)
             s.append(abstractFeature.getValue().toString()).append('\n');
 
