@@ -112,7 +112,7 @@ public class DescribeCoverageType implements DescribeCoverage {
      * Gets the value of the service property.
      */
     public String getService() {
-        return "WCS";
+        return this.service;
     }
 
     /**
@@ -125,6 +125,45 @@ public class DescribeCoverageType implements DescribeCoverage {
 
     @Override
     public String toKvp() {
-        return "request=DescribeCoverage&service="+ getService() +"&version="+ getVersion() +"&identifier="+ getIdentifier().get(0);
+        final StringBuilder sb = new StringBuilder("request=DescribeCoverage&service=");
+        sb.append(service).append("&version=").append(version).append("&identifier=");
+        for (int i=0; i<identifier.size(); i++) {
+            sb.append(identifier.get(i));
+            if (i < identifier.size() - 1) {
+                sb.append(',');
+            }
+        }
+        return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DescribeCoverageType other = (DescribeCoverageType) obj;
+        if ((this.service == null) ? (other.service != null) : !this.service.equals(other.service)) {
+            return false;
+        }
+        if ((this.version == null) ? (other.version != null) : !this.version.equals(other.version)) {
+            return false;
+        }
+        if (this.identifier != other.identifier && (this.identifier == null || !this.identifier.equals(other.identifier))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 31 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 31 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
+        return hash;
+    }
+
 }

@@ -118,7 +118,7 @@ public class DescribeCoverageType implements DescribeCoverage {
      * return the service type here always WCS.
      */
     public String getService() {
-        return "WCS";
+        return this.service;
     }
 
     /**
@@ -131,6 +131,45 @@ public class DescribeCoverageType implements DescribeCoverage {
 
     @Override
     public String toKvp() {
-        return "request=DescribeCoverage&service="+ getService() + "&version=" + getVersion() + "&coverage="+ getCoverage().get(0);
+        final StringBuilder sb = new StringBuilder("request=DescribeCoverage&service=");
+        sb.append(service).append("&version=").append(version).append("&coverage=");
+        for (int i=0; i<coverage.size(); i++) {
+            sb.append(coverage.get(i));
+            if (i < coverage.size() - 1) {
+                sb.append(',');
+            }
+        }
+        return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 17 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 17 * hash + (this.coverage != null ? this.coverage.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DescribeCoverageType other = (DescribeCoverageType) obj;
+        if ((this.service == null) ? (other.service != null) : !this.service.equals(other.service)) {
+            return false;
+        }
+        if ((this.version == null) ? (other.version != null) : !this.version.equals(other.version)) {
+            return false;
+        }
+        if (this.coverage != other.coverage && (this.coverage == null || !this.coverage.equals(other.coverage))) {
+            return false;
+        }
+        return true;
+    }
+
 }
