@@ -65,7 +65,14 @@ public class DataArrayPropertyType implements DataArrayProperty {
     DataArrayPropertyType() {
         
     }
-    
+
+    /**
+     * Clone a new Array Property type.
+     */
+    public DataArrayPropertyType(DataArrayPropertyType dataArrayP) {
+        this.dataArray = factory.createDataArray(new DataArrayEntry(dataArrayP.dataArray.getValue()));
+    }
+
     /**
      * Build a new Array Property type.
      */

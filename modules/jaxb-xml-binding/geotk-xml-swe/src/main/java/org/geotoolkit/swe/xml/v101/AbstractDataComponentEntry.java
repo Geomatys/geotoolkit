@@ -54,6 +54,12 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      */
     AbstractDataComponentEntry() {}
 
+    public AbstractDataComponentEntry(AbstractDataComponentEntry component) {
+        this.definition = component.definition;
+        this.fixed      = component.fixed;
+        this.id         = component.id;
+    }
+
     public AbstractDataComponentEntry(String definition) {
         this.definition = definition;
     }

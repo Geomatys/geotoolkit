@@ -75,7 +75,15 @@ public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry 
     AbstractDataArrayEntry() {
         
     }
-    
+
+    /**
+     * Clone a new Abstract Data array.
+     */
+    public AbstractDataArrayEntry(AbstractDataArrayEntry array) {
+        super(array);
+        this.elementCount = new ElementCount(array.elementCount);
+    }
+
     /**
      * Build a new Abstract Data array with only the value.
      */
@@ -166,7 +174,15 @@ public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry 
         ElementCount() {
         
         }
-    
+
+        /**
+        * Build a new Element count with only the value.
+        */
+        public ElementCount(ElementCount value) {
+            this.count = new Count(value.count);
+            this.ref   = value.ref;
+        }
+
        /**
         * Build a new Element count with only the value.
         */

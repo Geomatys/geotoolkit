@@ -170,10 +170,31 @@ public class ObservationEntry implements Observation {
     private Object procedureParameter;
     
     /**
-     * Construit une observation vide (utilisé pour la serialisation par JAXB)
+     * Build An empty observation (used for JAXB serialization)
      */
     public ObservationEntry() {}
-    
+
+     /**
+     * Build a clone of an observation
+     */
+    public ObservationEntry(ObservationEntry observation) {
+        this.definition          = observation.definition;
+        this.featureOfInterest   = observation.featureOfInterest;
+        this.name                = observation.name;
+        this.observationMetadata = observation.observationMetadata;
+        this.observedProperty    = observation.observedProperty;
+        this.procedure           = observation.procedure;
+        this.procedureParameter  = observation.procedureParameter;
+        this.procedureTime       = observation.procedureTime;
+        if (observation.result != null && observation.result.getValue() instanceof DataArrayPropertyType) {
+            this.result = omfactory.createResult(new DataArrayPropertyType((DataArrayPropertyType)observation.result.getValue()));
+        } else {
+            this.result              = observation.result;
+        }
+        this.resultQuality       = observation.resultQuality;
+        this.samplingTime        = observation.samplingTime;
+    }
+
     /**
      * Construit une observation.
      * 

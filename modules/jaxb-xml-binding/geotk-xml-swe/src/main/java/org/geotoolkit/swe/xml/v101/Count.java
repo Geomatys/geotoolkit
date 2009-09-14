@@ -76,7 +76,18 @@ public class Count extends AbstractDataComponentEntry {
     Count() {
         
     }
-    
+
+    /**
+     * Clone a new Count.
+     */
+    public Count(Count value) {
+        this.value          = value.value;
+        this.axisID         = value.axisID;
+        this.constraint     = value.constraint;
+        this.quality        = value.quality;
+        this.referenceFrame = value.referenceFrame;
+    }
+
     /**
      * Build a new Count with only the value.
      */
