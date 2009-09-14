@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
+import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationEntry;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureEntry;
@@ -36,15 +39,15 @@ import org.opengis.observation.sampling.SamplingPoint;
  */
 @XmlRootElement( name="SamplingPoint" )
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", namespace="http://www.opengis.net/sa/1.0")
+@XmlType(name = "", namespace="http://www.opengis.net/sampling/1.0")
 @XmlSeeAlso({PointType.class})
-public class SamplingPointEntry extends SamplingFeatureEntry implements SamplingPoint{
+public class SamplingPointEntry extends SamplingFeatureEntry implements SamplingPoint {
     
     /**
      * the station position.
      */
     @XmlElement(required = true)
-    private PointType position;
+    private PointPropertyType position;
     
     /**
      * Constructor used by JAXB.
@@ -58,11 +61,11 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
     public SamplingPointEntry(final String                              identifier,
                               final String                              name,
                               final String                              remarks,
-                              final List<SamplingFeatureRelationEntry> relatedSamplingFeature,
+                              final List<SamplingFeatureRelationEntry>  relatedSamplingFeature,
                               final List<ObservationEntry >             relatedObservation,
-                              final List<String>                        sampledFeature,
+                              final List<FeaturePropertyType>          sampledFeature,
                               final SurveyProcedureEntry                surveyDetail,
-                              final PointType location) 
+                              final PointPropertyType location)
     {
         super(identifier, name, remarks, relatedSamplingFeature, relatedObservation, sampledFeature, surveyDetail);
         this.position = location;
@@ -73,11 +76,11 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
       * adapted for the BRGM model.
       * 
       */
-    public SamplingPointEntry(final String            identifier,
-                              final String            name,
-                              final String            remarks,
-                              final String            sampledFeature,
-                              final PointType         location) 
+    public SamplingPointEntry(final String               identifier,
+                              final String               name,
+                              final String               remarks,
+                              final FeaturePropertyType  sampledFeature,
+                              final PointPropertyType    location)
     {
         super(identifier, name, remarks, sampledFeature);
         this.position = location;
@@ -88,7 +91,9 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
      */
     @Override
     public PointType getPosition(){
-        return position;
+        if (position != null)
+            return position.getPoint();
+        return null;
     }
     
     /**

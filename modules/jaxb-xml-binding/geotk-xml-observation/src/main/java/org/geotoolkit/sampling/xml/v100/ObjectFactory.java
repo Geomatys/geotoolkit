@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
     
-    private static final QName _SamplingPoint_QNAME = new QName("http://www.opengis.net/sa/1.0", "SamplingPoint");
+    private static final QName _SamplingPoint_QNAME = new QName("http://www.opengis.net/sampling/1.0", "SamplingPoint");
     /**
      *
      */
@@ -49,7 +49,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.opengis.net/sa/1.0", name = "SamplingPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
+    @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<SamplingPointEntry> createSamplingPoint(SamplingPointEntry value) {
         return new JAXBElement<SamplingPointEntry>(_SamplingPoint_QNAME, SamplingPointEntry.class, null, value);
     }

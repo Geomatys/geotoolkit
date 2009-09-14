@@ -22,12 +22,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * A property that has a point as its value domain can either be an appropriate geometry element encapsulated in an 
- * 			element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located 
- * 			elsewhere in the same document). Either the reference or the contained element must be given, but neither both nor none.
+ * element of this type or an XLink reference to a remote geometry element 
+ * (where remote includes geometry elements located elsewhere in the same document).
+ * Either the reference or the contained element must be given, but neither both nor none.
  * 
  * <p>Java class for PointPropertyType complex type.
  * 
@@ -76,6 +78,14 @@ public class PointPropertyType {
     protected String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
+
+    public PointPropertyType() {
+
+    }
+
+    public PointPropertyType(PointType point) {
+        this.point = point;
+    }
 
     /**
      * Gets the value of the point property.
@@ -297,4 +307,69 @@ public class PointPropertyType {
         this.actuate = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof PointPropertyType) {
+            final PointPropertyType that = (PointPropertyType) object;
+
+            return Utilities.equals(this.point,              that.point)            &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.point != null ? this.point.hashCode() : 0);
+        hash = 67 * hash + (this.href != null ? this.href.hashCode() : 0);
+        return hash;
+    }
+
+     /**
+     * Retourne une representation de l'objet.
+     */
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[PointPropertyType]");
+        if (point != null)
+            s.append("point:").append(point).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate:").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole:").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href:").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role:").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show:").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title:").append(title).append('\n');
+        }
+        if(title != null) {
+            s.append("title:").append(title).append('\n');
+        }
+        return s.toString();
+    }
 }

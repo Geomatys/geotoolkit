@@ -67,7 +67,6 @@ import org.opengis.observation.sampling.SamplingFeature;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Observation", propOrder = {
     "name",
-    "definition",
     "samplingTime",
     "procedure",
     "procedureParameter",
@@ -105,7 +104,7 @@ public class ObservationEntry implements Observation {
     /**
      * La description de l'observation
      */
-    @XmlElement
+    @XmlTransient
     private String definition;
     
     /**
