@@ -18,9 +18,6 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Date;
-import java.util.Locale;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -48,38 +45,9 @@ public final class XmlUtilities {
     private static DatatypeFactory factory;
 
     /**
-     * The format to use for parsing and formatting XML dates. The {@link Locale#CANADA}
-     * is used because it is close to the US locale while using a more ISO-like date format.
-     *
-     * @deprecated To be modified after {@link #getDateFormat} has been removed. It may be
-     *             be worth to continue to cache a {@link GregorianCalendar} instance.
-     */
-    @Deprecated
-    private static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
-        @Override protected DateFormat initialValue() {
-            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.CANADA);
-            // TODO: port here the code from gt_modified.
-            return format;
-        }
-    };
-
-    /**
      * Do not allow instantiation of this class.
      */
     private XmlUtilities() {
-    }
-
-    /**
-     * Returns the format to use for parsing and formatting XML dates.
-     * This method returns a shared instance - <strong>do not modify!</strong>
-     *
-     * @return The format to use for parsing and formatting XML dates.
-     *
-     * @deprecated Use {@link XMLGregorianCalendar} instead.
-     */
-    @Deprecated
-    public static DateFormat getDateFormat() {
-        return DATE_FORMAT.get();
     }
 
     /**
