@@ -226,7 +226,9 @@ public class GetCoverageType implements GetCoverage {
      */
     @Override
     public CoordinateReferenceSystem getResponseCRS() throws FactoryException {
-        if (output == null || output.getGridCRS() == null) {
+        if (output == null || output.getGridCRS() == null || output.getGridCRS().getSrsName() == null
+                           || output.getGridCRS().getSrsName().getValue() == null)
+        {
             return null;
         }
         final CoordinateReferenceSystem objCrs = CRS.decode(output.getGridCRS().getSrsName().getValue());

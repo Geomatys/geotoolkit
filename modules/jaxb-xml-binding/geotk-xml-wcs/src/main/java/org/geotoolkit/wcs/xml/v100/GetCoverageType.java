@@ -254,7 +254,7 @@ public class GetCoverageType implements GetCoverage {
      */
     @Override
     public CoordinateReferenceSystem getResponseCRS() throws FactoryException {
-        if (output == null || output.getCrs() == null) {
+        if (output == null || output.getCrs() == null || output.getCrs().getValue() == null) {
             return null;
         }
         final CoordinateReferenceSystem objCrs = CRS.decode(output.getCrs().getValue());
