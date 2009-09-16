@@ -149,10 +149,14 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     static final long TIMEOUT_RESOLUTION = 100;
 
     /**
-     * {@code true} if this factory contains at least one active backing stores.
-     * Note that a {@code ThreadedAuthorityFactory} may be active while having an
-     * empty queue of {@linkplain #stores} if all backing stores are currently in
-     * use.
+     * {@code true} if the call to {@link #disposeExpired} is scheduled for future execution
+     * in the background thread.  A value of {@code true} implies that this factory contains
+     * at least one active backing store. However the reciprocal is not true: this field may
+     * be set to {@code false} while a worker factory is currently in use because this field
+     * is set to {@code true} only when the worker factory is {@linkplain #release released}.
+     * <p>
+     * Note that we can not use {@link !stores.isEmpty()} as a replacement of {@code isActive}
+     * because the queue is empty if all backing stores are currently in use.
      * <p>
      * Every access to this field must be performed in a synchronized block.
      */
@@ -301,10 +305,6 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
              * threw an exception.
              */
             while (remainingBackingStores == 0) {
-                if (!isActive) {
-                    // Factory has been disposed.
-                    throw new IllegalStateException();
-                }
                 try {
                     wait(2000);
                 } catch (InterruptedException e) {
@@ -324,14 +324,6 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                 factory = createBackingStore();
                 if (factory == null) {
                     throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
-                }
-                /*
-                 * If the backing store we just created is the first one, awake the
-                 * disposer thread which was waiting for an indefinite amount of time.
-                 */
-                if (!isActive) {
-                    isActive = true;
-                    StoreDisposer.INSTANCE.schedule(this, System.currentTimeMillis() + timeout);
                 }
             }
             assert usage.count == 0;
@@ -355,8 +347,8 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             remainingBackingStores++; // Must be done first in case an exception happen after this point.
             final AbstractAuthorityFactory factory = usage.factory;
             usage.factory = null;
-            notify(); // We released only one backing store, so awake only one thread - not all of them.
-            if (!stores.offerLast(new Store(factory))) {
+            final Store store = new Store(factory);
+            if (!stores.offerLast(store)) {
                 /*
                  * We were unable to add the factory to the queue. It may be because the queue is full,
                  * which could happen if there is too much factories created recently (this behavior is
@@ -364,6 +356,16 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                  * probably not worth to keep yet more factories, so dispose the current one immediatly.
                  */
                 dispose(factory, false);
+            } else {
+                /*
+                 * If the backing store we just released is the first one, awake the
+                 * disposer thread which was waiting for an indefinite amount of time.
+                 */
+                if (!isActive) {
+                    isActive = true;
+                    StoreDisposer.INSTANCE.schedule(this, store.timestamp + timeout);
+                }
+                notify(); // We released only one backing store, so awake only one thread - not all of them.
             }
         }
         assert usage.count >= 0 && (usage.factory == null) == (usage.count == 0) : usage.count;
@@ -376,7 +378,10 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * timeout}.
      * <p>
      * A return value of {@code false} typically implies that every connection to the
-     * underlying database (if any) used by this factory have been closed.
+     * underlying database (if any) used by this factory have been closed. Note however
+     * that this information is only approximative. Because of the concurrent nature of
+     * {@code ThreadedAuthorityFactory}, we may have a small delay between the time when
+     * the first connection is created and the time when this method returns {@code true}.
      *
      * @return {@code true} if this factory contains at least one active backing store.
      *
@@ -495,7 +500,11 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             it.remove();
             dispose(store.factory, false);
         }
-        // If we reach this point, then all factories have been disposed.
+        /*
+         * If we reach this point, then all worker factories in the queue have been disposed.
+         * Note that some worker factories may still be active, because the workers which were
+         * in use at the time this method has been executed were not in the queue.
+         */
         isActive = false;
         return Long.MIN_VALUE;
     }
