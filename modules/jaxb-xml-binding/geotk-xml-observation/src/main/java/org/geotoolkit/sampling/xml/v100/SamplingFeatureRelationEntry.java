@@ -38,7 +38,7 @@ public class SamplingFeatureRelationEntry implements SamplingFeatureRelation {
     /**
      * Constructeur vide utilisé par JAXB
      */
-    private SamplingFeatureRelationEntry() {}
+    protected SamplingFeatureRelationEntry() {}
     
     /**
      */
