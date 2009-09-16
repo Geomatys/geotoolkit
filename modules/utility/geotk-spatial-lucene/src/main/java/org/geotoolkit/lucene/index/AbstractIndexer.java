@@ -71,6 +71,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     protected boolean create;
 
+    protected static boolean stopIndexing = false;
+
     /**
      * Build a new Indexer witch create an index in the specified directory,
      * with the specified analyzer.
@@ -160,6 +162,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     public abstract void indexDocument(E object);
 
     /**
+     * This method stop all the current indexation running
+     */
+    public static void stopIndexation() {
+        stopIndexing = true;
+    }
+    
+    /**
      * This method remove index of lucene a document identified by identifier.
      *
      * @param identifier
@@ -208,8 +217,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         new Coordinate(0, 0)
     };
     private final CoordinateSequence points = new CoordinateArraySequence(coords);
-    private final LinearRing ring = new LinearRing(points, GF);
-    private final Polygon polygon = new Polygon(ring, new LinearRing[0],GF);
+    private final LinearRing ring           = new LinearRing(points, GF);
+    private final Polygon polygon           = new Polygon(ring, new LinearRing[0],GF);
     
 
     protected byte[] toBytes(double minx, double maxx, double miny, double maxy, int srid){
