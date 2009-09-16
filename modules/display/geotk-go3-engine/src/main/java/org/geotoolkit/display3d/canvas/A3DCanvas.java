@@ -27,7 +27,7 @@ import javax.swing.JScrollPane;
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.DisplaySettings;
-import com.ardor3d.framework.awt.AwtCanvas;
+import com.ardor3d.framework.lwjgl.LwjglAwtCanvas;
 import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
 import com.ardor3d.input.InputState;
 import com.ardor3d.input.Key;
@@ -67,7 +67,7 @@ public class A3DCanvas extends ReferencedCanvas{
     private final A3DContainer container = new A3DContainer(this);
     private final A3DController controller;
     private final JScrollPane swingPane;
-    private final AwtCanvas canvas;
+    private final LwjglAwtCanvas canvas;
 
     public A3DCanvas(CoordinateReferenceSystem objectiveCRS, Hints hints) throws LWJGLException{
         super(objectiveCRS,hints);
@@ -127,17 +127,16 @@ public class A3DCanvas extends ReferencedCanvas{
         return swingPane;
     }
 
-    public AwtCanvas getNativeCanvas(){
+    public LwjglAwtCanvas getNativeCanvas(){
         return canvas;
     }
 
-    private AwtCanvas initContext() throws LWJGLException{
+    private LwjglAwtCanvas initContext() throws LWJGLException{
 //        refresher.addUpdater(controller);
 
-        final DisplaySettings settings = new DisplaySettings(1, 1, 0, 0, 0, 32, 0, 4, false, false);
-        final AwtCanvas canvas = new AwtCanvas(settings);
         LwjglCanvasRenderer renderer = new LwjglCanvasRenderer(container);
-        canvas.setCanvasRenderer(renderer);
+        final DisplaySettings settings = new DisplaySettings(1, 1, 0, 0, 0, 32, 0, 4, false, false);
+        final LwjglAwtCanvas canvas = new LwjglAwtCanvas(settings,renderer);
         canvas.setSize(new Dimension(100, 100));
         canvas.setPreferredSize(new Dimension(1,1));
         canvas.setVisible(true);

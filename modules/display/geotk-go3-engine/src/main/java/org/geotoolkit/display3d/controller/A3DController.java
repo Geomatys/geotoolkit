@@ -18,7 +18,7 @@ package org.geotoolkit.display3d.controller;
 
 import com.ardor3d.annotation.MainThread;
 import com.ardor3d.framework.Updater;
-import com.ardor3d.framework.awt.AwtCanvas;
+import com.ardor3d.framework.lwjgl.LwjglAwtCanvas;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Camera;
@@ -89,7 +89,7 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     private Camera getCamera(){
-        AwtCanvas nativ = canvas.getNativeCanvas();
+        LwjglAwtCanvas nativ = canvas.getNativeCanvas();
         if(nativ != null && nativ.getCanvasRenderer() != null){
             return nativ.getCanvasRenderer().getCamera();
         }
