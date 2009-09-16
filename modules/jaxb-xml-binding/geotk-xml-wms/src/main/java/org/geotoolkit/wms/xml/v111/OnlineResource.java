@@ -46,22 +46,22 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
 @XmlRootElement(name = "OnlineResource")
 public class OnlineResource extends AbstractOnlineResource {
 
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     private String type;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String href;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String role;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String arcrole;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     private String title;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     private String show;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    @XmlAttribute
     private String actuate;
 
     /**
