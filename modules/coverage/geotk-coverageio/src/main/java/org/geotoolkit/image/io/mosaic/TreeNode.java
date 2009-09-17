@@ -45,7 +45,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
  * all children bounds.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -221,10 +221,18 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
     }
 
     /**
-     * Returns {@code true} if this node has more than one tile and some of them overlaps.
-     * The default implementation returns {@code false}.
+     * Returns {@code true} if this node has more than one tile and some of them overlap.
+     * This method iterates over the direct children of this node, but does not scan down
+     * the tree.
      */
-    public boolean hasOverlaps() {
+    public final boolean hasOverlaps() {
+        for (TreeNode child = firstChildren; child != null; child = child.nextSibling) {
+            for (TreeNode next = child; (next = next.nextSibling) != null;) {
+                if (child.intersects(next)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

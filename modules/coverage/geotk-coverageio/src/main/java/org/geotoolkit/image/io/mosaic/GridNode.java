@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.Collections;
-import java.util.ListIterator;
+import java.util.Iterator;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import static org.geotoolkit.image.io.mosaic.Tile.MASK;
  * be considered as an implementation details exposed because this class is not public.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -70,14 +70,6 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
      * finer subsampling, this value is typically unmodified compared to its initial value.
      */
     private short xSubsampling, ySubsampling;
-
-    /**
-     * {@code true} if at least one tile overlaps an other tile in direct {@linkplain #children}.
-     * As a special case, if a tile has exactly the same bounding box than an other tile, then we
-     * do not consider it as an overlap. This is because those exact matchs are easy to handle by
-     * {@link RTree}.
-     */
-    private boolean overlaps;
 
     /**
      * Comparator for sorting tiles by descreasing subsamplings and area. The {@linkplain
@@ -206,16 +198,6 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
         for (int i=(root != null ? 1 : 0); i<nodes.length; i++) {
             final GridNode child = nodes[i];
             final GridNode parent = smallest(child);
-            if (!parent.overlaps) {
-                TreeNode existing = parent.firstChildren();
-                while (existing != null) {
-                    if (child.intersects(existing) && !child.equals(existing)) {
-                        parent.overlaps = true;
-                        break;
-                    }
-                    existing = existing.nextSibling();
-                }
-            }
             parent.addChild(child);
         }
         if (isFlat) {
@@ -235,7 +217,9 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
                 child = child.nextSibling();
             }
         }
-        splitOverlappingChildren(); // Must be after bounds calculation.
+        if (!isFlat) {
+            splitOverlappingChildren(); // Must be after bounds calculation.
+        }
         postTreeCreation();
         assert checkValidity() : toTree();
     }
@@ -295,153 +279,71 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
     }
 
     /**
-     * Returns the largest horizontal or vertical distance between this rectangle and the specified
-     * one. Returns a negative number if the rectangles overlap. Diagonals are <strong>not</strong>
-     * computed.
+     * If this node contains children at different subsampling and some of them overlap,
+     * creates new nodes which regroup every tiles having the same subsampling. This simple
+     * algorithm does exactly what we want for the simple case where the overlapping exists
+     * because the subsampling of some tiles are not a multiple of the subsampling of other
+     * tiles.
      * <p>
-     * This method is not robust to integer arithmetic overflow. In such case, an
-     * {@link AssertionError} is likely to be thrown if assertions are enabled.
-     */
-    private int distance(final Rectangle rect) {
-        int dx = rect.x - x;
-        if (dx >= 0) {
-            dx -= width;
-        } else {
-            dx += rect.width;
-            dx = -dx;
-        }
-        int dy = rect.y - y;
-        if (dy >= 0) {
-            dy -= height;
-        } else {
-            dy += rect.height;
-            dy = -dy;
-        }
-        final int distance = Math.max(dx, dy);
-        assert (intersects(rect) ? (dx < 0 && dy < 0) : (distance >= 0)) : distance;
-        return distance;
-    }
-
-    /**
-     * Makes sure that this node and all its children do not contains overlapping tiles. If at
-     * least one overlapping is found, then the nodes are reorganized in non-overlapping sub-nodes.
-     * Algorithm overview:
-     * <p>
-     * <ol>
-     *   <li>For the current {@linkplain #children}, keeps the first node and remove every nodes
-     *       that overlap with a previous one (except special cases described above). The removed
-     *       nodes are stored in a temporary list.</li>
-     *   <li>The nodes selected in the previous step are groupped in a new {@link GridNode},
-     *       which will be the first {@linkplain #children} of this tile.</li>
-     *   <li>Repeat the process with the nodes that were removed in the first step. Each new
-     *       group is added as a new {@linkplain #children} in this node.</li>
-     * </ol>
-     * <p>
-     * <b>special case:</b> if an overlapping is found but the two nodes have identical bounds,
-     * then they are considered as if they did not overlap. This exception exists because this
-     * trivial overlap is easy to detect and to process by {@link RTree}.
+     * We do <strong>not</strong> try to do anything special for overlapping of tiles at the
+     * same subsampling, because we assume that the user already validated his input tiles.
+     * Sometime those tiles overlap a bit (for example tiles having a width of 1003 pixels
+     * while we expected exactly 1000 pixels) but the user considers those overlapping as
+     * negligible. Trying to "solve" such overlapping cause more problems than good.
      */
     private void splitOverlappingChildren() {
         assert isLeaf() || !isEmpty() : this; // Requires that bounds has been computed.
+        /*
+         * Process the children. We must do that first because it may change the list of
+         * children in this node. Once the children have been processed, we can check if
+         * there is any overlapping in this node and stop this method if there is none.
+         */
         GridNode child = (GridNode) firstChildren();
         while (child != null) {
             child.splitOverlappingChildren();
             child = (GridNode) child.nextSibling();
         }
-        if (!overlaps) {
+        if (isFlat() || !hasOverlaps()) {
             return;
         }
-        List<GridNode> toProcess = new LinkedList<GridNode>();
-        final List<GridNode> retained = new ArrayList<GridNode>();
+        /*
+         * Move the list of children in a temporary array.
+         */
+        final List<GridNode> toProcess = new LinkedList<GridNode>();
+        final List<GridNode> retained  = new  ArrayList<GridNode>();
         child = (GridNode) firstChildren();
         while (child != null) {
             toProcess.add(child);
             child = (GridNode) child.nextSibling();
         }
         removeChildren(); // Necessary in order to give children to other nodes.
-        int bestIndex=0, bestDistance=0;
         /*
-         * The loop below is for processing a group of nodes. A "group of nodes" is either
-         * the initial children list (on the first iteration), or the nodes that have not be
-         * retained in a previous run of this loop. In the later case, those remaining nodes
-         * need to be examined again and again until they are classified in some group.
+         * For every tiles to process, copy in the "retained" list those having the same subsampling.
+         * The other tiles will be left in the "toProcess" list for examination in an other pass.
          */
         while (!toProcess.isEmpty()) {
-            final List<GridNode> removed = new LinkedList<GridNode>();
-            GridNode added = toProcess.remove(0);
-            retained.add(added);
-            /*
-             * The loop below is for moving every non-overlapping nodes to the "retained" list,
-             * begining with the first node that we retained unconditionnaly in the above line
-             * (we need to start with one node in order to select non-overlapping nodes...)
-             */
-            ListIterator<GridNode> it;
-            while ((it = toProcess.listIterator()).hasNext()) {
-                GridNode best = null;
-                /*
-                 * The loop below is for removing every nodes that overlap with the "added" node,
-                 * and select only one node (the "best" one) in the non-overlapping nodes. We
-                 * select the closest tile (relative to the "added" one) rather than the first
-                 * one because the retention order is significant.
-                 */
-                do {
-                    final GridNode candidate = it.next();
-                    final int distance = added.distance(candidate);
-                    if (distance < 0) {
-                        /*
-                         * Found an overlapping tile.  Accept inconditionnaly the tile if its bounds
-                         * is exactly equal to the "added" tile (this is the special case described
-                         * in the method javadoc above). Otherwise remove it from the toProcess list
-                         * and search for an other tile.
-                         */
-                        if (added.equals(candidate)) {
-                            retained.add(candidate);
-                        } else {
-                            removed.add(candidate);
-                        }
-                        it.remove();
-                    } else if (best == null || distance < bestDistance) {
-                        /*
-                         * The tile do not overlaps. Retain it only if it is the closest one
-                         * to the "added" tile.  Otherwise left it in the toProcess list for
-                         * consideration in a future iteration.
-                         */
-                        bestDistance = distance;
-                        bestIndex = it.previousIndex();
-                        best = candidate;
-                        // Note: if the distance is 0 we could break the loop as an optimization
-                        // (since we can't get anything better), but we don't because we still
-                        // need to remove the overlapping tiles that may be present in toProcess.
-                    }
-                } while (it.hasNext());
-                /*
-                 * If we found no non-overlapping tile, we are done. The toProcess list should be
-                 * empty now (it will be tested in an assert statement after the loop). Otherwise
-                 * move the best tile from the "toProcess" to the "retained" list.
-                 */
-                if (best == null) {
-                    break;
+            final Iterator<GridNode> it = toProcess.iterator();
+            child = it.next();
+            retained.add(child);
+            it.remove();
+            final short xSubsampling = child.xSubsampling;
+            final short ySubsampling = child.ySubsampling;
+            while (it.hasNext()) {
+                child = it.next();
+                if (child.xSubsampling == xSubsampling && child.ySubsampling == ySubsampling) {
+                    retained.add(child);
+                    it.remove();
                 }
-                if (toProcess.remove(bestIndex) != best) {
-                    throw new AssertionError(bestIndex);
-                }
-                retained.add(best);
-                added = best;
             }
-            assert toProcess.isEmpty() : toProcess;
-            assert Collections.disjoint(retained, removed);
-            final GridNode[] sorted = retained.toArray(new GridNode[retained.size()]);
-            retained.clear();
-            Arrays.sort(sorted, PRE_PROCESSING);
+            assert Collections.disjoint(toProcess, retained);
             child = new GridNode(this);
             assert child.isLeaf();
-            for (TreeNode newChild : sorted) {
-                child.addChild(newChild);
+            for (final GridNode r : retained) {
+                child.addChild(r);
             }
+            retained.clear();
             addChild(child);
-            toProcess = removed;
         }
-        overlaps = false;
     }
 
     /**
@@ -527,11 +429,23 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
     }
 
     /**
-     * Returns {@code true} if this node has more than one tile and some of them overlaps.
+     * Returns {@code true} if every direct children in this node use the same subsampling.
+     * This method does not looks recursively in children of children.
+     *
+     * @return {@code true} if every direct children in this node use the same subsampling.
      */
-    @Override
-    public boolean hasOverlaps() {
-        return overlaps;
+    private boolean isFlat() {
+        GridNode child = (GridNode) firstChildren();
+        if (child != null) {
+            final short xSubsampling = child.xSubsampling;
+            final short ySubsampling = child.ySubsampling;
+            while ((child = (GridNode) child.nextSibling()) != null) {
+                if (child.xSubsampling != xSubsampling || child.ySubsampling != ySubsampling) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
