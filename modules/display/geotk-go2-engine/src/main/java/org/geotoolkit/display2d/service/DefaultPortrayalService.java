@@ -30,11 +30,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Iterator;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -51,6 +46,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.ImageIOUtilities;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -112,7 +108,7 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
         try {
-            writeImage(image, mime, output);
+            ImageIOUtilities.writeImage(image, mime, output);
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         }
@@ -132,13 +128,12 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
         try {
-            writeImage(image, mime, output);
+            ImageIOUtilities.writeImage(image, mime, output);
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         }
 
     }
-
 
     /**
      * Portray a MapContext and returns an Image.
@@ -229,7 +224,6 @@ public class DefaultPortrayalService implements PortrayalService{
 
         return buffer;
     }
-
 
     /**
      * Portray a gridcoverage using amplitute windarrows/cercles
@@ -326,7 +320,6 @@ public class DefaultPortrayalService implements PortrayalService{
 
     }
 
-
     public static BufferedImage writeException(Exception e, Dimension dim){
 
         final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
@@ -366,34 +359,6 @@ public class DefaultPortrayalService implements PortrayalService{
         return img;
     }
 
-    public static void writeImage(final BufferedImage image,
-            final String mime, Object output) throws IOException{
-        if(image == null) throw new NullPointerException("Image can not be null");
-
-        final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);
-        while (writers.hasNext()) {
-            final ImageWriter writer = writers.next();
-            final ImageWriterSpi spi = writer.getOriginatingProvider();
-            if (spi.canEncodeImage(image)) {
-                ImageOutputStream stream = null;
-                if (!isValidType(spi.getOutputTypes(), output)) {
-                    stream = ImageIO.createImageOutputStream(output);
-                    output = stream;
-                }
-                writer.setOutput(output);
-                writer.write(image);
-                writer.dispose();
-                if (stream != null) {
-                    stream.close();
-                }
-
-                return;
-            }
-        }
-
-        throw new IOException("Unknowed image type");
-    }
-
     private static MapContext convertCoverage(final GridCoverage2D coverage){
         final MutableStyle style = STYLE_FACTORY.style(STYLE_FACTORY.rasterSymbolizer());
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, style,"coveragename");
@@ -404,17 +369,4 @@ public class DefaultPortrayalService implements PortrayalService{
         return context;
     }
 
-    /**
-     * Check if the provided object is an instance of one of the given classes.
-     */
-    private static boolean isValidType(final Class<?>[] validTypes, final Object type) {
-        for (final Class<?> t : validTypes) {
-            if (t.isInstance(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    
 }
