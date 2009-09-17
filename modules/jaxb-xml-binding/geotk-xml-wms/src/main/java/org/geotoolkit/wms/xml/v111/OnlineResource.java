@@ -40,6 +40,7 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @author Cédric Briançon
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
@@ -71,12 +72,24 @@ public class OnlineResource extends AbstractOnlineResource {
     }
 
     /**
-     * Build an online resource with only the href attribute (most of the case.
+     * Build an online resource with only the href attribute (most of the case).
      * 
      * @param href The url of the resource.
      */
     public OnlineResource(final String href) {
-        this.href = href;   
+        this.href = href;
+        this.type = "simple";
+    }
+
+    /**
+     * Build an online resource with the href and type attributes.
+     *
+     * @param href The url of the resource.
+     * @param type The type of resource.
+     */
+    public OnlineResource(final String href, final String type) {
+        this.href = href;
+        this.href = type;
     }
     
     /**
