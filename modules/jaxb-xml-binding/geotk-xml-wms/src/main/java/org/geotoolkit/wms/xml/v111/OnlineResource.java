@@ -46,22 +46,22 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
 @XmlRootElement(name = "OnlineResource")
 public class OnlineResource extends AbstractOnlineResource {
 
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink", required = true)
     private String type;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink", required = true)
     @XmlSchemaType(name = "anyURI")
     private String href;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
     private String role;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
     private String arcrole;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String title;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String show;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
     /**
@@ -109,6 +109,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the href property.
      * 
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -117,6 +118,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the href property.
      * 
      */
+    @Override
     public void setHref(String href) {
         this.href = href;
     }
