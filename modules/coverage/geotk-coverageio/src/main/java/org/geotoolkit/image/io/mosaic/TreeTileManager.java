@@ -27,6 +27,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.gui.swing.tree.TreeNodeFilter;
 import org.geotoolkit.util.Comparators;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -45,12 +46,12 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * more may slow down the execution.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
  */
-final class TreeTileManager extends TileManager {
+final class TreeTileManager extends TileManager implements TreeNodeFilter {
     /**
      * For cross-version compatibility during serialization.
      */
@@ -143,7 +144,7 @@ final class TreeTileManager extends TileManager {
         /*
          * Overwrites the tiles array with the same tiles, but ordered with same input firsts.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked","rawtypes"})
         final List<Tile>[] asArray = tilesByInput.values().toArray(new List[tilesByInput.size()]);
         final Comparator<List<Tile>> comparator = Comparators.forLists();
         Arrays.sort(asArray, comparator);
@@ -372,10 +373,30 @@ final class TreeTileManager extends TileManager {
             // For an unknown reason, direct usage of the TreeNode (which I expected legal)
             // produces artefacts when rendered in the JTree Swing component. We have to
             // copy them as Swing objects.
-            return new DefaultTreeModel(Trees.copy(tree.root));
+            return new DefaultTreeModel(Trees.copy(tree.root, this));
         } finally {
             release(tree);
         }
+    }
+
+    /**
+     * Returns {@code true} in order to get the {@link #toTree} method to copy every tiles.
+     */
+    @Override
+    public boolean accept(final javax.swing.tree.TreeNode node) {
+        return true;
+    }
+
+    /**
+     * Returns the user object, which is either an immutable {@link Tile} or the {@link Rectangle}
+     * of the tree node. The rectangle is copied in order to protect the node from user changes.
+     */
+    @Override
+    public Object convertUserObject(final javax.swing.tree.TreeNode node, Object userObject) {
+        if (userObject == null) {
+            userObject = new Rectangle((Rectangle) node);
+        }
+        return userObject;
     }
 
     /**

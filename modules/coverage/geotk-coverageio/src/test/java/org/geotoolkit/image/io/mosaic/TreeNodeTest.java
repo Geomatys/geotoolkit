@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.Commons;
 import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.junit.*;
@@ -68,34 +69,11 @@ public final class TreeNodeTest extends TestBase {
     @Test
     public void testSwingTree() {
         final javax.swing.tree.TreeNode copy = Trees.copy(root);
-        final int n = assertTreeEqual(root, copy, null, null);
+        final int n = Commons.assertTreeEquals(copy, root);
         assertEquals(4737, n);
         final String text1 = Trees.toString(root);
         final String text2 = Trees.toString(copy);
         assertEquals(text1, text2);
-    }
-
-    /**
-     * Ensures that the given nodes are equals. This method invokes itself recursively for
-     * checking children equality. Returns the number of node compared.
-     */
-    private static int assertTreeEqual(
-            final javax.swing.tree.TreeNode node,       final javax.swing.tree.TreeNode copy,
-            final javax.swing.tree.TreeNode nodeParent, final javax.swing.tree.TreeNode copyParent)
-    {
-        int n = 1;
-        assertSame(copyParent, copy.getParent());
-        assertSame(nodeParent, node.getParent());
-        assertEquals(copy.isLeaf(),            node.isLeaf());
-        assertEquals(copy.getAllowsChildren(), node.getAllowsChildren());
-        assertEquals(copy.toString(),          node.toString());
-        assertEquals(copy.getChildCount(),     node.getChildCount());
-        for (int i=0; i<copy.getChildCount(); i++) {
-            assertEquals(i, copy.getIndex(copy.getChildAt(i)));
-            assertEquals(i, node.getIndex(node.getChildAt(i)));
-            n += assertTreeEqual(node.getChildAt(i), copy.getChildAt(i), node, copy);
-        }
-        return n;
     }
 
     /**
@@ -111,7 +89,6 @@ public final class TreeNodeTest extends TestBase {
         assertEquals(root, root);
         assertTrue (root.containsAll(manager.getTiles()));
         assertFalse(root.containsAll(Arrays.asList(sourceTiles)));
-        assertTrue (((GridNode) root).isDense(root));
         final Rectangle bounds = new Rectangle(SOURCE_SIZE*4, SOURCE_SIZE*2);
         final Rectangle roi = new Rectangle();
         final Random random = new Random(4353223575290515986L);

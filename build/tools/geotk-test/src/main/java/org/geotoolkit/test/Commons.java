@@ -21,10 +21,12 @@ import java.io.*;
 import java.text.Format;
 import java.text.ParseException;
 import java.util.zip.CRC32;
+import java.util.Enumeration;
 import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.DataBufferByte;
+import javax.swing.tree.TreeNode;
 
 import static org.junit.Assert.*;
 
@@ -33,7 +35,7 @@ import static org.junit.Assert.*;
  * Provides assertion methods in addition of the JUnit ones.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 3.00
  */
@@ -90,6 +92,49 @@ public final class Commons {
         if (c2.hasNext()) {
             fail("Unexpected line: " + c2.next());
         }
+    }
+
+    /**
+     * Ensures that a tree is equals to an other tree. This method invokes itself
+     * recursively for every child nodes.
+     *
+     * @param  expected The expected tree, or {@code null}.
+     * @param  actual The tree to compare with the expected one, or {@code null}.
+     * @return The number of nodes.
+     *
+     * @since 3.04
+     */
+    public static int assertTreeEquals(final TreeNode expected, final TreeNode actual) {
+        if (expected == null) {
+            assertNull(actual);
+            return 0;
+        }
+        int n = 1;
+        assertNotNull(actual);
+        assertEquals("isLeaf()",            expected.isLeaf(),            actual.isLeaf());
+        assertEquals("getAllowsChildren()", expected.getAllowsChildren(), actual.getAllowsChildren());
+        assertEquals("getChildCount()",     expected.getChildCount(),     actual.getChildCount());
+        @SuppressWarnings("unchecked") final Enumeration<? extends TreeNode> ec = expected.children();
+        @SuppressWarnings("unchecked") final Enumeration<? extends TreeNode> ac = actual  .children();
+
+        int childIndex = 0;
+        while (ec.hasMoreElements()) {
+            assertTrue("hasMoreElements()", ac.hasMoreElements());
+            final TreeNode nextExpected = ec.nextElement();
+            final TreeNode nextActual   = ac.nextElement();
+            final String message = "getChildAt(" + childIndex + ')';
+            assertSame(message, nextExpected, expected.getChildAt(childIndex));
+            assertSame(message, nextActual,   actual  .getChildAt(childIndex));
+            assertSame("getParent()", expected, nextExpected.getParent());
+            assertSame("getParent()", actual,   nextActual  .getParent());
+            assertSame("getIndex(TreeNode)", childIndex, expected.getIndex(nextExpected));
+            assertSame("getIndex(TreeNode)", childIndex, actual  .getIndex(nextActual));
+            n += assertTreeEquals(nextExpected, nextActual);
+            childIndex++;
+        }
+        assertFalse("hasMoreElements()", ac.hasMoreElements());
+        assertEquals("toString()", expected.toString(), actual.toString());
+        return n;
     }
 
     /**

@@ -35,6 +35,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileImageInputStream;
 
+import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
@@ -124,6 +125,7 @@ import static java.lang.Math.max;
  * @since 2.5
  * @module
  */
+@Immutable
 public class Tile implements Comparable<Tile>, Serializable {
     /**
      * For cross-version compatibility during serialization.

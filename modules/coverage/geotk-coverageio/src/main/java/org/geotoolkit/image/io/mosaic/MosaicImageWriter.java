@@ -92,7 +92,7 @@ import org.geotoolkit.internal.rmi.RMI;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -108,12 +108,6 @@ public class MosaicImageWriter extends ImageWriter {
      * The logging level for tiling information during reads and writes.
      */
     private Level level = Level.FINE;
-
-    /**
-     * The executor to use for writting tiles in background thread.
-     * Will be created when first needed.
-     */
-    private ExecutorService executor;
 
     /**
      * The temporary files created for each input tile.
@@ -400,9 +394,7 @@ public class MosaicImageWriter extends ImageWriter {
          * Creates now the various other objects to be required in the loop. This include a
          * RTree initialized with the tiles remaining after the removal in the previous block.
          */
-        if (executor == null) {
-            executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        }
+        final ExecutorService executor  = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         final List<Future<?>> tasks     = new ArrayList<Future<?>>();
         final TreeNode        tree      = new GridNode(tiles.toArray(new Tile[tiles.size()]));
         final ImageReadParam  readParam = reader.getDefaultReadParam();
@@ -430,6 +422,7 @@ public class MosaicImageWriter extends ImageWriter {
         while (!tiles.isEmpty()) {
             if (abortRequested()) {
                 processWriteAborted();
+                executor.shutdown();
                 return false;
             }
             /*
@@ -481,8 +474,8 @@ public class MosaicImageWriter extends ImageWriter {
              */
             System.gc();
             /*
-             * Now process to the image loading. If we fails with an OutOfMemoryError (which
-             * typically happen while creating the large BufferedImage), reduces the amount
+             * Now process to the image loading. If we fail with an OutOfMemoryError (which
+             * typically happen while creating the large BufferedImage), reduce the amount
              * of memory that we are allowed to use and try again.
              */
             try {
@@ -593,6 +586,7 @@ public class MosaicImageWriter extends ImageWriter {
             assert !tiles.contains(imageTile) : imageTile;
         }
         awaitTermination(tasks, initialTileCount, progressScale);
+        executor.shutdown();
         if (abortRequested()) {
             processWriteAborted();
             return false;
@@ -1484,10 +1478,6 @@ search: for (final Tile tile : tiles) {
      */
     @Override
     public void dispose() {
-        if (executor != null) {
-            executor.shutdown();
-            executor = null;
-        }
         deleteTemporaryFiles();
         super.dispose();
     }

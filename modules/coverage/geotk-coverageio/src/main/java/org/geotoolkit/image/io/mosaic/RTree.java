@@ -367,8 +367,6 @@ final class RTree {
              * may be cheaper) and if the children subsampling are not higher than the tile's one
              * (they are usually not), then there is no need to continue down the tree since the
              * childs can not do better than this node.
-             *
-             * TODO: Checks if the children fill completly the bounds (i.e. are "dense").
              */
             cost = selected.cost;
             if (cost == 0 || (selected.equals(node) && !tile.isFinerThan(subsamplingCandidate))) {

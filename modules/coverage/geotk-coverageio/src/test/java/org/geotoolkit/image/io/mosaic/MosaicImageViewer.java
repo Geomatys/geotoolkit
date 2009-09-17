@@ -376,7 +376,7 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
     /**
      * Loads a serialized {@link TileManager} and display it.
      *
-     * @param args The command-line arguments.
+     * @param  args A single command-line argument which is the name of the serialized mosaic.
      * @throws IOException If the tiles can not be deserialized.
      * @throws ClassNotFoundException If the serialized stream contains an unknown class.
      */
@@ -391,8 +391,8 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
             manager = (TileManager) tiles;
         } else if (tiles instanceof Tile[]) {
             manager = TileManagerFactory.DEFAULT.create((Tile[]) tiles)[0];
-        } else if (tiles instanceof Collection) {
-            @SuppressWarnings("unchecked")
+        } else if (tiles instanceof Collection<?>) {
+            @SuppressWarnings({"unchecked","rawtypes"})
             final Collection<Tile> c = (Collection) tiles;
             manager = TileManagerFactory.DEFAULT.create(c)[0];
         } else {

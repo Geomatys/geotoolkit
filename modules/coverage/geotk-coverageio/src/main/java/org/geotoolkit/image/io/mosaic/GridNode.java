@@ -80,11 +80,6 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
     private boolean overlaps;
 
     /**
-     * {@code true} if the children fill completly this node bounds.
-     */
-    private boolean dense;
-
-    /**
      * Comparator for sorting tiles by descreasing subsamplings and area. The {@linkplain
      * GridNode#GridNode(Tile[]) constructor} expects this order for inserting a tile into
      * the smallest tile that can contains it. If two tiles have the same subsampling, then
@@ -121,6 +116,7 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
 
     /**
      * Creates a node for the specified bounds with no subsampling and no tile.
+     * This constructor is invoked for giving some depth to an initially flat tree.
      */
     private GridNode(final Rectangle bounds) {
         super(bounds);
@@ -476,7 +472,6 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
             if ((child.ySubsampling & MASK) > (ySubsampling & MASK)) ySubsampling = child.ySubsampling;
             child = (GridNode) child.nextSibling();
         }
-        dense = isDense(this, this);
     }
 
     /**
@@ -613,40 +608,5 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
             System.arraycopy(old, 0, nodes, size, old.length);
         }
         return nodes;
-    }
-
-    /**
-     * Returns {@code true} if the rectangles in the given collection fill completly the given
-     * ROI with no empty space.
-     *
-     * @todo This method is not yet correctly implemented. For now we performs a naive check
-     *       which is suffisient for common {@link TileLayout}. We may need to revisit this
-     *       method in a future version.
-     */
-    private static boolean isDense(final Rectangle roi, final Iterable<? extends Rectangle> regions) {
-        Rectangle bounds = null;
-        for (final Rectangle rect : regions) {
-            final Rectangle inter = roi.intersection(rect);
-            if (bounds == null) {
-                bounds = inter;
-            } else {
-                bounds.add(inter); // See java.awt.Rectangle javadoc for empty rectangle handling.
-            }
-        }
-        return bounds == null || bounds.equals(roi);
-    }
-
-    /**
-     * Returns {@code true} if this node fills completly the given ROI with no empty space.
-     *
-     * @todo This method is not yet correctly implemented. For now we performs a naive check
-     *       which is suffisient for common {@link TileLayout}. We may need to revisit this
-     *       method in a future version.
-     *
-     * @todo Not yet used, but should be in a future version. See the TODO notice in {@link RTree}.
-     */
-    public boolean isDense(final Rectangle roi) {
-        assert contains(roi);
-        return dense;
     }
 }

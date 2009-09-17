@@ -23,13 +23,20 @@
  * Sun can't fix it without breaking compatibility. We have to fix it ourselves,
  * which is the main purpose of this package.
  * <p>
- * This package provides also a set of static methods in the {@link org.geotoolkit.gui.swing.tree.Trees}
- * class. Those methods work on Swing tree models. Despite the fact that they are defined in a
- * <cite>Swing</cite> package, the tree model can be used as a generic model for arbitrary
- * applications (not limited to <cite>Swing</cite> widgets).
+ * This package provides also a few additional functionalities listed below. Those methods
+ * work on Swing tree models. Despite the fact that they are defined in a <cite>Swing</cite>
+ * package, the tree model can be used as a generic model for arbitrary applications
+ * (not limited to <cite>Swing</cite> widgets).
+ * <p>
+ * <ul>
+ *   <li>A set of static methods in the {@link org.geotoolkit.gui.swing.tree.Trees} class.</li>
+ *   <li>A {@link org.geotoolkit.gui.swing.tree.TreeTableNode} interface used as a bridge
+ *       toward <cite>Swingx</cite> {@code JTreeTable}.</li>
+ *   <li>A {@link org.geotoolkit.gui.swing.tree.TreeNodeFilter} interface.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
+ * @version 3.04
  *
  * @since 2.0
  * @module
