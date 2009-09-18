@@ -100,28 +100,24 @@ public class DefaultPortrayalService implements PortrayalService{
             final Date start, final Date end, final Color background, final Object output, 
             final String mime, final Dimension canvasDimension, Hints hints, 
             final boolean strechImage) throws PortrayalException {
-
-        final BufferedImage image = portray(context,contextEnv,start,end,canvasDimension,strechImage,0.0f,null,background,hints);
-
-        if(image == null){
-            throw new PortrayalException("No image created by the canvas.");
-        }
-
-        try {
-            ImageIOUtilities.writeImage(image, mime, output);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
-        }
-        
+        portray(context,contextEnv,start,end,background,output,mime,canvasDimension,hints,strechImage,new PortrayalExtension[0]);
     }
 
     public static void portray(final MapContext context, final Envelope contextEnv,
             final Date start, final Date end, final Color background, final Object output,
             final String mime, final Dimension canvasDimension, Hints hints,
             final boolean strechImage, PortrayalExtension ... extensions) throws PortrayalException {
+        portray(context,contextEnv,start,end,canvasDimension,strechImage,0.0f,null,background,output,mime,hints,extensions);
+    }
+
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Date start, final Date end, final Dimension canvasDimension,
+            final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
+            final Color background, final Object output, final String mime, Hints hints,
+            PortrayalExtension ... extensions) throws PortrayalException{
 
         final BufferedImage image = portray(context,contextEnv,start,end,
-                canvasDimension,strechImage,0.0f,null,background,hints,extensions);
+                canvasDimension,strechImage,azimuth,monitor,background,hints,extensions);
 
         if(image == null){
             throw new PortrayalException("No image created by the canvas.");
