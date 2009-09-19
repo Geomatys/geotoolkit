@@ -17,11 +17,6 @@
 
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -32,11 +27,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -59,7 +51,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
-import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -71,34 +62,22 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.style.category.CategoryStyleBuilder;
+import org.geotoolkit.style.interval.DefaultRandomPalette;
+import org.geotoolkit.style.interval.RandomPalette;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Rule;
-import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -119,11 +98,9 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
+    private final CategoryStyleBuilder builder = new CategoryStyleBuilder();
     private final RuleModel model = new RuleModel();
-    private final List<PropertyName> properties = new ArrayList<PropertyName>();
     private FeatureMapLayer layer = null;
-    private Symbolizer template = null;
-    private Class<? extends Symbolizer> expectedType = null;
 
     public JClassificationSingleStylePanel() {
         initComponents();
@@ -152,176 +129,30 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }
 
     private void parse(){
+        builder.analyze(layer);
 
-        model.rules.clear();
         guiTable.revalidate();
         guiTable.repaint();
         guiOther.setSelected(false);
 
-        properties.clear();
-        if(layer != null){
-            SimpleFeatureType schema = layer.getFeatureSource().getSchema();
-
-            for(PropertyDescriptor desc : schema.getDescriptors()){
-                Class<?> type = desc.getType().getBinding();
-
-                if(!Geometry.class.isAssignableFrom(type)){
-                    properties.add(FF.property(desc.getName().getLocalPart()));
-                }
-            }
-            
-            //find the geometry class for template
-            GeometryDescriptor geo = schema.getGeometryDescriptor();
-            Class<?> geoClass = geo.getType().getBinding();
-
-            if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
-                Stroke stroke = SF.stroke(Color.BLACK, 1);
-                Fill fill = SF.fill(Color.BLUE);
-                template = SF.polygonSymbolizer(stroke,fill,null);
-                expectedType = PolygonSymbolizer.class;
-            }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
-                Stroke stroke = SF.stroke(Color.BLUE, 2);
-                template = SF.lineSymbolizer(stroke,null);
-                expectedType = LineSymbolizer.class;
-            }else{
-                Stroke stroke = SF.stroke(Color.BLACK, 1);
-                Fill fill = SF.fill(Color.BLUE);
-                List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-                symbols.add(SF.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
-                Graphic gra = SF.graphic(symbols, FF.literal(1), FF.literal(12), FF.literal(0), SF.anchorPoint(), SF.displacement());
-                template = SF.pointSymbolizer(gra, null);
-                expectedType = PointSymbolizer.class;
-            }
-
-
-            guiProperty.setModel(new ListComboBoxModel(properties));
-
-            //try to rebuild the previous analyze if it was one
-            List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
-
-            if(ftss.size() == 1){
-                MutableFeatureTypeStyle fts = ftss.get(0);
-
-                List<MutableRule> rules = fts.rules();
-
-                for(Rule r : rules){
-                    List<? extends Symbolizer> symbols = r.symbolizers();
-
-                    if(symbols.size() != 1) break;
-
-                    Symbolizer symbol = symbols.get(0);
-                    if(expectedType.isInstance(symbol)){
-
-                        if(r.isElseFilter()){
-                            //it looks like it's a valid classification "other" rule
-                            model.rules.add(r);
-                            template = symbol;
-                            guiOther.setSelected(true);
-                        }else{
-                            Filter f = r.getFilter();
-                            if(f != null && f instanceof PropertyIsEqualTo){
-                                PropertyIsEqualTo equal = (PropertyIsEqualTo) f;
-                                Expression exp1 = equal.getExpression1();
-                                Expression exp2 = equal.getExpression2();
-
-                                if(exp1 instanceof PropertyName && exp2 instanceof Literal){
-                                    if(properties.contains(exp1)){
-                                        //it looks like it's a valid classification property rule
-                                        model.rules.add(r);
-                                        template = symbol;
-                                        guiProperty.setSelectedItem(exp1);
-                                    }else{
-                                        //property is not in the schema
-                                        break;
-                                    }
-                                }else if(exp2 instanceof PropertyName && exp1 instanceof Literal){
-                                    if(properties.contains(exp2)){
-                                        //it looks like it's a valid classification property rule
-                                        model.rules.add(r);
-                                        template = symbol;
-                                        guiProperty.setSelectedItem(exp2);
-                                    }else{
-                                        //property is not in the schema
-                                        break;
-                                    }
-                                }else{
-                                    //mismatch analyze structure
-                                    break;
-                                }
-                            }
-                        }
-
-                    }else{
-                        break;
-                    }
-
-                }
-
-            }
-        }else{
-            guiProperty.setModel(new ListComboBoxModel(properties));
-        }
+         guiProperty.setModel(new ListComboBoxModel(builder.getProperties()));
+         guiProperty.setSelectedItem(builder.getCurrentProperty());
 
         updateModelGlyph();
         guiTable.revalidate();
         guiTable.repaint();
     }
 
-    private Symbolizer createSymbolizer(){
-        return derivateSymbolizer(template, ((RandomPalette)guiPalette.getSelectedItem()).next());
-    }
-
-    /**
-     * Derivate a symbolizer with a new color.
-     */
-    private Symbolizer derivateSymbolizer(Symbolizer symbol, Color color){
-
-        if(symbol instanceof PolygonSymbolizer){
-            PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
-            Fill fill = SF.fill(SF.literal(color),ps.getFill().getOpacity());
-            return SF.polygonSymbolizer(ps.getName(), ps.getGeometryPropertyName(),
-                    ps.getDescription(), ps.getUnitOfMeasure(),
-                    ps.getStroke(),fill,ps.getDisplacement(),ps.getPerpendicularOffset());
-        }else if(symbol instanceof LineSymbolizer){
-            LineSymbolizer ls = (LineSymbolizer) symbol;
-            Stroke oldStroke = ls.getStroke();
-            Stroke stroke = SF.stroke(SF.literal(color),oldStroke.getOpacity(),oldStroke.getWidth(),
-                    oldStroke.getLineJoin(),oldStroke.getLineCap(),oldStroke.getDashArray(),oldStroke.getDashOffset());
-            return SF.lineSymbolizer(ls.getName(), ls.getGeometryPropertyName(),
-                    ls.getDescription(), ls.getUnitOfMeasure(), stroke, ls.getPerpendicularOffset());
-        }else if(symbol instanceof PointSymbolizer){
-            PointSymbolizer ps = (PointSymbolizer) symbol;
-            Graphic oldGraphic = ps.getGraphic();
-            Mark oldMark = (Mark) oldGraphic.graphicalSymbols().get(0);
-            Fill fill = SF.fill(SF.literal(color),oldMark.getFill().getOpacity());
-            List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-            symbols.add(SF.mark(oldMark.getWellKnownName(), fill, oldMark.getStroke()));
-            Graphic graphic = SF.graphic(symbols, oldGraphic.getOpacity(),oldGraphic.getSize(),
-                    oldGraphic.getRotation(),oldGraphic.getAnchorPoint(),oldGraphic.getDisplacement());
-            return SF.pointSymbolizer(graphic,ps.getGeometryPropertyName());
-        }else{
-            throw new IllegalArgumentException("unexpected symbolizer type : " + symbol);
-        }
-
-    }
-
     private void updateModelGlyph(){
-        if(template == null){
+        if(builder.getTemplate() == null){
             guiModel.setIcon(null);
             guiModel.setText(" ");
         }else{
             BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-            DefaultGlyphService.render(template, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+            DefaultGlyphService.render(builder.getTemplate(), new Rectangle(GLYPH_DIMENSION), img.createGraphics());
             guiModel.setIcon(new ImageIcon(img));
             guiModel.setText("");
         }
-    }
-
-    private Rule createRule(PropertyName property, Object obj){
-        MutableRule r = SF.rule(createSymbolizer());
-        r.setFilter(FF.equals(property, FF.literal(obj)));
-        r.setDescription(SF.description(obj.toString(), obj.toString()));
-        return r;
     }
 
     /** This method is called from within the constructor to
@@ -459,7 +290,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     private void guiAddOneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
         String val = JOptionPane.showInputDialog(MessageBundle.getString("value")+" :");
-        Rule r = createRule((PropertyName) guiProperty.getSelectedItem(), val);
+        Rule r = builder.createRule((PropertyName) guiProperty.getSelectedItem(), val);
 
         model.rules.add(r);
         guiTable.revalidate();
@@ -473,45 +304,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
     private void guiGenerateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
-
-        //search the different values
-        final Set<Object> differentValues = new HashSet<Object>();
-        final PropertyName property = (PropertyName)guiProperty.getSelectedItem();
-        final DefaultQuery query = new DefaultQuery();
-        query.setPropertyNames(new String[]{property.getPropertyName()});
-        
-        FeatureIterator<SimpleFeature> features = null;
-        try{
-            features = layer.getFeatureSource().getFeatures(query).features();
-            while(features.hasNext()){
-                SimpleFeature sf = features.next();
-                differentValues.add(property.evaluate(sf));
-            }
-        }catch(IOException ex){
-            ex.printStackTrace();
-        }finally{
-            if(features != null){
-                features.close();
-            }
-        }
-
-        //generate the different rules
-        List<Rule> rules = new ArrayList<Rule>();
-
-        for(Object obj : differentValues){
-            rules.add(createRule(property, obj));
-        }
-
-        //generate the other rule if asked
-        if(guiOther.isSelected()){
-            MutableRule r = SF.rule(createSymbolizer());
-            r.setElseFilter(true);
-            r.setDescription(SF.description("other", "other"));
-            rules.add(r);
-        }
-
-        model.rules.clear();
-        model.rules.addAll(rules);
+        builder.create();
 
         guiTable.revalidate();
         guiTable.repaint();
@@ -519,7 +312,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        template = JPropertyDialog.showSymbolizerDialog(template, layer);
+        builder.setTemplate( JPropertyDialog.showSymbolizerDialog(builder.getTemplate(), layer) );
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
@@ -860,7 +653,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     private class RuleModel extends AbstractTableModel{
 
-        private final List<Rule> rules = new ArrayList<Rule>();
+        private final List<Rule> rules = builder.getRules();
 
         @Override
         public int getRowCount() {
@@ -921,9 +714,6 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
             super.setValueAt(aValue, rowIndex, columnIndex);
 
         }
-
-
-
 
     }
 

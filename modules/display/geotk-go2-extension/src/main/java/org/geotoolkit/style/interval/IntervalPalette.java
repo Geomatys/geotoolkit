@@ -15,8 +15,9 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.swing.propertyedit.styleproperty;
+package org.geotoolkit.style.interval;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
@@ -24,8 +25,8 @@ import java.awt.Rectangle;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Palette {
+public interface IntervalPalette extends Palette{
 
-    void render(Graphics2D g, Rectangle rect);
+    Color interpolate(double d);
 
 }

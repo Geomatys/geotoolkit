@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.swing.propertyedit.styleproperty;
+package org.geotoolkit.style.interval;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

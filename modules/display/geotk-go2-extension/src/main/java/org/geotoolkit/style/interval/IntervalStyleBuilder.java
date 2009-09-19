@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.propertyedit.styleproperty;
+package org.geotoolkit.style.interval;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -31,7 +31,6 @@ import javax.swing.table.AbstractTableModel;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -41,14 +40,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.data.DefaultQuery;
 
 import org.geotoolkit.feature.collection.FeatureIterator;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -79,31 +70,20 @@ import org.opengis.style.Symbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class Analyze extends AbstractTableModel{
+public class IntervalStyleBuilder extends AbstractTableModel{
 
     private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-
-    public static final PropertyName NO_VALUE = FF.property("-");
-
     public static enum METHOD{
-        EL("el"),
-        QANTILE("qantile"),
-        MANUAL("manual");
-
-        private final String title;
-
-        METHOD(String key){
-            this.title = MessageBundle.getString(key);
-        }
-
-        public String getTitle(){
-            return title;
-        }
-
+        EL,
+        QANTILE,
+        MANUAL
     };
+
+
+    public final PropertyName noValue;
+    private final MutableStyleFactory sf;
+    private final FilterFactory ff;
 
     private FeatureMapLayer layer;
     private PropertyName classification;
@@ -125,7 +105,24 @@ public class Analyze extends AbstractTableModel{
     private Symbolizer template = null;
     private Class<? extends Symbolizer> expectedType = null;
 
-    public Analyze() {
+    public IntervalStyleBuilder() {
+        this(null,null);
+    }
+
+    public IntervalStyleBuilder(MutableStyleFactory styleFactory, FilterFactory filterFactory){
+        if(styleFactory == null){
+             sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+        }else{
+            sf = styleFactory;
+        }
+
+        if(filterFactory == null){
+             ff = FactoryFinder.getFilterFactory(null);
+        }else{
+            ff = filterFactory;
+        }
+
+        noValue = ff.property("-");
     }
 
     public long getCount() {
@@ -161,6 +158,10 @@ public class Analyze extends AbstractTableModel{
     public double[] getValues() {
         analyze();
         return values;
+    }
+
+    public Double[] getAllValues(){
+        return allValues.clone();
     }
 
     public void setValues(double[] values) {
@@ -337,7 +338,7 @@ public class Analyze extends AbstractTableModel{
             Class<?> type = desc.getType().getBinding();
 
             if(Number.class.isAssignableFrom(type)){
-                properties.add(FF.property(desc.getName().getLocalPart()));
+                properties.add(ff.property(desc.getName().getLocalPart()));
             }
         }
 
@@ -346,21 +347,21 @@ public class Analyze extends AbstractTableModel{
         Class<?> geoClass = geo.getType().getBinding();
 
         if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
-            Stroke stroke = SF.stroke(Color.BLACK, 1);
-            Fill fill = SF.fill(Color.BLUE);
-            template = SF.polygonSymbolizer(stroke,fill,null);
+            Stroke stroke = sf.stroke(Color.BLACK, 1);
+            Fill fill = sf.fill(Color.BLUE);
+            template = sf.polygonSymbolizer(stroke,fill,null);
             expectedType = PolygonSymbolizer.class;
         }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
-            Stroke stroke = SF.stroke(Color.BLUE, 2);
-            template = SF.lineSymbolizer(stroke,null);
+            Stroke stroke = sf.stroke(Color.BLUE, 2);
+            template = sf.lineSymbolizer(stroke,null);
             expectedType = LineSymbolizer.class;
         }else{
-            Stroke stroke = SF.stroke(Color.BLACK, 1);
-            Fill fill = SF.fill(Color.BLUE);
+            Stroke stroke = sf.stroke(Color.BLACK, 1);
+            Fill fill = sf.fill(Color.BLUE);
             List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-            symbols.add(SF.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
-            Graphic gra = SF.graphic(symbols, FF.literal(1), FF.literal(12), FF.literal(0), SF.anchorPoint(), SF.displacement());
-            template = SF.pointSymbolizer(gra, null);
+            symbols.add(sf.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
+            Graphic gra = sf.graphic(symbols, ff.literal(1), ff.literal(12), ff.literal(0), sf.anchorPoint(), sf.displacement());
+            template = sf.pointSymbolizer(gra, null);
             expectedType = PointSymbolizer.class;
         }
 
@@ -372,7 +373,7 @@ public class Analyze extends AbstractTableModel{
 
             if(!properties.contains(classification)) return;
 
-        if(normalize == null || normalize.equals(NO_VALUE)){
+        if(normalize == null || normalize.equals(noValue)){
             query.setPropertyNames(new String[]{classification.getPropertyName()});
         }else{
             if(!properties.contains(normalize)) return;
@@ -392,7 +393,7 @@ public class Analyze extends AbstractTableModel{
                 Number classifValue = classification.evaluate(sf, Number.class);
                 double value;
 
-                if(normalize == null || normalize.equals(NO_VALUE)){
+                if(normalize == null || normalize.equals(noValue)){
                     value = classifValue.doubleValue();
                 }else{
                     Number normalizeValue = normalize.evaluate(sf, Number.class);
@@ -472,27 +473,27 @@ public class Analyze extends AbstractTableModel{
 
         if(symbol instanceof PolygonSymbolizer){
             PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
-            Fill fill = SF.fill(SF.literal(color),ps.getFill().getOpacity());
-            return SF.polygonSymbolizer(ps.getName(), ps.getGeometryPropertyName(),
+            Fill fill = sf.fill(sf.literal(color),ps.getFill().getOpacity());
+            return sf.polygonSymbolizer(ps.getName(), ps.getGeometryPropertyName(),
                     ps.getDescription(), ps.getUnitOfMeasure(),
                     ps.getStroke(),fill,ps.getDisplacement(),ps.getPerpendicularOffset());
         }else if(symbol instanceof LineSymbolizer){
             LineSymbolizer ls = (LineSymbolizer) symbol;
             Stroke oldStroke = ls.getStroke();
-            Stroke stroke = SF.stroke(SF.literal(color),oldStroke.getOpacity(),oldStroke.getWidth(),
+            Stroke stroke = sf.stroke(sf.literal(color),oldStroke.getOpacity(),oldStroke.getWidth(),
                     oldStroke.getLineJoin(),oldStroke.getLineCap(),oldStroke.getDashArray(),oldStroke.getDashOffset());
-            return SF.lineSymbolizer(ls.getName(), ls.getGeometryPropertyName(),
+            return sf.lineSymbolizer(ls.getName(), ls.getGeometryPropertyName(),
                     ls.getDescription(), ls.getUnitOfMeasure(), stroke, ls.getPerpendicularOffset());
         }else if(symbol instanceof PointSymbolizer){
             PointSymbolizer ps = (PointSymbolizer) symbol;
             Graphic oldGraphic = ps.getGraphic();
             Mark oldMark = (Mark) oldGraphic.graphicalSymbols().get(0);
-            Fill fill = SF.fill(SF.literal(color),oldMark.getFill().getOpacity());
+            Fill fill = sf.fill(sf.literal(color),oldMark.getFill().getOpacity());
             List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-            symbols.add(SF.mark(oldMark.getWellKnownName(), fill, oldMark.getStroke()));
-            Graphic graphic = SF.graphic(symbols, oldGraphic.getOpacity(),oldGraphic.getSize(),
+            symbols.add(sf.mark(oldMark.getWellKnownName(), fill, oldMark.getStroke()));
+            Graphic graphic = sf.graphic(symbols, oldGraphic.getOpacity(),oldGraphic.getSize(),
                     oldGraphic.getRotation(),oldGraphic.getAnchorPoint(),oldGraphic.getDisplacement());
-            return SF.pointSymbolizer(graphic,ps.getGeometryPropertyName());
+            return sf.pointSymbolizer(graphic,ps.getGeometryPropertyName());
         }else{
             throw new IllegalArgumentException("unexpected symbolizer type : " + symbol);
         }
@@ -504,14 +505,14 @@ public class Analyze extends AbstractTableModel{
         List<MutableRule> rules = new ArrayList<MutableRule>();
 
         final Expression exp;
-        if(normalize == null || normalize.equals(NO_VALUE)){
+        if(normalize == null || normalize.equals(noValue)){
             exp = classification;
         }else{
-            exp = FF.divide(classification, normalize);
+            exp = ff.divide(classification, normalize);
         }
 
         for(int i=1;i<values.length;i++){
-            final MutableRule rule = SF.rule();
+            final MutableRule rule = sf.rule();
 
             double start = values[i-1];
             double end = values[i];
@@ -521,19 +522,19 @@ public class Analyze extends AbstractTableModel{
             final String title;
             if(i == values.length-1){
                 //last element
-                Filter above = FF.greaterOrEqual(exp, FF.literal(start));
-                Filter under = FF.lessOrEqual(exp, FF.literal(end));
-                interval = FF.and(above, under);
+                Filter above = ff.greaterOrEqual(exp, ff.literal(start));
+                Filter under = ff.lessOrEqual(exp, ff.literal(end));
+                interval = ff.and(above, under);
                 title = "[ " + FORMAT.format(start) + " -> " + FORMAT.format(end) + " ]";
             }else{
-                Filter above = FF.greaterOrEqual(exp, FF.literal(start));
-                Filter under = FF.less(exp, FF.literal(end));
-                interval = FF.and(above, under);
+                Filter above = ff.greaterOrEqual(exp, ff.literal(start));
+                Filter under = ff.less(exp, ff.literal(end));
+                interval = ff.and(above, under);
                 title = "[ " + FORMAT.format(start) + " -> " + FORMAT.format(end) + " [";
             }
             rule.setFilter(interval);
             rule.setName(title);
-            rule.setDescription(SF.description(title, title));
+            rule.setDescription(sf.description(title, title));
 
             //create the style
             Symbolizer symbol = createSymbolizer(palette,(double)(i-1)/(values.length-2));
@@ -543,58 +544,6 @@ public class Analyze extends AbstractTableModel{
         }
 
         return rules;
-    }
-
-    public JFreeChart getChart(int nbDivision){
-        analyze();
-
-        XYSeries series = new XYSeries( "Data" ) ;
-
-        double before = minimum;
-        for(float i=1;i<=nbDivision;i++){
-            final double localmin = before;
-            final double localmax = minimum + (i/nbDivision)*(maximum-minimum);
-            before = localmax;
-            long localsum = 0;
-
-            for(Double d : allValues){
-                if(i == 100){
-                    //last element
-                    if(d>=localmin && d<=localmax){
-                        localsum++;
-                    }
-                }else{
-                    if(d>=localmin && d<localmax){
-                        localsum++;
-                    }
-                }
-            }
-            series.add( minimum+(localmin+localmax)/2, localsum) ;
-        }
-
-	XYSeriesCollection dataset = new XYSeriesCollection(series);
-
-        JFreeChart chart = ChartFactory.createXYBarChart(
-		"",
-		"",
-		false,
-		"",
-		dataset,
-		PlotOrientation.VERTICAL,
-		false,
-		false,
-		false
-		);
-
-        XYPlot plot = chart.getXYPlot();
-        ((XYBarRenderer)plot.getRenderer()).setShadowVisible(false);
-        ((XYBarRenderer)plot.getRenderer()).setUseYInterval(false);
-        ((XYBarRenderer)plot.getRenderer()).setMargin(0);
-
-        chart.getPlot().setBackgroundAlpha(0);
-        chart.setBackgroundPaint(new Color(0f,0f,0f,0f));
-
-	return chart ;
     }
 
     ////////////// TABLE MODEL /////////////////////////////////////////////////

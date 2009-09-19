@@ -61,13 +61,17 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.Analyze.METHOD;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.interval.DefaultIntervalPalette;
+import org.geotoolkit.style.interval.IntervalPalette;
+import org.geotoolkit.style.interval.IntervalStyleBuilder;
+import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
+import org.geotoolkit.style.interval.Palette;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
@@ -111,7 +115,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final RuleModel model = new RuleModel();
-    private final Analyze analyze = new Analyze();
+    private final IntervalStyleBuilder analyze = new IntervalStyleBuilder();
     private FeatureMapLayer layer = null;
 
     public JClassificationIntervalStylePanel() {
@@ -139,7 +143,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable.getColumnExt(0).setMaxWidth(30);
         guiTable.getColumnExt(3).setMaxWidth(20);
 
-        guiMethod.setModel(new EnumComboBoxModel(Analyze.METHOD.class));
+        guiMethod.setModel(new EnumComboBoxModel(IntervalStyleBuilder.METHOD.class));
         guiMethod.setRenderer(new MethodRenderer());
 
     }
@@ -177,7 +181,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         Object oldSelected = guiNormalize.getSelectedItem();
 
         List<PropertyName> lstnormalize = new ArrayList<PropertyName>();
-        lstnormalize.add(Analyze.NO_VALUE);
+        lstnormalize.add(analyze.noValue);
         lstnormalize.addAll(analyze.getProperties());
         lstnormalize.remove(guiProperty.getSelectedItem());
         guiNormalize.setModel(new ListComboBoxModel(lstnormalize));
@@ -592,8 +596,16 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
             MethodRenderer.this.setText(" ");
 
-            if(value instanceof Analyze.METHOD){
-                MethodRenderer.this.setText(((Analyze.METHOD)value).getTitle());
+            if(value instanceof IntervalStyleBuilder.METHOD){
+                METHOD mt = (METHOD) value;
+                
+                final String txt;
+                switch(mt){
+                    case EL : txt = MessageBundle.getString("el"); break;
+                    case MANUAL : txt = MessageBundle.getString("manual"); break;
+                    default : txt = MessageBundle.getString("qantile"); break;
+                }
+                MethodRenderer.this.setText(txt);
             }
             return MethodRenderer.this;
         }

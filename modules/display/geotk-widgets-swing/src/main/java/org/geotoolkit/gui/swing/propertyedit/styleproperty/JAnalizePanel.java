@@ -26,13 +26,22 @@ import javax.swing.JList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.Analyze.METHOD;
+
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.style.interval.IntervalStyleBuilder;
+import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
 
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
@@ -42,15 +51,15 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
     private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
 
-    private final Analyze analyze;
+    private final IntervalStyleBuilder analyze;
 
     /** Creates new form JAnalizePanel */
-    public JAnalizePanel(Analyze analyze) {
+    public JAnalizePanel(IntervalStyleBuilder analyze) {
         this.analyze = analyze;
         initComponents();
 
 
-        guiMethod.setModel(new EnumComboBoxModel(Analyze.METHOD.class));
+        guiMethod.setModel(new EnumComboBoxModel(IntervalStyleBuilder.METHOD.class));
         guiMethod.setRenderer(new MethodRenderer());
 
         refresh();
@@ -65,7 +74,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
         guiMedian.setText(FORMAT.format(analyze.getMedian()));
 
         guiChart.removeAll();
-        guiChart.add(new ChartPanel(analyze.getChart((Integer)guiDivision.getModel().getValue())));
+        guiChart.add(new ChartPanel(getChart((Integer)guiDivision.getModel().getValue())));
 
         double[] values = analyze.getValues();
         Double[][] vals = new Double[values.length][1];
@@ -109,6 +118,58 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
         guiMethod.setSelectedItem(analyze.getMethod());
 
+    }
+
+
+
+    public JFreeChart getChart(int nbDivision){
+        XYSeries series = new XYSeries( "Data" ) ;
+
+        double before = analyze.getMinimum();
+        for(float i=1;i<=nbDivision;i++){
+            final double localmin = before;
+            final double localmax = analyze.getMinimum() + (i/nbDivision)*(analyze.getMaximum()-analyze.getMinimum());
+            before = localmax;
+            long localsum = 0;
+
+            for(Double d : analyze.getAllValues()){
+                if(i == 100){
+                    //last element
+                    if(d>=localmin && d<=localmax){
+                        localsum++;
+                    }
+                }else{
+                    if(d>=localmin && d<localmax){
+                        localsum++;
+                    }
+                }
+            }
+            series.add( analyze.getMinimum()+(localmin+localmax)/2, localsum) ;
+        }
+
+	XYSeriesCollection dataset = new XYSeriesCollection(series);
+
+        JFreeChart chart = ChartFactory.createXYBarChart(
+		"",
+		"",
+		false,
+		"",
+		dataset,
+		PlotOrientation.VERTICAL,
+		false,
+		false,
+		false
+		);
+
+        XYPlot plot = chart.getXYPlot();
+        ((XYBarRenderer)plot.getRenderer()).setShadowVisible(false);
+        ((XYBarRenderer)plot.getRenderer()).setUseYInterval(false);
+        ((XYBarRenderer)plot.getRenderer()).setMargin(0);
+
+        chart.getPlot().setBackgroundAlpha(0);
+        chart.setBackgroundPaint(new Color(0f,0f,0f,0f));
+
+	return chart ;
     }
 
     /** This method is called from within the constructor to
@@ -392,7 +453,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
     private void guiDivisionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_guiDivisionStateChanged
         guiChart.removeAll();
-        guiChart.add(new ChartPanel(analyze.getChart((Integer)guiDivision.getModel().getValue())));
+        guiChart.add(new ChartPanel(getChart((Integer)guiDivision.getModel().getValue())));
         guiChart.revalidate();
         guiChart.repaint();
     }//GEN-LAST:event_guiDivisionStateChanged
@@ -437,8 +498,16 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
             MethodRenderer.this.setText(" ");
 
-            if(value instanceof Analyze.METHOD){
-                MethodRenderer.this.setText(((Analyze.METHOD)value).getTitle());
+            if(value instanceof IntervalStyleBuilder.METHOD){
+                METHOD mt = (METHOD) value;
+
+                final String txt;
+                switch(mt){
+                    case EL : txt = MessageBundle.getString("el"); break;
+                    case MANUAL : txt = MessageBundle.getString("manual"); break;
+                    default : txt = MessageBundle.getString("qantile"); break;
+                }
+                MethodRenderer.this.setText(txt);
             }
             return MethodRenderer.this;
         }
