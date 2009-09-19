@@ -28,6 +28,7 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -61,6 +62,7 @@ public class JCoordinateBar extends JToolBar {
     private String error = MessageBundle.getString("map_control_coord_error");
 
     private final JCheckBox guiAxis = new JCheckBox();
+    private final JScaleCombo guiCombo = new JScaleCombo();
     private final JTextField guiCoord = new JTextField();
     private final JCheckBox guiStatefull = new JCheckBox();
     private final JCRSButton gui_crsButton = new JCRSButton();
@@ -120,6 +122,7 @@ public class JCoordinateBar extends JToolBar {
         add(guiStatefull,constraints);
         add(guiAxis,constraints);
 
+
 //        //a an empty component to fill space, like glue
 //        constraints.fill = GridBagConstraints.BOTH;
 //        constraints.anchor = GridBagConstraints.WEST;
@@ -132,6 +135,10 @@ public class JCoordinateBar extends JToolBar {
         constraints.anchor = GridBagConstraints.EAST;
         constraints.weightx = 1.0;
         add(guiCoord,constraints);
+
+        constraints.weightx = 0.5;
+        add(guiCombo,constraints);
+
         constraints.weightx = 0.0;
         add(gui_crsButton,constraints);
 
@@ -143,6 +150,7 @@ public class JCoordinateBar extends JToolBar {
     }
 
     public void setMap(Map2D map) {
+        guiCombo.setMap(map);
         
         if(this.map != null){
             this.map.getComponent().removeMouseMotionListener(listener);
@@ -157,11 +165,28 @@ public class JCoordinateBar extends JToolBar {
 
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             gui_crsButton.setText(crs.getName().toString());
+
         }
         
         gui_crsButton.setEnabled(this.map != null);
     }
-           
+
+    public void setScales(List<Number> scales){
+        guiCombo.setScales(scales);
+    }
+
+    public List<Number> getScales(){
+        return guiCombo.getScales();
+    }
+
+    public void setStepSize(Number step){
+        guiCombo.setStepSize(step);
+    }
+
+    public Number getStepSize(){
+        return guiCombo.getStepSize();
+    }
+
     private class myListener extends MouseMotionAdapter implements PropertyChangeListener{
 
         @Override

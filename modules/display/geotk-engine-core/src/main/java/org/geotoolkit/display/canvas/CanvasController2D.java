@@ -187,6 +187,15 @@ public interface CanvasController2D extends CanvasController{
     void setVisibleArea(final Rectangle2D logicalBounds) 
             throws IllegalArgumentException, NoninvertibleTransformException;
 
+    /**
+     * Set the scale, in a ground unit manner, relation between map display size
+     * and real ground unit meters;
+     * @param scale
+     */
+    void setGeographicScale(double scale);
+
+    double getGeographicScale();
+
 
     //TODO need to handle this more correctly with a 4D BBox
 

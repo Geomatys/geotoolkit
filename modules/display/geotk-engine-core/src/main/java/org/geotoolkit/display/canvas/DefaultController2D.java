@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display.canvas;
 
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -26,11 +27,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
@@ -568,6 +572,68 @@ public class DefaultController2D implements CanvasController2D{
     @Override
     public Unit<Length> getElevationUnit() {
         return elevationUnit;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setGeographicScale(double scale){
+        double currentScale = getGeographicScale();
+        double factor = currentScale/scale;
+        try {
+            scale(factor);
+        } catch (NoninvertibleTransformException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public double getGeographicScale(){
+        final Point2D center = getDisplayCenter();
+        final double[] P1 = new double[]{center.getX(),center.getY()};
+        final double[] P2 = new double[]{P1[0],P1[1]+1};
+
+        try {
+            AffineTransform trs = canvas.objectiveToDisplay.createInverse();
+            trs.transform(P1, 0, P1, 0, 1);
+            trs.transform(P2, 0, P2, 0, 1);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+        final CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+        final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
+
+        final double distance;
+        if(unit.isCompatible(SI.METER)){
+            final Point2D p1 = new Point2D.Double(P1[0], P1[1]);
+            final Point2D p2 = new Point2D.Double(P2[0], P2[1]);
+            final UnitConverter conv = unit.getConverterTo(SI.METER);
+            distance = conv.convert(p1.distance(p2));
+        }else{
+            try{
+                final GeodeticCalculator gc = new GeodeticCalculator(crs);
+                final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
+                pos1.setOrdinate(0, P1[0]);
+                pos1.setOrdinate(1, P1[1]);
+                final GeneralDirectPosition pos2 = new GeneralDirectPosition(crs);
+                pos2.setOrdinate(0, P2[0]);
+                pos2.setOrdinate(1, P2[1]);
+                gc.setStartingPosition(pos1);
+                gc.setDestinationPosition(pos2);
+                distance = Math.abs(gc.getOrthodromicDistance());
+            }catch(Exception ex){
+                LOGGER.log(Level.WARNING, "Current mpa bounds is out of geodetic calculation, will return scale 1.0");
+                return 1;
+            }
+        }
+
+        final double displayToDevice = 1f / 72f * 0.0254f;
+        return distance / displayToDevice;
     }
 
     // Convinient methods ------------------------------------------------------
