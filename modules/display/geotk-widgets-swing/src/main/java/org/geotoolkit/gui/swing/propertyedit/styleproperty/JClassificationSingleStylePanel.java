@@ -111,6 +111,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
         guiPalette.setRenderer(new PaletteRenderer());
         guiPalette.setSelectedIndex(0);
+        builder.setPalette((RandomPalette) guiPalette.getSelectedItem());
 
         guiTable.getColumnModel().getColumn(0).setCellRenderer(new RuleStyleRenderer());
         guiTable.getColumnModel().getColumn(0).setCellEditor(new RuleStyleEditor());
@@ -304,6 +305,8 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
     private void guiGenerateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
+
+        builder.setPalette((RandomPalette) guiPalette.getSelectedItem());
         builder.create();
 
         guiTable.revalidate();
