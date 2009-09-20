@@ -56,6 +56,14 @@ import static org.geotoolkit.image.io.mosaic.Tile.MASK;
 @SuppressWarnings("serial") // Not expected to be serialized.
 final class GridNode extends TreeNode implements Comparable<GridNode> {
     /**
+     * The horizontal and vertical size (in number of tiles) of a virtual tile.  This is used only
+     * when the structure of the tiles given at construction time is {@linkplain #isFlat flat}. In
+     * such case, a few virtual tiles are created for performance raisons. Each virtual tiles will
+     * contains at most {@value}×{@value} real tiles.
+     */
+    private static final int GROUP_SIZE = 3;
+
+    /**
      * The index, used for preserving order compared to the user-specified one.
      */
     private final int index;
@@ -72,14 +80,14 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
     private short xSubsampling, ySubsampling;
 
     /**
-     * Comparator for sorting tiles by descreasing subsamplings and area. The {@linkplain
+     * Comparator for sorting tiles by decreasing subsamplings and area. The {@linkplain
      * GridNode#GridNode(Tile[]) constructor} expects this order for inserting a tile into
      * the smallest tile that can contains it. If two tiles have the same subsampling, then
-     * they are sorted by descreasing area in absolute coordinates.
+     * they are sorted by decreasing area in absolute coordinates.
      * <p>
-     * If two tiles have the same subsampling and area, then their order is restored on the
-     * basis that initial order, when sorted by {@link TileManager}, should be efficient for
-     * reading tiles sequentially.
+     * If two tiles have the same subsampling and area, then their relative order is left
+     * unchanged on the basis that initial order, when sorted by {@link TileManager}, should
+     * be efficient for reading tiles sequentially.
      */
     private static final Comparator<GridNode> PRE_PROCESSING = new Comparator<GridNode>() {
         @Override public int compare(final GridNode n1, final GridNode n2) {
@@ -199,9 +207,6 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
             final GridNode child = nodes[i];
             final GridNode parent = smallest(child);
             parent.addChild(child);
-        }
-        if (isFlat) {
-            removeEmpty();
         }
         /*
          * Calculates the bounds only for root node, if not already computed. We do not iterate
@@ -347,21 +352,6 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
     }
 
     /**
-     * Remove empty nodes.
-     */
-    private void removeEmpty() {
-        GridNode child = (GridNode) firstChildren();
-        while (child != null) {
-            final GridNode next = (GridNode) child.nextSibling();
-            child.removeEmpty(); // May lost its nextSibling().
-            child = next;
-        }
-        if (tile == null && isLeaf() && !isRoot()) {
-            remove();
-        }
-    }
-
-    /**
      * Invoked when the tree construction is completed with every nodes assigned to its final
      * parent. This method calculate the values that depend on the child hierarchy, including
      * subsampling.
@@ -477,49 +467,142 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
      * The order of nodes is significant. This method must prepend bigger nodes first, like what
      * we would get if the nodes where associated with real tiles and the array sorted with the
      * {@link #PRE_PROCESSING} comparator.
+     * <p>
+     * The current algorithm requires that all tiles are organized on a regular grid. If the given
+     * array does not meet this criterion, then we are better to not try to prepend anything (the
+     * only consequence is slower execution). If we tried to use a better algorithm in this method,
+     * we would be taking the path of a real RTree, which is the subject of many litterature and
+     * out of scope of this mosaic package (which basically assumes a pre-existing layout suitable
+     * for the mosaic needs).
      *
      * @param  nodes The nodes for which to prepend a tree.
      * @return The nodes with a tree prepend before them.
      */
     private static GridNode[] prependTree(GridNode[] nodes) {
-        final Dimension largest = new Dimension();
-        final Rectangle bounds = new Rectangle(-1,-1);
+        /*
+         * Computes the bounds of the whole mosaic and get the size of the largest tiles. We select
+         * the size of largest tiles because the last row and the last column often contain cropped
+         * tiles, so the "normal" tiles are the one having the maximal size.
+         */
+        final Rectangle mosaicBounds = new Rectangle(-1, -1);
+        int tileWidth  = 0;
+        int tileHeight = 0;
         for (final GridNode node : nodes) {
-            bounds.add(node);
-            if (node.width  > largest.width)  largest.width  = node.width;
-            if (node.height > largest.height) largest.height = node.height;
+            mosaicBounds.add(node);
+            if (node.width  > tileWidth)  tileWidth  = node.width;
+            if (node.height > tileHeight) tileHeight = node.height;
         }
-        if (!bounds.isEmpty()) {
-            /*
-             * Asks for node that can contain at least 2×2 tiles, otherwise creating
-             * those nodes would consume memory without significant performance gain.
-             */
-            largest.width  *= 2;
-            largest.height *= 2;
-            final int[][] divisors = MosaicBuilder.suggestedNumTiles(bounds, largest, 16, false);
-            final int[] sx = divisors[0];
-            final int[] sy = divisors[1];
-            final Rectangle part = new Rectangle();
-            final List<GridNode> list = new ArrayList<GridNode>();
-            for (int i=0; i<sx.length; i++) {
-                final int nx = sx[i];
-                final int ny = sy[i];
-                part.y      = bounds.y;
-                part.width  = bounds.width  / nx;
-                part.height = bounds.height / ny;
-                for (int y=0; y<ny; y++) {
-                    part.x = bounds.x;
-                    for (int x=0; x<nx; x++) {
-                        list.add(new GridNode(part));
-                        part.x += part.width;
+        if (mosaicBounds.isEmpty()) {
+            return nodes;
+        }
+        /*
+         * While uncommon, it may happen that the first row and the first column contain cropped
+         * tiles has well. In such case the (x,y) location of the upper-left tile may not be the
+         * (x,y) location of the whole grid: an offset may exist. The code below compute the
+         * maximal allowed offset.
+         */
+        int xOffset = 0;
+        int yOffset = 0;
+        for (final GridNode node : nodes) {
+            if (node.x == mosaicBounds.x) {
+                int s = tileWidth - node.width;
+                if (s > xOffset) xOffset = s;
+            }
+            if (node.y == mosaicBounds.y) {
+                int s = tileHeight - node.height;
+                if (s > yOffset) yOffset = s;
+            }
+        }
+        /*
+         * The current algorithm requires that all tiles are organized on a regular grid. Check
+         * if this condition is meet. If an offset is allowed (as computed by the above code),
+         * try all possible offset until a suitable value is found.
+         */
+adjust: while (true) {
+            for (final GridNode node : nodes) {
+                if (node.width > tileWidth - (node.x - mosaicBounds.x) % tileWidth) {
+                    if (--xOffset < 0) {
+                        return nodes;
                     }
-                    part.y += part.height;
+                    mosaicBounds.x--;
+                    continue adjust;
                 }
             }
-            final int size = list.size();
-            final GridNode[] old = nodes;
-            nodes = list.toArray(new GridNode[size + old.length]);
-            System.arraycopy(old, 0, nodes, size, old.length);
+            break;
+        }
+adjust: while (true) {
+            for (final GridNode node : nodes) {
+                if (node.height > tileHeight - (node.y - mosaicBounds.y) % tileHeight) {
+                    if (--yOffset < 0) {
+                        return nodes;
+                    }
+                    mosaicBounds.y--;
+                    continue adjust;
+                }
+            }
+            break;
+        }
+        /*
+         * Compute the number of "group of tiles" (or "virtual tiles"), where each group encompass
+         * at most 3×3 real tiles. Then build an array of booleans which indicates, for each group
+         * of tiles, if at least one tile exists in this group.
+         */
+        tileWidth  *= GROUP_SIZE;
+        tileHeight *= GROUP_SIZE;
+        int numTileX = (mosaicBounds.width  + (tileWidth  - 1)) / tileWidth;
+        int numTileY = (mosaicBounds.height + (tileHeight - 1)) / tileHeight;
+        boolean[] exists = new boolean[numTileX * numTileY];
+        for (final GridNode node : nodes) {
+            final int nx = (node.x - mosaicBounds.x) / tileWidth;
+            final int ny = (node.y - mosaicBounds.y) / tileHeight;
+            exists[ny * numTileX + nx] = true;
+        }
+        /*
+         * Now create the "virtual" tiles having at least one real tile. The tiles are
+         * inserted in reverse order, with the biggest tiles added last.
+         */
+        final Rectangle region = new Rectangle();
+        final List<GridNode> extra = new ArrayList<GridNode>();
+        while (exists.length > 1) {
+            region.width  = tileWidth;
+            region.height = tileHeight;
+            for (int i=exists.length; --i>=0;) {
+                if (exists[i]) {
+                    region.x = mosaicBounds.x + tileWidth  * (i % numTileX);
+                    region.y = mosaicBounds.y + tileHeight * (i / numTileX);
+                    extra.add(new GridNode(region.intersection(mosaicBounds)));
+                }
+            }
+            /*
+             * At this point the virtual tiles have been created. The next step will be to
+             * create an other level of "virtual tiles" which are 3×3 bigger than the ones
+             * we just created. For doing this, we need to compact the "exists" array in a
+             * smaller array.
+             */
+            tileWidth  *= GROUP_SIZE;
+            tileHeight *= GROUP_SIZE;
+            final boolean[] oldArray = exists;
+            final int oldRowLength = numTileX;
+            numTileX = (numTileX + (GROUP_SIZE-1)) / GROUP_SIZE;
+            numTileY = (numTileY + (GROUP_SIZE-1)) / GROUP_SIZE;
+            exists = new boolean[numTileX * numTileY];
+            for (int i=0; i<oldArray.length; i++) {
+                if (oldArray[i]) {
+                    final int ny = (i / oldRowLength) / GROUP_SIZE;
+                    final int nx = (i % oldRowLength) / GROUP_SIZE;
+                    exists[ny * numTileX + nx] = true;
+                }
+            }
+        }
+        /*
+         * Copies the "virtual tiles" at the begining of the nodes array.
+         */
+        final int n = extra.size();
+        if (n != 0) {
+            Collections.reverse(extra);
+            final GridNode[] oldArray = nodes;
+            nodes = extra.toArray(new GridNode[n + oldArray.length]);
+            System.arraycopy(oldArray, 0, nodes, n, oldArray.length);
         }
         return nodes;
     }

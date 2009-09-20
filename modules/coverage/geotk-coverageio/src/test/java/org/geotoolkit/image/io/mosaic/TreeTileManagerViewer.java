@@ -69,6 +69,11 @@ final class TreeTileManagerViewer extends JPanel implements TreeSelectionListene
     private TreeNode selected;
 
     /**
+     * The fill color of tiles.
+     */
+    private final Color tileColor = new Color(248, 248, 248);
+
+    /**
      * The color to use for filling the children of the selected node.
      */
     private final Color selectedChildren = new Color(0, 0, 255, 32);
@@ -119,11 +124,13 @@ final class TreeTileManagerViewer extends JPanel implements TreeSelectionListene
                 /*
                  * Outline in light gray the tiles having a subsampling of (1,1).
                  */
-                gr.setColor(Color.LIGHT_GRAY);
                 for (final Tile tile : tiles.getTiles()) {
                     final Dimension s = tile.getSubsampling();
                     if (s.width == 1 && s.height == 1) {
                         final Rectangle region = tile.getAbsoluteRegion();
+                        gr.setColor(tileColor);
+                        gr.fill(region);
+                        gr.setColor(Color.LIGHT_GRAY);
                         gr.draw(region);
                     }
                 }
@@ -235,7 +242,17 @@ final class TreeTileManagerViewer extends JPanel implements TreeSelectionListene
                 new BufferedInputStream(new FileInputStream(args[0])));
         final Object tiles = in.readObject();
         in.close();
-        final TreeTileManager manager = (TreeTileManager) tiles;
+        final TreeTileManager manager;
+        if (tiles instanceof ComparedTileManager) {
+            final ComparedTileManager cm = (ComparedTileManager) tiles;
+            if (cm.first instanceof TreeTileManager) {
+                manager = (TreeTileManager) cm.first;
+            } else {
+                manager = (TreeTileManager) cm.second;
+            }
+        } else {
+            manager = (TreeTileManager) tiles;
+        }
         SwingUtilities.setLookAndFeel(MosaicImageViewer.class, "main");
         final TreeTileManagerViewer viewer = new TreeTileManagerViewer(manager);
         viewer.showInFrame();

@@ -60,6 +60,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  * writting the tiles in the {@code "output"} directory, use the following:
  *
  * {@preformat java
+ *     Object originalMosaic = ...; // May be a File, URL, list of Tiles, etc.
  *     MosaicBuilder builder = new MosaicBuilder();
  *     builder.setTileDirectory(new File("output"));
  *     builder.setTileSize(new Dimension(256, 256));
@@ -414,8 +415,8 @@ public class MosaicBuilder {
      * @param  tileSize  The preferred tile size. Must be inside the {@code [minSize...maxSize]} range.
      * @param  minSize   The minimum size, inclusive. Must be greater than 0.
      * @param  maxSize   The maximum size, inclusive. Must be equals or greater that {@code minSize}.
-     * @return The suggested tile size. Inside the {@code [minSize...maxSize]} range except
-     *         if {@code imageSize} was smaller than {@code minSize}.
+     * @return The suggested tile size. This value is inside the {@code [minSize...maxSize]}
+     *         range except if {@code imageSize} was smaller than {@code minSize}.
      * @throws IllegalArgumentException if any argument doesn't meet the above-cited conditions.
      */
     public static int suggestedTileSize(final int imageSize, final int tileSize,
@@ -462,22 +463,22 @@ public class MosaicBuilder {
      * resulting in two arrays of type {@code int[]}:
      *
      * <blockquote><code>
-     * {@linkplain XMath#divisors divisors}({@linkplain Fraction#round round}(imageBounds / tileSize))
+     * int[] n = {@linkplain XMath#divisors divisors}({@linkplain Fraction#round(int,int) round}(imageBounds / tileSize))
      * </code></blockquote>
      *
-     * The two arrays are then decimated using the following procedures:
+     * The two <var>n</var> arrays are then decimated using the following procedures:
      * <p>
      * <ul>
-     *   <li>If {@code multiples} is {@code true}, then the arrays are decimated in such a way
-     *       that each value {@code divisors[i]} is a multiple of {@code divisors[i-1]}. This
+     *   <li>If {@code multiples} is {@code true}, then the arrays are decimated in such a way that
+     *       for any <var>i</var> greater than 0, {@code n[i]} is a multiple of {@code n[i-1]}. This
      *       is useful for getting only tiles that can fit entirely in bigger tiles.</li>
      *   <li>The largest of the two arrays is trimmed in order to get arrays of the same
      *       length.</li>
      * </ul>
      * <p>
-     * If the number of divisors is lower than the {@code preferredCount}, then this method will
-     * try again for smaller tiles until the preferred count or some other (currently undocumented)
-     * stop condition is reached.
+     * If the resulting array length is smaller than the {@code preferredCount}, then this method
+     * will try again with smaller values of {@code tileSize} until the preferred count or some
+     * other (currently undocumented) stop condition is reached.
      * <p>
      * Let {@code r} be the return value. The following contract should hold in all cases:
      * <p>
@@ -488,15 +489,19 @@ public class MosaicBuilder {
      *   <li>{@code r[0][0]} == {@code r[1][0]} == 1 (i.e. the first divisor is always 1)</li>
      * </ul>
      *
-     * @param  imageBounds The image size.
-     * @param  tileSize The tile size.
-     * @param  preferredCount The preferred minimal amount of divisors, or 0 if there is no
-     *         minimal count.
-     * @param  multiples If {@code true}, then the returned numbers are restricted to multiples.
+     * @param  imageBounds The size of the full image.
+     * @param  tileSize The size of every tile in the full image.
+     * @param  preferredCount The preferred minimal length of the returned arrays,
+     *         or 0 if there is no minimum.
+     * @param  multiples If {@code true}, then every value in the returned arrays is a
+     *         multiple of the previous value.
      * @return Two arrays of the same length, which are respectively the divisors of
      *         image {@linkplain Rectangle#width width} and the divisors of image
      *         {@linkplain Rectangle#height height}.
+     *
+     * @deprecated The behavior of this method is a little bit arbitrary and note quite useful in practice.
      */
+    @Deprecated
     public static int[][] suggestedNumTiles(final Rectangle imageBounds, final Dimension tileSize,
                                             final int preferredCount, final boolean multiples)
     {
@@ -684,41 +689,9 @@ public class MosaicBuilder {
                  * ySubsampling are equal, assuming that pixels are square (otherwise we could
                  * multiply by a height/width ratio; it may be done in a future version). Current
                  * implementation keep the union of divisors.
-                 *
-                 * TODO: move the code that computes the union in XArray.union(int[],int[]).
                  */
                 final int[] ySubsamplings = XMath.divisors(ny);
-                final int[] union  = new int[xSubsamplings.length + ySubsamplings.length];
-                int nu=0;
-                for (int ix=0, iy=0;;) {
-                    if (ix == xSubsamplings.length) {
-                        final int no = ySubsamplings.length - iy;
-                        System.arraycopy(ySubsamplings, iy, union, nu, no);
-                        nu += no;
-                        break;
-                    }
-                    if (iy == ySubsamplings.length) {
-                        final int no = xSubsamplings.length - ix;
-                        System.arraycopy(xSubsamplings, ix, union, nu, no);
-                        nu += no;
-                        break;
-                    }
-                    final int sx = xSubsamplings[ix];
-                    final int sy = ySubsamplings[iy];
-                    final int s;
-                    if (sx <= sy) {
-                        s = sx;
-                        ix++;
-                        if (sx == sy) {
-                            iy++;
-                        }
-                    } else {
-                        s = sy;
-                        iy++;
-                    }
-                    union[nu++] = s;
-                }
-                xSubsamplings = XArrays.resize(union, nu);
+                xSubsamplings = XArrays.union(xSubsamplings, ySubsamplings);
             }
             /*
              * Trims the subsamplings which would produce tiles smaller than the minimum size

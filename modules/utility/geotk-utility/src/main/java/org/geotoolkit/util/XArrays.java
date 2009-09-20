@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * the given array already has the requested length.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @see Arrays
  *
@@ -1054,5 +1054,52 @@ public final class XArrays {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the union of two sorted arrays. The input arrays shall be sorted in strictly
+     * increasing order (for perfomance raison, this is not verified). The output array is
+     * the union of the input arrays without duplicated values, with elements in strictly
+     * increasing order.
+     *
+     * @param  array1 The first array.
+     * @param  array2 The second array.
+     * @return The union of the given array without duplicated values.
+     *
+     * @since 3.04
+     */
+    public static int[] union(final int[] array1, final int[] array2) {
+        int[] union  = new int[array1.length + array2.length];
+        int nu=0;
+        for (int ix=0, iy=0;;) {
+            if (ix == array1.length) {
+                final int no = array2.length - iy;
+                System.arraycopy(array2, iy, union, nu, no);
+                nu += no;
+                break;
+            }
+            if (iy == array2.length) {
+                final int no = array1.length - ix;
+                System.arraycopy(array1, ix, union, nu, no);
+                nu += no;
+                break;
+            }
+            final int sx = array1[ix];
+            final int sy = array2[iy];
+            final int s;
+            if (sx <= sy) {
+                s = sx;
+                ix++;
+                if (sx == sy) {
+                    iy++;
+                }
+            } else {
+                s = sy;
+                iy++;
+            }
+            union[nu++] = s;
+        }
+        union = resize(union, nu);
+        return union;
     }
 }

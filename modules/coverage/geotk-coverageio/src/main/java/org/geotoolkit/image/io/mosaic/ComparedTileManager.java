@@ -50,9 +50,9 @@ final class ComparedTileManager extends TileManager {
     private static final long serialVersionUID = -6028433158360279586L;
 
     /**
-     * The tile manager.
+     * The tile managers to compare.
      */
-    private final TileManager first, second;
+    final TileManager first, second;
 
     /**
      * Creates a comparator the grid and tree tile managers for the given tiles.
