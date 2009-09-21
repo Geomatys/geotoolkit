@@ -1103,7 +1103,7 @@ public class MosaicBuilder {
 
         /**
          * Invoked after {@link MosaicImageWriter} has created a reader and set the input.
-         * This implementation set the following properties with values inferred from the
+         * This implementation sets the following properties with values inferred from the
          * given reader:
          * <p>
          * <ul>
@@ -1368,10 +1368,13 @@ public class MosaicBuilder {
 
     /**
      * Invoked automatically when a tile is about to be written. The default implementation does
-     * nothing. Subclasses can override this method in order to set custom write parameters. The
-     * {@linkplain ImageWriteParam#setSourceRegion source region} and
-     * {@linkplain ImageWriteParam#setSourceSubsampling source subsampling} should not be set
-     * since they will be inconditionnaly overwritten by the caller.
+     * nothing. Subclasses can override this method in order to set custom write parameters.
+     * <p>
+     * The {@linkplain ImageWriteParam#setSourceRegion source region} and
+     * {@linkplain ImageWriteParam#setSourceSubsampling source subsampling} parameters can not be
+     * set through this method. Their setting will be overwritten by the caller because their
+     * values depend on the strategy choosen by {@code MosaicImageWriter} for reading images,
+     * which itself depends on the amount of available memory.
      *
      * @param  tile The tile to be written.
      * @param  parameters The parameters to be given to the {@linkplain ImageWriter image writer}.

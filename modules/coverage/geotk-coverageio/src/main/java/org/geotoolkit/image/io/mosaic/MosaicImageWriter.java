@@ -30,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import javax.imageio.*; // Lot of them in this class.
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
@@ -43,9 +44,11 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.geotoolkit.util.XArrays;
@@ -301,17 +304,30 @@ public class MosaicImageWriter extends ImageWriter {
     {
         final boolean success;
         final ImageReader reader = getImageReader(input, inputIndex, param);
+        final Queue<ReaderInputPair.WithWriter> cache = new LinkedList<ReaderInputPair.WithWriter>();
         try {
             if (onlyOneImage && reader.getNumImages(false) <= 1) {
                 onlyOneImage = false;
             }
-            success = !onlyOneImage && writeFromReader(reader, inputIndex, param);
+            // Write the image only if 'onlyOneImage' is false, otherwise we already failed.
+            success = !onlyOneImage && writeFromReader(reader, inputIndex, param, cache);
             close(reader.getInput(), input);
         } finally {
+            /*
+             * Make sure that we delete the temporary files. This is the most important
+             * cleanup. Other cleanup (disposing the ImageWriters) is good practice but
+             * less important since the garbage collector would collect them anyway.
+             */
             try {
                 reader.dispose();
             } finally {
                 deleteTemporaryFiles();
+            }
+            synchronized (cache) {
+                for (final ReaderInputPair.WithWriter entry : cache) {
+                    entry.writer.dispose();
+                }
+                cache.clear();
             }
         }
         if (onlyOneImage) {
@@ -328,7 +344,8 @@ public class MosaicImageWriter extends ImageWriter {
      *        should have been created by {@link #getImageReader(Object, int, ImageWriteParam)}.
      */
     private boolean writeFromReader(final ImageReader reader, final int inputIndex,
-            final ImageWriteParam writeParam) throws IOException
+            final ImageWriteParam writeParam, final Queue<ReaderInputPair.WithWriter> cache)
+            throws IOException
     {
         clearAbortRequest();
         final int outputIndex;
@@ -394,7 +411,9 @@ public class MosaicImageWriter extends ImageWriter {
          * Creates now the various other objects to be required in the loop. This include a
          * RTree initialized with the tiles remaining after the removal in the previous block.
          */
-        final ExecutorService executor  = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        final int             nThreads  = Runtime.getRuntime().availableProcessors();
+        final ExecutorService executor  = Executors.newFixedThreadPool(nThreads);
+        final Semaphore  submitPermits  = new Semaphore(nThreads + 1);
         final List<Future<?>> tasks     = new ArrayList<Future<?>>();
         final TreeNode        tree      = new GridNode(tiles.toArray(new Tile[tiles.size()]));
         final ImageReadParam  readParam = reader.getDefaultReadParam();
@@ -528,56 +547,118 @@ public class MosaicImageWriter extends ImageWriter {
                 sourceRegion.width  /= imageSubsampling.width;
                 sourceRegion.height /= imageSubsampling.height;
                 if (image != null && (policy.includeEmpty || !isEmpty(image, sourceRegion))) {
-                    final ImageWriter writer = getImageWriter(tile, image);
-                    final ImageWriteParam wp = writer.getDefaultWriteParam();
+                    /*
+                     * Before to create a new ImageWriter, wait for the executor to catch up
+                     * with pending tasks. If we enqueue every tasks without waiting, we would
+                     * have a lot of ImageWriter instances with only a few of them actually in
+                     * use.
+                     */
+                    try {
+                        submitPermits.acquire();
+                    } catch (InterruptedException e) {
+                        throw new InterruptedIOException(e.getLocalizedMessage());
+                    }
+                    /*
+                     * Get an image writer (maybe from the cache) and configure it. We do the
+                     * configuration here because we want the 'filter' and 'onTileWrite' methods
+                     * (which may be overriden by the user) to be invoked in this thread.
+                     */
+                    final ReaderInputPair.WithWriter cacheEntry = getImageWriter(tile, image, cache);
+                    final ImageWriteParam wp = cacheEntry.writer.getDefaultWriteParam();
                     onTileWrite(tile, wp);
                     wp.setSourceRegion(sourceRegion);
                     wp.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
                     final IIOImage iioImage = new IIOImage(image, null, null);
-                    final Object tileInput = tile.getInput();
+                    /*
+                     * Submit the image write for execution in a background thread.
+                     */
                     tasks.add(executor.submit(new Callable<Object>() {
                         @Override public Object call() throws IOException {
-                            if (!abortRequested()) {
-                                if (logWrites) {
-                                    final LogRecord record =
-                                            getLogRecord(false, Vocabulary.Keys.SAVING_$1, tile);
-                                    record.setLoggerName(logger.getName());
-                                    logger.log(record);
-                                }
-                                boolean success = false;
-                                try {
-                                    writer.write(null, iioImage, wp);
-                                    close(writer.getOutput(), tileInput);
-                                    success = true;
-                                } finally {
-                                    if (success) {
-                                        writer.dispose();
-                                    } else {
-                                        final Object output = writer.getOutput();
-                                        writer.dispose();
-                                        close(output, null); // Unconditional close.
-                                        if (tileInput instanceof File) {
-                                            ((File) tileInput).delete();
-                                        }
+                            if (abortRequested()) {
+                                return null;
+                            }
+                            if (logWrites) {
+                                final LogRecord record =
+                                        getLogRecord(false, Vocabulary.Keys.SAVING_$1, tile);
+                                record.setLoggerName(logger.getName());
+                                logger.log(record);
+                            }
+                            final Object tileInput = tile.getInput();
+                            final ImageWriter writer = cacheEntry.writer;
+                            boolean success = false;
+                            try {
+                                writer.write(null, iioImage, wp);
+                                close(writer.getOutput(), tileInput);
+                                success = true;
+                            } finally {
+                                if (success) {
+                                    /*
+                                     * The write operation succeed: return the ImageWriter
+                                     * to the pool of writers, so the next write operation
+                                     * can recycle it.
+                                     */
+                                    writer.reset();
+                                    synchronized (cache) {
+                                        cache.add(cacheEntry);
+                                    }
+                                    submitPermits.release();
+                                } else {
+                                    /*
+                                     * The write operation failed. Dispose the ImageWriter
+                                     * (do not return it to the pool) and delete the file
+                                     * if possible. The exception that caused the failure
+                                     * will be propagated after this block.
+                                     */
+                                    final Object output = writer.getOutput();
+                                    writer.dispose();
+                                    close(output, null); // Unconditional close.
+                                    if (tileInput instanceof File) {
+                                        ((File) tileInput).delete();
                                     }
                                 }
-                                /*
-                                 * Write the TFW file.
-                                 */
-                                if (tileInput instanceof File) {
-                                    AffineTransform gridToCRS = tile.getGridToCRS();
-                                    if (gridToCRS != null) {
-                                        gridToCRS = new AffineTransform(gridToCRS);
-                                        final Point location = tile.getLocation();
-                                        gridToCRS.translate(location.x, location.y);
-                                        SupportFiles.writeTFW((File) tileInput, gridToCRS);
-                                    }
+                            }
+                            /*
+                             * Write the TFW file.
+                             */
+                            if (tileInput instanceof File) {
+                                AffineTransform gridToCRS = tile.getGridToCRS();
+                                if (gridToCRS != null) {
+                                    gridToCRS = new AffineTransform(gridToCRS);
+                                    final Point location = tile.getLocation();
+                                    gridToCRS.translate(location.x, location.y);
+                                    SupportFiles.writeTFW((File) tileInput, gridToCRS);
                                 }
                             }
                             return null;
                         }
                     }));
+                    /*
+                     * While submitPermits.acquire() was waiting in the above code, some image
+                     * writers may have been pushed back to the cache. Ensure that the cache is
+                     * keept to a raisonable size by disposing, if needed, the oldest writers.
+                     * We do this cleanup here instead than after submitPermits.acquire() because
+                     * getImageWriter(...) may have selected a writer that we would otherwise have
+                     * disposed.
+                     */
+                    synchronized (cache) {
+                        while (cache.size() > 2*nThreads) {
+                            cache.remove().writer.dispose();
+                        }
+                        if (false) { // Removed from compilation except when debugging.
+                            final ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
+                            logger.fine("Active threads: " + e.getActiveCount() +
+                                      "  Enqueued tasks: " + e.getQueue().size() +
+                                      "  Available permits: " + submitPermits.availablePermits() +
+                                      "  Available ImageWriters: " + cache.size());
+                        }
+                    }
                 }
+                /*
+                 * The current tile has been processed. It may have been discarted because it
+                 * contains only transparent pixels, or it may have been enqueued for writing
+                 * in a background thread. Remove this tile from the list of tiles to process,
+                 * and inspect the next tile.
+                 */
                 it.remove();
                 if (!tree.remove(tile)) {
                     throw new AssertionError(tile); // Should never happen.
@@ -585,6 +666,11 @@ public class MosaicImageWriter extends ImageWriter {
             }
             assert !tiles.contains(imageTile) : imageTile;
         }
+        /*
+         * At this point, every tiles have been submitted for writting. Wait for the write
+         * operations to complete. The remaining ImageWriter instances will be disposed by
+         * the caller.
+         */
         awaitTermination(tasks, initialTileCount, progressScale);
         executor.shutdown();
         if (abortRequested()) {
@@ -1269,17 +1355,20 @@ search: for (final Tile tile : tiles) {
      * probably an {@linkplain ImageOutputStream image output stream} and closing it is caller's
      * responsability.
      * <p>
-     * This method must returns a new instance. We are not allowed to cache and recycle writers,
-     * because more than one writer may be used simultaneously.
+     * This method extracts an {@code ImageWriter} instance from the given cache, if possible.
+     * If no suitable writer is available, then a new one is created but <strong>not</strong>
+     * cached; it is caller responsability to reset and cache the writer when the write operation
+     * is done.
      *
-     * @param  tile The tile to encode.
+     * @param  tile  The tile to encode.
      * @param  image The image associated to the specified tile.
+     * @param  cache An initially empty list of image writers created during the write process.
      * @return The image writer that seems to be the most appropriated (never {@code null}).
      * @throws IOException If no suitable image writer has been found or if an error occured
      *         while creating an image writer or initiazing it.
      */
-    private ImageWriter getImageWriter(final Tile tile, final RenderedImage image)
-            throws IOException
+    private ReaderInputPair.WithWriter getImageWriter(final Tile tile, final RenderedImage image,
+            final Queue<ReaderInputPair.WithWriter> cache) throws IOException
     {
         // Note: we rename "Tile.input" as "output" because we want to write in it.
         final Object         output      = tile.getInput();
@@ -1288,6 +1377,54 @@ search: for (final Tile tile : tiles) {
         final String[]       formatNames = readerSpi.getFormatNames();
         final String[]       spiNames    = readerSpi.getImageWriterSpiNames();
         ImageOutputStream    stream      = null; // Created only if needed.
+        /*
+         * The result of this method is determined entirely by the (readerSpi, outputType)
+         * pair and by implementation of the user-overrideable filter(ImageWriter) method.
+         * We will search iteratively for the first suitable entry.
+         *
+         * Note: Using Map<ReaderInputPair, Queue<ImageWriter>> could be more performant than
+         * the iteration performed below, but the queue is usually very short since its length
+         * is approximatively the number of processors. In addition, in the typical case where
+         * all tiles use the same format, the iterator will stop at the first item in the queue.
+         * So a Map would really bring no performance benefit for the "normal" case at the cost
+         * of more complex code (harder to count the total number of ImageWriters and to dispose
+         * the oldest ones).
+         */
+        final ReaderInputPair.WithWriter cacheEntry = new ReaderInputPair.WithWriter(readerSpi, outputType);
+        if (cache != null) {
+            ReaderInputPair.WithWriter candidate = null;
+            synchronized (cache) {
+                for (final Iterator<ReaderInputPair.WithWriter> it=cache.iterator(); it.hasNext();) {
+                    final ReaderInputPair.WithWriter c = it.next();
+                    if (cacheEntry.equals(c)) {
+                        candidate = c;
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+            /*
+             * If we have found a candidate, define its output and check if filter(ImageWriter)
+             * accepts it. If the image writer is not accepted, the remaining of this method will
+             * try to get an other instance from the IIORegistry.
+             *
+             * Note that the remaining of this method basically perform the same check 4 times,
+             * each time using a different way to get the ImageWriter instances to test.
+             */
+            if (candidate != null) {
+                final ImageWriter writer = candidate.writer;
+                if (candidate.needStream) {
+                    stream = ImageIO.createImageOutputStream(output);
+                    writer.setOutput(stream);
+                } else {
+                    writer.setOutput(output);
+                }
+                if (filter(writer)) {
+                    return candidate;
+                }
+                writer.dispose();
+            }
+        }
         /*
          * The search will be performed at most twice. In the first try (code below) we check the
          * plugins specified in 'spiNames' since we assume that they will encode the image in the
@@ -1324,7 +1461,8 @@ search: for (final Tile tile : tiles) {
                                 final ImageWriter writer = spi.createWriterInstance();
                                 writer.setOutput(output);
                                 if (filter(writer)) {
-                                    return writer;
+                                    cacheEntry.writer = writer;
+                                    return cacheEntry;
                                 }
                                 writer.dispose();
                                 break;
@@ -1348,7 +1486,9 @@ search: for (final Tile tile : tiles) {
                                 final ImageWriter writer = spi.createWriterInstance();
                                 writer.setOutput(stream);
                                 if (filter(writer)) {
-                                    return writer;
+                                    cacheEntry.writer = writer;
+                                    cacheEntry.needStream = true;
+                                    return cacheEntry;
                                 }
                                 writer.dispose();
                                 break;
@@ -1378,7 +1518,8 @@ search: for (final Tile tile : tiles) {
                     if (legalType.isAssignableFrom(outputType)) {
                         writer.setOutput(output);
                         if (filter(writer)) {
-                            return writer;
+                            cacheEntry.writer = writer;
+                            return cacheEntry;
                         }
                         // Do not dispose the writer since we will try it again later.
                         break;
@@ -1399,7 +1540,9 @@ search: for (final Tile tile : tiles) {
                         if (legalType.isAssignableFrom(streamType)) {
                             writer.setOutput(stream);
                             if (filter(writer)) {
-                                return writer;
+                                cacheEntry.writer = writer;
+                                cacheEntry.needStream = true;
+                                return cacheEntry;
                             }
                             break;
                         }

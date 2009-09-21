@@ -18,8 +18,11 @@
 package org.geotoolkit.image.io.mosaic;
 
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.lang.Immutable;
 
 
 /**
@@ -31,7 +34,8 @@ import org.geotoolkit.util.Utilities;
  * @since 2.5
  * @module
  */
-final class ReaderInputPair {
+@Immutable
+class ReaderInputPair {
     /**
      * The image reader, or the provider if none.
      */
@@ -68,7 +72,7 @@ final class ReaderInputPair {
      * Returns a hash value for this reader/input pair.
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return hash;
     }
 
@@ -83,12 +87,43 @@ final class ReaderInputPair {
      * Compares this reader/input pair with the specified object for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public final boolean equals(final Object object) {
         if (object instanceof ReaderInputPair) {
             final ReaderInputPair that = (ReaderInputPair) object;
             return Utilities.equals(this.reader, that.reader) &&
                    Utilities.deepEquals(this.input, that.input);
         }
         return false;
+    }
+
+    /**
+     * A {@link ReaderInputPair} associated with an {@link ImageWriter} to be set by the caller.
+     * This is for internal use by {@link MosaicImageWriter} only. The writer is not used in hash
+     * code value or comparaisons.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.04
+     *
+     * @since 3.04
+     * @module
+     */
+    static final class WithWriter extends ReaderInputPair {
+        /**
+         * The image writer. This is initially null and must be set by the caller.
+         */
+        ImageWriter writer;
+
+        /**
+         * {@code true} if the output given to the writer needs to be an output stream.
+         * This is initially {@code false} and must be set by the caller if needed.
+         */
+        boolean needStream;
+
+        /**
+         * Creates a provider/input pair. The writer must be set by the caller after construction.
+         */
+        WithWriter(final ImageReaderSpi provider, final Class<?> inputType) {
+            super(provider, inputType);
+        }
     }
 }
