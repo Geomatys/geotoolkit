@@ -46,4 +46,14 @@ public interface TreeNode extends javax.swing.tree.TreeNode {
      */
     @Override
     Enumeration<? extends javax.swing.tree.TreeNode> children();
+
+    /**
+     * Returns a string representation of this node suitable for a user interface.
+     * {@link javax.swing.JTree} uses this method for formatting the text to display
+     * in the widget.
+     *
+     * @return The text to display in the {@code JTree} for this node.
+     */
+    @Override
+    String toString();
 }

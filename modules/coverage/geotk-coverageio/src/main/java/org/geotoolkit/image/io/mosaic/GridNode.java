@@ -477,6 +477,15 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
      *
      * @param  nodes The nodes for which to prepend a tree.
      * @return The nodes with a tree prepend before them.
+     *
+     * @todo In its current form, this method is not quite useful since it does its job only in
+     *       the cases where <code>GridTileManager</code> would have been used instead than the
+     *       <code>TreeTileManager</code>.  It still useful for assertions since this method is
+     *       used in the context of <code>ComparedTileManager</code>.
+     *       <p>
+     *       This method could be made more useful by extending its scope beyond the cases handled
+     *       by <code>GridTileManager</code>.  We could accept larger tiles having a size which is
+     *       a multiple of "normal" tiles.
      */
     private static GridNode[] prependTree(GridNode[] nodes) {
         /*

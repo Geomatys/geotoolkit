@@ -1058,9 +1058,9 @@ public final class XArrays {
 
     /**
      * Returns the union of two sorted arrays. The input arrays shall be sorted in strictly
-     * increasing order (for perfomance raison, this is not verified). The output array is
-     * the union of the input arrays without duplicated values, with elements in strictly
-     * increasing order.
+     * increasing order (for perfomance raison, this is verified only if assertions are enabled).
+     * The output array is the union of the input arrays without duplicated values, with elements
+     * in strictly increasing order.
      *
      * @param  array1 The first array.
      * @param  array2 The second array.
@@ -1069,6 +1069,8 @@ public final class XArrays {
      * @since 3.04
      */
     public static int[] union(final int[] array1, final int[] array2) {
+        assert isSorted(array1, true);
+        assert isSorted(array2, true);
         int[] union  = new int[array1.length + array2.length];
         int nu=0;
         for (int ix=0, iy=0;;) {
@@ -1100,6 +1102,7 @@ public final class XArrays {
             union[nu++] = s;
         }
         union = resize(union, nu);
+        assert isSorted(union, true);
         return union;
     }
 }

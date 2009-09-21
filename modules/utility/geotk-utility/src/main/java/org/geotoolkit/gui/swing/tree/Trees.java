@@ -177,8 +177,8 @@ public final class Trees {
     /**
      * Returns a copy of the tree starting at the given node. The references to the
      * {@linkplain org.geotoolkit.gui.swing.tree.TreeNode#getUserObject() user objects}
-     * (if any) and the {@linkplain TreeNode#toString() string representations} are copied
-     * verbatism.
+     * (if any) and the {@linkplain org.geotoolkit.gui.swing.tree.TreeNode#toString()
+     * string representations} are copied verbatism.
      *
      * @param  node The tree to copy (may be {@code null}).
      * @return A mutable copy of the given tree, or {@code null} if the given tree was null.
