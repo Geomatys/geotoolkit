@@ -247,6 +247,12 @@ public final class IOUtilities {
             ZipEntry entry;
             while ((entry = def.getNextEntry()) != null) {
                 final File file = new File(target, entry.getName());
+                if (entry.isDirectory()) {
+                    if (!file.isDirectory() && !file.mkdir()) {
+                        throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, file));
+                    }
+                    continue;
+                }
                 final OutputStream out = new FileOutputStream(file);
                 int n;
                 while ((n = def.read(buffer)) >= 0) {
