@@ -139,11 +139,6 @@
       <!-- GeoAPI and its dependencies -->
       <dependency>
         <groupId>org.opengis</groupId>
-        <artifactId>geoapi</artifactId>
-        <version>2.3-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opengis</groupId>
         <artifactId>geoapi-pending</artifactId>
         <version>2.3-SNAPSHOT</version>
       </dependency>
@@ -563,7 +558,6 @@
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
             <link>http://jscience.org/api/</link>
-            <link>http://geoapi.sourceforge.net/snapshot/javadoc</link>
             <link>http://geoapi.sourceforge.net/snapshot/pending</link>
           </links>
 
