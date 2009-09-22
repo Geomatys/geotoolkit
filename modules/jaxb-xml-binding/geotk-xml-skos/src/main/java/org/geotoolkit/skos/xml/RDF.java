@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.skos.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="RDF", namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-public class RDF {
+public class RDF implements Serializable {
     
     @XmlElement(name="Concept", namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> concept;

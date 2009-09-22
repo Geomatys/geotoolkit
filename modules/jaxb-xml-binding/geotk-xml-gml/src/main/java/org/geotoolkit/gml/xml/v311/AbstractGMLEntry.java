@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -66,7 +67,7 @@ import org.geotoolkit.gml.xml.AbstractGML;
     AbstractGeometryType.class,
     AbstractFeatureEntry.class
 })
-public abstract class AbstractGMLEntry implements AbstractGML {
+public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
 
     //protected List<MetaDataPropertyType> metaDataProperty;
     private String description;

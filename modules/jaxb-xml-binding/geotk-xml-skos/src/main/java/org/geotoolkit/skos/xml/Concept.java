@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.skos.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ propOrder = {
     "geometry"
 
 })
-public class Concept {
+public class Concept implements Serializable {
     
     @XmlAttribute(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     private String about;

@@ -67,7 +67,7 @@ public class DirectPositionType implements DirectPosition {
     protected List<Double> value;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger srsDimension;
+    protected Integer srsDimension;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     protected String srsName;
@@ -93,7 +93,7 @@ public class DirectPositionType implements DirectPosition {
             List<Double> value, List<String> uomLabels)
     {
         this.srsName      = srsName;
-        this.srsDimension = BigInteger.valueOf(srsDimension);
+        this.srsDimension = Integer.valueOf(srsDimension);
         this.axisLabels   = axisLabels;
         this.value        = value;
         this.uomLabels    = uomLabels;
@@ -110,7 +110,7 @@ public class DirectPositionType implements DirectPosition {
             List<Double> value)
     {
         this.srsName      = srsName;
-        this.srsDimension = BigInteger.valueOf(srsDimension);
+        this.srsDimension = Integer.valueOf(srsDimension);
         this.axisLabels   = axisLabels;
         this.value        = value;
     }
@@ -123,7 +123,7 @@ public class DirectPositionType implements DirectPosition {
      */
     public DirectPositionType(String srsName, int srsDimension, List<Double> value) {
         this.srsName      = srsName;
-        this.srsDimension = BigInteger.valueOf(srsDimension);
+        this.srsDimension = Integer.valueOf(srsDimension);
         this.value        = value;
     }
 
@@ -170,7 +170,7 @@ public class DirectPositionType implements DirectPosition {
                     Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
                 }
             }
-            this.srsDimension = null;
+            this.srsDimension = position.getDimension();
         }
     }
 
@@ -235,7 +235,7 @@ public class DirectPositionType implements DirectPosition {
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getSrsDimension() {
+    public Integer getSrsDimension() {
         return srsDimension;
     }
 
@@ -247,7 +247,7 @@ public class DirectPositionType implements DirectPosition {
      *     {@link BigInteger }
      *     
      */
-    public void setSrsDimension(BigInteger value) {
+    public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
 
