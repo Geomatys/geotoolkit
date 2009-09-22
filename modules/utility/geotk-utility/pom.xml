@@ -91,11 +91,6 @@
     </dependency>
     <dependency>
       <groupId>org.opengis</groupId>
-      <artifactId>geoapi</artifactId>
-    </dependency>
-    <dependency>
-      <!-- Temporary dependency for the org.opengis.util.Cloneable interface, to be removed -->
-      <groupId>org.opengis</groupId>
       <artifactId>geoapi-pending</artifactId>
     </dependency>
     <dependency>

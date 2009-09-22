@@ -59,7 +59,7 @@
     </dependency>
     <dependency>
       <groupId>org.opengis</groupId>
-      <artifactId>geoapi</artifactId>
+      <artifactId>geoapi-pending</artifactId>
     </dependency>
   </dependencies>
 
