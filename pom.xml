@@ -28,7 +28,7 @@
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
   <version>SNAPSHOT</version>
-  <name>Geotoolkit</name>
+  <name>Geotoolkit.org</name>
   <url>http://www.geotoolkit.org/</url>
 
   <description>
@@ -109,6 +109,11 @@
   <!--                                                             -->
   <!--     Reference: http://repo1.maven.org/maven2/               -->
   <!-- =========================================================== -->
+  <properties>
+    <derby.version>10.4.2.0</derby.version>
+    <!-- TODO: <sourceEncoding>UTF-8</sourceEncoding> in Maven 3 -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <!-- GeoAPI and its dependencies -->
@@ -147,7 +152,7 @@
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jdk14</artifactId> <!-- Logging system used by NetCDF. -->
+        <artifactId>slf4j-jdk14</artifactId> <!-- Logging system used by NetCDF -->
         <version>1.4.0</version>
       </dependency>
       <!-- Raster formats -->
@@ -160,7 +165,7 @@
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
-        <version>10.4.2.0</version>
+        <version>${derby.version}</version>
         <scope>provided</scope> <!-- Already included in JDK as JavaDB -->
       </dependency>
       <dependency>
@@ -172,7 +177,7 @@
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
         <version>1.4.1</version>
-        <scope>provided</scope> <!-- Already included in JEE. -->
+        <scope>provided</scope> <!-- Already included in JEE -->
       </dependency>
       <!-- GUI -->
       <dependency>
@@ -247,16 +252,8 @@
 
   <!-- ======================================================= -->
   <!--     Build setting.                                      -->
-  <!--                                                         -->
-  <!-- Note: replace the properties by the following when      -->
-  <!-- we will be allowed to use Maven 3:                      -->
-  <!--                                                         -->
-  <!-- <sourceEncoding>UTF-8</sourceEncoding>                  -->
-  <!--                                                         -->
   <!-- ======================================================= -->
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+  <!-- sourceEncoding>UTF-8</sourceEncoding -->
   <build>
     <plugins>
       <!-- ======================================================= -->

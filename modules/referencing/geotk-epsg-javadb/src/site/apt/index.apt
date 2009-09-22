@@ -1,0 +1,21 @@
+EPSG database on JavaDB
+
+  The referencing module with the EPSG database and the JavaDB driver. This module is provided
+  only as a convenience: it does not contain any actual code, but contains the dependencies to
+  everything needed for running the core referencing module with a standalone EPSG database.
+  Nothing else than a standard Java 6 runtime environment is required.
+
+  Application developers are strongly encouraged to depend on the <<<{{{../geotk-epsg/index.html}geotk-epsg}}>>>
+  module instead than this one, and to declare themself the dependency to the database of their choice
+  (PostgreSQL, Oracle, JavaDB with the locales of their choice, <etc>). This <<<geotk-epsg-javadb>>>
+  module should be used only for simple applications wanting to run <out of the box> without
+  bothering about whatever a database engine is already installed and running. It should not
+  be used for example in a Glassfish container - applications shall use the JavaDB instance
+  provided by Glassfish instead.
+
+  This module is also a convenient entry point for command lines, since it avoid the need to
+  put the JavaDB driver on the classpath. Use the following for more information:
+
+--------------------------------
+java -jar geotk-epsg-javadb help
+--------------------------------
