@@ -85,7 +85,6 @@ public class PackerSpecificMojo extends AbstractMojo {
             packer.addPack(null, referencing, new String[] {
                     "vecmath-1.5.2.jar",
                     "jsr-275-1.0-beta-2.jar",
-                    "geoapi-2.3-SNAPSHOT.jar",
                     "geoapi-pending-2.3-SNAPSHOT.jar",
                     "geotk-epsg-" + VERSION + ".jar",
                     "geotk-utility-" + VERSION + ".jar",
