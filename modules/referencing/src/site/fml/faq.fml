@@ -3,7 +3,7 @@
 <faqs title="Referencing FAQ" toplink="false">
   <part id="intro">
     <title>Getting started</title>
-    <faq id="Google">
+    <faq id="demos">
       <question>
         How do I transform a coordinate?
       </question>
@@ -17,6 +17,26 @@
 
   <part id="crs">
     <title>Coordinate Reference Systems</title>
+    <faq id="JavaDB">
+      <question>
+        How to fix the "No suitable driver found for jdbc:derby" exception?
+      </question>
+      <answer>
+        <p>If you are developing a desktop application with Maven, make sure that your project declares
+        a dependency to the <code>derby</code> artifact from the <code>org.apache.derby</code> group.
+        This is not done automatically by Geotk (except the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a>
+        convenience module) because the choice of the database engine (Access, PostgreSQL, <i>etc.</i>)
+        is left to the users.</p>
+
+        <p>If you are developing a desktop application without Maven, make sure that the
+        <code>derby.jar</code> file is presents on the classpath.</p>
+
+        <p>If you are developing a server application to be deployed in a container like
+        Glassfish or Tomcat, make sure that the Derby dependency does <strong>not</strong> appear
+        in the WAR file. <strong>This is the opposite of what one may intuitively think</strong>.
+        See the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a> module for more explanation.</p>
+      </answer>
+    </faq>
     <faq id="Google">
       <question>
         How do I instantiate a Google projection?

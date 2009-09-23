@@ -36,8 +36,12 @@
     and library-wide consistency.
   </description>
 
+  <!-- TODO: the information below is used by Maven for generating the copyright
+       sentence at the bottom of every page, so we should probably put OSGEO if
+       the Geotk project get incubated. Maybe the year should be 2001, which is
+       the begining of the legacy SeaGIS project on SourceForge. -->
   <organization>
-    <name>Geotoolkit</name>
+    <name>Geotoolkit.org</name>
     <url>http://www.geotoolkit.org/</url>
   </organization>
   <inceptionYear>2009</inceptionYear>
