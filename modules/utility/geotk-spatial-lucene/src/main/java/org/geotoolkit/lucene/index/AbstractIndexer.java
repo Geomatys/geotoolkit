@@ -28,7 +28,6 @@ import com.vividsolutions.jts.io.WKBWriter;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -205,7 +204,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     * @param Form An MDweb formular to index.
     * @return A Lucene document.
     */
-    protected abstract Document createDocument(E object) throws SQLException;
+    protected abstract Document createDocument(E object) throws IndexingException;
 
 
     
