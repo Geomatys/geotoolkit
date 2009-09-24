@@ -105,7 +105,8 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
             Logging.getLogger(DefaultGraphicFeatureJ2D.class).log(Level.SEVERE, null, ex);
         }
 
-        return null;
+        //worst case, return the partial feature
+        return feature;
     }
 
     @Override
@@ -220,6 +221,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
         if(layer != null){
             Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
+
             SimpleFeature feature = null;
 
             final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = layer.getFeatureSource().getFeatures(filter);
@@ -231,8 +233,15 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
                 }
                 ite.close();
             }
+
+            if(feature == null){
+                //worst case, return the partial feature
+                return this.feature;
+            }
+
             return feature;
         }else{
+            //worst case, return the partial feature
             return feature;
         }
     }

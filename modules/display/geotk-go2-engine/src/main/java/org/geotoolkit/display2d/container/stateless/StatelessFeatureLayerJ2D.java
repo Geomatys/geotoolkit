@@ -54,7 +54,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;

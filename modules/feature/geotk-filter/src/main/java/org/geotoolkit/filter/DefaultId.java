@@ -116,6 +116,20 @@ public class DefaultId implements Id{
         return hash;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Filter ID :");
+
+        for(final Object key : keys.keySet()){
+            sb.append(key.toString()).append(", ");
+        }
+
+        return sb.toString();
+    }
+
+
+
+
     /**
      * Take advantage of the fact that both ObjectId and Identifier are unique and
      * ObjectId is an attribut of Identifier.
