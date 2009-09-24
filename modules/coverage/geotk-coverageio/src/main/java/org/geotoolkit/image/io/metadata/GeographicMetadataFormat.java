@@ -219,20 +219,20 @@ public class GeographicMetadataFormat extends IIOMetadataFormatImpl {
     });
 
     /**
-     * Enumeration of valid axis directions. We do not declare {@link String} constants
-     * for them since they are already available as {@linkplain AxisDirection
-     * axis direction} code list.
+     * Enumeration of valid axis directions. We do not declare {@link String} constants for them
+     * since they are already available as {@linkplain AxisDirection axis direction} code list.
      */
     static final List<String> DIRECTIONS = UnmodifiableArrayList.wrap(new String[] {
         "north", "east", "south", "west", "up", "down"
     });
 
     /**
-     * Enumeration of valid pixel orientation. We do not declare {@link String} constants
-     * for them since they are already available as {@linkplain PixelOrientation pixel orientation} code list.
+     * Enumeration of valid pixel orientation. We do not declare {@link String} constants for them
+     * since they are already available as {@linkplain PixelOrientation pixel orientation} code list.
      */
     static final List<String> PIXEL_ORIENTATIONS = UnmodifiableArrayList.wrap(new String[] {
-        "center", "lower left", "lower right", "upper right", "upper left"
+        "center", "lowerLeft", "lowerRight", "upperRight", "upperLeft", // The UML identifiers.
+        "lower left", "lower right", "upper right", "upper left" // For backward compatibility.
     });
 
     /**
