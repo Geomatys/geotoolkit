@@ -1198,7 +1198,7 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
                 if (converted != null) {
                     values.set(i, converted);
                 }
-                if (strict && !type.isInstance(value)) {
+                if (strict && !type.isInstance(converted)) {
                     throw new IllegalArgumentException("Value " + values.get(i) + " illegal for type " + type.getName());
                 }
             }
