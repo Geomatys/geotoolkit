@@ -20,7 +20,9 @@ package org.geotoolkit.display2d.ext.dimrange;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -67,6 +69,7 @@ import org.opengis.style.StyleVisitor;
  */
 public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
 
+    private static final Logger LOGGER = Logging.getLogger(DimRangeRenderer.class);
     @Override
     public Class<DimRangeSymbolizer> getSymbolizerClass() {
         return DimRangeSymbolizer.class;
@@ -194,7 +197,33 @@ public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,C
     }
 
     @Override
-    public boolean hit(ProjectedCoverage graphic, CachedDimRangeSymbolizer symbol, RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedDimRangeSymbolizer symbol,
+            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
+
+        
+        //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
+
+        final Shape mask = search.getDisplayShape();
+        final Shape shape;
+        try {
+            shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
+        } catch (TransformException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+        final Area area = new Area(mask);
+
+        switch(filter){
+            case INTERSECTS :
+                area.intersect(new Area(shape));
+                return !area.isEmpty();
+            case WITHIN :
+                Area start = new Area(area);
+                area.add(new Area(shape));
+                return start.equals(area);
+        }
+
         return false;
     }
 
