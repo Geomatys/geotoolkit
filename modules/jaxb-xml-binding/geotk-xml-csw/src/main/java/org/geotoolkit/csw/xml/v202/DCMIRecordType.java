@@ -382,9 +382,12 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public void setRights(SimpleLiteral rights) {
-        if (this.rights == null)
+        if (this.rights == null) {
             this.rights = new ArrayList<SimpleLiteral>();
-        this.rights.add(rights);
+        }
+        if (rights != null) {
+            this.rights.add(rights);
+        }
     }
 
     public void setRights(List<SimpleLiteral> rights) {

@@ -28,6 +28,7 @@ import com.vividsolutions.jts.io.WKBWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -70,7 +71,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     protected boolean create;
 
+    /**
+     * A flag to stop the indexation going on
+     */
     protected static boolean stopIndexing = false;
+
+    /**
+     * A list of services id
+     */
+    protected static final List<String> indexationToStop = new ArrayList<String>();
 
     /**
      * Build a new Indexer witch create an index in the specified directory,
@@ -249,5 +258,34 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     }
 
     public abstract void destroy();
+
+    /**
+     * This method stop all the current indexation running
+     */
+    public static void stopIndexation(List<String> ids) {
+        stopIndexing = true;
+        if (ids != null) {
+            for (String id: ids) {
+                indexationToStop.add(id);
+            }
+        }
+    }
+
+    /**
+     * Return the service ID of this index or "" if there is not explicit service ID.
+     * @return
+     */
+    protected String getServiceID() {
+        File directory = getFileDirectory();
+        String directoryName = directory.getName();
+        String serviceId = "";
+        if (directoryName.contains("index")) {
+            serviceId = directoryName.substring(0, directoryName.indexOf("index"));
+
+        } else if (directoryName.contains("nextIndex")) {
+            serviceId = directoryName.substring(0, directoryName.indexOf("nextIndex"));
+        }
+        return serviceId;
+    }
 }
 
