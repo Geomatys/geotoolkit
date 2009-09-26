@@ -131,14 +131,16 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     public Rectangle2D getGraphicsEnvelope2D() {
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
-            Envelope env = getContext().getBounds();
-
-            if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
-                GeneralEnvelope genv = new GeneralEnvelope(env);
-                return genv.toRectangle2D();
-            }else{
-                GeneralEnvelope genv = (GeneralEnvelope) CRS.transform(env, crs);
-                return genv.toRectangle2D();
+            final MapContext context = getContext();
+            if(context != null){
+                Envelope env = context.getBounds();
+                if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
+                    GeneralEnvelope genv = new GeneralEnvelope(env);
+                    return genv.toRectangle2D();
+                }else{
+                    GeneralEnvelope genv = (GeneralEnvelope) CRS.transform(env, crs);
+                    return genv.toRectangle2D();
+                }
             }
 
         } catch (IOException ex) {
@@ -172,12 +174,18 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     public GeneralEnvelope getGraphicsEnvelope(){
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
-            Envelope env = getContext().getBounds();
 
-            if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
-                return new GeneralEnvelope(env);
-            }else{
-                return (GeneralEnvelope) CRS.transform(env, crs);
+            final MapContext context = getContext();
+            if(context != null){
+                Envelope env = context.getBounds();
+
+                if(env != null){
+                if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
+                    return new GeneralEnvelope(env);
+                }else{
+                    return (GeneralEnvelope) CRS.transform(env, crs);
+                }
+                }
             }
 
         } catch (IOException ex) {
