@@ -33,6 +33,11 @@ public class CanvasDef {
     public CanvasDef() {
     }
 
+    public CanvasDef(Dimension dim, Color background) {
+        setDimension(dimension);
+        setBackground(background);
+    }
+
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }

@@ -39,6 +39,11 @@ public class ViewDef {
     public ViewDef() {
     }
 
+    public ViewDef(Envelope env, double azimuth) {
+        setEnvelope(envelope);
+        setAzimuth(azimuth);
+    }
+
     public void setEnvelope(Envelope envelope) {
         this.envelope = envelope;
     }

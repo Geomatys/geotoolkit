@@ -423,6 +423,31 @@ public class DefaultPortrayalService implements PortrayalService{
             final Shape selectedArea, final GraphicVisitor visitor)
             throws PortrayalException {
 
+        final CanvasDef canvasDef = new CanvasDef();
+        final SceneDef sceneDef = new SceneDef();
+        final ViewDef viewDef = new ViewDef();
+        final VisitDef visitDef = new VisitDef();
+
+        sceneDef.setContext(context);
+        viewDef.setEnvelope(contextEnv);
+        canvasDef.setDimension(canvasDimension);
+        canvasDef.setStretchImage(strechImage);
+        sceneDef.setHints(hints);
+        visitDef.setArea(selectedArea);
+        visitDef.setVisitor(visitor);
+
+        visit(canvasDef, sceneDef, viewDef, visitDef);
+    }
+
+    public static void visit(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef, VisitDef visitDef)
+            throws PortrayalException {
+
+        final Envelope contextEnv = viewDef.getEnvelope();
+        final Dimension canvasDimension = canvasDef.getDimension();
+        final Hints hints = sceneDef.getHints();
+        final MapContext context = sceneDef.getContext();
+        final boolean strechImage = canvasDef.isStretchImage();
+
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
@@ -442,6 +467,8 @@ public class DefaultPortrayalService implements PortrayalService{
             throw new PortrayalException(ex);
         }
 
+        final Shape selectedArea = visitDef.getArea();
+        final GraphicVisitor visitor = visitDef.getVisitor();
         try {
             canvas.getGraphicsIn(selectedArea, visitor, VisitFilter.INTERSECTS);
         } catch(Exception ex) {
@@ -456,6 +483,7 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
     }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // OTHER USEFULL ///////////////////////////////////////////////////////////
