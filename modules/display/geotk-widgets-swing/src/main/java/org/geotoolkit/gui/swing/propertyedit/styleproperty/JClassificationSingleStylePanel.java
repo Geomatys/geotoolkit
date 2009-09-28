@@ -307,6 +307,8 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private void guiGenerateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
 
         builder.setPalette((RandomPalette) guiPalette.getSelectedItem());
+        builder.setOther(guiOther.isSelected());
+        builder.setCurrentProperty((PropertyName) guiProperty.getSelectedItem());
         builder.create();
 
         guiTable.revalidate();
