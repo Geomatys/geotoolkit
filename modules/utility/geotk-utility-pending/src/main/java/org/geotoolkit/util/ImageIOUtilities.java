@@ -37,6 +37,43 @@ public class ImageIOUtilities {
 
     public static void writeImage(final RenderedImage image,
             final String mime, Object output) throws IOException{
+
+        final ImageWriter writer = getImageWriter(image, mime, output);
+        final ImageWriterSpi spi = writer.getOriginatingProvider();
+
+        ImageOutputStream stream = null;
+        if (!isValidType(spi.getOutputTypes(), output)) {
+            stream = ImageIO.createImageOutputStream(output);
+            output = stream;
+        }
+        writer.setOutput(output);
+        writer.write(image);
+        writer.dispose();
+        if (stream != null) {
+            stream.close();
+        }
+
+    }
+
+    public static void writeImage(final RenderedImage image, Object output, ImageWriter writer) throws IOException{
+
+        final ImageWriterSpi spi = writer.getOriginatingProvider();
+
+        ImageOutputStream stream = null;
+        if (!isValidType(spi.getOutputTypes(), output)) {
+            stream = ImageIO.createImageOutputStream(output);
+            output = stream;
+        }
+        writer.setOutput(output);
+        writer.write(image);
+        writer.dispose();
+        if (stream != null) {
+            stream.close();
+        }
+
+    }
+
+    public static ImageWriter getImageWriter(final RenderedImage image, String mime, Object output) throws IOException{
         if(image == null) throw new NullPointerException("Image can not be null");
 
         final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);
@@ -44,19 +81,7 @@ public class ImageIOUtilities {
             final ImageWriter writer = writers.next();
             final ImageWriterSpi spi = writer.getOriginatingProvider();
             if (spi.canEncodeImage(image)) {
-                ImageOutputStream stream = null;
-                if (!isValidType(spi.getOutputTypes(), output)) {
-                    stream = ImageIO.createImageOutputStream(output);
-                    output = stream;
-                }
-                writer.setOutput(output);
-                writer.write(image);
-                writer.dispose();
-                if (stream != null) {
-                    stream.close();
-                }
-
-                return;
+                return writer;
             }
         }
 
@@ -66,7 +91,7 @@ public class ImageIOUtilities {
     /**
      * Check if the provided object is an instance of one of the given classes.
      */
-    private static boolean isValidType(final Class<?>[] validTypes, final Object type) {
+    public static boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
             if (t.isInstance(type)) {
                 return true;

@@ -30,7 +30,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
@@ -49,6 +56,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.ImageIOUtilities;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.portrayal.PortrayalService;
 
@@ -62,74 +70,66 @@ public class DefaultPortrayalService implements PortrayalService{
         
     private DefaultPortrayalService(){}
     
+    
     /**
-     * Portray a MapContext and outpur it in the given
-     * stream.
+     * Portray a gridcoverage using amplitute windarrows/cercles
      *
-     * @param context : Mapcontext to render
-     * @param contextEnv : MapArea to render
-     * @param output : output srteam or file or url
-     * @param mime : mime output type
+     * @param coverage : grid coverage to render
+     * @param mapArea : mapArea to render
      * @param canvasDimension : size of the wanted image
+     * @return resulting image of the portraying operation
      */
-    public static void portray(final MapContext context, final Envelope contextEnv,
-            final Object output, final String mime, final Dimension canvasDimension, 
-            final boolean strechImage) throws PortrayalException {
-        portray(context, contextEnv, null, output, mime, canvasDimension, null, strechImage);
+    public static Image portray(final GridCoverage2D coverage, final Envelope mapArea,
+            final Dimension canvasDimension, final boolean strechImage)
+            throws PortrayalException{
+
+        final MapContext context = convertCoverage(coverage);
+        return portray(context,mapArea,canvasDimension,strechImage);
     }
 
     /**
-     * Portray a MapContext and outpur it in the given
-     * stream.
+     * Portray a gridcoverage using amplitute windarrows/cercles
      *
-     * @param context : Mapcontext to render
-     * @param contextEnv : MapArea to render
-     * @param output : output srteam or file or url
-     * @param mime : mime output type
+     * @param coverage : grid coverage to render
+     * @param mapArea : mapArea to render
      * @param canvasDimension : size of the wanted image
-     * @param hints : canvas hints
+     * @return resulting image of the portraying operation
      */
-    public static void portray(final MapContext context, final Envelope contextEnv,
-            final Color background, final Object output, final String mime, 
-            final Dimension canvasDimension, Hints hints, final boolean strechImage) 
-            throws PortrayalException {
-        portray(context, contextEnv, null,null,background,output,mime,canvasDimension, hints,strechImage);
-    }
+    public static BufferedImage portray(final GridCoverage2D coverage, final Rectangle2D mapArea,
+            final Dimension canvasDimension, final boolean strechImage)
+            throws PortrayalException{
 
-    public static void portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Color background, final Object output, 
-            final String mime, final Dimension canvasDimension, Hints hints, 
-            final boolean strechImage) throws PortrayalException {
-        portray(context,contextEnv,start,end,background,output,mime,canvasDimension,hints,strechImage,new PortrayalExtension[0]);
-    }
+        final MapContext context = convertCoverage(coverage);
+        final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(coverage.getCoordinateReferenceSystem(),canvasDimension);
+        final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
+        canvas.setContainer(renderer);
 
-    public static void portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Color background, final Object output,
-            final String mime, final Dimension canvasDimension, Hints hints,
-            final boolean strechImage, PortrayalExtension ... extensions) throws PortrayalException {
-        portray(context,contextEnv,start,end,canvasDimension,strechImage,0.0f,null,background,output,mime,hints,extensions);
-    }
-
-    public static void portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Dimension canvasDimension,
-            final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
-            final Color background, final Object output, final String mime, Hints hints,
-            PortrayalExtension ... extensions) throws PortrayalException{
-
-        final BufferedImage image = portray(context,contextEnv,start,end,
-                canvasDimension,strechImage,azimuth,monitor,background,hints,extensions);
-
-        if(image == null){
-            throw new PortrayalException("No image created by the canvas.");
+        renderer.setContext(context);
+        try {
+            canvas.getController().setObjectiveCRS(coverage.getCoordinateReferenceSystem());
+        } catch (TransformException ex) {
+            throw new PortrayalException("Could not set objective crs",ex);
         }
 
+        //we specifically say to not repect X/Y proportions
+        if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
         try {
-            ImageIOUtilities.writeImage(image, mime, output);
-        } catch (IOException ex) {
+            canvas.getController().setVisibleArea(mapArea);
+        } catch (IllegalArgumentException ex) {
+            throw new PortrayalException("Could not set map to requested area",ex);
+        } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
         }
+        canvas.getController().repaint();
+        BufferedImage buffer = canvas.getSnapShot();
+        canvas.dispose();
 
+        return buffer;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // PAINTING IN A BUFFERED IMAGE ////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Portray a MapContext and returns an Image.
@@ -140,7 +140,7 @@ public class DefaultPortrayalService implements PortrayalService{
      * @return resulting image of the portraying operation
      */
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
-            final Dimension canvasDimension, final boolean strechImage) 
+            final Dimension canvasDimension, final boolean strechImage)
             throws PortrayalException{
         return portray(context,contextEnv,canvasDimension,strechImage,0,null,null);
     }
@@ -221,61 +221,202 @@ public class DefaultPortrayalService implements PortrayalService{
         return buffer;
     }
 
-    /**
-     * Portray a gridcoverage using amplitute windarrows/cercles
-     *
-     * @param coverage : grid coverage to render
-     * @param mapArea : mapArea to render
-     * @param canvasDimension : size of the wanted image
-     * @return resulting image of the portraying operation
-     */
-    public static Image portray(final GridCoverage2D coverage, final Envelope mapArea,
-            final Dimension canvasDimension, final boolean strechImage)
-            throws PortrayalException{
+    public static BufferedImage portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef) throws PortrayalException{
 
-        final MapContext context = convertCoverage(coverage);
-        return portray(context,mapArea,canvasDimension,strechImage);
-    }
+        final Envelope contextEnv = viewDef.getEnvelope();
+        final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
 
-    /**
-     * Portray a gridcoverage using amplitute windarrows/cercles
-     *
-     * @param coverage : grid coverage to render
-     * @param mapArea : mapArea to render
-     * @param canvasDimension : size of the wanted image
-     * @return resulting image of the portraying operation
-     */
-    public static BufferedImage portray(final GridCoverage2D coverage, final Rectangle2D mapArea,
-            final Dimension canvasDimension, final boolean strechImage)
-            throws PortrayalException{
-
-        final MapContext context = convertCoverage(coverage);
-        final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(coverage.getCoordinateReferenceSystem(),canvasDimension);
+        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(
+                crs,
+                canvasDef.getDimension(),
+                sceneDef.getHints());
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
+        canvas.setBackgroundPainter(new SolidColorPainter(canvasDef.getBackground()));
 
+        final CanvasMonitor monitor = viewDef.getMonitor();
+        if(monitor != null){
+            canvas.setMonitor(monitor);
+        }
+
+        final Hints hints = sceneDef.getHints();
+        if(hints != null){
+            for(Object key : hints.keySet()){
+                canvas.setRenderingHint((Key)key, hints.get(key));
+            }
+        }
+
+        final MapContext context = sceneDef.getContext();
         renderer.setContext(context);
         try {
-            canvas.getController().setObjectiveCRS(coverage.getCoordinateReferenceSystem());
+            canvas.getController().setObjectiveCRS(crs);
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
+        canvas.getController().setTemporalRange(viewDef.getStart(), viewDef.getEnd());
 
         //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
+        final CanvasController2D control = canvas.getController();
+        if(canvasDef.isStretchImage()) control.setAxisProportions(Double.NaN);
         try {
-            canvas.getController().setVisibleArea(mapArea);
-        } catch (IllegalArgumentException ex) {
-            throw new PortrayalException("Could not set map to requested area",ex);
+            control.setVisibleArea(contextEnv);
+            if (viewDef.getAzimuth() != 0) {
+                control.rotate( -Math.toRadians(viewDef.getAzimuth()) );
+            }
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
         }
+
+        //paints all extensions
+        final List<PortrayalExtension> extensions = sceneDef.extensions();
+        if(extensions != null){
+            for(final PortrayalExtension extension : extensions){
+                extension.completeCanvas(canvas);
+            }
+        }
+
         canvas.getController().repaint();
-        BufferedImage buffer = canvas.getSnapShot();
+        final BufferedImage buffer = canvas.getSnapShot();
         canvas.dispose();
 
         return buffer;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // PAINTING IN A STREAM or OUTPUT //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Portray a MapContext and outpur it in the given
+     * stream.
+     *
+     * @param context : Mapcontext to render
+     * @param contextEnv : MapArea to render
+     * @param output : output srteam or file or url
+     * @param mime : mime output type
+     * @param canvasDimension : size of the wanted image
+     */
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Object output, final String mime, final Dimension canvasDimension,
+            final boolean strechImage) throws PortrayalException {
+        portray(context, contextEnv, null, output, mime, canvasDimension, null, strechImage);
+    }
+
+    /**
+     * Portray a MapContext and outpur it in the given
+     * stream.
+     *
+     * @param context : Mapcontext to render
+     * @param contextEnv : MapArea to render
+     * @param output : output srteam or file or url
+     * @param mime : mime output type
+     * @param canvasDimension : size of the wanted image
+     * @param hints : canvas hints
+     */
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Color background, final Object output, final String mime,
+            final Dimension canvasDimension, Hints hints, final boolean strechImage)
+            throws PortrayalException {
+        portray(context, contextEnv, null,null,background,output,mime,canvasDimension, hints,strechImage);
+    }
+
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Date start, final Date end, final Color background, final Object output,
+            final String mime, final Dimension canvasDimension, Hints hints,
+            final boolean strechImage) throws PortrayalException {
+        portray(context,contextEnv,start,end,background,output,mime,canvasDimension,hints,strechImage,new PortrayalExtension[0]);
+    }
+
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Date start, final Date end, final Color background, final Object output,
+            final String mime, final Dimension canvasDimension, Hints hints,
+            final boolean strechImage, PortrayalExtension ... extensions) throws PortrayalException {
+        portray(context,contextEnv,start,end,canvasDimension,strechImage,0.0f,null,background,output,mime,hints,extensions);
+    }
+
+    public static void portray(final MapContext context, final Envelope contextEnv,
+            final Date start, final Date end, final Dimension canvasDimension,
+            final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
+            final Color background, final Object output, final String mime, Hints hints,
+            PortrayalExtension ... extensions) throws PortrayalException{
+
+        final CanvasDef canvasDef = new CanvasDef();
+        final SceneDef sceneDef = new SceneDef();
+        final ViewDef viewDef = new ViewDef();
+        final OutputDef outputDef = new OutputDef(mime,output);
+
+        sceneDef.setContext(context);
+        sceneDef.setHints(hints);
+        canvasDef.setDimension(canvasDimension);
+        canvasDef.setStretchImage(strechImage);
+        canvasDef.setBackground(background);
+        viewDef.setEnvelope(contextEnv);
+        viewDef.setStart(start);
+        viewDef.setEnd(end);
+        viewDef.setAzimuth(azimuth);
+        viewDef.setMonitor(monitor);
+
+        if(extensions != null){
+            for(final PortrayalExtension ext : extensions){
+                sceneDef.extensions().add(ext);
+            }
+        }
+        
+        portray(canvasDef, sceneDef, viewDef, outputDef);
+    }
+
+    public static void portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef, OutputDef outputDef) throws PortrayalException{
+
+        final BufferedImage image = portray(canvasDef,sceneDef,viewDef);
+
+        if(image == null){
+            throw new PortrayalException("No image created by the canvas.");
+        }
+
+        try {
+            final ImageWriter writer = ImageIOUtilities.getImageWriter(image, outputDef.getMime(), outputDef.getOutput());
+            final ImageWriteParam param = writer.getDefaultWriteParam();
+
+            final Float compression = outputDef.getCompression();
+            if(compression != null){
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(compression);
+            }
+
+            final Boolean progress = outputDef.getProgressive();
+            if(progress != null){
+                if(progress){
+                    param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+                }else{
+                    param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+                }
+            }
+
+            Object output = outputDef.getOutput();
+            final ImageWriterSpi spi = writer.getOriginatingProvider();
+
+            ImageOutputStream stream = null;
+            if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
+                stream = ImageIO.createImageOutputStream(output);
+                output = stream;
+            }
+            writer.setOutput(output);
+            writer.write(null,new IIOImage(image, null, null),param);
+            writer.dispose();
+            if (stream != null) {
+                stream.close();
+            }
+
+
+        } catch (IOException ex) {
+            throw new PortrayalException(ex);
+        }
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // VISITING A CONTEXT //////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     public static void visit( final MapContext context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage, final Hints hints,
@@ -315,6 +456,10 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // OTHER USEFULL ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     public static BufferedImage writeException(Exception e, Dimension dim){
 
