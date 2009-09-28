@@ -34,7 +34,7 @@ public class CanvasDef {
     }
 
     public CanvasDef(Dimension dim, Color background) {
-        setDimension(dimension);
+        setDimension(dim);
         setBackground(background);
     }
 
