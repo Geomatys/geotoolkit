@@ -63,8 +63,8 @@ public final class AnchoredInternationalStringAdapter extends InternationalStrin
     }
 
     /**
-     * Converts an {@link InternationalString} to an object to formatted into a
-     * XML stream. JAXB invokes automatically this method at marshalling time.
+     * Converts an {@link InternationalString} to an object to be formatted into
+     * a XML stream. JAXB invokes automatically this method at marshalling time.
      *
      * @param  value The string value.
      * @return The adapter for the string.

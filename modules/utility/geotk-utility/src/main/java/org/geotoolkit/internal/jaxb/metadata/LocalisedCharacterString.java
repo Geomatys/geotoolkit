@@ -90,10 +90,17 @@ final class LocalisedCharacterString {
      * Sets the locale language, using a string formatted as {@code #locale-xx},
      * where {@code xx} are the two letters representing the language.
      *
-     * @param locale The new locale.
+     * @param localeId The new locale.
      */
-    public void setLocale(final String locale) {
-        this.locale = Locales.parse(locale.substring(locale.indexOf('-') + 1));
+    public void setLocale(String localeId) {
+        if (localeId != null) {
+            localeId = localeId.trim();
+            if (localeId.length() != 0) {
+                locale = Locales.parse(localeId.substring(localeId.indexOf('-') + 1));
+                return;
+            }
+        }
+        locale = null;
     }
 
     /**

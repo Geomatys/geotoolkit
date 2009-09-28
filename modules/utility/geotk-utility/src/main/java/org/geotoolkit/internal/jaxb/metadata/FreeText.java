@@ -59,9 +59,7 @@ public final class FreeText extends CharacterString {
      *             same text.
      */
     public FreeText(final DefaultInternationalString text) {
-        this.textGroup = new TextGroup(text);
-        if (text != null) {
-            this.text = text;
-        }
+        textGroup = new TextGroup(text);
+        this.text = text;
     }
 }

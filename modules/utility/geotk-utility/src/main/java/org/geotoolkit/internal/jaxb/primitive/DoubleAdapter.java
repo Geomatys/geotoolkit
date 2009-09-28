@@ -55,6 +55,7 @@ public final class DoubleAdapter extends XmlAdapter<DoubleAdapter, Double> {
 
     /**
      * The double value to handle.
+     * This field should be considered final after construction.
      */
     @XmlElement(name = "Decimal")
     public Double value;

@@ -29,7 +29,7 @@ import org.geotoolkit.internal.jaxb.metadata.FreeText;
  * element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -82,7 +82,13 @@ public class CharacterString {
      *
      * @param text The new text.
      */
-    public final void setCharacterString(final String text) {
+    public final void setCharacterString(String text) {
+        if (text != null) {
+            text = text.trim();
+            if (text.length() == 0) {
+                text = null;
+            }
+        }
         this.text = text;
     }
 

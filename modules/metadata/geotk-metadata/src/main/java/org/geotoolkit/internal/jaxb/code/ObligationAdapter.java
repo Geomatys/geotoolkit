@@ -42,8 +42,8 @@ public final class ObligationAdapter extends XmlAdapter<String, Obligation> {
      * @throws IllegalArgumentException If the given name is unknown.
      */
     @Override
-    public Obligation unmarshal(final String value) throws IllegalArgumentException {
-        if (value == null) {
+    public Obligation unmarshal(String value) throws IllegalArgumentException {
+        if (value == null || (value = value.trim()).length() == 0) {
             return null;
         }
         return Obligation.valueOf(value);

@@ -32,7 +32,7 @@ import org.geotoolkit.internal.jaxb.text.CharacterString;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -66,9 +66,12 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
                 }
                 return ist;
             }
-            final String text = value.toString();
+            String text = value.toString();
             if (text != null) {
-                return new SimpleInternationalString(text);
+                text = text.trim();
+                if (text.length() != 0) {
+                    return new SimpleInternationalString(text);
+                }
             }
         }
         return null;
@@ -87,9 +90,12 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
             if (value instanceof DefaultInternationalString) {
                 return new FreeText((DefaultInternationalString) value);
             }
-            final String text = value.toString();
+            String text = value.toString();
             if (text != null) {
-                return new CharacterString(text);
+                text = text.trim();
+                if (text.length() != 0) {
+                    return new CharacterString(text);
+                }
             }
         }
         return null;

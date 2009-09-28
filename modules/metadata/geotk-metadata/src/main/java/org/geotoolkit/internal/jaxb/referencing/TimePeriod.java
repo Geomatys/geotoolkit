@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
-import java.util.Date;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;

@@ -38,7 +38,7 @@ public final class URINameAdapter extends XmlAdapter<URINameAdapter, URI> {
      * The URI value.
      */
     @XmlElement(name = "CharacterString")
-    public String uri;
+    private String uri;
 
     /**
      * Empty constructor for JAXB only.
@@ -65,7 +65,7 @@ public final class URINameAdapter extends XmlAdapter<URINameAdapter, URI> {
      */
     @Override
     public URI unmarshal(final URINameAdapter value) throws URISyntaxException {
-        if (value == null) {
+        if (value == null || value.uri == null) {
             return null;
         }
         return new URI(value.uri);

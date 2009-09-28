@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * and treats the {@code '_'} character like whitespace.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.04
  *
  * @since 3.02
  * @module
@@ -49,7 +49,7 @@ public final class CodeLists implements CodeList.Filter {
      * Creates a new filter for the specified code name.
      */
     private CodeLists(final String name) {
-        codename = name.trim();
+        codename = name;
     }
 
     /**
@@ -118,10 +118,9 @@ public final class CodeLists implements CodeList.Filter {
      * @see CodeList#valueOf(Class, String)
      */
     public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, String name) {
-        if (name == null) {
+        if (name == null || (name = name.trim()).length() == 0) {
             return null;
         }
-        name = name.trim();
         try {
             // Forces initialization of the given class in order
             // to register its list of static final constants.

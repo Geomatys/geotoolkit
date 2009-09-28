@@ -40,15 +40,16 @@ public final class IntegerAdapter extends XmlAdapter<IntegerAdapter, Integer> {
     /**
      * Frequently used constants.
      */
-    private static final IntegerAdapter
-            P0 = new IntegerAdapter(0),
-            P1 = new IntegerAdapter(1),
-            P2 = new IntegerAdapter(2),
-            P3 = new IntegerAdapter(3),
-            P4 = new IntegerAdapter(4);
+    private static final IntegerAdapter[] CONSTANTS = new IntegerAdapter[5];
+    static {
+        for (int i=0; i<CONSTANTS.length; i++) {
+            CONSTANTS[i] = new IntegerAdapter(i);
+        }
+    }
 
     /**
      * The integer value to handle.
+     * This field should be considered final after construction.
      */
     @XmlElement(name = "Integer")
     public Integer value;
@@ -95,15 +96,8 @@ public final class IntegerAdapter extends XmlAdapter<IntegerAdapter, Integer> {
         if (value == null) {
             return null;
         }
-        final IntegerAdapter c;
-        switch (value) {
-            case 0:  c = P0; break;
-            case 1:  c = P1; break;
-            case 2:  c = P2; break;
-            case 3:  c = P3; break;
-            case 4:  c = P4; break;
-            default: c = new IntegerAdapter(value); break;
-        }
+        final int i = value;
+        final IntegerAdapter c = (i >= 0 && i < CONSTANTS.length) ? CONSTANTS[i] : new IntegerAdapter(value);
         assert value.equals(c.value) : value;
         return c;
     }

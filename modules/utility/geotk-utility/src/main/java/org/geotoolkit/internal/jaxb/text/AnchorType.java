@@ -30,7 +30,7 @@ import org.geotoolkit.xml.Namespaces;
  * The {@code AnchorType} element, which is included in {@code CharacterString} elements.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -42,13 +42,13 @@ public final class AnchorType { // Should NOT implement CharSequence.
      * A URN.
      */
     @XmlAttribute(namespace = Namespaces.XLINK)
-    public URI href;
+    private URI href;
 
     /**
      * Often a short textual description of the URN target.
      */
     @XmlValue
-    public String value;
+    private String value;
 
     /**
      * Creates a unitialized {@code AnchorType}.

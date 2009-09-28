@@ -28,7 +28,7 @@ import org.opengis.util.CodeList;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -73,11 +73,12 @@ public final class CodeListProxy {
      * Builds a proxy instance of {@link CodeList}. It stores the values that will be
      * used for marshalling.
      *
-     * @param codeList The code list to wrap.
+     * @param code The code list to wrap.
      */
-    CodeListProxy(final CodeList<?> codeList) {
-        final String identifier = codeList.identifier();
-        this.codeListValue = (identifier != null) ? identifier : codeList.name();
-        this.codeList = URL.concat(codeListValue);
+    CodeListProxy(final CodeList<?> code) {
+        String identifier = code.identifier();
+        codeListValue = (identifier != null &&
+                (identifier = identifier.trim()).length() != 0) ? identifier : code.name();
+        codeList = URL.concat(codeListValue);
     }
 }

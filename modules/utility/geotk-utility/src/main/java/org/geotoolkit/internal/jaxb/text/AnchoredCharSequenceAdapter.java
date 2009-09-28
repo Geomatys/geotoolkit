@@ -111,15 +111,18 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
     public CharacterString marshal(final CharSequence value) {
         if (value != null) {
             final URI href;
-            final String key = value.toString();
+            String key = value.toString();
             if (key != null) {
-                synchronized (anchors) {
-                    href = anchors.get(key);
-                }
-                if (href != null) {
-                    return new CharacterString(new AnchorType(href, key));
-                } else {
-                    return new CharacterString(value);
+                key = key.trim();
+                if (key.length() != 0) {
+                    synchronized (anchors) {
+                        href = anchors.get(key);
+                    }
+                    if (href != null) {
+                        return new CharacterString(new AnchorType(href, key));
+                    } else {
+                        return new CharacterString(value);
+                    }
                 }
             }
         }

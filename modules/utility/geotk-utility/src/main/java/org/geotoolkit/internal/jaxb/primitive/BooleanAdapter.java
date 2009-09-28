@@ -49,6 +49,7 @@ public final class BooleanAdapter extends XmlAdapter<BooleanAdapter, Boolean> {
 
     /**
      * The boolean value to handle.
+     * This field should be considered final after construction.
      */
     @XmlElement(name = "Boolean")
     public Boolean value;

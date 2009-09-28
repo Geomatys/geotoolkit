@@ -28,7 +28,7 @@ import org.geotoolkit.resources.Locales;
  * complying with ISO-19139 standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -71,8 +71,15 @@ public final class LocaleAdapter extends XmlAdapter<LocaleAdapter, Locale> {
      *
      * @param language The unmarshalled locale.
      */
-    public void setLocale(final String language) {
-        locale = Locales.parse(language);
+    public void setLocale(String language) {
+        if (language != null) {
+            language = language.trim();
+            if (language.length() != 0) {
+                locale = Locales.parse(language);
+                return;
+            }
+        }
+        locale = null;
     }
 
     /**

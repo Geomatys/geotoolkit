@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -40,11 +40,14 @@ public final class UnitAdapter extends XmlAdapter<String, Unit<?>> {
      * @throws IllegalArgumentException if the given symbol is unknown.
      */
     @Override
-    public Unit<?> unmarshal(final String value) throws IllegalArgumentException {
-        if (value == null) {
-            return null;
+    public Unit<?> unmarshal(String value) throws IllegalArgumentException {
+        if (value != null) {
+            value = value.trim();
+            if (value.length() != 0) {
+                return Unit.valueOf(value.trim());
+            }
         }
-        return Unit.valueOf(value.trim());
+        return null;
     }
 
     /**

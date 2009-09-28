@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -46,7 +46,13 @@ public class StringAdapter extends XmlAdapter<CharacterString, String> {
      */
     @Override
     public final String unmarshal(final CharacterString value) {
-        return (value != null) ? value.toString() : null;
+        if (value != null) {
+            final String text = value.toString().trim();
+            if (text.length() != 0) {
+                return text;
+            }
+        }
+        return null;
     }
 
     /**
@@ -57,7 +63,13 @@ public class StringAdapter extends XmlAdapter<CharacterString, String> {
      * @return The adapter for this string.
      */
     @Override
-    public CharacterString marshal(final String value) {
-        return (value != null) ? new CharacterString(value) : null;
+    public CharacterString marshal(String value) {
+        if (value != null) {
+            value = value.trim();
+            if (value.length() != 0) {
+                return new CharacterString(value);
+            }
+        }
+        return null;
     }
 }
