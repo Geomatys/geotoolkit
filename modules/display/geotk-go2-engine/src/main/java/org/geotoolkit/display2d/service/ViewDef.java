@@ -40,7 +40,7 @@ public class ViewDef {
     }
 
     public ViewDef(Envelope env, double azimuth) {
-        setEnvelope(envelope);
+        setEnvelope(env);
         setAzimuth(azimuth);
     }
 
