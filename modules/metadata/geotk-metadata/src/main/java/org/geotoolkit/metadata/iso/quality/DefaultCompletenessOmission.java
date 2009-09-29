@@ -20,6 +20,8 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.quality.CompletenessOmission;
 
 import org.geotoolkit.lang.ThreadSafe;
@@ -30,12 +32,13 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlRootElement(name = "DQ_CompletenessOmission")
 public class DefaultCompletenessOmission extends AbstractCompleteness implements CompletenessOmission {
     /**
      * Serial number for interoperability with different versions.

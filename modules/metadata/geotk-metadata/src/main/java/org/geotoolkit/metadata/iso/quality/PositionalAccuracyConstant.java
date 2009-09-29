@@ -22,6 +22,7 @@ package org.geotoolkit.metadata.iso.quality;
 
 import java.util.Collections;
 import java.io.ObjectStreamException;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.EvaluationMethodType;
@@ -40,7 +41,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * package-privated class that users can not instantiate themself.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4891511">Issue 4891511</a>
  *
@@ -48,6 +49,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @module
  */
 @ThreadSafe
+@XmlRootElement(name = "DQ_AbsoluteExternalPositionalAccuracy")
 final class PositionalAccuracyConstant extends AbstractPositionalAccuracy
        implements AbsoluteExternalPositionalAccuracy
 {

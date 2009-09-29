@@ -21,15 +21,15 @@
 package org.geotoolkit.metadata.iso.quality;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.opengis.metadata.quality.TopologicalConsistency;
+import org.opengis.metadata.quality.TemporalAccuracy;
 
 import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
- * Correctness of the explicitly encoded topological characteristics of the dataset as
- * described by the scope.
+ * Accuracy of the temporal attributes and temporal relationships of features.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
@@ -39,19 +39,22 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlRootElement(name = "DQ_TopologicalConsistency")
-public class DefaultTopologicalConsistency extends AbstractLogicalConsistency
-        implements TopologicalConsistency
-{
+@XmlRootElement(name = "DQ_TemporalAccuracy")
+@XmlSeeAlso({
+    DefaultAccuracyOfATimeMeasurement.class,
+    DefaultTemporalConsistency.class,
+    DefaultTemporalValidity.class
+})
+public class AbstractTemporalAccuracy extends AbstractElement implements TemporalAccuracy {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -255014076679068944L;
+    private static final long serialVersionUID = 4525353962603986621L;
 
     /**
-     * Constructs an initially empty topological consistency.
+     * Constructs an initially empty temporal accuracy.
      */
-    public DefaultTopologicalConsistency() {
+    public AbstractTemporalAccuracy() {
     }
 
     /**
@@ -61,7 +64,7 @@ public class DefaultTopologicalConsistency extends AbstractLogicalConsistency
      *
      * @since 2.4
      */
-    public DefaultTopologicalConsistency(final TopologicalConsistency source) {
+    public AbstractTemporalAccuracy(final TemporalAccuracy source) {
         super(source);
     }
 }

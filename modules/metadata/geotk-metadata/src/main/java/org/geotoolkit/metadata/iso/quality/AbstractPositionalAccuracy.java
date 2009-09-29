@@ -20,6 +20,9 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
@@ -34,12 +37,18 @@ import org.geotoolkit.resources.Descriptions;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlRootElement(name = "DQ_PositionalAccuracy")
+@XmlSeeAlso({
+    DefaultAbsoluteExternalPositionalAccuracy.class,
+    DefaultGriddedDataPositionalAccuracy.class,
+    DefaultRelativeInternalPositionalAccuracy.class
+})
 public class AbstractPositionalAccuracy extends AbstractElement implements PositionalAccuracy {
     /**
      * Serial number for interoperability with different versions.

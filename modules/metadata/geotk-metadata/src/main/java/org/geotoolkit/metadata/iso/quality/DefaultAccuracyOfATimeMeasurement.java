@@ -20,6 +20,8 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.quality.AccuracyOfATimeMeasurement;
 
 import org.geotoolkit.lang.ThreadSafe;
@@ -30,13 +32,14 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
-public class DefaultAccuracyOfATimeMeasurement extends DefaultTemporalAccuracy
+@XmlRootElement(name = "DQ_AccuracyOfATimeMeasurement")
+public class DefaultAccuracyOfATimeMeasurement extends AbstractTemporalAccuracy
         implements AccuracyOfATimeMeasurement
 {
     /**

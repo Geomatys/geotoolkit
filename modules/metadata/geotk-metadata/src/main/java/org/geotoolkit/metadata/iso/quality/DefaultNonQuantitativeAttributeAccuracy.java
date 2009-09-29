@@ -20,6 +20,8 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy;
 
 import org.geotoolkit.lang.ThreadSafe;
@@ -30,12 +32,13 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Cory Horner (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.4
  * @module
  */
 @ThreadSafe
+@XmlRootElement(name = "DQ_NonQuantitativeAttributeAccuracy")
 public class DefaultNonQuantitativeAttributeAccuracy extends AbstractThematicAccuracy
         implements NonQuantitativeAttributeAccuracy
 {

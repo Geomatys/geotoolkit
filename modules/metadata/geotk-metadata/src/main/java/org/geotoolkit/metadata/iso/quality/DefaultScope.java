@@ -21,6 +21,9 @@
 package org.geotoolkit.metadata.iso.quality;
 
 import java.util.Collection;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.quality.Scope;
@@ -36,12 +39,18 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlType(propOrder={
+   "level",
+   "extent",
+   "levelDescription"
+})
+@XmlRootElement(name = "DQ_Scope")
 public class DefaultScope extends MetadataEntity implements Scope {
     /**
      * Serial number for interoperability with different versions.
@@ -94,6 +103,7 @@ public class DefaultScope extends MetadataEntity implements Scope {
      * Returns the hierarchical level of the data specified by the scope.
      */
     @Override
+    @XmlElement(name = "level", required = true)
     public synchronized ScopeCode getLevel() {
         return level;
     }
@@ -116,6 +126,7 @@ public class DefaultScope extends MetadataEntity implements Scope {
      * @since 2.4
      */
     @Override
+    @XmlElement(name = "levelDescription")
     public synchronized Collection<ScopeDescription> getLevelDescription() {
         return levelDescription = nonNullCollection(levelDescription, ScopeDescription.class);
     }
@@ -136,6 +147,7 @@ public class DefaultScope extends MetadataEntity implements Scope {
      * scope.
      */
     @Override
+    @XmlElement(name = "extent")
     public synchronized Extent getExtent() {
         return extent;
     }

@@ -34,9 +34,12 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Renamed as {@link AbstractTemporalAccuracy}.
  */
+@Deprecated
 @ThreadSafe
-public class DefaultTemporalAccuracy extends AbstractElement implements TemporalAccuracy {
+public class DefaultTemporalAccuracy extends AbstractTemporalAccuracy {
     /**
      * Serial number for interoperability with different versions.
      */

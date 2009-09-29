@@ -21,6 +21,7 @@
 package org.geotoolkit.metadata.iso.quality;
 
 import java.util.Collection;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,12 +39,17 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlType(propOrder={
+    "scope",
+    "reports",
+    "lineage"
+})
 @XmlRootElement(name = "DQ_DataQuality")
 public class DefaultDataQuality extends MetadataEntity implements DataQuality {
     /**
@@ -100,7 +106,7 @@ public class DefaultDataQuality extends MetadataEntity implements DataQuality {
      * Returns the specific data to which the data quality information applies.
      */
     @Override
-/// @XmlElement(name = "scope", required = true)
+    @XmlElement(name = "scope", required = true)
     public synchronized Scope getScope() {
         return scope;
     }
@@ -121,6 +127,7 @@ public class DefaultDataQuality extends MetadataEntity implements DataQuality {
      * is {@linkplain org.opengis.metadata.maintenance.ScopeCode#DATASET dataset}.
      */
     @Override
+    @XmlElement(name = "report")
     public synchronized Collection<Element> getReports() {
         return reports = nonNullCollection(reports, Element.class);
     }

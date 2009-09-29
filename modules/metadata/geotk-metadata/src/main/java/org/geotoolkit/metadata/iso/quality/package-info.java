@@ -32,7 +32,7 @@
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.1
  * @module
@@ -46,11 +46,20 @@
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(LineageAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
     @XmlJavaTypeAdapter(ScopeAdapter.class),
     @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
     @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class)
+    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
+    @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(IdentifierAdapter.class),
+    @XmlJavaTypeAdapter(EvaluationMethodTypeAdapter.class),
+    @XmlJavaTypeAdapter(ResultAdapter.class),
+    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
+    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
+    @XmlJavaTypeAdapter(ElementAdapter.class)
 })
 package org.geotoolkit.metadata.iso.quality;
 
@@ -65,5 +74,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.uom.DateAdapter;
+import org.geotoolkit.internal.jaxb.code.EvaluationMethodTypeAdapter;
 import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
+import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.text.RecordTypeAdapter;

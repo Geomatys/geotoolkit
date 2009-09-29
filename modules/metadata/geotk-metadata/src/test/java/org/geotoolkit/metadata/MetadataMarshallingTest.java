@@ -30,17 +30,23 @@ import javax.xml.bind.Unmarshaller;
 
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.metadata.iso.DefaultMetaData;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.metadata.iso.quality.DefaultCompletenessCommission;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
+import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.xml.Namespaces;
 
 import org.opengis.metadata.identification.CharacterSet;
+import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.spatial.DimensionNameType;
 
 import org.junit.*;
@@ -87,8 +93,11 @@ public final class MetadataMarshallingTest {
             DefaultResponsibleParty.GEOTOOLKIT, DefaultResponsibleParty.OPEN_GIS
         ));
         metadata.setMetadataStandardVersion("ISO-19115");
+        final DefaultCitation citationGeotk = new DefaultCitation();
+        citationGeotk.setTitle(new SimpleInternationalString("Geotoolkit.org"));
+        citationGeotk.setCitedResponsibleParties(Arrays.asList(DefaultResponsibleParty.GEOTOOLKIT));
         final DefaultDataIdentification dataIdent = new DefaultDataIdentification();
-        dataIdent.setCitation(Citations.GEOTOOLKIT);
+        dataIdent.setCitation(citationGeotk);
         final DefaultInternationalString localizedAbstract = new DefaultInternationalString();
         localizedAbstract.add(Locale.ENGLISH, "Geotoolkit.org, OpenSource Project");
         localizedAbstract.add(Locale.FRENCH,  "Geotoolkit.org, projet OpenSource");
@@ -100,6 +109,7 @@ public final class MetadataMarshallingTest {
         metadata.setIdentificationInfo(Arrays.asList(
             dataIdent
         ));
+        // Spatial representation part.
         final DefaultDimension dimension = new DefaultDimension();
         dimension.setDimensionName(DimensionNameType.COLUMN);
         dimension.setDimensionSize(830);
@@ -112,15 +122,29 @@ public final class MetadataMarshallingTest {
             new DefaultDistributor(DefaultResponsibleParty.GEOTOOLKIT)
         ));
         metadata.setDistributionInfo(distrib);
-        final StringWriter writer = new StringWriter();
+        // DataQuality part.
+        final DefaultDataQuality dataQuality = new DefaultDataQuality();
+        final DefaultCompletenessCommission completeComm = new DefaultCompletenessCommission();
+        completeComm.setEvaluationMethodDescription(new SimpleInternationalString("method"));
+        completeComm.setEvaluationMethodType(EvaluationMethodType.INDIRECT);
+        completeComm.setEvaluationProcedure(citationGeotk);
+        completeComm.setMeasureDescription(new SimpleInternationalString("description"));
+        completeComm.setMeasureIdentification(new DefaultIdentifier("ident measure"));
+        completeComm.setNamesOfMeasure(Arrays.asList(new SimpleInternationalString("my measure")));
+        final DefaultConformanceResult conformResult = new DefaultConformanceResult(citationGeotk,
+                new SimpleInternationalString("conformance to the WMS standard"), true);
+        completeComm.setResults(Arrays.asList(conformResult));
+        dataQuality.setReports(Arrays.asList(completeComm));
+        metadata.setDataQualityInfo(Arrays.asList(dataQuality));
         /*
          * Write in output buffer.
          */
+        final StringWriter writer = new StringWriter();
         marshaller.marshal(metadata, writer);
         final String xml = writer.toString();
         pool.release(marshaller);
         writer.close();
-        assertFalse("Nothing has be written.", xml.length() == 0);
+        assertFalse("Nothing to write.", xml.length() == 0);
         /*
          * Parses the xml string.
          */
@@ -134,13 +158,14 @@ public final class MetadataMarshallingTest {
          */
         assertNotNull(obj);
         assertTrue("The unmarshalled object gotten from the XML file marshalled is not an instance " +
-                   "of DefaultMetaData. So the unmarshalling has failed on this XML file.",
+                   "of DefaultMetaData. So the unmarshalling process fails for that XML string.",
                    obj instanceof DefaultMetaData);
 
         final DefaultMetaData dataUnmarsh = (DefaultMetaData) obj;
         assertEquals(metadata.getCharacterSet(), dataUnmarsh.getCharacterSet());
         assertEquals(metadata.getLanguage(), dataUnmarsh.getLanguage());
-        assertEquals(metadata.getIdentificationInfo().iterator().next().getAbstract(),
-                     dataUnmarsh.getIdentificationInfo().iterator().next().getAbstract());
+        assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());
+        assertEquals(metadata.getDataQualityInfo(), dataUnmarsh.getDataQualityInfo());
+        assertEquals(metadata, dataUnmarsh);
     }
 }

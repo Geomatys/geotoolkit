@@ -25,6 +25,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -43,12 +47,30 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlType(propOrder={
+    "namesOfMeasure",
+    "measureIdentification",
+    "measureDescription",
+    "evaluationMethodType",
+    "evaluationMethodDescription",
+    "evaluationProcedure",
+    "dates",
+    "results"
+})
+@XmlRootElement(name = "DQ_Element")
+@XmlSeeAlso({
+    AbstractCompleteness.class,
+    AbstractLogicalConsistency.class,
+    AbstractPositionalAccuracy.class,
+    AbstractThematicAccuracy.class,
+    AbstractTemporalAccuracy.class
+})
 public class AbstractElement extends MetadataEntity implements Element {
     /**
      * Serial number for interoperability with different versions.
@@ -130,6 +152,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the name of the test applied to the data.
      */
     @Override
+    @XmlElement(name = "nameOfMeasure")
     public synchronized Collection<InternationalString> getNamesOfMeasure() {
         return namesOfMeasure = nonNullCollection(namesOfMeasure, InternationalString.class);
     }
@@ -149,6 +172,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the code identifying a registered standard procedure, or {@code null} if none.
      */
     @Override
+    @XmlElement(name = "measureIdentification")
     public synchronized Identifier getMeasureIdentification() {
         return measureIdentification;
     }
@@ -167,6 +191,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the description of the measure being determined.
      */
     @Override
+    @XmlElement(name = "measureDescription")
     public synchronized InternationalString getMeasureDescription() {
         return measureDescription;
     }
@@ -186,6 +211,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * or {@code null} if unspecified.
      */
     @Override
+    @XmlElement(name = "evaluationMethodType")
     public synchronized EvaluationMethodType getEvaluationMethodType() {
         return evaluationMethodType;
     }
@@ -204,6 +230,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the description of the evaluation method.
      */
     @Override
+    @XmlElement(name = "evaluationMethodDescription")
     public synchronized InternationalString getEvaluationMethodDescription() {
         return evaluationMethodDescription;
     }
@@ -222,6 +249,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Returns the reference to the procedure information, or {@code null} if none.
      */
     @Override
+    @XmlElement(name = "evaluationProcedure")
     public synchronized Citation getEvaluationProcedure() {
         return evaluationProcedure;
     }
@@ -244,6 +272,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * @since 2.4
      */
     @Override
+    @XmlElement(name = "dateTime")
     public synchronized Collection<Date> getDates() {
         if (date1 == Long.MIN_VALUE) {
             return Collections.emptyList();
@@ -288,6 +317,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * @since 2.4
      */
     @Override
+    @XmlElement(name = "result")
     public synchronized Collection<Result> getResults() {
         return results = nonNullCollection(results, Result.class);
     }

@@ -20,6 +20,8 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
 
@@ -31,12 +33,13 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlRootElement(name = "DQ_AbsoluteExternalPositionalAccuracy")
 public class DefaultAbsoluteExternalPositionalAccuracy extends AbstractPositionalAccuracy
        implements AbsoluteExternalPositionalAccuracy
 {

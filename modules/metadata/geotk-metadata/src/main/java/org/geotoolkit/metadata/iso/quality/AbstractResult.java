@@ -20,6 +20,9 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.metadata.quality.Result;
 
 import org.geotoolkit.lang.ThreadSafe;
@@ -31,12 +34,14 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlRootElement(name = "DQ_Result")
+@XmlSeeAlso({DefaultConformanceResult.class, DefaultQuantitativeResult.class})
 public class AbstractResult extends MetadataEntity implements Result {
     /**
      * Serial number for interoperability with different versions.

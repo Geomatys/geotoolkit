@@ -20,6 +20,10 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -33,12 +37,18 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlType(propOrder={
+    "specification",
+    "explanation",
+    "pass"
+})
+@XmlRootElement(name = "DQ_ConformanceResult")
 public class DefaultConformanceResult extends AbstractResult implements ConformanceResult {
 
     /**
@@ -58,7 +68,11 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
 
     /**
      * Indication of the conformance result.
+     *
+     * The fiels is directly annotated here, because the getter method is called {@link #pass()},
+     * and JAXB does not recognize it. The method should have been called getPass() or isPass().
      */
+    @XmlElement(name = "pass", required = true)
     private boolean pass;
 
     /**
@@ -99,6 +113,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      * requirement against which data is being evaluated.
      */
     @Override
+    @XmlElement(name = "specification", required = true)
     public synchronized Citation getSpecification() {
         return specification;
     }
@@ -118,6 +133,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      * Returns the explanation of the meaning of conformance for this result.
      */
     @Override
+    @XmlElement(name = "explanation", required = true)
     public synchronized InternationalString getExplanation() {
         return explanation;
     }

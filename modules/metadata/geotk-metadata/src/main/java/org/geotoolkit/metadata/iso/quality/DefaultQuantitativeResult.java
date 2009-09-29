@@ -23,6 +23,9 @@ package org.geotoolkit.metadata.iso.quality;
 import java.util.List;
 import java.util.Arrays;
 import javax.measure.unit.Unit;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.QuantitativeResult;
 import org.opengis.util.InternationalString;
@@ -37,12 +40,18 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.03
+ * @version 3.04
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
+@XmlType(propOrder={
+    "valueType",
+    "valueUnit",
+    "errorStatistic"
+})
+@XmlRootElement(name = "DQ_QuantitativeResult")
 public class DefaultQuantitativeResult extends AbstractResult implements QuantitativeResult {
     /**
      * Serial number for compatibility with different versions.
@@ -98,8 +107,11 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
     /**
      * Returns the quantitative value or values, content determined
      * by the evaluation procedure used.
+     *
+     * @TODO find an implementation of {@link Record}. The one in this class is deprecated.
      */
     @Override
+/// @XmlElement(name = "value", required = true)
     public synchronized List<Record> getValues() {
         return values = nonNullList(values, Record.class);
     }
@@ -180,6 +192,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Return the value type for reporting a data quality result, or {@code null} if none.
      */
     @Override
+    @XmlElement(name = "valueType")
     public synchronized RecordType getValueType()  {
         return valueType;
     }
@@ -198,6 +211,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Returns the value unit for reporting a data quality result, or {@code null} if none.
      */
     @Override
+    @XmlElement(name = "valueUnit", required = true)
     public synchronized Unit<?> getValueUnit()  {
         return valueUnit;
     }
@@ -216,6 +230,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Returns the statistical method used to determine the value, or {@code null} if none.
      */
     @Override
+    @XmlElement(name = "errorStatistic")
     public synchronized InternationalString getErrorStatistic()  {
         return errorStatistic;
     }
