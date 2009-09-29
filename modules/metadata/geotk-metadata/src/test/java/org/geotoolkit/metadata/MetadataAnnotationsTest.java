@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,128 +17,202 @@
  */
 package org.geotoolkit.metadata;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
-import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
-import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
-import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.geotoolkit.util.DefaultInternationalString;
-import org.geotoolkit.xml.Namespaces;
-
-import org.opengis.metadata.identification.CharacterSet;
-import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.util.CodeList;
+import org.opengis.annotation.UML;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
- * A test class for annotations written in the Metadata module.
- * First, it marshalls all annotations in a XML temporary file, starting with the
- * {@link DefaultMetaData} class as root element. Then, the temporary XML file is
- * unmarshalled, in order to get a {@code DefaultMetaData} object. Finally some
- * fields of this object are compared with the original value.
+ * Compares JAXB annotations with the UML ones.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.04
  *
- * @since 2.5
+ * @since 3.04
  */
-@Depend(MetadataStandardTest.class)
 public final class MetadataAnnotationsTest {
     /**
-     * Generates an XML tree from the annotations on the {@link DefaultMetaData} class,
-     * and writes it in a temporary buffer. This file is then read by the unmarshaller.
-     * Some assertions about the validity of the unmarshalled data are checked.
-     *
-     * @throws JAXBException If an error occured during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
-     * @throws IOException If a writing error in the temporary file occured.
+     * The list of Metadata code list or interfaces to test,
+     * in alphabetical order.
+     */
+    private static final Class<?>[] TYPES = {
+        org.opengis.metadata.acquisition.AcquisitionInformation.class,
+        org.opengis.metadata.acquisition.Context.class,
+        org.opengis.metadata.acquisition.EnvironmentalRecord.class,
+        org.opengis.metadata.acquisition.Event.class,
+        org.opengis.metadata.acquisition.GeometryType.class,
+        org.opengis.metadata.acquisition.Instrument.class,
+        org.opengis.metadata.acquisition.Objective.class,
+        org.opengis.metadata.acquisition.ObjectiveType.class,
+        org.opengis.metadata.acquisition.Operation.class,
+        org.opengis.metadata.acquisition.OperationType.class,
+        org.opengis.metadata.acquisition.Plan.class,
+        org.opengis.metadata.acquisition.Platform.class,
+        org.opengis.metadata.acquisition.PlatformPass.class,
+        org.opengis.metadata.acquisition.Priority.class,
+        org.opengis.metadata.acquisition.RequestedDate.class,
+        org.opengis.metadata.acquisition.Requirement.class,
+        org.opengis.metadata.acquisition.Sequence.class,
+        org.opengis.metadata.acquisition.Trigger.class,
+        org.opengis.metadata.ApplicationSchemaInformation.class,
+        org.opengis.metadata.citation.Address.class,
+        org.opengis.metadata.citation.Citation.class,
+        org.opengis.metadata.citation.CitationDate.class,
+        org.opengis.metadata.citation.Contact.class,
+        org.opengis.metadata.citation.DateType.class,
+        org.opengis.metadata.citation.OnLineFunction.class,
+        org.opengis.metadata.citation.OnLineResource.class,
+        org.opengis.metadata.citation.PresentationForm.class,
+        org.opengis.metadata.citation.ResponsibleParty.class,
+        org.opengis.metadata.citation.Role.class,
+        org.opengis.metadata.citation.Series.class,
+        org.opengis.metadata.citation.Telephone.class,
+        org.opengis.metadata.constraint.Classification.class,
+        org.opengis.metadata.constraint.Constraints.class,
+        org.opengis.metadata.constraint.LegalConstraints.class,
+        org.opengis.metadata.constraint.Restriction.class,
+        org.opengis.metadata.constraint.SecurityConstraints.class,
+        org.opengis.metadata.content.Band.class,
+        org.opengis.metadata.content.BandDefinition.class,
+        org.opengis.metadata.content.ContentInformation.class,
+        org.opengis.metadata.content.CoverageContentType.class,
+        org.opengis.metadata.content.CoverageDescription.class,
+        org.opengis.metadata.content.FeatureCatalogueDescription.class,
+        org.opengis.metadata.content.ImageDescription.class,
+        org.opengis.metadata.content.ImagingCondition.class,
+        org.opengis.metadata.content.PolarizationOrientation.class,
+        org.opengis.metadata.content.RangeDimension.class,
+        org.opengis.metadata.content.RangeElementDescription.class,
+        org.opengis.metadata.content.TransferFunctionType.class,
+        org.opengis.metadata.Datatype.class,
+        org.opengis.metadata.distribution.DataFile.class,
+        org.opengis.metadata.distribution.DigitalTransferOptions.class,
+        org.opengis.metadata.distribution.Distribution.class,
+        org.opengis.metadata.distribution.Distributor.class,
+        org.opengis.metadata.distribution.Format.class,
+        org.opengis.metadata.distribution.Medium.class,
+        org.opengis.metadata.distribution.MediumFormat.class,
+        org.opengis.metadata.distribution.MediumName.class,
+        org.opengis.metadata.distribution.StandardOrderProcess.class,
+        org.opengis.metadata.ExtendedElementInformation.class,
+        org.opengis.metadata.extent.BoundingPolygon.class,
+        org.opengis.metadata.extent.Extent.class,
+        org.opengis.metadata.extent.GeographicBoundingBox.class,
+        org.opengis.metadata.extent.GeographicDescription.class,
+        org.opengis.metadata.extent.GeographicExtent.class,
+        org.opengis.metadata.extent.SpatialTemporalExtent.class,
+        org.opengis.metadata.extent.TemporalExtent.class,
+        org.opengis.metadata.extent.VerticalExtent.class,
+        org.opengis.metadata.FeatureTypeList.class,
+        org.opengis.metadata.identification.AggregateInformation.class,
+        org.opengis.metadata.identification.AssociationType.class,
+        org.opengis.metadata.identification.BrowseGraphic.class,
+        org.opengis.metadata.identification.CharacterSet.class,
+        org.opengis.metadata.identification.DataIdentification.class,
+        org.opengis.metadata.identification.Identification.class,
+        org.opengis.metadata.identification.InitiativeType.class,
+        org.opengis.metadata.identification.Keywords.class,
+        org.opengis.metadata.identification.KeywordType.class,
+        org.opengis.metadata.identification.Progress.class,
+        org.opengis.metadata.identification.RepresentativeFraction.class,
+        org.opengis.metadata.identification.Resolution.class,
+        org.opengis.metadata.identification.ServiceIdentification.class,
+        org.opengis.metadata.identification.TopicCategory.class,
+        org.opengis.metadata.identification.Usage.class,
+        org.opengis.metadata.Identifier.class,
+        org.opengis.metadata.lineage.Algorithm.class,
+        org.opengis.metadata.lineage.Lineage.class,
+        org.opengis.metadata.lineage.NominalResolution.class,
+        org.opengis.metadata.lineage.Processing.class,
+        org.opengis.metadata.lineage.ProcessStep.class,
+        org.opengis.metadata.lineage.ProcessStepReport.class,
+        org.opengis.metadata.lineage.Source.class,
+        org.opengis.metadata.maintenance.MaintenanceFrequency.class,
+        org.opengis.metadata.maintenance.MaintenanceInformation.class,
+        org.opengis.metadata.maintenance.ScopeCode.class,
+        org.opengis.metadata.maintenance.ScopeDescription.class,
+        org.opengis.metadata.MetaData.class,
+        org.opengis.metadata.MetadataExtensionInformation.class,
+        org.opengis.metadata.Obligation.class,
+        org.opengis.metadata.PortrayalCatalogueReference.class,
+        org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy.class,
+        org.opengis.metadata.quality.AccuracyOfATimeMeasurement.class,
+        org.opengis.metadata.quality.Completeness.class,
+        org.opengis.metadata.quality.CompletenessCommission.class,
+        org.opengis.metadata.quality.CompletenessOmission.class,
+        org.opengis.metadata.quality.ConceptualConsistency.class,
+        org.opengis.metadata.quality.ConformanceResult.class,
+        org.opengis.metadata.quality.CoverageResult.class,
+        org.opengis.metadata.quality.DataQuality.class,
+        org.opengis.metadata.quality.DomainConsistency.class,
+        org.opengis.metadata.quality.Element.class,
+        org.opengis.metadata.quality.EvaluationMethodType.class,
+        org.opengis.metadata.quality.FormatConsistency.class,
+        org.opengis.metadata.quality.GriddedDataPositionalAccuracy.class,
+        org.opengis.metadata.quality.LogicalConsistency.class,
+        org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy.class,
+        org.opengis.metadata.quality.PositionalAccuracy.class,
+        org.opengis.metadata.quality.QuantitativeAttributeAccuracy.class,
+        org.opengis.metadata.quality.QuantitativeResult.class,
+        org.opengis.metadata.quality.RelativeInternalPositionalAccuracy.class,
+        org.opengis.metadata.quality.Result.class,
+        org.opengis.metadata.quality.Scope.class,
+        org.opengis.metadata.quality.TemporalAccuracy.class,
+        org.opengis.metadata.quality.TemporalConsistency.class,
+        org.opengis.metadata.quality.TemporalValidity.class,
+        org.opengis.metadata.quality.ThematicAccuracy.class,
+        org.opengis.metadata.quality.ThematicClassificationCorrectness.class,
+        org.opengis.metadata.quality.TopologicalConsistency.class,
+        org.opengis.metadata.quality.Usability.class,
+        org.opengis.metadata.spatial.CellGeometry.class,
+        org.opengis.metadata.spatial.Dimension.class,
+        org.opengis.metadata.spatial.DimensionNameType.class,
+        org.opengis.metadata.spatial.GCP.class,
+        org.opengis.metadata.spatial.GCPCollection.class,
+        org.opengis.metadata.spatial.GeolocationInformation.class,
+        org.opengis.metadata.spatial.GeometricObjects.class,
+        org.opengis.metadata.spatial.GeometricObjectType.class,
+        org.opengis.metadata.spatial.Georectified.class,
+        org.opengis.metadata.spatial.Georeferenceable.class,
+        org.opengis.metadata.spatial.GridSpatialRepresentation.class,
+        org.opengis.metadata.spatial.PixelOrientation.class,
+        org.opengis.metadata.spatial.SpatialRepresentation.class,
+        org.opengis.metadata.spatial.SpatialRepresentationType.class,
+        org.opengis.metadata.spatial.TopologyLevel.class,
+        org.opengis.metadata.spatial.VectorSpatialRepresentation.class
+    };
+
+    /**
+     * Tests the annotations on metadata (not code list) objects.
      */
     @Test
-    public void testMetadataAnnotations() throws JAXBException, IOException {
-        final MarshallerPool pool = new MarshallerPool(Namespaces.GMD, DefaultMetaData.class);
-        final Marshaller marshaller = pool.acquireMarshaller();
-        /*
-         * Fill metadata values.
-         */
-        final DefaultMetaData metadata = new DefaultMetaData();
-        metadata.setLanguage(Locale.FRENCH);
-        metadata.setCharacterSet(CharacterSet.UTF_8);
-        metadata.setDateStamp(new Date());
-        metadata.setContacts(Arrays.asList(
-            DefaultResponsibleParty.GEOTOOLKIT, DefaultResponsibleParty.OPEN_GIS
-        ));
-        metadata.setMetadataStandardVersion("ISO-19115");
-        final DefaultDataIdentification dataIdent = new DefaultDataIdentification();
-        dataIdent.setCitation(Citations.GEOTOOLKIT);
-        final DefaultInternationalString localizedAbstract = new DefaultInternationalString();
-        localizedAbstract.add(Locale.ENGLISH, "Geotoolkit.org, OpenSource Project");
-        localizedAbstract.add(Locale.FRENCH,  "Geotoolkit.org, projet OpenSource");
-        localizedAbstract.add(Locale.ITALIAN, "Geotoolkit.org, progetto OpenSource");
-        dataIdent.setAbstract(localizedAbstract);
-        dataIdent.setLanguages(Arrays.asList(
-            Locale.FRENCH
-        ));
-        metadata.setIdentificationInfo(Arrays.asList(
-            dataIdent
-        ));
-        final DefaultDimension dimension = new DefaultDimension();
-        dimension.setDimensionName(DimensionNameType.COLUMN);
-        dimension.setDimensionSize(830);
-        dimension.setResolution(70.5);
-        final DefaultGridSpatialRepresentation gridSpatialRepres = new DefaultGridSpatialRepresentation();
-        gridSpatialRepres.setAxisDimensionsProperties(Arrays.asList(dimension));
-        metadata.setSpatialRepresentationInfo(Arrays.asList(gridSpatialRepres));
-        final DefaultDistribution distrib = new DefaultDistribution();
-        distrib.setDistributors(Arrays.asList(
-            new DefaultDistributor(DefaultResponsibleParty.GEOTOOLKIT)
-        ));
-        metadata.setDistributionInfo(distrib);
-        final StringWriter writer = new StringWriter();
-        /*
-         * Write in output buffer.
-         */
-        marshaller.marshal(metadata, writer);
-        final String xml = writer.toString();
-        pool.release(marshaller);
-        writer.close();
-        assertFalse("Nothing has be written.", xml.length() == 0);
-        /*
-         * Parses the xml string.
-         */
-        final StringReader reader = new StringReader(xml);
-        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        final Object obj = unmarshaller.unmarshal(reader);
-        pool.release(unmarshaller);
-        reader.close();
-        /*
-         * Validation tests.
-         */
-        assertNotNull(obj);
-        assertTrue("The unmarshalled object gotten from the XML file marshalled is not an instance " +
-                   "of DefaultMetaData. So the unmarshalling has failed on this XML file.",
-                   obj instanceof DefaultMetaData);
-
-        final DefaultMetaData dataUnmarsh = (DefaultMetaData) obj;
-        assertEquals(metadata.getCharacterSet(), dataUnmarsh.getCharacterSet());
-        assertEquals(metadata.getLanguage(), dataUnmarsh.getLanguage());
-        assertEquals(metadata.getIdentificationInfo().iterator().next().getAbstract(),
-                     dataUnmarsh.getIdentificationInfo().iterator().next().getAbstract());
+    @Ignore
+    public void testMetadataAnnotations() {
+        final MetadataStandard standard = MetadataStandard.ISO_19115;
+        for (final Class<?> type : TYPES) {
+            assertTrue(standard.isMetadata(type));
+            if (CodeList.class.isAssignableFrom(type)) {
+                // Skip code lists, as they are not the purpose of this test.
+                continue;
+            }
+            /*
+             * Get the @UML annotation, which is mandatory.
+             */
+            final UML uml = type.getAnnotation(UML.class);
+            assertNotNull("Missing @UML annotation for " + type, uml);
+            /*
+             * Get the @XmlRootElement annotation and compare.
+             */
+            final Class<?> impl = standard.getImplementation(type);
+            assertFalse("No implementation found.", impl.isInterface());
+            XmlRootElement xml = impl.getAnnotation(XmlRootElement.class);
+            assertNotNull("Missing @XmlRootElement annotation for " + impl, xml);
+            assertEquals("Annotation mismatch for " + impl, uml.identifier(), xml.name());
+        }
     }
 }
