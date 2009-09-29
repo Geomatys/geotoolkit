@@ -18,7 +18,6 @@ package org.geotoolkit.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,15 +59,15 @@ public class AbstractRequest implements Request{
             }
 
             String key = keys.get(0);
-            sb.append(key).append('=').append(requestParameters.get(key));
+            sb.append(noSpaces(key)).append('=').append(noSpaces(requestParameters.get(key)));
             
             for(int i=1,n=keys.size();i<n;i++){
                 key = keys.get(i);
-                sb.append('&').append(key).append('=').append(requestParameters.get(key));
+                sb.append('&').append(noSpaces(key)).append('=').append(noSpaces(requestParameters.get(key)));
             }
         }
 
-        return new URL(URLEncoder.encode(sb.toString()));
+        return new URL(sb.toString());
     }
 
     private static String noSpaces(String str){
