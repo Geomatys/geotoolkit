@@ -149,19 +149,21 @@ public class CategoryStyleBuilder extends Factory {
             if(ftss.size() == 1){
                 MutableFeatureTypeStyle fts = ftss.get(0);
 
-                List<MutableRule> rules = fts.rules();
+                //defensive copy avoid synchronization
+                List<MutableRule> candidateRules = new ArrayList<MutableRule>(fts.rules());
 
-                for(Rule r : rules){
-                    List<? extends Symbolizer> symbols = r.symbolizers();
+                for(Rule r : candidateRules){
+                    //defensive copy avoid synchronization
+                    List<? extends Symbolizer> candidateSymbols = new ArrayList<Symbolizer>(r.symbolizers());
 
-                    if(symbols.size() != 1) break;
+                    if(candidateSymbols.size() != 1) break;
 
-                    Symbolizer symbol = symbols.get(0);
+                    Symbolizer symbol = candidateSymbols.get(0);
                     if(expectedType.isInstance(symbol)){
 
                         if(r.isElseFilter()){
                             //it looks like it's a valid classification "other" rule
-                            rules.add((MutableRule) r);
+                            this.rules.add((MutableRule) r);
                             template = symbol;
                             other = true;
                         }else{
@@ -174,7 +176,7 @@ public class CategoryStyleBuilder extends Factory {
                                 if(exp1 instanceof PropertyName && exp2 instanceof Literal){
                                     if(properties.contains(exp1)){
                                         //it looks like it's a valid classification property rule
-                                        rules.add((MutableRule) r);
+                                        this.rules.add((MutableRule) r);
                                         template = symbol;
                                         currentProperty = (PropertyName) exp1;
                                     }else{
@@ -184,7 +186,7 @@ public class CategoryStyleBuilder extends Factory {
                                 }else if(exp2 instanceof PropertyName && exp1 instanceof Literal){
                                     if(properties.contains(exp2)){
                                         //it looks like it's a valid classification property rule
-                                        rules.add((MutableRule) r);
+                                        this.rules.add((MutableRule) r);
                                         template = symbol;
                                         currentProperty = (PropertyName) exp2;
                                     }else{
