@@ -49,7 +49,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlType(propOrder={
     "phone",
     "address",
-    "onLineResource",
+    "onlineResource",
     "hoursOfService",
     "contactInstructions"
 })
@@ -202,7 +202,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * On-line information that can be used to contact the individual or organization.
      */
-    private OnLineResource onLineResource;
+    private OnLineResource onlineResource;
 
     /**
      * Physical and email address at which the organization or individual may be contacted.
@@ -239,7 +239,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * @param resource The on-line information that can be used to contact the individual or organization.
      */
     public DefaultContact(final OnLineResource resource) {
-        setOnLineResource(resource);
+        setOnlineResource(resource);
     }
 
     /**
@@ -288,8 +288,8 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "onlineResource")
-    public synchronized OnLineResource getOnLineResource() {
-        return onLineResource;
+    public synchronized OnLineResource getOnlineResource() {
+        return onlineResource;
     }
 
     /**
@@ -297,9 +297,28 @@ public class DefaultContact extends MetadataEntity implements Contact {
      *
      * @param newValue The new online resource.
      */
-    public synchronized void setOnLineResource(final OnLineResource newValue) {
+    public synchronized void setOnlineResource(final OnLineResource newValue) {
         checkWritePermission();
-        onLineResource = newValue;
+        onlineResource = newValue;
+    }
+
+    /**
+     * @deprecated Renamed {@link #getOnlineResource}.
+     */
+    @Override
+    @Deprecated
+    public OnLineResource getOnLineResource() {
+        return getOnlineResource();
+    }
+
+    /**
+     * @deprecated Renamed {@link #setOnlineResource}.
+     *
+     * @param newValue The new online resource.
+     */
+    @Deprecated
+    public void setOnLineResource(final OnLineResource newValue) {
+        setOnlineResource(newValue);
     }
 
     /**

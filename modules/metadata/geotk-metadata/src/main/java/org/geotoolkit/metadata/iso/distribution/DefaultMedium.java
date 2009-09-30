@@ -194,7 +194,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
      * Returns a description of other limitations or requirements for using the medium.
      */
     @Override
-    @XmlElement(name = "mediumName")
+    @XmlElement(name = "mediumNote")
     public synchronized InternationalString getMediumNote() {
         return mediumNote;
     }

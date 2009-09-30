@@ -151,7 +151,7 @@ public final class MetadataWriterTest {
          * Try an indirect dependency.
          */
         assertEquals("http://www.epsg.org", extract(c.getCitedResponsibleParties())
-                .getContactInfo().getOnLineResource().getLinkage().toString());
+                .getContactInfo().getOnlineResource().getLinkage().toString());
         /*
          * Ask columns that are known to not exist.
          */

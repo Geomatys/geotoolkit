@@ -56,7 +56,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "priority",
     "requestedDate",
     "expiryDate",
-    "satisifedPlans"
+    "satisfiedPlans"
 })
 @XmlRootElement(name = "MI_Requirement")
 public class DefaultRequirement extends MetadataEntity implements Requirement {
@@ -104,7 +104,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
     /**
      * Plan that identifies solution to satisfy the requirement.
      */
-    private Collection<Plan> satisifedPlans;
+    private Collection<Plan> satisfiedPlans;
 
     /**
      * Constructs an initially empty requirement.
@@ -258,17 +258,34 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the plan that identifies solution to satisfy the requirement.
      */
     @Override
-    @XmlElement(name = "satisifedPlan")
-    public synchronized Collection<Plan> getSatisifedPlans() {
-        return xmlOptional(satisifedPlans = nonNullCollection(satisifedPlans, Plan.class));
+    @XmlElement(name = "satisfiedPlan")
+    public synchronized Collection<Plan> getSatisfiedPlans() {
+        return xmlOptional(satisfiedPlans = nonNullCollection(satisfiedPlans, Plan.class));
     }
 
     /**
-     * Sets the plan that identifies solution to satisfy the requirement.
+     * @param newValues The new satisfied plans values.
+     */
+    public synchronized void setSatisfiedPlans(final Collection<? extends Plan> newValues) {
+        satisfiedPlans = copyCollection(newValues, satisfiedPlans, Plan.class);
+    }
+
+    /**
+     * @deprecated Renamed {@link #getSatisfiedPlans}.
+     */
+    @Override
+    @Deprecated
+    public Collection<Plan> getSatisifedPlans() {
+        return getSatisfiedPlans();
+    }
+
+    /**
+     * @deprecated Renamed {@link #setSatisfiedPlans}.
      *
      * @param newValues The new satisfied plans values.
      */
-    public synchronized void setSatisifedPlans(final Collection<? extends Plan> newValues) {
-        satisifedPlans = copyCollection(newValues, satisifedPlans, Plan.class);
+    @Deprecated
+    public void setSatisifedPlans(final Collection<? extends Plan> newValues) {
+        setSatisfiedPlans(newValues);
     }
 }

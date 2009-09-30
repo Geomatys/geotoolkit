@@ -53,6 +53,7 @@ import org.geotoolkit.lang.ValueRange;
     "shortName",
     "domainCode",
     "definition",
+    "obligation",
     "condition",
     "dataType",
     "maximumOccurrence",
@@ -279,7 +280,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      * Obligation of the extended element.
      */
     @Override
-/// @XmlElement(name = "obligation")
+    @XmlElement(name = "obligation")
     public synchronized Obligation getObligation()  {
         return obligation;
     }

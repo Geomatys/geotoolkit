@@ -152,7 +152,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the ground control point(s) used in the collection.
      */
     @Override
-    @XmlElement(name = "GCP")
+    @XmlElement(name = "gcp")
     public synchronized Collection<GCP> getGCPs() {
         return GCPs = nonNullCollection(GCPs, GCP.class);
     }

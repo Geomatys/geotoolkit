@@ -48,7 +48,7 @@ import org.geotoolkit.lang.ThreadSafe;
  */
 @ThreadSafe
 @XmlType(name = "MD_CoverageDescription", propOrder={
-/// "attributeDescription",
+    "attributeDescription",
     "contentType",
     "dimensions",
     "rangeElementDescriptions"
@@ -101,7 +101,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      * Returns the description of the attribute described by the measurement value.
      */
     @Override
-/// @XmlElement(name = "attributeDescription", required = true)
+    @XmlElement(name = "attributeDescription", required = true)
     public synchronized RecordType getAttributeDescription() {
         return attributeDescription;
     }

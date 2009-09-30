@@ -74,7 +74,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
     /**
      * Indication of whether or not the feature catalogue is included with the dataset.
      */
-    private boolean includeWithDataset;
+    private boolean includedWithDataset;
 
     /**
      * Subset of feature types from cited feature catalogue occurring in dataset.
@@ -144,9 +144,9 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
      * Returns whether or not the feature catalogue is included with the dataset.
      */
     @Override
-    @XmlElement(name = "includeWithDataset")
+    @XmlElement(name = "includedWithDataset")
     public synchronized boolean isIncludedWithDataset() {
-        return includeWithDataset;
+        return includedWithDataset;
     }
 
     /**
@@ -156,7 +156,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
      */
     public synchronized void setIncludedWithDataset(final boolean newValue) {
         checkWritePermission();
-        includeWithDataset = newValue;
+        includedWithDataset = newValue;
     }
 
     /**

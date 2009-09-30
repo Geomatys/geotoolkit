@@ -163,7 +163,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      * Returns the identification of the activity or activities that satisfy a plan.
      */
     @Override
-    @XmlElement(name = "operations")
+    @XmlElement(name = "operation")
     public synchronized Collection<Operation> getOperations() {
         return xmlOptional(operations = nonNullCollection(operations, Operation.class));
     }
@@ -181,7 +181,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      * Returns the requirement satisfied by the plan.
      */
     @Override
-    @XmlElement(name = "satisfiedRequirements")
+    @XmlElement(name = "satisfiedRequirement")
     public synchronized Collection<Requirement> getSatisfiedRequirements() {
         return xmlOptional(satisfiedRequirements = nonNullCollection(satisfiedRequirements, Requirement.class));
     }

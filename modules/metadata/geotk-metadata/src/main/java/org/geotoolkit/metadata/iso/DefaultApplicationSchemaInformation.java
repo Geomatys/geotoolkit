@@ -248,7 +248,7 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
      * Software dependent format used for the application schema software dependent file.
      */
     @Override
-    @XmlElement(name = "softwareDevelopmentFile")
+    @XmlElement(name = "softwareDevelopmentFileFormat")
     public synchronized String getSoftwareDevelopmentFileFormat()  {
         return softwareDevelopmentFileFormat;
     }

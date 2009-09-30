@@ -115,7 +115,7 @@ public final class MetadataMarshallingTest {
         dimension.setDimensionSize(830);
         dimension.setResolution(70.5);
         final DefaultGridSpatialRepresentation gridSpatialRepres = new DefaultGridSpatialRepresentation();
-        gridSpatialRepres.setAxisDimensionsProperties(Arrays.asList(dimension));
+        gridSpatialRepres.setAxisDimensionProperties(Arrays.asList(dimension));
         metadata.setSpatialRepresentationInfo(Arrays.asList(gridSpatialRepres));
         final DefaultDistribution distrib = new DefaultDistribution();
         distrib.setDistributors(Arrays.asList(

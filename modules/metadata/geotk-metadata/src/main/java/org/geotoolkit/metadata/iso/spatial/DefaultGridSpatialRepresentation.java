@@ -48,7 +48,7 @@ import org.geotoolkit.lang.ValueRange;
 @ThreadSafe
 @XmlType(name = "MD_GridSpatialRepresentation", propOrder={
     "numberOfDimensions",
-    "axisDimensionsProperties",
+    "axisDimensionProperties",
     "cellGeometry",
     "transformationParameterAvailable"
 })
@@ -70,7 +70,7 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
     /**
      * Information about spatial-temporal axis properties.
      */
-    private List<Dimension> axisDimensionsProperties;
+    private List<Dimension> axisDimensionProperties;
 
     /**
      * Identification of grid data as point or cell.
@@ -115,7 +115,7 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
                                             final boolean transformationParameterAvailable)
     {
         setNumberOfDimensions(numberOfDimensions);
-        setAxisDimensionsProperties(axisDimensionsProperties);
+        setAxisDimensionProperties(axisDimensionsProperties);
         setCellGeometry(cellGeometry);
         setTransformationParameterAvailable(transformationParameterAvailable);
     }
@@ -145,8 +145,8 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      */
     @Override
     @XmlElement(name = "axisDimensionProperties", required = true)
-    public synchronized List<Dimension> getAxisDimensionsProperties() {
-        return axisDimensionsProperties = nonNullList(axisDimensionsProperties, Dimension.class);
+    public synchronized List<Dimension> getAxisDimensionProperties() {
+        return axisDimensionProperties = nonNullList(axisDimensionProperties, Dimension.class);
     }
 
     /**
@@ -154,10 +154,29 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      *
      * @param newValues The new axis dimension properties.
      */
-    public synchronized void setAxisDimensionsProperties(final List<? extends Dimension> newValues) {
+    public synchronized void setAxisDimensionProperties(final List<? extends Dimension> newValues) {
         checkWritePermission();
-        axisDimensionsProperties = (List<Dimension>)
-                copyCollection(newValues, axisDimensionsProperties, Dimension.class);
+        axisDimensionProperties = (List<Dimension>)
+                copyCollection(newValues, axisDimensionProperties, Dimension.class);
+    }
+
+    /**
+     * @deprecated Renamed as {@link #getAxisDimensionProperties()}
+     */
+    @Override
+    @Deprecated
+    public List<Dimension> getAxisDimensionsProperties() {
+        return getAxisDimensionProperties();
+    }
+
+    /**
+     * @deprecated Renamed as {@link #setAxisDimensionProperties}
+     *
+     * @param newValues The new axis dimension properties.
+     */
+    @Deprecated
+    public void setAxisDimensionsProperties(final List<? extends Dimension> newValues) {
+        setAxisDimensionProperties(newValues);
     }
 
     /**

@@ -162,7 +162,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      * Returns the organization responsible for building, launch, or operation of the platform.
      */
     @Override
-    @XmlElement(name = "sponsors")
+    @XmlElement(name = "sponsor")
     public synchronized Collection<ResponsibleParty> getSponsors() {
         return xmlOptional(sponsors = nonNullCollection(sponsors, ResponsibleParty.class));
     }
@@ -180,7 +180,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      * Gets the instrument(s) mounted on a platform.
      */
     @Override
-    @XmlElement(name = "instruments")
+    @XmlElement(name = "instrument")
     public synchronized Collection<Instrument> getInstruments() {
         return instruments = nonNullCollection(instruments, Instrument.class);
     }

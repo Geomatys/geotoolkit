@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.opengis.annotation.Obligation;
+import org.opengis.metadata.Obligation;
 
 
 /**
@@ -28,7 +28,7 @@ import org.opengis.annotation.Obligation;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.04
  *
  * @since 2.5
  * @module

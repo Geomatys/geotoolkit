@@ -67,6 +67,7 @@
     @XmlJavaTypeAdapter(DateAdapter.class),
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
     @XmlJavaTypeAdapter(AcquisitionInformationAdapter.class),
+    @XmlJavaTypeAdapter(ObligationAdapter.class),
 
     // Primitive type handling
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class),
@@ -90,6 +91,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.code.DatatypeAdapter;
 import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
 import org.geotoolkit.internal.jaxb.code.CharacterSetAdapter;
+import org.geotoolkit.internal.jaxb.code.ObligationAdapter;
 import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;

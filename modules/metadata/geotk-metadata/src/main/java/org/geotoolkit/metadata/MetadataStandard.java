@@ -281,6 +281,11 @@ public final class MetadataStandard {
                                 length = p.length();
                                 continue;
                             }
+                            if (candidate.isAnnotationPresent(Deprecated.class)) {
+                                // Skip deprecated implementations.
+                                length = p.length();
+                                continue;
+                            }
                             implementations.put(type, candidate);
                             return candidate;
                         }

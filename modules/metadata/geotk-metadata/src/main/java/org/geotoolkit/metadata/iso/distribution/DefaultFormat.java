@@ -221,7 +221,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      * Provides information about the distributors format.
      */
     @Override
-    @XmlElement(name = "FormatDistributor")
+    @XmlElement(name = "formatDistributor")
     public synchronized Collection<Distributor> getFormatDistributors() {
         return xmlOptional(formatDistributors = nonNullCollection(formatDistributors, Distributor.class));
     }
@@ -231,9 +231,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
      *
      * @param newValues The new format distributors.
      */
-    public synchronized void setFormatDistributors(
-            final Collection<? extends Distributor> newValues)
-    {
+    public synchronized void setFormatDistributors(final Collection<? extends Distributor> newValues) {
         formatDistributors = copyCollection(newValues, formatDistributors, Distributor.class);
     }
 }

@@ -21,6 +21,7 @@
 package org.geotoolkit.metadata.iso.distribution;
 
 import java.util.Collection;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -43,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  */
 @ThreadSafe
 @XmlType(propOrder={
-    "featureTypes",
+/// "featureTypes",
     "fileFormat"
 })
 @XmlRootElement(name = "MX_DataFile")
@@ -105,6 +106,7 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
      * Returns the format of the transfer data file.
      */
     @Override
+    @XmlElement(name = "fileFormat", required = true)
     public synchronized Format getFileFormat() {
         return fileFormat;
     }
