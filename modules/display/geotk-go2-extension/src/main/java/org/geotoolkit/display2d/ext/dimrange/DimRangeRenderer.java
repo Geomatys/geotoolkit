@@ -19,18 +19,14 @@ package org.geotoolkit.display2d.ext.dimrange;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.NonSI;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -49,10 +45,8 @@ import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.style.AbstractSymbolizer;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -60,8 +54,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.ExtensionSymbolizer;
-import org.opengis.style.StyleVisitor;
 
 /**
  *
@@ -136,7 +128,7 @@ public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,C
             throw new PortrayalException(ex);
         }
 
-        if(!dataCoverage.getCoordinateReferenceSystem2D().equals(context.getObjectiveCRS())){
+        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), context.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
             try{
                 //we resample the native view of the coverage only, the style will be applied later.
@@ -154,7 +146,7 @@ public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,C
         context.switchToObjectiveCRS();
 
         MeasurementRange dimRange = symbol.getSource().getDimRange();
-        if (dimRange != null) {
+        if (dimRange != null && dataCoverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() <= 2) {
             final GridSampleDimension[] samples = dataCoverage.getSampleDimensions();
             if (samples != null && samples.length == 1 && samples[0] != null) {
                 if (samples[0].getSampleToGeophysics() != null) {
