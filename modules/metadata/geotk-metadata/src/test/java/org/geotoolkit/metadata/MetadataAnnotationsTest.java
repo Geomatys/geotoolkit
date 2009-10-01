@@ -17,16 +17,9 @@
  */
 package org.geotoolkit.metadata;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.opengis.util.CodeList;
-import org.opengis.annotation.UML;
+import org.geotoolkit.test.AnnotationsTest;
 
-import org.junit.*;
 import static org.junit.Assert.*;
 
 
@@ -39,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public final class MetadataAnnotationsTest {
+public final class MetadataAnnotationsTest extends AnnotationsTest {
     /**
      * The list of Metadata code list or interfaces to test,
      * in alphabetical order.
@@ -192,89 +185,45 @@ public final class MetadataAnnotationsTest {
     };
 
     /**
-     * Tests the annotations on metadata (not code list) objects.
+     * Returns the list of Metadata code lists or interfaces to test.
      */
-    @Test
-    public void testMetadataAnnotations() {
-        final MetadataStandard standard = MetadataStandard.ISO_19115;
-        for (final Class<?> type : TYPES) {
-            assertTrue(standard.isMetadata(type));
-            if (CodeList.class.isAssignableFrom(type)) {
-                // Skip code lists, as they are not the purpose of this test.
-                continue;
-            }
-            assertTrue(type + " is not an interface", type.isInterface());
-            final Class<?> impl = standard.getImplementation(type);
-            assertNotSame("No implementation found for " + type, type, impl);
+    @Override
+    protected Class<?>[] getTestedTypes() {
+        return TYPES;
+    }
+
+    /**
+     * Returns the Geotk implementation for the given GeoAPI interface.
+     */
+    @Override
+    protected Class<?> getImplementation(final Class<?> type) {
+        assertTrue(MetadataStandard.ISO_19115.isMetadata(type));
+        return MetadataStandard.ISO_19115.getImplementation(type);
+    }
+
+    /**
+     * Returns the ISO 19139 wrapper for the given GeoAPI type.
+     */
+    @Override
+    protected Class<?> getWrapper(final Class<?> type) {
+        String classname = type.getSimpleName();
+        if (classname.equals("MetaData")) {
+            // Workaround an historical mispelling (TODO: fix in later GeoAPI version?)
+            classname = "Metadata";
+        }
+        classname = "org.geotoolkit.internal.jaxb." +
+              (CodeList.class.isAssignableFrom(type) ? "code" : "metadata") +
+              '.' + classname + "Adapter";
+        try {
+            return Class.forName(classname);
+        } catch (ClassNotFoundException e) {
             /*
-             * Get the @UML annotation, which is mandatory.
+             * Do not consider missing wrapper as fatal errors for now, since we known
+             * that some are missing. Instead just report the missing wrapper at build
+             * time.
              */
-            final UML classUML = type.getAnnotation(UML.class);
-            assertNotNull("Missing @UML annotation for " + type, classUML);
-            /*
-             * Get the @XmlRootElement annotation and compare.
-             */
-            final XmlRootElement xmlRoot = impl.getAnnotation(XmlRootElement.class);
-            assertNotNull("Missing @XmlRootElement annotation for " + impl, xmlRoot);
-            assertEquals("Annotation mismatch for " + impl, classUML.identifier(), xmlRoot.name());
-            /*
-             * We do not expect a name attributes in @XmlType since the name
-             * is already specified in the @XmlRootElement annotation.
-             */
-            final XmlType xmlType = impl.getAnnotation(XmlType.class);
-            if (xmlType != null && false) { // TODO: this test is disabled for now.
-                assertEquals("No @XmlType(name) value expected for " + impl, "##default", xmlType.name());
-            }
-            /*
-             * Compare the method annotations.
-             */
-            for (final Method method : type.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(Deprecated.class)) {
-                    // Skip deprecated methods.
-                    continue;
-                }
-                final String name = method.getName();
-                if (name.equals("equals") || name.equals("hashCode") || name.equals("doubleValue")) {
-                    /*
-                     * Do not verify annotations for those methods that we know they are
-                     * intentionaly not annotated.
-                     */
-                    continue;
-                }
-                final UML methodUML = method.getAnnotation(UML.class);
-                assertNotNull("Missing @UML annotation for " + method, methodUML);
-                /*
-                 * Get the annotation from the method. If the method is not annotated,
-                 * get the annotation from the field instead.
-                 */
-                final Method methodImpl;
-                try {
-                    methodImpl = impl.getMethod(name, (Class<?>[]) null);
-                } catch (NoSuchMethodException ex) {
-                    fail(ex.getMessage());
-                    continue;
-                }
-                XmlElement xmlElem = methodImpl.getAnnotation(XmlElement.class);
-                if (xmlElem == null) try {
-                    final Field field = impl.getDeclaredField(methodUML.identifier());
-                    xmlElem = field.getAnnotation(XmlElement.class);
-                } catch (NoSuchFieldException ex) {
-                    // Ignore - we will consider that there is no annotation.
-                }
-                /*
-                 * Just displays the missing @XmlElement annotation for the method, since it can be
-                 * intentionaly done. Sometimes there is no implementation for the method return type,
-                 * consequently we are unable to annotate the method with this annotation until the
-                 * implementation is done.
-                 */
-                //assertNotNull("Missing @XmlElement annotation for method " + methodGeotk, xmlElem);
-                if (xmlElem == null) {
-                    System.out.println("Missing @XmlElement annotation for method " +
-                            impl.getName() + '.' + name + "()");
-                    continue;
-                }
-                assertEquals("Annotation mismatch for " + impl, methodUML.identifier(), xmlElem.name());
-            }
+            System.err.println("Missing adapter: " + classname);
+            return null;
         }
     }
 }
