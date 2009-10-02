@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultUsage;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class UsageAdapter extends MetadataAdapter<UsageAdapter,Usage> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Usage")
-    public DefaultUsage getUsage() {
+    public DefaultUsage getElement() {
         final Usage metadata = this.metadata;
         return (metadata instanceof DefaultUsage) ?
             (DefaultUsage) metadata : new DefaultUsage(metadata);
@@ -78,7 +79,7 @@ public final class UsageAdapter extends MetadataAdapter<UsageAdapter,Usage> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setUsage(final DefaultUsage metadata) {
+    public void setElement(final DefaultUsage metadata) {
         this.metadata = metadata;
     }
 }

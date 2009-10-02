@@ -28,7 +28,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -66,8 +66,9 @@ public final class VerticalCSAdapter extends MetadataAdapter<VerticalCSAdapter,V
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "VerticalCS")
-    public DefaultVerticalCS getVerticalCS() {
+    public DefaultVerticalCS getElement() {
         final VerticalCS metadata = this.metadata;
         return (metadata instanceof DefaultVerticalCS) ?
             (DefaultVerticalCS) metadata : new DefaultVerticalCS(metadata);
@@ -79,7 +80,7 @@ public final class VerticalCSAdapter extends MetadataAdapter<VerticalCSAdapter,V
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setVerticalCS(final DefaultVerticalCS metadata) {
+    public void setElement(final DefaultVerticalCS metadata) {
         this.metadata = metadata;
     }
 }

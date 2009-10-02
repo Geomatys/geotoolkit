@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.DefaultApplicationSchemaInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class ApplicationSchemaInformationAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_ApplicationSchemaInformation")
-    public DefaultApplicationSchemaInformation getApplicationSchemaInformation() {
+    public DefaultApplicationSchemaInformation getElement() {
         final ApplicationSchemaInformation metadata = this.metadata;
         return (metadata instanceof DefaultApplicationSchemaInformation) ?
             (DefaultApplicationSchemaInformation) metadata :
@@ -83,7 +84,7 @@ public final class ApplicationSchemaInformationAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setApplicationSchemaInformation(final DefaultApplicationSchemaInformation metadata) {
+    public void setElement(final DefaultApplicationSchemaInformation metadata) {
         this.metadata = metadata;
     }
 }

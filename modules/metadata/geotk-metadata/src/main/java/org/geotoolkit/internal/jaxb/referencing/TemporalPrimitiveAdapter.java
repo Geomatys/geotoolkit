@@ -40,7 +40,8 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * not the ISO 19139 one.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.03
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -91,8 +92,9 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
      *
      * @todo Add other TemporalPrimitive than Period.
      */
+    @Override
     @XmlElement(name = "TimePeriod")
-    public TimePeriod getTimePeriod() {
+    public TimePeriod getElement() {
         final TemporalPrimitive metadata = this.metadata;
         if (metadata instanceof Period) {
             return new TimePeriod((Period) metadata);
@@ -106,7 +108,7 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
      *
      * @param period The adapter to set.
      */
-    public void setTimePeriod(final TimePeriod period) {
+    public void setElement(final TimePeriod period) {
         metadata = null; // Cleaned first in case of failure.
         if (period != null) {
             final Date begin = XmlUtilities.toDate(TimePeriod.select(period.beginPosition, period.begin));
@@ -127,8 +129,8 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
                     return;
                 }
                 metadata = factory.createPeriod(
-                            factory.createInstant(factory.createPosition(begin)),
-                            factory.createInstant(factory.createPosition(end)));
+                           factory.createInstant(factory.createPosition(begin)),
+                           factory.createInstant(factory.createPosition(end)));
             }
         }
     }

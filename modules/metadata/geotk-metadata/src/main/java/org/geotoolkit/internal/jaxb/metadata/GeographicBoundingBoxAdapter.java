@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class GeographicBoundingBoxAdapter extends
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "EX_GeographicBoundingBox")
-    public DefaultGeographicBoundingBox getGeographicBoundingBox() {
+    public DefaultGeographicBoundingBox getElement() {
         final GeographicBoundingBox metadata = this.metadata;
         return (metadata instanceof DefaultGeographicBoundingBox) ?
             (DefaultGeographicBoundingBox) metadata : new DefaultGeographicBoundingBox(metadata);
@@ -80,7 +81,7 @@ public final class GeographicBoundingBoxAdapter extends
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setGeographicBoundingBox(final DefaultGeographicBoundingBox metadata) {
+    public void setElement(final DefaultGeographicBoundingBox metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class CitationAdapter extends MetadataAdapter<CitationAdapter,Citat
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_Citation")
-    public DefaultCitation getCitation() {
+    public DefaultCitation getElement() {
         final Citation metadata = this.metadata;
         return (metadata instanceof DefaultCitation) ?
             (DefaultCitation) metadata : new DefaultCitation(metadata);
@@ -78,7 +79,7 @@ public final class CitationAdapter extends MetadataAdapter<CitationAdapter,Citat
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setCitation(final DefaultCitation metadata) {
+    public void setElement(final DefaultCitation metadata) {
         this.metadata = metadata;
     }
 }

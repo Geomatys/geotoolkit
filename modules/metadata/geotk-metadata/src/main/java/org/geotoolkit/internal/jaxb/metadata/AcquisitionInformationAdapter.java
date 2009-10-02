@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.AcquisitionInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class AcquisitionInformationAdapter extends MetadataAdapter<Acquisi
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_AcquisitionInformation")
-    public DefaultAcquisitionInformation getAcquisitionInformation() {
+    public DefaultAcquisitionInformation getElement() {
         final AcquisitionInformation metadata = this.metadata;
         return (metadata instanceof DefaultAcquisitionInformation) ?
             (DefaultAcquisitionInformation) metadata : new DefaultAcquisitionInformation(metadata);
@@ -78,7 +79,7 @@ public final class AcquisitionInformationAdapter extends MetadataAdapter<Acquisi
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setAcquisitionInformation(final DefaultAcquisitionInformation metadata) {
+    public void setElement(final DefaultAcquisitionInformation metadata) {
         this.metadata = metadata;
     }
 }

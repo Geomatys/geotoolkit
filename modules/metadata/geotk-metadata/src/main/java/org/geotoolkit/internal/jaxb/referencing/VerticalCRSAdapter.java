@@ -29,7 +29,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * not the ISO 19139 one.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -67,8 +67,9 @@ public final class VerticalCRSAdapter extends MetadataAdapter<VerticalCRSAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "VerticalCRS")
-    public DefaultVerticalCRS getVerticalCRS() {
+    public DefaultVerticalCRS getElement() {
         final VerticalCRS metadata = this.metadata;
         return (metadata instanceof DefaultVerticalCRS) ?
             (DefaultVerticalCRS) metadata : new DefaultVerticalCRS(metadata);
@@ -80,7 +81,7 @@ public final class VerticalCRSAdapter extends MetadataAdapter<VerticalCRSAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setVerticalCRS(final DefaultVerticalCRS metadata) {
+    public void setElement(final DefaultVerticalCRS metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultExtent;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class ExtentAdapter extends MetadataAdapter<ExtentAdapter,Extent> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "EX_Extent")
-    public DefaultExtent getExtent() {
+    public DefaultExtent getElement() {
         final Extent metadata = this.metadata;
         return (metadata instanceof DefaultExtent) ?
             (DefaultExtent) metadata : new DefaultExtent(metadata);
@@ -78,7 +79,7 @@ public final class ExtentAdapter extends MetadataAdapter<ExtentAdapter,Extent> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setExtent(final DefaultExtent metadata) {
+    public void setElement(final DefaultExtent metadata) {
         this.metadata = metadata;
     }
 }

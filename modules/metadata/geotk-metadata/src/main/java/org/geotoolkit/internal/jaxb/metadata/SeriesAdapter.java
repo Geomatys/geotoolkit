@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultSeries;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class SeriesAdapter extends MetadataAdapter<SeriesAdapter,Series> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_Series")
-    public DefaultSeries getSeries() {
+    public DefaultSeries getElement() {
         final Series metadata = this.metadata;
         return (metadata instanceof DefaultSeries) ?
             (DefaultSeries) metadata : new DefaultSeries(metadata);
@@ -78,7 +79,7 @@ public final class SeriesAdapter extends MetadataAdapter<SeriesAdapter,Series> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setSeries(final DefaultSeries metadata) {
+    public void setElement(final DefaultSeries metadata) {
         this.metadata = metadata;
     }
 }

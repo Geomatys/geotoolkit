@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class ContentInformationAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public AbstractContentInformation getContentInformation() {
+    public AbstractContentInformation getElement() {
         final ContentInformation metadata = this.metadata;
         return (metadata instanceof AbstractContentInformation) ?
             (AbstractContentInformation) metadata : new AbstractContentInformation(metadata);
@@ -80,7 +81,7 @@ public final class ContentInformationAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setContentInformation(final AbstractContentInformation metadata) {
+    public void setElement(final AbstractContentInformation metadata) {
         this.metadata = metadata;
     }
 }

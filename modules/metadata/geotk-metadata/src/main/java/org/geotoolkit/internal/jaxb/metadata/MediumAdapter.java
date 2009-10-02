@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultMedium;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class MediumAdapter extends MetadataAdapter<MediumAdapter,Medium> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Medium")
-    public DefaultMedium getMedium() {
+    public DefaultMedium getElement() {
         final Medium metadata = this.metadata;
         return (metadata instanceof DefaultMedium) ?
             (DefaultMedium) metadata : new DefaultMedium(metadata);
@@ -78,7 +79,7 @@ public final class MediumAdapter extends MetadataAdapter<MediumAdapter,Medium> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setMedium(final DefaultMedium metadata) {
+    public void setElement(final DefaultMedium metadata) {
         this.metadata = metadata;
     }
 }

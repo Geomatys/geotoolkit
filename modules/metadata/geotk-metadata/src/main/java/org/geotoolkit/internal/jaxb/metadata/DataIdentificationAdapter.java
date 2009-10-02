@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class DataIdentificationAdapter extends MetadataAdapter<DataIdentif
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_DataIdentification")
-    public DefaultDataIdentification getIdentification() {
+    public DefaultDataIdentification getElement() {
         final DataIdentification metadata = this.metadata;
         return (metadata instanceof DefaultDataIdentification) ?
             (DefaultDataIdentification) metadata : new DefaultDataIdentification(metadata);
@@ -78,7 +79,7 @@ public final class DataIdentificationAdapter extends MetadataAdapter<DataIdentif
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setIdentification(final DefaultDataIdentification metadata) {
+    public void setElement(final DefaultDataIdentification metadata) {
         this.metadata = metadata;
     }
 }

@@ -28,7 +28,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -66,8 +66,9 @@ public final class AffineCSAdapter extends MetadataAdapter<AffineCSAdapter, Affi
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "AffineCS")
-    public DefaultAffineCS getAffineCS() {
+    public DefaultAffineCS getElement() {
         final AffineCS metadata = this.metadata;
         return (metadata instanceof DefaultAffineCS) ?
             (DefaultAffineCS) metadata : new DefaultAffineCS(metadata);
@@ -79,7 +80,7 @@ public final class AffineCSAdapter extends MetadataAdapter<AffineCSAdapter, Affi
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setAffineCS(final DefaultAffineCS metadata) {
+    public void setElement(final DefaultAffineCS metadata) {
         this.metadata = metadata;
     }
 }

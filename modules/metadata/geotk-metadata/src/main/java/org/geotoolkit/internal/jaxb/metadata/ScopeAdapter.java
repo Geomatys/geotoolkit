@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultScope;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -65,8 +65,9 @@ public final class ScopeAdapter extends MetadataAdapter<ScopeAdapter,Scope> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "DQ_Scope")
-    public DefaultScope getScope() {
+    public DefaultScope getElement() {
         final Scope metadata = this.metadata;
         return (metadata instanceof DefaultScope) ?
             (DefaultScope) metadata : new DefaultScope(metadata);
@@ -78,7 +79,7 @@ public final class ScopeAdapter extends MetadataAdapter<ScopeAdapter,Scope> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setScope(final DefaultScope metadata) {
+    public void setElement(final DefaultScope metadata) {
         this.metadata = metadata;
     }
 }

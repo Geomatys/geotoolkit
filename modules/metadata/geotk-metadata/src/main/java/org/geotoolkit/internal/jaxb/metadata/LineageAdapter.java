@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class LineageAdapter extends MetadataAdapter<LineageAdapter,Lineage
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "LI_Lineage")
-    public DefaultLineage getLineage() {
+    public DefaultLineage getElement() {
         final Lineage metadata = this.metadata;
         return (metadata instanceof DefaultLineage) ?
             (DefaultLineage) metadata : new DefaultLineage(metadata);
@@ -78,7 +79,7 @@ public final class LineageAdapter extends MetadataAdapter<LineageAdapter,Lineage
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setLineage(final DefaultLineage metadata) {
+    public void setElement(final DefaultLineage metadata) {
         this.metadata = metadata;
     }
 }

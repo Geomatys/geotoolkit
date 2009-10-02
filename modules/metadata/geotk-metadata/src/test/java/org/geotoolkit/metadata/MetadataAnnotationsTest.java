@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import java.lang.reflect.Modifier;
 import org.opengis.util.CodeList;
 import org.geotoolkit.test.AnnotationsTest;
 
@@ -206,24 +207,24 @@ public final class MetadataAnnotationsTest extends AnnotationsTest {
      */
     @Override
     protected Class<?> getWrapper(final Class<?> type) {
-        String classname = type.getSimpleName();
-        if (classname.equals("MetaData")) {
-            // Workaround an historical mispelling (TODO: fix in later GeoAPI version?)
-            classname = "Metadata";
-        }
-        classname = "org.geotoolkit.internal.jaxb." +
-              (CodeList.class.isAssignableFrom(type) ? "code" : "metadata") +
-              '.' + classname + "Adapter";
-        try {
-            return Class.forName(classname);
-        } catch (ClassNotFoundException e) {
+        if (type.equals(org.opengis.metadata.MetaData.class)) {
             /*
-             * Do not consider missing wrapper as fatal errors for now, since we known
-             * that some are missing. Instead just report the missing wrapper at build
-             * time.
+             * We don't have adapter for Metadata, since it is the root element.
+             * We explicitly exclude it for avoiding confusion with MetadataAdapter,
+             * which is the base class of all other adapters.
              */
-            System.err.println("Missing adapter: " + classname);
+            return Void.TYPE;
+        }
+        final String classname = "org.geotoolkit.internal.jaxb." +
+              (CodeList.class.isAssignableFrom(type) ? "code" : "metadata") +
+              '.' + type.getSimpleName() + "Adapter";
+        final Class<?> wrapper;
+        try {
+            wrapper = Class.forName(classname);
+        } catch (ClassNotFoundException e) {
             return null;
         }
+        assertTrue(wrapper.getName(), Modifier.isFinal(wrapper.getModifiers()));
+        return wrapper;
     }
 }

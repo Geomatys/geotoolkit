@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class IdentificationAdapter extends MetadataAdapter<IdentificationA
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public AbstractIdentification getIdentification() {
+    public AbstractIdentification getElement() {
         final Identification metadata = this.metadata;
         return (metadata instanceof AbstractIdentification) ?
             (AbstractIdentification) metadata : new AbstractIdentification(metadata);
@@ -78,7 +79,7 @@ public final class IdentificationAdapter extends MetadataAdapter<IdentificationA
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setIdentification(final AbstractIdentification metadata) {
+    public void setElement(final AbstractIdentification metadata) {
         this.metadata = metadata;
     }
 }

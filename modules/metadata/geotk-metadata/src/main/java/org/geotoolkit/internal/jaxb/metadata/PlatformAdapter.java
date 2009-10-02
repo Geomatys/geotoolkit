@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Platform;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class PlatformAdapter extends MetadataAdapter<PlatformAdapter,Platf
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Platform")
-    public DefaultPlatform getPlatform() {
+    public DefaultPlatform getElement() {
         final Platform metadata = this.metadata;
         return (metadata instanceof DefaultPlatform) ?
             (DefaultPlatform) metadata : new DefaultPlatform(metadata);
@@ -78,7 +79,7 @@ public final class PlatformAdapter extends MetadataAdapter<PlatformAdapter,Platf
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setPlatform(final DefaultPlatform metadata) {
+    public void setElement(final DefaultPlatform metadata) {
         this.metadata = metadata;
     }
 }

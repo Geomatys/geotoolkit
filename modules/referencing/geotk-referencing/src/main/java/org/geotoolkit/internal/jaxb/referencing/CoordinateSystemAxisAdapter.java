@@ -28,7 +28,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -69,8 +69,9 @@ public final class CoordinateSystemAxisAdapter extends
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CoordinateSystemAxis")
-    public DefaultCoordinateSystemAxis getCoordinateSystemAxis() {
+    public DefaultCoordinateSystemAxis getElement() {
         final CoordinateSystemAxis metadata = this.metadata;
         return (metadata instanceof DefaultCoordinateSystemAxis) ?
             (DefaultCoordinateSystemAxis) metadata : new DefaultCoordinateSystemAxis(metadata);
@@ -82,7 +83,7 @@ public final class CoordinateSystemAxisAdapter extends
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setCoordinateSystemAxis(final DefaultCoordinateSystemAxis metadata) {
+    public void setElement(final DefaultCoordinateSystemAxis metadata) {
         this.metadata = metadata;
     }
 }

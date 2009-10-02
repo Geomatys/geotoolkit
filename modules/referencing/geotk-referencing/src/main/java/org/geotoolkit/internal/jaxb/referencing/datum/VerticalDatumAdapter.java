@@ -28,7 +28,7 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -66,8 +66,9 @@ public final class VerticalDatumAdapter extends MetadataAdapter<VerticalDatumAda
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "VerticalDatum")
-    public DefaultVerticalDatum getVerticalDatum() {
+    public DefaultVerticalDatum getElement() {
         final VerticalDatum metadata = this.metadata;
         return (metadata instanceof DefaultVerticalDatum) ?
             (DefaultVerticalDatum) metadata : new DefaultVerticalDatum(metadata);
@@ -79,7 +80,7 @@ public final class VerticalDatumAdapter extends MetadataAdapter<VerticalDatumAda
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setVerticalDatum(final DefaultVerticalDatum metadata) {
+    public void setElement(final DefaultVerticalDatum metadata) {
         this.metadata = metadata;
     }
 }

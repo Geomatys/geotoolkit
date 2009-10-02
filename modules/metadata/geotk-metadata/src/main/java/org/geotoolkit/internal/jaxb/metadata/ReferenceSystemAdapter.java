@@ -28,7 +28,7 @@ import org.geotoolkit.xml.Namespaces;
  * See package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -66,8 +66,9 @@ public class ReferenceSystemAdapter extends MetadataAdapter<ReferenceSystemAdapt
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_ReferenceSystem")
-    public ReferenceSystemMetadata getReferenceSystem() {
+    public ReferenceSystemMetadata getElement() {
         final ReferenceSystem metadata = this.metadata;
         if (metadata instanceof ReferenceSystemMetadata) {
             return (ReferenceSystemMetadata) metadata;
@@ -106,7 +107,7 @@ public class ReferenceSystemAdapter extends MetadataAdapter<ReferenceSystemAdapt
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setReferenceSystem(final ReferenceSystemMetadata metadata) {
+    public void setElement(final ReferenceSystemMetadata metadata) {
         this.metadata = metadata;
     }
 }

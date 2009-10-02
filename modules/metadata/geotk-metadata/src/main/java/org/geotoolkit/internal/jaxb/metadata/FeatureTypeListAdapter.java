@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.DefaultFeatureTypeList;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class FeatureTypeListAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_FeatureTypeList")
-    public DefaultFeatureTypeList getFeatureTypeList() {
+    public DefaultFeatureTypeList getElement() {
         final FeatureTypeList metadata = this.metadata;
         return (metadata instanceof DefaultFeatureTypeList) ?
             (DefaultFeatureTypeList) metadata : new DefaultFeatureTypeList(metadata);
@@ -80,7 +81,7 @@ public final class FeatureTypeListAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setFeatureTypeList(final DefaultFeatureTypeList metadata) {
+    public void setElement(final DefaultFeatureTypeList metadata) {
         this.metadata = metadata;
     }
 }

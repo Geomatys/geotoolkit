@@ -27,7 +27,7 @@ import org.opengis.metadata.content.RangeElementDescription;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class RangeElementDescriptionAdapter extends MetadataAdapter<RangeE
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_RangeElementDescription")
-    public DefaultRangeElementDescription getRangeElementDescription() {
+    public DefaultRangeElementDescription getElement() {
         final RangeElementDescription metadata = this.metadata;
         return (metadata instanceof DefaultRangeElementDescription) ?
             (DefaultRangeElementDescription) metadata : new DefaultRangeElementDescription(metadata);
@@ -78,7 +79,7 @@ public final class RangeElementDescriptionAdapter extends MetadataAdapter<RangeE
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setCitation(final DefaultRangeElementDescription metadata) {
+    public void setElement(final DefaultRangeElementDescription metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.maintenance.DefaultScopeDescription;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class ScopeDescriptionAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_ScopeDescription")
-    public DefaultScopeDescription getScopeDescription() {
+    public DefaultScopeDescription getElement() {
         final ScopeDescription metadata = this.metadata;
         return (metadata instanceof DefaultScopeDescription) ?
             (DefaultScopeDescription) metadata : new DefaultScopeDescription(metadata);
@@ -80,7 +81,7 @@ public final class ScopeDescriptionAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setScopeDescription(final DefaultScopeDescription metadata) {
+    public void setElement(final DefaultScopeDescription metadata) {
         this.metadata = metadata;
     }
 }

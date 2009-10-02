@@ -27,7 +27,7 @@ import org.opengis.metadata.lineage.Algorithm;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class AlgorithmAdapter extends MetadataAdapter<AlgorithmAdapter,Alg
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "LE_Algorithm")
-    public DefaultAlgorithm getAlgorithm() {
+    public DefaultAlgorithm getElement() {
         final Algorithm metadata = this.metadata;
         return (metadata instanceof DefaultAlgorithm) ?
             (DefaultAlgorithm) metadata : new DefaultAlgorithm(metadata);
@@ -78,7 +79,7 @@ public final class AlgorithmAdapter extends MetadataAdapter<AlgorithmAdapter,Alg
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setAlgorithm(final DefaultAlgorithm metadata) {
+    public void setElement(final DefaultAlgorithm metadata) {
         this.metadata = metadata;
     }
 }

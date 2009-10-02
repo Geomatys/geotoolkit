@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class FormatAdapter extends MetadataAdapter<FormatAdapter,Format> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Format")
-    public DefaultFormat getFormat() {
+    public DefaultFormat getElement() {
         final Format metadata = this.metadata;
         return (metadata instanceof DefaultFormat) ?
             (DefaultFormat) metadata : new DefaultFormat(metadata);
@@ -78,7 +79,7 @@ public final class FormatAdapter extends MetadataAdapter<FormatAdapter,Format> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setFormat(final DefaultFormat metadata) {
+    public void setElement(final DefaultFormat metadata) {
         this.metadata = metadata;
     }
 }

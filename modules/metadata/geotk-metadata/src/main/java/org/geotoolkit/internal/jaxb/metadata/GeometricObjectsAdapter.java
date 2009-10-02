@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultGeometricObjects;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class GeometricObjectsAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_GeometricObjects")
-    public DefaultGeometricObjects getGeometricObjects() {
+    public DefaultGeometricObjects getElement() {
         final GeometricObjects metadata = this.metadata;
         return (metadata instanceof DefaultGeometricObjects) ?
             (DefaultGeometricObjects) metadata : new DefaultGeometricObjects(metadata);
@@ -80,7 +81,7 @@ public final class GeometricObjectsAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setGeometricObjects(final DefaultGeometricObjects metadata) {
+    public void setElement(final DefaultGeometricObjects metadata) {
         this.metadata = metadata;
     }
 }

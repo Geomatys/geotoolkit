@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultResolution;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class ResolutionAdapter extends MetadataAdapter<ResolutionAdapter,R
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Resolution")
-    public DefaultResolution getResolution() {
+    public DefaultResolution getElement() {
         final Resolution metadata = this.metadata;
         return (metadata instanceof DefaultResolution) ?
             (DefaultResolution) metadata : new DefaultResolution(metadata);
@@ -78,7 +79,7 @@ public final class ResolutionAdapter extends MetadataAdapter<ResolutionAdapter,R
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setResolution(final DefaultResolution metadata) {
+    public void setElement(final DefaultResolution metadata) {
         this.metadata = metadata;
     }
 }

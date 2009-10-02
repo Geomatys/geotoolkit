@@ -27,7 +27,7 @@ import org.opengis.metadata.lineage.NominalResolution;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class NominalResolutionAdapter extends MetadataAdapter<NominalResol
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "LE_NominalResolution")
-    public DefaultNominalResolution getNominalResolution() {
+    public DefaultNominalResolution getElement() {
         final NominalResolution metadata = this.metadata;
         return (metadata instanceof DefaultNominalResolution) ?
             (DefaultNominalResolution) metadata : new DefaultNominalResolution(metadata);
@@ -78,7 +79,7 @@ public final class NominalResolutionAdapter extends MetadataAdapter<NominalResol
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setNominalResolution(final DefaultNominalResolution metadata) {
+    public void setElement(final DefaultNominalResolution metadata) {
         this.metadata = metadata;
     }
 }

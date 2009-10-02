@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultRepresentativeFraction;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class RepresentativeFractionAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_RepresentativeFraction")
-    public DefaultRepresentativeFraction getRepresentativeFraction() {
+    public DefaultRepresentativeFraction getElement() {
         final RepresentativeFraction metadata = this.metadata;
         return (metadata instanceof DefaultRepresentativeFraction) ?
             (DefaultRepresentativeFraction) metadata :
@@ -83,7 +84,7 @@ public final class RepresentativeFractionAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setRepresentativeFraction(final DefaultRepresentativeFraction metadata) {
+    public void setElement(final DefaultRepresentativeFraction metadata) {
         this.metadata = metadata;
     }
 }

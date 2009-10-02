@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.extent.AbstractGeographicExtent;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class GeographicExtentAdapter extends
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public AbstractGeographicExtent getGeographicExtent() {
+    public AbstractGeographicExtent getElement() {
         final GeographicExtent metadata = this.metadata;
         return (metadata instanceof AbstractGeographicExtent) ?
             (AbstractGeographicExtent) metadata : new AbstractGeographicExtent(metadata);
@@ -80,7 +81,7 @@ public final class GeographicExtentAdapter extends
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setGeographicExtent(final AbstractGeographicExtent metadata) {
+    public void setElement(final AbstractGeographicExtent metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,8 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @param <BoundType> The interface being adapted.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.05
  *
  * @see XmlAdapter
  *
@@ -97,4 +98,19 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
         }
         return value.metadata;
     }
+
+    /**
+     * Returns the Geotk implementation class generated from the metadata value.
+     * This method is systematically called at marshalling time by JAXB.
+     * <p>
+     * The return value is usually an implementation of {@code BoundType}. But in
+     * some situations this is Java type like {@link String}. For this raison the
+     * return type is declared as {@code Object} here, but subclasses shall restrict
+     * that to a more specific type.
+     *
+     * @return The metadata to be marshalled.
+     *
+     * @since 3.05
+     */
+    public abstract Object getElement();
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.DefaultPortrayalCatalogueReference;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class PortrayalCatalogueReferenceAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_PortrayalCatalogueReference")
-    public DefaultPortrayalCatalogueReference getPortrayalCatalogueReference() {
+    public DefaultPortrayalCatalogueReference getElement() {
         final PortrayalCatalogueReference metadata = this.metadata;
         return (metadata instanceof DefaultPortrayalCatalogueReference) ?
             (DefaultPortrayalCatalogueReference) metadata :
@@ -83,7 +84,7 @@ public final class PortrayalCatalogueReferenceAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setPortrayalCatalogueReference(final DefaultPortrayalCatalogueReference metadata) {
+    public void setElement(final DefaultPortrayalCatalogueReference metadata) {
         this.metadata = metadata;
     }
 }

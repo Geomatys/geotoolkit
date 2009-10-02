@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.geotoolkit.metadata.iso.spatial.AbstractGeolocationInformation;
 import org.opengis.metadata.spatial.GeolocationInformation;
 
@@ -27,7 +27,7 @@ import org.opengis.metadata.spatial.GeolocationInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class GeolocationInformationAdapter extends MetadataAdapter<Geoloca
      *
      * @return The metadata to be marshalled.
      */
-    @XmlElement(name = "MI_GeolocationInformation")
-    public AbstractGeolocationInformation getGeolocationInformation() {
+    @Override
+    @XmlElementRef
+    public AbstractGeolocationInformation getElement() {
         final GeolocationInformation metadata = this.metadata;
         return (metadata instanceof AbstractGeolocationInformation) ?
             (AbstractGeolocationInformation) metadata : new AbstractGeolocationInformation(metadata);
@@ -78,7 +79,7 @@ public final class GeolocationInformationAdapter extends MetadataAdapter<Geoloca
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setGeolocationInformation(final AbstractGeolocationInformation metadata) {
+    public void setElement(final AbstractGeolocationInformation metadata) {
         this.metadata = metadata;
     }
 }

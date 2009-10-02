@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class DataQualityAdapter extends MetadataAdapter<DataQualityAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "DQ_DataQuality")
-    public DefaultDataQuality getDataQuality() {
+    public DefaultDataQuality getElement() {
         final DataQuality metadata = this.metadata;
         return (metadata instanceof DefaultDataQuality) ?
             (DefaultDataQuality) metadata : new DefaultDataQuality(metadata);
@@ -78,7 +79,7 @@ public final class DataQualityAdapter extends MetadataAdapter<DataQualityAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setDataQuality(final DefaultDataQuality metadata) {
+    public void setElement(final DefaultDataQuality metadata) {
         this.metadata = metadata;
     }
 }

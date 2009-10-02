@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -68,8 +68,9 @@ public final class SpatialRepresentationAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public AbstractSpatialRepresentation getSpatialRepresentation() {
+    public AbstractSpatialRepresentation getElement() {
         final SpatialRepresentation metadata = this.metadata;
         return (metadata instanceof AbstractSpatialRepresentation) ?
             (AbstractSpatialRepresentation) metadata : new AbstractSpatialRepresentation(metadata);
@@ -81,7 +82,7 @@ public final class SpatialRepresentationAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setSpatialRepresentation(final AbstractSpatialRepresentation metadata) {
+    public void setElement(final AbstractSpatialRepresentation metadata) {
         this.metadata = metadata;
     }
 }

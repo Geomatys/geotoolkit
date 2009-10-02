@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultSource;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class SourceAdapter extends MetadataAdapter<SourceAdapter,Source> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "LI_Source")
-    public DefaultSource getSource() {
+    public DefaultSource getElement() {
         final Source metadata = this.metadata;
         return (metadata instanceof DefaultSource) ?
             (DefaultSource) metadata : new DefaultSource(metadata);
@@ -78,7 +79,7 @@ public final class SourceAdapter extends MetadataAdapter<SourceAdapter,Source> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setSource(final DefaultSource metadata) {
+    public void setElement(final DefaultSource metadata) {
         this.metadata = metadata;
     }
 }

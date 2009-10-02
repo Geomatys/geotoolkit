@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Event;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class EventAdapter extends MetadataAdapter<EventAdapter,Event> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Event")
-    public DefaultEvent getEvent() {
+    public DefaultEvent getElement() {
         final Event metadata = this.metadata;
         return (metadata instanceof DefaultEvent) ?
             (DefaultEvent) metadata : new DefaultEvent(metadata);
@@ -78,7 +79,7 @@ public final class EventAdapter extends MetadataAdapter<EventAdapter,Event> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setEvent(final DefaultEvent metadata) {
+    public void setElement(final DefaultEvent metadata) {
         this.metadata = metadata;
     }
 }

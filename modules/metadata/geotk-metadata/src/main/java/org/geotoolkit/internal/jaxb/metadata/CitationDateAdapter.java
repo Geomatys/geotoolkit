@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class CitationDateAdapter extends MetadataAdapter<CitationDateAdapt
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_Date")
-    public DefaultCitationDate getCitationDate() {
+    public DefaultCitationDate getElement() {
         final CitationDate metadata = this.metadata;
         return (metadata instanceof DefaultCitationDate) ?
             (DefaultCitationDate) metadata : new DefaultCitationDate(metadata);
@@ -78,7 +79,7 @@ public final class CitationDateAdapter extends MetadataAdapter<CitationDateAdapt
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setCitationDate(final DefaultCitationDate metadata) {
+    public void setElement(final DefaultCitationDate metadata) {
         this.metadata = metadata;
     }
 }

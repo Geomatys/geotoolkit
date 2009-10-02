@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultOnLineResource;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class OnLineResourceAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_OnlineResource")
-    public DefaultOnLineResource getOnLineResource() {
+    public DefaultOnLineResource getElement() {
         final OnLineResource metadata = this.metadata;
         return (metadata instanceof DefaultOnLineResource) ?
             (DefaultOnLineResource) metadata : new DefaultOnLineResource(metadata);
@@ -80,7 +81,7 @@ public final class OnLineResourceAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setOnLineResource(final DefaultOnLineResource metadata) {
+    public void setElement(final DefaultOnLineResource metadata) {
         this.metadata = metadata;
     }
 }

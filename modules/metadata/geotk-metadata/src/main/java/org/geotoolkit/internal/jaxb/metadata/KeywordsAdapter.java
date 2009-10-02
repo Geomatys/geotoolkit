@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class KeywordsAdapter extends MetadataAdapter<KeywordsAdapter,Keywo
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Keywords")
-    public DefaultKeywords getKeywords() {
+    public DefaultKeywords getElement() {
         final Keywords metadata = this.metadata;
         return (metadata instanceof DefaultKeywords) ?
             (DefaultKeywords) metadata : new DefaultKeywords(metadata);
@@ -78,7 +79,7 @@ public final class KeywordsAdapter extends MetadataAdapter<KeywordsAdapter,Keywo
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setKeywords(final DefaultKeywords metadata) {
+    public void setElement(final DefaultKeywords metadata) {
         this.metadata = metadata;
     }
 }

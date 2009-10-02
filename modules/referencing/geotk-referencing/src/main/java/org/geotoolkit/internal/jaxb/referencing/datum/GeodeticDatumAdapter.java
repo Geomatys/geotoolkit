@@ -28,7 +28,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -66,8 +66,9 @@ public final class GeodeticDatumAdapter extends MetadataAdapter<GeodeticDatumAda
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "GeodeticDatum")
-    public DefaultGeodeticDatum getGeodeticDatum() {
+    public DefaultGeodeticDatum getElement() {
         final GeodeticDatum metadata = this.metadata;
         return (metadata instanceof DefaultGeodeticDatum) ?
             (DefaultGeodeticDatum) metadata : new DefaultGeodeticDatum(metadata);
@@ -79,7 +80,7 @@ public final class GeodeticDatumAdapter extends MetadataAdapter<GeodeticDatumAda
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setGeodeticDatum(final DefaultGeodeticDatum metadata) {
+    public void setElement(final DefaultGeodeticDatum metadata) {
         this.metadata = metadata;
     }
 }

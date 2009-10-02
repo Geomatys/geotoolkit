@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class VerticalExtentAdapter extends MetadataAdapter<VerticalExtentA
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "EX_VerticalExtent")
-    public DefaultVerticalExtent getVerticalExtent() {
+    public DefaultVerticalExtent getElement() {
         final VerticalExtent metadata = this.metadata;
         return (metadata instanceof DefaultVerticalExtent) ?
             (DefaultVerticalExtent) metadata : new DefaultVerticalExtent(metadata);
@@ -78,7 +79,7 @@ public final class VerticalExtentAdapter extends MetadataAdapter<VerticalExtentA
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setVerticalExtent(final DefaultVerticalExtent metadata) {
+    public void setElement(final DefaultVerticalExtent metadata) {
         this.metadata = metadata;
     }
 }

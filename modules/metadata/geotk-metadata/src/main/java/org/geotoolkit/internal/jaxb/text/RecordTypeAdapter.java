@@ -29,7 +29,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * See package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class RecordTypeAdapter extends MetadataAdapter<RecordTypeAdapter,R
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "RecordType")
-    public DefaultRecordType getRecordType() {
+    public DefaultRecordType getElement() {
         final RecordType metadata = this.metadata;
         if (metadata instanceof DefaultRecordType) {
             return (DefaultRecordType) metadata;
@@ -83,7 +84,7 @@ public final class RecordTypeAdapter extends MetadataAdapter<RecordTypeAdapter,R
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setRecordType(final DefaultRecordType metadata) {
+    public void setElement(final DefaultRecordType metadata) {
         this.metadata = metadata;
     }
 }

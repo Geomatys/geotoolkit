@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultTelephone;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class TelephoneAdapter extends MetadataAdapter<TelephoneAdapter,Tel
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_Telephone")
-    public DefaultTelephone getTelephone() {
+    public DefaultTelephone getElement() {
         final Telephone metadata = this.metadata;
         return (metadata instanceof DefaultTelephone) ?
             (DefaultTelephone) metadata : new DefaultTelephone(metadata);
@@ -78,7 +79,7 @@ public final class TelephoneAdapter extends MetadataAdapter<TelephoneAdapter,Tel
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setTelephone(final DefaultTelephone metadata) {
+    public void setElement(final DefaultTelephone metadata) {
         this.metadata = metadata;
     }
 }

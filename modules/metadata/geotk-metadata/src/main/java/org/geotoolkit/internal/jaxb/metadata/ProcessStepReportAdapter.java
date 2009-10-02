@@ -27,7 +27,7 @@ import org.opengis.metadata.lineage.ProcessStepReport;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class ProcessStepReportAdapter extends MetadataAdapter<ProcessStepR
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "LE_ProcessStepReport")
-    public DefaultProcessStepReport getProcessStepReport() {
+    public DefaultProcessStepReport getElement() {
         final ProcessStepReport metadata = this.metadata;
         return (metadata instanceof DefaultProcessStepReport) ?
             (DefaultProcessStepReport) metadata : new DefaultProcessStepReport(metadata);
@@ -78,7 +79,7 @@ public final class ProcessStepReportAdapter extends MetadataAdapter<ProcessStepR
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setProcessStepReport(final DefaultProcessStepReport metadata) {
+    public void setElement(final DefaultProcessStepReport metadata) {
         this.metadata = metadata;
     }
 }

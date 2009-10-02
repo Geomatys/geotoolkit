@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class RangeDimensionAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public DefaultRangeDimension getRangeDimension() {
+    public DefaultRangeDimension getElement() {
         final RangeDimension metadata = this.metadata;
         return (metadata instanceof DefaultRangeDimension) ?
             (DefaultRangeDimension) metadata : new DefaultRangeDimension(metadata);
@@ -80,7 +81,7 @@ public final class RangeDimensionAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setRangeDimension(final DefaultRangeDimension metadata) {
+    public void setElement(final DefaultRangeDimension metadata) {
         this.metadata = metadata;
     }
 }

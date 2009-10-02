@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class DimensionAdapter extends MetadataAdapter<DimensionAdapter,Dim
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Dimension")
-    public DefaultDimension getDimension() {
+    public DefaultDimension getElement() {
         final Dimension metadata = this.metadata;
         return (metadata instanceof DefaultDimension) ?
             (DefaultDimension) metadata : new DefaultDimension(metadata);
@@ -78,7 +79,7 @@ public final class DimensionAdapter extends MetadataAdapter<DimensionAdapter,Dim
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setDimension(final DefaultDimension metadata) {
+    public void setElement(final DefaultDimension metadata) {
         this.metadata = metadata;
     }
 }

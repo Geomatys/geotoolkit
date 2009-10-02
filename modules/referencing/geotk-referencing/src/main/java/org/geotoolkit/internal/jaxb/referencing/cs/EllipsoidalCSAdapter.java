@@ -29,7 +29,7 @@ import org.opengis.referencing.cs.EllipsoidalCS;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -67,8 +67,9 @@ public final class EllipsoidalCSAdapter extends MetadataAdapter<EllipsoidalCSAda
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "EllipsoidalCS")
-    public DefaultEllipsoidalCS getEllipsoidalCS() {
+    public DefaultEllipsoidalCS getElement() {
         final EllipsoidalCS metadata = this.metadata;
         return (metadata instanceof DefaultEllipsoidalCS) ?
             (DefaultEllipsoidalCS) metadata : new DefaultEllipsoidalCS(metadata);
@@ -80,7 +81,7 @@ public final class EllipsoidalCSAdapter extends MetadataAdapter<EllipsoidalCSAda
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setEllipsoidalCS(final DefaultEllipsoidalCS metadata) {
+    public void setElement(final DefaultEllipsoidalCS metadata) {
         this.metadata = metadata;
     }
 }

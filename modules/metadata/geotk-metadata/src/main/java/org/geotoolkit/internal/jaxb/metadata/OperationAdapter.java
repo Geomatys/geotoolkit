@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Operation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class OperationAdapter extends MetadataAdapter<OperationAdapter,Ope
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Operation")
-    public DefaultOperation getOperation() {
+    public DefaultOperation getElement() {
         final Operation metadata = this.metadata;
         return (metadata instanceof DefaultOperation) ?
             (DefaultOperation) metadata : new DefaultOperation(metadata);
@@ -78,7 +79,7 @@ public final class OperationAdapter extends MetadataAdapter<OperationAdapter,Ope
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setOperation(final DefaultOperation metadata) {
+    public void setElement(final DefaultOperation metadata) {
         this.metadata = metadata;
     }
 }

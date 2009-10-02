@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultAddress;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class AddressAdapter extends MetadataAdapter<AddressAdapter,Address
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_Address")
-    public DefaultAddress getAddress() {
+    public DefaultAddress getElement() {
         final Address metadata = this.metadata;
         return (metadata instanceof DefaultAddress) ?
             (DefaultAddress) metadata : new DefaultAddress(metadata);
@@ -78,7 +79,7 @@ public final class AddressAdapter extends MetadataAdapter<AddressAdapter,Address
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setAddress(final DefaultAddress metadata) {
+    public void setElement(final DefaultAddress metadata) {
         this.metadata = metadata;
     }
 }

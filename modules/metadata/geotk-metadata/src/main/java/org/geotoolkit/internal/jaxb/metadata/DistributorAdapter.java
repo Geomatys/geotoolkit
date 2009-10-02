@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class DistributorAdapter extends MetadataAdapter<DistributorAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Distributor")
-    public DefaultDistributor getDistributor() {
+    public DefaultDistributor getElement() {
         final Distributor metadata = this.metadata;
         return (metadata instanceof DefaultDistributor) ?
             (DefaultDistributor) metadata : new DefaultDistributor(metadata);
@@ -78,7 +79,7 @@ public final class DistributorAdapter extends MetadataAdapter<DistributorAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setDistributor(final DefaultDistributor metadata) {
+    public void setElement(final DefaultDistributor metadata) {
         this.metadata = metadata;
     }
 }

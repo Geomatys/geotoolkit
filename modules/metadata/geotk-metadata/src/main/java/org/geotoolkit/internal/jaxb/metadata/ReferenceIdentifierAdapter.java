@@ -31,12 +31,14 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * instead.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
  */
-public final class ReferenceIdentifierAdapter extends MetadataAdapter<ReferenceIdentifierAdapter,ReferenceIdentifier> {
+public final class ReferenceIdentifierAdapter
+        extends MetadataAdapter<ReferenceIdentifierAdapter,ReferenceIdentifier>
+{
     /**
      * Empty constructor for JAXB only.
      */
@@ -69,8 +71,9 @@ public final class ReferenceIdentifierAdapter extends MetadataAdapter<ReferenceI
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "RS_Identifier")
-    public DefaultReferenceIdentifier getIdentifier() {
+    public DefaultReferenceIdentifier getElement() {
         final ReferenceIdentifier metadata = this.metadata;
         if (metadata instanceof DefaultReferenceIdentifier) {
             return (DefaultReferenceIdentifier) metadata;
@@ -85,7 +88,7 @@ public final class ReferenceIdentifierAdapter extends MetadataAdapter<ReferenceI
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setIdentifier(final DefaultReferenceIdentifier metadata) {
+    public void setElement(final DefaultReferenceIdentifier metadata) {
         this.metadata = metadata;
     }
 }

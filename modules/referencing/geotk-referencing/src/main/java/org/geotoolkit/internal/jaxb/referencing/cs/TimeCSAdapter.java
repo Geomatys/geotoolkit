@@ -28,7 +28,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -66,8 +66,9 @@ public final class TimeCSAdapter extends MetadataAdapter<TimeCSAdapter, TimeCS> 
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "TimeCS")
-    public DefaultTimeCS getTimeCS() {
+    public DefaultTimeCS getElement() {
         final TimeCS metadata = this.metadata;
         return (metadata instanceof DefaultTimeCS) ?
             (DefaultTimeCS) metadata : new DefaultTimeCS(metadata);
@@ -79,7 +80,7 @@ public final class TimeCSAdapter extends MetadataAdapter<TimeCSAdapter, TimeCS> 
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setTimeCS(final DefaultTimeCS metadata) {
+    public void setElement(final DefaultTimeCS metadata) {
         this.metadata = metadata;
     }
 }

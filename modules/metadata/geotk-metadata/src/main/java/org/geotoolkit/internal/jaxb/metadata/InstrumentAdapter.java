@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Instrument;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class InstrumentAdapter extends MetadataAdapter<InstrumentAdapter,I
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Instrument")
-    public DefaultInstrument getInstrument() {
+    public DefaultInstrument getElement() {
         final Instrument metadata = this.metadata;
         return (metadata instanceof DefaultInstrument) ?
             (DefaultInstrument) metadata : new DefaultInstrument(metadata);
@@ -78,7 +79,7 @@ public final class InstrumentAdapter extends MetadataAdapter<InstrumentAdapter,I
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setInstrument(final DefaultInstrument metadata) {
+    public void setElement(final DefaultInstrument metadata) {
         this.metadata = metadata;
     }
 }

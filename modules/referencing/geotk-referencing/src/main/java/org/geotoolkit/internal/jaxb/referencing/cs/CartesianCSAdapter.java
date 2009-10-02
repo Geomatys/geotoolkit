@@ -28,7 +28,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -66,8 +66,9 @@ public final class CartesianCSAdapter extends MetadataAdapter<CartesianCSAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CartesianCS")
-    public DefaultCartesianCS getCartesianCS() {
+    public DefaultCartesianCS getElement() {
         final CartesianCS metadata = this.metadata;
         return (metadata instanceof DefaultCartesianCS) ?
             (DefaultCartesianCS) metadata : new DefaultCartesianCS(metadata);
@@ -79,7 +80,7 @@ public final class CartesianCSAdapter extends MetadataAdapter<CartesianCSAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setCartesianCS(final DefaultCartesianCS metadata) {
+    public void setElement(final DefaultCartesianCS metadata) {
         this.metadata = metadata;
     }
 }

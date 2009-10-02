@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class ResponsiblePartyAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_ResponsibleParty")
-    public DefaultResponsibleParty getResponsibleParty() {
+    public DefaultResponsibleParty getElement() {
         final ResponsibleParty metadata = this.metadata;
         return (metadata instanceof DefaultResponsibleParty) ?
             (DefaultResponsibleParty) metadata : new DefaultResponsibleParty(metadata);
@@ -80,7 +81,7 @@ public final class ResponsiblePartyAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setResponsibleParty(final DefaultResponsibleParty metadata) {
+    public void setElement(final DefaultResponsibleParty metadata) {
         this.metadata = metadata;
     }
 }

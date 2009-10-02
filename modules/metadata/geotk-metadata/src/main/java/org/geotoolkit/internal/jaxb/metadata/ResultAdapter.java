@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.geotoolkit.metadata.iso.quality.AbstractResult;
 import org.opengis.metadata.quality.Result;
 
@@ -27,7 +27,7 @@ import org.opengis.metadata.quality.Result;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -65,8 +65,9 @@ public final class ResultAdapter extends MetadataAdapter<ResultAdapter,Result> {
      *
      * @return The metadata to be marshalled.
      */
-    @XmlElement(name = "DQ_Result")
-    public AbstractResult getSource() {
+    @Override
+    @XmlElementRef
+    public AbstractResult getElement() {
         final Result metadata = this.metadata;
         return (metadata instanceof AbstractResult) ?
             (AbstractResult) metadata : new AbstractResult(metadata);
@@ -78,7 +79,7 @@ public final class ResultAdapter extends MetadataAdapter<ResultAdapter,Result> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setSource(final AbstractResult metadata) {
+    public void setElement(final AbstractResult metadata) {
         this.metadata = metadata;
     }
 }

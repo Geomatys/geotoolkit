@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDigitalTransferOptions;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class DigitalTransferOptionsAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_DigitalTransferOptions")
-    public DefaultDigitalTransferOptions getDigitalTransferOptions() {
+    public DefaultDigitalTransferOptions getElement() {
         final DigitalTransferOptions metadata = this.metadata;
         return (metadata instanceof DefaultDigitalTransferOptions) ?
             (DefaultDigitalTransferOptions) metadata : new DefaultDigitalTransferOptions(metadata);
@@ -82,7 +83,7 @@ public final class DigitalTransferOptionsAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setDigitalTransferOptions(final DefaultDigitalTransferOptions metadata) {
+    public void setElement(final DefaultDigitalTransferOptions metadata) {
         this.metadata = metadata;
     }
 }

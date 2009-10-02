@@ -89,12 +89,12 @@ public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter imp
      * @return The metadata to be marshalled.
      */
     @Override
-    public ReferenceSystemMetadata getReferenceSystem() {
+    public ReferenceSystemMetadata getElement() {
         final ReferenceSystem metadata = this.metadata;
         if (metadata instanceof FRA_DirectReferenceSystem || metadata instanceof FRA_IndirectReferenceSystem) {
             return null;
         }
-        return super.getReferenceSystem();
+        return super.getElement();
     }
 
     /**

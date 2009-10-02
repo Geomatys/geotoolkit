@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.PlatformPass;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class PlatformPassAdapter extends MetadataAdapter<PlatformPassAdapt
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_PlatformPass")
-    public DefaultPlatformPass getPlatformPass() {
+    public DefaultPlatformPass getElement() {
         final PlatformPass metadata = this.metadata;
         return (metadata instanceof DefaultPlatformPass) ?
             (DefaultPlatformPass) metadata : new DefaultPlatformPass(metadata);
@@ -78,7 +79,7 @@ public final class PlatformPassAdapter extends MetadataAdapter<PlatformPassAdapt
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setPlatformPass(final DefaultPlatformPass metadata) {
+    public void setElement(final DefaultPlatformPass metadata) {
         this.metadata = metadata;
     }
 }

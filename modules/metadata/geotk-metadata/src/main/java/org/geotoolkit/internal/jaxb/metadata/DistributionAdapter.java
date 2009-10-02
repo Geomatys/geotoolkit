@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class DistributionAdapter extends MetadataAdapter<DistributionAdapt
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_Distribution")
-    public DefaultDistribution getDistribution() {
+    public DefaultDistribution getElement() {
         final Distribution metadata = this.metadata;
         return (metadata instanceof DefaultDistribution) ?
             (DefaultDistribution) metadata : new DefaultDistribution(metadata);
@@ -78,7 +79,7 @@ public final class DistributionAdapter extends MetadataAdapter<DistributionAdapt
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setDistribution(final DefaultDistribution metadata) {
+    public void setElement(final DefaultDistribution metadata) {
         this.metadata = metadata;
     }
 }

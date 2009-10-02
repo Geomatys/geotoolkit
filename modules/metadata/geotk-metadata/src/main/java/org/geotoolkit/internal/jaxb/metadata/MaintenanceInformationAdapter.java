@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.maintenance.DefaultMaintenanceInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class MaintenanceInformationAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_MaintenanceInformation")
-    public DefaultMaintenanceInformation getMaintenanceInformation() {
+    public DefaultMaintenanceInformation getElement() {
         final MaintenanceInformation metadata = this.metadata;
         return (metadata instanceof DefaultMaintenanceInformation) ?
             (DefaultMaintenanceInformation) metadata : new DefaultMaintenanceInformation(metadata);
@@ -82,7 +83,7 @@ public final class MaintenanceInformationAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setMaintenanceInformation(final DefaultMaintenanceInformation metadata) {
+    public void setElement(final DefaultMaintenanceInformation metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.DefaultMetadataExtensionInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class MetadataExtensionInformationAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_MetadataExtensionInformation")
-    public DefaultMetadataExtensionInformation getMetadataExtensionInformation() {
+    public DefaultMetadataExtensionInformation getElement() {
         final MetadataExtensionInformation metadata = this.metadata;
         return (metadata instanceof DefaultMetadataExtensionInformation) ?
             (DefaultMetadataExtensionInformation) metadata :
@@ -78,12 +79,12 @@ public final class MetadataExtensionInformationAdapter
     }
 
     /**
-     * Sets the value for the {@link DefaultMetadataExtensionInformation}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * Sets the value for the {@link DefaultMetadataExtensionInformation}.
+     * This method is systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setMetadataExtensionInformation(final DefaultMetadataExtensionInformation metadata) {
+    public void setElement(final DefaultMetadataExtensionInformation metadata) {
         this.metadata = metadata;
     }
 }

@@ -28,7 +28,7 @@ import org.geotoolkit.referencing.datum.DefaultImageDatum;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -66,8 +66,9 @@ public final class ImageDatumAdapter extends MetadataAdapter<ImageDatumAdapter,I
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "ImageDatum")
-    public DefaultImageDatum getImageDatum() {
+    public DefaultImageDatum getElement() {
         final ImageDatum metadata = this.metadata;
         return (metadata instanceof DefaultImageDatum) ?
             (DefaultImageDatum) metadata : new DefaultImageDatum(metadata);
@@ -79,7 +80,7 @@ public final class ImageDatumAdapter extends MetadataAdapter<ImageDatumAdapter,I
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setImageDatum(final DefaultImageDatum metadata) {
+    public void setElement(final DefaultImageDatum metadata) {
         this.metadata = metadata;
     }
 }

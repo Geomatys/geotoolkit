@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class ConstraintsAdapter extends MetadataAdapter<ConstraintsAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public DefaultConstraints getConstraints() {
+    public DefaultConstraints getElement() {
         final Constraints metadata = this.metadata;
         return (metadata instanceof DefaultConstraints) ?
             (DefaultConstraints) metadata : new DefaultConstraints(metadata);
@@ -78,7 +79,7 @@ public final class ConstraintsAdapter extends MetadataAdapter<ConstraintsAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setConstraints(final DefaultConstraints metadata) {
+    public void setElement(final DefaultConstraints metadata) {
         this.metadata = metadata;
     }
 }

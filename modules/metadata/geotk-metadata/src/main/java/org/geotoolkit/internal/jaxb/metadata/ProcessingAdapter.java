@@ -27,7 +27,7 @@ import org.opengis.metadata.lineage.Processing;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class ProcessingAdapter extends MetadataAdapter<ProcessingAdapter,P
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "LE_Processing")
-    public DefaultProcessing getProcessing() {
+    public DefaultProcessing getElement() {
         final Processing metadata = this.metadata;
         return (metadata instanceof DefaultProcessing) ?
             (DefaultProcessing) metadata : new DefaultProcessing(metadata);
@@ -78,7 +79,7 @@ public final class ProcessingAdapter extends MetadataAdapter<ProcessingAdapter,P
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setProcessing(final DefaultProcessing metadata) {
+    public void setElement(final DefaultProcessing metadata) {
         this.metadata = metadata;
     }
 }

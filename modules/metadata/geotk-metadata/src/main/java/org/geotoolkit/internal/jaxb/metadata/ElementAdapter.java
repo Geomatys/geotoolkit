@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.geotoolkit.metadata.iso.quality.AbstractElement;
 import org.opengis.metadata.quality.Element;
 
@@ -27,7 +27,7 @@ import org.opengis.metadata.quality.Element;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,7 +65,8 @@ public final class ElementAdapter extends MetadataAdapter<ElementAdapter,Element
      *
      * @return The metadata to be marshalled.
      */
-    @XmlElement(name = "DQ_Element")
+    @Override
+    @XmlElementRef
     public AbstractElement getElement() {
         final Element metadata = this.metadata;
         return (metadata instanceof AbstractElement) ?

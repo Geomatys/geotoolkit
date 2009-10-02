@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultContact;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -65,8 +65,9 @@ public final class ContactAdapter extends MetadataAdapter<ContactAdapter,Contact
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_Contact")
-    public DefaultContact getContact() {
+    public DefaultContact getElement() {
         final Contact metadata = this.metadata;
         return (metadata instanceof DefaultContact) ?
             (DefaultContact) metadata : new DefaultContact(metadata);
@@ -78,7 +79,7 @@ public final class ContactAdapter extends MetadataAdapter<ContactAdapter,Contact
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setContact(final DefaultContact metadata) {
+    public void setElement(final DefaultContact metadata) {
         this.metadata = metadata;
     }
 }

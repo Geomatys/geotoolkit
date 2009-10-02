@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultStandardOrderProcess;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -68,8 +68,9 @@ public final class StandardOrderProcessAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_StandardOrderProcess")
-    public DefaultStandardOrderProcess getStandardOrder() {
+    public DefaultStandardOrderProcess getElement() {
         final StandardOrderProcess metadata = this.metadata;
         return (metadata instanceof DefaultStandardOrderProcess) ?
             (DefaultStandardOrderProcess) metadata : new DefaultStandardOrderProcess(metadata);
@@ -81,7 +82,7 @@ public final class StandardOrderProcessAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setStandardOrderProcess(final DefaultStandardOrderProcess metadata) {
+    public void setElement(final DefaultStandardOrderProcess metadata) {
         this.metadata = metadata;
     }
 }

@@ -20,6 +20,7 @@ package org.geotoolkit.test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -95,11 +96,32 @@ public abstract class AnnotationsTest {
      * If the given GeoAPI type, when marshalled to XML, is wrapped in an other XML element,
      * returns the wrapper for that XML element. Otherwise returns {@code null}. Such wrappers
      * are unusual, but the ISO 19139 standard is done that way.
+     * <p>
+     * This method can return the {@link Void#TYPE} special value if the given type is not
+     * intented to have any wrapper (as opposed to {@code null}, which means that a wrapper
+     * was expected but not found).
      *
      * @param  type The GeoAPI type.
      * @return The wrapper for the given type.
      */
     protected abstract Class<?> getWrapper(Class<?> type);
+
+    /**
+     * Returns the parent of the given interface, or {@code null} if none.
+     * The parent interface is expected to be in the same package than the given interface.
+     *
+     * @param  type The type for which the parent is looked for.
+     * @return The parent of the given type, or {@code null}.
+     */
+    private Class<?> getParent(final Class<?> type) {
+        final Package p = type.getPackage();
+        for (final Class<?> parent : type.getInterfaces()) {
+            if (p.equals(parent.getPackage())) {
+                return parent;
+            }
+        }
+        return null;
+    }
 
     /**
      * Tests the annotations on interfaces (not code list).
@@ -111,6 +133,7 @@ public abstract class AnnotationsTest {
                 // Skip code lists, since they are not the purpose of this test.
                 continue;
             }
+            testingMethod = null;
             testingClass = type.getName();
             assertTrue(message("Not an interface: "), type.isInterface());
             /*
@@ -119,12 +142,49 @@ public abstract class AnnotationsTest {
             final UML classUML = type.getAnnotation(UML.class);
             assertNotNull(message("Missing @UML annotation for "), classUML);
             /*
-             * Checks the annotation on the wrapper, if there is one.
+             * Check the annotation on the wrapper, if there is one. If no wrapper is declared
+             * specifically for the current type, check if a wrapper is defined for the parent
+             * interface. In such case, the getElement() method is required to be annotated by
+             * @XmlElementRef, not @XmlElement, in order to let JAXB infer the name from the
+             * actual subclass.
              */
-            final Class<?> wrapper = getWrapper(type);
-            if (wrapper != null) {
+            boolean wrapperIsInherited = false;
+            Class<?> wrapper = getWrapper(type);
+            if (wrapper == null) {
+                Class<?> parent = type;
+                while ((parent = getParent(parent)) != null) {
+                    wrapper = getWrapper(parent);
+                    if (wrapper != null) {
+                        wrapperIsInherited = true;
+                        break;
+                    }
+                }
+            }
+            if (wrapper == null) {
+                /*
+                 * Do not consider missing wrapper as fatal errors for now, since we known
+                 * that some are missing. Instead just report the missing wrapper at build
+                 * time.
+                 */
+                System.err.println(message("Missing adapter for "));
+            } else if (!wrapper.equals(Void.TYPE)) {
                 testingClass = wrapper.getName();
-                // TODO: Test for the annotated method here.
+                final Method getter, setter;
+                try {
+                    getter = wrapper.getMethod("getElement", (Class<?>[]) null);
+                    setter = wrapper.getMethod("setElement", getter.getReturnType());
+                } catch (NoSuchMethodException e) {
+                    fail(e.toString());
+                    continue;
+                }
+                assertEquals(setter.getDeclaringClass(), getter.getDeclaringClass());
+                final XmlElement xmlElem = getter.getAnnotation(XmlElement.class);
+                assertEquals(message("Expected @XmlElement XOR @XmlElementRef in "),
+                        (xmlElem == null), getter.isAnnotationPresent(XmlElementRef.class));
+                if (xmlElem != null) {
+                    assertFalse(message("Expected @XmlElementRef for "), wrapperIsInherited);
+                    assertEquals(message("Wrong @XmlElement for "), classUML.identifier(), xmlElem.name());
+                }
             }
             /*
              * Get the implementation class, which is mandatory.
@@ -138,7 +198,7 @@ public abstract class AnnotationsTest {
              */
             final XmlRootElement xmlRoot = impl.getAnnotation(XmlRootElement.class);
             assertNotNull(message("Missing @XmlRootElement annotation for "), xmlRoot);
-            assertEquals(message("Annotation mismatch for "), classUML.identifier(), xmlRoot.name());
+            assertEquals(message("Wrong @XmlRootElement for "), classUML.identifier(), xmlRoot.name());
             /*
              * We do not expect a name attributes in @XmlType since the name
              * is already specified in the @XmlRootElement annotation.

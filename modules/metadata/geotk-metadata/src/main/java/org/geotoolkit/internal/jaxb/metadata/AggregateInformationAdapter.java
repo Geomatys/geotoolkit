@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultAggregateInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -68,8 +68,9 @@ public final class AggregateInformationAdapter extends
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_AggregateInformation")
-    public DefaultAggregateInformation getAggregateInfo() {
+    public DefaultAggregateInformation getElement() {
         final AggregateInformation metadata = this.metadata;
         return (metadata instanceof DefaultAggregateInformation) ?
             (DefaultAggregateInformation) metadata : new DefaultAggregateInformation(metadata);
@@ -81,7 +82,7 @@ public final class AggregateInformationAdapter extends
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setAggregateInfo(final DefaultAggregateInformation metadata) {
+    public void setElement(final DefaultAggregateInformation metadata) {
         this.metadata = metadata;
     }
 }

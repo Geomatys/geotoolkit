@@ -33,7 +33,7 @@ import org.geotoolkit.internal.CodeLists;
  * not be wrapped in a {@link CodeListProxy}.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -72,8 +72,9 @@ public final class TopicCategoryAdapter extends MetadataAdapter<TopicCategoryAda
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_TopicCategoryCode")
-    public String getTopicCategory() {
+    public String getElement() {
         return metadata.identifier();
     }
 
@@ -82,7 +83,7 @@ public final class TopicCategoryAdapter extends MetadataAdapter<TopicCategoryAda
      *
      * @param metadata The unmarshalled value.
      */
-    public void setTopicCategory(final String metadata) {
+    public void setElement(final String metadata) {
         this.metadata = CodeLists.valueOf(TopicCategory.class, metadata);
     }
 }

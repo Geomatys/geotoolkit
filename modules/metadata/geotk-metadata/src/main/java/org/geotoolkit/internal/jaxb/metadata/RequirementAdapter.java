@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Requirement;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class RequirementAdapter extends MetadataAdapter<RequirementAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Requirement")
-    public DefaultRequirement getRequirement() {
+    public DefaultRequirement getElement() {
         final Requirement metadata = this.metadata;
         return (metadata instanceof DefaultRequirement) ?
             (DefaultRequirement) metadata : new DefaultRequirement(metadata);
@@ -78,7 +79,7 @@ public final class RequirementAdapter extends MetadataAdapter<RequirementAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setRequirement(final DefaultRequirement metadata) {
+    public void setElement(final DefaultRequirement metadata) {
         this.metadata = metadata;
     }
 }

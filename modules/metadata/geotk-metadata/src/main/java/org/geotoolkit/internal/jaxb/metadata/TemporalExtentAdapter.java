@@ -27,14 +27,12 @@ import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
  */
-public final class TemporalExtentAdapter
-        extends MetadataAdapter<TemporalExtentAdapter,TemporalExtent>
-{
+public final class TemporalExtentAdapter extends MetadataAdapter<TemporalExtentAdapter,TemporalExtent> {
     /**
      * Empty constructor for JAXB only.
      */
@@ -67,8 +65,9 @@ public final class TemporalExtentAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElementRef
-    public DefaultTemporalExtent getTemporalExtent() {
+    public DefaultTemporalExtent getElement() {
         final TemporalExtent metadata = this.metadata;
         return (metadata instanceof DefaultTemporalExtent) ?
             (DefaultTemporalExtent) metadata : new DefaultTemporalExtent(metadata);
@@ -80,7 +79,7 @@ public final class TemporalExtentAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setTemporalExtent(final DefaultTemporalExtent metadata) {
+    public void setElement(final DefaultTemporalExtent metadata) {
         this.metadata = metadata;
     }
 }

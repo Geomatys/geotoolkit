@@ -27,7 +27,7 @@ import org.opengis.metadata.spatial.GCP;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class GCPAdapter extends MetadataAdapter<GCPAdapter,GCP> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_GCP")
-    public DefaultGCP getGCP() {
+    public DefaultGCP getElement() {
         final GCP metadata = this.metadata;
         return (metadata instanceof DefaultGCP) ?
             (DefaultGCP) metadata : new DefaultGCP(metadata);
@@ -78,7 +79,7 @@ public final class GCPAdapter extends MetadataAdapter<GCPAdapter,GCP> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setGCP(final DefaultGCP metadata) {
+    public void setElement(final DefaultGCP metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.DefaultExtendedElementInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -69,8 +69,9 @@ public final class ExtendedElementInformationAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_ExtendedElementInformation")
-    public DefaultExtendedElementInformation getExtendedElementInformation() {
+    public DefaultExtendedElementInformation getElement() {
         final ExtendedElementInformation metadata = this.metadata;
         return (metadata instanceof DefaultExtendedElementInformation) ?
             (DefaultExtendedElementInformation) metadata : new DefaultExtendedElementInformation(metadata);
@@ -82,7 +83,7 @@ public final class ExtendedElementInformationAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setExtendedElementInformation(final DefaultExtendedElementInformation metadata) {
+    public void setElement(final DefaultExtendedElementInformation metadata) {
         this.metadata = metadata;
     }
 }

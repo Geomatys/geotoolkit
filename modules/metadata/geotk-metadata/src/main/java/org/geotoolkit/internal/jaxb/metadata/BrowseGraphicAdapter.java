@@ -27,7 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -67,8 +67,9 @@ public final class BrowseGraphicAdapter
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_BrowseGraphic")
-    public DefaultBrowseGraphic getBrowseGraphic() {
+    public DefaultBrowseGraphic getElement() {
         final BrowseGraphic metadata = this.metadata;
         return (metadata instanceof DefaultBrowseGraphic) ?
             (DefaultBrowseGraphic) metadata : new DefaultBrowseGraphic(metadata);
@@ -80,7 +81,7 @@ public final class BrowseGraphicAdapter
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setBrowseGraphic(final DefaultBrowseGraphic metadata) {
+    public void setElement(final DefaultBrowseGraphic metadata) {
         this.metadata = metadata;
     }
 }

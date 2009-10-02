@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Plan;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class PlanAdapter extends MetadataAdapter<PlanAdapter,Plan> {
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Plan")
-    public DefaultPlan getPlan() {
+    public DefaultPlan getElement() {
         final Plan metadata = this.metadata;
         return (metadata instanceof DefaultPlan) ?
             (DefaultPlan) metadata : new DefaultPlan(metadata);
@@ -78,7 +79,7 @@ public final class PlanAdapter extends MetadataAdapter<PlanAdapter,Plan> {
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setPlan(final DefaultPlan metadata) {
+    public void setElement(final DefaultPlan metadata) {
         this.metadata = metadata;
     }
 }

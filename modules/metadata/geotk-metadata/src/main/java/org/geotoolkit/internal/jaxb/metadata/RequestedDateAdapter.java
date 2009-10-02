@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.RequestedDate;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class RequestedDateAdapter extends MetadataAdapter<RequestedDateAda
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_RequestedDate")
-    public DefaultRequestedDate getRequestedDate() {
+    public DefaultRequestedDate getElement() {
         final RequestedDate metadata = this.metadata;
         return (metadata instanceof DefaultRequestedDate) ?
             (DefaultRequestedDate) metadata : new DefaultRequestedDate(metadata);
@@ -78,7 +79,7 @@ public final class RequestedDateAdapter extends MetadataAdapter<RequestedDateAda
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setRequestedDate(final DefaultRequestedDate metadata) {
+    public void setElement(final DefaultRequestedDate metadata) {
         this.metadata = metadata;
     }
 }

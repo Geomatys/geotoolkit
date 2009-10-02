@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.EnvironmentalRecord;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class EnvironmentalRecordAdapter extends MetadataAdapter<Environmen
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_EnvironmentalRecord")
-    public DefaultEnvironmentalRecord getEnvironmentalRecord() {
+    public DefaultEnvironmentalRecord getElement() {
         final EnvironmentalRecord metadata = this.metadata;
         return (metadata instanceof DefaultEnvironmentalRecord) ?
             (DefaultEnvironmentalRecord) metadata : new DefaultEnvironmentalRecord(metadata);
@@ -78,7 +79,7 @@ public final class EnvironmentalRecordAdapter extends MetadataAdapter<Environmen
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setEnvironmentalRecord(final DefaultEnvironmentalRecord metadata) {
+    public void setElement(final DefaultEnvironmentalRecord metadata) {
         this.metadata = metadata;
     }
 }

@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.Objective;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -65,8 +65,9 @@ public final class ObjectiveAdapter extends MetadataAdapter<ObjectiveAdapter,Obj
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_Objective")
-    public DefaultObjective getObjective() {
+    public DefaultObjective getElement() {
         final Objective metadata = this.metadata;
         return (metadata instanceof DefaultObjective) ?
             (DefaultObjective) metadata : new DefaultObjective(metadata);
@@ -78,7 +79,7 @@ public final class ObjectiveAdapter extends MetadataAdapter<ObjectiveAdapter,Obj
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setObjective(final DefaultObjective metadata) {
+    public void setElement(final DefaultObjective metadata) {
         this.metadata = metadata;
     }
 }

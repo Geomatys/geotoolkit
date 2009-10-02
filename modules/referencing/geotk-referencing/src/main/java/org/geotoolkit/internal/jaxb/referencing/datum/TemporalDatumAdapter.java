@@ -28,7 +28,7 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -66,8 +66,9 @@ public final class TemporalDatumAdapter extends MetadataAdapter<TemporalDatumAda
      *
      * @return The metadata to be marshalled.
      */
+    @Override
     @XmlElement(name = "TemporalDatum")
-    public DefaultTemporalDatum getTemporalDatum() {
+    public DefaultTemporalDatum getElement() {
         final TemporalDatum metadata = this.metadata;
         return (metadata instanceof DefaultTemporalDatum) ?
             (DefaultTemporalDatum) metadata : new DefaultTemporalDatum(metadata);
@@ -79,7 +80,7 @@ public final class TemporalDatumAdapter extends MetadataAdapter<TemporalDatumAda
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setTemporalDatum(final DefaultTemporalDatum metadata) {
+    public void setElement(final DefaultTemporalDatum metadata) {
         this.metadata = metadata;
     }
 }
