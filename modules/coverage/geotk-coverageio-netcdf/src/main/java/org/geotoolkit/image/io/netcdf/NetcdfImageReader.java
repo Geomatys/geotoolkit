@@ -513,14 +513,16 @@ scan:       while (it.hasNext()) {
     private AxisType getAxisType(final int dimension) throws IOException {
         if (variable instanceof VariableDS) {
             ensureMetadataLoaded();
-            final List sys = ((VariableDS) variable).getCoordinateSystems();
+            @SuppressWarnings("unchecked")
+            final List<CoordinateSystem> sys = ((VariableDS) variable).getCoordinateSystems();
             if (sys != null) {
                 final int count = sys.size();
                 for (int i=0; i<count; i++) {
-                    final CoordinateSystem cs = (CoordinateSystem) sys.get(i);
-                    final List axes = cs.getCoordinateAxes();
+                    final CoordinateSystem cs = sys.get(i);
+                    @SuppressWarnings("unchecked")
+                    final List<CoordinateAxis> axes = cs.getCoordinateAxes();
                     if (axes != null && axes.size() > dimension) {
-                        final CoordinateAxis axis = (CoordinateAxis) axes.get(dimension);
+                        final CoordinateAxis axis = axes.get(dimension);
                         if (axis != null) {
                             return axis.getAxisType();
                         }
@@ -539,11 +541,11 @@ scan:       while (it.hasNext()) {
      * @param  variables The list of variables.
      * @return {@code true} if the specified variable is a dimension of an other variable.
      */
-    private static boolean isAxis(final VariableIF candidate, final List variables) {
+    private static boolean isAxis(final VariableIF candidate, final List<VariableIF> variables) {
         final String name = candidate.getName();
         final int size = variables.size();
         for (int i=0; i<size; i++) {
-            final VariableIF var = (VariableIF) variables.get(i);
+            final VariableIF var = variables.get(i);
             if (var != candidate) {
                 Dimension dim;
                 for (int d=0; (dim=var.getDimension(d)) != null; d++) {
@@ -596,11 +598,12 @@ scan:       while (it.hasNext()) {
                  * variable. The "longitude" variable is usually not of direct interest to the user
                  * (the interresting variable is "temperature"), so we exclude it.
                  */
-                final List variables = dataset.getVariables();
+                @SuppressWarnings("unchecked")
+                final List<VariableIF> variables = dataset.getVariables();
                 final String[] filtered = new String[variables.size()];
                 int count = 0;
                 for (int i=0; i<filtered.length; i++) {
-                    final VariableIF candidate = (VariableIF) variables.get(i);
+                    final VariableIF candidate = variables.get(i);
                     /*
                      * - Images require at least 2 dimensions. They may have more dimensions,
                      *   in which case a slice will be taken later.
@@ -690,6 +693,7 @@ scan:       while (it.hasNext()) {
          * We tried a case-sensitive search without success. Now tries a case-insensitive search
          * before to report a failure.
          */
+        @SuppressWarnings("unchecked")
         final List<Variable> variables = dataset.getVariables();
         if (variables != null) {
             for (final Variable variable : variables) {
@@ -816,6 +820,7 @@ scan:       while (it.hasNext()) {
                 throw netcdfFailure(e);
             }
         }
+        @SuppressWarnings("unchecked")
         final List<Range> sections = Range.toList(ranges);
         /*
          * Reads the requested sub-region only.
