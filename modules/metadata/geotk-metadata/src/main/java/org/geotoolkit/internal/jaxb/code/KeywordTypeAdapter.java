@@ -27,7 +27,7 @@ import org.opengis.metadata.identification.KeywordType;
  * about the handling of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -74,8 +74,9 @@ public final class KeywordTypeAdapter extends CodeListAdapter<KeywordTypeAdapter
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_KeywordTypeCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
@@ -84,7 +85,7 @@ public final class KeywordTypeAdapter extends CodeListAdapter<KeywordTypeAdapter
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

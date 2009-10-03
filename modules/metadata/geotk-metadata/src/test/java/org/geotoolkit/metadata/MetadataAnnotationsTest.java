@@ -136,7 +136,8 @@ public final class MetadataAnnotationsTest extends AnnotationsTest {
         org.opengis.metadata.maintenance.ScopeDescription.class,
         org.opengis.metadata.MetaData.class,
         org.opengis.metadata.MetadataExtensionInformation.class,
-        org.opengis.metadata.Obligation.class,
+// The following CodeList is excluded because it doesn't use the usual kind of adapter.
+//      org.opengis.metadata.Obligation.class,
         org.opengis.metadata.PortrayalCatalogueReference.class,
         org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy.class,
         org.opengis.metadata.quality.AccuracyOfATimeMeasurement.class,

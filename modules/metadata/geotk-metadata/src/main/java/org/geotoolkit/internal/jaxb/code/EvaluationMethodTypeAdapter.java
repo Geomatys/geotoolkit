@@ -27,7 +27,7 @@ import org.opengis.metadata.quality.EvaluationMethodType;
  * handling of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -74,8 +74,9 @@ public final class EvaluationMethodTypeAdapter extends CodeListAdapter<Evaluatio
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "DQ_EvaluationMethodTypeCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return this.proxy;
     }
 
@@ -84,7 +85,7 @@ public final class EvaluationMethodTypeAdapter extends CodeListAdapter<Evaluatio
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

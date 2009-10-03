@@ -124,18 +124,14 @@ public abstract class AnnotationsTest {
     }
 
     /**
-     * Tests the annotations on interfaces (not code list).
+     * Tests the annotations on adapters. The test is applied for everything returned
+     * by the {@link #getTestedTypes()} method, including both metadata interfaces and
+     * code lists.
      */
     @Test
-    public void testInterfaceAnnotations() {
+    public void testAdapterAnnotations() {
         for (final Class<?> type : getTestedTypes()) {
-            if (CodeList.class.isAssignableFrom(type)) {
-                // Skip code lists, since they are not the purpose of this test.
-                continue;
-            }
-            testingMethod = null;
             testingClass = type.getName();
-            assertTrue(message("Not an interface: "), type.isInterface());
             /*
              * Get the @UML annotation, which is mandatory.
              */
@@ -177,7 +173,9 @@ public abstract class AnnotationsTest {
                     fail(e.toString());
                     continue;
                 }
-                assertEquals(setter.getDeclaringClass(), getter.getDeclaringClass());
+                assertEquals("The setter method must be declared in the same class than the " +
+                        "getter method - not in a parent class, to avoid issues with JAXB.",
+                        getter.getDeclaringClass(), setter.getDeclaringClass());
                 final XmlElement xmlElem = getter.getAnnotation(XmlElement.class);
                 assertEquals(message("Expected @XmlElement XOR @XmlElementRef in "),
                         (xmlElem == null), getter.isAnnotationPresent(XmlElementRef.class));
@@ -186,6 +184,27 @@ public abstract class AnnotationsTest {
                     assertEquals(message("Wrong @XmlElement for "), classUML.identifier(), xmlElem.name());
                 }
             }
+        }
+    }
+
+    /**
+     * Tests the annotations on interfaces (not code list).
+     */
+    @Test
+    public void testInterfaceAnnotations() {
+        for (final Class<?> type : getTestedTypes()) {
+            if (CodeList.class.isAssignableFrom(type)) {
+                // Skip code lists, since they are not the purpose of this test.
+                continue;
+            }
+            testingMethod = null;
+            testingClass = type.getName();
+            assertTrue(message("Not an interface: "), type.isInterface());
+            /*
+             * Get the @UML annotation, which is mandatory.
+             */
+            final UML classUML = type.getAnnotation(UML.class);
+            assertNotNull(message("Missing @UML annotation for "), classUML);
             /*
              * Get the implementation class, which is mandatory.
              */

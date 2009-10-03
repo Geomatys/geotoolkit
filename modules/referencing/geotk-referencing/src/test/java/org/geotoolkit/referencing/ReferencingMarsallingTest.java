@@ -38,7 +38,6 @@ import org.opengis.metadata.spatial.GeometricObjectType;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
@@ -82,7 +81,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  *
  * @since 3.04
  */
-public class ReferencingAnnotationsTest {
+public class ReferencingMarsallingTest {
     /**
      * The resource file which contains an XML representation of a
      * {@linkplain DefaultMetaData metadata} object, with a {@link VerticalCRS}.

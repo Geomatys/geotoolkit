@@ -27,7 +27,7 @@ import org.opengis.metadata.acquisition.GeometryType;
  * of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.02
  * @module
@@ -74,8 +74,9 @@ public final class GeometryTypeAdapter extends CodeListAdapter<GeometryTypeAdapt
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "MI_GeometryTypeCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
@@ -84,7 +85,7 @@ public final class GeometryTypeAdapter extends CodeListAdapter<GeometryTypeAdapt
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

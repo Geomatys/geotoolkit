@@ -27,7 +27,7 @@ import org.opengis.metadata.spatial.TopologyLevel;
  * the handling of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -74,8 +74,9 @@ public final class TopologyLevelAdapter extends CodeListAdapter<TopologyLevelAda
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "MD_TopologyLevelCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
@@ -84,7 +85,7 @@ public final class TopologyLevelAdapter extends CodeListAdapter<TopologyLevelAda
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

@@ -27,7 +27,7 @@ import org.opengis.metadata.identification.AssociationType;
  * about the handling of CodeList in ISO-19139.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -74,8 +74,9 @@ public final class AssociationTypeAdapter extends CodeListAdapter<AssociationTyp
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "DS_AssociationTypeCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
@@ -84,7 +85,7 @@ public final class AssociationTypeAdapter extends CodeListAdapter<AssociationTyp
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

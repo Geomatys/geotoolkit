@@ -27,7 +27,7 @@ import org.opengis.metadata.citation.PresentationForm;
  * the handling of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -76,8 +76,9 @@ public final class PresentationFormAdapter
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "CI_PresentationFormCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
@@ -86,7 +87,7 @@ public final class PresentationFormAdapter
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

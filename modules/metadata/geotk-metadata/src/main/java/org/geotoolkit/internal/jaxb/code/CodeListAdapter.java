@@ -30,7 +30,7 @@ import org.geotoolkit.internal.CodeLists;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.5
  * @module
@@ -119,4 +119,18 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         }
         return wrap(new CodeListProxy(value));
     }
+
+    /**
+     * Invoked by JAXB on marshalling. Subclasses must override this
+     * method with the appropriate {@code @XmlElement} annotation.
+     *
+     * @return The {@code CodeList} value to be marshalled.
+     */
+    public abstract CodeListProxy getElement();
+
+    /*
+     * We do not define setter method (even abstract) since it seems to confuse JAXB.
+     * It is subclasses responsability to define the setter method. The existence of
+     * this setter will be tested by MetadataAnnotationsTest.
+     */
 }
