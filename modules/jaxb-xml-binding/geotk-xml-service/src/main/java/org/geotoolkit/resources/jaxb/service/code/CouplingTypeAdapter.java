@@ -41,20 +41,23 @@ public final class CouplingTypeAdapter extends CodeListAdapter<CouplingTypeAdapt
         super(proxy);
     }
 
+    @Override
     protected CouplingTypeAdapter wrap(CodeListProxy proxy) {
         return new CouplingTypeAdapter(proxy);
     }
 
+    @Override
     protected Class<CouplingType> getCodeListClass() {
         return CouplingType.class;
     }
 
+    @Override
     @XmlElement(name = "SV_CouplingType", namespace = "http://www.isotc211.org/2005/srv")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

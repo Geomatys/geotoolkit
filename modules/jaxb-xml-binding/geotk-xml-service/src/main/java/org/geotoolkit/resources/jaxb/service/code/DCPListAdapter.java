@@ -41,20 +41,23 @@ public final class DCPListAdapter extends CodeListAdapter<DCPListAdapter, DCPLis
         super(proxy);
     }
 
+    @Override
     protected DCPListAdapter wrap(CodeListProxy proxy) {
         return new DCPListAdapter(proxy);
     }
 
+    @Override
     protected Class<DCPList> getCodeListClass() {
         return DCPList.class;
     }
 
+    @Override
     @XmlElement(name = "DCPList", namespace = "http://www.isotc211.org/2005/srv")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }
