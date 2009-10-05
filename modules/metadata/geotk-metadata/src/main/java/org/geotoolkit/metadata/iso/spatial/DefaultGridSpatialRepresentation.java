@@ -161,25 +161,6 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
     }
 
     /**
-     * @deprecated Renamed as {@link #getAxisDimensionProperties()}
-     */
-    @Override
-    @Deprecated
-    public List<Dimension> getAxisDimensionsProperties() {
-        return getAxisDimensionProperties();
-    }
-
-    /**
-     * @deprecated Renamed as {@link #setAxisDimensionProperties}
-     *
-     * @param newValues The new axis dimension properties.
-     */
-    @Deprecated
-    public void setAxisDimensionsProperties(final List<? extends Dimension> newValues) {
-        setAxisDimensionProperties(newValues);
-    }
-
-    /**
      * Returns the identification of grid data as point or cell.
      */
     @Override

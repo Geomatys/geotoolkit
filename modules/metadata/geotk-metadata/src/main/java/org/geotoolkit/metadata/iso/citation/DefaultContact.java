@@ -303,25 +303,6 @@ public class DefaultContact extends MetadataEntity implements Contact {
     }
 
     /**
-     * @deprecated Renamed {@link #getOnlineResource}.
-     */
-    @Override
-    @Deprecated
-    public OnLineResource getOnLineResource() {
-        return getOnlineResource();
-    }
-
-    /**
-     * @deprecated Renamed {@link #setOnlineResource}.
-     *
-     * @param newValue The new online resource.
-     */
-    @Deprecated
-    public void setOnLineResource(final OnLineResource newValue) {
-        setOnlineResource(newValue);
-    }
-
-    /**
      * Returns telephone numbers at which the organization or individual may be contacted.
      * Returns {@code null} if none.
      */

@@ -269,23 +269,4 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
     public synchronized void setSatisfiedPlans(final Collection<? extends Plan> newValues) {
         satisfiedPlans = copyCollection(newValues, satisfiedPlans, Plan.class);
     }
-
-    /**
-     * @deprecated Renamed {@link #getSatisfiedPlans}.
-     */
-    @Override
-    @Deprecated
-    public Collection<Plan> getSatisifedPlans() {
-        return getSatisfiedPlans();
-    }
-
-    /**
-     * @deprecated Renamed {@link #setSatisfiedPlans}.
-     *
-     * @param newValues The new satisfied plans values.
-     */
-    @Deprecated
-    public void setSatisifedPlans(final Collection<? extends Plan> newValues) {
-        setSatisfiedPlans(newValues);
-    }
 }

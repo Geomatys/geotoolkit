@@ -138,20 +138,6 @@ public class MarshallerPool {
     }
 
     /**
-     * Creates a new factory for the given class to be bound.
-     *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetaData.class}.
-     * @throws JAXBException    If the JAXB context can not be created.
-     *
-     * @deprecated Replaced by the constructor expecting a {@code Map} argument.
-     */
-    @Deprecated
-    public MarshallerPool(final String rootNamespace, final Class<?>... classesToBeBound) throws JAXBException {
-        this(Collections.singletonMap(ROOT_NAMESPACE_KEY, rootNamespace), classesToBeBound);
-    }
-
-    /**
      * Creates a new factory for the given class to be bound. The keys in the {@code properties} map
      * shall be one or many of the constants defined in this class like {@link #ROOT_NAMESPACE_KEY}.
      *
@@ -175,21 +161,6 @@ public class MarshallerPool {
      */
     public MarshallerPool(final String packages) throws JAXBException {
         this(Collections.<String,String>emptyMap(), packages);
-    }
-
-    /**
-     * Creates a new factory for the given packages. The separator character for the packages is the colon.
-     *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
-     *                          for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
-     * @throws JAXBException    If the JAXB context can not be created.
-     *
-     * @deprecated Replaced by the constructor expecting a {@code Map} argument.
-     */
-    @Deprecated
-    public MarshallerPool(final String rootNamespace, final String packages) throws JAXBException {
-        this(Collections.singletonMap(ROOT_NAMESPACE_KEY, rootNamespace), packages);
     }
 
     /**

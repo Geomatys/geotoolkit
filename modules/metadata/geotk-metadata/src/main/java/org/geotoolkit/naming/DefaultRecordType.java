@@ -143,24 +143,6 @@ public class DefaultRecordType implements RecordType, Serializable {
      * pairs in this record type.
      *
      * @return The dictionary of (<var>name</var>, <var>type</var>) pairs.
-     *
-     * @deprecated Replaced by {@link #getMemberTypes()}.
-     */
-    @Override
-    @Deprecated
-    public Map<MemberName,TypeName> getAttributeTypes() {
-        final Map<MemberName,TypeName> attributeTypes = new LinkedHashMap<MemberName,TypeName>();
-        for (final Map.Entry<MemberName,Type> entry : memberTypes.entrySet()) {
-            attributeTypes.put(entry.getKey(), entry.getValue().getTypeName());
-        }
-        return attributeTypes;
-    }
-
-    /**
-     * Returns the unmodifiable dictionary of all (<var>name</var>, <var>type</var>)
-     * pairs in this record type.
-     *
-     * @return The dictionary of (<var>name</var>, <var>type</var>) pairs.
      */
     @Override
     public Map<MemberName,Type> getMemberTypes() {
