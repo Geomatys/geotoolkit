@@ -182,6 +182,13 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                         newEnvelope = new GeneralEnvelope(envelope);
                     } else {
                         origin = envelope.getMedian();
+                        envelope.normalize(false);
+                        /*
+                         * Fix the envelope coordinates to the maximum dimensions allowed in the CRS definition.
+                         * This envelope is just used for the canvas, the data values are not changed. The only
+                         * risk to do so is to loose the graphic object if requesting a bounding box outside the
+                         * allowed bounds, which case should not occur.
+                         */
                         newEnvelope = CRS.transform(transform, envelope);
                     }
                     newEnvelope.setCoordinateReferenceSystem(newCRS);
