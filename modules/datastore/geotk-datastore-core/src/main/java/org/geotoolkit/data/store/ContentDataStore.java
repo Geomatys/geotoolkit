@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DataAccess;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DefaultServiceInfo;
 import org.geotoolkit.data.FeatureReader;
@@ -93,7 +92,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  * @author Jody Garnett, Refractions Research Inc.
  * @author Justin Deoliveira, The Open Planning Project
  */
-public abstract class ContentDataStore implements DataStore {
+public abstract class ContentDataStore implements DataStore<SimpleFeatureType,SimpleFeature> {
 
     /**
      * writer flags

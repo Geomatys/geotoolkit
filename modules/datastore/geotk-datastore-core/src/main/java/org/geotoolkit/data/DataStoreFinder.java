@@ -17,14 +17,18 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
 
+import org.geotoolkit.internal.LazySet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
@@ -47,47 +51,87 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  *
  * <p>
- * Example:<br/><code>org.geotoolkit.data.mytype.MyTypeDataStoreFacotry</code>
+ * Example:<br/><code>org.geotoolkit.data.mytype.MyTypeDataStoreFactory</code>
  * </p>
  */
-public final class DataStoreFinder {
+public final class DataStoreFinder{
 
-    /** The logger for the filter module. */
-    protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
+    /** The logger for the datastore module. */
+    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
     /**
      * The service registry for this manager. Will be initialized only when
      * first needed.
      */
     private static FactoryRegistry registry;
 
-    //Singleton pattern
-    private DataStoreFinder() {
-    }
+    private DataStoreFinder() {}
 
     /**
      * Checks each available datasource implementation in turn and returns the
      * first one which claims to support the resource identified by the params
      * object.
      *
-     * @param params A Map object which contains a defenition of the resource
-     *        to connect to. for file based resources the property 'url'
-     *        should be set within this Map.
+     * @param params
+     *            A Map object which contains a defenition of the resource to
+     *            connect to. for file based resources the property 'url' should
+     *            be set within this Map.
      *
      * @return The first datasource which claims to process the required
      *         resource, returns null if none can be found.
      *
-     * @throws IOException If a suitable loader can be found, but it can not be
-     *         attached to the specified resource without errors.
+     * @throws IOException
+     *             If a suitable loader can be found, but it can not be attached
+     *             to the specified resource without errors.
      */
-    public static synchronized DataStore getDataStore(Map params) throws IOException {
-        Iterator<DataStoreFactorySpi> ps = getAvailableDataStores();
-        DataAccess<? extends FeatureType, ? extends Feature> dataStore;
-        dataStore = DataAccessFinder.getDataStore(params, ps);
-        return (DataStore) dataStore;
+    public static synchronized DataStore<? extends FeatureType, ? extends Feature> getDataStore(
+            Map<String, Serializable> params) throws IOException {
+        final Iterator<DataStoreFactorySpi> ps = getAvailableDataStores();
+
+
+        IOException canProcessButNotAvailable = null;
+        while (ps.hasNext()) {
+            final DataStoreFactorySpi fac = (DataStoreFactorySpi) ps.next();
+            boolean canProcess = false;
+            try {
+                canProcess = fac.canProcess(params);
+            } catch (Throwable t) {
+                LOGGER.log(Level.WARNING, "Problem asking " + fac.getDisplayName() + " if it can process request:" + t, t);
+                // Protect against DataStores that don't carefully code
+                // canProcess
+                continue;
+            }
+            if (canProcess) {
+                boolean isAvailable = false;
+                try {
+                    isAvailable = fac.availability().pass();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
+                    // Protect against DataStores that don't carefully code
+                    // isAvailable
+                    continue;
+                }
+                if (isAvailable) {
+                    try {
+                        return fac.createDataStore(params);
+                    } catch (IOException couldNotConnect) {
+                        canProcessButNotAvailable = couldNotConnect;
+                        LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
+                    }
+                } else {
+                    canProcessButNotAvailable = new IOException(
+                            fac.getDisplayName() + " should be used, but is not availble. Have you installed the required drivers or jar files?");
+                    LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but is not availble", canProcessButNotAvailable);
+                }
+            }
+        }
+        if (canProcessButNotAvailable != null) {
+            throw canProcessButNotAvailable;
+        }
+        return null;
     }
 
     /**
-     * Finds all implemtaions of DataStoreFactory which have registered using
+     * Finds all implemtaions of DataAccessFactory which have registered using
      * the services mechanism, regardless weather it has the appropriate
      * libraries on the classpath.
      *
@@ -95,7 +139,9 @@ public final class DataStoreFinder {
      *         factories
      */
     public static synchronized Iterator<DataStoreFactorySpi> getAllDataStores() {
-        return DataAccessFinder.getAllDataStores(getServiceRegistry(), DataStoreFactorySpi.class);
+        final FactoryRegistry serviceRegistry = getServiceRegistry();
+        final Iterator<DataStoreFactorySpi> allDataAccess = serviceRegistry.getServiceProviders(DataStoreFactorySpi.class, null, null, null);
+        return new LazySet<DataStoreFactorySpi>(allDataAccess).iterator();
     }
 
     /**
@@ -107,11 +153,21 @@ public final class DataStoreFinder {
      *         factories, and whose available method returns true.
      */
     public static synchronized Iterator<DataStoreFactorySpi> getAvailableDataStores() {
-        Set<DataStoreFactorySpi> availableDS;
-        FactoryRegistry serviceRegistry = getServiceRegistry();
-        availableDS = DataAccessFinder.getAvailableDataStores(serviceRegistry, DataStoreFactorySpi.class);
-        return availableDS.iterator();
+        final FactoryRegistry serviceRegistry = getServiceRegistry();
+        final Iterator<DataStoreFactorySpi> allStores = serviceRegistry.getServiceProviders(DataStoreFactorySpi.class, null, null, null);
+
+        final Set<DataStoreFactorySpi> availableStores = new HashSet<DataStoreFactorySpi>();
+
+        while (allStores.hasNext()) {
+            final DataStoreFactorySpi dsFactory = allStores.next();
+            if (dsFactory.availability().pass()) {
+                availableStores.add(dsFactory);
+            }
+        }
+        
+        return availableStores.iterator();
     }
+
 
     /**
      * Returns the service registry. The registry will be created the first time
@@ -120,7 +176,7 @@ public final class DataStoreFinder {
     private static FactoryRegistry getServiceRegistry() {
         assert Thread.holdsLock(DataStoreFinder.class);
         if (registry == null) {
-            registry = new DynamicFactoryRegistry(new Class<?>[]{DataStoreFactorySpi.class});
+            registry = new DynamicFactoryRegistry(DataStoreFactorySpi.class);
         }
         return registry;
     }
@@ -138,4 +194,5 @@ public final class DataStoreFinder {
     public static synchronized void scanForPlugins() {
         getServiceRegistry().scanForPlugins();
     }
+
 }

@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geotoolkit.data.DataStoreFactorySpi.Param;
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.data.DataAccessFactory.Param;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.FloatParameter;

@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.Query;
 import java.awt.RenderingHints;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.util.Set;
 
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
@@ -125,7 +125,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      *
      * @return DataStore implementing this FeatureStore
      */
-    DataAccess<T, F> getDataStore();
+    DataStore<T, F> getDataStore();
 
     /**
      * Returns and indication of what query capabilities this FeatureSource

@@ -87,7 +87,7 @@ import org.opengis.filter.Filter;
  * @author jgarnett
  * @source $URL$
  */
-public abstract class AbstractDataStore implements DataStore {
+public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,SimpleFeature> {
 
     /**
      * The logger for the filter module.

@@ -34,7 +34,6 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.data.DataAccessFactory.Param;
 import org.opengis.metadata.quality.ConformanceResult;
 
 
