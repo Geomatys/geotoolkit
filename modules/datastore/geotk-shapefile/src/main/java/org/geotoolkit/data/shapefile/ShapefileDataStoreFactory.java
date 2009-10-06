@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FileDataStoreFactorySpi;
+import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.factory.Factory;
@@ -59,7 +59,7 @@ import org.opengis.metadata.quality.ConformanceResult;
  * @version $Id: ShapefileDataStoreFactory.java 27856 2007-11-12 17:23:35Z
  *          desruisseaux $
  */
-public class ShapefileDataStoreFactory extends Factory implements FileDataStoreFactorySpi {
+public class ShapefileDataStoreFactory extends Factory implements FileDataStoreFactory {
 
     public static final Logger LOGGER = Logging.getLogger("org.geotools.data.shapefile");
     /**
@@ -96,7 +96,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
          * This is an example of a non simple Param type where a custom parse
          * method is required.
          * 
-         * @see org.geotools.data.DataStoreFactorySpi.Param#parse(java.lang.String)
+         * @see org.geotools.data.DataStoreFactory.Param#parse(java.lang.String)
          */
         public Object parse(String text) throws IOException {
             return Charset.forName(text);
@@ -373,7 +373,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
      * We may need to create a new datastore if the provided file does not
      * exist.
      * 
-     * @see org.geotools.data.dir.FileDataStoreFactorySpi#createDataStore(java.net.URL)
+     * @see org.geotools.data.dir.FileDataStoreFactory#createDataStore(java.net.URL)
      */
     @Override
     public DataStore createDataStore(URL url) throws IOException {
@@ -389,7 +389,7 @@ public class ShapefileDataStoreFactory extends Factory implements FileDataStoreF
     }
 
     /**
-     * @see org.geotools.data.dir.FileDataStoreFactorySpi#createDataStore(java.net.URL)
+     * @see org.geotools.data.dir.FileDataStoreFactory#createDataStore(java.net.URL)
      */
     public DataStore createDataStore(URL url, boolean memorymapped)
             throws IOException {

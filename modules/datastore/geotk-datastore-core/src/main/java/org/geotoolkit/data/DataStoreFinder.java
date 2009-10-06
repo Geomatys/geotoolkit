@@ -37,12 +37,12 @@ import org.opengis.feature.type.FeatureType;
  *
  * <p>
  * In order to be located by this finder datasources must provide an
- * implementation of the {@link DataStoreFactorySpi} interface.
+ * implementation of the {@link DataStoreFactory} interface.
  * </p>
  *
  * <p>
  * In addition to implementing this interface datasouces should have a services
- * file:<br/><code>META-INF/services/org.geotoolkit.data.DataStoreFactorySpi</code>
+ * file:<br/><code>META-INF/services/org.geotoolkit.data.DataStoreFactory</code>
  * </p>
  *
  * <p>
@@ -85,12 +85,12 @@ public final class DataStoreFinder{
      */
     public static synchronized DataStore<? extends FeatureType, ? extends Feature> getDataStore(
             Map<String, Serializable> params) throws IOException {
-        final Iterator<DataStoreFactorySpi> ps = getAvailableDataStores();
+        final Iterator<DataStoreFactory> ps = getAvailableDataStores();
 
 
         IOException canProcessButNotAvailable = null;
         while (ps.hasNext()) {
-            final DataStoreFactorySpi fac = (DataStoreFactorySpi) ps.next();
+            final DataStoreFactory fac = (DataStoreFactory) ps.next();
             boolean canProcess = false;
             try {
                 canProcess = fac.canProcess(params);
@@ -138,10 +138,10 @@ public final class DataStoreFinder{
      * @return An iterator over all discovered datastores which have registered
      *         factories
      */
-    public static synchronized Iterator<DataStoreFactorySpi> getAllDataStores() {
+    public static synchronized Iterator<DataStoreFactory> getAllDataStores() {
         final FactoryRegistry serviceRegistry = getServiceRegistry();
-        final Iterator<DataStoreFactorySpi> allDataAccess = serviceRegistry.getServiceProviders(DataStoreFactorySpi.class, null, null, null);
-        return new LazySet<DataStoreFactorySpi>(allDataAccess).iterator();
+        final Iterator<DataStoreFactory> allDataAccess = serviceRegistry.getServiceProviders(DataStoreFactory.class, null, null, null);
+        return new LazySet<DataStoreFactory>(allDataAccess).iterator();
     }
 
     /**
@@ -152,14 +152,14 @@ public final class DataStoreFinder{
      * @return An iterator over all discovered datastores which have registered
      *         factories, and whose available method returns true.
      */
-    public static synchronized Iterator<DataStoreFactorySpi> getAvailableDataStores() {
+    public static synchronized Iterator<DataStoreFactory> getAvailableDataStores() {
         final FactoryRegistry serviceRegistry = getServiceRegistry();
-        final Iterator<DataStoreFactorySpi> allStores = serviceRegistry.getServiceProviders(DataStoreFactorySpi.class, null, null, null);
+        final Iterator<DataStoreFactory> allStores = serviceRegistry.getServiceProviders(DataStoreFactory.class, null, null, null);
 
-        final Set<DataStoreFactorySpi> availableStores = new HashSet<DataStoreFactorySpi>();
+        final Set<DataStoreFactory> availableStores = new HashSet<DataStoreFactory>();
 
         while (allStores.hasNext()) {
-            final DataStoreFactorySpi dsFactory = allStores.next();
+            final DataStoreFactory dsFactory = allStores.next();
             if (dsFactory.availability().pass()) {
                 availableStores.add(dsFactory);
             }
@@ -176,7 +176,7 @@ public final class DataStoreFinder{
     private static FactoryRegistry getServiceRegistry() {
         assert Thread.holdsLock(DataStoreFinder.class);
         if (registry == null) {
-            registry = new DynamicFactoryRegistry(DataStoreFactorySpi.class);
+            registry = new DynamicFactoryRegistry(DataStoreFactory.class);
         }
         return registry;
     }

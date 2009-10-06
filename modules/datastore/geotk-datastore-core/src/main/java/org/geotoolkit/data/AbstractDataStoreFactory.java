@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotoolkit.data.DataStoreFactorySpi.Param;
+import org.geotoolkit.data.DataStoreFactory.Param;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValue;
  * A best of toolkit for DataStoreFactory implementors.
  * <p>
  * Will also allow me to mess with the interface API without breaking every
- * last DataStoreFactorySpi out there.
+ * last DataStoreFactory out there.
  * </p>
  * <p>
  * The default implementations often hinge around the use of
@@ -57,7 +57,7 @@ import org.opengis.parameter.ParameterValue;
  * @author Jody Garnett, Refractions Research
  * @source $URL$
  */
-public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactorySpi {
+public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
 
     /** Default Implementation abuses the naming convention.
      * <p>

@@ -66,7 +66,7 @@ import org.opengis.util.InternationalString;
  * </p>
  *
  * <p>
- * <code>META-INF/services/org.geotoolkit.data.DataStoreFactorySpi</code>
+ * <code>META-INF/services/org.geotoolkit.data.DataStoreFactory</code>
  * </p>
  *
  * <p>
@@ -88,7 +88,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  * @source $URL$
  */
-public interface DataStoreFactorySpi {
+public interface DataStoreFactory {
 
     /**
      * Construct a live DataStore using the connection parameters provided.
@@ -246,7 +246,7 @@ public interface DataStoreFactorySpi {
      * </p>
      *
      * <p>
-     * Warning: We would like to start moving towards a common paraemters
+     * Deprecated: We would like to start moving towards a common paraemters
      * framework with GridCoverageExchnage. Param will be maintained as a
      * wrapper for one point release (at which time it will be deprecated).
      * </p>

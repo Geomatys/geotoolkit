@@ -43,14 +43,14 @@ import org.geotoolkit.factory.FactoryRegistry;
  */
 public class FileDataStoreFinder {
 
-    private static final Set<FileDataStoreFactorySpi> FILE_FACTORIES = new HashSet<FileDataStoreFactorySpi>();
+    private static final Set<FileDataStoreFactory> FILE_FACTORIES = new HashSet<FileDataStoreFactory>();
 
     static {
-        final FactoryRegistry fr = new FactoryRegistry(FileDataStoreFactorySpi.class);
-        final Iterator<FileDataStoreFactorySpi> factories = fr.getServiceProviders(FileDataStoreFactorySpi.class, null, null, null);
+        final FactoryRegistry fr = new FactoryRegistry(FileDataStoreFactory.class);
+        final Iterator<FileDataStoreFactory> factories = fr.getServiceProviders(FileDataStoreFactory.class, null, null, null);
 
         while (factories.hasNext()) {
-            final FileDataStoreFactorySpi ff = factories.next();
+            final FileDataStoreFactory ff = factories.next();
             FILE_FACTORIES.add(ff);
         }
 
@@ -77,10 +77,10 @@ public class FileDataStoreFinder {
      *         attached to the specified resource without errors.
      */
     public static DataStore getDataStore(URL url) throws IOException {
-        Iterator<FileDataStoreFactorySpi> ps = getAvailableDataStores();
+        Iterator<FileDataStoreFactory> ps = getAvailableDataStores();
 
         while (ps.hasNext()) {
-            FileDataStoreFactorySpi fac = ps.next();
+            FileDataStoreFactory fac = ps.next();
 
             try {
                 if (fac.canProcess(url)) {
@@ -103,19 +103,19 @@ public class FileDataStoreFinder {
     }
 
     /**
-     * Returns an iterator of FileDataStoreFactorySpi to allow for the easy
+     * Returns an iterator of FileDataStoreFactory to allow for the easy
      * creation of a FileDataStore
      *
      *
-     * @see FileDataStoreFactorySpi
+     * @see FileDataStoreFactory
      * @see FileDataStore
      */
-    public static Iterator<FileDataStoreFactorySpi> getAvailableDataStores() {
+    public static Iterator<FileDataStoreFactory> getAvailableDataStores() {
         Set availableDS = new HashSet();
 
-        Set<FileDataStoreFactorySpi> all = FILE_FACTORIES;
+        Set<FileDataStoreFactory> all = FILE_FACTORIES;
 
-        for (FileDataStoreFactorySpi dsFactory : all) {
+        for (FileDataStoreFactory dsFactory : all) {
             if (dsFactory.availability().pass()) {
                 availableDS.add(dsFactory);
             }
@@ -132,9 +132,9 @@ public class FileDataStoreFinder {
     public static Set<String> getAvailableFileExtentions() {
         Set<String> extentions = new HashSet<String>();
 
-        Iterator<FileDataStoreFactorySpi> ps = getAvailableDataStores();
+        Iterator<FileDataStoreFactory> ps = getAvailableDataStores();
         while (ps.hasNext()) {
-            FileDataStoreFactorySpi fac = ps.next();
+            FileDataStoreFactory fac = ps.next();
             try {
                 for (String fileExtention : fac.getFileExtensions()) {
                     extentions.add(fileExtention);

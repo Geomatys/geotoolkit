@@ -29,7 +29,7 @@ import java.net.URL;
  * @author dzwiers
  * @source $URL$
  */
-public interface FileDataStoreFactorySpi extends DataStoreFactorySpi {
+public interface FileDataStoreFactory extends DataStoreFactory {
 
     /**
      * The list of filename extentions handled by this factory.
