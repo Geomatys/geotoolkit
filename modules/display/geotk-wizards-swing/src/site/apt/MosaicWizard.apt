@@ -1,0 +1,132 @@
+Creating an image mosaic
+
+* Installing and launching the wizard
+
+  Download the latest version of <<<geotk-bundle.pack.gz>>> from {{{http://download.geotoolkit.org}http://download.geotoolkit.org}}.
+  Open a command-line window and set the current directory to the directory where the Geotk bundle has
+  been saved. Uncompress the file using the command below (replace <<<SNAPSHOT>>> by the actual version
+  number):
+
+--------------------------------------------------------------------
+unpack200 --remove-pack-file geotk-bundle-SNAPSHOT.pack.gz geotk.jar
+--------------------------------------------------------------------
+
+  Execute with a large amount of memory (1 gigabyte in the example below). The wizard can works with
+  much less memory, but more memory makes it faster because it allows the wizard to reduce the amount
+  of read passes.
+
+--------------------------
+java -Xmx1G -jar geotk.jar
+--------------------------
+
+  A menu will popups and proposes different options. Select "<Mosaic generator>". The "<Geotoolkit.org setup>"
+  option can be safely ignored because the mosaic generator doesn't need this setup.
+
+
+* Select source tiles
+
+  The first wizard window should looks like the screenshot below:
+
+[screenshots/SelectInputTiles.png]
+
+  Press the "<Add>" button. An Open dialog box will appear for choosing the input files. The
+  images format (PNG, TIFF, <etc.>) must be selected. Each image file <<must>> be completed by
+  a {{{http://fr.wikipedia.org/wiki/World_file}World File}} having the <<<.tfw>>>, <<<.pgw>>>
+  or <<<.jgw>>> extension, depending on the image format.
+
+  As an alternative to the direct selection of image files, it is possible to select instead a
+  text file which contains a list of image files. This is useful if the files to select are
+  spread in many directories, or if a frozen subset of images is to be used. Click on the
+  "<Format>" button and select "<List of images>", then select the "<<<.txt>>>" or "<<<.csv>>>"
+  file as in the screenshot below:
+
+[screenshots/OpenDialog.png]
+
+  Press the "<Open>" button for starting the loading of tiles information. The wizard will read
+  the image headers and the <World Files>, which may take a few minutes if there is thousands of
+  tiles (this operation can be cancelled at any time). Once completed, the list of tiles appears
+  in a table on the left side, and a visual representation appears on the right side:
+
+[screenshots/ViewInputTiles.png]
+
+  The "<File>" column in the table contains the selected file names. The "<Width>" and "<Height>"
+  columns give the dimension of every tiles. The "<x>" and "<y>" columns give the position in pixel
+  coordinates of each tiles in the input mosaic, with the origin (0,0) in the upper-left corner.
+  The "<sx>" and "<sy>" columns give the pixel sizes relative to the tiles having the finest pixels.
+  Those 4 last columns are computed from the information found in the <World Files>. Note that the
+  input mosaic can be rotated - the above computation is robust to rotations, provided that every
+  tiles have the same rotation angle.
+
+  An arbitrary amount of lines in the table can be selected. This selection is shown in the picture
+  on the right pane as darker tiles. The selected tiles can be removed from the list of input tiles
+  by pressing the "<Remove>" button. Other tiles can be added by pressing again the "<Add>" button.
+  This process can be repeated for example in order to add tiles in different directories.
+
+  If the input mosaic is very large, it may be useful to zoom and navigate in the picture on the right
+  pane. A right-click on the picture provides a contextual menu for this purpose. The mouse whell can
+  also be used for zooming in and out.
+
+  When the list of input tiles is complete, click on "<Next>"
+
+
+* Define the tiling and pyramid levels
+
+  The next wizard step suggests an output tiles size and subsampling for the various pyramid levels
+  to write. The subsampling is relative to the input tiles having the finest pixels, i.e. the ones
+  having the value (1,1) for the (<sx>,<sy>) columns in the previous wizard step. The graph on the
+  right side gives an estimation of the theorical performance when reading tiles at the subsamplings
+  on the abscissa. The 100% value is the best performance one could expect.
+
+  The output tiles size and subsamplings are computed by default in a way that try to produce an
+  integer number of output tiles (i.e. the tiles on the last row and last column are complete).
+  However those values can be freely modified. An output tile size close to 256 gives good
+  performance at the cost of a greater amount of tiles.
+
+  <<In current implementation, experience shows that the default proposal of subsamplings is sub-optimal>>.
+  Experience suggests that it is better to define the subsampling as powers of 2, like in the screenshot
+  below. We have not yet identified why other subsampling values seem to hurt performance (they should
+  be neutral at worst). In the maintime, users are encouraged to remove all default subsampling
+  values by pressing the "<Remove>" button, then add new values in the "<X axis>" column and pressing
+  "<Enter>" on the keyboard.
+
+[screenshots/DefineMosaicLayout.png]
+
+  The output directory and the output format shall also be specified in this step. When all
+  information are accurate, press "<Next>".
+
+
+* Remove opaque border
+
+  Some input tiles may have an opaque border (typically black or white). If the output mosaic is
+  to be overlayed with other images, it is preferable to replace opaque border by a transparent
+  one. An arbitrary amount of border colors to make transparent can be specified at this step.
+  If at least one color is specified, then the wizard will apply the following algorithm:
+
+  * For each input tile:
+
+    * For each corner in the input tile:
+
+      * Replace every consecutive occurence of a specified opaque color by a transparent color.
+
+      * Stop the search at the first pixel which was not specified in the list of opaque colors to replace.\
+        This prevent the algorithm to replace opaque colors that may appear in the middle of the tile.
+
+    * Cache the result in a temporary file. This will require an amount of free disk space at least
+      equal to the space used by the input tiles.
+
+  []
+
+  To add an opaque color to make transparent, select the color in the right pane and press the
+  "<Add>" button. Repeat this operation for each color to make transparent.
+
+[screenshots/SuppressOpaqueBorder.png]
+
+  When all opaque colors (if any) have been selected, press "<Next>".
+
+
+* Confirm
+
+  The last step just waits for confirmation. Press the "<Finish>" button for launching the
+  creation of the output image mosaic. This operation may take many hours if there is many
+  thousands of input tiles. When the operation is finished, the wizard will disaspear if
+  they were no error. In case of error, the wizard will stay open with an error message.

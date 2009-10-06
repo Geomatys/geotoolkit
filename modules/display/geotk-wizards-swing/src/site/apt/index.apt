@@ -1,0 +1,14 @@
+Swing wizards
+
+  This module provides wizards using the Swing framework. The following command-line launch
+  a menu which a choice of wizards (replace <<<SNAPSHOT>>> by the actual version number in
+  the JAR filename):
+
+------------------------------------------
+java -jar geotk-wizards-swing-SNAPSHOT.jar
+------------------------------------------
+
+  Available wizards are:
+
+  * {{{MosaicWizard.html}Mosaic wizard}} for creating a mosaic and a pyramid of images from a
+    single image or an other mosaic.
