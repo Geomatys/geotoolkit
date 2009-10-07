@@ -20,13 +20,12 @@ package org.geotoolkit.internal.image.io;
 import java.io.*;
 import java.awt.geom.AffineTransform;
 
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.io.wkt.PrjFiles;
 
 
 
@@ -216,34 +215,6 @@ attempts:   for (int i=0; ; i++) {
      *         errors while parsing the WKT.
      */
     public static CoordinateReferenceSystem parsePRJ(File file) throws IOException {
-        file = toSupportFile(file, "prj");
-        final BufferedReader in = new BufferedReader(new FileReader(file));
-        StringBuilder buffer = null;
-        String wkt=null, line;
-        while ((line = in.readLine()) != null) {
-            line = line.trim();
-            if (line.length() != 0) {
-                if (wkt == null) {
-                    wkt = line;
-                } else {
-                    if (buffer == null) {
-                        buffer = new StringBuilder(wkt);
-                    }
-                    buffer.append('\n').append(line);
-                }
-            }
-        }
-        in.close();
-        if (buffer != null) {
-            wkt = buffer.toString();
-        }
-        if (wkt == null) {
-            throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
-        }
-        try {
-            return CRS.decode(wkt);
-        } catch (FactoryException e) {
-            throw new ContentFormatException(e.getLocalizedMessage(), e);
-        }
+        return PrjFiles.read(toSupportFile(file, "prj"));
     }
 }
