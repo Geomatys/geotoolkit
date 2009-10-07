@@ -16,6 +16,15 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.data.DataSourceException;
+
 /**
  * Not much but a type safe enumeration of file types as ints and names. The
  * descriptions can easily be tied to a ResourceBundle if someone wants to do
@@ -111,6 +120,23 @@ public enum ShapeType {
         return id % 10 == 8;
     }
 
+    public final Class bestJTSClass() {
+        if (this == ShapeType.NULL) {
+            return Geometry.class;
+        } else if (isLineType()) {
+            return MultiLineString.class;
+        } else if (isMultiPointType()) {
+            return MultiPoint.class;
+        } else if (isPointType()) {
+            return Point.class;
+        } else if (isPolygonType()) {
+            return MultiPolygon.class;
+        } else {
+            throw new RuntimeException("Unknown ShapeType->GeometryClass : " + this);
+        }
+    }
+
+
     /**
      * Determine the ShapeType for the id.
      * 
@@ -165,6 +191,34 @@ public enum ShapeType {
                 return new MultiPointHandler(this);
             default:
                 return null;
+        }
+    }
+
+
+    /**
+     * Determine the best ShapeType for a given Geometry.
+     *
+     * @param geom
+     *                The Geometry to analyze.
+     * @return The best ShapeType for the Geometry.
+     */
+    public static final ShapeType findBestGeometryType(Geometry geom) {
+        return findBestGeometryType(geom.getClass());
+    }
+
+    public static final ShapeType findBestGeometryType(Class geomType) {
+        if (Point.class.isAssignableFrom(geomType)) {
+            return ShapeType.POINT;
+        } else if (MultiPoint.class.isAssignableFrom(geomType)) {
+            return ShapeType.MULTIPOINT;
+        } else if (LineString.class.isAssignableFrom(geomType)
+                || MultiLineString.class.isAssignableFrom(geomType)) {
+            return ShapeType.ARC;
+        } else if (Polygon.class.isAssignableFrom(geomType)
+                || MultiPolygon.class.isAssignableFrom(geomType)) {
+            return ShapeType.POLYGON;
+        } else {
+            return ShapeType.UNDEFINED;
         }
     }
 

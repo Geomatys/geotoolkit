@@ -43,6 +43,9 @@ import org.geotoolkit.util.logging.Logging;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/dbf/DbaseFileHeader.java $
  */
 public class DbaseFileHeader {
+
+    private final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+    
     // Constant for the size of a record
     private static final int FILE_DESCRIPTOR_SIZE = 32;
 
@@ -68,7 +71,6 @@ public class DbaseFileHeader {
 
     private int largestFieldSize = 0;
 
-    private Logger logger = Logging.getLogger("org.geotools.data.shapefile");
 
     /**
      * Class for holding the information assicated with a record.
@@ -96,8 +98,7 @@ public class DbaseFileHeader {
     // lets start out with a zero-length array, just in case
     private DbaseField[] fields = new DbaseField[0];
 
-    private void read(ByteBuffer buffer, ReadableByteChannel channel)
-            throws IOException {
+    private void read(ByteBuffer buffer, ReadableByteChannel channel) throws IOException {
         while (buffer.remaining() > 0) {
             if (channel.read(buffer) == -1) {
                 throw new EOFException("Premature end of file");
@@ -224,8 +225,8 @@ public class DbaseFileHeader {
         // Sorry folks.
         if (tempFieldName.length() > 10) {
             tempFieldName = tempFieldName.substring(0, 10);
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("FieldName " + inFieldName
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.warning("FieldName " + inFieldName
                         + " is longer than 10 characters, truncating to "
                         + tempFieldName);
             }
@@ -236,8 +237,8 @@ public class DbaseFileHeader {
         if ((inFieldType == 'C') || (inFieldType == 'c')) {
             tempFieldDescriptors[fields.length].fieldType = 'C';
             if (inFieldLength > 254) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Length for "
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -246,14 +247,14 @@ public class DbaseFileHeader {
             }
         } else if ((inFieldType == 'S') || (inFieldType == 's')) {
             tempFieldDescriptors[fields.length].fieldType = 'C';
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("Field type for "
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.warning("Field type for "
                                 + inFieldName
                                 + " set to S which is flat out wrong people!, I am setting this to C, in the hopes you meant character.");
             }
             if (inFieldLength > 254) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Length for "
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -264,8 +265,8 @@ public class DbaseFileHeader {
         } else if ((inFieldType == 'D') || (inFieldType == 'd')) {
             tempFieldDescriptors[fields.length].fieldType = 'D';
             if (inFieldLength != 8) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Length for " + inFieldName + " set to "
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Length for " + inFieldName + " set to "
                             + inFieldLength + " Setting to 8 digets YYYYMMDD");
                 }
             }
@@ -273,8 +274,8 @@ public class DbaseFileHeader {
         } else if ((inFieldType == 'F') || (inFieldType == 'f')) {
             tempFieldDescriptors[fields.length].fieldType = 'F';
             if (inFieldLength > 20) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Length for "
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -284,8 +285,8 @@ public class DbaseFileHeader {
         } else if ((inFieldType == 'N') || (inFieldType == 'n')) {
             tempFieldDescriptors[fields.length].fieldType = 'N';
             if (inFieldLength > 18) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Length for "
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Length for "
                                     + inFieldName
                                     + " set to "
                                     + inFieldLength
@@ -293,16 +294,16 @@ public class DbaseFileHeader {
                 }
             }
             if (inDecimalCount < 0) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Decimal Position for " + inFieldName
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Decimal Position for " + inFieldName
                             + " set to " + inDecimalCount
                             + " Setting to 0 no decimal data will be saved.");
                 }
                 tempFieldDescriptors[fields.length].decimalCount = 0;
             }
             if (inDecimalCount > inFieldLength - 1) {
-                if (logger.isLoggable(Level.WARNING)) {
-                    logger.warning("Field Decimal Position for " + inFieldName
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.warning("Field Decimal Position for " + inFieldName
                             + " set to " + inDecimalCount + " Setting to "
                             + (inFieldLength - 1)
                             + " no non decimal data will be saved.");
@@ -312,8 +313,8 @@ public class DbaseFileHeader {
         } else if ((inFieldType == 'L') || (inFieldType == 'l')) {
             tempFieldDescriptors[fields.length].fieldType = 'L';
             if (inFieldLength != 1) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Field Length for " + inFieldName + " set to "
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("Field Length for " + inFieldName + " set to "
                             + inFieldLength
                             + " Setting to length of 1 for logical fields.");
                 }

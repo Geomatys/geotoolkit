@@ -25,6 +25,7 @@ import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
@@ -33,12 +34,13 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Jody Garnett (Refractions Research Inc)
  */
 class ShapefileFeatureSource extends AbstractFeatureSource {
+
     private final ShapefileDataStore shapefile;
     private final SimpleFeatureType featureType;
     
-    ShapefileFeatureSource( ShapefileDataStore shapefileDataStore, Set hints, SimpleFeatureType featureType ) {
+    ShapefileFeatureSource(ShapefileDataStore shapefileDataStore, Set hints, SimpleFeatureType featureType) {
         super(hints);
-        shapefile = shapefileDataStore;
+        this.shapefile = shapefileDataStore;
         this.featureType = featureType;
     }
 

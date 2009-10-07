@@ -168,7 +168,11 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
                     .getGeometryDescriptor();
 
             Class gat = geometryAttributeType.getType().getBinding();
-            shapeType = JTSUtilities.getShapeType(gat);
+            shapeType = ShapeType.findBestGeometryType(gat);
+            if (shapeType == ShapeType.UNDEFINED) {
+                throw new ShapefileException("Cannot handle geometry class : "
+                        + (gat == null ? "null" : gat.getName()));
+            }
         }
 
         shpWriter.writeHeaders(bounds, shapeType, records, shapefileLength);

@@ -25,17 +25,17 @@ import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 
 public class ShapefileFeatureLocking extends AbstractFeatureLocking {
-    /**
-     * 
-     */
+
     private final ShapefileDataStore shapefile;
     private final SimpleFeatureType featureType;
-    public ShapefileFeatureLocking( ShapefileDataStore shapefileDataStore, Set hints, SimpleFeatureType featureType ) {
+    
+    public ShapefileFeatureLocking(ShapefileDataStore shapefileDataStore, Set hints, SimpleFeatureType featureType) {
         super(hints);
-        shapefile = shapefileDataStore;
+        this.shapefile = shapefileDataStore;
         this.featureType = featureType;
     }
 

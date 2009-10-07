@@ -32,12 +32,13 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Jody Garnett (Refractions Research Inc)
  */
 public class ShapefileFeatureStore extends AbstractFeatureStore {
+    
     private final ShapefileDataStore shapefile;
     private final SimpleFeatureType featureType;
     
-    public ShapefileFeatureStore( ShapefileDataStore shapefileDataStore, Set hints, SimpleFeatureType featureType ) {
+    public ShapefileFeatureStore(ShapefileDataStore shapefileDataStore, Set hints, SimpleFeatureType featureType) {
         super(hints);
-        shapefile = shapefileDataStore;
+        this.shapefile = shapefileDataStore;
         this.featureType = featureType;
     }
 
@@ -77,8 +78,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public JTSEnvelope2D getBounds(Query query)
-            throws IOException {
+    public JTSEnvelope2D getBounds(Query query) throws IOException {
         return shapefile.getBounds(query);
     }
 
@@ -87,6 +87,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore {
      */
     @Override
     public ResourceInfo getInfo(){
-        return shapefile.getInfo( featureType.getTypeName() );
+        return shapefile.getInfo(featureType.getTypeName());
     }
 }

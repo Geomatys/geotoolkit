@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,18 +25,20 @@ import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Information about the contents of a shapefile.
- * 
+ *
  * @author Jody Garnett (Refractions Reserach Inc)
+ * @author Johann Sorel (Geomatys)
  */
-public class ShapefileURLResourceInfo implements ResourceInfo {
+public class ShapefileResourceInfo implements ResourceInfo {
 
-    private ShapefileDataStore shapefile;
+    private final ShapefileDataStore shapefile;
 
-    public ShapefileURLResourceInfo( ShapefileDataStore shapefile ) {
+    public ShapefileResourceInfo( ShapefileDataStore shapefile ) {
         this.shapefile = shapefile;
     }
 

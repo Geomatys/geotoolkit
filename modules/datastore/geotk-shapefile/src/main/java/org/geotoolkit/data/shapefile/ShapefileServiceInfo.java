@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,13 +28,14 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * ServiceInfo for ShapefileDataStore.
- * 
- * @author Jody Garnett (Refractions Reserach)
+ *
+ * @author Jody Garnett (Refractions Research)
+ * @author Johann Sorel (Geomatys)
  */
-public class ShapefileFileServiceInfo implements ServiceInfo {
+public class ShapefileServiceInfo implements ServiceInfo {
     private final ShapefileDataStore shapefile;
-    
-    ShapefileFileServiceInfo(ShapefileDataStore shapefile) {
+
+    ShapefileServiceInfo(ShapefileDataStore shapefile) {
         this. shapefile = shapefile;
     }
 
@@ -50,12 +52,16 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
      * {@inheritDoc }
      */
     @Override
-    public URI getPublisher() {    
-        String user = System.getProperty("user.name");
-        try {
-            return new URI( user );
-        } catch (URISyntaxException e) {
-            return null;
+    public URI getPublisher() {
+        if(shapefile.isLocal()){
+            String user = System.getProperty("user.name");
+            try {
+                return new URI( user );
+            } catch (URISyntaxException e) {
+                return null;
+            }
+        }else{
+            return null; // current user? last person to modify the file
         }
     }
 
@@ -64,10 +70,14 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
      */
     @Override
     public String getDescription() {
-        StringBuffer buf = new StringBuffer();
+        final StringBuffer buf = new StringBuffer();
         buf.append( shapefile.getCurrentTypeName() );
-        buf.append( " local shapefile" );
-        
+        if(shapefile.isLocal()){
+            buf.append( " local shapefile" );
+        }else{
+            buf.append( " non local shapefile." );
+        }
+
         return buf.toString();
     }
 
@@ -105,11 +115,11 @@ public class ShapefileFileServiceInfo implements ServiceInfo {
         if( shapefile instanceof IndexedShapefileDataStore ){
             IndexedShapefileDataStore indexed = (IndexedShapefileDataStore) shapefile;
             if( indexed.indexUseable( ShpFileType.QIX ) ){
-                words.add( "qix" );        
-            }            
+                words.add( "qix" );
+            }
         }
         words.add( "shapefile" );
-        
+
         return words;
     }
 }

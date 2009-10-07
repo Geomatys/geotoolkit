@@ -144,21 +144,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         return new InProcessLockingManager();
     }
 
-//    public void fireAdded( Feature newFeature ){
-//        String typeName = newFeature.getFeatureType().getTypeName();
-//        listenerManager.fireFeaturesAdded( typeName, Transaction.AUTO_COMMIT, newFeature.getBounds(), false );
-//    }
-//    public void fireRemoved( Feature removedFeature ){
-//        String typeName = removedFeature.getFeatureType().getTypeName();
-//        listenerManager.fireFeaturesRemoved( typeName, Transaction.AUTO_COMMIT, removedFeature.getBounds(), false );
-//    }
-//    public void fireChanged( Feature before, Feature after ){
-//        String typeName = after.getFeatureType().getTypeName();
-//        Envelope bounds = new Envelope();
-//        bounds.expandToInclude( before.getBounds() );
-//        bounds.expandToInclude( after.getBounds() );
-//        listenerManager.fireFeaturesChanged( typeName, Transaction.AUTO_COMMIT, bounds, false );
-//    }
     /**
      * Subclass override to provide access to metadata.
      * <p>
@@ -212,6 +197,17 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
+     * Delegates to {@link #getSchema(String)} with {@code name.getLocalPart()}
+     *
+     * @since 2.5
+     * @see DataAccess#getSchema(Name)
+     */
+    @Override
+    public SimpleFeatureType getSchema(Name name) throws IOException {
+        return getSchema(name.getLocalPart());
+    }
+
+    /**
      * Subclass should implement to provide writing support.
      *
      * @param featureType Requested FeatureType
@@ -223,6 +219,18 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
         throw new UnsupportedOperationException("Schema creation not supported");
+    }
+
+    /**
+     * Delegates to {@link #updateSchema(String, SimpleFeatureType)} with
+     * {@code name.getLocalPart()}
+     *
+     * @since 2.5
+     * @see DataAccess#getFeatureSource(Name)
+     */
+    @Override
+    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+        updateSchema(typeName.getLocalPart(), featureType);
     }
 
     /**
@@ -240,6 +248,19 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     public FeatureSource<SimpleFeatureType, SimpleFeature> getView(final Query query)
             throws IOException, SchemaException {
         return new DefaultView(this.getFeatureSource(query.getTypeName()), query);
+    }
+
+    /**
+     * Delegates to {@link #getFeatureSource(String)} with
+     * {@code name.getLocalPart()}
+     *
+     * @since 2.5
+     * @see DataAccess#getFeatureSource(Name)
+     */
+    @Override
+    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName)
+            throws IOException {
+        return getFeatureSource(typeName.getLocalPart());
     }
 
     /**
@@ -610,19 +631,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
-     * Delegates to {@link #getFeatureSource(String)} with
-     * {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataAccess#getFeatureSource(Name)
-     */
-    @Override
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName)
-            throws IOException {
-        return getFeatureSource(typeName.getLocalPart());
-    }
-
-    /**
      * Returns the same list of names than {@link #getTypeNames()} meaning the
      * returned Names have no namespace set.
      *
@@ -631,34 +639,12 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      */
     @Override
     public List<Name> getNames() throws IOException {
-        String[] typeNames = getTypeNames();
-        List<Name> names = new ArrayList<Name>(typeNames.length);
-        for (String typeName : typeNames) {
+        final String[] typeNames = getTypeNames();
+        final List<Name> names = new ArrayList<Name>(typeNames.length);
+        for (final String typeName : typeNames) {
             names.add(new DefaultName(typeName));
         }
         return names;
     }
 
-    /**
-     * Delegates to {@link #getSchema(String)} with {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataAccess#getSchema(Name)
-     */
-    @Override
-    public SimpleFeatureType getSchema(Name name) throws IOException {
-        return getSchema(name.getLocalPart());
-    }
-
-    /**
-     * Delegates to {@link #updateSchema(String, SimpleFeatureType)} with
-     * {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataAccess#getFeatureSource(Name)
-     */
-    @Override
-    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
-        updateSchema(typeName.getLocalPart(), featureType);
-    }
 }

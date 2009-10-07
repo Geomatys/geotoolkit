@@ -40,19 +40,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * The default implementations often hinge around the use of
  * getParameterInfo and the correct use of Param by your subclass.
  * </p>
- * <p>
- * You still have to implement a few methods:
- * </p>
- * <pre><code>
- * public DataSourceMetadataEnity createMetadata( Map params ) throws IOException {
- * 	    String host = (String) HOST.lookUp(params);
- *      String user = (String) USER.lookUp(params);
- *      Integer port = (Integer) PORT.lookUp(params);
- *      String database = (String) DATABASE.lookUp(params);
- *
- *      String description = "Connection to "+getDisplayName()+" on "+host+" as "+user ;
- *      return new DataSourceMetadataEnity( host+":"+port, database, description );
- * }</code></pre>
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$

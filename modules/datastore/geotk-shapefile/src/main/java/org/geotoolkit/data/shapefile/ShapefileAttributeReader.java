@@ -42,7 +42,7 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
 
     public ShapefileAttributeReader(List<AttributeDescriptor> atts,
             ShapefileReader shp, DbaseFileReader dbf) {
-        this(atts.toArray(new AttributeDescriptor[0]), shp, dbf);
+        this(atts.toArray(new AttributeDescriptor[atts.size()]), shp, dbf);
     }
 
     /**

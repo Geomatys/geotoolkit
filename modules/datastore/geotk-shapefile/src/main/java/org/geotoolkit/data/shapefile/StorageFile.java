@@ -41,7 +41,7 @@ public final class StorageFile implements Comparable<StorageFile>, FileWriter {
     private final File tempFile;
     private final ShpFileType type;
 
-    public StorageFile( ShpFiles shpFiles, File tempFile, ShpFileType type ) {
+    public StorageFile(ShpFiles shpFiles, File tempFile, ShpFileType type) {
         this.shpFiles = shpFiles;
         this.tempFile = tempFile;
         this.type = type;
