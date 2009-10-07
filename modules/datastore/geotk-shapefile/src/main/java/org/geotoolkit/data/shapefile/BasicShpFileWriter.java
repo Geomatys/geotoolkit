@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile;
 
 
 public final class BasicShpFileWriter implements FileWriter {
-    private String id;
+    private final String id;
 
     public BasicShpFileWriter( String id ) {
         this.id = id;

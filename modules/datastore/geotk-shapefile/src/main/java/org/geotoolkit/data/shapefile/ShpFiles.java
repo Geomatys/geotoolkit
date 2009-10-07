@@ -35,6 +35,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -381,21 +382,21 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return A result object containing the URL or the reason for the failure.
      */
-    public Result<URL, State> tryAcquireRead(ShpFileType type,
+    public Entry<URL, State> tryAcquireRead(ShpFileType type,
             FileReader requestor) {
         URL url = urls.get(type);
         if (url == null) {
-            return new Result<URL, State>(null, State.NOT_EXIST);
+            return new SimpleImmutableEntry<URL, State>(null, State.NOT_EXIST);
         }
         
         boolean locked = readWriteLock.readLock().tryLock();
         if (!locked) {
-            return new Result<URL, State>(null, State.LOCKED);
+            return new SimpleImmutableEntry<URL, State>(null, State.LOCKED);
         }
         
         getCurrentThreadLockers().add(new ShpFilesLocker(url, requestor));
 
-        return new Result<URL, State>(url, State.GOOD);
+        return new SimpleImmutableEntry<URL, State>(url, State.GOOD);
     }
 
     /**
@@ -526,12 +527,11 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return A result object containing the URL or the reason for the failure.
      */
-    public Result<URL, State> tryAcquireWrite(ShpFileType type,
-            FileWriter requestor) {
+    public Entry<URL, State> tryAcquireWrite(ShpFileType type,FileWriter requestor) {
         
         URL url = urls.get(type);
         if (url == null) {
-            return new Result<URL, State>(null, State.NOT_EXIST);
+            return new SimpleImmutableEntry<URL, State>(null, State.NOT_EXIST);
         }
 
         Collection<ShpFilesLocker> threadLockers = getCurrentThreadLockers();
@@ -542,12 +542,12 @@ public class ShpFiles {
             locked = readWriteLock.writeLock().tryLock();
             if(locked == false) {
                 regainReadLocks(threadLockers);
-                return new Result<URL, State>(null, State.LOCKED);
+                return new SimpleImmutableEntry<URL, State>(null, State.LOCKED);
             }
         }
 
         threadLockers.add(new ShpFilesLocker(url, requestor));
-        return new Result<URL, State>(url, State.GOOD);
+        return new SimpleImmutableEntry<URL, State>(url, State.GOOD);
     }
 
     /**

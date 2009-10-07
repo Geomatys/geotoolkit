@@ -32,8 +32,7 @@ import java.nio.channels.WritableByteChannel;
  * 
  * @author jesse
  */
-public class FileChannelDecorator extends FileChannel implements
-        ReadableByteChannel {
+public class FileChannelDecorator extends FileChannel implements ReadableByteChannel {
 
     private final FileChannel wrapped;
     private final ShpFiles shapefileFiles;

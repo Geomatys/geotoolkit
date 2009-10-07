@@ -96,8 +96,7 @@ public enum ShpFileType {
             return null;
         }
 
-        int indexOfExtension = path.toLowerCase().lastIndexOf(
-                extensionWithPeriod);
+        int indexOfExtension = path.toLowerCase().lastIndexOf(extensionWithPeriod);
         return path.substring(0, indexOfExtension);
     }
 
@@ -110,8 +109,7 @@ public enum ShpFileType {
      */
     public String toBase(URL url) {
         try {
-            return toBase(java.net.URLDecoder.decode(url.toExternalForm(),
-                    "US-ASCII"));
+            return toBase(java.net.URLDecoder.decode(url.toExternalForm(),"US-ASCII"));
         } catch (UnsupportedEncodingException e) {
             return toBase(url.toExternalForm());
         }

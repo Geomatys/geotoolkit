@@ -54,6 +54,9 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  */
 public class ShapefileWriter {
 
+    private final StreamLogging shpLogger = new StreamLogging("SHP Channel in ShapefileWriter");
+    private final StreamLogging shxLogger = new StreamLogging("SHX Channel in ShapefileWriter");
+
     FileChannel shpChannel;
     FileChannel shxChannel;
     ByteBuffer shapeBuffer;
@@ -63,10 +66,6 @@ public class ShapefileWriter {
     int offset;
     int lp;
     int cnt;
-    private StreamLogging shpLogger = new StreamLogging(
-            "SHP Channel in ShapefileWriter");
-    private StreamLogging shxLogger = new StreamLogging(
-            "SHX Channel in ShapefileWriter");
 
     /**
      * Creates a new instance of ShapeFileWriter
@@ -149,8 +148,7 @@ public class ShapefileWriter {
             // if (size > largestShapeSize)
             // largestShapeSize = size;
         }
-        writeHeaders(geometries.getEnvelopeInternal(), type, geometries
-                .getNumGeometries(), fileLength);
+        writeHeaders(geometries.getEnvelopeInternal(), type, geometries.getNumGeometries(), fileLength);
     }
 
     /**

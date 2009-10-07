@@ -62,8 +62,7 @@ public class MultiLineHandler implements ShapeHandler {
      */
     public MultiLineHandler(ShapeType type) throws ShapefileException {
         if ((type != ShapeType.ARC) && (type != ShapeType.ARCM) && (type != ShapeType.ARCZ)) {
-            throw new ShapefileException(
-                    "MultiLineHandler constructor - expected type to be 3,13 or 23");
+            throw new ShapefileException("MultiLineHandler constructor - expected type to be 3,13 or 23");
         }
 
         shapeType = type;
@@ -82,30 +81,20 @@ public class MultiLineHandler implements ShapeHandler {
      * {@inheritDoc }
      */
     @Override
-    public int getLength(Object geometry) {
+    public int getLength(final Object geometry) {
         final MultiLineString multi = (MultiLineString) geometry;
-
-        int numlines;
-        int numpoints;
-        int length;
-
-        numlines = multi.getNumGeometries();
-        numpoints = multi.getNumPoints();
+        final int numlines = multi.getNumGeometries();
+        final int numpoints = multi.getNumPoints();
 
         if (shapeType == ShapeType.ARC) {
-            length = 44 + (4 * numlines) + (numpoints * 16);
+            return 44 + (4*numlines) + (16*numpoints);
         } else if (shapeType == ShapeType.ARCM) {
-            length = 44 + (4 * numlines) + (numpoints * 16) + 8 + 8
-                    + (8 * numpoints);
+            return 44 + (4*numlines) + (16*numpoints) + 8 + 8 + (8*numpoints);
         } else if (shapeType == ShapeType.ARCZ) {
-            length = 44 + (4 * numlines) + (numpoints * 16) + 8 + 8
-                    + (8 * numpoints) + 8 + 8 + (8 * numpoints);
+            return 44 + (4*numlines) + (16*numpoints) + 8 + 8 + (8*numpoints) + 8 + 8 + (8*numpoints);
         } else {
-            throw new IllegalStateException("Expected ShapeType of Arc, got "
-                    + shapeType);
+            throw new IllegalStateException("Expected ShapeType of Arc, got " + shapeType);
         }
-
-        return length;
     }
 
     private Object createNull() {
@@ -116,7 +105,7 @@ public class MultiLineHandler implements ShapeHandler {
         if (type == ShapeType.NULL) {
             return createNull();
         }
-        final int dimensions = shapeType == ShapeType.ARCZ ? 3 : 2;
+        final int dimensions = (shapeType == ShapeType.ARCZ) ? 3 : 2;
         // read bounding box (not needed)
         buffer.position(buffer.position() + 4 * 8);
 
@@ -126,7 +115,7 @@ public class MultiLineHandler implements ShapeHandler {
         final int[] partOffsets = new int[numParts];
 
         // points = new Coordinate[numPoints];
-        for (int i = 0; i < numParts; i++) {
+        for (int i=0; i<numParts; i++) {
             partOffsets[i] = buffer.getInt();
         }
 
@@ -134,7 +123,7 @@ public class MultiLineHandler implements ShapeHandler {
         // Coordinate[] coords = new Coordinate[numPoints];
         prepareCoordinateArrays(numPoints);
 
-        for (int t = 0; t < numPoints; t++) {
+        for (int t=0; t<numPoints; t++) {
             x[t] = buffer.getDouble();
             y[t] = buffer.getDouble();
             // coords[t] = new Coordinate(buffer.getDouble(),

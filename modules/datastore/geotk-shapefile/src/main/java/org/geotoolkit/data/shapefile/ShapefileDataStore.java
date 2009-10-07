@@ -981,11 +981,11 @@ public class ShapefileDataStore extends AbstractDataStore {
             }
 
             // no Index file so use the number of shapefile records
-            ShapefileReader reader = openShapeReader();
+            final ShapefileReader reader = openShapeReader();
+            
             int count = -1;
-
             try {
-                count = reader.getCount(count);
+                count = reader.getCount();
             } catch (IOException e) {
                 throw e;
             } finally {

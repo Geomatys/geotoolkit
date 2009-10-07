@@ -199,12 +199,12 @@ public class ShapefileReader implements FileReader {
      */
     public static ShapefileHeader readHeader(ReadableByteChannel channel,
             boolean strict) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocateDirect(100);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(100);
         if (fill(buffer, channel) == -1) {
             throw new EOFException("Premature end of header");
         }
         buffer.flip();
-        ShapefileHeader header = ShapefileHeader.read(buffer, strict);
+        final ShapefileHeader header = ShapefileHeader.read(buffer, strict);
         NIOUtilities.clean(buffer);
         return header;
     }
@@ -265,7 +265,7 @@ public class ShapefileReader implements FileReader {
         }
 
         if (channel instanceof FileChannel && useMemoryMappedBuffer) {
-            FileChannel fc = (FileChannel) channel;
+            final FileChannel fc = (FileChannel) channel;
             buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             buffer.position(100);
             this.currentOffset = 0;
@@ -311,8 +311,9 @@ public class ShapefileReader implements FileReader {
         if (buffer instanceof MappedByteBuffer) {
             NIOUtilities.clean(buffer);
         }
-        if(shxReader != null)
+        if(shxReader != null){
             shxReader.close();
+        }
         shxReader = null;
         channel = null;
         header = null;
@@ -332,7 +333,7 @@ public class ShapefileReader implements FileReader {
      * @return True if has next record, false otherwise.
      */
     public boolean hasNext() throws IOException {
-        return this.hasNext(true);
+        return hasNext(true);
     }
 
     /**
@@ -353,7 +354,7 @@ public class ShapefileReader implements FileReader {
             return false;
         
         // mark current position
-        int position = buffer.position();
+        final int position = buffer.position();
 
         // ensure the proper position, regardless of read or handler behavior
         buffer.position(getNextOffset());
@@ -367,7 +368,7 @@ public class ShapefileReader implements FileReader {
         if (checkRecno) {
             // record headers in big endian
             buffer.order(ByteOrder.BIG_ENDIAN);
-            int declaredRecNo = buffer.getInt();
+            final int declaredRecNo = buffer.getInt();
             hasNext = declaredRecNo == record.number + 1;
         }
 
@@ -394,22 +395,21 @@ public class ShapefileReader implements FileReader {
      *                into
      * @return The length of the record transfered in bytes
      */
-    public int transferTo(ShapefileWriter writer, int recordNum, double[] bounds)
-            throws IOException {
+    public int transferTo(ShapefileWriter writer, int recordNum, double[] bounds) throws IOException {
 
         buffer.position(this.toBufferOffset(record.end));
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         buffer.getInt(); // record number
-        int rl = buffer.getInt();
-        int mark = buffer.position();
-        int len = rl * 2;
+        final int rl = buffer.getInt();
+        final int mark = buffer.position();
+        final int len = rl * 2;
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        ShapeType recordType = ShapeType.forID(buffer.getInt());
+        final ShapeType recordType = ShapeType.forID(buffer.getInt());
 
         if (recordType.isMultiPoint()) {
-            for (int i = 0; i < 4; i++) {
+            for (int i=0; i<4; i++) {
                 bounds[i] = buffer.getDouble();
             }
         } else if (recordType != ShapeType.NULL) {
@@ -453,21 +453,20 @@ public class ShapefileReader implements FileReader {
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         // read shape record header
-        int recordNumber = buffer.getInt();
+        final int recordNumber = buffer.getInt();
         // silly ESRI say contentLength is in 2-byte words
         // and ByteByffer uses bytes.
         // track the record location
-        int recordLength = buffer.getInt() * 2;
+        final int recordLength = buffer.getInt() * 2;
 
         if (!buffer.isReadOnly() && !useMemoryMappedBuffer) {
             // capacity is less than required for the record
             // copy the old into the newly allocated
             if (buffer.capacity() < recordLength + 8) {
                 this.currentOffset += buffer.position();
-                ByteBuffer old = buffer;
+                final ByteBuffer old = buffer;
                 // ensure enough capacity for one more record header
-                buffer = ensureCapacity(buffer, recordLength + 8,
-                        useMemoryMappedBuffer);
+                buffer = ensureCapacity(buffer, recordLength + 8, useMemoryMappedBuffer);
                 buffer.put(old);
                 NIOUtilities.clean(old);
                 fill(buffer, channel);
@@ -488,7 +487,7 @@ public class ShapefileReader implements FileReader {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         // read the type, handlers don't need it
-        ShapeType recordType = ShapeType.forID(buffer.getInt());
+        final ShapeType recordType = ShapeType.forID(buffer.getInt());
 
         // this usually happens if the handler logic is bunk,
         // but bad files could exist as well...
@@ -540,31 +539,29 @@ public class ShapefileReader implements FileReader {
      * @throws IOException
      * @throws UnsupportedOperationException
      */
-    public void goTo(int offset) throws IOException,
-            UnsupportedOperationException {
+    public void goTo(int offset) throws IOException, UnsupportedOperationException {
         disableShxUsage();
         if (randomAccessEnabled) {
-            if (this.useMemoryMappedBuffer) {
+            if (useMemoryMappedBuffer) {
                 buffer.position(offset);
             } else {
                 /*
                  * Check to see if requested offset is already loaded; ensure
                  * that record header is in the buffer
                  */
-                if (this.currentOffset <= offset
-                        && this.currentOffset + buffer.limit() >= offset + 8) {
-                    buffer.position(this.toBufferOffset(offset));
+                if (currentOffset <= offset && currentOffset + buffer.limit() >= offset + 8) {
+                    buffer.position(toBufferOffset(offset));
                 } else {
-                    FileChannel fc = (FileChannel) this.channel;
+                    final FileChannel fc = (FileChannel)channel;
                     fc.position(offset);
-                    this.currentOffset = offset;
+                    currentOffset = offset;
                     buffer.position(0);
                     fill(buffer, fc);
                     buffer.position(0);
                 }
             }
 
-            int oldRecordOffset = record.end;
+            final int oldRecordOffset = record.end;
             record.end = offset;
             try {
                 hasNext(false); // don't check for next logical record equality
@@ -592,10 +589,9 @@ public class ShapefileReader implements FileReader {
      * @throws IOException
      * @throws UnsupportedOperationException
      */
-    public Object shapeAt(int offset) throws IOException,
-            UnsupportedOperationException {
+    public Object shapeAt(int offset) throws IOException, UnsupportedOperationException {
         if (randomAccessEnabled) {
-            this.goTo(offset);
+            goTo(offset);
             return nextRecord().shape();
         }
         throw new UnsupportedOperationException("Random Access not enabled");
@@ -623,10 +619,9 @@ public class ShapefileReader implements FileReader {
      * @throws UnsupportedOperationException
      *             thrown if not a random access file
      */
-    public Record recordAt(int offset) throws IOException,
-            UnsupportedOperationException {
+    public Record recordAt(int offset) throws IOException, UnsupportedOperationException {
         if (randomAccessEnabled) {
-            this.goTo(offset);
+            goTo(offset);
             return nextRecord();
         }
         throw new UnsupportedOperationException("Random Access not enabled");
@@ -640,7 +635,7 @@ public class ShapefileReader implements FileReader {
      * @return The offset relative to the current loaded portion of the file
      */
     private int toBufferOffset(int offset) {
-        return (int) (offset - this.currentOffset);
+        return (int) (offset - currentOffset);
     }
 
     /**
@@ -651,7 +646,7 @@ public class ShapefileReader implements FileReader {
      * @return The offset relative to the whole file
      */
     private int toFileOffset(int offset) {
-        return (int) (this.currentOffset + offset);
+        return (int) (currentOffset + offset);
     }
 
     /**
@@ -659,30 +654,33 @@ public class ShapefileReader implements FileReader {
      * 
      * @return the number of non-null records in the shapefile
      */
-    public int getCount(int count) throws DataSourceException {
+    public int getCount() throws DataSourceException {
+
+        if (channel == null) return -1;
+
+        int count = 0;
+        final long offset = currentOffset;
+
         try {
-            if (channel == null)
-                return -1;
-            count = 0;
-            long offset = this.currentOffset;
             try {
                 goTo(100);
             } catch (UnsupportedOperationException e) {
                 return -1;
             }
+
             while (hasNext()) {
                 count++;
                 nextRecord();
             }
 
+            //go back to where we was
             goTo((int) offset);
 
         } catch (IOException ioe) {
-            count = -1;
             // What now? This seems arbitrarily appropriate !
-            throw new DataSourceException("Problem reading shapefile record",
-                    ioe);
+            throw new DataSourceException("Problem reading shapefile record",ioe);
         }
+        
         return count;
     }
 
