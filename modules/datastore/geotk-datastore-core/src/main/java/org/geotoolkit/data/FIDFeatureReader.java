@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
 
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -54,8 +53,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
-    /** The logger for the data module. */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.data");
     private final AttributeReader attributeReader;
     private final SimpleFeatureType schema;
     private final FIDReader fidReader;

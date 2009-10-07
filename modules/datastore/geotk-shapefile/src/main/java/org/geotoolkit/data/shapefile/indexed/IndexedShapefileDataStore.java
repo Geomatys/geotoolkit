@@ -95,8 +95,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  * @source $URL:
  *         http://svn.geotools.org/geotools/branches/constantTimeFid/src/org/geotools/data/shapefile/indexed/IndexedShapefileDataStore.java $
  */
-public class IndexedShapefileDataStore extends ShapefileDataStore implements
-        FileWriter {
+public class IndexedShapefileDataStore extends ShapefileDataStore implements FileWriter {
     private static final class IdentifierComparator implements Comparator<Identifier>
     {
         public int compare(Identifier o1, Identifier o2)
@@ -308,7 +307,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements
     protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
             throws IOException {
         if (query.getFilter() == Filter.EXCLUDE)
-            return new EmptyFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema());
+            return new EmptyFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(typeName));
 
         String[] propertyNames = query.getPropertyNames() == null ? new String[0]
                 : query.getPropertyNames();
@@ -762,7 +761,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements
         IndexedShapefileAttributeReader attReader = getAttributesReader(true,
                 true, null);
         try {
-            SimpleFeatureType schema = getSchema();
+            SimpleFeatureType schema = getSchema(typeName);
             if (schema == null) {
                 throw new IOException(
                         "To create a shapefile, you must first call createSchema()");
@@ -781,6 +780,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements
     /**
      * @see org.geotools.data.AbstractDataStore#getBounds(org.geotools.data.Query)
      */
+    @Override
     protected JTSEnvelope2D getBounds(Query query) throws IOException {
         JTSEnvelope2D ret = null;
 
@@ -811,7 +811,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements
 
         ShapefileReader reader = new ShapefileReader(shpFiles, false, false);
         try {
-            ret = new JTSEnvelope2D(getSchema().getCoordinateReferenceSystem());
+            ret = new JTSEnvelope2D(getSchema(getTypeNames()[0]).getCoordinateReferenceSystem());
             for (Iterator iter = records.iterator(); iter.hasNext();) {
                 Data data = (Data) iter.next();
                 reader.goTo(((Long) data.getValue(1)).intValue());

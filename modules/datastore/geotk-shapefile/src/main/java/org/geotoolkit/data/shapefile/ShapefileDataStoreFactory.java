@@ -16,15 +16,12 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataSourceException;
@@ -33,7 +30,7 @@ import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.data.AbstractDataStoreFactory;
+import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.util.logging.Logging;
@@ -68,15 +65,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @version $Id: ShapefileDataStoreFactory.java 27856 2007-11-12 17:23:35Z
  *          desruisseaux $
  */
-public class ShapefileDataStoreFactory extends AbstractDataStoreFactory implements FileDataStoreFactory {
+public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {
 
     public static final Logger LOGGER = Logging.getLogger("org.geotools.data.shapefile");
-    /**
-     * url to the .shp file.
-     */
-    public static final GeneralParameterDescriptor URLP =
-            new DefaultParameterDescriptor("url","url to a .shp file",URL.class,null,true);
-
+    
     /**
      * Optional - uri of the FeatureType's namespace
      */
@@ -283,44 +275,6 @@ public class ShapefileDataStoreFactory extends AbstractDataStoreFactory implemen
     @Override
     public String[] getFileExtensions() {
         return new String[] { ".shp", };
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean canProcess(URL f) {
-        return f.getFile().toUpperCase().endsWith("SHP");
-    }
-
-    /**
-     * We may need to create a new datastore if the provided file does not
-     * exist.
-     * 
-     * @see org.geotools.data.dir.FileDataStoreFactory#createDataStore(java.net.URL)
-     */
-    @Override
-    public DataStore createDataStore(URL url) throws IOException {
-        Map params = new HashMap();
-        params.put(URLP.getName().toString(), url);
-
-        boolean isLocal = url.getProtocol().equalsIgnoreCase("file");
-        if (isLocal && !(new File(url.getFile()).exists())) {
-            return createNewDataStore(params);
-        } else {
-            return createDataStore(params);
-        }
-    }
-
-    /**
-     * @see org.geotools.data.dir.FileDataStoreFactory#createDataStore(java.net.URL)
-     */
-    public DataStore createDataStore(URL url, boolean memorymapped)
-            throws IOException {
-        Map params = new HashMap();
-        params.put(URLP.getName().toString(), url);
-        params.put(MEMORY_MAPPED.getName().toString(), new Boolean(memorymapped));
-        return createDataStore(params);
     }
 
     /**

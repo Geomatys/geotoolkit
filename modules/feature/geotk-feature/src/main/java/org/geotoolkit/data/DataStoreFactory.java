@@ -87,7 +87,7 @@ public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
     /**
      * @see DataStoreFactory#createDataStore(org.opengis.parameter.ParameterValueGroup) 
      */
-    DataStore<T,F> createDataStore(Map<String, Serializable> params) throws IOException;
+    DataStore<T,F> createDataStore(Map<String, ? extends Serializable> params) throws IOException;
 
     /**
      * Construct a live DataStore using the connection parameters provided.
@@ -177,7 +177,7 @@ public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
      *         indicated by the param set and all the required params are
      *         pressent.
      */
-    boolean canProcess(Map<String, Serializable> params);
+    boolean canProcess(Map<String, ? extends Serializable> params);
 
     /**
      * @see DataStoreFactory#canProcess(org.opengis.parameter.ParameterValueGroup) 
@@ -207,7 +207,7 @@ public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
      */
     ConformanceResult availability();
 
-    DataStore<T,F> createNewDataStore(Map<String, Serializable> params) throws IOException;
+    DataStore<T,F> createNewDataStore(Map<String, ? extends Serializable> params) throws IOException;
 
     DataStore<T,F> createNewDataStore(ParameterValueGroup params) throws IOException;
 

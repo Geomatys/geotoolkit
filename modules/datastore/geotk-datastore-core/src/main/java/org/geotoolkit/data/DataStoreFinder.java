@@ -18,17 +18,19 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.spi.ServiceRegistry;
 
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
-
 import org.geotoolkit.internal.LazySet;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
@@ -65,6 +67,16 @@ public final class DataStoreFinder{
     private static FactoryRegistry registry;
 
     private DataStoreFinder() {}
+
+    /**
+     * @see DataStoreFinder#getDataStore(java.util.Map) 
+     * Get a datastore wich has a single parameter. 
+     * This is a utility method that will redirect to getDataStore(java.util.Map)
+     */
+    public static synchronized DataStore<? extends FeatureType, ? extends Feature> getDataStore(
+            String key, Serializable value) throws IOException{
+        return getDataStore(Collections.singletonMap(key, value));
+    }
 
     /**
      * Checks each available datasource implementation in turn and returns the
@@ -139,13 +151,33 @@ public final class DataStoreFinder{
      *         factories
      */
     public static synchronized Iterator<DataStoreFactory> getAllDataStores() {
-        final FactoryRegistry serviceRegistry = getServiceRegistry();
-        final Iterator<DataStoreFactory> allDataAccess = serviceRegistry.getServiceProviders(DataStoreFactory.class, null, null, null);
-        return new LazySet<DataStoreFactory>(allDataAccess).iterator();
+        return getAllDataStores(null);
     }
 
     /**
-     * Finds all implemtaions of DataStoreFactory which have registered using
+     * @see DataStoreFinder#getAllDataStores() 
+     * Get all datastores of a given class.
+     */
+    public static synchronized <T extends DataStoreFactory> Iterator<T> getAllDataStores(final Class<T> type){
+        final FactoryRegistry serviceRegistry = getServiceRegistry();
+
+        ServiceRegistry.Filter filter = null;
+        if(type != null){
+            filter = new ServiceRegistry.Filter() {
+                @Override
+                public boolean filter(Object provider) {
+                    return type.isInstance(provider);
+                }
+            };
+        }
+
+        final Iterator<DataStoreFactory> allDataAccess = serviceRegistry.getServiceProviders(DataStoreFactory.class, filter, null, null);
+
+        return new LazySet(allDataAccess).iterator();
+    }
+
+    /**
+     * Finds all implementations of DataStoreFactory which have registered using
      * the services mechanism, and that have the appropriate libraries on the
      * classpath.
      *
@@ -153,13 +185,20 @@ public final class DataStoreFinder{
      *         factories, and whose available method returns true.
      */
     public static synchronized Iterator<DataStoreFactory> getAvailableDataStores() {
-        final FactoryRegistry serviceRegistry = getServiceRegistry();
-        final Iterator<DataStoreFactory> allStores = serviceRegistry.getServiceProviders(DataStoreFactory.class, null, null, null);
+        return getAvailableDataStores(null);
+    }
 
-        final Set<DataStoreFactory> availableStores = new HashSet<DataStoreFactory>();
+    /**
+     * @see DataStoreFinder#getAvailableDataStores()
+     * Get all available datastores of a given class.
+     */
+    public static synchronized <T extends DataStoreFactory> Iterator<T> getAvailableDataStores(final Class<T> type) {
+        final Iterator<T> allStores = getAllDataStores(type);
+
+        final Set<T> availableStores = new HashSet<T>();
 
         while (allStores.hasNext()) {
-            final DataStoreFactory dsFactory = allStores.next();
+            final T dsFactory = allStores.next();
             if (dsFactory.availability().pass()) {
                 availableStores.add(dsFactory);
             }
@@ -167,7 +206,6 @@ public final class DataStoreFinder{
         
         return availableStores.iterator();
     }
-
 
     /**
      * Returns the service registry. The registry will be created the first time

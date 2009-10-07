@@ -29,7 +29,7 @@ import org.opengis.feature.type.FeatureType;
  */
 public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 
-    private T featureType;
+    private final T featureType;
 
     /**
      * An Empty  FeatureReader<SimpleFeatureType, SimpleFeature> of the provided <code>featureType</code>.
@@ -81,6 +81,5 @@ public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implem
      */
     @Override
     public void close() {
-        featureType = null;
     }
 }

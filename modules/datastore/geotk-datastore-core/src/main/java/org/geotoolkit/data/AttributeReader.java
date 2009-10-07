@@ -46,8 +46,7 @@ public interface AttributeReader {
      *
      * @return AttributeType at given index
      */
-    AttributeDescriptor getAttributeType(int index)
-            throws ArrayIndexOutOfBoundsException;
+    AttributeDescriptor getAttributeType(int index) throws ArrayIndexOutOfBoundsException;
 
     /**
      * Release any resources associated with this reader
@@ -57,8 +56,7 @@ public interface AttributeReader {
     /**
      * Does another set of attributes exist in this reader?
      *
-     * @return <code>true</code> if additional content exists for
-     *         AttributeReader
+     * @return <code>true</code> if additional content exists for AttributeReader
      */
     boolean hasNext() throws IOException;
 

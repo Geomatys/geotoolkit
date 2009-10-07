@@ -78,11 +78,24 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatureType, SimpleFeature> {
 
-    protected Set hints = Collections.EMPTY_SET;
+    protected final Set hints;
     protected QueryCapabilities queryCapabilities = new QueryCapabilities();
 
     public AbstractFeatureSource() {
-        // just to keep the default constructor around
+        this(null);
+    }
+
+    /**
+     * This constructors allows to set the supported hints
+     * @param hints
+     */
+    public AbstractFeatureSource(final Set hints) {
+        if(hints == null){
+            this.hints = Collections.EMPTY_SET;
+        }else{
+            this.hints = Collections.unmodifiableSet(new HashSet(hints));
+        }
+
     }
 
     /**
@@ -102,14 +115,6 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     @Override
     public Name getName() {
         return getSchema().getName();
-    }
-
-    /**
-     * This constructors allows to set the supported hints 
-     * @param hints
-     */
-    public AbstractFeatureSource(final Set hints) {
-        this.hints = Collections.unmodifiableSet(new HashSet(hints));
     }
 
     /**
@@ -203,7 +208,6 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      * </p>
      *
      * @param query
-     *
      *
      * @see org.geotoolkit.data.FeatureSource#getFeatures(org.geotoolkit.data.Query)
      */

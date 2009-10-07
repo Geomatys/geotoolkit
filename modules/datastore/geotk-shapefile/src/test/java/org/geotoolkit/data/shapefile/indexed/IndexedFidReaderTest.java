@@ -91,7 +91,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         {
             IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURL(), null,
                     true, true, IndexType.NONE);
-            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource();
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(ds.getTypeNames()[0]);
             FeatureIterator<SimpleFeature> features = featureSource.getFeatures().features();
             while (features.hasNext()) {
                 SimpleFeature next = features.next();
@@ -115,7 +115,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         {
             IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURL(), null,
                     true, true, IndexType.NONE);
-            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource();
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(ds.getTypeNames()[0]);
             FeatureIterator<SimpleFeature> features = featureSource.getFeatures().features();
             while (features.hasNext()) {
                 SimpleFeature next = features.next();

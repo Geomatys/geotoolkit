@@ -35,6 +35,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.Collections;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
@@ -144,7 +145,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         // write features
         ShapefileDataStoreFactory make = new ShapefileDataStoreFactory();
-        DataStore s = make.createDataStore(tmpFile.toURL());
+        DataStore s = make.createNewDataStore(Collections.singletonMap("url", tmpFile.toURL()));
         s.createSchema(type);
         String typeName = type.getTypeName();
         FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore<SimpleFeatureType, SimpleFeature>) s.getFeatureSource(typeName);
@@ -178,7 +179,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testDuplicateColumnNames() throws Exception {
         File file = ShapeTestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
-        FeatureSource<SimpleFeatureType, SimpleFeature> states = dataStore.getFeatureSource();
+        FeatureSource<SimpleFeatureType, SimpleFeature> states = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         SimpleFeatureType schema = states.getSchema();
         assertEquals(6, schema.getAttributeCount());
         assertTrue(states.getCount(Query.ALL) > 0);

@@ -66,7 +66,7 @@ public interface FileDataStoreFactory extends DataStoreFactory<SimpleFeatureType
      *
      * @see AbstractFileDataStore
      */
-    public DataStore createDataStore(URL url) throws IOException;
+    public DataStore<SimpleFeatureType,SimpleFeature> createDataStore(URL url) throws IOException;
 
     /**
      * The typeName represented by the provided url.

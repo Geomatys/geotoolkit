@@ -229,7 +229,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore ds = new ShapefileDataStore(toURL);
         ds.createSchema(FeatureTypeUtilities.createType("test", "geom:MultiPolygon"));
 
-        assertEquals("test", ds.getSchema().getTypeName());
+        assertEquals("test", ds.getTypeNames()[0]);
 
         file.deleteOnExit();
         file = new File("test.dbf");
@@ -257,9 +257,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         
         ds.createSchema(featureType);
         
-        assertEquals("test", ds.getSchema().getTypeName());
+        assertEquals("test", ds.getSchema(ds.getTypeNames()[0]).getTypeName());
 
-        CoordinateReferenceSystem crs2 = ds.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs2 = ds.getSchema("test").getGeometryDescriptor().getCoordinateReferenceSystem();
         assertNotNull( crs2 );
         assertEquals( crs.getName(), crs2.getName() );
         
@@ -290,10 +290,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         ShapefileDataStore ds = new ShapefileDataStore(toURL);
         ds.createSchema(FeatureTypeUtilities.createType("test", "geom:MultiPolygon"));
-        FeatureType before = ds.getSchema();
+        FeatureType before = ds.getSchema("test");
 
         ds.forceSchemaCRS(CRS.decode("EPSG:3005"));
-        FeatureType after = ds.getSchema();
+        FeatureType after = ds.getSchema("test");
 
         assertNotSame(before, after);
         assertNull("4326", before.getCoordinateReferenceSystem());
@@ -532,7 +532,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore store = (ShapefileDataStore) new ShapefileDataStoreFactory()
                 .createDataStore(ShapeTestData.url(AbstractTestCaseSupport.class, STREAM));
         int count = 0;
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = store.getFeatureReader();
+         FeatureReader<SimpleFeatureType, SimpleFeature> reader = store.getFeatureReader(store.getTypeNames()[0]);
         try {
             while (reader.hasNext()) {
                 count++;
@@ -555,9 +555,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore s = new ShapefileDataStore(url);
 
         // attributes other than geometry can be ignored here
-        Query query = new DefaultQuery(s.getSchema().getTypeName(),
+        Query query = new DefaultQuery(s.getSchema(s.getTypeNames()[0]).getTypeName(),
                 Filter.INCLUDE, new String[] { "the_geom" });
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = s.getFeatureReader(s.getSchema().getTypeName(),
+         FeatureReader<SimpleFeatureType, SimpleFeature> reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(),
                 query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
         assertEquals("the_geom", reader.getFeatureType().getDescriptor(0)
@@ -575,11 +575,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .getEnvelopeInternal(), null);
         Filter gf = ff.bbox(ff.property("the_geom"), bounds);
 
-        query = new DefaultQuery(s.getSchema().getTypeName(), gf,
+        query = new DefaultQuery(s.getSchema(s.getTypeNames()[0]).getTypeName(), gf,
                 new String[] { "the_geom" });
 
         reader.close();
-        reader = s.getFeatureReader(s.getSchema().getTypeName(), query);
+        reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(), query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
         assertEquals("the_geom", reader.getFeatureType().getDescriptor(0)
                 .getLocalName());
@@ -590,10 +590,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // file please
         Filter cf = ff
                 .equals(ff.property("STATE_NAME"), ff.literal("Illinois"));
-        query = new DefaultQuery(s.getSchema().getTypeName(), cf,
+        query = new DefaultQuery(s.getSchema(s.getTypeNames()[0]).getTypeName(), cf,
                 new String[] { "the_geom" });
-        reader = s.getFeatureReader(s.getSchema().getTypeName(), query);
-        assertEquals(s.getSchema(), reader.getFeatureType());
+        reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(), query);
+        assertEquals(s.getSchema(s.getTypeNames()[0]), reader.getFeatureType());
         reader.close();
     }
     

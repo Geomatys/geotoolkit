@@ -30,7 +30,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleFeature> {
 
-    private SimpleFeatureType featureType;
+    private final SimpleFeatureType featureType;
 
     /**
      * An Empty FeatureWriter of the provided <code>featureType</code>.
@@ -68,8 +68,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
      */
     @Override
     public void remove() throws IOException {
-        throw new IOException(
-                "FeatureWriter is empty and does not support remove()");
+        throw new IOException("FeatureWriter is empty and does not support remove()");
     }
 
     /**
@@ -77,8 +76,7 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
      */
     @Override
     public void write() throws IOException {
-        throw new IOException(
-                "FeatureWriter is empty and does not support write()");
+        throw new IOException("FeatureWriter is empty and does not support write()");
     }
 
     /**
@@ -100,6 +98,5 @@ public class EmptyFeatureWriter implements FeatureWriter<SimpleFeatureType, Simp
      */
     @Override
     public void close() {
-        featureType = null;
     }
 }

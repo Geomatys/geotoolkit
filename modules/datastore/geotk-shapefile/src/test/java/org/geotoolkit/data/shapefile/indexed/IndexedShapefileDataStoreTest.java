@@ -211,7 +211,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null,
                 true, true, IndexType.QIX);
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = ds.getFeatureSource().getFeatures();
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
         FeatureIterator<SimpleFeature> indexIter = features.features();
 
         GeometryFactory factory = new GeometryFactory();
@@ -257,7 +257,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL url = shpFile.toURL();
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true,
                 IndexType.NONE);
-        FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource();
+        FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(ds.getTypeNames()[0]);
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureSource.getFeatures();
         FeatureIterator<SimpleFeature> indexIter = features.features();
 
@@ -309,13 +309,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection<SimpleFeatureType, SimpleFeature> features;
         FeatureIterator<SimpleFeature> indexIter;
         FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-        String geometryName = indexedDS.getSchema().getGeometryDescriptor()
+        String geometryName = indexedDS.getSchema(indexedDS.getTypeNames()[0]).getGeometryDescriptor()
                 .getLocalName();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
-        features = indexedDS.getFeatureSource().getFeatures(filter);
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features2 = baselineDS.getFeatureSource()
+        features = indexedDS.getFeatureSource(indexedDS.getTypeNames()[0]).getFeatures(filter);
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features2 = baselineDS.getFeatureSource(baselineDS.getTypeNames()[0])
                 .getFeatures(filter);
 
         FeatureIterator<SimpleFeature> baselineIter = features2.features();
@@ -542,13 +542,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeature[] newFeatures1 = new SimpleFeature[1];
         SimpleFeature[] newFeatures2 = new SimpleFeature[2];
         GeometryFactory fac = new GeometryFactory();
-        newFeatures1[0] = DataUtilities.template(sds.getSchema());
+        newFeatures1[0] = DataUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
         newFeatures1[0].setDefaultGeometry(fac
                 .createPoint(new Coordinate(0, 0)));
-        newFeatures2[0] = DataUtilities.template(sds.getSchema());
+        newFeatures2[0] = DataUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
         newFeatures2[0].setDefaultGeometry(fac
                 .createPoint(new Coordinate(0, 0)));
-        newFeatures2[1] = DataUtilities.template(sds.getSchema());
+        newFeatures2[1] = DataUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
         newFeatures2[1].setDefaultGeometry(fac
                 .createPoint(new Coordinate(0, 0)));
 
@@ -662,7 +662,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
 
         fw.close();
-        assertEquals(20,  s.getFeatureSource().getFeatures().size());
+        assertEquals(20,  s.getFeatureSource(s.getTypeNames()[0]).getFeatures().size());
     }
 
     private void runWriteReadTest(Geometry geom, boolean d3) throws Exception {
@@ -759,7 +759,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testWipesOutInvalidFidsFromFilters() throws Exception {
         final IndexedShapefileDataStore ds = createDataStore();
         FeatureStore<SimpleFeatureType, SimpleFeature> store;
-        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource();
+        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource(ds.getTypeNames()[0]);
         
         final String validFid1, validFid2, invalidFid1, invalidFid2;
         {
@@ -800,7 +800,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     	
     	final IndexedShapefileDataStore ds = createDataStore();
         FeatureStore<SimpleFeatureType, SimpleFeature> store;
-        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource();
+        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource(ds.getTypeNames()[0]);
         Transaction t = new DefaultTransaction();
         store.setTransaction(t);
     	

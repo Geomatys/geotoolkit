@@ -43,7 +43,7 @@ public class FidIndexerTest extends FIDTestCase {
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp
                 .toURL(), null, false, false, IndexType.NONE);
 
-        FeatureSource<SimpleFeatureType, SimpleFeature> fs = ds.getFeatureSource();
+        FeatureSource<SimpleFeatureType, SimpleFeature> fs = ds.getFeatureSource(ds.getTypeNames()[0]);
         int features = fs.getCount(Query.ALL);
 
         IndexedFidReader reader = new IndexedFidReader(shpFiles);

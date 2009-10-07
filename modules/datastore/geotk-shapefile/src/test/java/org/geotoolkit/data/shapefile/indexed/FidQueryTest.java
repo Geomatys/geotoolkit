@@ -67,7 +67,7 @@ public class FidQueryTest extends FIDTestCase {
         ds = new IndexedShapefileDataStore(url, null, false, true,
                 IndexType.QIX);
         numFeatures = 0;
-        featureStore = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource();
+        featureStore = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource(ds.getTypeNames()[0]);
         {
             FeatureIterator<SimpleFeature> features = featureStore.getFeatures().features();
             try {
@@ -93,7 +93,7 @@ public class FidQueryTest extends FIDTestCase {
 
     public void testAddFeature() throws Exception {
         SimpleFeature feature = fids.values().iterator().next();
-        SimpleFeatureType schema = ds.getSchema();
+        SimpleFeatureType schema = ds.getSchema(ds.getTypeNames()[0]);
 
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(schema);
         GeometryFactory gf = new GeometryFactory();

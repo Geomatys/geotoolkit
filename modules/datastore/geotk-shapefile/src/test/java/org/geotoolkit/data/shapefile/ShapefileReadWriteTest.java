@@ -34,6 +34,8 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -200,8 +202,11 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         ShapefileDataStore shapefile;
         String typeName;
-        shapefile = (ShapefileDataStore) maker.createDataStore(tmp.toURL(),
-                memorymapped);
+        Map params = new HashMap();
+        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), tmp.toURL());
+        params.put(ShapefileDataStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);
+
+        shapefile = (ShapefileDataStore) maker.createDataStore(params);
         if(charset != null)
             shapefile.setStringCharset(charset);
 

@@ -27,7 +27,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  */
 public abstract class AbstractAttributeIO {
 
-    protected AttributeDescriptor[] metaData;
+    protected final AttributeDescriptor[] metaData;
 
     protected AbstractAttributeIO(AttributeDescriptor[] metaData) {
         this.metaData = metaData;

@@ -230,7 +230,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         FeatureId featureId = ff.featureId("streams.84");
         Id filter = ff.id(Collections.singleton(featureId));
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = ds.getFeatureSource().getFeatures(filter);
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures(filter);
 
         FeatureIterator<SimpleFeature> iter = features.features();
         JTSEnvelope2D bounds;
@@ -245,7 +245,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         Query query = new DefaultQuery(ds.getTypeNames()[0], filter);
 
-        Envelope result = ds.getFeatureSource().getBounds(query);
+        Envelope result = ds.getFeatureSource(ds.getTypeNames()[0]).getBounds(query);
 
         assertTrue(result.equals(bounds));
     }

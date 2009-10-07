@@ -81,7 +81,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createDataStore(Map<String, Serializable> params) throws IOException {
+    public DataStore<SimpleFeatureType, SimpleFeature> createDataStore(Map<String, ? extends Serializable> params) throws IOException {
         try{
             return createDataStore(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
@@ -93,7 +93,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(Map<String, Serializable> params) throws IOException {
+    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(Map<String, ? extends Serializable> params) throws IOException {
         try{
             return createNewDataStore(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
@@ -105,7 +105,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(Map<String, Serializable> params) {
+    public boolean canProcess(Map<String, ? extends Serializable> params) {
         try{
             return canProcess(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
@@ -125,11 +125,11 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     }
 
 
-    protected ParameterValueGroup toParameterValueGroup(Map<String,Serializable> params) throws InvalidParameterValueException{
+    protected ParameterValueGroup toParameterValueGroup(Map<String, ? extends Serializable> params) throws InvalidParameterValueException{
         final ParameterDescriptorGroup desc = getParametersDescriptor();
         final ParameterValueGroup values = desc.createValue();
 
-        for(final Entry<String,Serializable> entry : params.entrySet()){
+        for(final Entry<String, ? extends Serializable> entry : params.entrySet()){
             try{
                 values.parameter(entry.getKey()).setValue(entry.getValue());
             }catch(ParameterNotFoundException ex){

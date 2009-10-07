@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.AbstractFileDataStore;
+import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DefaultFIDReader;
 import org.geotoolkit.data.EmptyFeatureReader;
@@ -103,7 +103,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/ShapefileDataStore.java $
  */
-public class ShapefileDataStore extends AbstractFileDataStore {
+public class ShapefileDataStore extends AbstractDataStore {
     
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = Charset
@@ -319,18 +319,11 @@ public class ShapefileDataStore extends AbstractFileDataStore {
      *                 If an error occurs during creation
      */
     @Override
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName)
-            throws IOException {
+    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
         typeCheck(typeName);
 
-        return getFeatureReader();
-    }
-
-    @Override
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader() throws IOException {
         try {
-            return createFeatureReader(getSchema().getTypeName(),
-                    getAttributesReader(true), schema);
+            return createFeatureReader(typeName,getAttributesReader(true), schema);
         } catch (SchemaException se) {
             throw new DataSourceException("Error creating schema", se);
         }
@@ -575,7 +568,7 @@ public class ShapefileDataStore extends AbstractFileDataStore {
          FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
         ShapefileAttributeReader attReader = getAttributesReader(true);
         try {
-            SimpleFeatureType schema = getSchema();
+            SimpleFeatureType schema = getSchema(typeName);
             if (schema == null) {
                 throw new IOException(
                         "To create a shapefile, you must first call createSchema()");
@@ -606,11 +599,7 @@ public class ShapefileDataStore extends AbstractFileDataStore {
     @Override
     public SimpleFeatureType getSchema(String typeName) throws IOException {
         typeCheck(typeName);
-        return getSchema();
-    }
 
-    @Override
-    public SimpleFeatureType getSchema() throws IOException {
         if (schema == null) {
 
             List<AttributeDescriptor> types = readAttributes();
