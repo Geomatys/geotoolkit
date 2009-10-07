@@ -18,6 +18,8 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.net.URL;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  * DataAccessFactory for working with formats based on a single URL.
@@ -29,7 +31,7 @@ import java.net.URL;
  * @author dzwiers
  * @source $URL$
  */
-public interface FileDataStoreFactory extends DataStoreFactory {
+public interface FileDataStoreFactory extends DataStoreFactory<SimpleFeatureType,SimpleFeature> {
 
     /**
      * The list of filename extentions handled by this factory.

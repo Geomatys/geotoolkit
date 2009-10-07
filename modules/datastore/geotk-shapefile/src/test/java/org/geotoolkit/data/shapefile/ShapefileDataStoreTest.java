@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureReader;
@@ -64,6 +63,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
 
 /**
@@ -153,11 +153,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         URI namespace = new URI("http://jesse.com");
 
-        map.put(ShapefileDataStoreFactory.NAMESPACEP.key, namespace);
-        map.put(ShapefileDataStoreFactory.URLP.key, ShapeTestData.url(STATE_POP));
+        map.put(ShapefileDataStoreFactory.NAMESPACEP.getName().toString(), namespace);
+        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(STATE_POP));
 
-        ShapefileDataStore store = factory.createDataStore(map);
-        FeatureType schema = store.getSchema();
+        DataStore store = factory.createDataStore(map);
+        FeatureType schema = store.getSchema(store.getTypeNames()[0]);
         assertEquals(namespace.toString(), schema.getName().getNamespaceURI());
     }
 

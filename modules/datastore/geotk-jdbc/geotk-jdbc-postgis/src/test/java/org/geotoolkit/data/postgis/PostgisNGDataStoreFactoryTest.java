@@ -44,17 +44,17 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         
         Properties db = new Properties();
         db.load(getClass().getResourceAsStream("factory.properties"));
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put(HOST.key, db.getProperty(HOST.key));
-        params.put(DATABASE.key, db.getProperty(DATABASE.key));
-        params.put(PORT.key, db.getProperty(PORT.key));
-        params.put(USER.key, db.getProperty(USER.key));
-        params.put(PASSWD.key, db.getProperty(PASSWD.key));
+        Map params = new HashMap();
+        params.put(HOST.getName().toString(), db.getProperty(HOST.getName().toString()));
+        params.put(DATABASE.getName().toString(), db.getProperty(DATABASE.getName().toString()));
+        params.put(PORT.getName().toString(), db.getProperty(PORT.getName().toString()));
+        params.put(USER.getName().toString(), db.getProperty(USER.getName().toString()));
+        params.put(PASSWD.getName().toString(), db.getProperty(PASSWD.getName().toString()));
         
-        params.put(DBTYPE.key, factory.getDatabaseID());
+        params.put(DBTYPE.getName().toString(), factory.getDatabaseID());
 
         assertTrue(factory.canProcess(params));
-        JDBCDataStore store = factory.createDataStore(params);
+        JDBCDataStore store = (JDBCDataStore) factory.createDataStore(params);
         assertNotNull(store);
         try {
             // check dialect

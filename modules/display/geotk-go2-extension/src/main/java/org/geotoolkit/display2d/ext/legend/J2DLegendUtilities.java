@@ -207,6 +207,7 @@ public class J2DLegendUtilities {
 
     public static Dimension estimate(Graphics2D g, MapContext context, LegendTemplate template, boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
+        if(context == null) return dim;
 
         final FontMetrics layerFontMetric = g.getFontMetrics(template.getLayerFont());
         final int layerFontHeight = layerFontMetric.getHeight();

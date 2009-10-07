@@ -111,8 +111,8 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     private DataStore createDataStore( ShapefileDataStoreFactory fac, URL url, boolean memoryMapped )
             throws IOException {
         Map params = new HashMap();
-        params.put(ShapefileDataStoreFactory.URLP.key, url);
-        params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, new Boolean(true));
+        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), url);
+        params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
         DataStore createDataStore = fac.createDataStore(params);
         return createDataStore;
     }
@@ -222,8 +222,8 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         ShapefileDataStoreFactory fac = new ShapefileDataStoreFactory();
 
         Map params = new HashMap();
-        params.put(ShapefileDataStoreFactory.URLP.key, file.toURL());
-        params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, new Boolean(true));
+        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), file.toURL());
+        params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
         IndexedShapefileDataStore ds = (IndexedShapefileDataStore) fac.createDataStore(params);
 
         FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);

@@ -17,18 +17,18 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.geotoolkit.data.DataStoreFactory.Param;
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.FloatParameter;
-import org.geotoolkit.parameter.Parameter;
 
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * A best of toolkit for DataStoreFactory implementors.
@@ -57,7 +57,7 @@ import org.opengis.parameter.ParameterValue;
  * @author Jody Garnett, Refractions Research
  * @source $URL$
  */
-public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
+public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory<SimpleFeatureType,SimpleFeature> {
 
     /** Default Implementation abuses the naming convention.
      * <p>
@@ -73,119 +73,71 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         name = name.substring(name.lastIndexOf('.'));
         if (name.endsWith("Factory")) {
             name = name.substring(0, name.length() - 7);
-        } else if (name.endsWith("FactorySpi")) {
-            name = name.substring(0, name.length() - 10);
         }
         return name;
     }
 
     /**
-     * Default implementation verifies the Map against the Param information.
-     * <p>
-     * It will ensure that:
-     * <ul>
-     * <li>params is not null
-     * <li>Everything is of the correct type (or upcovertable
-     * to the correct type without Error)
-     * <li>Required Parameters are present
-     * </ul>
-     * </p>
-     * <p>
-     * <p>
-     * Why would you ever want to override this method?
-     * If you want to check that a expected file exists and is a directory.
-     * </p>
-     * Overrride:
-     * <pre><code>
-     * public boolean canProcess( Map params ) {
-     *     if( !super.canProcess( params ) ){
-     *          return false; // was not in agreement with getParametersInfo
-     *     }
-     *     // example check
-     *     File file = (File) DIRECTORY.lookup( params ); // DIRECTORY is a param
-     *     return file.exists() && file.isDirectory();
-     * }
-     * </code></pre>
-     * @param params
-     * @return true if params is in agreement with getParametersInfo, override for additional checks.
+     * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(Map params) {
-        if (params == null) {
+    public DataStore<SimpleFeatureType, SimpleFeature> createDataStore(Map<String, Serializable> params) throws IOException {
+        try{
+            return createDataStore(toParameterValueGroup(params));
+        }catch(InvalidParameterValueException ex){
+            throw new IOException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(Map<String, Serializable> params) throws IOException {
+        try{
+            return createNewDataStore(toParameterValueGroup(params));
+        }catch(InvalidParameterValueException ex){
+            throw new IOException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean canProcess(Map<String, Serializable> params) {
+        try{
+            return canProcess(toParameterValueGroup(params));
+        }catch(InvalidParameterValueException ex){
             return false;
         }
-        Param arrayParameters[] = getParametersInfo();
-        for (int i = 0; i < arrayParameters.length; i++) {
-            Param param = arrayParameters[i];
-            Object value;
-            if (!params.containsKey(param.key)) {
-                if (param.required) {
-                    return false; // missing required key!
-                } else {
-                    continue;
-                }
-            }
-            try {
-                value = param.lookUp(params);
-            } catch (IOException e) {
-                // could not upconvert/parse to expected type!
-                // even if this parameter is not required
-                // we are going to refuse to process
-                // these params
-                return false;
-            }
-            if (value == null) {
-                if (param.required) {
-                    return (false);
-                }
-            } else {
-                if (!param.type.isInstance(value)) {
-                    return false; // value was not of the required type
-                }
-            }
-        }
-        return true;
     }
 
-    public ParameterDescriptorGroup getParameters() {
-        Param params[] = getParametersInfo();
-        DefaultParameterDescriptor parameters[] = new DefaultParameterDescriptor[params.length];
-        for (int i = 0; i < params.length; i++) {
-            Param param = params[i];
-            parameters[i] = new ParamDescriptor(params[i]);
-        }
-        Map properties = new HashMap();
-        properties.put("name", getDisplayName());
-        properties.put("remarks", getDescription());
-        return new DefaultParameterDescriptorGroup(properties, parameters);
-    }
-}
-
-class ParamDescriptor extends DefaultParameterDescriptor {
-
-    private static final long serialVersionUID = 1L;
-    Param param;
-
-    public ParamDescriptor(Param param) {
-        super(param.key, param.description, Object.class, param.sample, param.required);
-        this.param = param;
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public ParameterValue createValue() {
-        if (Double.TYPE.equals(getValueClass())) {
-            return new FloatParameter(this) {
+    public boolean canProcess(ParameterValueGroup params) {
+        return params.getDescriptor().equals(getParametersDescriptor());
 
-                protected Object valueOf(String text) throws IOException {
-                    return param.handle(text);
-                }
-            };
-        }
-        return new Parameter(this) {
-
-            protected Object valueOf(String text) throws IOException {
-                return param.handle(text);
-            }
-        };
+        //TODO wait for new utility methods for validation
+//        return Parameters.isValid(params);
     }
-};
+
+
+    protected ParameterValueGroup toParameterValueGroup(Map<String,Serializable> params) throws InvalidParameterValueException{
+        final ParameterDescriptorGroup desc = getParametersDescriptor();
+        final ParameterValueGroup values = desc.createValue();
+
+        for(final Entry<String,Serializable> entry : params.entrySet()){
+            try{
+                values.parameter(entry.getKey()).setValue(entry.getValue());
+            }catch(ParameterNotFoundException ex){
+                //do nothing, the map may contain other values for other uses
+            }
+        }
+
+        return values;
+    }
+
+}

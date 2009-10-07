@@ -50,7 +50,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      */
     public void testCanProcessMap() throws Exception {
         Map map = new HashMap();
-        map.put(ShapefileDataStoreFactory.URLP.key, ShapeTestData
+        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
         assertTrue(factory.canProcess(map));
     }
@@ -80,8 +80,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         ShapefileDataStoreFactory factory = new ShapefileDataStoreFactory();
         Map map = new HashMap();
         URI namespace = new URI("http://jesse.com");
-        map.put(ShapefileDataStoreFactory.NAMESPACEP.key, namespace);
-        map.put(ShapefileDataStoreFactory.URLP.key, ShapeTestData
+        map.put(ShapefileDataStoreFactory.NAMESPACEP.getName().toString(), namespace);
+        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
 
         DataStore store = factory.createDataStore(map);
@@ -96,9 +96,9 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
             boolean createIndex) throws Exception {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         Map map = new HashMap();
-        map.put(ShapefileDataStoreFactory.URLP.key, ShapeTestData.url(AbstractTestCaseSupport.class,
+        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
-        map.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key,
+        map.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(),
                 createIndex ? Boolean.TRUE : Boolean.FALSE);
 
         ShapefileDataStore ds;
@@ -148,10 +148,9 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getParametersInfo()'
      */
     public void testGetParametersInfo() {
-        List infos = Arrays.asList(factory.getParametersInfo());
-        assertTrue(infos
-                .contains(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX));
-        assertTrue(infos.contains(ShapefileDataStoreFactory.URLP));
+        //check that we have those two parameters descriptors.
+        factory.getParametersDescriptor().descriptor(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
+        factory.getParametersDescriptor().descriptor(ShapefileDataStoreFactory.URLP.getName().toString());
     }
 
     /*

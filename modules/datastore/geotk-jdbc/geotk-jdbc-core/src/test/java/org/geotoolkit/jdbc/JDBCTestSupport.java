@@ -34,6 +34,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.DataStore;
 
 
 /**
@@ -124,12 +125,12 @@ public abstract class JDBCTestSupport extends TestCase {
         //create the dataStore
         //TODO: replace this with call to datastore factory
         HashMap params = new HashMap();
-        params.put( JDBCDataStoreFactory.NAMESPACE.key, "http://www.geotools.org/test" );
-        params.put( JDBCDataStoreFactory.SCHEMA.key, "geotools" );
-        params.put( JDBCDataStoreFactory.DATASOURCE.key, setup.getDataSource() );
+        params.put( JDBCDataStoreFactory.NAMESPACE.getName().toString(), "http://www.geotools.org/test" );
+        params.put( JDBCDataStoreFactory.SCHEMA.getName().toString(), "geotools" );
+        params.put( JDBCDataStoreFactory.DATASOURCE.getName().toString(), setup.getDataSource() );
         
         JDBCDataStoreFactory factory = setup.createDataStoreFactory();
-        dataStore = factory.createDataStore( params );
+        dataStore = (JDBCDataStore) factory.createDataStore( params );
         
         setup.setUpDataStore(dataStore);
         dialect = dataStore.getSQLDialect();

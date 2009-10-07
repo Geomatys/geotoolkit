@@ -17,33 +17,55 @@
 package org.geotoolkit.data.postgis;
 
 import java.io.IOException;
-import java.util.Map;
 
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.SQLDialect;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     /**
      * Parameter for namespace of the datastore
      */
-    public static final Param LOOSEBBOX = new Param("Loose bbox", Boolean.class,
-                                                    "Perform only primary filter on bbox", false, Boolean.TRUE);
+    public static final GeneralParameterDescriptor LOOSEBBOX =
+            new DefaultParameterDescriptor("Loose bbox","Perform only primary filter on bbox",Boolean.class,true,false);
 
     /**
      * Parameter for database port
      */
-    public static final Param PORT = new Param("port", Integer.class, "Port", true, 5432);
+    public static final GeneralParameterDescriptor PORT =
+            new DefaultParameterDescriptor("port","Port",Integer.class,5432,true);
 
     /**
      * Wheter a prepared statements based dialect should be used, or not
      */
-    public static final Param PREPARED_STATEMENTS = new Param("preparedStatements", Boolean.class,
-                "Use prepared statements", false, Boolean.FALSE);
+    public static final GeneralParameterDescriptor PREPARED_STATEMENTS =
+            new DefaultParameterDescriptor("preparedStatements","Use prepared statements",Boolean.class,false,false);
+
+
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
+            new DefaultParameterDescriptorGroup("PostGISParameters",
+                new GeneralParameterDescriptor[]{DBTYPE,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
+                DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,PREPARED_STATEMENTS});
 
     @Override
     protected SQLDialect createSQLDialect(JDBCDataStore dataStore) {
         return new PostGISDialect(dataStore);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ParameterDescriptorGroup getParametersDescriptor() {
+        return PARAMETERS_DESCRIPTOR;
     }
 
     @Override
@@ -67,16 +89,16 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, final Map params)
+    protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, final ParameterValueGroup params)
         throws IOException {
 
         // setup loose bbox
         final PostGISDialect dialect = (PostGISDialect) dataStore.getSQLDialect();
-        final Boolean loose = (Boolean) LOOSEBBOX.lookUp(params);
+        final Boolean loose = (Boolean) params.parameter(LOOSEBBOX.getName().toString()).getValue();
         dialect.setLooseBBOXEnabled(loose == null || Boolean.TRUE.equals(loose));
 
         // setup the ps dialect if need be
-        final Boolean usePs = (Boolean) PREPARED_STATEMENTS.lookUp(params);
+        final Boolean usePs = (Boolean) params.parameter(PREPARED_STATEMENTS.getName().toString()).getValue();
         if(Boolean.TRUE.equals(usePs)) {
             dataStore.setSQLDialect(new PostGISPSDialect(dataStore, dialect));
         }
@@ -85,23 +107,15 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    protected void setupParameters(final Map parameters) {
-        super.setupParameters(parameters);
-        parameters.put(LOOSEBBOX.key, LOOSEBBOX);
-        parameters.put(PORT.key, PORT);
-        parameters.put(PREPARED_STATEMENTS.key, PREPARED_STATEMENTS);
-    }
-
-    @Override
     protected String getValidationQuery() {
         return "select now()";
     }
 
     @Override
-    protected String getJDBCUrl(final Map params) throws IOException {
-        final String host = (String) HOST.lookUp(params);
-        final String db = (String) DATABASE.lookUp(params);
-        final int port = (Integer) PORT.lookUp(params);
+    protected String getJDBCUrl(final ParameterValueGroup params) throws IOException {
+        final String host = (String) params.parameter(HOST.getName().toString()).getValue();
+        final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
+        final String db = (String) params.parameter(DATABASE.getName().toString()).getValue();
         return "jdbc:postgresql" + "://" + host + ":" + port + "/" + db;
     }
 

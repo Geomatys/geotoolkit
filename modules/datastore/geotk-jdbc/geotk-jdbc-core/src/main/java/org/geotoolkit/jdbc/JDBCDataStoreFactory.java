@@ -17,24 +17,25 @@
 package org.geotoolkit.jdbc;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+
 import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.Parameter;
 import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
+
+import org.geotoolkit.data.DataStore;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -46,56 +47,62 @@ import org.opengis.metadata.quality.ConformanceResult;
  *
  */
 public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
+
     /** parameter for database type */
-    public static final Param DBTYPE = new Param("dbtype", String.class, "Type", true);
+    public static final GeneralParameterDescriptor DBTYPE =
+            new DefaultParameterDescriptor("dbtype","Type",String.class,null,true);
 
     /** parameter for database host */
-    public static final Param HOST = new Param("host", String.class, "Host", true, "localhost");
+    public static final GeneralParameterDescriptor HOST =
+            new DefaultParameterDescriptor("host","Host",String.class,"localhost",true);
 
     /** parameter for database port */
-    public static final Param PORT = new Param("port", Integer.class, "Port", true);
+    public static final GeneralParameterDescriptor PORT =
+            new DefaultParameterDescriptor("port","Port",Integer.class,null,true);
 
     /** parameter for database instance */
-    public static final Param DATABASE = new Param("database", String.class, "Database", false );
+    public static final GeneralParameterDescriptor DATABASE =
+            new DefaultParameterDescriptor("database","Database",String.class,null,false);
 
     /** parameter for database schema */
-    public static final Param SCHEMA = new Param("schema", String.class, "Schema", false);
+    public static final GeneralParameterDescriptor SCHEMA =
+            new DefaultParameterDescriptor("schema","Schema",String.class,null,false);
 
     /** parameter for database user */
-    public static final Param USER = new Param("user", String.class, "user name to login as");
+    public static final GeneralParameterDescriptor USER =
+            new DefaultParameterDescriptor("user","user name to login as",String.class,null,true);
 
     /** parameter for database password */
-    public static final Param PASSWD = new Param("passwd", String.class,
-                                                 new SimpleInternationalString("password used to login"),
-                                                 false, null,
-                                                 Collections.singletonMap(Parameter.IS_PASSWORD, Boolean.TRUE));
+    public static final GeneralParameterDescriptor PASSWD =
+            new DefaultParameterDescriptor("passwd","password used to login",String.class,null,true);
 
     /** parameter for namespace of the datastore */
-    public static final Param NAMESPACE = new Param("namespace", String.class, "Namespace prefix", false);
+    public static final GeneralParameterDescriptor NAMESPACE =
+            new DefaultParameterDescriptor("namespace","Namespace prefix",String.class,null,false);
 
     /** parameter for data source */
-    public static final Param DATASOURCE = new Param( "Data Source", DataSource.class, "Data Source", false );
+    public static final GeneralParameterDescriptor DATASOURCE =
+            new DefaultParameterDescriptor("Data Source","Data Source",DataSource.class,null,false);
 
     /** Maximum number of connections in the connection pool */
-    public static final Param MAXCONN = new Param("max connections", Integer.class, "maximum number of open connections",
-                                                  false, new Integer(10));
+    public static final GeneralParameterDescriptor MAXCONN =
+            new DefaultParameterDescriptor("max connections","maximum number of open connections",Integer.class,10,false);
 
     /** Minimum number of connections in the connection pool */
-    public static final Param MINCONN = new Param("min connections", Integer.class, "minimum number of pooled connection",
-                                                  false, new Integer(1));
+    public static final GeneralParameterDescriptor MINCONN =
+            new DefaultParameterDescriptor("min connections","minimum number of pooled connection",Integer.class,1,false);
 
     /** If connections should be validated before using them */
-    public static final Param VALIDATECONN = new Param("validate connections", Boolean .class,
-                                                       "check connection is alive before using it", false, Boolean.FALSE);
+    public static final GeneralParameterDescriptor VALIDATECONN =
+            new DefaultParameterDescriptor("validate connections","check connection is alive before using it",Boolean.class,false,false);
 
     /** If connections should be validated before using them */
-    public static final Param FETCHSIZE = new Param("fetch size", Integer.class,
-                                                    "number of records read with each iteraction with the dbms", false, 1000);
-
+    public static final GeneralParameterDescriptor FETCHSIZE =
+            new DefaultParameterDescriptor("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
+    
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
-    public static final Param MAXWAIT = new Param("Connection timeout", Integer.class, "number of seconds the connection pool " +
-                                                  "will wait before timing out attempting to get a new connection (default, 20 seconds)",
-                                                  false, 20);
+    public static final GeneralParameterDescriptor MAXWAIT =
+            new DefaultParameterDescriptor("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
 
     @Override
     public String getDisplayName() {
@@ -103,22 +110,22 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public boolean canProcess(final Map params) {
-        if (!super.canProcess(params)) {
-            return false; // was not in agreement with getParametersInfo
-        }
-
-        try {
-            final String type = (String) DBTYPE.lookUp(params);
-
-            return getDatabaseID().equals(type);
-        } catch (IOException e) {
+    public boolean canProcess(ParameterValueGroup params) {
+        boolean valid = super.canProcess(params);
+        if(valid){
+            Object value = params.parameter(DBTYPE.getName().toString()).getValue();
+            if(value != null && value instanceof String){
+                return value.toString().equals(getDatabaseID());
+            }else{
+                return false;
+            }
+        }else{
             return false;
         }
     }
 
     @Override
-    public final JDBCDataStore createDataStore(final Map params) throws IOException {
+    public final JDBCDataStore createDataStore(final ParameterValueGroup params) throws IOException {
         final JDBCDataStore dataStore = new JDBCDataStore();
 
         // dialect
@@ -127,24 +134,24 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
         // datasource
         // check if the DATASOURCE parameter was supplied, it takes precendence
-        final DataSource ds = (DataSource) DATASOURCE.lookUp( params );
+        final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
         dataStore.setDataSource((ds != null) ? ds : createDataSource(params, dialect));
 
         // fetch size
-        Integer fetchSize = (Integer) FETCHSIZE.lookUp(params);
+        Integer fetchSize = (Integer) params.parameter(FETCHSIZE.getName().toString()).getValue();
         if (fetchSize != null && fetchSize > 0) {
             dataStore.setFetchSize(fetchSize);
         }
 
         // namespace
-        final String namespace = (String) NAMESPACE.lookUp(params);
+        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
         if (namespace != null) {
             dataStore.setNamespaceURI(namespace);
         }
 
         //database schema
-        final String schema = (String) SCHEMA.lookUp(params);
+        final String schema = (String) params.parameter(SCHEMA.getName().toString()).getValue();
 
         if (schema != null) {
             dataStore.setDatabaseSchema(schema);
@@ -179,61 +186,14 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      * @param params THe datastore parameters.
      *
      */
-    protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, Map params)
-        throws IOException
-    {
+    protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, ParameterValueGroup params)
+        throws IOException{
         return dataStore;
     }
 
     @Override
-    public DataStore createNewDataStore(final Map params) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final Param[] getParametersInfo() {
-        final LinkedHashMap map = new LinkedHashMap();
-        setupParameters(map);
-
-        return (Param[]) map.values().toArray(new Param[map.size()]);
-    }
-
-    /**
-     * Sets up the database connection parameters.
-     * <p>
-     * Subclasses may extend, but should not override. This implementation
-     * registers the following parameters.
-     * <ul>
-     *   <li>{@link #HOST}
-     *   <li>{@link #PORT}
-     *   <li>{@link #DATABASE}
-     *   <li>{@link #SCHEMA}
-     *   <li>{@link #USER}
-     *   <li>{@link #PASSWD}
-     * </ul>
-     * Subclass implementation may remove any parameters from the map, or may
-     * overrwrite any parameters in the map.
-     * </p>
-     *
-     * @param parameters Map of {@link Param} objects.
-     */
-    protected void setupParameters(final Map parameters) {
-        parameters.put(DBTYPE.key, new Param(DBTYPE.key, DBTYPE.type, DBTYPE.description,
-                                             DBTYPE.required, getDatabaseID()));
-        parameters.put(HOST.key, HOST);
-        parameters.put(PORT.key, PORT);
-        parameters.put(DATABASE.key, DATABASE);
-        parameters.put(SCHEMA.key, SCHEMA);
-        parameters.put(USER.key, USER);
-        parameters.put(PASSWD.key, PASSWD);
-        parameters.put(NAMESPACE.key, NAMESPACE);
-        parameters.put(MAXCONN.key, MAXCONN);
-        parameters.put(MINCONN.key, MINCONN);
-        parameters.put(FETCHSIZE.key, FETCHSIZE);
-        parameters.put(MAXWAIT.key, MAXWAIT);
-        if (getValidationQuery() != null) {
-            parameters.put(VALIDATECONN.key, VALIDATECONN);
-        }
+    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(ParameterValueGroup params) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -296,7 +256,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      * overridden.
      * </p>
      */
-    protected DataSource createDataSource(final Map params, final SQLDialect dialect) throws IOException {
+    protected DataSource createDataSource(final ParameterValueGroup params, final SQLDialect dialect) throws IOException {
         //create a datasource
         final BasicDataSource dataSource = new BasicDataSource();
 
@@ -310,33 +270,33 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         dataSource.setUrl(getJDBCUrl(params));
 
         // username
-        final String user = (String) USER.lookUp(params);
+        final String user = (String) params.parameter(USER.getName().toString()).getValue();
         dataSource.setUsername(user);
 
         // password
-        final String passwd = (String) PASSWD.lookUp(params);
+        final String passwd = (String) params.parameter(PASSWD.getName().toString()).getValue();
         if (passwd != null) {
             dataSource.setPassword(passwd);
         }
 
         // max wait
-        final Integer maxWait = (Integer) MAXWAIT.lookUp(params);
+        final Integer maxWait = (Integer) params.parameter(MAXWAIT.getName().toString()).getValue();
         if (maxWait != null && maxWait != -1) {
             dataSource.setMaxWait(maxWait * 1000);
         }
 
         // connection pooling options
-        final Integer minConn = (Integer) MINCONN.lookUp(params);
+        final Integer minConn = (Integer) params.parameter(MINCONN.getName().toString()).getValue();
         if ( minConn != null ) {
             dataSource.setMinIdle(minConn);
         }
 
-        final Integer maxConn = (Integer) MAXCONN.lookUp(params);
+        final Integer maxConn = (Integer) params.parameter(MAXCONN.getName().toString()).getValue();
         if ( maxConn != null ) {
             dataSource.setMaxActive(maxConn);
         }
 
-        final Boolean validate = (Boolean) VALIDATECONN.lookUp(params);
+        final Boolean validate = (Boolean) params.parameter(VALIDATECONN.getName().toString()).getValue();
         if(validate != null && validate && getValidationQuery() != null) {
             dataSource.setTestOnBorrow(true);
             dataSource.setValidationQuery(getValidationQuery());
@@ -363,11 +323,11 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      * @return
      * @throws IOException
      */
-    protected String getJDBCUrl(final Map params) throws IOException {
+    protected String getJDBCUrl(final ParameterValueGroup params) throws IOException {
         // jdbc url
-        final String host = (String) HOST.lookUp(params);
-        final Integer port = (Integer) PORT.lookUp(params);
-        final String db = (String) DATABASE.lookUp(params);
+        final String host = (String) params.parameter(HOST.getName().toString()).getValue();
+        final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
+        final String db = (String) params.parameter(DATABASE.getName().toString()).getValue();
 
         String url = "jdbc:" + getDatabaseID() + "://" + host;
         if ( port != null ) {
