@@ -149,42 +149,55 @@ public abstract class AbstractParameter extends FormattableObject
      * {@linkplain ParameterDescriptor#getValidValues set of valid values}.
      * If the value fails any of those tests, then an exception is thrown.
      * <p>
-     * This method is similar to {@link Parameters#isValid} except that the exception contains an
-     * error message formatted with a description of the failure reason.
+     * This method is similar to {@link Parameters#isValid(ParameterValue)} except that the
+     * exception contains an error message formatted with a description of the failure raison.
      *
      * @param  <T> The type of parameter value. The given {@code value} should typically be an
      *         instance of this class. This is not required by this method signature but is
      *         checked by this method implementation.
      * @param  descriptor The parameter descriptor to check against.
      * @param  value The value to check, or {@code null}.
-     * @return The value casted to the descriptor parameterized type.
+     * @return The value casted to the descriptor parameterized type, or the
+     *         {@linkplain ParameterDescriptor#getDefaultValue() default value}
+     *         if the given value was null while the parameter is mandatory.
      * @throws InvalidParameterValueException if the parameter value is invalid.
      */
     static <T> T ensureValidValue(final ParameterDescriptor<T> descriptor, final Object value)
             throws InvalidParameterValueException
     {
         if (value == null) {
+            if (descriptor.getMinimumOccurs() != 0) {
+                return descriptor.getDefaultValue();
+            }
             return null;
         }
         final String error;
+        /*
+         * Note: the implementation below is similar (except for different error message) to the
+         * one in Parameters.isValidValue(ParameterDescriptor, Object). If one implementation is
+         * modified, the other should be updated accordingly. The main difference is that null
+         * values are replaced by the default value instead than being a conformance error.
+         */
         final Class<T> type = descriptor.getValueClass();
         if (!type.isInstance(value)) {
             error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, Classes.getClass(value));
         } else {
-            @SuppressWarnings({"unchecked","rawtypes"}) // Type checked with the above "if" statement.
-            final Comparable<Object> minimum = (Comparable) descriptor.getMinimumValue();
-            @SuppressWarnings({"unchecked","rawtypes"})
-            final Comparable<Object> maximum = (Comparable) descriptor.getMaximumValue();
-            if ((minimum != null && minimum.compareTo(value) > 0) ||
-                (maximum != null && maximum.compareTo(value) < 0))
+            final T typedValue = type.cast(value);
+            final Comparable<T> minimum = descriptor.getMinimumValue();
+            final Comparable<T> maximum = descriptor.getMaximumValue();
+            if ((minimum != null && minimum.compareTo(typedValue) > 0) ||
+                (maximum != null && maximum.compareTo(typedValue) < 0))
             {
                 error = Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, minimum, maximum);
             } else {
-                final Set<?> validValues = descriptor.getValidValues();
+                final Set<T> validValues = descriptor.getValidValues();
                 if (validValues!=null && !validValues.contains(value)) {
                     error = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, getName(descriptor), value);
                 } else {
-                    return type.cast(value);
+                    /*
+                     * Passed every tests - the value is valid.
+                     */
+                    return typedValue;
                 }
             }
         }

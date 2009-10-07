@@ -20,14 +20,15 @@ package org.geotoolkit.parameter;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.lang.reflect.Array;
 import javax.measure.unit.Unit;
 
+import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -36,13 +37,16 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterTypeException;
+import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 
 
 /**
@@ -73,7 +77,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.1
  * @module
@@ -86,11 +90,16 @@ public final class Parameters {
     private static final double EPS = 1E-8;
 
     /**
+     * The explanation for conformance results.
+     */
+    private static final InternationalString EXPLAIN =
+            Descriptions.formatInternational(Descriptions.Keys.CONFORMANCE_MEANS_VALID_PARAMETERS);
+
+    /**
      * An empty parameter group. This group contains no parameters.
      */
     public static ParameterDescriptorGroup EMPTY_GROUP =
-            new DefaultParameterDescriptorGroup(Vocabulary.format(Vocabulary.Keys.EMPTY),
-            new GeneralParameterDescriptor[0]);
+            new DefaultParameterDescriptorGroup(Vocabulary.format(Vocabulary.Keys.EMPTY));
 
     /**
      * Do not allows instantiation of this utility class.
@@ -104,9 +113,9 @@ public final class Parameters {
      * is a helper method for type safety when using Java 5 parameterized types.
      *
      * @param  <T> The expected value class.
-     * @param  descriptor The descriptor to cast.
+     * @param  descriptor The descriptor to cast, or {@code null}.
      * @param  type The expected value class.
-     * @return The descriptor casted to the given type.
+     * @return The descriptor casted to the given type, or {@code null) if the given descriptor was null.
      * @throws ClassCastException if the given descriptor doesn't have the expected value class.
      *
      * @since 2.5
@@ -133,9 +142,9 @@ public final class Parameters {
      * is a helper method for type safety when using Java 5 parameterized types.
      *
      * @param  <T> The expected value class.
-     * @param  value The value to cast.
+     * @param  value The value to cast, or {@code null}.
      * @param  type The expected value class.
-     * @return The value casted to the given type.
+     * @return The value casted to the given type, or {@code null} if the given value was null.
      * @throws ClassCastException if the given value doesn't have the expected value class.
      *
      * @since 2.5
@@ -157,88 +166,241 @@ public final class Parameters {
 
     /**
      * Checks a parameter value against its {@linkplain ParameterDescriptor parameter descriptor}.
-     * This method takes care of handling checking arrays and collections against parameter
-     * descriptor.
+     * This method compares the {@linkplain ParameterValue#getValue() value} against the expected
+     *  {@linkplain ParameterDescriptor#getValueClass value class}, the
+     * [{@linkplain ParameterDescriptor#getMinimumValue minimum} &hellip;
+     *  {@linkplain ParameterDescriptor#getMaximumValue maximum}] range and the set of
+     *  {@linkplain ParameterDescriptor#getValidValues valid values}.
      * <p>
-     * When the {@linkplain ParameterDescriptor#getValueClass value class} is an array (like
-     * {@code double[].class}) or a {@linkplain Collection collection} (like {@code List.class}),
-     * the descriptor
-     * {@linkplain ParameterDescriptor#getMinimumValue minimum value},
-     * {@linkplain ParameterDescriptor#getMaximumValue maximum value} and
-     * {@linkplain ParameterDescriptor#getValidValues valid values}
-     * will be used to check the elements.
+     * This is a convenience method for testing a single parameter value assuming that its
+     * descriptor is correct. It returns a {@code boolean} because in case of failure, the
+     * faulty parameter is known: it is the one given in argument to this method. For a more
+     * generic test which can work on group of parameters and provide more details about which
+     * parameter failed and why, use the
+     * {@link #isValid(GeneralParameterValue, GeneralParameterDescriptor) method instead.
      *
      * @param parameter The parameter to test.
-     * @return true if parameter is valid.
-     *
-     * @see Parameter#ensureValidValue
+     * @return {@code true} if the given parameter is valid.
      */
     public static boolean isValid(final ParameterValue<?> parameter) {
-        final ParameterDescriptor<?> descriptor = parameter.getDescriptor();
-        final Object value = parameter.getValue();
-        if (value == null) {
-            // Accepts null values only if explicitly authorized.
-            final Set<?> validValues = descriptor.getValidValues();
-            return validValues != null && validValues.contains(value);
-        }
-        final Class<?> type = Classes.primitiveToWrapper(value.getClass());
-        final Class<?> expected = Classes.primitiveToWrapper(descriptor.getValueClass());
-        if (expected.isAssignableFrom(type)) {
-            return false; // value not of the correct type
-        }
-        if (type.isArray()) {
-            // handle checking elements in an aray
-            final int length = Array.getLength(value);
-            for (int i=0; i<length; i++) {
-                if (!isValidValue(Array.get(value, i), descriptor)) {
-                    return false;
-                }
-            }
-        } else if (value instanceof Collection<?>) {
-            // handle checking elements in a collection
-            for (final Object element : (Collection<?>) value) {
-                if (!isValidValue(element, descriptor)) {
-                    return false;
-                }
-            }
-        } else {
-            if (!isValidValue(value, descriptor)) {
-                return false;
-            }
-        }
-        return true;
+        return isValidValue(parameter.getDescriptor(), parameter.getValue(), false) == null;
     }
 
     /**
-     * Called on a single {@linkplain ParameterValue parameter value},
-     * or on elements of a parameter value. This method ensures that
-     * {@linkplain ParameterDescriptor#getMinimumValue minimum value},
-     * {@linkplain ParameterDescriptor#getMaximumValue maximum value} and
-     * {@linkplain ParameterDescriptor#getValidValues valid values}
-     * all think the provided value is okay.
+     * Checks a parameter value against its descriptor, and returns an error message if it is
+     * not conformant. This method is similar to {@link AbstractParameter#ensureValidValue}.
+     * If one implementation is modified, the other one should be updated accordingly.
      *
-     * @param  value The value to test.
-     * @param  descriptor The descriptor for the value.
-     * @return true if parameter is valid.
-     *
-     * @see Parameter#ensureValidValue
+     * @param <T> The expected type of value.
+     * @param parameter The parameter to test.
+     * @param localized {@code true} if a fully localized message is wanted in case of failure,
+     *        or {@code false} for a sentinal value (not useful for reporting to the user).
+     * @param descriptor The descriptor to use for fetching the conditions.
+     * @return {@code null} if the given parameter is valid, or an error message otherwise.
      */
-    private static boolean isValidValue(final Object value, final ParameterDescriptor<?> descriptor) {
-        final Set<?> validValues = descriptor.getValidValues();
-        if (validValues != null && !validValues.contains(value)) {
-            return false;
+    private static <T> InternationalString isValidValue(final ParameterDescriptor<T> descriptor,
+            final Object value, final boolean localized)
+    {
+        /*
+         * Accept null values only if explicitly authorized.
+         */
+        if (value == null) {
+            if (descriptor.getMinimumOccurs() == 0) {
+                return null; // Test pass.
+            }
+            return localized ? Errors.formatInternational(Errors.Keys.MISSING_PARAMETER_$1,
+                    AbstractParameter.getName(descriptor)) : EXPLAIN;
         }
-        @SuppressWarnings({"unchecked","rawtypes"}) // Type has been verified by the caller.
-        final Comparable<Object> min = (Comparable) descriptor.getMinimumValue();
-        if (min!=null && min.compareTo(value) > 0) {
-            return false;
+        /*
+         * Check the type.
+         */
+        final Class<?> type = value.getClass();
+        final Class<T> expected = descriptor.getValueClass();
+        if (!expected.isAssignableFrom(type)) {
+            return localized ? Errors.formatInternational(Errors.Keys.ILLEGAL_CLASS_$2,
+                    type, expected) : EXPLAIN;
         }
-        @SuppressWarnings({"unchecked","rawtypes"})
-        final Comparable<Object> max = (Comparable) descriptor.getMaximumValue();
-        if (max!=null && max.compareTo(value) < 0) {
-            return false;
+        final T typedValue = expected.cast(value);
+        /*
+         * Check the range (if any).
+         */
+        final Comparable<T> minimum = descriptor.getMinimumValue();
+        final Comparable<T> maximum = descriptor.getMaximumValue();
+        if ((minimum != null && minimum.compareTo(typedValue) > 0) ||
+            (maximum != null && maximum.compareTo(typedValue) < 0))
+        {
+            return localized ? Errors.formatInternational(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+                    value, minimum, maximum) : EXPLAIN;
         }
-        return true;
+        /*
+         * Check the enumeration (if any).
+         */
+        final Set<T> validValues = descriptor.getValidValues();
+        if (validValues!=null && !validValues.contains(value)) {
+            return localized ? Errors.formatInternational(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+                    AbstractParameter.getName(descriptor), value) : EXPLAIN;
+        }
+        return null; // Test pass.
+    }
+
+    /**
+     * Checks a parameter value against the conditions specified by the given descriptor.
+     * If the given parameter is an instance of {@link ParameterValue}, then this method
+     * compares the {@linkplain ParameterValue#getValue() value} against the expected
+     *  {@linkplain ParameterDescriptor#getValueClass value class}, the
+     * [{@linkplain ParameterDescriptor#getMinimumValue minimum} &hellip;
+     *  {@linkplain ParameterDescriptor#getMaximumValue maximum}] range and the set of
+     *  {@linkplain ParameterDescriptor#getValidValues valid values}.
+     * If this method is an instance of {@link ParameterValueGroup}, then the check
+     * is applied recursively for every parameter in this group.
+     *
+     * @param  parameter The parameter to test.
+     * @param  descriptor The descriptor to use for fetching the conditions.
+     * @return A conformance result having the attribute <code>{@linkplain ConformanceResult#pass()
+     *         pass}=true</code> if the parameter is valid. If the parameter is not valid, then
+     *         the result {@linkplain ConformanceResult#getExplanation() explanation} gives the
+     *         raison.
+     *
+     * @since 3.05
+     */
+    public static ConformanceResult isValid(final GeneralParameterValue parameter,
+            final GeneralParameterDescriptor descriptor)
+    {
+        /*
+         * Create a conformance result initialized to a successful check.
+         */
+        final DefaultConformanceResult result = new DefaultConformanceResult(
+                descriptor.getName().getAuthority(), EXPLAIN, true);
+        final GeneralParameterValue failure = isValid(parameter, descriptor, result);
+        /*
+         * If the validity test failed, update the conformance result accordingly.
+         */
+        if (failure != null) {
+            final Identifier name = failure.getDescriptor().getName();
+            result.setExplanation(Descriptions.formatInternational(
+                    Descriptions.Keys.NON_CONFORM_PARAMETER_$2, name, result.getExplanation()));
+            result.setSpecification(name.getAuthority());
+            result.setPass(false);
+        }
+        return result;
+    }
+
+    /**
+     * Checks a parameter value against the conditions specified by the given descriptor.
+     * In case of failure, the explanation message of the given {@code result} is updated
+     * with the cause, and this method returns the descriptor of the parameter that failed
+     * the check.
+     *
+     * @param  parameter  The parameter to test.
+     * @param  descriptor The descriptor to use for fetching the conditions.
+     * @param  result     The conformance result to update in case of failure.
+     * @return {@code null} in case of success, or the faulty parameter in case of failure.
+     */
+    private static GeneralParameterValue isValid(final GeneralParameterValue parameter,
+            final GeneralParameterDescriptor descriptor, final DefaultConformanceResult result)
+    {
+        if (descriptor instanceof ParameterDescriptor<?>) {
+            /*
+             * For a single parameter (the most common case), the value shall be an instance
+             * of ParameterValue. If it is not, then the error message will be formatted at
+             * the end of this method.
+             */
+            if (parameter instanceof ParameterValue<?>) {
+                final InternationalString failure = isValidValue((ParameterDescriptor<?>) descriptor,
+                        ((ParameterValue<?>) parameter).getValue(), true);
+                if (failure != null) {
+                    result.setExplanation(failure);
+                    return parameter;
+                }
+                return null; // The test pass.
+            }
+        } else if (descriptor instanceof ParameterDescriptorGroup) {
+            /*
+             * For a group, the value shall be an instance of ParameterValueGroup. If it
+             * is not, then the error message will be formatted at the end of this method.
+             */
+            if (parameter instanceof ParameterValueGroup) {
+                final Map<GeneralParameterDescriptor,Integer> count = new HashMap<GeneralParameterDescriptor,Integer>();
+                final ParameterDescriptorGroup group = (ParameterDescriptorGroup) descriptor;
+                for (final GeneralParameterValue element : ((ParameterValueGroup) parameter).values()) {
+                    final String name = getName(element.getDescriptor(), group);
+                    final GeneralParameterDescriptor desc;
+                    try {
+                        desc = group.descriptor(name);
+                    } catch (ParameterNotFoundException e) {
+                        result.setExplanation(Errors.formatInternational(
+                                Errors.Keys.UNEXPECTED_PARAMETER_$1, name));
+                        return parameter;
+                    }
+                    final GeneralParameterValue failure = isValid(element, desc, result);
+                    if (failure != null) {
+                        return failure;
+                    }
+                    // Count the occurence of parameters.
+                    Integer old = count.put(desc, 1);
+                    if (old != null) {
+                        count.put(desc, old + 1);
+                    }
+                }
+                /*
+                 * All parameters pass their individual test.
+                 * Now check their cardinality.
+                 */
+                for (final GeneralParameterDescriptor desc : group.descriptors()) {
+                    final Integer nw = count.get(desc);
+                    final int n = (nw != null) ? nw : 0;
+                    final int min = desc.getMinimumOccurs();
+                    final int max = desc.getMaximumOccurs();
+                    if (n < min || n > max) {
+                        final String name = desc.getName().getCode();
+                        final int key;
+                        final Object[] param;
+                        if (n == 0) {
+                            key = Errors.Keys.MISSING_PARAMETER_$1;
+                            param = new Object[] {name};
+                        } else {
+                            key = Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_$4;
+                            param = new Object[] {name, nw, min, max};
+                        }
+                        result.setExplanation(Errors.formatInternational(key, param));
+                        return parameter;
+                    }
+                }
+                return null; // The test pass.
+            }
+        }
+        /*
+         * If we reach this point, the type of the parameter value is not consistent
+         * with the type of the descriptor. Format the error message.
+         */
+        final Class<? extends GeneralParameterValue> type;
+        if (parameter instanceof ParameterValue<?>) {
+            type = ParameterValue.class;
+        } else if (parameter instanceof ParameterValueGroup) {
+            type = ParameterValueGroup.class;
+        } else {
+            type = GeneralParameterValue.class;
+        }
+        result.setExplanation(Errors.formatInternational(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, type));
+        return parameter;
+    }
+
+    /**
+     * Returns the name of the given parameter, using the authority code space expected by
+     * the given group if possible.
+     *
+     * @param  param The parameter for which the name is wanted.
+     * @param  group The group to use for determining the authority code space.
+     * @return The name of the given parameter.
+     *
+     * @since 3.05
+     */
+    private static String getName(final GeneralParameterDescriptor param, final ParameterDescriptorGroup group) {
+        String name = AbstractIdentifiedObject.getName(param, group.getName().getAuthority());
+        if (name == null) {
+            name = param.getName().getCode();
+        }
+        return name;
     }
 
     /**
@@ -259,10 +421,7 @@ public final class Parameters {
          * EPSG database for example: we need to use the EPSG names instead
          * of the OGC ones.
          */
-        String name = AbstractIdentifiedObject.getName(param, group.getDescriptor().getName().getAuthority());
-        if (name == null) {
-            name = param.getName().getCode();
-        }
+        final String name = getName(param, group.getDescriptor());
         if (param.getMinimumOccurs() != 0) {
             return cast(group.parameter(name), param.getValueClass());
         }

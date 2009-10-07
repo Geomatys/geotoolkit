@@ -1629,58 +1629,14 @@ public final class Vocabulary extends IndexedResourceBundle {
      * when a {@link InternationalString#toString} method is invoked.
      *
      * @param  key The key for the desired string.
-     * @param  arg0 Value to substitute to "{0}".
+     * @param  args Values to substitute to "{0}", "{1}", <i>etc</i>.
      * @return An international string for the given key.
      *
      * @todo Current implementation just invokes {@link #format}. Need to format only when
      *       {@code toString(Locale)} is invoked.
      */
-    public static InternationalString formatInternational(final int    key,
-                                                          final Object arg0)
-    {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg0));
-    }
-
-    /**
-     * Gets an international string for the given key. This method does not check for the key
-     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
-     * when a {@link InternationalString#toString} method is invoked.
-     *
-     * @param  key The key for the desired string.
-     * @param  arg0 Value to substitute to "{0}".
-     * @param  arg1 Value to substitute to "{1}".
-     * @return An international string for the given key.
-     *
-     * @todo Current implementation just invokes {@link #format}. Need to format only when
-     *       {@code toString(Locale)} is invoked.
-     */
-    public static InternationalString formatInternational(final int    key,
-                                                          final Object arg0,
-                                                          final Object arg1)
-    {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg0, arg1));
-    }
-
-    /**
-     * Gets an international string for the given key. This method does not check for the key
-     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
-     * when a {@link InternationalString#toString} method is invoked.
-     *
-     * @param  key The key for the desired string.
-     * @param  arg0 Value to substitute to "{0}".
-     * @param  arg1 Value to substitute to "{1}".
-     * @param  arg2 Value to substitute to "{2}".
-     * @return An international string for the given key.
-     *
-     * @todo Current implementation just invokes {@link #format}. Need to format only when
-     *       {@code toString(Locale)} is invoked.
-     */
-    public static InternationalString formatInternational(final int    key,
-                                                          final Object arg0,
-                                                          final Object arg1,
-                                                          final Object arg2)
-    {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg0, arg1, arg2));
+    public static InternationalString formatInternational(final int key, final Object... args) {
+        return new org.geotoolkit.util.SimpleInternationalString(format(key, args));
     }
 
     /**

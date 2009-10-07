@@ -18,14 +18,17 @@
 package org.geotoolkit.resources;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import org.opengis.util.InternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 
 
 /**
  * Locale-dependent resources for error messages.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.2
  * @module
@@ -1181,6 +1184,56 @@ public final class Errors extends IndexedResourceBundle {
      */
     public static Errors getResources(Locale locale) throws MissingResourceException {
         return getBundle(Errors.class, locale);
+    }
+
+    /**
+     * The international string to be returned by {@link formatInternational}.
+     *
+     * @since 3.05
+     */
+    private static final class International extends ResourceInternationalString {
+        private static final long serialVersionUID = -229348959712294902L;
+
+        International(final int key) {
+            super(Errors.class.getName(), String.valueOf(key));
+        }
+
+        @Override
+        protected ResourceBundle getBundle(final Locale locale) {
+            return getResources(locale);
+        }
+    }
+
+    /**
+     * Gets an international string for the given key. This method does not check for the key
+     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
+     * when a {@link InternationalString#toString} method is invoked.
+     *
+     * @param  key The key for the desired string.
+     * @return An international string for the given key.
+     *
+     * @since 3.05
+     */
+    public static InternationalString formatInternational(final int key) {
+        return new International(key);
+    }
+
+    /**
+     * Gets an international string for the given key. This method does not check for the key
+     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
+     * when a {@link InternationalString#toString} method is invoked.
+     *
+     * @param  key The key for the desired string.
+     * @param  args Values to substitute to "{0}", "{1}", <i>etc</i>.
+     * @return An international string for the given key.
+     *
+     * @todo Current implementation just invokes {@link #format}. Need to format only when
+     *       {@code toString(Locale)} is invoked.
+     *
+     * @since 3.05
+     */
+    public static InternationalString formatInternational(final int key, final Object... args) {
+        return new org.geotoolkit.util.SimpleInternationalString(format(key, args));
     }
 
     /**

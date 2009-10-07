@@ -184,12 +184,8 @@ public class Resample extends Operation2D {
      */
     public Resample() {
         super(new DefaultParameterDescriptorGroup(Citations.OGC, "Resample",
-              new ParameterDescriptor<?>[] {
-                    SOURCE_0,
-                    INTERPOLATION_TYPE,
-                    COORDINATE_REFERENCE_SYSTEM,
-                    GRID_GEOMETRY
-        }));
+                SOURCE_0, INTERPOLATION_TYPE, COORDINATE_REFERENCE_SYSTEM, GRID_GEOMETRY
+        ));
     }
 
     /**

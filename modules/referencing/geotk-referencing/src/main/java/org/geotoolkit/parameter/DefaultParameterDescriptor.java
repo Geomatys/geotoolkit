@@ -278,9 +278,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         } else {
             this.validValues = null;
         }
-        if (defaultValue != null) {
-            AbstractParameter.ensureValidValue(this, defaultValue);
-        }
+        AbstractParameter.ensureValidValue(this, defaultValue);
     }
 
     /**

@@ -42,22 +42,24 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A parameter value used by an operation method. Most CRS parameter values are numeric,
- * but other types of parameter values are possible. The parameter type can be fetch with
- * the following idion:
+ * A parameter value used by an operation method. Most CRS parameter values are numeric and can
+ * be obtained by the {@link #intValue()} or {@link #doubleValue()} methods. But other types of
+ * parameter values are possible and can be handled by the more generic {@link #getValue()} and
+ * {@link #setValue(Object)} methods. The type and constraints on parameter values are given
+ * by the {@linkplain #getDescriptor() descriptor}.
+ * <p>
+ * Instances of {@code ParameterValue} are created by the {@link ParameterDescriptor#createValue()}
+ * method. The parameter type can be fetch with the following idiom:
  *
  * {@preformat java
  *     Class<? extends T> valueClass = parameter.getDescriptor().getValueClass();
  * }
  *
- * The {@link #getValue()} and {@link #setValue(Object)} methods can be invoked at any time.
- * Others getters and setters are parameter-type dependents.
- *
  * @param <T> The value type.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.05
  *
  * @see DefaultParameterDescriptor
  * @see ParameterGroup
@@ -229,24 +231,26 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @param  unit The unit of measure for the value to be returned.
      * @return The numeric value represented by this parameter after conversion to type
      *         {@code double} and conversion to {@code unit}.
-     * @throws InvalidParameterTypeException if the value is not a numeric type.
      * @throws IllegalArgumentException if the specified unit is invalid for this parameter.
+     * @throws InvalidParameterTypeException if the value is not a numeric type.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #getUnit
      * @see #setValue(double,Unit)
      * @see #doubleValueList(Unit)
      */
     @Override
-    public double doubleValue(final Unit<?> unit) throws InvalidParameterTypeException {
-        if (this.unit == null) {
+    public double doubleValue(final Unit<?> unit) throws IllegalArgumentException, IllegalStateException {
+        final Unit<?> actual = this.unit;
+        if (actual == null) {
             throw unitlessParameter(descriptor);
         }
         ensureNonNull("unit", unit);
-        final int expectedID = getUnitMessageID(this.unit);
+        final int expectedID = getUnitMessageID(actual);
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
-        return this.unit.getConverterTo(unit).convert(doubleValue());
+        return actual.getConverterTo(unit).convert(doubleValue());
     }
 
     /**
@@ -255,13 +259,15 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The numeric value represented by this parameter after conversion to type {@code double}.
      * @throws InvalidParameterTypeException if the value is not a numeric type.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #getUnit
      * @see #setValue(double)
      * @see #doubleValueList()
      */
     @Override
-    public double doubleValue() throws InvalidParameterTypeException {
+    public double doubleValue() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
         }
@@ -280,12 +286,14 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The numeric value represented by this parameter after conversion to type {@code int}.
      * @throws InvalidParameterTypeException if the value is not an integer type.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #setValue(int)
      * @see #intValueList
      */
     @Override
-    public int intValue() throws InvalidParameterTypeException {
+    public int intValue() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof Number) {
             return ((Number) value).intValue();
         }
@@ -302,11 +310,13 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The boolean value represented by this parameter.
      * @throws InvalidParameterTypeException if the value is not a boolean type.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #setValue(boolean)
      */
     @Override
-    public boolean booleanValue() throws InvalidParameterTypeException {
+    public boolean booleanValue() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof Boolean) {
             return ((Boolean) value).booleanValue();
         }
@@ -323,12 +333,14 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The string value represented by this parameter.
      * @throws InvalidParameterTypeException if the value is not a string.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #getValue
      * @see #setValue(Object)
      */
     @Override
-    public String stringValue() throws InvalidParameterTypeException {
+    public String stringValue() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof CharSequence) {
             return value.toString();
         }
@@ -346,24 +358,26 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @param  unit The unit of measure for the value to be returned.
      * @return The sequence of values represented by this parameter after conversion to type
      *         {@code double} and conversion to {@code unit}.
-     * @throws InvalidParameterTypeException if the value is not an array of {@code double}s.
      * @throws IllegalArgumentException if the specified unit is invalid for this parameter.
+     * @throws InvalidParameterTypeException if the value is not an array of {@code double}s.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #getUnit
      * @see #setValue(double[],Unit)
      * @see #doubleValue(Unit)
      */
     @Override
-    public double[] doubleValueList(final Unit<?> unit) throws InvalidParameterTypeException {
-        if (this.unit == null) {
+    public double[] doubleValueList(final Unit<?> unit) throws IllegalArgumentException, IllegalStateException {
+        final Unit<?> actual = this.unit;
+        if (actual == null) {
             throw unitlessParameter(descriptor);
         }
         ensureNonNull("unit", unit);
-        final int expectedID = getUnitMessageID(this.unit);
+        final int expectedID = getUnitMessageID(actual);
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
-        final UnitConverter converter = this.unit.getConverterTo(unit);
+        final UnitConverter converter = actual.getConverterTo(unit);
         final double[] values = doubleValueList().clone();
         for (int i=0; i<values.length; i++) {
             values[i] = converter.convert(values[i]);
@@ -377,13 +391,15 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The sequence of values represented by this parameter.
      * @throws InvalidParameterTypeException if the value is not an array of {@code double}s.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #getUnit
      * @see #setValue(Object)
      * @see #doubleValue()
      */
     @Override
-    public double[] doubleValueList() throws InvalidParameterTypeException {
+    public double[] doubleValueList() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof double[]) {
             return (double[]) value;
         }
@@ -400,12 +416,14 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The sequence of values represented by this parameter.
      * @throws InvalidParameterTypeException if the value is not an array of {@code int}s.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #setValue(Object)
      * @see #intValue
      */
     @Override
-    public int[] intValueList() throws InvalidParameterTypeException {
+    public int[] intValueList() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof int[]) {
             return (int[]) value;
         }
@@ -424,12 +442,14 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @return The reference to a file containing parameter values.
      * @throws InvalidParameterTypeException if the value is not a reference to a file or an URI.
+     * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #getValue
      * @see #setValue(Object)
      */
     @Override
-    public URI valueFile() throws InvalidParameterTypeException {
+    public URI valueFile() throws IllegalStateException {
+        final T value = this.value;
         if (value instanceof URI) {
             return (URI) value;
         }
@@ -465,9 +485,11 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     /**
      * Returns the parameter value as an object. The object type is typically a {@link Double},
      * {@link Integer}, {@link Boolean}, {@link String}, {@link URI}, {@code double[]} or
-     * {@code int[]}.
+     * {@code int[]}. If no value has been set, then this method returns the
+     * {@linkplain ParameterDescriptor#getDefaultValue() default value} (which may be null).
      *
-     * @return The parameter value as an object.
+     * @return The parameter value as an object, or {@code null} if no value has been set and
+     *         there is no default value.
      *
      * @see #setValue(Object)
      */
@@ -489,9 +511,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @see #doubleValue(Unit)
      */
     @Override
-    public void setValue(final double value, final Unit<?> unit)
-            throws InvalidParameterValueException
-    {
+    public void setValue(final double value, final Unit<?> unit) throws InvalidParameterValueException {
         ensureNonNull("unit", unit);
         @SuppressWarnings("unchecked") // Checked by constructor.
         final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
@@ -506,8 +526,10 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         }
         final Double converted = unit.getConverterTo(targetUnit).convert(value);
         ensureValidValue(descriptor, converted);
-        // Really store the original value, not the converted one,
-        // because we store the unit as well.
+        /*
+         * Really store the original value, not the converted one, because we store the given
+         * unit as well. Conversions will be applied on the fly by the getter method if needed.
+         */
         this.value = descriptor.getValueClass().cast(value);
         this.unit  = unit;
     }

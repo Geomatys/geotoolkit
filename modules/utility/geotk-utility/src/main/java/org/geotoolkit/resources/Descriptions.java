@@ -28,7 +28,7 @@ import org.geotoolkit.util.ResourceInternationalString;
  * Locale-dependent resources for long descriptions.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.2
  * @module
@@ -80,6 +80,11 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1 = 11;
 
         /**
+         * This result indicates if the parameters are valid.
+         */
+        public static final int CONFORMANCE_MEANS_VALID_PARAMETERS = 12;
+
+        /**
          * Are the {0} data installed? Some optional data can be downloaded and installed by running
          * the "{2}" module. The default directory for {0} data is "{1}", but {2} allows to change this
          * setting.
@@ -96,6 +101,11 @@ public final class Descriptions extends IndexedResourceBundle {
          * Inserted {0} rows in {1} seconds.
          */
         public static final int INSERTED_ROWS_$2 = 6;
+
+        /**
+         * Parameter "{0}" is not conform. {1}
+         */
+        public static final int NON_CONFORM_PARAMETER_$2 = 13;
 
         /**
          * Count:       {0}
@@ -174,7 +184,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * when a {@link InternationalString#toString} method is invoked.
      *
      * @param  key The key for the desired string.
-     * @param  arg0 Value to substitute to "{0}".
+     * @param  args Values to substitute to "{0}", "{1}", <i>etc</i>.
      * @return An international string for the given key.
      *
      * @since 3.03
@@ -182,10 +192,8 @@ public final class Descriptions extends IndexedResourceBundle {
      * @todo Current implementation just invokes {@link #format}. Need to format only when
      *       {@code toString(Locale)} is invoked.
      */
-    public static InternationalString formatInternational(final int    key,
-                                                          final Object arg0)
-    {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg0));
+    public static InternationalString formatInternational(final int key, final Object... args) {
+        return new org.geotoolkit.util.SimpleInternationalString(format(key, args));
     }
 
     /**

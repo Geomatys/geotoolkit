@@ -94,8 +94,7 @@ public class Recolor extends IndexColorOperation {
      * Constructs a new "Recolor" operation.
      */
     public Recolor() {
-        super(new DefaultParameterDescriptorGroup(Citations.GEOTOOLKIT, "Recolor",
-                new ParameterDescriptor<?>[] { SOURCE_0, COLOR_MAPS }));
+        super(new DefaultParameterDescriptorGroup(Citations.GEOTOOLKIT, "Recolor", SOURCE_0, COLOR_MAPS));
     }
 
     /**
