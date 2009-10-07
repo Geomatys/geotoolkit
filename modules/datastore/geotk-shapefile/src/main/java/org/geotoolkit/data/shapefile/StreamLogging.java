@@ -17,12 +17,13 @@
 package org.geotoolkit.data.shapefile;
 
 import java.util.logging.Logger;
+import org.geotoolkit.util.logging.Logging;
 
 public class StreamLogging {
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
 
-    private String name;
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+
+    private final String name;
     private int open = 0;
 
     /**

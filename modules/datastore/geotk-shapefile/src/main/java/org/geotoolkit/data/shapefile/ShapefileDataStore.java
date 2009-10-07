@@ -484,8 +484,7 @@ public class ShapefileDataStore extends AbstractDataStore {
      * @throws FactoryException
      *                 DOCUMENT ME!
      */
-    protected PrjFileReader openPrjReader() throws IOException,
-            FactoryException {
+    protected PrjFileReader openPrjReader() throws IOException,FactoryException {
 
         if (shpFiles.get(PRJ) == null) {
             return null;
@@ -894,6 +893,7 @@ public class ShapefileDataStore extends AbstractDataStore {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(100);
             FileReader reader = new FileReader() {
+                @Override
                 public String id() {
                     return "Shapefile Datastore's getBounds Method";
                 }
@@ -904,16 +904,14 @@ public class ShapefileDataStore extends AbstractDataStore {
                 in.read(buffer);
                 buffer.flip();
 
-                ShapefileHeader header = new ShapefileHeader();
-                header.read(buffer, true);
+                ShapefileHeader header = ShapefileHeader.read(buffer, true);
 
                 JTSEnvelope2D bounds = new JTSEnvelope2D(schema
                         .getCoordinateReferenceSystem());
                 bounds.include(header.minX(), header.minY());
                 bounds.include(header.minX(), header.minY());
 
-                Envelope env = new Envelope(header.minX(), header.maxX(),
-                        header.minY(), header.maxY());
+                Envelope env = new Envelope(header.minX(), header.maxX(), header.minY(), header.maxY());
 
                 if (schema != null) {
                     return new JTSEnvelope2D(env, schema.getCoordinateReferenceSystem());

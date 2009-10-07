@@ -35,10 +35,12 @@ import org.geotoolkit.resources.NIOUtilities;
 import org.opengis.referencing.FactoryException;
 
 /**
- * 
+ * @deprecated Martin will do a generic class to handle prj files.
+ *
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/prj/PrjFileReader.java $
  */
+@Deprecated
 public class PrjFileReader implements FileReader {
 
     ByteBuffer buffer;

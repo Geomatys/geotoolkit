@@ -53,6 +53,7 @@ import org.geotoolkit.util.logging.Logging;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/ShapefileReader.java $
  */
 public class ShapefileReader implements FileReader {
+
     private static final Logger LOGGER = Logging.getLogger(ShapefileReader.class);
     
     /**
@@ -203,8 +204,7 @@ public class ShapefileReader implements FileReader {
             throw new EOFException("Premature end of header");
         }
         buffer.flip();
-        ShapefileHeader header = new ShapefileHeader();
-        header.read(buffer, strict);
+        ShapefileHeader header = ShapefileHeader.read(buffer, strict);
         NIOUtilities.clean(buffer);
         return header;
     }
@@ -694,6 +694,7 @@ public class ShapefileReader implements FileReader {
         this.handler = handler;
     }
 
+    @Override
     public String id() {
         return getClass().getName();
     }

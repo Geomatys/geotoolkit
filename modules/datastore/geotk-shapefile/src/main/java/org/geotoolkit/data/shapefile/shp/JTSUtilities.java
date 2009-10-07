@@ -155,7 +155,7 @@ public final class JTSUtilities {
 
     /**
      * Create a nice Polygon from the given Polygon. Will ensure that shells are
-     * clockwise and holes are counter-clockwise. Capiche?
+     * clockwise and holes are counter-clockwise.
      * 
      * @param p
      *                The Polygon to make "nice".
@@ -188,6 +188,7 @@ public final class JTSUtilities {
     }
 
     /**
+     * @see JTSUtilities#makeGoodShapePolygon(com.vividsolutions.jts.geom.Polygon)
      * Like makeGoodShapePolygon, but applied towards a multi polygon.
      * 
      * @param mp
@@ -219,16 +220,14 @@ public final class JTSUtilities {
      * @return The dimension.
      */
     public static final int guessCoorinateDims(final Coordinate[] cs) {
-        int dims = 2;
 
-        for (int t = cs.length - 1; t >= 0; t--) {
-            if (!(Double.isNaN(cs[t].z))) {
-                dims = 4;
-                break;
+        for(final Coordinate c : cs) {
+            if (!(Double.isNaN(c.z))) {
+                return 4;
             }
         }
 
-        return dims;
+        return 2;
     }
 
     public static Geometry convertToCollection(Geometry geom, ShapeType type) {
@@ -243,8 +242,7 @@ public final class JTSUtilities {
             }
         } else if (type.isLineType()) {
             if (geom instanceof LineString) {
-                retVal = FACTORY
-                        .createMultiLineString(new LineString[] { (LineString) geom });
+                retVal = FACTORY.createMultiLineString(new LineString[] { (LineString) geom });
             } else if (geom instanceof MultiLineString) {
                 retVal = geom;
             } else {
@@ -255,8 +253,7 @@ public final class JTSUtilities {
                 final Polygon p = makeGoodShapePolygon((Polygon) geom);
                 retVal = FACTORY.createMultiPolygon(new Polygon[] { p });
             } else if (geom instanceof MultiPolygon) {
-                retVal = JTSUtilities
-                        .makeGoodShapeMultiPolygon((MultiPolygon) geom);
+                retVal = JTSUtilities.makeGoodShapeMultiPolygon((MultiPolygon) geom);
             } else {
                 retVal = FACTORY.createMultiPolygon(null);
             }
@@ -269,9 +266,9 @@ public final class JTSUtilities {
                 Point[] pNull = null;
                 retVal = FACTORY.createMultiPoint(pNull);
             }
-        } else
-            throw new RuntimeException("Could not convert " + geom.getClass()
-                    + " to " + type);
+        } else {
+            throw new RuntimeException("Could not convert " + geom.getClass()+ " to " + type);
+        }
 
         return retVal;
     }
@@ -294,68 +291,36 @@ public final class JTSUtilities {
 
         if (geom instanceof Point) {
             switch (shapeFileDimentions) {
-            case 2:
-                type = ShapeType.POINT;
-                break;
-            case 3:
-                type = ShapeType.POINTM;
-                break;
-            case 4:
-                type = ShapeType.POINTZ;
-                break;
+            case 2: type = ShapeType.POINT;  break;
+            case 3: type = ShapeType.POINTM; break;
+            case 4: type = ShapeType.POINTZ; break;
             default:
-                throw new ShapefileException(
-                        "Too many dimensions for shapefile : "
-                                + shapeFileDimentions);
+                throw new ShapefileException("Too many dimensions for shapefile : "+ shapeFileDimentions);
             }
         } else if (geom instanceof MultiPoint) {
             switch (shapeFileDimentions) {
-            case 2:
-                type = ShapeType.MULTIPOINT;
-                break;
-            case 3:
-                type = ShapeType.MULTIPOINTM;
-                break;
-            case 4:
-                type = ShapeType.MULTIPOINTZ;
-                break;
+            case 2: type = ShapeType.MULTIPOINT;  break;
+            case 3: type = ShapeType.MULTIPOINTM; break;
+            case 4: type = ShapeType.MULTIPOINTZ; break;
             default:
-                throw new ShapefileException(
-                        "Too many dimensions for shapefile : "
-                                + shapeFileDimentions);
+                throw new ShapefileException("Too many dimensions for shapefile : "+ shapeFileDimentions);
             }
         } else if ((geom instanceof Polygon) || (geom instanceof MultiPolygon)) {
             switch (shapeFileDimentions) {
-            case 2:
-                type = ShapeType.POLYGON;
-                break;
-            case 3:
-                type = ShapeType.POLYGONM;
-                break;
-            case 4:
-                type = ShapeType.POLYGONZ;
-                break;
+            case 2: type = ShapeType.POLYGON;  break;
+            case 3: type = ShapeType.POLYGONM; break;
+            case 4: type = ShapeType.POLYGONZ; break;
             default:
-                throw new ShapefileException(
-                        "Too many dimensions for shapefile : "
-                                + shapeFileDimentions);
+                throw new ShapefileException("Too many dimensions for shapefile : "+ shapeFileDimentions);
             }
         } else if ((geom instanceof LineString)
                 || (geom instanceof MultiLineString)) {
             switch (shapeFileDimentions) {
-            case 2:
-                type = ShapeType.ARC;
-                break;
-            case 3:
-                type = ShapeType.ARCM;
-                break;
-            case 4:
-                type = ShapeType.ARCZ;
-                break;
+            case 2: type = ShapeType.ARC;  break;
+            case 3: type = ShapeType.ARCM; break;
+            case 4: type = ShapeType.ARCZ; break;
             default:
-                throw new ShapefileException(
-                        "Too many dimensions for shapefile : "
-                                + shapeFileDimentions);
+                throw new ShapefileException("Too many dimensions for shapefile : "+ shapeFileDimentions);
             }
         }
 

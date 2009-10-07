@@ -133,16 +133,16 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
             isMemoryMapped = Boolean.FALSE;
         }
 
-        ShpFiles shpFiles = new ShpFiles(url);
+        final ShpFiles shpFiles = new ShpFiles(url);
+        final boolean isLocal = shpFiles.isLocal();
 
-        boolean isLocal = shpFiles.isLocal();
         if (isLocal && !shpFiles.exists(ShpFileType.SHP)) {
             throw new FileNotFoundException("Shapefile not found:" + shpFiles.get(ShpFileType.SHP));
         }
-        boolean useMemoryMappedBuffer = isLocal
-                && shpFiles.exists(ShpFileType.SHP)
-                && isMemoryMapped.booleanValue();
-        boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
+
+        final boolean useMemoryMappedBuffer = isLocal && shpFiles.exists(ShpFileType.SHP) && isMemoryMapped.booleanValue();
+        final boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
+
         IndexType treeIndex = IndexType.NONE;
         if (isLocal) {
             if (createIndex) {
@@ -160,19 +160,14 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
 
         try {
             if (createIndex) {
-                return new IndexedShapefileDataStore(url, namespace,
-                        useMemoryMappedBuffer, createIndex, IndexType.QIX,
-                        dbfCharset);
+                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
             } else if (treeIndex != IndexType.NONE) {
-                return new IndexedShapefileDataStore(url, namespace,
-                        useMemoryMappedBuffer, false, treeIndex, dbfCharset);
+                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
             } else {
-                return new ShapefileDataStore(url, namespace,
-                        useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileDataStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
-            throw new DataSourceException(
-                    "Url for shapefile malformed: " + url, mue);
+            throw new DataSourceException("Url for shapefile malformed: " + url, mue);
         }
     }
 
@@ -207,20 +202,17 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
 
         boolean isLocal = shpFiles.isLocal();
         if (!isLocal || shpFiles.exists(ShpFileType.SHP)) {
-            LOGGER.fine("File already exists: "
-                    + shpFiles.get(ShpFileType.SHP));
+            LOGGER.fine("File already exists: " + shpFiles.get(ShpFileType.SHP));
         }
-        boolean useMemoryMappedBuffer = isLocal
-                && isMemoryMapped.booleanValue();
-        boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
+        
+        final boolean useMemoryMappedBuffer = isLocal && isMemoryMapped.booleanValue();
+        final boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
 
         try {
             if (createIndex) {
-                return new IndexedShapefileDataStore(url, namespace,
-                        useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
             } else {
-                return new ShapefileDataStore(url, namespace,
-                        useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileDataStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
             throw new DataSourceException(

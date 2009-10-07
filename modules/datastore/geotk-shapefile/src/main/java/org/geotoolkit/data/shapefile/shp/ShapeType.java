@@ -92,15 +92,7 @@ public enum ShapeType {
      * @return true if multipoint, false otherwise.
      */
     public boolean isMultiPoint() {
-        boolean mp = true;
-        if (this == UNDEFINED) {
-            mp = false;
-        } else if (this == NULL) {
-            mp = false;
-        } else if (this == POINT) {
-            mp = false;
-        }
-        return mp;
+        return !(this==UNDEFINED || this==NULL || this==POINT);
     }
 
     public boolean isPointType() {
@@ -127,52 +119,22 @@ public enum ShapeType {
      * @return The ShapeType for the id.
      */
     public static ShapeType forID(int id) {
-        ShapeType t;
         switch (id) {
-        case 0:
-            t = NULL;
-            break;
-        case 1:
-            t = POINT;
-            break;
-        case 11:
-            t = POINTZ;
-            break;
-        case 21:
-            t = POINTM;
-            break;
-        case 3:
-            t = ARC;
-            break;
-        case 13:
-            t = ARCZ;
-            break;
-        case 23:
-            t = ARCM;
-            break;
-        case 5:
-            t = POLYGON;
-            break;
-        case 15:
-            t = POLYGONZ;
-            break;
-        case 25:
-            t = POLYGONM;
-            break;
-        case 8:
-            t = MULTIPOINT;
-            break;
-        case 18:
-            t = MULTIPOINTZ;
-            break;
-        case 28:
-            t = MULTIPOINTM;
-            break;
-        default:
-            t = UNDEFINED;
-            break;
+            case 0:  return NULL;
+            case 1:  return POINT;
+            case 11: return POINTZ;
+            case 21: return POINTM;
+            case 3:  return ARC;
+            case 13: return ARCZ;
+            case 23: return ARCM;
+            case 5:  return POLYGON;
+            case 15: return POLYGONZ;
+            case 25: return POLYGONM;
+            case 8:  return MULTIPOINT;
+            case 18: return MULTIPOINTZ;
+            case 28: return MULTIPOINTM;
+            default: return UNDEFINED;
         }
-        return t;
     }
 
     /**
@@ -184,32 +146,26 @@ public enum ShapeType {
      * @return The correct handler for this ShapeType. Returns a new one.
      */
     public ShapeHandler getShapeHandler() throws ShapefileException {
-        ShapeHandler handler;
         switch (id) {
-        case 1:
-        case 11:
-        case 21:
-            handler = new PointHandler(this);
-            break;
-        case 3:
-        case 13:
-        case 23:
-            handler = new MultiLineHandler(this);
-            break;
-        case 5:
-        case 15:
-        case 25:
-            handler = new PolygonHandler(this);
-            break;
-        case 8:
-        case 18:
-        case 28:
-            handler = new MultiPointHandler(this);
-            break;
-        default:
-            handler = null;
+            case 1:
+            case 11:
+            case 21:
+                return new PointHandler(this);
+            case 3:
+            case 13:
+            case 23:
+                return new MultiLineHandler(this);
+            case 5:
+            case 15:
+            case 25:
+                return new PolygonHandler(this);
+            case 8:
+            case 18:
+            case 28:
+                return new MultiPointHandler(this);
+            default:
+                return null;
         }
-        return handler;
     }
 
 }

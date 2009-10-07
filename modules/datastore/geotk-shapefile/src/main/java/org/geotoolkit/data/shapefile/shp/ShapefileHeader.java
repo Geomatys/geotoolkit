@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -34,6 +35,7 @@ public class ShapefileHeader {
 
     public static final int MAGIC = 9994;
     public static final int VERSION = 1000;
+
     private int fileCode = -1;
     private int fileLength = -1;
     private int version = -1;
@@ -43,87 +45,7 @@ public class ShapefileHeader {
     private double minY;
     private double maxY;
 
-    private void checkMagic(boolean strict) throws java.io.IOException {
-        if (fileCode != MAGIC) {
-            String message = "Wrong magic number, expected " + MAGIC + ", got " + fileCode;
-            if (!strict) {
-                System.err.println(message);
-            } else {
-                throw new java.io.IOException(message);
-            }
-        }
-    }
-
-    private void checkVersion(boolean strict) throws java.io.IOException {
-        if (version != VERSION) {
-            String message = "Wrong version, expected " + MAGIC + ", got " + version;
-            if (!strict) {
-                System.err.println(message);
-            } else {
-                throw new java.io.IOException(message);
-            }
-        }
-    }
-
-    public void read(ByteBuffer file, boolean strict)
-            throws java.io.IOException {
-        file.order(ByteOrder.BIG_ENDIAN);
-        fileCode = file.getInt();
-
-        checkMagic(strict);
-
-        // skip 5 ints...
-        file.position(file.position() + 20);
-
-        fileLength = file.getInt();
-
-        file.order(ByteOrder.LITTLE_ENDIAN);
-        version = file.getInt();
-        checkVersion(strict);
-        shapeType = ShapeType.forID(file.getInt());
-
-        minX = file.getDouble();
-        minY = file.getDouble();
-        maxX = file.getDouble();
-        maxY = file.getDouble();
-
-        // skip remaining unused bytes
-        file.order(ByteOrder.BIG_ENDIAN);// well they may not be unused
-                                            // forever...
-        file.position(file.position() + 32);
-
-    }
-
-    public void write(ByteBuffer file, ShapeType type, int numGeoms,
-            int length, double minX, double minY, double maxX, double maxY)
-            throws IOException {
-        file.order(ByteOrder.BIG_ENDIAN);
-
-        file.putInt(MAGIC);
-
-        for (int i = 0; i < 5; i++) {
-            file.putInt(0); // Skip unused part of header
-        }
-
-        file.putInt(length);
-
-        file.order(ByteOrder.LITTLE_ENDIAN);
-
-        file.putInt(VERSION);
-        file.putInt(type.id);
-
-        // write the bounding box
-        file.putDouble(minX);
-        file.putDouble(minY);
-        file.putDouble(maxX);
-        file.putDouble(maxY);
-
-        // skip remaining unused bytes
-        file.order(ByteOrder.BIG_ENDIAN);
-        for (int i = 0; i < 8; i++) {
-            file.putInt(0); // Skip unused part of header
-        }
-    }
+    private ShapefileHeader(){}
 
     public ShapeType getShapeType() {
         return shapeType;
@@ -162,9 +84,92 @@ public class ShapefileHeader {
         return res;
     }
 
+    private static void checkMagic(int fileCode, final boolean strict) throws IOException {
+        if (fileCode != MAGIC) {
+            final String message = "Wrong magic number, expected " + MAGIC + ", got " + fileCode;
+            if (!strict) {
+                System.err.println(message);
+            } else {
+                throw new IOException(message);
+            }
+        }
+    }
+
+    private static void checkVersion(int version,final boolean strict) throws IOException {
+        if (version != VERSION) {
+            final String message = "Wrong version, expected " + MAGIC + ", got " + version;
+            if (!strict) {
+                System.err.println(message);
+            } else {
+                throw new IOException(message);
+            }
+        }
+    }
+
+    public static ShapefileHeader read(ByteBuffer file, boolean strict) throws IOException {
+        ShapefileHeader header = new ShapefileHeader();
+        file.order(ByteOrder.BIG_ENDIAN);
+        header.fileCode = file.getInt();
+
+        checkMagic(header.fileCode,strict);
+
+        // skip 5 ints...
+        file.position(file.position() + 20);
+
+        header.fileLength = file.getInt();
+
+        file.order(ByteOrder.LITTLE_ENDIAN);
+        header.version = file.getInt();
+        checkVersion(header.version,strict);
+        header.shapeType = ShapeType.forID(file.getInt());
+
+        header.minX = file.getDouble();
+        header.minY = file.getDouble();
+        header.maxX = file.getDouble();
+        header.maxY = file.getDouble();
+
+        // skip remaining unused bytes
+        file.order(ByteOrder.BIG_ENDIAN);
+        // well they may not be unused forever...
+        file.position(file.position() + 32);
+
+        return header;
+    }
+
+    public static void write(ByteBuffer file, ShapeType type, int numGeoms,
+            int length, double minX, double minY, double maxX, double maxY)
+            throws IOException {
+        file.order(ByteOrder.BIG_ENDIAN);
+
+        file.putInt(MAGIC);
+
+        // Skip unused part of header
+        for (int i=0; i<5; i++) {
+            file.putInt(0);
+        }
+
+        file.putInt(length);
+
+        file.order(ByteOrder.LITTLE_ENDIAN);
+
+        file.putInt(VERSION);
+        file.putInt(type.id);
+
+        // write the bounding box
+        file.putDouble(minX);
+        file.putDouble(minY);
+        file.putDouble(maxX);
+        file.putDouble(maxY);
+
+        // skip remaining unused bytes
+        file.order(ByteOrder.BIG_ENDIAN);
+        for (int i=0; i<8; i++) {
+            file.putInt(0); // Skip unused part of header
+        }
+    }
+
     public static void main(String[] args) throws Exception {
-        FileChannel channel = new FileInputStream(new File(args[0]))
-                .getChannel();
+        final FileChannel channel = new FileInputStream(new File(args[0])).getChannel();
         System.out.println(ShapefileReader.readHeader(channel, true));
         channel.close();
     }

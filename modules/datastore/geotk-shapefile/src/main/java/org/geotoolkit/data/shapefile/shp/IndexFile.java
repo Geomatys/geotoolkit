@@ -130,8 +130,7 @@ public class IndexFile implements FileReader {
             channel.read(buffer);
         }
         buffer.flip();
-        header = new ShapefileHeader();
-        header.read(buffer, true);
+        header = ShapefileHeader.read(buffer, true);
 
         NIOUtilities.clean(buffer);
     }

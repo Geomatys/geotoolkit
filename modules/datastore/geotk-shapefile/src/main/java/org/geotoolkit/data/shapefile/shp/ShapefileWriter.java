@@ -168,11 +168,10 @@ public class ShapefileWriter {
         }
         if (shapeBuffer == null)
             allocateBuffers();
-        ShapefileHeader header = new ShapefileHeader();
-        header.write(shapeBuffer, type, numberOfGeometries, fileLength / 2,
-                bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds
-                        .getMaxY());
-        header.write(indexBuffer, type, numberOfGeometries,
+        
+        ShapefileHeader.write(shapeBuffer, type, numberOfGeometries, fileLength / 2,
+                bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
+        ShapefileHeader.write(indexBuffer, type, numberOfGeometries,
                 50 + 4 * numberOfGeometries, bounds.getMinX(),
                 bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
 
