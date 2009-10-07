@@ -128,6 +128,12 @@
  * image needs to be read from the mosaic (see next section) while the steps performed up to this
  * point need to be executed only once. An easy way to save the mosaic information is simply to
  * {@linkplain java.io.ObjectOutput#writeObject serialize} the {@code TileManager} instance.
+ * <p>
+ * <blockquote><table border="1" cellpadding="6" bgcolor="paleturquoise"><tr><td>
+ * <b>Tip:</b> for an easy way to generate a mosaic using a graphical user interface, see the
+ * <a href="http://www.geotoolkit.org/modules/display/geotk-wizards-swing/MosaicWizard.html">Image
+ * Mosaic Wizard</a>.
+ * </td></tr></table></blockquote>
  *
  *
  * {@section To read images from the mosaic}

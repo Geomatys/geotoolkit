@@ -130,3 +130,34 @@ java -Xmx1G -jar geotk.jar
   creation of the output image mosaic. This operation may take many hours if there is many
   thousands of input tiles. When the operation is finished, the wizard will disaspear if
   they were no error. In case of error, the wizard will stay open with an error message.
+
+
+* The result
+
+  The output directory will contain every output tiles with a name pattern like
+  <<<L{level}_{column}{row}.{extension}>>> where <<<{level}>>> is the pyramid level as a decimal
+  number (<<<01>>> for the level having the finest pixels, <<<02>>> for the next level defined in
+  the wizard, <etc.>), <<<{column}>>> is the column of the tile (<<<AA>>> for the first column,
+  <<<AB>>> for the second column, <etc.>) and <<<{row}>>> is the row of the tile (<<<01>>>,
+  <<<02>>>, <etc.>). For example the output tile in the upper-left corner will have a name
+  similar to <<<L01_AA01.png>>>. The actual number of digits used may vary.
+
+  Note that some tiles may be missing from the output directory, since the wizard omits the
+  tiles having only transparent pixels.
+
+  For every output tile, a <World File> having the same name with the appropriate extension will
+  be created. This allow the exploitation of those tiles in other softwares. It can also be used
+  as a slower but more portable way to recreate the mosaic for use in Geotk. The faster but
+  geotk-specific way is described below.
+
+  In addition, the output directory will contain a <<<TileManager.serialized>>> file which is an
+  instance of the <<<TileManager>>> class that client code can deserialize as below:
+
+--------------------------------------------------------------------------------------------
+ObjectInputStream in = new ObjectInputStream(new FileInputStream("TileManager.serialized"));
+TileManager mosaic = (TileManager) in.readObject();
+in.close();
+--------------------------------------------------------------------------------------------
+
+  This <<<TileManager>>> can be given in argument to the <<<MosaicImageReader.setInput(Object)>>>
+  method for exploiting the mosaic just created.

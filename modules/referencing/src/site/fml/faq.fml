@@ -37,6 +37,33 @@
         See the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a> module for more explanation.</p>
       </answer>
     </faq>
+    <faq id="embedded">
+      <question>
+        Can I embed a small EPSG factory in my application without the need for JavaDB?
+      </question>
+      <answer>
+        <p>Yes. The GeoTools project was used to provide a <code>gt-epsg-wkt</code> module, which
+        contain a plain text file listing various CRS in their <cite>Well Known Text</cite> (WKT)
+        format. This text file is not provided in Geotk because it contained only a subset of the
+        EPSG database, and the CRS defined in that file were not fully compliant with EPSG (especially
+        regarding axis order). However Geotk provides the factory class that exploit this file, but it
+        is up to the user to provide the file itself with the CRS of his choice. The only required
+        action is to make that file available in the classpath (typically inside a JAR file) under
+        the following directory and name:</p>
+
+<blockquote><pre>org/geotoolkit/referencing/factory/espg/epsg.properties</pre></blockquote>
+
+        <p>No coding required. Note however that if a connection to an EPSG database is found,
+        that database will have precedence over the CRS defined in the properties file.</p>
+
+        <p>In order to create <code>epsg.properties</code>, the properties file in the GeoTools
+        <code><a href="https://svn.osgeo.org/geotools/trunk/modules/plugin/epsg-wkt">gt-epsg-wkt</a></code>
+        module can be used as a starting point. It is also possible to change the directory where
+        the <code>epsg.properties</code> is looked at. See
+        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/epsg/PropertyEpsgFactory.html">PropertyEpsgFactory</a></code>
+        for more information.</p>
+      </answer>
+    </faq>
     <faq id="Google">
       <question>
         How do I instantiate a Google projection?

@@ -52,7 +52,8 @@ import org.geotoolkit.lang.ThreadSafe;
  * <ol>
  *   <li><p>If a value for {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY} exists in the hints map
  *       given at construction time, then that value will be used as the directory where to
- *       search for the {@value #FILENAME} file.</p></li>
+ *       search for the {@value #FILENAME} file. Reminder: such hint can be
+ *       {@linkplain Hints#putSystemDefault defined system-wide} for convenience.</p></li>
  *   <li><p>The {@value #FILENAME} files found in all {@code org/geotoolkit/referencing/factory/epsg}
  *       directories on the classpath are merged with the values found in previous step, if any.
  *       If the same value is defined twice, the value of previous step have precedence.</p></li>
@@ -63,7 +64,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * {@link #PropertyEpsgFactory(Hints, String, Citation[])} constructor with different constants.
  * You can also subclass {@link PropertyAuthorityFactory} directly for getting more control. In
  * order to make the factory be an override, override the {@link #setOrdering setOrdering(...)}
- * as below:
+ * method as below:
  *
  * {@preformat java
  *     protected void setOrdering(Organizer organizer) {
@@ -89,10 +90,11 @@ import org.geotoolkit.lang.ThreadSafe;
 @ThreadSafe(concurrent = false)
 public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRSAuthorityFactory {
     /**
-     * The default filename to read. The default {@code PropertyEpsgFactory}
-     * implementation will search for all occurences of this file in every
-     * {@code org/geotoolkit/referencing/factory/espg} directories found on the
-     * classpath.
+     * The default filename to read, which is {@value}. The default
+     * {@code PropertyEpsgFactory} implementation will search for all occurences of
+     * <code>org/geotoolkit/referencing/factory/espg/{@value}</code> on the classpath.
+     * However a different directory for this filename can be specified using
+     * {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY}.
      */
     public static final String FILENAME = "epsg.properties";
 
