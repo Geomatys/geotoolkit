@@ -268,9 +268,8 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * </p>
      */
     @Override
-    public final void setFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
-        //remove features
-        removeFeatures(Filter.INCLUDE);
+    public final List<FeatureId> addFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
+        final List<FeatureId> ids = new LinkedList<FeatureId>();
 
         //grab a feature writer for insert
         final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getWriter(Filter.INCLUDE, WRITER_ADD);
@@ -283,17 +282,20 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
                 // because the raw schema we are inserting into may not match the
                 // schema of the features we are inserting
                 final SimpleFeature toWrite = writer.next();
-                for (int i = 0; i < toWrite.getAttributeCount(); i++) {
+                for (int i=0; i<toWrite.getAttributeCount(); i++) {
                     final String name = toWrite.getType().getDescriptor(i).getLocalName();
                     toWrite.setAttribute(name, feature.getAttribute(name));
                 }
 
                 //perform the write
                 writer.write();
+                ids.add(toWrite.getIdentifier());
             }
         } finally {
             writer.close();
         }
+
+        return ids;
     }
 
     /**
@@ -308,7 +310,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * </p>
      */
     @Override
-    public void modifyFeatures(final AttributeDescriptor[] type, final Object[] value,
+    public void updateFeatures(final AttributeDescriptor[] type, final Object[] value,
             Filter filter) throws IOException {
         if (filter == null) {
             final String msg = "Must specify a filter, must not be null.";
@@ -338,10 +340,10 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      * Calls through to {@link #modifyFeatures(AttributeDescriptor[], Object[], Filter)}.
      */
     @Override
-    public final void modifyFeatures(final AttributeDescriptor type, final Object value,
+    public final void updateFeatures(final AttributeDescriptor type, final Object value,
             final Filter filter) throws IOException {
 
-        modifyFeatures(new AttributeDescriptor[]{type}, new Object[]{value}, filter);
+        updateFeatures(new AttributeDescriptor[]{type}, new Object[]{value}, filter);
     }
 
     /**

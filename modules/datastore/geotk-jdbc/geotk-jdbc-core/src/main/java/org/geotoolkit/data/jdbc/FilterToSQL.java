@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -41,6 +42,7 @@ import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
+import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -91,8 +93,6 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.filter.DefaultPropertyIsLike;
-import org.geotoolkit.filter.function.AbstractFunction;
 
 /**
  * Encodes a filter into a SQL WHERE statement.  It should hopefully be generic

@@ -266,7 +266,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      */
     @Override
     public String[] getFileExtensions() {
-        return new String[] { ".shp", };
+        return new String[] {".shp"};
     }
 
     /**

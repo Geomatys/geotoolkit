@@ -121,6 +121,29 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
     ResourceInfo getInfo();
 
     /**
+     * Retrieves the featureType that features extracted from this datasource
+     * will be created with.
+     *
+     * <p>
+     * The schema returned is the LCD supported by all available Features. In
+     * the common case of shapfiles and database table this schema will match
+     * that of every feature available. In the degenerate GML case this will
+     * simply reflect the gml:AbstractFeatureType.
+     * </p>
+     *
+     * @return the schema of features created by this datasource.
+     *
+     * @task REVISIT: Our current FeatureType model is not yet advanced enough
+     *       to handle multiple featureTypes.  Should getSchema take a
+     *       typeName now that a query takes a typeName, and thus DataSources
+     *       can now support multiple types? Or just wait until we can
+     *       programmatically make powerful enough schemas?
+     * @task REVISIT: we could also just use DataStore to capture multi
+     *       FeatureTypes?
+     */
+    T getSchema();
+
+    /**
      * Access to the DataStore implementing this FeatureStore.
      *
      * @return DataStore implementing this FeatureStore
@@ -193,29 +216,6 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * @throws IOException For all data source errors.
      */
     FeatureCollection<T, F> getFeatures() throws IOException;
-
-    /**
-     * Retrieves the featureType that features extracted from this datasource
-     * will be created with.
-     *
-     * <p>
-     * The schema returned is the LCD supported by all available Features. In
-     * the common case of shapfiles and database table this schema will match
-     * that of every feature available. In the degenerate GML case this will
-     * simply reflect the gml:AbstractFeatureType.
-     * </p>
-     *
-     * @return the schema of features created by this datasource.
-     *
-     * @task REVISIT: Our current FeatureType model is not yet advanced enough
-     *       to handle multiple featureTypes.  Should getSchema take a
-     *       typeName now that a query takes a typeName, and thus DataSources
-     *       can now support multiple types? Or just wait until we can
-     *       programmatically make powerful enough schemas?
-     * @task REVISIT: we could also just use DataStore to capture multi
-     *       FeatureTypes?
-     */
-    T getSchema();
 
     /**
      * Gets the bounding box of this datasource.
@@ -301,5 +301,5 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * @return a set of {@link RenderingHints#Key} objects (eventually empty, never null).
      */
     public Set<RenderingHints.Key> getSupportedHints();
-    // FeatureReader getFeatureReader( Query query ); // ask justin for proposal
+    
 }

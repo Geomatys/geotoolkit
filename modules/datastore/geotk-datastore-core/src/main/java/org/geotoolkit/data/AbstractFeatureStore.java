@@ -17,9 +17,8 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +47,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
     protected Transaction transaction = Transaction.AUTO_COMMIT;
 
     public AbstractFeatureStore() {
-        // just to keep the default constructor around
+        this(null);
     }
 
     /**
@@ -69,100 +68,15 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
         return transaction;
     }
 
-    // 
-    // FeatureStore implementation against DataStore API
-    // 
     /**
-     * Modifies features matching <code>filter</code>.
-     * 
-     * <p>
-     * Equivelent to:
-     * </p>
-     * <pre><code>
-     * FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter( typeName, filter, transaction );
-     * while( writer.hasNext() ){
-     *    feature = writer.next();
-     *    feature.setAttribute( type.getName(), value );
-     *    writer.write();
-     * }
-     * writer.close();
-     * </code>
-     * </pre>
-     * 
-     * <p>
-     * Subclasses may override this method to perform the appropriate
-     * optimization for this result.
-     * </p>
-     *
-     * @param type Attribute to modify
-     * @param value Modification being made to type
-     * @param filter Identifies features to modify
-     *
-     * @throws IOException If modification could not be made
+     * {@inheritDoc }
      */
     @Override
-    public void modifyFeatures(final AttributeDescriptor type, final Object value, final Filter filter)
-            throws IOException {
-        modifyFeatures(new AttributeDescriptor[]{type}, new Object[]{value}, filter);
-    }
-
-    /**
-     * Modifies features matching <code>filter</code>.
-     * 
-     * <p>
-     * Equivelent to:
-     * </p>
-     * <pre><code>
-     * FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter( typeName, filter, transaction );
-     * Feature feature;
-     * while( writer.hasNext() ){
-     *    feature = writer.next();
-     *    feature.setAttribute( type[0].getName(), value[0] );
-     *    feature.setAttribute( type[1].getName(), value[1] );
-     *    ...
-     *    feature.setAttribute( type[N].getName(), value[N] ); 
-     *    writer.write();
-     * }
-     * writer.close();
-     * </code>
-     * </pre>
-     * 
-     * <p>
-     * Subclasses may override this method to perform the appropriate
-     * optimization for this result.
-     * </p>
-     *
-     * @param type Attributes to modify
-     * @param value Modifications being made to type
-     * @param filter Identifies features to modify
-     *
-     * @throws IOException If we could not modify Feature
-     * @throws DataSourceException See IOException
-     */
-    @Override
-    public void modifyFeatures(final AttributeDescriptor[] type, final Object[] value,
-            final Filter filter) throws IOException {
-        final String typeName = getSchema().getTypeName();
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = ((DataStore) getDataStore()).getFeatureWriter(typeName, filter, getTransaction());
-
-        try {
-            while (writer.hasNext()) {
-                final SimpleFeature feature = writer.next();
-
-                for (int i=0; i<type.length; i++) {
-                    try {
-                        feature.setAttribute(type[i].getLocalName(), value[i]);
-                    } catch (Exception e) {
-                        throw new DataSourceException(
-                                "Could not update feature " + feature.getID() + " with " + type[i].getLocalName() + "=" + value[i], e);
-                    }
-                }
-
-                writer.write();
-            }
-        } finally {
-            writer.close();
+    public void setTransaction(final Transaction transaction) {
+        if (transaction == null) {
+            throw new IllegalArgumentException("Transaction cannot be null, did you mean Transaction.AUTO_COMMIT?");
         }
+        this.transaction = transaction;
     }
 
     /**
@@ -208,8 +122,9 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
      *
      * @see org.geotoolkit.data.FeatureStore#addFeatures(org.geotoolkit.data.FeatureReader)
      */
-    public Set<String> addFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
-        final Set<String> addedFids = new HashSet<String>();
+    @Override
+    public List<FeatureId> addFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
+        final List<FeatureId> addedFids = new ArrayList<FeatureId>();
         final String typeName = getSchema().getTypeName();
         final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getDataStore().getFeatureWriterAppend(typeName, getTransaction());
 
@@ -219,8 +134,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
                 try {
                     feature = reader.next();
                 } catch (Exception e) {
-                    throw new DataSourceException("Could not add Features, problem with provided reader",
-                            e);
+                    throw new DataSourceException("Could not add Features, problem with provided reader", e);
                 }
 
                 final SimpleFeature newFeature = (SimpleFeature) writer.next();
@@ -232,7 +146,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
                 }
 
                 writer.write();
-                addedFids.add(newFeature.getID());
+                addedFids.add(newFeature.getIdentifier());
             }
         } finally {
             reader.close();
@@ -248,7 +162,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
     @Override
     public List<FeatureId> addFeatures(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection)
             throws IOException {
-        final List<FeatureId> addedFids = new LinkedList<FeatureId>();
+        final List<FeatureId> addedFids = new ArrayList<FeatureId>();
         final String typeName = getSchema().getTypeName();
         final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getDataStore().getFeatureWriterAppend(typeName, getTransaction());
 
@@ -272,6 +186,100 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
             writer.close();
         }
         return addedFids;
+    }
+
+    /**
+     * Modifies features matching <code>filter</code>.
+     *
+     * <p>
+     * Equivelent to:
+     * </p>
+     * <pre><code>
+     * FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter( typeName, filter, transaction );
+     * while( writer.hasNext() ){
+     *    feature = writer.next();
+     *    feature.setAttribute( type.getName(), value );
+     *    writer.write();
+     * }
+     * writer.close();
+     * </code>
+     * </pre>
+     *
+     * <p>
+     * Subclasses may override this method to perform the appropriate
+     * optimization for this result.
+     * </p>
+     *
+     * @param type Attribute to modify
+     * @param value Modification being made to type
+     * @param filter Identifies features to modify
+     *
+     * @throws IOException If modification could not be made
+     */
+    @Override
+    public void updateFeatures(final AttributeDescriptor type, final Object value, final Filter filter)
+            throws IOException {
+        updateFeatures(new AttributeDescriptor[]{type}, new Object[]{value}, filter);
+    }
+
+    /**
+     * Modifies features matching <code>filter</code>.
+     *
+     * <p>
+     * Equivalent to:
+     * </p>
+     * <pre><code>
+     * FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter( typeName, filter, transaction );
+     * Feature feature;
+     * while( writer.hasNext() ){
+     *    feature = writer.next();
+     *    feature.setAttribute( type[0].getName(), value[0] );
+     *    feature.setAttribute( type[1].getName(), value[1] );
+     *    ...
+     *    feature.setAttribute( type[N].getName(), value[N] );
+     *    writer.write();
+     * }
+     * writer.close();
+     * </code>
+     * </pre>
+     *
+     * <p>
+     * Subclasses may override this method to perform the appropriate
+     * optimization for this result.
+     * </p>
+     *
+     * @param type Attributes to modify
+     * @param value Modifications being made to type
+     * @param filter Identifies features to modify
+     *
+     * @throws IOException If we could not modify Feature
+     * @throws DataSourceException See IOException
+     */
+    @Override
+    public void updateFeatures(final AttributeDescriptor[] type, final Object[] value,
+            final Filter filter) throws IOException {
+        final String typeName = getSchema().getTypeName();
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer =
+                getDataStore().getFeatureWriter(typeName, filter, getTransaction());
+
+        try {
+            while (writer.hasNext()) {
+                final SimpleFeature feature = writer.next();
+
+                for (int i=0; i<type.length; i++) {
+                    try {
+                        feature.setAttribute(type[i].getLocalName(), value[i]);
+                    } catch (Exception e) {
+                        throw new DataSourceException(
+                                "Could not update feature " + feature.getID() + " with " + type[i].getLocalName() + "=" + value[i], e);
+                    }
+                }
+
+                writer.write();
+            }
+        } finally {
+            writer.close();
+        }
     }
 
     /**
@@ -303,8 +311,8 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
     @Override
     public void removeFeatures(final Filter filter) throws IOException {
         final String typeName = getSchema().getTypeName();
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getDataStore().getFeatureWriter(typeName,
-                filter, getTransaction());
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = 
+                getDataStore().getFeatureWriter(typeName, filter, getTransaction());
 
         try {
             while (writer.hasNext()) {
@@ -316,87 +324,4 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
         }
     }
 
-    /**
-     * Replace with contents of reader.
-     * 
-     * <p>
-     * Equivelent to:
-     * </p>
-     * <pre><code>
-     * FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter( typeName, false, transaction );
-     * Feature feature, newFeature;
-     * while( writer.hasNext() ){
-     *    feature = writer.next();
-     *    writer.remove();
-     * }
-     * while( reader.hasNext() ){
-     *    newFeature = reader.next();
-     *    feature = writer.next();
-     *    newFeature.setAttributes( feature.getAttributes( null ) );
-     *    writer.write();
-     * }
-     * reader.close();
-     * writer.close();
-     * </code>
-     * </pre>
-     * 
-     * <p>
-     * Subclasses may override this method to perform the appropriate
-     * optimization for this result.
-     * </p>
-     *
-     * @param reader Contents to replace with
-     *
-     * @throws IOException if anything goes wrong during replacement
-     * @throws DataSourceException See IOException
-     */
-    @Override
-    public void setFeatures(final FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
-        final String typeName = getSchema().getTypeName();
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getDataStore().getFeatureWriter(typeName,
-                getTransaction());
-        SimpleFeature feature;
-        SimpleFeature newFeature;
-
-        try {
-            while (writer.hasNext()) {
-                feature = writer.next();
-                writer.remove();
-            }
-
-            while (reader.hasNext()) {
-                try {
-                    feature = reader.next();
-                } catch (Exception readProblem) {
-                    throw new DataSourceException("Could not add Features, problem with provided reader",
-                            readProblem);
-                }
-
-                newFeature = (SimpleFeature) writer.next();
-
-                try {
-                    newFeature.setAttributes(feature.getAttributes());
-                } catch (IllegalAttributeException writeProblem) {
-                    throw new DataSourceException("Could not create " + typeName + " out of provided feature: " + feature.getID(), writeProblem);
-                }
-
-                writer.write();
-            }
-        } finally {
-            reader.close();
-            writer.close();
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setTransaction(final Transaction transaction) {
-        if (transaction == null) {
-            throw new IllegalArgumentException("Transaction cannot be null, did you mean Transaction.AUTO_COMMIT?");
-        }
-
-        this.transaction = transaction;
-    }
 }

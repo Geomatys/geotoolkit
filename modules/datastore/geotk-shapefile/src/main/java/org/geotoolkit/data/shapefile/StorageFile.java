@@ -180,6 +180,7 @@ public final class StorageFile implements Comparable<StorageFile>, FileWriter {
     /**
      * Just groups together files that have the same ShpFiles instance
      */
+    @Override
     public int compareTo( StorageFile o ) {
         // group togheter files that have the same shpefile instance
         if (this == o) {
@@ -196,6 +197,7 @@ public final class StorageFile implements Comparable<StorageFile>, FileWriter {
         return id();
     }
 
+    @Override
     public String id() {
         return getClass().getSimpleName() + ": " + tempFile.getName();
     }

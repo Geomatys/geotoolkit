@@ -276,7 +276,7 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
     }
 
     @Override
-    public void modifyFeatures(final AttributeDescriptor[] types, final Object[] values, final Filter filter)
+    public void updateFeatures(final AttributeDescriptor[] types, final Object[] values, final Filter filter)
             throws IOException {
 
         // we cannot trust attribute definitions coming from outside, they might not
@@ -296,7 +296,7 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
         if (postFilter != null && !Filter.INCLUDE.equals(postFilter)) {
             // we don't have a fast way to perform this update, let's do it the
             // feature by feature way then
-            super.modifyFeatures(innerTypes, values, filter);
+            super.updateFeatures(innerTypes, values, filter);
         } else {
             final Connection cx;
             // we want to support a "batch" update, but we need to be weary of locks

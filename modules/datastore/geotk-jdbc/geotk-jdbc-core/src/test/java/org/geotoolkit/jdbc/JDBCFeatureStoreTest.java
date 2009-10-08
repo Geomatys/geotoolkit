@@ -115,7 +115,8 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
         }
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = new CollectionFeatureReader(collection, collection.getSchema());
-        featureStore.setFeatures(reader);
+        featureStore.removeFeatures(Filter.INCLUDE);
+        featureStore.addFeatures(reader);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureStore.getFeatures();
         assertEquals(3, features.size());
@@ -137,7 +138,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
 
     public void testModifyFeatures() throws IOException {
         SimpleFeatureType t = featureStore.getSchema();
-        featureStore.modifyFeatures(new AttributeDescriptor[] { t.getDescriptor(aname("stringProperty")) },
+        featureStore.updateFeatures(new AttributeDescriptor[] { t.getDescriptor(aname("stringProperty")) },
             new Object[] { "foo" }, Filter.INCLUDE);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureStore.getFeatures();
@@ -158,7 +159,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
         SimpleFeatureType t = featureStore.getSchema();
         GeometryFactory gf = new GeometryFactory();
         Point point = gf.createPoint(new Coordinate(-10, 0));
-		featureStore.modifyFeatures(new AttributeDescriptor[] { t.getDescriptor(aname("geometry")) },
+		featureStore.updateFeatures(new AttributeDescriptor[] { t.getDescriptor(aname("geometry")) },
             new Object[] { point }, Filter.INCLUDE);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureStore.getFeatures();
@@ -186,7 +187,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
         ab.binding(Point.class);
         AttributeDescriptor madeUp = ab.buildDescriptor(aname("geometry"));
         
-        featureStore.modifyFeatures(new AttributeDescriptor[] { madeUp },
+        featureStore.updateFeatures(new AttributeDescriptor[] { madeUp },
             new Object[] { point }, Filter.INCLUDE);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureStore.getFeatures();
@@ -204,7 +205,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
     
     public void testModifyFeaturesSingleAttribute() throws IOException {
         SimpleFeatureType t = featureStore.getSchema();
-        featureStore.modifyFeatures(t.getDescriptor(aname("stringProperty")), "foo" , Filter.INCLUDE);
+        featureStore.updateFeatures(t.getDescriptor(aname("stringProperty")), "foo" , Filter.INCLUDE);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureStore.getFeatures();
         Iterator i = features.iterator();
@@ -225,7 +226,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
         
         try {
-            featureStore.modifyFeatures(new AttributeDescriptor[] { t.getDescriptor(aname("stringProperty")) },
+            featureStore.updateFeatures(new AttributeDescriptor[] { t.getDescriptor(aname("stringProperty")) },
             new Object[] { "foo" }, f);
             fail("This should have failed with an exception reporting the invalid filter");
         } catch(Exception e) {

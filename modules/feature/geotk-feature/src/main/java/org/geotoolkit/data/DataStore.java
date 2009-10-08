@@ -456,6 +456,27 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
     FeatureReader<T, F> getFeatureReader(Query query, Transaction transaction) throws IOException;
 
     /**
+     * Access FeatureWriter for modification of the DataStore typeName.
+     *
+     * <p>
+     * FeatureWriters will need to be limited to the FeatureTypes defined by
+     * the DataStore, the easiest way to express this limitation is to the
+     * FeatureType by a provided typeName.
+     * </p>
+     *
+     * <p>
+     * The returned FeatureWriter will return <code>false</code> for getNext()
+     * when it reaches the end of the Query.
+     * </p>
+     *
+     * @param typeName Indicates featureType to be modified
+     * @param transaction Transaction to operates against
+     *
+     * @return FeatureReader Allows Sequential Processing of featureType
+     */
+    FeatureWriter<T, F> getFeatureWriter(String typeName, Transaction transaction) throws IOException;
+
+    /**
      * Access FeatureWriter for modification of existing DataStore contents.
      *
      * <p>
@@ -510,27 +531,6 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * @return FeatureWriter Allows Sequential Modification of featureType
      */
     FeatureWriter<T, F> getFeatureWriter(String typeName, Filter filter, Transaction transaction) throws IOException;
-
-    /**
-     * Access FeatureWriter for modification of the DataStore typeName.
-     *
-     * <p>
-     * FeatureWriters will need to be limited to the FeatureTypes defined by
-     * the DataStore, the easiest way to express this limitation is to the
-     * FeatureType by a provided typeName.
-     * </p>
-     *
-     * <p>
-     * The returned FeatureWriter will return <code>false</code> for getNext()
-     * when it reaches the end of the Query.
-     * </p>
-     *
-     * @param typeName Indicates featureType to be modified
-     * @param transaction Transaction to operates against
-     *
-     * @return FeatureReader Allows Sequential Processing of featureType
-     */
-    FeatureWriter<T, F> getFeatureWriter(String typeName, Transaction transaction) throws IOException;
 
     /**
      * Aquire a FeatureWriter for adding new content to a FeatureType.

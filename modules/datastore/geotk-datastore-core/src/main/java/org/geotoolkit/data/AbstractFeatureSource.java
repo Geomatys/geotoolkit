@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 Geomatys
  *    
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,13 +26,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.data.crs.ForceCoordinateSystemFeatureResults;
-import org.geotoolkit.data.crs.ReprojectFeatureResults;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.store.EmptyFeatureCollection;
 import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -74,6 +71,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * </p>
  *
  * @author Jody Garnett, Refractions Research Inc
+ * @author Johann Sorel (Geomatys)
  * @source $URL$
  */
 public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatureType, SimpleFeature> {
@@ -201,60 +199,6 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     }
 
     /**
-     * Provides an interface to for the Results of a Query.
-     *
-     * <p>
-     * Various queries can be made against the results, the most basic being to retrieve Features.
-     * </p>
-     *
-     * @param query
-     *
-     * @see org.geotoolkit.data.FeatureSource#getFeatures(org.geotoolkit.data.Query)
-     */
-    @Override
-    public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(final Query query) throws IOException {
-        final SimpleFeatureType schema = getSchema();
-        final String typeName = schema.getTypeName();
-
-        if (query.getTypeName() == null) { // typeName unspecified we will "any" use a default
-            final DefaultQuery defaultQuery = new DefaultQuery(query);
-            defaultQuery.setTypeName(typeName);
-        } else if (!typeName.equals(query.getTypeName())) {
-            return (FeatureCollection<SimpleFeatureType, SimpleFeature>) new EmptyFeatureCollection(schema);
-        }
-
-        final QueryCapabilities queryCapabilities = getQueryCapabilities();
-        if (!queryCapabilities.supportsSorting(query.getSortBy())) {
-            throw new DataSourceException("DataStore cannot provide the requested sort order");
-        }
-
-        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = new DefaultFeatureResults(this, query);
-        if (collection.getSchema().getGeometryDescriptor() == null) {
-            return collection; // no geometry no reprojection needed
-        }
-
-        if (false) { // we need to have our CRS forced
-            if (query.getCoordinateSystem() != null) {
-                try {
-                    collection = new ForceCoordinateSystemFeatureResults(collection, query.getCoordinateSystem());
-                } catch (SchemaException e) {
-                    throw new IOException("Could not force CRS " + query.getCoordinateSystem());
-                }
-            }
-        }
-        if (false) { // we need our data reprojected
-            if (query.getCoordinateSystemReproject() != null) {
-                try {
-                    collection = new ReprojectFeatureResults(collection, query.getCoordinateSystemReproject());
-                } catch (Exception e) {
-                    throw new IOException("Could not reproject to " + query.getCoordinateSystemReproject());
-                }
-            }
-        }
-        return collection;
-    }
-
-    /**
      * Retrieve all Feature matching the Filter.
      *
      * @param filter Indicates features to retrieve
@@ -266,6 +210,39 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(final Filter filter) throws IOException {
         return getFeatures(new DefaultQuery(getSchema().getTypeName(), filter));
+    }
+
+    /**
+     * Provides an interface to for the Results of a Query.
+     *
+     * <p>
+     * Various queries can be made against the results, the most basic being to retrieve Features.
+     * </p>
+     *
+     * @param query
+     *
+     * @see org.geotoolkit.data.FeatureSource#getFeatures(org.geotoolkit.data.Query)
+     */
+    @Override
+    public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(Query query) throws IOException {
+        final SimpleFeatureType schema = getSchema();
+        final String typeName = schema.getTypeName();
+
+        if (query.getTypeName() == null) {
+            //typeName unspecified we will "any" use a default
+            final DefaultQuery defaultQuery = new DefaultQuery(query);
+            defaultQuery.setTypeName(typeName);
+            query = defaultQuery;
+        } else if (!typeName.equals(query.getTypeName())) {
+            throw new IOException("Query type name : "+ query.getTypeName() +"doesn't match schema name : "+typeName);
+        }
+
+        final QueryCapabilities queryCapabilities = getQueryCapabilities();
+        if (!queryCapabilities.supportsSorting(query.getSortBy())) {
+            throw new DataSourceException("DataStore cannot provide the requested sort order");
+        }
+
+        return new DefaultFeatureResults(this, query);
     }
 
     /**
@@ -297,8 +274,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     @Override
     public JTSEnvelope2D getBounds() throws IOException {
-//        return getBounds(Query.ALL); // DZ should this not return just the bounds for this type?
-        return getBounds(getSchema() == null ? Query.ALL : new DefaultQuery(getSchema().getTypeName()));
+        return getBounds(Query.ALL);
     }
 
     /**
@@ -347,9 +323,8 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     protected Query namedQuery(final Query query) {
         final String typeName = getSchema().getTypeName();
-        if (query.getTypeName() == null ||
-                !query.getTypeName().equals(typeName)) {
-
+        final String candidate = query.getTypeName();
+        if (!typeName.equals(candidate)) {
             return new DefaultQuery(
                     typeName,
                     query.getFilter(),
@@ -381,7 +356,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
             return 0;
         }
 
-        final DataStore dataStore = (DataStore) getDataStore();
+        final DataStore dataStore = getDataStore();
         if ((dataStore == null) || !(dataStore instanceof AbstractDataStore)) {
             // too expensive
             return -1;

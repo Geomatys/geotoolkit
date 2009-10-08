@@ -965,7 +965,7 @@ public class MemoryDataStoreTest extends DataTestCase {
     public void testGetFeatureStoreModifyFeatures1() throws IOException {
         FeatureStore<SimpleFeatureType, SimpleFeature> road = (FeatureStore<SimpleFeatureType, SimpleFeature>) data.getFeatureSource("road");
         AttributeDescriptor name = roadType.getDescriptor("name");
-        road.modifyFeatures(name, "changed", rd1Filter);
+        road.updateFeatures(name, "changed", rd1Filter);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> results = road.getFeatures(rd1Filter);
         assertEquals("changed", results.features().next().getAttribute("name"));
@@ -974,7 +974,7 @@ public class MemoryDataStoreTest extends DataTestCase {
     public void testGetFeatureStoreModifyFeatures2() throws IOException {
         FeatureStore<SimpleFeatureType, SimpleFeature> road = (FeatureStore<SimpleFeatureType, SimpleFeature>) data.getFeatureSource("road");
         AttributeDescriptor name = roadType.getDescriptor("name");
-        road.modifyFeatures(new AttributeDescriptor[]{name}, new Object[]{"changed",}, rd1Filter);
+        road.updateFeatures(new AttributeDescriptor[]{name}, new Object[]{"changed",}, rd1Filter);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> results = road.getFeatures(rd1Filter);
         assertEquals("changed", results.features().next().getAttribute("name"));
@@ -1000,7 +1000,8 @@ public class MemoryDataStoreTest extends DataTestCase {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader(new SimpleFeature[]{newRoad,});
         FeatureStore<SimpleFeatureType, SimpleFeature> road = (FeatureStore<SimpleFeatureType, SimpleFeature>) data.getFeatureSource("road");
 
-        road.setFeatures(reader);
+        road.removeFeatures(Filter.INCLUDE);
+        road.addFeatures(reader);
         assertEquals(1, road.getFeatures().size());
     }
 

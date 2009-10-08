@@ -145,7 +145,7 @@ public class FidQueryTest extends FIDTestCase {
                 .getID())));
 
         SimpleFeatureType schema = feature.getFeatureType();
-        featureStore.modifyFeatures(schema.getDescriptor("ID"), new Integer(
+        featureStore.updateFeatures(schema.getDescriptor("ID"), new Integer(
                 newId), createFidFilter);
 
         FeatureIterator<SimpleFeature> features = featureStore.getFeatures(createFidFilter)

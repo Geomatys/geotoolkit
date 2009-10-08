@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Statement;
 
-
 /**
  * <p>
  * The FIDMapper interface manages the mapping of feature id to the identifiers

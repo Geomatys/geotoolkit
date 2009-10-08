@@ -785,7 +785,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         
         assertEquals(2, count(ds, typeName, fidFilter));
 
-        store.modifyFeatures(attribute, "modified", fidFilter);
+        store.updateFeatures(attribute, "modified", fidFilter);
         Filter modifiedFilter = ff.equals(ff.property("f"), ff.literal("modified"));
         assertEquals(2, count(ds, typeName, modifiedFilter));
         

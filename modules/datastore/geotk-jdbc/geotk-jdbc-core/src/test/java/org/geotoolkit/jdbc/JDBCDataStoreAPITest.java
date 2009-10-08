@@ -1010,7 +1010,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         // rd1Filter = factory.createFidFilter( roadFeatures[0].getID() );
         Object changed = new Integer(5);
         AttributeDescriptor name = td.roadType.getDescriptor(aname("id"));
-        road.modifyFeatures(name, changed, td.rd1Filter);
+        road.updateFeatures(name, changed, td.rd1Filter);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> results = road.getFeatures(td.rd1Filter);
         FeatureIterator<SimpleFeature> features = results.features();
@@ -1029,7 +1029,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
                         td.roadFeatures[0].getID())));
 
         AttributeDescriptor name = td.roadType.getDescriptor(aname("name"));
-        road.modifyFeatures(new AttributeDescriptor[] { name, }, new Object[] { "changed", },
+        road.updateFeatures(new AttributeDescriptor[] { name, }, new Object[] { "changed", },
             rd1Filter);
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> results = road.getFeatures(td.rd1Filter);
@@ -1052,7 +1052,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         PropertyIsEqualTo filter = ff.equals(ff.property(aname("name")), ff.literal("r1"));
 
         AttributeDescriptor name = td.roadType.getDescriptor(aname("name"));
-        road.modifyFeatures(new AttributeDescriptor[] { name, }, new Object[] { "changed", }, filter);
+        road.updateFeatures(new AttributeDescriptor[] { name, }, new Object[] { "changed", }, filter);
     }
 
     public void testGetFeatureStoreRemoveFeatures() throws IOException {
@@ -1087,7 +1087,8 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         assertEquals(3, count(tname("road")));
 
-        road.setFeatures(reader);
+        road.removeFeatures(Filter.INCLUDE);
+        road.addFeatures(reader);
 
         assertEquals(1, count(tname("road")));
     }

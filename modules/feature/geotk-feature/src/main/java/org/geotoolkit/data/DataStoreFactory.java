@@ -85,47 +85,27 @@ import org.opengis.parameter.ParameterValueGroup;
 public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
 
     /**
-     * @see DataStoreFactory#createDataStore(org.opengis.parameter.ParameterValueGroup) 
-     */
-    DataStore<T,F> createDataStore(Map<String, ? extends Serializable> params) throws IOException;
-
-    /**
-     * Construct a live DataStore using the connection parameters provided.
+     * Test to see if the implementation is available for use.
+     * This method ensures all the appropriate libraries to construct
+     * the DataAccess are available.
      * <p>
-     * You can think of this class as setting up a connection to the back end data source. The
-     * required parameters are described by the getParameterInfo() method.
-     * </p>
-     *
+     * Most factories will simply return <code>true</code> as GeoTools will
+     * distribute the appropriate libraries. Though it's not a bad idea for
+     * DataStoreFactories to check to make sure that the  libraries are there.
      * <p>
-     * Magic Params: the following params are magic and should be honoured by convention.
+     * OracleDataStoreFactory is an example of one that may generally return
+     * <code>false</code>, since GeoTools can not distribute the oracle jars.
+     * (they must be added by the client.)
+     * <p>
+     * One may ask how this is different than canProcess, and basically available
+     * is used by the DataStoreFinder getAvailableDataStore method, so that
+     * DataStores that can not even be used do not show up as options in gui
+     * applications.
      *
-     * <ul>
-     * <li>
-     * "user": is taken to be the user name
-     * </li>
-     * <li>
-     * "passwd": is taken to be the password
-     * </li>
-     * </ul>
-     *
-     * When we eventually move over to the use of OpperationalParam we will
-     * have to find someway to codify this convention.
-     * </p>
-     *
-     * @param params The full set of information needed to construct a live
-     *        data store. Typical key values for the map include: url -
-     *        location of a resource, used by file reading datasources. dbtype
-     *        - the type of the database to connect to, e.g. postgis, mysql
-     *
-     * @return The created DataStore, this may be null if the required resource
-     *         was not found or if insufficent parameters were given. Note
-     *         that canProcess() should have returned false if the problem is
-     *         to do with insuficent parameters.
-     *
-     * @throws IOException if there were any problems setting up (creating or
-     *         connecting) the datasource.
+     * @return <tt>true</tt> if and only if this factory has all the
+     *         appropriate jars on the classpath to create DataStores.
      */
-    DataStore<T,F> createDataStore(ParameterValueGroup params) throws IOException;
+    ConformanceResult availability();
 
     /**
      * Name suitable for display to end user.
@@ -185,27 +165,47 @@ public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
     boolean canProcess(ParameterValueGroup params);
 
     /**
-     * Test to see if the implementation is available for use.
-     * This method ensures all the appropriate libraries to construct
-     * the DataAccess are available.
-     * <p>
-     * Most factories will simply return <code>true</code> as GeoTools will
-     * distribute the appropriate libraries. Though it's not a bad idea for
-     * DataStoreFactories to check to make sure that the  libraries are there.
-     * <p>
-     * OracleDataStoreFactory is an example of one that may generally return
-     * <code>false</code>, since GeoTools can not distribute the oracle jars.
-     * (they must be added by the client.)
-     * <p>
-     * One may ask how this is different than canProcess, and basically available
-     * is used by the DataStoreFinder getAvailableDataStore method, so that
-     * DataStores that can not even be used do not show up as options in gui
-     * applications.
-     *
-     * @return <tt>true</tt> if and only if this factory has all the
-     *         appropriate jars on the classpath to create DataStores.
+     * @see DataStoreFactory#createDataStore(org.opengis.parameter.ParameterValueGroup)
      */
-    ConformanceResult availability();
+    DataStore<T,F> createDataStore(Map<String, ? extends Serializable> params) throws IOException;
+
+    /**
+     * Construct a live DataStore using the connection parameters provided.
+     * <p>
+     * You can think of this class as setting up a connection to the back end data source. The
+     * required parameters are described by the getParameterInfo() method.
+     * </p>
+     *
+     * <p>
+     * Magic Params: the following params are magic and should be honoured by convention.
+     *
+     * <ul>
+     * <li>
+     * "user": is taken to be the user name
+     * </li>
+     * <li>
+     * "passwd": is taken to be the password
+     * </li>
+     * </ul>
+     *
+     * When we eventually move over to the use of OpperationalParam we will
+     * have to find someway to codify this convention.
+     * </p>
+     *
+     * @param params The full set of information needed to construct a live
+     *        data store. Typical key values for the map include: url -
+     *        location of a resource, used by file reading datasources. dbtype
+     *        - the type of the database to connect to, e.g. postgis, mysql
+     *
+     * @return The created DataStore, this may be null if the required resource
+     *         was not found or if insufficent parameters were given. Note
+     *         that canProcess() should have returned false if the problem is
+     *         to do with insuficent parameters.
+     *
+     * @throws IOException if there were any problems setting up (creating or
+     *         connecting) the datasource.
+     */
+    DataStore<T,F> createDataStore(ParameterValueGroup params) throws IOException;
 
     DataStore<T,F> createNewDataStore(Map<String, ? extends Serializable> params) throws IOException;
 
