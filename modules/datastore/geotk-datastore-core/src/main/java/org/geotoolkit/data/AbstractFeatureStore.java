@@ -103,8 +103,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
     @Override
     public void modifyFeatures(final AttributeDescriptor type, final Object value, final Filter filter)
             throws IOException {
-        modifyFeatures(new AttributeDescriptor[]{type,}, new Object[]{value,},
-                filter);
+        modifyFeatures(new AttributeDescriptor[]{type}, new Object[]{value}, filter);
     }
 
     /**
@@ -150,7 +149,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
             while (writer.hasNext()) {
                 final SimpleFeature feature = writer.next();
 
-                for (int i = 0; i < type.length; i++) {
+                for (int i=0; i<type.length; i++) {
                     try {
                         feature.setAttribute(type[i].getLocalName(), value[i]);
                     } catch (Exception e) {
@@ -253,12 +252,12 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
         final String typeName = getSchema().getTypeName();
         final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getDataStore().getFeatureWriterAppend(typeName, getTransaction());
 
-        Iterator iterator = collection.iterator();
+        final Iterator<SimpleFeature> iterator = collection.iterator();
         try {
 
             while (iterator.hasNext()) {
-                final SimpleFeature feature = (SimpleFeature) iterator.next();
-                final SimpleFeature newFeature = (SimpleFeature) writer.next();
+                final SimpleFeature feature = iterator.next();
+                final SimpleFeature newFeature = writer.next();
                 try {
                     newFeature.setAttributes(feature.getAttributes());
                 } catch (Exception writeProblem) {
@@ -395,8 +394,7 @@ public abstract class AbstractFeatureStore extends AbstractFeatureSource
     @Override
     public void setTransaction(final Transaction transaction) {
         if (transaction == null) {
-            throw new IllegalArgumentException(
-                    "Transaction cannot be null, did you mean Transaction.AUTO_COMMIT?");
+            throw new IllegalArgumentException("Transaction cannot be null, did you mean Transaction.AUTO_COMMIT?");
         }
 
         this.transaction = transaction;

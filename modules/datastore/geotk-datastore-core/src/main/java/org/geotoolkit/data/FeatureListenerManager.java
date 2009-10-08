@@ -27,6 +27,7 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -48,7 +49,7 @@ import org.opengis.feature.type.FeatureType;
  */
 public class FeatureListenerManager {
 
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
     /**
      * Hold on to provided FeatureListener using a weak reference.
@@ -91,8 +92,7 @@ public class FeatureListenerManager {
      */
     public void addFeatureListener(final FeatureSource<? extends FeatureType, ? extends Feature> featureSource,
             final FeatureListener featureListener) {
-        eventListenerList(featureSource).add(FeatureListener.class,
-                featureListener);
+        eventListenerList(featureSource).add(FeatureListener.class, featureListener);
     }
 
     /**

@@ -58,7 +58,6 @@ import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
-import org.geotoolkit.data.shapefile.prj.PrjFileReader;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileException;
@@ -94,6 +93,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.InputStream;
+import org.geotoolkit.io.wkt.PrjFiles;
 
 
 /**
@@ -452,34 +453,6 @@ public class ShapefileDataStore extends AbstractDataStore {
     }
 
     /**
-     * Convenience method for opening a DbaseFileReader.
-     * 
-     * @return A new DbaseFileReader
-     * 
-     * @throws IOException
-     *                 If an error occurs during creation.
-     * @throws FactoryException
-     *                 DOCUMENT ME!
-     */
-    protected PrjFileReader openPrjReader() throws IOException,FactoryException {
-
-        if (shpFiles.get(PRJ) == null) {
-            return null;
-        }
-
-        if (isLocal() && !shpFiles.exists(PRJ)) {
-            return null;
-        }
-
-        try {
-            return new PrjFileReader(shpFiles);
-        } catch (IOException e) {
-            // could happen if prj file does not exist remotely
-            return null;
-        }
-    }
-
-    /**
      * Get an array of type names this DataStore holds.<BR/>ShapefileDataStore
      * will always return a single name.
      * 
@@ -616,18 +589,16 @@ public class ShapefileDataStore extends AbstractDataStore {
     protected List<AttributeDescriptor> readAttributes() throws IOException {
         final ShapefileReader shp = openShapeReader();
         final DbaseFileReader dbf = openDbfReader();
+        
         CoordinateReferenceSystem crs = null;
-
-        PrjFileReader prj = null;
-        try {
-            prj = openPrjReader();
-
-            if (prj != null) {
-                crs = prj.getCoodinateSystem();
-            }
-        } catch (FactoryException fe) {
+        try{
+            final InputStream prjStream = shpFiles.getInputStream(PRJ, new BasicShpFileReader("dummy"));
+            crs = PrjFiles.read(prjStream, true);
+        }catch(IOException ex){
+            //there might not be any prj file
             crs = null;
         }
+        
 
         final AttributeTypeBuilder build = new AttributeTypeBuilder();
         final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>();
@@ -674,13 +645,6 @@ public class ShapefileDataStore extends AbstractDataStore {
             return attributes;
         } finally {
 
-            try {
-                if (prj != null) {
-                    prj.close();
-                }
-            } catch (IOException ioe) {
-                // do nothing
-            }
             try {
                 if (dbf != null) {
                     dbf.close();

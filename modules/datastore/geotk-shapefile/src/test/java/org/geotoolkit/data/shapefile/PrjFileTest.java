@@ -17,7 +17,6 @@
 package org.geotoolkit.data.shapefile;
 
 import java.io.IOException;
-import org.geotoolkit.data.shapefile.prj.PrjFileReader;
 
 /**
  * 
@@ -31,18 +30,15 @@ public class PrjFileTest extends AbstractTestCaseSupport {
 
     static final String TEST_FILE = "wkt/cntbnd01.prj";
 
-    protected PrjFileReader prj = null;
 
     public PrjFileTest(String testName) throws IOException {
         super(testName);
     }
 
     protected void setUp() throws Exception {
-//        prj = new PrjFileReader(new ShpFiles(TEST_FILE));
     }
 
     protected void tearDown() throws Exception {
-//        prj.close();
         super.tearDown();
     }
 

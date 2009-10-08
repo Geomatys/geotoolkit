@@ -23,8 +23,10 @@ import java.util.Map.Entry;
 
 import org.geotoolkit.factory.Factory;
 
+import org.geotoolkit.parameter.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -105,10 +107,8 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      */
     @Override
     public boolean canProcess(ParameterValueGroup params) {
-        return params.getDescriptor().equals(getParametersDescriptor());
-
-        //TODO wait for new utility methods for validation
-//        return Parameters.isValid(params);
+        final ConformanceResult result = Parameters.isValid(params, getParametersDescriptor());
+        return result.pass();
     }
 
 

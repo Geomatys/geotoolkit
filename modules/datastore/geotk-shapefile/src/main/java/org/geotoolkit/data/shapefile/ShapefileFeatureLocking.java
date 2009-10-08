@@ -75,8 +75,7 @@ public class ShapefileFeatureLocking extends AbstractFeatureLocking {
      * {@inheritDoc }
      */
     @Override
-    public JTSEnvelope2D getBounds(Query query)
-            throws IOException {
+    public JTSEnvelope2D getBounds(Query query) throws IOException {
         return shapefile.getBounds(query);
     }
 
