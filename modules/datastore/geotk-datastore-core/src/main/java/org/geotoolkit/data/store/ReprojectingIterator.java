@@ -38,12 +38,12 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class ReprojectingIterator implements Iterator {
+public class ReprojectingIterator implements Iterator<SimpleFeature> {
 
     /**
      * decorated iterator
      */
-    private final Iterator delegate;
+    private final Iterator<SimpleFeature> delegate;
     /**
      * The target coordinate reference system
      */
@@ -57,27 +57,24 @@ public class ReprojectingIterator implements Iterator {
      */
     private final GeometryCoordinateSequenceTransformer tx;
 
-    public ReprojectingIterator(
-            Iterator delegate, MathTransform transform, SimpleFeatureType schema,
-            GeometryCoordinateSequenceTransformer transformer) throws OperationNotFoundException, FactoryRegistryException, FactoryException {
+    public ReprojectingIterator(Iterator<SimpleFeature> delegate, CoordinateReferenceSystem source, CoordinateReferenceSystem target,
+            SimpleFeatureType schema, GeometryCoordinateSequenceTransformer transformer)
+            throws OperationNotFoundException, FactoryRegistryException, FactoryException {
+        this(delegate,
+             AuthorityFactoryFinder.getCoordinateOperationFactory(null)
+                .createOperation(source, target).getMathTransform(),
+             schema,
+             transformer);
+    }
+
+    public ReprojectingIterator(Iterator<SimpleFeature> delegate, MathTransform transform,
+            SimpleFeatureType schema, GeometryCoordinateSequenceTransformer transformer)
+            throws OperationNotFoundException, FactoryRegistryException, FactoryException {
         this.delegate = delegate;
         this.target = null;
         this.schema = schema;
 
         tx = transformer;
-        tx.setMathTransform((MathTransform2D) transform);
-    }
-
-    public ReprojectingIterator(
-            Iterator delegate, CoordinateReferenceSystem source, CoordinateReferenceSystem target,
-            SimpleFeatureType schema, GeometryCoordinateSequenceTransformer transformer) throws OperationNotFoundException, FactoryRegistryException, FactoryException {
-        this.delegate = delegate;
-        this.target = target;
-        this.schema = schema;
-        tx = transformer;
-
-        MathTransform transform = AuthorityFactoryFinder.getCoordinateOperationFactory(
-                null).createOperation(source, target).getMathTransform();
         tx.setMathTransform((MathTransform2D) transform);
     }
 
@@ -105,8 +102,8 @@ public class ReprojectingIterator implements Iterator {
      * {@inheritDoc }
      */
     @Override
-    public Object next() {
-        SimpleFeature feature = (SimpleFeature) delegate.next();
+    public SimpleFeature next() {
+        final SimpleFeature feature = delegate.next();
         try {
             return reproject(feature);
         } catch (IOException e) {
@@ -114,11 +111,11 @@ public class ReprojectingIterator implements Iterator {
         }
     }
 
-    SimpleFeature reproject(SimpleFeature feature) throws IOException {
+    private SimpleFeature reproject(SimpleFeature feature) throws IOException {
         //make a copy, the original one is immutable
         List<Object> attributes = new ArrayList<Object>(feature.getAttributes());
 
-        for (int i = 0, n = attributes.size(); i < n; i++) {
+        for (int i=0, n=attributes.size(); i<n; i++) {
             Object object = attributes.get(i);
             if (object instanceof Geometry) {
                 // do the transformation

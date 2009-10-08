@@ -100,8 +100,7 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
         try {
             return CRS.findMathTransform(source, target);
         } catch (FactoryException e) {
-            throw new IllegalArgumentException(
-                    "Could not create math transform");
+            throw new IllegalArgumentException("Could not create math transform");
         }
     }
 
@@ -110,8 +109,7 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
         try {
             return FeatureTypeUtilities.transform(type, target);
         } catch (SchemaException e) {
-            throw new IllegalArgumentException(
-                    "Could not transform source schema", e);
+            throw new IllegalArgumentException("Could not transform source schema", e);
         }
     }
 

@@ -36,7 +36,6 @@ import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.collection.DelegateFeatureIterator;
 import org.geotoolkit.feature.collection.SubFeatureCollection;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.util.logging.Logging;
 

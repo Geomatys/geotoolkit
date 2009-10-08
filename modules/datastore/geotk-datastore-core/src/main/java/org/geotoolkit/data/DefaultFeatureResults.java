@@ -34,6 +34,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.feature.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -58,7 +59,7 @@ public class DefaultFeatureResults extends DataFeatureCollection {
     /**
      * Shared package logger
      */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
     /**
      * Query used to define this subset of features from the feature source
      */

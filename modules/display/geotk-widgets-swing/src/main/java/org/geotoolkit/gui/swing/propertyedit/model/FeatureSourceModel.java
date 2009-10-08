@@ -164,7 +164,7 @@ public class FeatureSourceModel extends DefaultTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 
-        FeatureStore<SimpleFeatureType, SimpleFeature> store;
+        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
         if ( ((FeatureMapLayer)layer).getFeatureSource() instanceof FeatureStore) {
 
             store = (FeatureStore<SimpleFeatureType, SimpleFeature>)  ((FeatureMapLayer)layer).getFeatureSource();
@@ -179,7 +179,7 @@ public class FeatureSourceModel extends DefaultTableModel {
             AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex));
                         
             try {
-                store.modifyFeatures(NAME, aValue, filter);
+                store.updateFeatures(NAME, aValue, filter);
                 transaction.commit();
             } catch (IOException ex) {
                 ex.printStackTrace();

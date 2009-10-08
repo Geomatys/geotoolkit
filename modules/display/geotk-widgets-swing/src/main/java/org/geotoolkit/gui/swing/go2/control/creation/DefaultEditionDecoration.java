@@ -557,9 +557,9 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         }
 
 
-        FeatureMapLayer editionLayer = getEditedLayer();
-
-        FeatureStore<SimpleFeatureType, SimpleFeature> store;
+        final FeatureMapLayer editionLayer = getEditedLayer();
+        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
+        
         if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
 
 //            String name = editionLayer.getFeatureSource().getName().getLocalPart();
@@ -587,7 +587,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
             try {
                 final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
-                store.modifyFeatures(geomAttribut, geom, filter);
+                store.updateFeatures(geomAttribut, geom, filter);
                 transaction.commit();
             } catch (Exception ex) {
                 ex.printStackTrace();
