@@ -56,6 +56,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
 
     /**
      * Creates a pooled marshaller wrapping the given one.
+     *
+     * @param marshaller The marshaller to use for the actual work.
+     * @param internal {@code true} if the JAXB implementation is the one bundled in JDK 6,
+     *        or {@code false} if this is an external implementation like a JAR put in the
+     *        endorsed directory.
      */
     PooledMarshaller(final Marshaller marshaller, final boolean internal) {
         super(internal);
@@ -74,7 +79,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     protected void reset(final Object key, Object value) throws PropertyException {
         if (key instanceof String) {
             final String k = (String) key;
-            if (value == null && k.endsWith(".xmlHeaders")) {
+            if (value == null && (k.endsWith(".xmlHeaders") || k.equals(Marshaller.JAXB_SCHEMA_LOCATION))) {
                 value = ""; // Null value doesn't seem to be accepted.
             }
             marshaller.setProperty(k, value);

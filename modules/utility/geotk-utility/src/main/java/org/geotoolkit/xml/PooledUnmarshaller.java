@@ -57,6 +57,11 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
 
     /**
      * Creates a pooled unmarshaller wrapping the given one.
+     *
+     * @param unmarshaller The unmarshaller to use for the actual work.
+     * @param internal {@code true} if the JAXB implementation is the one bundled in JDK 6,
+     *        or {@code false} if this is an external implementation like a JAR put in the
+     *        endorsed directory.
      */
     PooledUnmarshaller(final Unmarshaller unmarshaller, final boolean internal) {
         super(internal);
