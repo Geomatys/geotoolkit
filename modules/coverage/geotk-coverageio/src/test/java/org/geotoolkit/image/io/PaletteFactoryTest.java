@@ -17,8 +17,7 @@
  */
 package org.geotoolkit.image.io;
 
-import java.util.List;
-import java.util.Arrays;
+import java.util.Set;
 import java.io.IOException;
 import java.awt.image.IndexColorModel;
 
@@ -27,14 +26,14 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link Palette} and {@link PaletteFactory}.
+ * Tests {@link PaletteFactory} and a bit of {@link Palette}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @since 2.4
  */
-public final class PaletteTest {
+public final class PaletteFactoryTest {
     /**
      * Tests the argument check performed by constructor.
      */
@@ -78,15 +77,26 @@ public final class PaletteTest {
 
     /**
      * Tests {@link PaletteFactory#getAvailableNames}.
+     *
+     * @throws IOException Should never happen.
      */
     @Test
-    public void testAvailableNames() {
-        final List<String> names = Arrays.asList(PaletteFactory.getDefault().getAvailableNames());
+    public void testAvailableNames() throws IOException {
+        final PaletteFactory factory = PaletteFactory.getDefault();
+        final Set<String> names = factory.getAvailableNames();
+        assertNotNull(names);
         assertFalse(names.isEmpty());
-        assertTrue (names.contains("rainbow"));
-        assertTrue (names.contains("grayscale"));
-        assertTrue (names.contains("bell"));
-        assertFalse(names.contains("Donald Duck"));
+        assertTrue ("Part of Geotk distribution", names.contains("rainbow"));
+        assertTrue ("Part of Geotk distribution", names.contains("grayscale"));
+        assertTrue ("Part of Geotk distribution", names.contains("bell"));
+        assertFalse("Non-existant",               names.contains("Donald Duck"));
+        assertTrue ("Defined in MyPalettes",      names.contains("green-blue"));
+        /*
+         * Ensures that every palettes exist.
+         */
+        for (final String name : names) {
+            assertTrue(name, factory.getPalette(name, 16).getColorModel() instanceof IndexColorModel);
+        }
     }
 
     /**
@@ -106,7 +116,7 @@ public final class PaletteTest {
     /**
      * Tests the color model.
      *
-     * @throws IOException If an I/O operation was required and failed.
+     * @throws IOException Should never happen.
      */
     @Test
     public void testColorModel() throws IOException {
@@ -115,5 +125,14 @@ public final class PaletteTest {
         final IndexColorModel icm     = (IndexColorModel) palette.getColorModel();
         assertEquals(100, icm.getMapSize());
         assertEquals(0, icm.getTransparentPixel());
+        /*
+         * Tests the color values.
+         */
+        assertEquals("R", 124, icm.getRed  ( 1));
+        assertEquals("G", 000, icm.getGreen( 1));
+        assertEquals("B", 255, icm.getBlue ( 1));
+        assertEquals("R", 255, icm.getRed  (99));
+        assertEquals("G", 005, icm.getGreen(99));
+        assertEquals("B", 000, icm.getBlue (99));
     }
 }

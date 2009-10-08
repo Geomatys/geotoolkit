@@ -23,7 +23,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import javax.imageio.IIOException;
 import javax.imageio.ImageTypeSpecifier;
 import javax.swing.JFrame;
 
@@ -160,12 +159,11 @@ public abstract class Palette {
      * color model if possible, since it may consume a significant amount of memory.
      *
      * @return  The color model for this palette.
-     * @throws  FileNotFoundException If the RGB values need to be read from a file and this file
-     *          (typically inferred from {@link #name}) is not found.
-     * @throws  IIOException If logical error prevent this method to complete.
+     * @throws  FileNotFoundException If the RGB values need to be read from a file
+     *          and this file (typically inferred from {@link #name}) is not found.
      * @throws  IOException  If an other kind of I/O error occured.
      */
-    public synchronized ColorModel getColorModel() throws IOException {
+    public synchronized ColorModel getColorModel() throws FileNotFoundException, IOException {
         if (colors != null) {
             final ColorModel candidate = colors.get();
             if (candidate != null) {
@@ -179,12 +177,11 @@ public abstract class Palette {
      * Returns the image type specifier for this palette.
      *
      * @return  The image type specified for this palette.
-     * @throws  FileNotFoundException If the RGB values need to be read from a file and this file
-     *          (typically inferred from {@link #name}) is not found.
-     * @throws  IIOException If logical error prevent this method to complete.
+     * @throws  FileNotFoundException If the RGB values need to be read from a file
+     *          and this file (typically inferred from {@link #name}) is not found.
      * @throws  IOException  If an other kind of I/O error occured.
      */
-    public abstract ImageTypeSpecifier getImageTypeSpecifier() throws IOException;
+    public abstract ImageTypeSpecifier getImageTypeSpecifier() throws FileNotFoundException, IOException;
 
     /**
      * Returns the image type specifier from the cache, or {@code null}.

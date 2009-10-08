@@ -26,8 +26,9 @@ import java.awt.Color;
 import java.awt.image.IndexColorModel;
 import javax.imageio.IIOException;
 
-import org.geotoolkit.io.DefaultFileFilter;
 import org.geotoolkit.io.LineFormat;
+import org.geotoolkit.io.DefaultFileFilter;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
@@ -56,20 +57,64 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * }
  *
  * The number of RGB codes doesn't have to match the target {@linkplain IndexColorModel#getMapSize
- * color map size}. RGB codes will be automatically interpolated as needed.
+ * color map size}. RGB codes will be automatically interpolated as needed. For example it is legal
+ * to declare only 2 colors, {@linkplain Color#BLUE blue} and {@linkplain Color#RED red} for instance.
+ * If an image needs 256 colors, then all needed colors will be interpolated from blue to red, with
+ * blue at index 0 and red at index 255.
+ * <p>
+ * The {@linkplain #getDefault() default instance} provides the following color palettes:
+ * <p>
+ * <table>
+ *   <tr><th>Name</th>          <th>&nbsp;&nbsp;Overview</th>                                 <th>Typical usage</th></tr>
+ *   <tr><td>grayscale</td>     <td>&nbsp;&nbsp;<img src="doc-files/grayscale.png"></td>      <td></td></tr>
+ *   <tr><td>red-blue</td>      <td>&nbsp;&nbsp;<img src="doc-files/red-blue.png"></td>       <td></td></tr>
+ *   <tr><td>blue-red</td>      <td>&nbsp;&nbsp;<img src="doc-files/blue-red.png"></td>       <td></td></tr>
+ *   <tr><td>white-cyan-red</td><td>&nbsp;&nbsp;<img src="doc-files/white-cyan-red.png"></td> <td></td></tr>
+ *   <tr><td>bell</td>          <td>&nbsp;&nbsp;<img src="doc-files/bell.png"></td>           <td></td></tr>
+ *   <tr><td>rainbow</td>       <td>&nbsp;&nbsp;<img src="doc-files/rainbow.png"></td>        <td></td></tr>
+ *   <tr><td>rainbow-c</td>     <td>&nbsp;&nbsp;<img src="doc-files/rainbow-c.png"></td>      <td>Chlorophyll-a concentration (Nasa)</td></tr>
+ *   <tr><td>SeaWiFS</td>       <td>&nbsp;&nbsp;<img src="doc-files/SeaWiFS.png"></td>        <td>Chlorophyll-a concentration (SeaWiFS)</td></tr>
+ *   <tr><td>dem</td>           <td>&nbsp;&nbsp;<img src="doc-files/dem.png"></td>            <td>Digital Elevation Model</td></tr>
+ * </table>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * {@section Adding custom palettes}
+ * To add custum palettes, create a subclass of {@code PaletteFactory} like below:
+ *
+ * {@preformat java
+ *     public class MyPalettes extends PaletteFactory {
+ *         public MyPalettes() {
+ *             // The call below uses the default options for convenience,
+ *             // but we could use an other constructor with more parameters.
+ *             super();
+ *         }
+ *     }
+ *
+ *     // Optionnaly, we could override getResourceAsStream(String) if we wanted
+ *     // to fetch the color codes from a custom source (e.g. from a database).
+ * }
+ *
+ * In the directory that contain the {@code MyPalettes.class} file, create a "{@code colors}"
+ * sub-directory and put the palette definitions (as text files with the "{@code .pal}" suffix)
+ * in that directory. The directory and the file suffix can be changed using one of the
+ * constructors expecting arguments.
+ *
+ * Finally, declare the fully-qualified name of {@code MyPalettes} in the following file:
+ *
+ * {@preformat text
+ *     META-INF/services/org.geotoolkit.image.io.PaletteFactory
+ * }
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @since 1.2
  * @module
  */
 public class PaletteFactory {
     /**
-     * The file which contains a list of available color palettes. This file is optional
-     * and used only in last resort, since scanning a directory content is more reliable.
+     * The file which contains a list of available color palettes. This file is optional.
      * If such file exists in the same directory than the one that contains the palettes,
-     * this file will be used by {@link #getAvailableNames}.
+     * this file will be used by {@link #getAvailableNames()}.
      */
     private static final String LIST_FILE = "list.txt";
 
@@ -145,11 +190,17 @@ public class PaletteFactory {
     final Set<Palette> protectedPalettes = new HashSet<Palette>();
 
     /**
-     * Gets the default palette factory. This method creates a default instance looking for
-     * {@code org/geotoolkit/image/io/colors/*.pal} files where {@code '*'} is a palette name.
-     * Next, this method {@linkplain #scanForPlugins scan for plugins} using the default
-     * class loader. The result is cached for subsequent calls to this {@code getDefault()}
-     * method.
+     * Gets the default palette factory. The returned factory can provide the palettes listed in
+     * the class javadoc, together with the palettes defined by any custom factories registered
+     * in the way defined by the class javadoc.
+     *
+     * {@note The scan for custom factories is performed only when this method is first invoked. If
+     *        a new scan is desired (for example because new JAR files are added on the classpath,
+     *        then <code>scanForPlugins(null)</code> should be invoked explicitly.}
+     *
+     * If custom factories are found and if they define some palettes of the same name than the
+     * ones provided by the build-in factory, then the custom palettes have precedence over the
+     * build-in ones.
      *
      * @return The default palette factory.
      */
@@ -162,17 +213,18 @@ public class PaletteFactory {
     }
 
     /**
-     * Lookups for additional palette factories on the classpath. The palette factories shall
-     * be declared in {@code META-INF/services/org.geotoolkit.image.io.PaletteFactory} files.
+     * Lookups for custom palette factories on the classpath. This method is automatically
+     * invoked by {@link #getDefault()} and doesn't need to be invoked explicitly, unless
+     * new JAR files have been added on the classpath or unless some specific class loader
+     * needs to be used.
      * <p>
-     * Palette factories found are added to the chain of default factories. The next time that
-     * a <code>{@linkplain #getDefault()}.getPalette(...)</code> method will be invoked, the
-     * scanned factories will be tried first. If they can't create a given palette, then the
-     * Geotk default factory will be tried last.
-     * <p>
-     * It is usually not needed to invoke this method directly since it is invoked automatically
-     * by {@link #getDefault()} when first needed. This method may be useful when a specific class
-     * loader need to be used, or when the classpath content changed.
+     * Custom factories shall be declared in the following file:
+     *
+     * {@preformat text
+     *   META-INF/services/org.geotoolkit.image.io.PaletteFactory
+     * }
+     *
+     * Newly discovered factories have precedence over the old ones.
      *
      * @param loader The class loader to use, or {@code null} for the default one.
      *
@@ -211,8 +263,13 @@ public class PaletteFactory {
      * and the locale is {@linkplain Locale#US US}.
      * <p>
      * This constructor is protected because is it merely a convenience for subclasses registering
-     * themself as a service in the {@code META-INF/services/org.geotoolkit.image.io.PaletteFactory}
-     * file. Users should invoke {@link #getDefault} instead, which will returns a shared instance
+     * themself as a service in the following file (see class javadoc for more details):
+     *
+     * {@preformat text
+     *     META-INF/services/org.geotoolkit.image.io.PaletteFactory
+     * }
+     *
+     * Users should invoke {@link #getDefault} instead, which will returns a shared instance
      * of this class together with any custom factories found on the class path.
      *
      * @since 2.5
@@ -227,8 +284,9 @@ public class PaletteFactory {
     }
 
     /**
-     * Constructs a palette factory using loading palette definition files in a specific directory.
-     * No {@linkplain ClassLoader class loader} is used for loading the files.
+     * Constructs a palette factory which will load the palette definition files from the specified
+     * directory. No {@linkplain ClassLoader class loader} is used, i.e. the palettes are read as
+     * ordinary file relative to the current working directory (not the classpath).
      *
      * @param directory The base directory for palette definition files relative to current
      *                  directory, or {@code null} for {@code "."}.
@@ -255,7 +313,9 @@ public class PaletteFactory {
 
     /**
      * Constructs a palette factory using an optional {@linkplain ClassLoader class loader}
-     * for loading palette definition files.
+     * for loading palette definition files. If {@code loader} is non-null, the definitions
+     * will be read using {@link ClassLoader#getResource(String)}, which imply that the
+     * {@code directory} argument is relative to the root packages on the classpath.
      *
      * @param fallback  An optional fallback factory, or {@code null} if there is none. The fallback
      *                  factory will be queried if a palette was not found in the current factory.
@@ -289,10 +349,13 @@ public class PaletteFactory {
 
     /**
      * Constructs a palette factory using an optional {@linkplain Class class} for loading
-     * palette definition files. Using a {@linkplain Class class} instead of a {@linkplain
-     * ClassLoader class loader} can avoid security issue on some platforms (some platforms
-     * do not allow to load resources from a {@code ClassLoader} because it can load from the
-     * root package).
+     * palette definition files. If {@code loader} is non-null, the definitions will be read
+     * using {@link Class#getResource(String)}, which imply that the {@code directory} argument
+     * is relative to the package of the {@code PaletteFactory} subclass.
+     * <p>
+     * Using a {@linkplain Class class} instead of a {@linkplain ClassLoader class loader} can
+     * avoid security issue on some platforms (some platforms do not allow to load resources
+     * from a {@code ClassLoader} because it would make possible to load from the root package).
      *
      * @param fallback  An optional fallback factory, or {@code null} if there is none. The fallback
      *                  factory will be queried if a palette was not found in the current factory.
@@ -373,8 +436,8 @@ public class PaletteFactory {
     }
 
     /**
-     * Returns the locale set by the last invocation to {@link #setWarningLocale} in the
-     * current thread.
+     * Returns the locale set by the last invocation to {@link #setWarningLocale(Locale)}
+     * in the current thread.
      *
      * @return The current locale to use for warning messages.
      *
@@ -397,11 +460,12 @@ public class PaletteFactory {
 
     /**
      * Returns an input stream for reading the specified resource. The default
-     * implementation delegates to the {@link Class#getResourceAsStream(String) Class} or
-     * {@link ClassLoader#getResourceAsStream(String) ClassLoader} method of the same name,
-     * according the {@code loader} argument type given to the constructor. Subclasses may
-     * override this method if a more elaborated mechanism is wanted for fetching resources.
-     * This is sometime required in the context of applications using particular class loaders.
+     * implementation delegates to either {@link Class#getResourceAsStream(String) Class} or
+     * {@link ClassLoader#getResourceAsStream(String) ClassLoader} {@code getResourceAsStream(String)}
+     * method, depending on the type of the {@code loader} argument given to the constructor.
+     * Subclasses may override this method if a more elaborated mechanism is wanted for fetching
+     * resources. This is sometime required in the context of applications using particular class
+     * loaders.
      *
      * @param name The name of the resource to load, constructed as {@code directory} + {@code name}
      *             + {@code extension} where <var>directory</var> and <var>extension</var> were
@@ -422,48 +486,69 @@ public class PaletteFactory {
     }
 
     /**
-     * Returns the list of available palette names. Any item in this list can be specified as
-     * argument to {@link #getPalette}.
+     * Returns the set of available palette names. Any item in this set can be specified as
+     * argument to the {@link #getPalette(String, int)} method.
+     * <p>
+     * If this method can not infer the names of available palettes, then it returns {@code null}.
+     * Note that this is not the same than an empty set, which means "there is no palette". The
+     * null return value means that the set is unknown.
      *
      * @return The list of available palette name, or {@code null} if this method
      *         is unable to fetch this information.
      */
-    public String[] getAvailableNames() {
+    public Set<String> getAvailableNames() {
+        boolean found = false;
         final Set<String> names = new TreeSet<String>();
         PaletteFactory factory = this;
         do {
-            factory.getAvailableNames(names);
+            found |= factory.getAvailableNames(names);
             factory = factory.fallback;
         } while (factory != null);
-        return names.toArray(new String[names.size()]);
+        if (!found) {
+            return null;
+        }
+        return names;
     }
 
     /**
      * Adds available palette names to the specified collection.
+     *
+     * @param  names The collection where to add the name of the palettes.
+     * @return {@code true} if this method has been able to find some informations about palettes.
      */
-    private void getAvailableNames(final Collection<String> names) {
+    private boolean getAvailableNames(final Collection<String> names) {
         /*
-         * First, parses the content of every "list.txt" files found on the classpath. Those files
-         * are optional. But if they are present, we assume that their content are accurate.
+         * First, parse the content of every "list.txt" files found on the classpath. Those files
+         * are optional. But if they are present, we assume that their content are accurate (this
+         * will not be verified).
          */
-        String filename = new File(directory, LIST_FILE).getPath();
-        BufferedReader in = getReader(LIST_FILE, "getAvailableNames");
+        boolean found = false;
         try {
+            BufferedReader in = getReader(LIST_FILE, "getAvailableNames");
             if (in != null) {
                 readNames(in, names);
+                found = true;
             }
+            /*
+             * We can iterate only with ClassLoader because there is no Class.getResources(...)
+             * method. Note that this iteration (when performed) is not completly redundant with
+             * the above call to 'getReader' because the user may have overriden
+             * PaletteFactory.getResourceAsStream(String).
+             */
             if (classloader != null) {
+                final String filename = new File(directory, LIST_FILE).getPath().replace(File.separatorChar, '/');
                 for (final Enumeration<URL> it=classloader.getResources(filename); it.hasMoreElements();) {
                     final URL url = it.nextElement();
                     in = getReader(url.openStream());
                     readNames(in, names);
+                    found = true;
                 }
             }
         } catch (IOException e) {
             /*
              * Logs a warning but do not stop. The only consequence is that the names list
-             * will be incomplete. We log the message as if came from getAvailableNames(),
-             * which is the public method that invoked this one.
+             * will be incomplete. We log the message as if it came from getAvailableNames(),
+             * because it is the public method that invoked this one.
              */
             Logging.unexpectedException(PaletteFactory.class, "getAvailableNames", e);
         }
@@ -474,30 +559,30 @@ public class PaletteFactory {
          */
         File dir = (directory != null) ? directory : new File(".");
         if (classloader != null) {
-            dir = toFile(classloader.getResource(dir.getPath()));
+            dir = IOUtilities.toFile(classloader.getResource(dir.getPath()));
             if (dir == null) {
                 // Directory not found.
-                return;
+                return found;
             }
         } else if (loader != null) {
-            dir = toFile(loader.getResource(dir.getPath()));
+            dir = IOUtilities.toFile(loader.getResource(dir.getPath()));
             if (dir == null) {
                 // Directory not found.
-                return;
+                return found;
             }
         }
-        if (!dir.isDirectory()) {
-            return;
-        }
         final String[] list = dir.list(new DefaultFileFilter('*' + extension));
+        if (list == null) {
+            return found; // Not a directory.
+        }
         final int extLg = extension.length();
-        for (int i=0; i<list.length; i++) {
-            filename = list[i];
+        for (final String filename : list) {
             final int lg = filename.length();
             if (lg > extLg && filename.regionMatches(true, lg-extLg, extension, 0, extLg)) {
                 names.add(filename.substring(0, lg-extLg));
             }
         }
+        return true;
     }
 
     /**
@@ -518,17 +603,6 @@ public class PaletteFactory {
     }
 
     /**
-     * Transforms an {@link URL} into a {@link File}. If the URL can't be
-     * interpreted as a file, then this method returns {@code null}.
-     */
-    private static File toFile(final URL url) {
-        if (url != null && url.getProtocol().equalsIgnoreCase("file")) {
-            return new File(url.getPath());
-        }
-        return null;
-    }
-
-    /**
      * Returns a buffered reader for the specified palette.
      *
      * @param  The palette's name to load. This name doesn't need to contains a path
@@ -546,8 +620,7 @@ public class PaletteFactory {
     /**
      * Returns a buffered reader for the specified filename.
      *
-     * @param  The filename. Path and extension are set according value specified
-     *         at construction time.
+     * @param  The filename. Path and extension are set according value specified at construction time.
      * @return A buffered reader to read {@code name}, or {@code null} if the resource is not found.
      */
     private LineNumberReader getReader(final String name, final String caller) {
@@ -654,13 +727,11 @@ public class PaletteFactory {
 
     /**
      * Loads colors from a definition file. If no colors were found in the current palette
-     * factory and a fallback was specified at construction time, then the fallback will
+     * factory, then the fallback (if any fallback was specified to the constructor) will
      * be queried.
      *
-     * @param  name The palette's name to load. This name doesn't need to contains a path
-     *              or an extension. Path and extension are set according value specified
-     *              at construction time.
-     * @return The set of colors, or {@code null} if the set was not found.
+     * @param  name The name of the palette to load.
+     * @return The set of colors, or {@code null} if no palette was found for the given name.
      * @throws IOException if an error occurs during reading.
      */
     public Color[] getColors(final String name) throws IOException {
@@ -674,7 +745,7 @@ public class PaletteFactory {
     }
 
     /**
-     * Ensures that the specified valus is inside the {@code [0..255]} range.
+     * Ensures that the specified value is inside the {@code [0..255]} range.
      * If the value is outside that range, a {@link ParseException} is thrown.
      */
     private int byteValue(final int value) throws ParseException {
@@ -686,11 +757,18 @@ public class PaletteFactory {
     }
 
     /**
-     * Returns the palette of the specified name and size. The palette's name doesn't need
-     * to contains a directory path or an extension. Path and extension are set according
-     * values specified at construction time.
+     * Returns the palette of the specified name and size.
+     * The default implementation is equivalents to:
      *
-     * @param  name The palette's name to load.
+     * {@preformat java
+     *     return getPalette(name, 0, size, size, 1, 0);
+     * }
+     *
+     * This method does not test the validity of the {@code name} argument. If there is
+     * no palette for the given name, then a {@link java.io.FileNotFoundException} will
+     * be thrown by the getter methods in the returned palette.
+     *
+     * @param  name The name of the palette to load.
      * @param  size The {@linkplain IndexColorModel index color model} size.
      * @return The palette.
      *
@@ -702,8 +780,17 @@ public class PaletteFactory {
 
     /**
      * Returns a palette with a <cite>pad value</cite> at index 0.
+     * The default implementation is equivalents to:
      *
-     * @param  name The palette's name to load.
+     * {@preformat java
+     *     return getPalette(name, 1, size, size, 1, 0);
+     * }
+     *
+     * This method does not test the validity of the {@code name} argument. If there is
+     * no palette for the given name, then a {@link java.io.FileNotFoundException} will
+     * be thrown by the getter methods in the returned palette.
+     *
+     * @param  name The name of the palette to load.
      * @param  size The {@linkplain IndexColorModel index color model} size.
      * @return The palette.
      *
@@ -715,8 +802,17 @@ public class PaletteFactory {
 
     /**
      * Returns a palette with <cite>pad value</cite> at the last index.
+     * The default implementation is equivalents to:
      *
-     * @param  name The palette's name to load.
+     * {@preformat java
+     *     return getPalette(name, 0, size-1, size, 1, 0);
+     * }
+     *
+     * This method does not test the validity of the {@code name} argument. If there is
+     * no palette for the given name, then a {@link java.io.FileNotFoundException} will
+     * be thrown by the getter methods in the returned palette.
+     *
+     * @param  name The name of the palette to load.
      * @param  size The {@linkplain IndexColorModel index color model} size.
      * @return The palette.
      *
@@ -731,10 +827,11 @@ public class PaletteFactory {
      * in the range {@code lower} inclusive to {@code upper} exclusive. Remaining pixel values
      * (if any) will be left to a black or transparent color by default.
      * <p>
-     * The palette's name doesn't need to contains a directory path or an extension.
-     * Path and extension are set according values specified at construction time.
+     * This method does not test the validity of the {@code name} argument. If there is
+     * no palette for the given name, then a {@link java.io.FileNotFoundException} will
+     * be thrown by the getter methods in the returned palette.
      *
-     * @param name  The palette's name to load.
+     * @param  name The name of the palette to load.
      * @param lower Index of the first valid element (inclusive) in the
      *              {@linkplain IndexColorModel index color model} to be created.
      * @param upper Index of the last valid element (exclusive) in the

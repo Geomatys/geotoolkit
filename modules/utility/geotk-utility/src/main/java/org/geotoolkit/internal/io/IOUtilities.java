@@ -35,7 +35,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -64,6 +64,22 @@ public final class IOUtilities {
                 }
             }
             root = root.getParentFile();
+        }
+        return null;
+    }
+
+    /**
+     * Transforms an {@link URL} into a {@link File}. If the URL can't be
+     * interpreted as a file, then this method returns {@code null}.
+     *
+     * @param  url The URL (may be {@code null}).
+     * @return The file for the given URL, or {@code null}.
+     *
+     * @since 3.05
+     */
+    public static File toFile(final URL url) {
+        if (url != null && url.getProtocol().equalsIgnoreCase("file")) {
+            return new File(url.getPath());
         }
         return null;
     }

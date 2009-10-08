@@ -1,10 +1,11 @@
+# List of .pal files.
+
 bell
 blue-red
-CHLA-Nasa
-CHLA-SeaWifs
 dem
 grayscale
 rainbow
+rainbow-c
 red-blue
-SST-Nasa
+SeaWiFS
 white-cyan-red
