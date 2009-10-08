@@ -54,18 +54,18 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class DiffFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 
-    private FeatureReader<T, F> reader;
-    private Diff diff;
-    /** Next value as peeked by hasNext() */
-    F next = null;
+    private final FeatureReader<T, F> reader;
+    private final Diff diff;
     private final Filter filter;
-    private final Set encounteredFids;
-    private Iterator<F> addedIterator;
-    private Iterator<F> modifiedIterator;
-    private Iterator<Identifier> fids;
-    private Iterator<F> spatialIndexIterator;
-    private boolean indexedGeometryFilter = false;
-    private boolean fidFilter = false;
+    private final Set encounteredFids = new HashSet();
+    private final boolean indexedGeometryFilter;
+    private final boolean fidFilter;
+    
+    private Iterator<? extends Feature> addedIterator;
+    private Iterator<? extends Feature> modifiedIterator;
+    private Iterator<? extends Identifier> fids;
+    private Iterator<? extends Feature> spatialIndexIterator;
+    private F next = null;
 
     /**
      * This constructor grabs a "copy" of the current diff.
@@ -75,10 +75,10 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
      * </p>
      * 
      * @param reader
-     * @param diff2 Differences of Feature by FID
+     * @param diff Differences of Feature by FID
      */
-    public DiffFeatureReader(final FeatureReader<T, F> reader, final Diff diff2) {
-        this(reader, diff2, Filter.INCLUDE);
+    public DiffFeatureReader(final FeatureReader<T, F> reader, final Diff diff) {
+        this(reader, diff, Filter.INCLUDE);
     }
 
     /**
@@ -89,18 +89,22 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
      * </p>
      * 
      * @param reader
-     * @param diff2 Differences of Feature by FID
+     * @param diff Differences of Feature by FID
      */
-    public DiffFeatureReader(final FeatureReader<T, F> reader, final Diff diff2, final Filter filter) {
+    public DiffFeatureReader(final FeatureReader<T, F> reader, final Diff diff, final Filter filter) {
         this.reader = reader;
-        this.diff = diff2;
+        this.diff = diff;
         this.filter = filter;
-        encounteredFids = new HashSet();
 
         if (filter instanceof Id) {
             fidFilter = true;
-        } else if (isSubsetOfBboxFilter(filter)) {
+            indexedGeometryFilter = false;
+        }else if(isSubsetOfBboxFilter(filter)) {
+            fidFilter = false;
             indexedGeometryFilter = true;
+        }else{
+            fidFilter = false;
+            indexedGeometryFilter = false;
         }
 
         synchronized (diff) {
@@ -126,9 +130,8 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     @Override
     public F next() throws IOException, IllegalAttributeException, NoSuchElementException {
         if (hasNext()) {
-            F live = next;
+            final F live = next;
             next = null;
-
             return live;
         }
 
@@ -144,13 +147,13 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
             // We found it already
             return true;
         }
-        F peek;
-
+        
         if (filter == Filter.EXCLUDE) {
             return false;
         }
 
-        while ((reader != null) && reader.hasNext()) {
+        F peek;
+        while(reader.hasNext()) {
 
             try {
                 peek = reader.next();
@@ -160,20 +163,21 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
                 throw new DataSourceException("Could not aquire the next Feature", e);
             }
 
-            String fid = peek.getIdentifier().getID();
+            final String fid = peek.getIdentifier().getID();
             encounteredFids.add(fid);
 
-            if (diff.modified2.containsKey(fid)) {
-                F changed = (F) diff.modified2.get(fid);
+            final F changed = (F) diff.modified2.get(fid);
+            if(changed != null){
+                //the feature is modified in the diff, use it
                 if (changed == TransactionStateDiff.NULL || !filter.evaluate(changed)) {
+                    //the feature has be removed in the diff or doesnt match the filter anymore
                     continue;
                 } else {
                     next = changed;
                     return true;
                 }
             } else {
-
-                next = peek; // found feature
+                next = peek;
                 return true;
             }
         }
@@ -189,11 +193,9 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     public void close() throws IOException {
         if (reader != null) {
             reader.close();
-            reader = null;
         }
 
         if (diff != null) {
-            diff = null;
             addedIterator = null;
         }
     }
@@ -211,7 +213,7 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
 
     protected void querySpatialIndex() {
         while (spatialIndexIterator.hasNext() && next == null) {
-            F f = (F) spatialIndexIterator.next();
+            final F f = (F) spatialIndexIterator.next();
             if (encounteredFids.contains(f.getIdentifier().getID()) || !filter.evaluate(f)) {
                 continue;
             }
@@ -238,12 +240,12 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
     }
 
     protected void queryFidFilter() {
-        Id fidFilter = (Id) filter;
+        final Id fidFilter = (Id) filter;
         if (fids == null) {
             fids = fidFilter.getIdentifiers().iterator();
         }
         while (fids.hasNext() && next == null) {
-            String fid = fids.next().toString();
+            final String fid = fids.next().toString();
             if (!encounteredFids.contains(fid)) {
                 next = (F) diff.modified2.get(fid);
                 if (next == null) {
@@ -259,7 +261,17 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
         return diff.queryIndex(env);
     }
 
-    protected Envelope extractBboxForSpatialIndexQuery(final BinarySpatialOperator f) {
+    protected boolean isDefaultGeometry(PropertyName ae) {
+        return reader.getFeatureType().getGeometryDescriptor().getLocalName().equals(ae.getPropertyName());
+    }
+
+    private static boolean isSubsetOfBboxFilter(final Filter filter) {
+        return filter instanceof Contains || filter instanceof Crosses ||
+                filter instanceof Overlaps || filter instanceof Touches ||
+                filter instanceof Within || filter instanceof BBOX;
+    }
+
+    private static Envelope extractBboxForSpatialIndexQuery(final BinarySpatialOperator f) {
         final BinarySpatialOperator geomFilter = (BinarySpatialOperator) f;
         final Expression leftGeometry = geomFilter.getExpression1();
         final Expression rightGeometry = geomFilter.getExpression2();
@@ -271,15 +283,5 @@ public class DiffFeatureReader<T extends FeatureType, F extends Feature> impleme
             g = (Geometry) ((Literal) rightGeometry).getValue();
         }
         return g.getEnvelopeInternal();
-    }
-
-    protected boolean isDefaultGeometry(PropertyName ae) {
-        return reader.getFeatureType().getGeometryDescriptor().getLocalName().equals(ae.getPropertyName());
-    }
-
-    protected boolean isSubsetOfBboxFilter(final Filter f) {
-        return filter instanceof Contains || filter instanceof Crosses ||
-                filter instanceof Overlaps || filter instanceof Touches ||
-                filter instanceof Within || filter instanceof BBOX;
     }
 }

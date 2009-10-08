@@ -46,7 +46,14 @@ public interface AttributeReader {
      *
      * @return AttributeType at given index
      */
-    AttributeDescriptor getAttributeType(int index) throws ArrayIndexOutOfBoundsException;
+    AttributeDescriptor getAttributeDescriptor(int index) throws ArrayIndexOutOfBoundsException;
+
+    /**
+     * Retrieve all AttributeDescriptors.
+     * 
+     * @return Array of all AttributeDescriptor in index order
+     */
+    AttributeDescriptor[] getAttributeDescriptors();
 
     /**
      * Release any resources associated with this reader
@@ -71,4 +78,12 @@ public interface AttributeReader {
      * @return Object Attribute at given index
      */
     Object read(int index) throws IOException, ArrayIndexOutOfBoundsException;
+
+    /**
+     * Read all attributs in one call, improves performances when iterating.
+     *
+     * @param buffer, be sure it is not null and has the good size
+     * @throws IOException
+     */
+    void read(Object[] buffer) throws IOException;
 }

@@ -56,8 +56,8 @@ public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, Simple
     private final AttributeReader attributeReader;
     private final SimpleFeatureType schema;
     private final FIDReader fidReader;
-    protected final Object[] attributes;
-    private SimpleFeatureBuilder builder;
+    private final Object[] buffer;
+    private final SimpleFeatureBuilder builder;
 
     /**
      * Creates a new instance of AbstractFeatureReader
@@ -69,17 +69,17 @@ public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, Simple
      * @throws SchemaException if we could not determine the correct
      *         FeatureType
      */
-    public FIDFeatureReader(AttributeReader attributeReader,
-            FIDReader fidReader, SimpleFeatureType schema) throws SchemaException {
+    public FIDFeatureReader(AttributeReader attributeReader, FIDReader fidReader, SimpleFeatureType schema)
+            throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
 
         if (schema == null) {
-            schema = createSchema();
+            schema = createSchema(attributeReader);
         }
 
         this.schema = schema;
-        this.attributes = new Object[attributeReader.getAttributeCount()];
+        this.buffer = new Object[attributeReader.getAttributeCount()];
         this.builder = new SimpleFeatureBuilder(schema);
     }
 
@@ -92,43 +92,25 @@ public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, Simple
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature next()
-            throws IOException, IllegalAttributeException, NoSuchElementException {
+    public SimpleFeature next() throws IOException, IllegalAttributeException, NoSuchElementException {
         if (attributeReader.hasNext()) {
             attributeReader.next();
-
-            return readFeature(attributeReader);
+            return readFeature();
         } else {
-            throw new NoSuchElementException(
-                    "There are no more Features to be read");
+            throw new NoSuchElementException("There are no more Features to be read");
         }
     }
 
-    protected SimpleFeatureType createSchema() throws SchemaException {
-        SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
-        b.setName("xxx");
-
-        for (int i = 0, ii = attributeReader.getAttributeCount(); i < ii;
-                i++) {
-            b.add(attributeReader.getAttributeType(i));
-        }
-
-        return b.buildFeatureType();
-    }
-
-    protected SimpleFeature readFeature(AttributeReader atts)
-            throws IllegalAttributeException, IOException {
+    private SimpleFeature readFeature() throws IllegalAttributeException, IOException {
 
         //Seems like doing it here could be a bit expensive.
         //The other option from this is to have this constructed with two
         //attributeReaders, the FID one and real attributes one.  Could then
         //have default FIDAttributeReader.
-        String fid = fidReader.next();
-
+        final String fid = fidReader.next();
         builder.reset();
-        for (int i = 0, ii = atts.getAttributeCount(); i < ii; i++) {
-            builder.add(atts.read(i));
-        }
+        attributeReader.read(buffer);
+        builder.addAll(buffer);
         return builder.buildFeature(fid);
     }
 
@@ -156,4 +138,15 @@ public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, Simple
     public boolean hasNext() throws IOException {
         return attributeReader.hasNext();
     }
+
+    /**
+     * Create a FeatureType based on the attributs described in the attribut reader.
+     */
+    private static SimpleFeatureType createSchema(AttributeReader attributeReader) throws SchemaException {
+        final SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
+        b.setName("xxx");
+        b.addAll(attributeReader.getAttributeDescriptors());
+        return b.buildFeatureType();
+    }
+    
 }

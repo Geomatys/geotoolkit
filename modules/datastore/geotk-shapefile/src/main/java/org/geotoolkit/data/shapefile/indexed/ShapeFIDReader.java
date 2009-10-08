@@ -29,8 +29,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/indexed/ShapeFIDReader.java $
  */
 public class ShapeFIDReader implements FIDReader {
-    protected static final String CLOSE_MESG = "Close has already been called"
-            + " on this FIDReader";
+    protected static final String CLOSE_MESG = "Close has already been called on this FIDReader";
     private boolean opened;
     private IndexedShapefileAttributeReader reader;
     private int len;
@@ -53,6 +52,7 @@ public class ShapeFIDReader implements FIDReader {
     /**
      * Release any resources associated with this reader
      */
+    @Override
     public void close() {
         this.opened = false;
     }
@@ -67,6 +67,7 @@ public class ShapeFIDReader implements FIDReader {
      * @throws IOException
      *                 If closed
      */
+    @Override
     public boolean hasNext() throws IOException {
         if (!this.opened) {
             throw new IOException(CLOSE_MESG);
@@ -88,6 +89,7 @@ public class ShapeFIDReader implements FIDReader {
      * @throws IOException
      *                 If closed
      */
+    @Override
     public String next() throws IOException {
         if (!this.opened) {
             throw new IOException(CLOSE_MESG);

@@ -72,6 +72,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
         this.recno = 0;
     }
 
+    @Override
     public void close() throws IOException {
         try {
             super.close();
@@ -84,6 +85,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
         }
     }
 
+    @Override
     public boolean hasNext() throws IOException {
         if (this.goodRecs != null) {
             if (next != null)
@@ -100,6 +102,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
         return super.hasNext();
     }
 
+    @Override
     public void next() throws IOException {
         if (!hasNext())
             throw new IndexOutOfBoundsException("No more features in reader");
@@ -120,6 +123,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
         super.next();
     }
 
+    @Override
     public int getRecordNumber() {
         return this.recno;
     }

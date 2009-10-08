@@ -46,7 +46,7 @@ public class DiffWriterTest extends TestCase {
 
         Diff diff = new Diff();
         diff.add("1", SimpleFeatureBuilder.build(type, new Object[]{"diff1", geom}, "1"));
-        diff.modify("original", SimpleFeatureBuilder.build(type, new Object[]{"diff2", geom}, "original"));
+        diff.update("original", SimpleFeatureBuilder.build(type, new Object[]{"diff2", geom}, "original"));
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = new ATestReader(type, SimpleFeatureBuilder.build(type, new Object[]{"original", geom}, "original"));
         writer = new DiffFeatureWriter(reader, diff) {
 

@@ -47,11 +47,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleFeature> {
 
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-    protected Diff diff;
-    SimpleFeature next; // next value aquired by hasNext()
-    SimpleFeature live; // live value supplied by FeatureReader
-    SimpleFeature current; // duplicate provided to user
+    private final FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+    //keep it package visible for test cases
+    final Diff diff;
+    private SimpleFeature next; // next value aquired by hasNext()
+    private SimpleFeature live; // live value supplied by FeatureReader
+    private SimpleFeature current; // duplicate provided to user
 
     /**
      * DiffFeatureWriter construction.
@@ -146,7 +147,7 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
         //     (We do the work)
         if ((live != null)) {
             // We have a modification to record!
-            diff.modify(live.getID(), current);
+            diff.update(live.getID(), current);
 
             final JTSEnvelope2D bounds = new JTSEnvelope2D((CoordinateReferenceSystem) null);
             bounds.include(live.getBounds());
@@ -207,13 +208,11 @@ public abstract class DiffFeatureWriter implements FeatureWriter<SimpleFeatureTy
     public void close() throws IOException {
         if (reader != null) {
             reader.close();
-            reader = null;
         }
 
         current = null;
         live = null;
         next = null;
-        diff = null;
     }
 
     /**

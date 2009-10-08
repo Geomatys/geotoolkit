@@ -31,14 +31,12 @@ import org.opengis.feature.type.AttributeDescriptor;
  * <BR/>The dbf file may not be necessary, if not, just pass null as the
  * DbaseFileReader
  */
-public class ShapefileAttributeReader extends AbstractAttributeIO implements
-        AttributeReader {
+public class ShapefileAttributeReader extends AbstractAttributeIO implements AttributeReader {
 
     protected ShapefileReader shp;
     protected DbaseFileReader dbf;
     protected DbaseFileReader.Row row;
     protected ShapefileReader.Record record;
-    int cnt;
 
     public ShapefileAttributeReader(List<AttributeDescriptor> atts,
             ShapefileReader shp, DbaseFileReader dbf) {
@@ -89,21 +87,33 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
      */
     @Override
     public boolean hasNext() throws IOException {
-        int n = shp.hasNext() ? 1 : 0;
 
-        if (dbf != null) {
-            n += (dbf.hasNext() ? 2 : 0);
+        if(shp.hasNext()){
+            if(dbf != null){
+                if(dbf.hasNext()){
+                    return true;
+                }else{
+                    //shape files has more data then the dbf ? file or reader is corrupted
+                    throw new IOException("Shp has extra record");
+                }
+            }else{
+                //no attributs, only shapes
+                return true;
+            }
+        }else{
+            if(dbf != null){
+                if(!dbf.hasNext()){
+                    return false;
+                }else{
+                    //dbf has more data then the shape ? file or reader is corrupted
+                    throw new IOException("Dbf has extra record");
+                }
+            }else{
+                //no attributs, only shapes
+                return false;
+            }
         }
 
-        if ((n == 3) || ((n == 1) && (dbf == null))) {
-            return true;
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        throw new IOException(((n == 1) ? "Shp" : "Dbf") + " has extra record");
     }
 
     /**
@@ -122,19 +132,23 @@ public class ShapefileAttributeReader extends AbstractAttributeIO implements
      * {@inheritDoc }
      */
     @Override
-    public Object read(int param) throws IOException,
-            java.lang.ArrayIndexOutOfBoundsException {
+    public Object read(int param) throws IOException,IndexOutOfBoundsException {
         switch (param) {
-        case 0:
-            return record.shape();
+            case 0:
+                return record.shape();
+            default:
+                if (row != null) {
+                    return row.read(param - 1);
+                }
+                return null;
+        }
+    }
 
-        default:
-
-            if (row != null) {
-                return row.read(param - 1);
-            }
-
-            return null;
+    @Override
+    public void read(Object[] buffer) throws IOException {
+        buffer[0] = record.shape();
+        for(int i=0,n=getAttributeCount()-1; i<n; i++){
+            buffer[i+1] = row.read(i);
         }
     }
 }

@@ -18,7 +18,6 @@ package org.geotoolkit.data;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,8 +34,11 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 public class Diff {
 
-    private final Map modifiedFeatures;
-    private final Map addedFeatures;
+    private final Map<String,SimpleFeature> modifiedFeatures;
+    private final Map<String,SimpleFeature> addedFeatures;
+    private final Object mutex;
+    private SpatialIndex spatialIndex;
+
     /**
      * Unmodifiable view of modified features.
      * It is imperative that the user manually synchronize on the
@@ -55,7 +57,7 @@ public class Diff {
      * <p>The returned map will be serializable if the specified map is
      * serializable.
      */
-    public final Map modified2;
+    public final Map<String,SimpleFeature> modified2;
     /**
      * Unmodifiable view of added features.
      * It is imperative that the user manually synchronize on the
@@ -74,33 +76,17 @@ public class Diff {
      * <p>The returned map will be serializable if the specified map is
      * serializable.
      */
-    public final Map added;
+    public final Map<String,SimpleFeature> added;
     public int nextFID = 0;
-    private SpatialIndex spatialIndex;
-    final Object mutex;
+    
 
     public Diff() {
-        modifiedFeatures = new ConcurrentHashMap();
-        addedFeatures = new ConcurrentHashMap();
+        modifiedFeatures = new ConcurrentHashMap<String,SimpleFeature>();
+        addedFeatures = new ConcurrentHashMap<String,SimpleFeature>();
         modified2 = Collections.unmodifiableMap(modifiedFeatures);
         added = Collections.unmodifiableMap(addedFeatures);
         spatialIndex = new Quadtree();
         mutex = this;
-    }
-
-    public boolean isEmpty() {
-        synchronized (mutex) {
-            return modifiedFeatures.isEmpty() && addedFeatures.isEmpty();
-        }
-    }
-
-    public void clear() {
-        synchronized (mutex) {
-            nextFID = 0;
-            addedFeatures.clear();
-            modifiedFeatures.clear();
-            spatialIndex = new Quadtree();
-        }
     }
 
     public Diff(final Diff other) {
@@ -113,20 +99,9 @@ public class Diff {
         mutex = this;
     }
 
-    public void modify(final String fid, final SimpleFeature f) {
+    public boolean isEmpty() {
         synchronized (mutex) {
-            final SimpleFeature old;
-            if (addedFeatures.containsKey(fid)) {
-                old = (SimpleFeature) addedFeatures.get(fid);
-                addedFeatures.put(fid, f);
-            } else {
-                old = (SimpleFeature) modifiedFeatures.get(fid);
-                modifiedFeatures.put(fid, f);
-            }
-            if (old != null) {
-                spatialIndex.remove(JTSEnvelope2D.reference(old.getBounds()), old);
-            }
-            addToSpatialIndex(f);
+            return modifiedFeatures.isEmpty() && addedFeatures.isEmpty();
         }
     }
 
@@ -137,12 +112,32 @@ public class Diff {
         }
     }
 
-    protected void addToSpatialIndex(final SimpleFeature f) {
+    private void addToSpatialIndex(final SimpleFeature f) {
         if (f.getDefaultGeometry() != null) {
-            BoundingBox bounds = f.getBounds();
+            final BoundingBox bounds = f.getBounds();
             if (!bounds.isEmpty()) {
                 spatialIndex.insert(JTSEnvelope2D.reference(bounds), f);
             }
+        }
+    }
+
+    /*
+     * Update a feature already in the diff
+     */
+    public void update(final String fid, final SimpleFeature f) {
+        synchronized (mutex) {
+            final SimpleFeature old;
+            if (addedFeatures.containsKey(fid)) {
+                old = addedFeatures.get(fid);
+                addedFeatures.put(fid, f);
+            } else {
+                old = modifiedFeatures.get(fid);
+                modifiedFeatures.put(fid, f);
+            }
+            if (old != null) {
+                spatialIndex.remove(JTSEnvelope2D.reference(old.getBounds()), old);
+            }
+            addToSpatialIndex(f);
         }
     }
 
@@ -163,28 +158,34 @@ public class Diff {
         }
     }
 
+    public void clear() {
+        synchronized (mutex) {
+            nextFID = 0;
+            addedFeatures.clear();
+            modifiedFeatures.clear();
+            spatialIndex = new Quadtree();
+        }
+    }
+
     public List queryIndex(final Envelope env) {
         synchronized (mutex) {
             return spatialIndex.query(env);
         }
     }
 
-    protected Quadtree copySTRtreeFrom(final Diff diff) {
+    private Quadtree copySTRtreeFrom(final Diff diff) {
         final Quadtree tree = new Quadtree();
 
         synchronized (diff) {
-            Iterator i = diff.added.entrySet().iterator();
-            while (i.hasNext()) {
-                Entry e = (Map.Entry) i.next();
-                SimpleFeature f = (SimpleFeature) e.getValue();
+            for(final Entry<String,SimpleFeature> entry : diff.added.entrySet()){
+                final SimpleFeature f = entry.getValue();
                 if (!diff.modifiedFeatures.containsKey(f.getID())) {
                     tree.insert(JTSEnvelope2D.reference(f.getBounds()), f);
                 }
             }
-            Iterator j = diff.modified2.entrySet().iterator();
-            while (j.hasNext()) {
-                Entry e = (Map.Entry) j.next();
-                SimpleFeature f = (SimpleFeature) e.getValue();
+
+            for(final Entry<String,SimpleFeature> entry : diff.modified2.entrySet()){
+                final SimpleFeature f = (SimpleFeature) entry.getValue();
                 tree.insert(JTSEnvelope2D.reference(f.getBounds()), f);
             }
         }

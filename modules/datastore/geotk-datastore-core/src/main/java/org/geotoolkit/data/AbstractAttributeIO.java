@@ -29,30 +29,27 @@ public abstract class AbstractAttributeIO {
 
     protected final AttributeDescriptor[] metaData;
 
-    protected AbstractAttributeIO(AttributeDescriptor[] metaData) {
-        this.metaData = metaData;
-    }
-
     /**
-     * Copy the meta-data from this reader, but don't use the reader!!
+     * Copy the meta-data from this reader, but doesn't use the reader.
      */
     protected AbstractAttributeIO(AttributeReader defs) {
-        this(copy(defs));
+        this(defs.getAttributeDescriptors());
     }
 
-    public static AttributeDescriptor[] copy(AttributeReader defs) {
-        AttributeDescriptor[] d = new AttributeDescriptor[defs.getAttributeCount()];
-        for (int i = 0, ii = d.length; i < ii; i++) {
-            d[i] = defs.getAttributeType(i);
-        }
-        return d;
+    protected AbstractAttributeIO(AttributeDescriptor[] metaData) {
+        this.metaData = metaData;
     }
 
     public final int getAttributeCount() {
         return metaData.length;
     }
 
-    public final AttributeDescriptor getAttributeType(int position) {
+    public final AttributeDescriptor getAttributeDescriptor(int position) {
         return metaData[position];
     }
+
+    public final AttributeDescriptor[] getAttributeDescriptors(){
+        return metaData;
+    }
+
 }
