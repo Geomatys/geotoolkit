@@ -108,7 +108,7 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
      * Returns the quantitative value or values, content determined
      * by the evaluation procedure used.
      *
-     * @TODO find an implementation of {@link Record}. The one in this class is deprecated.
+     * @todo Find an implementation of {@link Record}. The one in this class is deprecated.
      */
     @Override
 /// @XmlElement(name = "value", required = true)

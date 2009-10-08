@@ -59,19 +59,24 @@ import org.geotoolkit.lang.ThreadSafe;
  *       If the same value is defined twice, the value of previous step have precedence.</p></li>
  * </ol>
  *
- * This factory can also be used to provide custom extensions or overrides to a main EPSG
- * factory. In order to provide a custom extension, you can create a subclass that invoke the
- * {@link #PropertyEpsgFactory(Hints, String, Citation[])} constructor with different constants.
- * You can also subclass {@link PropertyAuthorityFactory} directly for getting more control. In
- * order to make the factory be an override, override the {@link #setOrdering setOrdering(...)}
- * method as below:
+ * This factory can also be used to provide custom extensions or overrides to a main EPSG factory:
+ *
+ * <ul>
+ *   <li><p>In order to provide a custom extension, you can create a subclass that invoke the
+ *   {@link #PropertyEpsgFactory(Hints, String, Citation[])} constructor with different constants.
+ *   You can also subclass {@link PropertyAuthorityFactory} directly for getting more control.</p></li>
+ *
+ *   <li><p>In order to make the factory be an override, override the
+ *   {@link #setOrdering setOrdering(...)} method as below:
  *
  * {@preformat java
  *     protected void setOrdering(Organizer organizer) {
  *         organizer.before(ThreadedEpsgFactory.class);
  *     }
- * }
+ * }</p></li>
+ * </ul>
  *
+ * {@section Caching of CRS objects}
  * This factory doesn't cache any result. Any call to a {@code createFoo} method
  * will trig a new WKT parsing. For adding caching service, this factory should
  * be wrapped in {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory}.
@@ -91,8 +96,8 @@ import org.geotoolkit.lang.ThreadSafe;
 public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The default filename to read, which is {@value}. The default
-     * {@code PropertyEpsgFactory} implementation will search for all occurences of
-     * <code>org/geotoolkit/referencing/factory/espg/{@value}</code> on the classpath.
+     * {@code PropertyEpsgFactory} implementation will search for every occurences of
+     * {@code org/geotoolkit/referencing/factory/espg/epsg.properties} on the classpath.
      * However a different directory for this filename can be specified using
      * {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY}.
      */

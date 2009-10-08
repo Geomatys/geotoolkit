@@ -66,7 +66,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
  *   <li><p>Parameter descriptors are implementation-dependent. For example if a user searches for
  *       the above-cited {@code "semi_major"} axis length using the {@linkplain
  *       org.geotoolkit.referencing.operation.provider.MapProjection#SEMI_MAJOR Geotk's descriptor}
- *       for this parameter, we will fail to find this parameter in any alternative
+ *       for that parameter, we will fail to find this parameter in any alternative
  *       {@link ParameterValueGroup} implementations. This is against GeoAPI's inter-operability goal.</p></li>
  * </ul>
  *
@@ -115,7 +115,7 @@ public final class Parameters {
      * @param  <T> The expected value class.
      * @param  descriptor The descriptor to cast, or {@code null}.
      * @param  type The expected value class.
-     * @return The descriptor casted to the given type, or {@code null) if the given descriptor was null.
+     * @return The descriptor casted to the given type, or {@code null} if the given descriptor was null.
      * @throws ClassCastException if the given descriptor doesn't have the expected value class.
      *
      * @since 2.5
@@ -177,7 +177,7 @@ public final class Parameters {
      * faulty parameter is known: it is the one given in argument to this method. For a more
      * generic test which can work on group of parameters and provide more details about which
      * parameter failed and why, use the
-     * {@link #isValid(GeneralParameterValue, GeneralParameterDescriptor) method instead.
+     * {@link #isValid(GeneralParameterValue, GeneralParameterDescriptor)} method instead.
      *
      * @param parameter The parameter to test.
      * @return {@code true} if the given parameter is valid.

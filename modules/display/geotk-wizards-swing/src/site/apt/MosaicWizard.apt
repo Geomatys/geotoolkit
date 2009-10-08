@@ -135,12 +135,12 @@ java -Xmx1G -jar geotk.jar
 * The result
 
   The output directory will contain every output tiles with a name pattern like
-  <<<L{level}_{column}{row}.{extension}>>> where <<<{level}>>> is the pyramid level as a decimal
-  number (<<<01>>> for the level having the finest pixels, <<<02>>> for the next level defined in
-  the wizard, <etc.>), <<<{column}>>> is the column of the tile (<<<AA>>> for the first column,
-  <<<AB>>> for the second column, <etc.>) and <<<{row}>>> is the row of the tile (<<<01>>>,
-  <<<02>>>, <etc.>). For example the output tile in the upper-left corner will have a name
-  similar to <<<L01_AA01.png>>>. The actual number of digits used may vary.
+  <<<L\{level\}_\{column\}\{row\}.\{extension\}>>> where <<<\{level\}>>> is the pyramid level as
+  a decimal number (<<<01>>> for the level having the finest pixels, <<<02>>> for the next level
+  defined in the wizard, <etc.>), <<<\{column\}>>> is the column of the tile (<<<AA>>> for the
+  first column, <<<AB>>> for the second column, <etc.>) and <<<\{row\}>>> is the row of the tile
+  (<<<01>>>, <<<02>>>, <etc.>). For example the output tile in the upper-left corner will have a
+  name similar to <<<L01_AA01.png>>>. The actual number of digits used may vary.
 
   Note that some tiles may be missing from the output directory, since the wizard omits the
   tiles having only transparent pixels.
