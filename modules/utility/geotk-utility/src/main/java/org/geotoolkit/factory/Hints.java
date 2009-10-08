@@ -19,6 +19,8 @@ package org.geotoolkit.factory;
 
 import java.awt.RenderingHints;
 import java.io.File;
+import java.io.Serializable;
+import java.io.ObjectStreamException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -67,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.01
+ * @version 3.05
  *
  * @see Factory
  * @see FactoryRegistry
@@ -775,43 +777,60 @@ public class Hints extends RenderingHints {
     }
 
     /**
+     * Returns the enclosing class of the given key, or {@code null} if none. A special case
+     * is applied for {@code sun.awt.SunHints}, which maps to {@link RenderingHints}.
+     */
+    private static Class<?> getEnclosingClass(final RenderingHints.Key key) {
+        Class<?> c = key.getClass().getEnclosingClass();
+        if (c != null && c.getName().startsWith("sun.")) {
+            c = RenderingHints.class;
+        }
+        return c;
+    }
+
+    /**
      * Tries to find the name of the given key, using reflection.
+     *
+     * @param  key The key for which a name is wanted, or {@code null}.
+     * @return The key name as declared in the static constants.
      */
     static String nameOf(final RenderingHints.Key key) {
         if (key == null) {
             return null;
         }
-        if (key instanceof Key) {
-            return key.toString();
-        }
-        int t = 0;
-        while (true) {
-            final Class<?> type;
-            switch (t++) {
-                case 0: {
-                    type = RenderingHints.class;
-                    break;
-                }
-                case 1: {
-                    try {
-                        type = Class.forName("javax.media.jai.JAI");
-                        break;
-                    } catch (ClassNotFoundException e) {
-                        continue;
-                    } catch (NoClassDefFoundError e) {
-                        // May occurs because of indirect JAI dependencies.
-                        continue;
-                    }
-                }
-                default: {
-                    return key.toString();
-                }
-            }
-            final String name = nameOf(type, key);
-            if (name != null) {
-                return name;
+        if (!(key instanceof Key)) {
+            final Field field = fieldOf(key);
+            if (field != null) {
+                return field.getName();
             }
         }
+        return key.toString();
+    }
+
+    /**
+     * Tries to find the field of the given key, using reflection. This method searches
+     * for a constant declared in the enclosing class, which is typically one of:
+     * <p>
+     * <ul>
+     *   <li>{@code org.geotoolkit.factory.Hints}  (this class)</li>
+     *   <li>{@code javax.media.jai.JAI}           (assuming JAI is on the classpath)</li>
+     *   <li>{@code java.awt.RenderingHints}       (actually sun.awt.SunHints at least on Sun JDK)</li>
+     * </ul>
+     *
+     * @param  key The key for which a field is wanted, or {@code null}.
+     * @return The key field as declared in the static constants.
+     */
+    static Field fieldOf(final RenderingHints.Key key) {
+        Field field = null;
+        if (key != null) {
+            Class<?> c = getEnclosingClass(key);
+            if (c == null || (field = fieldOf(c, key)) == null) {
+                if (key instanceof Key && c != (c = ((Key) key).getValueClass())) {
+                    field = fieldOf(c, key);
+                }
+            }
+        }
+        return field;
     }
 
     /**
@@ -819,9 +838,22 @@ public class Hints extends RenderingHints {
      * Otherwise returns {@code null}.
      */
     private static String nameOf(final Class<?> type, final RenderingHints.Key key) {
+        final Field f = fieldOf(type, key);
+        return (f != null) ? f.getName() : null;
+    }
+
+    /**
+     * If the given key is declared in the given class, returns its field.
+     * Otherwise returns {@code null}.
+     */
+    private static Field fieldOf(final Class<?> type, final RenderingHints.Key key) {
         final Field[] fields = type.getFields();
         for (int i=0; i<fields.length; i++) {
             final Field f = fields[i];
+            /*
+             * Note: to be strict, the line below should ensure that the field is final in
+             * addition of static. Unfortunatly the JAI static fields are not final in JAI 1.1.
+             */
             if (Modifier.isStatic(f.getModifiers())) {
                 final Object v;
                 try {
@@ -830,7 +862,7 @@ public class Hints extends RenderingHints {
                     continue;
                 }
                 if (v == key) {
-                    return f.getName();
+                    return f;
                 }
             }
         }
@@ -843,16 +875,22 @@ public class Hints extends RenderingHints {
      * {@linkplain java.awt.RenderingHints.Key rendering key} is not a complete
      * non-sense), but may impact other aspects of an application as well.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * {@section Serialization}
+     * Keys are serializable if the instance to serialize is declared as a public static
+     * final constant in the {@linkplain Class#getEnclosingClass() enclosing class}.
+     * Otherwise, an {@link java.io.NotSerializableException} will be thrown.
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.05
      *
      * @since 2.1
      * @module
      */
     @Immutable
-    public static class Key extends RenderingHints.Key {
+    @SuppressWarnings("serial") // Not relevant because of writeReplace()
+    public static class Key extends RenderingHints.Key implements Serializable {
         /**
-         * The number of key created up to date.
+         * The number of keys created up to date.
          */
         private static int count;
 
@@ -946,19 +984,35 @@ public class Hints extends RenderingHints {
          */
         @Override
         public String toString() {
-            int t = 0;
-            while (true) {
-                final Class<?> type;
-                switch (t++) {
-                    case 0:  type = Hints.class;     break;
-                    case 1:  type = getValueClass(); break;
-                    default: return super.toString();
+            Class<?> c = getEnclosingClass(this);
+            String name = nameOf(c, this);
+            if (name == null) {
+                if (c != (c = getValueClass())) {
+                    name = nameOf(c, this);
                 }
-                final String name = nameOf(type, this);
-                if (name != null) {
-                    return name;
+                if (name == null) {
+                    name = super.toString();
                 }
             }
+            return name;
+        }
+
+        /**
+         * Invoked on serialization for writing a proxy instead than this {@code Key}
+         * instance. The proxy will use reflection in order to restore the key as one
+         * of the static constants defined in the {@linkplain Class#getEnclosingClass()
+         * enclosing class} on deserialization.
+         *
+         * @return The proxy to be serialized instead than this {@code Key}.
+         * @throws ObjectStreamException If this key can not be serialized
+         *         because it is not a known constant.
+         *
+         * @since 3.05
+         *
+         * @level hidden
+         */
+        protected final Object writeReplace() throws ObjectStreamException {
+            return new SerializedKey(this);
         }
     }
 
@@ -973,6 +1027,7 @@ public class Hints extends RenderingHints {
      * @module
      */
     @Immutable
+    @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class ClassKey extends Key {
         /**
          * Constructs a new key for values of the given class.
@@ -1062,6 +1117,7 @@ public class Hints extends RenderingHints {
      * @module
      */
     @Immutable
+    @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class FileKey extends Key {
         /**
          * {@code true} if write operations need to be allowed.
@@ -1125,6 +1181,7 @@ public class Hints extends RenderingHints {
      * @module
      */
     @Immutable
+    @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class IntegerKey extends Key {
         /**
          * The default value.
@@ -1201,6 +1258,7 @@ public class Hints extends RenderingHints {
      * @module
      */
     @Immutable
+    @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class OptionKey extends Key {
         /**
          * The set of options allowed.
@@ -1260,6 +1318,7 @@ public class Hints extends RenderingHints {
      * @module
      */
     @Immutable
+    @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     static final class DataSourceKey extends Key {
         /**
          * Creates a new key for {@link javax.sql.DataSource} value.

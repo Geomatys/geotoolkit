@@ -21,8 +21,11 @@ import java.awt.RenderingHints;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.media.jai.JAI;
 
+import org.geotoolkit.test.Commons;
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 
@@ -31,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.4
  */
@@ -42,6 +45,25 @@ public final class HintsTest {
     @Test
     public void testAssertionEnabled() {
         assertTrue("Assertions not enabled.", Hints.class.desiredAssertionStatus());
+    }
+
+    /**
+     * Tests the {@link Hints#nameOf} static method.
+     */
+    @Test
+    public void testNameOf() {
+        assertEquals("CS_FACTORY",        Hints.nameOf(Hints.CS_FACTORY));
+        assertEquals("KEY_INTERPOLATION", Hints.nameOf(RenderingHints.KEY_INTERPOLATION));
+        assertEquals("KEY_TILE_CACHE",    Hints.nameOf(JAI.KEY_TILE_CACHE));
+    }
+
+    /**
+     * Tests the serialization of a key.
+     */
+    @Test
+    public void testKeySerialization() {
+        assertSame(Hints.CS_FACTORY,    Commons.serialize(Hints.CS_FACTORY));
+        assertSame(Hints.DATUM_FACTORY, Commons.serialize(Hints.DATUM_FACTORY));
     }
 
     /**

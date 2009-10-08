@@ -156,6 +156,7 @@ public abstract class Factory {
      * An internal hint meaning that a factory has been disposed.
      * The value is the disposal time, used for debugging purpose.
      */
+    @SuppressWarnings("serial")
     private static final Hints.Key DISPOSED = new Hints.Key(Date.class) {
         @Override public String toString() {
             return "DISPOSED";
