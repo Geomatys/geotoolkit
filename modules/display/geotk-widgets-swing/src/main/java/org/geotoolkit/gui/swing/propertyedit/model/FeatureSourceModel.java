@@ -33,6 +33,7 @@ import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
@@ -125,17 +126,19 @@ public class FeatureSourceModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return columns.size();
+        return columns.size()+1; //for id column
     }
 
     @Override
     public Class getColumnClass(int column) {
-        return columns.get(column).getType().getBinding();
+        if(column == 0) return String.class;
+        return columns.get(column-1).getType().getBinding();
     }
 
     @Override
     public String getColumnName(int column) {
-        return columns.get(column).getName().toString();
+        if(column == 0) return "id";
+        return columns.get(column-1).getName().toString();
     }
 
     @Override
@@ -149,7 +152,7 @@ public class FeatureSourceModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return columnIndex != 0;
     }
 
     public Feature getFeatureAt(int rowIndex){
@@ -158,11 +161,13 @@ public class FeatureSourceModel extends DefaultTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return features.get(rowIndex).getProperty(columns.get(columnIndex).getName()).getValue();
+        if(columnIndex == 0) return features.get(rowIndex).getIdentifier().getID();
+        return features.get(rowIndex).getProperty(columns.get(columnIndex-1).getName()).getValue();
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if(columnIndex == 0) return;
 
         final FeatureStore<SimpleFeatureType, SimpleFeature> store;
         if ( ((FeatureMapLayer)layer).getFeatureSource() instanceof FeatureStore) {
@@ -176,7 +181,7 @@ public class FeatureSourceModel extends DefaultTableModel {
             Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));            
             FeatureType schema = store.getSchema();
             
-            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex));
+            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
                         
             try {
                 store.updateFeatures(NAME, aValue, filter);
