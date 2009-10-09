@@ -25,6 +25,9 @@ import static org.junit.Assert.*;
 
 /**
  * Tests {@link EpsgScriptRunner}.
+ * <p>
+ * Note: There is no test of {@link EpsgInstaller} in this module.
+ * The installer is tested in the {@code geotk-epsg} module.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

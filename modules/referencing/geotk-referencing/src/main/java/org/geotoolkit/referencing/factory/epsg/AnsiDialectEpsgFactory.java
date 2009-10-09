@@ -40,7 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Martin Desruisseaux (IRD)
  * @author Didier Richard (IGN)
  * @author John Grange
- * @version 3.00
+ * @version 3.05
  *
  * @since 2.0
  * @module
@@ -173,9 +173,9 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * @since 3.00
      */
     final void autoconfig(final DatabaseMetaData metadata) throws SQLException {
+        final String quote = metadata.getIdentifierQuoteString();
         for (int i=SENTINAL.length; --i>=0;) {
             final String table = SENTINAL[i];
-            final String quote = metadata.getIdentifierQuoteString();
             final ResultSet result = metadata.getTables(null, schema, table, null);
             if (!result.next()) {
                 result.close();
@@ -201,6 +201,20 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * This method inserts "<code><var>schema</var>.</code>" in front of every table names,
      * where <var>schema</var> is the value provided in argument. The "{@code epsg_}" prefix
      * is removed from the table names only if {@code removePrefix} is {@code true}.
+     *
+     * @param schema The database schema in which the epsg tables are stored.
+     * @param removePrefix {@code true} if the "{@code epsg_}" prefix should be removed from
+     *        the table names.
+     * @throws SQLException If the schema can not be set.
+     *
+     * @since 3.05
+     */
+    protected void setSchema(final String schema, final boolean removePrefix) throws SQLException {
+        setSchema(schema, connection.getMetaData().getIdentifierQuoteString(), removePrefix);
+    }
+
+    /**
+     * Implementation of {@link #setSchema(String, boolean)}.
      *
      * @param schema The database schema in which the epsg tables are stored.
      * @param quote  The identifier quotes.
@@ -243,6 +257,17 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * If a schema has been previously set by a call to {@link #setSchema setSchema},
      * it will be preserved. It is better to set the schema (if desired) before to
      * invoke this method.
+     *
+     * @throws SQLException If the name of the tables to query can not be changed.
+     *
+     * @since 3.05
+     */
+    protected void useOriginalTableNames() throws SQLException {
+        useOriginalTableNames(connection.getMetaData().getIdentifierQuoteString());
+    }
+
+    /**
+     * Implementation of {@link #useOriginalTableNames()}.
      *
      * @param open The identifier quote (usually {@code "}).
      */
