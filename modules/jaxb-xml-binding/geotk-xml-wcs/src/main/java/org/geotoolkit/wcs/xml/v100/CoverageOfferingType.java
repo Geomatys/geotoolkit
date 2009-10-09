@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 
 /**
- * Full description of one coverage available from a WCS instance. 
+ * Full description of one coverage available from a WCS instance.
  * WCS version 1.0.0
- * 
+ *
  * <p>Java class for CoverageOfferingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageOfferingType">
  *   &lt;complexContent>
@@ -44,28 +44,29 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageOfferingType")
 public class CoverageOfferingType extends CoverageOfferingBriefType {
-    
+
     private DomainSetType domainSet;
-    
+
     private RangeSet rangeSet;
-    
+
     private SupportedCRSsType supportedCRSs;
-    
+
     private SupportedFormatsType supportedFormats;
-    
+
     private SupportedInterpolationsType supportedInterpolations;
+
     /**
      * An empty constructor used by JAXB.
      */
     CoverageOfferingType(){
     }
-    
+
     /**
      * build a new CoverageOffering type used in describeCoverage response.
      */
@@ -78,30 +79,37 @@ public class CoverageOfferingType extends CoverageOfferingBriefType {
         this.supportedCRSs           = supportedCRSs;
         this.supportedFormats        = supportedFormats;
         this.supportedInterpolations = supportedInterpolations;
-        
+
     }
-    
+
     /**
      * Return the domainSet property
+     */
+    public DomainSetType getDomainSet() {
+        return domainSet;
+    }
+
+    /**
+     * Return the rangeSet property
      */
     public RangeSet getRangeSet(){
         return rangeSet;
     }
-    
+
     /**
      * Return the domainSet property
      */
     public SupportedCRSsType getSupportedCRSs(){
         return supportedCRSs;
     }
-    
+
     /**
      * Return the domainSet property
      */
     public SupportedFormatsType getSupportedFormats(){
         return supportedFormats;
     }
-    
+
     /**
      * Return the domainSet property
      */
