@@ -173,10 +173,19 @@ public class DefaultDataSource implements DataSource {
      * @since 3.03
      */
     public void shutdown() {
-        if (url.startsWith("jdbc:derby:")) try {
-            DriverManager.getConnection(url + ";shutdown=true");
-        } catch (SQLException e) {
-            // This is the expected exception.
+        String url = this.url;
+        if (url.startsWith("jdbc:derby:")) {
+            final int p = url.indexOf(';');
+            if (p >= 0) {
+                // Trim the parameters, especially ";create=true".
+                url = url.substring(0, p);
+            }
+            url += ";shutdown=true";
+            try {
+                DriverManager.getConnection(url);
+            } catch (SQLException e) {
+                // This is the expected exception.
+            }
         }
     }
 

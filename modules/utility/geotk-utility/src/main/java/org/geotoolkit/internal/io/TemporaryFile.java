@@ -86,7 +86,7 @@ public final class TemporaryFile extends PhantomReference<File> {
      *
      * @param  prefix    The prefix string to be used in generating the file's name.
      * @param  suffix    The suffix string to be used in generating the file's name.
-     * @param  directory The directory in which the file is to be created.
+     * @param  directory The directory in which the file is to be created, or {@code null}.
      * @return The temporary file.
      * @throws IOException If the file can not be created.
      */

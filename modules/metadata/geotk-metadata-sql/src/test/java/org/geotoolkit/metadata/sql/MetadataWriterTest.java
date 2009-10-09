@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.metadata.sql;
 
-import java.io.File;
 import java.util.Collection;
 import java.sql.SQLException;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -25,7 +24,6 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 
-import org.geotoolkit.test.TestData;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -57,8 +55,7 @@ public final class MetadataWriterTest {
      */
     @Test
     public void testDerby() throws SQLException {
-        final File directory = new File(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit.org").getAbsoluteFile();
-        final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:" + directory.getPath().replace('\\','/') + ";create=true");
+        final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:memory:Test;create=true");
         source = new MetadataWriter(MetadataStandard.ISO_19115, ds, null);
         try {
             write();
@@ -68,7 +65,6 @@ public final class MetadataWriterTest {
             source.close();
             source = null;
             ds.shutdown();
-            assertTrue(TestData.deleteRecursively(directory));
         }
     }
 

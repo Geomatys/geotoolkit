@@ -17,11 +17,8 @@
  */
 package org.geotoolkit.internal.sql;
 
-import java.io.File;
 import java.sql.Statement;
 import java.sql.SQLException;
-
-import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -59,8 +56,7 @@ public final class IdentifierGeneratorTest {
      */
     @Test
     public void testSequence() throws SQLException {
-        final File directory = new File(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit.org").getAbsoluteFile();
-        final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:" + directory.getPath().replace('\\','/') + ";create=true");
+        final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:memory:Test;create=true");
         final StatementPool<String,StatementEntry> pool = new StatementPool<String,StatementEntry>(1, ds);
         synchronized (pool) {
             try {
@@ -76,7 +72,6 @@ public final class IdentifierGeneratorTest {
                 generator = null;
                 pool.close();
                 ds.shutdown();
-                assertTrue(TestData.deleteRecursively(directory));
             }
         }
     }
