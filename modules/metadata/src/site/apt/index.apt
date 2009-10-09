@@ -1,0 +1,9 @@
+Referencing
+
+  Projects group for metadata services. This group contains the core of metadata services
+  (<<<geotk-metadata>>>) and various plugins. See the "Modules" links on the left side for
+  information about individual components.
+
+  * Getting started
+
+  * {{{faq.html}Frequently Asked Questions}}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faqs title="Metadata FAQ" toplink="false">
+  <part id="implementation">
+    <title>Custom implementations</title>
+    <faq id="proxy">
+      <question>
+        My metadata are stored in a database-like framework.
+        Implementing every GeoAPI interfaces for accessing them is impratical!
+      </question>
+      <answer>
+        <p>But you don't have to implement directly the metadata interfaces! If the underlying
+        storage framework allows access to metadata from their class and attribute names (either
+        Java names or ISO/OGC names), then it is possible to implement a single engine accessing
+        any kind of metadata and let the Java Virtual Machine implements the GeoAPI interfaces
+        on-the-fly, using the
+        <code><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Proxy.html">java.lang.reflect.Proxy</a></code>
+        class. See the <code>Proxy</code> javadoc for details, keeping in mind that the ISO/OGC name
+        of a <code>java.lang.Class</code> or <code>java.lang.reflect.Method</code> object can be
+        obtained as below:</p>
+
+<blockquote><pre>UML uml = method.getAnnotation(UML.class);
+if (uml != null) {
+    String name = uml.identifier();
+    // Fetch the metadata here.
+}</pre></blockquote>
+
+        <p>This is exactly the approach taken by the <a href="geotk-metadata-sql">geotk-metadata-sql</a>
+        module for providing an implementation of all GeoAPI metadata interfaces reading their values
+        directly from a SQL database.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
