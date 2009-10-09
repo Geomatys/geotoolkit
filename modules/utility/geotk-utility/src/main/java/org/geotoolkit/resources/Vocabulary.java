@@ -1628,6 +1628,27 @@ public final class Vocabulary extends IndexedResourceBundle {
      * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
      * when a {@link InternationalString#toString} method is invoked.
      *
+     * {@note This method is redundant with the one expecting <code>Object...</code>, but is
+     *        provided for binary compatibility with previous Geotk versions. It also avoid the
+     *        creation of a temporary array. There is no risk of confusion since the two methods
+     *        delegate their work to the same <code>format</code> method anyway.}
+     *
+     * @param  key The key for the desired string.
+     * @param  arg Values to substitute to "{0}".
+     * @return An international string for the given key.
+     *
+     * @todo Current implementation just invokes {@link #format}. Need to format only when
+     *       {@code toString(Locale)} is invoked.
+     */
+    public static InternationalString formatInternational(final int key, final Object arg) {
+        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg));
+    }
+
+    /**
+     * Gets an international string for the given key. This method does not check for the key
+     * validity. If the key is invalid, then a {@link MissingResourceException} may be thrown
+     * when a {@link InternationalString#toString} method is invoked.
+     *
      * @param  key The key for the desired string.
      * @param  args Values to substitute to "{0}", "{1}", <i>etc</i>.
      * @return An international string for the given key.
