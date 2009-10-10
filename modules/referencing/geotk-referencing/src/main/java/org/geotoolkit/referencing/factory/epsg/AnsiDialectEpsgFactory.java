@@ -201,6 +201,8 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * This method inserts "<code><var>schema</var>.</code>" in front of every table names,
      * where <var>schema</var> is the value provided in argument. The "{@code epsg_}" prefix
      * is removed from the table names only if {@code removePrefix} is {@code true}.
+     * <p>
+     * This method can be invoked at most once, at construction time only.
      *
      * @param schema The database schema in which the epsg tables are stored.
      * @param removePrefix {@code true} if the "{@code epsg_}" prefix should be removed from
@@ -257,6 +259,8 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * If a schema has been previously set by a call to {@link #setSchema setSchema},
      * it will be preserved. It is better to set the schema (if desired) before to
      * invoke this method.
+     * <p>
+     * This method can be invoked at most once, at construction time only.
      *
      * @throws SQLException If the name of the tables to query can not be changed.
      *
