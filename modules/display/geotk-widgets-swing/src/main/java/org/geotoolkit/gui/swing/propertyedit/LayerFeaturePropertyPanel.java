@@ -327,6 +327,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     @Override
     public void reset() {
+        setTarget(getTarget());
     }
 
     private class DynamicMenu extends JPopupMenu{
