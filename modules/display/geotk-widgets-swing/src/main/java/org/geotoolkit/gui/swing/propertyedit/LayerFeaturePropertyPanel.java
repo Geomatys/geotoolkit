@@ -24,8 +24,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -91,6 +93,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         }
     };
 
+    private final List<JFeaturePanelAction> actions = new ArrayList<JFeaturePanelAction>();
+
     private FeatureMapLayer layer = null;
     private boolean editable = false;
 
@@ -119,24 +123,13 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         });
 
 
-        final JPopupMenu menu = new JPopupMenu();
-
-        JMenuItem mi = new JMenuItem(MessageBundle.getString("clear_selection"));
-        menu.add(mi);
-        mi.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if(layer != null){
-                    layer.setSelectionFilter(null);
-                }
-            }
-        });
+        final JPopupMenu menu = new DynamicMenu();
 
         jbu_action.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent event) {
                 if(event.getButton() == MouseEvent.BUTTON1){
-                    menu.show(jbu_action, event.getX(), event.getY());
+                    menu.show(jbu_action, event.getX()-10, event.getY()-10);
                 }
             }
             @Override
@@ -148,7 +141,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             @Override
             public void mouseExited(MouseEvent arg0) {}
         });
-
 
     }
 
@@ -202,6 +194,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.getSelectionModel().addListSelectionListener(selectionListener);
     }
 
+    public List<JFeaturePanelAction> actions(){
+        return actions;
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -230,6 +225,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         jcb_edit.setText(MessageBundle.getString("property_edit")); // NOI18N
         jcb_edit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jcb_edit.setEnabled(false);
+
         jcb_edit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 actionEditer(evt);
@@ -237,8 +233,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         });
 
         jbu_action.setText(MessageBundle.getString("property_action")); // NOI18N
-        jbu_action.setEnabled(false);
-
         guiCount.setHorizontalAlignment(SwingConstants.CENTER);
         guiCount.setText(" ");
 
@@ -293,7 +287,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
             editable = (source instanceof FeatureStore);
             jcb_edit.setEnabled(editable);
-            jbu_action.setEnabled(editable);
 
             FeatureSourceModel m = new FeatureSourceModel(tab_data, layer);
             tab_data.setModel(m);
@@ -302,6 +295,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             layer.addLayerListener(layerListener);
         }
 
+    }
+
+    public FeatureMapLayer getTarget(){
+        return layer;
     }
 
     @Override
@@ -331,4 +328,46 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     @Override
     public void reset() {
     }
+
+    private class DynamicMenu extends JPopupMenu{
+
+        public DynamicMenu() {
+            addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent arg0) {
+                }
+
+                @Override
+                public void mousePressed(MouseEvent arg0) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent arg0) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent arg0) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent arg0) {
+                    DynamicMenu.this.setVisible(false);
+                }
+            });
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            DynamicMenu.this.removeAll();
+            if(visible){
+                for(final JFeaturePanelAction item : actions){
+                    item.setFeaturePanel(LayerFeaturePropertyPanel.this);
+                    DynamicMenu.this.add(item);
+                }
+            }
+            super.setVisible(visible);
+        }
+
+    }
+
 }
