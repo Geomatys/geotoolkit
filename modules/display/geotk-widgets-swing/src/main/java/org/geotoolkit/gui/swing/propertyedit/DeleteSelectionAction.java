@@ -53,8 +53,9 @@ public class DeleteSelectionAction extends JFeaturePanelAction{
                     Filter fid = layer.getSelectionFilter();
                     if(fid != null){
 
-                        int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"));
-                        if (JOptionPane.YES_OPTION == confirm) {
+                        int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
+                                MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
+                        if (JOptionPane.OK_OPTION == confirm) {
 
                             try {
                                 store.removeFeatures(layer.getSelectionFilter());

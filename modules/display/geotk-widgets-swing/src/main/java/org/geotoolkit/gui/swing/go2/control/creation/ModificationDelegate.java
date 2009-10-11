@@ -20,18 +20,19 @@ package org.geotoolkit.gui.swing.go2.control.creation;
 import java.awt.event.MouseEvent;
 
 
-
-import com.vividsolutions.jts.geom.Geometry;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
@@ -43,9 +44,39 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 public class ModificationDelegate extends AbstractMouseDelegate {
 
     private static final Icon ICON_DELETE = IconBundle.getInstance().getIcon("16_delete");
+    private static final Icon ICON_MOVE = IconBundle.getInstance().getIcon("16_move_node");
+    private static final Icon ICON_ADD = IconBundle.getInstance().getIcon("16_add_node");
+    private static final Icon ICON_REMOVE = IconBundle.getInstance().getIcon("16_remove_node");
+    
+    private final Action moveAction = new AbstractAction("",ICON_MOVE) {
 
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            if(hasEditionGeometry){
+            }
+        }
+    };
 
-    private final JButton guiEnd = new JButton(new AbstractAction("",ICON_DELETE) {
+    private final Action addAction = new AbstractAction("",ICON_ADD) {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            if(hasEditionGeometry){
+            }
+        }
+    };
+
+    private final Action removeAction = new AbstractAction("",ICON_REMOVE) {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            if(hasEditionGeometry){
+            }
+        }
+    };
+
+    private final Action deleteAction = new AbstractAction("",ICON_DELETE) {
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             if(hasEditionGeometry){
@@ -55,7 +86,8 @@ public class ModificationDelegate extends AbstractMouseDelegate {
                 handler.setMemoryLayerGeometry(geoms);
             }
         }
-    });
+    };
+
 
     public ModificationDelegate(DefaultEditionDecoration handler) {
         super(handler);
@@ -69,18 +101,58 @@ public class ModificationDelegate extends AbstractMouseDelegate {
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.HORIZONTAL;
 
+        AbstractButton but;
+
         gc.gridy = 0;
-        JPanel general = new JPanel(new GridLayout(3, 3));
+        final JPanel general = new JPanel(new GridLayout(3, 3));
         general.setOpaque(false);
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
-        general.add(new JButton(" "));
+        final ButtonGroup group = new ButtonGroup();
+
+        but = new JToggleButton(moveAction);
+        but.setSelected(true);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(addAction);
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(removeAction);
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(" ");
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(" ");
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(" ");
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(" ");
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(" ");
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
+        but = new JToggleButton(" ");
+        but.setEnabled(false);
+        group.add(but);
+        general.add(but);
+
         panDetail.add(general, gc);
 
         gc.gridy = 1;
@@ -90,9 +162,19 @@ public class ModificationDelegate extends AbstractMouseDelegate {
         gc.gridy = 2;
         JPanel intelli = new JPanel(new GridLayout(1, 3));
         intelli.setOpaque(false);
-        intelli.add(new JButton(" "));
-        intelli.add(new JButton(" "));
-        intelli.add(new JButton(" "));
+
+        but = new JButton(" ");
+        but.setEnabled(false);
+        intelli.add(but);
+
+        but = new JButton(" ");
+        but.setEnabled(false);
+        intelli.add(but);
+
+        but = new JButton(" ");
+        but.setEnabled(false);
+        intelli.add(but);
+
         panDetail.add(intelli, gc);
 
         gc.gridy = 3;
@@ -101,9 +183,18 @@ public class ModificationDelegate extends AbstractMouseDelegate {
         gc.gridy = 4;
         JPanel other = new JPanel(new GridLayout(1, 3));
         other.setOpaque(false);
-        other.add(new JButton(" "));
-        other.add(new JButton(" "));
-        other.add(guiEnd);
+
+        but = new JButton(" ");
+        but.setEnabled(false);
+        other.add(but);
+
+        but = new JButton(" ");
+        but.setEnabled(false);
+        other.add(but);
+
+        but = new JButton(deleteAction);
+        other.add(but);
+        
         panDetail.add(other, gc);
 
         panDetail.revalidate();
