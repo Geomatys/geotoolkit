@@ -34,6 +34,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -93,7 +94,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         }
     };
 
-    private final List<JFeaturePanelAction> actions = new ArrayList<JFeaturePanelAction>();
+    private final List<JComponent> actions = new ArrayList<JComponent>();
 
     private FeatureMapLayer layer = null;
     private boolean editable = false;
@@ -194,7 +195,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.getSelectionModel().addListSelectionListener(selectionListener);
     }
 
-    public List<JFeaturePanelAction> actions(){
+    public List<JComponent> actions(){
         return actions;
     }
 
@@ -290,6 +291,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
             FeatureSourceModel m = new FeatureSourceModel(tab_data, layer);
             tab_data.setModel(m);
+            tab_data.packAll();
             updateLayerSelection();
             
             layer.addLayerListener(layerListener);
@@ -333,36 +335,16 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private class DynamicMenu extends JPopupMenu{
 
         public DynamicMenu() {
-            addMouseListener(new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent arg0) {
-                }
-
-                @Override
-                public void mousePressed(MouseEvent arg0) {
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent arg0) {
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent arg0) {
-                }
-
-                @Override
-                public void mouseExited(MouseEvent arg0) {
-                    DynamicMenu.this.setVisible(false);
-                }
-            });
         }
 
         @Override
         public void setVisible(boolean visible) {
             DynamicMenu.this.removeAll();
             if(visible){
-                for(final JFeaturePanelAction item : actions){
-                    item.setFeaturePanel(LayerFeaturePropertyPanel.this);
+                for(final JComponent item : actions){
+                    if(item instanceof JFeaturePanelAction){
+                        ((JFeaturePanelAction)item).setFeaturePanel(LayerFeaturePropertyPanel.this);
+                    }
                     DynamicMenu.this.add(item);
                 }
             }
