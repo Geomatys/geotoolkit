@@ -89,8 +89,10 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * the factories by instances that are compliant with the axis order hint.
      */
     static DefaultAuthorityFactory create(final boolean longitudeFirst) {
+        final Hints hints = new Hints( // Default hints (system width) are inherited here.
+                Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
         final List<CRSAuthorityFactory> factories = new ArrayList<CRSAuthorityFactory>(
-                AuthorityFactoryFinder.getCRSAuthorityFactories(EMPTY_HINTS));
+                AuthorityFactoryFinder.getCRSAuthorityFactories(hints));
         /*
          * Do not invoke FactoryRegistry.getServiceProviders() (which returns an Iterator over
          * all registered factories) because it doesn't create new instance. We want to create
@@ -98,10 +100,8 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
          * needed. So instead, iterates over the default factories and derives factories from
          * them.
          */
-        final Filter filter = new Filter();
-        final Hints hints = new Hints( // Default hints (system width) are inherited here.
-                AuthorityFactoryFinder.FILTER_KEY, filter,
-                Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
+        final TypeFilter filter = new TypeFilter();
+        hints.put(AuthorityFactoryFinder.FILTER_KEY, filter);
         for (int i=factories.size(); --i>=0;) {
             CRSAuthorityFactory factory = factories.get(i);
             final String authority = Citations.getIdentifier(factory.getAuthority());
@@ -131,6 +131,19 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
                 LOGGER.log(record);
             }
         }
+        /*
+         * At this point we have the list of factories that we want to use.  Creates a
+         * MultiAuthoritiesFactory which will use those factories. If all of them fail
+         * for a given authority, then we will fallback on any factory registered in
+         * AuthorityFactoryFinder without hints constraint except axis order.
+         *
+         * Note that the factories found above are override. If the above list contains
+         * an EPSG factory, then AuthorityFactoryFinder will never be used for fetching
+         * an EPSG factory. Consequently the EPSG factory used is constrained by the
+         * hints computed at the begining of this method. Only factories that would not
+         * be available otherwise will be fetch by AuthorityFactoryFinder with no hints
+         * constraint.
+         */
         hints.clear();
         hints.put(AllAuthoritiesFactory.USER_FACTORIES_KEY, factories);
         hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
@@ -140,7 +153,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
     /**
      * The filter for requesting factories that are exactly of the given type.
      */
-    private static final class Filter implements ServiceRegistry.Filter {
+    private static final class TypeFilter implements ServiceRegistry.Filter {
         /**
          * The requested factory type. Must be assigned by the caller.
          */

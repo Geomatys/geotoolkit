@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Locale;
 
 import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -33,6 +34,9 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
+import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
 
@@ -46,7 +50,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.02
+ * @version 3.05
  *
  * @since 2.4
  */
@@ -127,6 +131,68 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
             throw failure;
         } finally {
             assertEquals(Boolean.TRUE, Hints.removeSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
+        }
+    }
+
+    /**
+     * Tests EPSG:3035 from the {@code epsg.properties} file.
+     *
+     * @since 3.05
+     */
+    @Test
+    public void testSystemPropertyToFactoryKind() {
+        assumeTrue(isEpsgFactoryAvailable());
+        /*
+         * The following loop is executed three time. The first execution use the default
+         * configuration, which includes both factories. The second execution ask only for
+         * the factory backed by the properties file. The third execution is back to the
+         * initial state.
+         */
+        try {
+            for (int stage=0; stage<3; stage++) {
+                boolean foundDatabase   = false;
+                boolean foundProperties = false;
+                boolean foundFallback   = false;
+                for (final AuthorityFactory factory : ((DefaultAuthorityFactory)
+                        CRS.getAuthorityFactory(false)).backingStore.getFactories())
+                {
+                    foundDatabase   |= (factory instanceof ThreadedEpsgFactory);
+                    foundProperties |= (factory instanceof PropertyEpsgFactory);
+                    foundFallback   |= (factory instanceof FallbackAuthorityFactory);
+                }
+                /*
+                 * Performs the test that are specific to the stage:
+                 * - Stage 0 and 2: both factory are available.
+                 * - Stage 1: only the PropertyEpsgFactory is available.
+                 */
+                assertFalse("Should never found ThreadedEpsgFactory alone. If this factory is available, then it " +
+                        "should be together with PropertyEpsgFactory in a FallbackAuthorityFactory.", foundDatabase);
+                if (stage == 1) {
+                    assertTrue("PropertyEpsgFactory should be available directly.", foundProperties);
+                    assertFalse("Expected no fallback, since PropertyEpsgFactory should be alone.", foundFallback);
+                } else {
+                    assertFalse("Should not found PropertyEpsgFactory alone, since it should be " +
+                            "part of FallbackAuthorityFactory.", foundProperties);
+                    assertTrue("Expected a FallbackAuthorityFactory containing both " +
+                            "ThreadedEpsgFactory and PropertyEpsgFactory", foundFallback);
+                }
+                /*
+                 * Modifies the configuration depending on the next stage to be tested.
+                 */
+                switch (stage) {
+                    case 0: {
+                        assertNull(Hints.putSystemDefault(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class));
+                        break;
+                    }
+                    case 1: {
+                        assertEquals(PropertyEpsgFactory.class, Hints.removeSystemDefault(Hints.CRS_AUTHORITY_FACTORY));
+                        break;
+                    }
+                }
+            }
+        } finally {
+            // In case of failure, make sure that we restore the system in its expected state.
+            Hints.removeSystemDefault(Hints.CRS_AUTHORITY_FACTORY);
         }
     }
 

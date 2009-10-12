@@ -40,20 +40,21 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  * An authority factory that delegates the object creation to an other factory determined from the
- * authority name in the code. This factory requires that every codes given to a {@code createFoo}
- * method are prefixed by the authority name, for example {@code "EPSG:4326"}. This is different
- * from using a factory from a known authority, in which case the authority part was optional (for
- * example when using the {@linkplain org.geotoolkit.referencing.factory.epsg EPSG authority factory},
- * the {@code "EPSG:"} part in {@code "EPSG:4326"} is optional).
+ * authority part in {@code "authority:code"} arguments. The set of factories to use as delegates
+ * shall be specified at construction time. This is different than {@link AllAuthoritiesFactory},
+ * which get its delegates from the {@link AuthorityFactoryFinder}.
  * <p>
- * This class parses the authority name and delegates the work to the corresponding factory. For
- * example if any {@code createFoo(...)} method in this class is invoked with a code starting
- * by {@code "EPSG:"}, then this class delegates the object creation to one of the authority
- * factories provided to the constructor.
+ * This factory requires that every codes given to a {@code createXXX(String)} method are prefixed
+ * by the authority name, for example {@code "EPSG:4326"}. When a {@code createXXX(String)} method
+ * is invoked, this class extracts the authority name from the {@code "authority:code"} argument
+ * and searchs for a factory for that authority in the list of factories given at construction
+ * time. If a factory is found, then the work is delegated to that factory. Otherwise a
+ * {@link NoSuchAuthorityCodeException} is thrown.
  * <p>
  * This class is not registered in {@link AuthorityFactoryFinder}, because it is not a real
- * authority factory. There is not a single authority name associated to this factory, but rather
- * a set of names determined from all available authority factories.
+ * authority factory. There is not a single authority name associated to this factory, but
+ * rather a set of names determined from all available authority factories. If an instance
+ * of this class is desired, it must be created explicitly.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.02
@@ -331,8 +332,14 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * @return The authority names of every factories known to this class.
      */
     public Set<String> getAuthorityNames() {
+        return getAuthorityNames(getFactories());
+    }
+
+    /**
+     * Returns the authority names of every factories in the given collection.
+     */
+    static Set<String> getAuthorityNames(final Collection<AuthorityFactory> factories) {
         final Set<String> names = new HashSet<String>();
-        final Collection<AuthorityFactory> factories = getFactories();
         if (factories != null) {
             for (final AuthorityFactory factory : factories) {
                 names.add(Citations.getIdentifier(factory.getAuthority()));
@@ -384,8 +391,14 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
     }
 
     /**
-     * Same as {@link #fromFactoryRegistry(String, Class)}, but returns every factories
-     * that fit the given type. The factories are added to the specified set.
+     * Returns every factories from {@link AuthorityFactoryRegistry} for the specified type and
+     * authority. This method is like {@link #fromFactoryRegistry(String, Class)}, but is more
+     * flexible on the type argument since it doesn't constraint it to the {@link #OBJECT_TYPES}
+     * enumeration.
+     * <p>
+     * The factories are added to the specified set. More than one factory may fit. The set will
+     * not contains the factories for which {@link #isExclude} returns {@code true} because this
+     * method is invoked from the context of the {@link Finder} inner class.
      */
     final void fromFactoryRegistry(final String authority,
                                    final Class<? extends AuthorityFactory> type,
@@ -408,9 +421,12 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
     }
 
     /**
-     * Returns a factory for the specified authority, or {@code null} if none.
-     * To be overriden by {@link AllAuthoritiesFactory} in order to search among
-     * factories registered on a system-wide basis.
+     * Returns a factory from {@link AuthorityFactoryRegistry} for the specified type and authority,
+     * or {@code null} if none. This method is invoked by {@link #getAuthorityFactory(Class, String)}
+     * when no-user supplied factory has been found. The default implementation returns {@code null}
+     * since it is not the purpose of {@code MultiAuthoritiesFactory} to search for any factory not
+     * specified at construction time. However {@link AllAuthoritiesFactory} override this method in
+     * order to search among the factories registered on a system-wide basis.
      *
      * @param  authority The authority to query.
      * @param  type The interface to be implemented.
@@ -834,7 +850,9 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
         }
 
         /**
-         * Returns the type of the factory creating the identified objects.
+         * Returns the type of the factory creating the identified objects. This method is
+         * invoked by {@link AllAuthoritiesFactory} in order to obtain the type to request
+         * to {@link MultiAuthoritiesFactory#fromFactoryRegistry(String,Class,Set)}.
          */
         final Class<? extends AuthorityFactory> getFactoryType() {
             final Class<? extends IdentifiedObject> type = proxy.getObjectType();
@@ -847,7 +865,13 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
         }
 
         /**
-         * Returns the user-supplied factories.
+         * Returns the factories supplied by the user in the enclosing {@code MultiAuthoritiesFactory},
+         * or {@code null} if none. This is the collection of factories to try iteratively until a
+         * factory recognize the object that we want to identify.
+         * <p>
+         * The returned collection doesn't include the factories registered in
+         * {@link AuthorityFactoryFinder}. If the later are desired, they must be fetched
+         * using the {@code AllAuthoritiesFactory.Finder.fromFactoryRegistry()} method.
          */
         final Collection<AuthorityFactory> getFactories() {
             return ((MultiAuthoritiesFactory) proxy.getAuthorityFactory()).getFactories();
@@ -888,6 +912,11 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
             if (candidate != null) {
                 return candidate;
             }
+            /*
+             * Try every known factories, stopping the search on the first factory
+             * that recognized the given object. The collection of factories should
+             * exclude URN or HTTP wrappers in order to avoid duplicated search.
+             */
             final Collection<AuthorityFactory> factories = getFactories();
             if (factories != null) {
                 IdentifiedObjectFinder finder;
@@ -930,6 +959,11 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                     return name.toString();
                 }
             }
+            /*
+             * Try every known factories, stopping the search on the first factory
+             * that recognized the given object. The collection of factories should
+             * exclude URN or HTTP wrappers in order to avoid duplicated search.
+             */
             final Collection<AuthorityFactory> factories = getFactories();
             if (factories != null) {
                 IdentifiedObjectFinder finder;

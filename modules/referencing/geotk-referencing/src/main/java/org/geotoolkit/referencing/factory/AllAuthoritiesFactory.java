@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
@@ -42,17 +43,31 @@ import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
- * An authority factory that delegates the object creation to an other factory determined
- * from the authority name in the code. This is similar to {@link MultiAuthoritiesFactory}
- * except that the set of factories is determined by calls to
- * <code>AuthorityFactoryFinder.{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
- * get<var>Foo</var>AuthorityFactory}(<var>authority</var>, {@linkplain #hints hints})</code>.
+ * An authority factory that delegates the object creation to an other factory determined from the
+ * authority part in {@code "authority:code"} arguments. The set of factories to use as delegates
+ * is determined from the {@link AuthorityFactoryFinder} with the hints given at construction time.
  * <p>
- * This class is not registered in {@link AuthorityFactoryFinder}. If this "authority" factory
+ * This factory requires that every codes given to a {@code createXXX(String)} method are prefixed
+ * by the authority name, for example {@code "EPSG:4326"}. When a {@code createXXX(String)} method
+ * is invoked, this class extracts the authority name from the {@code "authority:code"} argument.
+ * Then is searchs for a factory for that authority in the first of the following sets:
+ * <p>
+ * <ol>
+ *   <li>The factories given at construction time under the {@link #USER_FACTORIES_KEY} key, if
+ *       any. Those factories <cite>override</cite> the factories normally found by this class
+ *       at the step below.</li>
+ *   <li>The factories registered in {@link AuthorityFactoryFinder} and compatible with the
+ *       hints given at construction time.</li>
+ * </ol>
+ * <p>
+ * If a factory is found, then the work is delegated to that factory. Otherwise a
+ * {@link NoSuchAuthorityCodeException} is thrown.
+ * <p>
+ * This class is not registered in {@code AuthorityFactoryFinder}. If this factory
  * is wanted, then users need to invoke explicitly the {@link #getInstance(Hints)} method.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.05
  *
  * @since 2.2
  * @module
@@ -130,8 +145,10 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
      */
     @Override
     public Set<String> getAuthorityNames() {
+        final Set<String> factories = getAuthorityNames(getUserFactories());
         // Do not use 'authorityNames' since it may be out-of-date.
-        return AuthorityFactoryFinder.getAuthorityNames();
+        factories.addAll(AuthorityFactoryFinder.getAuthorityNames());
+        return factories;
     }
 
     /**
@@ -147,10 +164,10 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
 
     /**
      * Returns the factories on which to delegate object creations. This list is determined from
-     * the factories registered in the {@link AuthorityFactoryFinder}.
+     * the factories registered in the {@link AuthorityFactoryFinder}, merged with the list of
+     * factories specified by the {@link #USER_FACTORIES_KEY} hint if any.
      *
-     * @return The factories on which this {@code AllAuthoritiesFactory} will delegate
-     *         object creations, in iteration order.
+     * @return The factories on which this {@code AllAuthoritiesFactory} will delegate object creations.
      *
      * @since 3.00
      */
@@ -161,6 +178,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
             authorityNames = authorities;
             final Hints hints = getHints();
             final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>(getUserFactories());
+            final Set<String> names = getAuthorityNames(factories);
 typeLoop:   for (int i=0; ; i++) {
                 final Set<? extends AuthorityFactory> c;
                 switch (i) {
@@ -170,10 +188,19 @@ typeLoop:   for (int i=0; ; i++) {
                     case 3: c = AuthorityFactoryFinder.getCRSAuthorityFactories(hints); break;
                     default: break typeLoop;
                 }
-                // Add to the set only the factories that are not excluded.
+                /*
+                 * Add only the factories that are not others MultiAuthoritiesFactory. To be
+                 * more specific, the intend is actually to exclude the URN or HTTP wrappers.
+                 * This is necessary because this method is invoked indirectly by the Finder
+                 * inner class (see MultiAuthoritiesFactory.Finder.getFactories()) and we want
+                 * to avoid duplicated searchs.
+                 */
                 for (final AuthorityFactory f : c) {
                     if (!isExcluded(f)) {
-                        factories.add(f);
+                        // Add the factory only if it is not overriden by a user-specified one.
+                        if (!names.contains(Citations.getIdentifier(f.getAuthority()))) {
+                            factories.add(f);
+                        }
                     }
                 }
             }
@@ -257,7 +284,13 @@ typeLoop:   for (int i=0; ; i++) {
         }
 
         /**
-         * Returns all factories to try.
+         * Returns all factories to try. This method is invoked by the {@code find} methods in
+         * order to get the list of factories to try iteratively, with the iteration stopping
+         * on the first factory that found the object.
+         * <p>
+         * For performance raison, the returned set should exclude wrappers around
+         * {@link MultiAuthoritiesFactory}, because using those wrappers cause the
+         * search to be performed (indirectly) twice for the same factories.
          */
         private Set<AuthorityFactory> fromFactoryRegistry() {
             final MultiAuthoritiesFactory factory = (MultiAuthoritiesFactory) proxy.getAuthorityFactory();
@@ -275,7 +308,10 @@ typeLoop:   for (int i=0; ; i++) {
         }
 
         /**
-         * Lookups for the specified object.
+         * Lookups for the specified object. First, this method uses the algorithm defined
+         * in {@link MultiAuthoritiesFactory} super-class in order to scan the factories
+         * that were explicitly specified by the user. Only if no suitable factory is found,
+         * this method fallbacks on the factories registered in {@link AuthorityFactoryFinder}.
          */
         @Override
         public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
@@ -296,6 +332,10 @@ typeLoop:   for (int i=0; ; i++) {
 
         /**
          * Returns the identifier of the specified object, or {@code null} if none.
+         * First, this method uses the algorithm defined in {@link MultiAuthoritiesFactory}
+         * super-class in order to scan the factories that were explicitly specified by the
+         * user. Only if no suitable factory is found, this method fallbacks on the factories
+         * registered in {@link AuthorityFactoryFinder}.
          */
         @Override
         public String findIdentifier(final IdentifiedObject object) throws FactoryException {
