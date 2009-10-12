@@ -19,6 +19,9 @@ package org.geotoolkit.referencing;
 
 import java.util.Set;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
@@ -33,6 +36,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
@@ -135,21 +139,37 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
     }
 
     /**
-     * Tests EPSG:3035 from the {@code epsg.properties} file.
+     * Tests EPSG:3035 from with various system hints. In some cases we will attempt to fetch
+     * from the EPSG database, and in other cases from the {@code epsg.properties} file.
+     *
+     * @throws FactoryException Should never happen.
      *
      * @since 3.05
      */
     @Test
-    public void testSystemPropertyToFactoryKind() {
+    public void testSystemPropertyToFactoryKind() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
+        final AtomicBoolean askedConnection = new AtomicBoolean();
+        final DefaultDataSource dummy = new DefaultDataSource("jdbc:dummy") {
+            @Override public Connection getConnection() throws SQLException {
+                askedConnection.set(true);
+                return super.getConnection();
+            }
+
+            @Override public Connection getConnection(String username, String password) throws SQLException {
+                askedConnection.set(true);
+                return super.getConnection(username, password);
+            }
+        };
         /*
-         * The following loop is executed three time. The first execution use the default
-         * configuration, which includes both factories. The second execution ask only for
-         * the factory backed by the properties file. The third execution is back to the
-         * initial state.
+         * The following loop is executed four time. The first execution uses the default
+         * configuration, which includes both factories.  The second and third executions
+         * ask only for the factory backed by the properties file.  The last execution is
+         * back to the initial state.
          */
         try {
-            for (int stage=0; stage<3; stage++) {
+            for (int stage=0; stage<4; stage++) {
+                askedConnection.set(false);
                 boolean foundDatabase   = false;
                 boolean foundProperties = false;
                 boolean foundFallback   = false;
@@ -160,22 +180,42 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
                     foundProperties |= (factory instanceof PropertyEpsgFactory);
                     foundFallback   |= (factory instanceof FallbackAuthorityFactory);
                 }
-                /*
-                 * Performs the test that are specific to the stage:
-                 * - Stage 0 and 2: both factory are available.
-                 * - Stage 1: only the PropertyEpsgFactory is available.
-                 */
                 assertFalse("Should never found ThreadedEpsgFactory alone. If this factory is available, then it " +
                         "should be together with PropertyEpsgFactory in a FallbackAuthorityFactory.", foundDatabase);
-                if (stage == 1) {
-                    assertTrue("PropertyEpsgFactory should be available directly.", foundProperties);
-                    assertFalse("Expected no fallback, since PropertyEpsgFactory should be alone.", foundFallback);
-                } else {
-                    assertFalse("Should not found PropertyEpsgFactory alone, since it should be " +
-                            "part of FallbackAuthorityFactory.", foundProperties);
-                    assertTrue("Expected a FallbackAuthorityFactory containing both " +
-                            "ThreadedEpsgFactory and PropertyEpsgFactory", foundFallback);
+                switch (stage) {
+                    /*
+                     * Tests to perform when PropertyEpsgFactory is alone. The other
+                     * factory (ThreadedEpsgFactory) has been excluded either directly
+                     * (case 1), or indirectly through an invalid JDBC URL (case 2).
+                     */
+                    case 1:
+                    case 2: {
+                        assertTrue ("PropertyEpsgFactory should be available directly.", foundProperties);
+                        assertFalse("Expected no fallback, only PropertyEpsgFactory.",   foundFallback);
+                        break;
+                    }
+                    /*
+                     * Tests to perform when both PropertyEpsgFactory and ThreadedEpsgFactory
+                     * are available. They should form a FallbackAuthorityFactory chain.
+                     */
+                    case 0:
+                    case 3: {
+                        assertFalse("Should not found PropertyEpsgFactory alone, since it should be " +
+                                "part of FallbackAuthorityFactory.", foundProperties);
+                        assertTrue("Expected a FallbackAuthorityFactory containing both " +
+                                "ThreadedEpsgFactory and PropertyEpsgFactory", foundFallback);
+                        break;
+                    }
                 }
+                assertEquals("Should have attempted to get a connection from the dummy database.",
+                        (stage == 2), askedConnection.get());
+                /*
+                 * Gets the EPSG:3035 CRS object. The EPSG code should be available even if not
+                 * explicitly declared in the properties file, because it should have been added
+                 * automatically by PropertyEpsgFactory when needed.
+                 */
+                final CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
+                assertEquals("3035", AbstractIdentifiedObject.getIdentifier(crs, Citations.EPSG).getCode());
                 /*
                  * Modifies the configuration depending on the next stage to be tested.
                  */
@@ -186,6 +226,11 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
                     }
                     case 1: {
                         assertEquals(PropertyEpsgFactory.class, Hints.removeSystemDefault(Hints.CRS_AUTHORITY_FACTORY));
+                        assertNull(Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, dummy));
+                        break;
+                    }
+                    case 2: {
+                        assertEquals(dummy, Hints.removeSystemDefault(Hints.EPSG_DATA_SOURCE));
                         break;
                     }
                 }
@@ -193,6 +238,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         } finally {
             // In case of failure, make sure that we restore the system in its expected state.
             Hints.removeSystemDefault(Hints.CRS_AUTHORITY_FACTORY);
+            Hints.removeSystemDefault(Hints.EPSG_DATA_SOURCE);
         }
     }
 

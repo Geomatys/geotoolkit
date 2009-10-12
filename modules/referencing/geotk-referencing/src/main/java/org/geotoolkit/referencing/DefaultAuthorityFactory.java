@@ -89,8 +89,19 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * the factories by instances that are compliant with the axis order hint.
      */
     static DefaultAuthorityFactory create(final boolean longitudeFirst) {
-        final Hints hints = new Hints( // Default hints (system width) are inherited here.
-                Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
+        /*
+         * Get the CRS factories with no user hints (we will apply a filtering later), except
+         * CRS_AUTHORITY_FACTORY because this hint will be overwritten in the loop below.  We
+         * don't want to supply the full set of hints  because it would prevent the obtention
+         * of factories that don't exist yet but could be derived from existing ones (see the
+         * next comment block below).
+         */
+        final Hints systemHints = new Hints(); // Initialized to the system default.
+        Hints hints = EMPTY_HINTS.clone();     // Initialized to an empty map.
+        final Object userType = systemHints.get(Hints.CRS_AUTHORITY_FACTORY);
+        if (userType != null) {
+            hints.put(Hints.CRS_AUTHORITY_FACTORY, userType);
+        }
         final List<CRSAuthorityFactory> factories = new ArrayList<CRSAuthorityFactory>(
                 AuthorityFactoryFinder.getCRSAuthorityFactories(hints));
         /*
@@ -100,8 +111,10 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
          * needed. So instead, iterates over the default factories and derives factories from
          * them.
          */
+        hints = systemHints;
         final TypeFilter filter = new TypeFilter();
         hints.put(AuthorityFactoryFinder.FILTER_KEY, filter);
+        hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
         for (int i=factories.size(); --i>=0;) {
             CRSAuthorityFactory factory = factories.get(i);
             final String authority = Citations.getIdentifier(factory.getAuthority());
