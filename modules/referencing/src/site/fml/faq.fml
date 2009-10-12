@@ -45,7 +45,7 @@
         <p>Yes. The GeoTools project was used to provide a <code>gt-epsg-wkt</code> module, which
         contain a plain text file listing various CRS in their <cite>Well Known Text</cite> (WKT)
         format. This text file is not provided in Geotk because it contained only a subset of the
-        EPSG database, and the CRS defined in that file were not fully compliant with EPSG (especially
+        EPSG database, and the CRS defined in that file are not fully compliant with EPSG (especially
         regarding axis order). However Geotk provides the factory class that exploit this file, but it
         is up to the user to provide the file itself with the CRS of his choice. The only required
         action is to make that file available in the classpath (typically inside a JAR file) under
@@ -53,15 +53,18 @@
 
 <blockquote><pre>org/geotoolkit/referencing/factory/espg/epsg.properties</pre></blockquote>
 
-        <p>No coding required. Note however that if a connection to an EPSG database is found,
-        that database will have precedence over the CRS defined in the properties file.</p>
-
-        <p>In order to create <code>epsg.properties</code>, the properties file in the GeoTools
-        <code><a href="https://svn.osgeo.org/geotools/trunk/modules/plugin/epsg-wkt">gt-epsg-wkt</a></code>
-        module can be used as a starting point. It is also possible to change the directory where
-        the <code>epsg.properties</code> is looked at. See
+        <p>No coding is required to make it works, unless you wish to search for the
+        <code>epsg.properties</code> file in an other directory (see
         <code><a href="../../apidocs/org/geotoolkit/referencing/factory/epsg/PropertyEpsgFactory.html">PropertyEpsgFactory</a></code>
-        for more information.</p>
+        for more information). In order to create a <code>epsg.properties</code> file, the resources provided in the GeoTools
+        <code><a href="https://svn.osgeo.org/geotools/trunk/modules/plugin/epsg-wkt">gt-epsg-wkt</a></code>
+        module can be used as a starting point</p>
+
+        <p>Note that if a connection to an EPSG database is found, then that database will have
+        precedence over the CRS defined in the properties file. If the properties file seems to
+        be ignored when it should not, the code snippet provided in the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/FactoryDependencies.html">FactoryDependencies</a></code>
+        javadoc may provide useful informations for debugging purpose.</p>
       </answer>
     </faq>
     <faq id="Google">

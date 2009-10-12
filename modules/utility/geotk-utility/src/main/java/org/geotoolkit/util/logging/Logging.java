@@ -471,12 +471,17 @@ search:     while (configs.hasMoreElements()) try {
      * properties file may find confusing to see his setting ignored.
      *
      * @param level The desired logging level, or {@code null} to left it unchanged.
+     *
+     * @see <a href="http://java.sun.com/javase/6/docs/technotes/guides/logging/overview.html">Java Logging Overview</a>
      */
     @Configuration
     public void forceMonolineConsoleOutput(final Level level) {
         final Logger logger = Logger.getLogger(name); // Really Java logging, not the redirected one.
         synchronized (EMPTY) {
-            MonolineFormatter.configureConsoleHandler(logger, level);
+            final MonolineFormatter f = MonolineFormatter.configureConsoleHandler(logger, level);
+            if (f != null) {
+                f.setSourceFormat("class:short");
+            }
             if (level != null) {
                 // If a level was specified, changes to a finer level if needed
                 // (e.g. from FINE to FINER, but not the opposite).

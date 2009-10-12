@@ -53,6 +53,49 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 /**
  * Build a tree of factory dependencies, usually for printing to the console. This is a
  * convenience utility for inspecting the dependencies between Geotk referencing factories.
+ * For example the following code will prints the full set of factories used by the
+ * {@link org.geotoolkit.referencing.CRS#decode(String)} method:
+ *
+ * {@preformat java
+ *   FactoryDependencies report = new FactoryDependencies(CRS.getAuthorityFactory(null));
+ *   report.setColorEnabled(true); // Use only if the output console is ANSI X3.64 compliant.
+ *   report.setAbridged(true);
+ *   report.print();
+ * }
+ *
+ * The output will looks like the tree below (actual output may vary depending the plugins
+ * available on the classpath). The "{@code …⬏}" suffix means that the factory has already
+ * been defined in a previous line and its dependencies are not repeated for brievety.
+ *
+ * {@preformat text
+ * DefaultAuthorityFactory["All"]
+ * └───AllAuthoritiesFactory["All"]
+ *     ├───ThreadedEpsgFactory["EPSG"]
+ *     │   └───AnsiDialectEpsgFactory["EPSG"]
+ *     │       ├───ReferencingObjectFactory[objects]
+ *     │       └───DatumAliases[objects]
+ *     ├───AutoCRSFactory["AUTO2", "AUTO"]
+ *     │   ├───ReferencingObjectFactory[objects] …⬏
+ *     │   └───DatumAliases[objects] …⬏
+ *     ├───WebCRSFactory["CRS", "OGC"]
+ *     │   ├───ReferencingObjectFactory[objects] …⬏
+ *     │   └───DatumAliases[objects] …⬏
+ *     ├───URN_AuthorityFactory["urn:ogc:def", "urn:x-ogc:def"]
+ *     │   └───AllAuthoritiesFactory["All"]
+ *     │       ├───ThreadedEpsgFactory["EPSG"] …⬏
+ *     │       ├───AutoCRSFactory["AUTO2"] …⬏
+ *     │       └───WebCRSFactory["CRS"] …⬏
+ *     └───HTTP_AuthorityFactory["http://www.opengis.net"]
+ *         └───AllAuthoritiesFactory["All"] …⬏
+ * }
+ *
+ * For example if an {@value org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory#FILENAME}
+ * file is provided on the classpath, then the above code snippet is useful for verifying if
+ * {@code PropertyEpsgFactory} appears as expected. It should be visible below
+ * {@code ThreadedEpsgFactory} in a fallback chain.
+ * <p>
+ * An other way to gather information about the factories available at runtime is to set the
+ * logging level of {@code org.geotoolkit} loggers to {@code CONFIG} or a finer level.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

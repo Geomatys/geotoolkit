@@ -83,6 +83,32 @@ import org.geotoolkit.lang.ThreadSafe;
  * Note that this is done automatically when this factory is used through the
  * {@link org.geotoolkit.referencing.CRS} static methods.
  *
+ * {@section Troubleshotting}
+ * If the {@value #FILENAME} file is on the classpath but seems to be ignored,
+ * the following actions may provide some useful informations:
+ *
+ * <ul>
+ *   <li><p>Print the list of every registered factories using the code snippet documented
+ *       in the {@link org.geotoolkit.referencing.factory.FactoryDependencies} and verify
+ *       that {@code PropertyEpsgFactory} is presents.</p></li>
+ *
+ *   <li><p>Set the logging level for the {@code org.geotoolkit} loggers to {@code CONFIG}.
+ *       See <a href="http://java.sun.com/javase/6/docs/technotes/guides/logging/overview.html">Java
+ *       Logging Overview</a> for the standard way, or use the following Geotk convenience method:
+ *
+ *       {@preformat java
+ *         Logging.forceMonolineConsoleOutput(Level.CONFIG);
+ *       }
+ *       </p></li>
+ *
+ *   <li><p>Forces the system to ignore any factory other than {@code PropertyEpsgFactory}:
+ *
+ *       {@preformat java
+ *         Hints.putSystemDefault(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class);
+ *       }
+ *       </p></li>
+ * </ul>
+ *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)

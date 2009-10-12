@@ -40,6 +40,8 @@
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.01
  *
+ * @see <a href="http://java.sun.com/javase/6/docs/technotes/guides/logging/overview.html">Java Logging Overview</a>
+ *
  * @since 2.4
  * @module
  */

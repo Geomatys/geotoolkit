@@ -322,8 +322,9 @@ loop:   for (int i=0; ; i++) {
     }
 
     /**
-     * Sets the format for displaying the source. The pattern can be {@code null}, {@code "none"}
-     * or the concatenation of two following parts separated by a {@code ':'} character:
+     * Sets the format for displaying the source. The pattern can be {@code null}, {@code "none"},
+     * {@code "logger:short"}, {@code "class:short"}, {@code "logger:long"} or {@code "class:long"}.
+     * The 4 last choices are made of two parts separated by a {@code ':'} character:
      *
      * <ol>
      *   <li><p>{@code "logger"} for the {@linkplain LogRecord#getLoggerName logger name}, or
@@ -335,11 +336,8 @@ loop:   for (int i=0; ; i++) {
      *       the part following the last dot character.</p></li>
      * </ol>
      *
-     * In summary valid arguments are: {@code null}, {@code "none"}, {@code "logger:short"},
-     * {@code "class:short"}, {@code "logger:long"} or {@code "class:long"}.
-     * <p>
      * The difference between a {@code null} and {@code "none"} is that {@code null}
-     * may be replaced by a default value, while {@code "none"} means that the user
+     * may be replaced by a default value, while {@code "none"} means that the caller
      * explicitly requested no source.
      *
      * @param format The format for displaying the source.

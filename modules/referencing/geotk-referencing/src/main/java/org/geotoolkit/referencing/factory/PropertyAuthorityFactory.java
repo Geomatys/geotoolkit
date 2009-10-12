@@ -53,8 +53,8 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @see org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory
  *
@@ -192,11 +192,14 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
             hints.put(directoryKey, directory);
         }
         /*
-         * Now build the list of URLs to load.
+         * Now build the list of URLs to load. First we look for a real file (not
+         * a URL to a resource) in the directory supplied by the user, if any.
          */
+        String path = filename; // Will be used for formatting a "File not found" message if needed.
         final List<URL> definitionFiles = new ArrayList<URL>(4);
         if (directory != null) try {
             final File file = new File(directory, filename);
+            path = file.getPath();
             if (file.isFile()) { // May throw a SecurityException.
                 definitionFiles.add(file.toURI().toURL());
             }
@@ -205,14 +208,18 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
             // directory, we assume that he was expecting us to read its file.
             Logging.unexpectedException(LOGGER, PropertyAuthorityFactory.class, "<init>", exception);
         }
+        /*
+         * Now search for URL to resources, which may be entries in a JAR file.
+         * The same resources may be present in more than one JAR file.
+         */
         if (resourceLoader != null) {
-            String path = resourceLoader.getName();
-            path = path.substring(0, path.lastIndexOf('.') + 1).replace('.', '/');
             List<URL> more = Collections.emptyList();
+            path = resourceLoader.getName();
+            path = path.substring(0, path.lastIndexOf('.') + 1).replace('.', '/') + filename;
             try {
                 final ClassLoader cl = resourceLoader.getClassLoader();
                 if (cl != null) {
-                    more = Collections.list(cl.getResources(path + filename));
+                    more = Collections.list(cl.getResources(path));
                     // Note: above list may still empty.
                 }
             } catch (SecurityException exception) {
@@ -222,12 +229,24 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
                 Logging.recoverableException(LOGGER, PropertyAuthorityFactory.class, "<init>", exception);
             }
             definitionFiles.addAll(more);
+            /*
+             * If we have not been able to get the resources from the root (typically because
+             * of security constraints), try to get the resource relative to the class.  This
+             * approach usually don't have security constraint.
+             */
             if (more.isEmpty()) {
                 final URL candidate = resourceLoader.getResource(filename);
                 if (candidate != null) {
                     definitionFiles.add(candidate);
                 }
             }
+        }
+        /*
+         * Now the list of URLs to load is complete. If this list is empty,
+         * logs a message for debugging purpose.
+         */
+        if (definitionFiles.isEmpty()) {
+            log(false, Loggings.Keys.CANT_READ_FILE_$1, null, path);
         }
         load(definitionFiles);
     }
@@ -263,32 +282,32 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
         ensureNonNull("definitionFiles", definitionFiles);
         @SuppressWarnings("unchecked")
         final Properties definitions = (Properties) (Map<?,?>) this.definitions;
-        Properties properties = definitions;
+        Properties currentFile = definitions;
         boolean containsAxis = false;
         for (final URL url : definitionFiles) {
             /*
              * If we have read other files before this one, use a temporary object.
-             * It allows us to remove duplicated keys before that are merged.
+             * It allows us to remove duplicated keys before they are merged.
              */
-            if (!properties.isEmpty()) {
-                if (properties == definitions) {
-                    properties = new Properties();
+            if (!currentFile.isEmpty()) {
+                if (currentFile == definitions) {
+                    currentFile = new Properties();
                 } else {
-                    properties.clear();
+                    currentFile.clear();
                 }
             }
             final InputStream in = url.openStream();
-            properties.load(in);
+            currentFile.load(in);
             in.close();
-            if (!properties.isEmpty()) {
+            if (!currentFile.isEmpty()) {
                 final String authority = String.valueOf(Citations.getIdentifier(authority()));
-                log(Loggings.Keys.USING_FILE_AS_FACTORY_$2, url, authority);
+                log(false, Loggings.Keys.USING_FILE_AS_FACTORY_$2, url, authority);
             }
-            if (properties != definitions) {
-                if (properties.keySet().removeAll(definitions.keySet())) {
-                    log(Loggings.Keys.DUPLICATED_CONTENT_IN_FILE_$1, url, null);
+            if (currentFile != definitions) {
+                if (currentFile.keySet().removeAll(definitions.keySet())) {
+                    log(true, Loggings.Keys.DUPLICATED_CONTENT_IN_FILE_$1, url, null);
                 }
-                definitions.putAll(properties);
+                definitions.putAll(currentFile);
             }
             /*
              * Checks if the map we just loaded contains axis. We don't do that in the constructor
@@ -323,15 +342,25 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
 
     /**
      * Logs a message using the given resource key and using the given URL as a value.
+     *
+     * @param warning {@code true} if the message should be logged as a warning.
+     * @param key The key of the internationalized string to fetch.
+     * @param url The URL to put in the message, or {@code null} if none.
+     * @param ext An additional parameter to put in the message, or {@code null} if none.
      */
-    private static void log(final int key, final URL url, final Object ext) {
-        String path = url.getPath();
-        path = path.substring(path.lastIndexOf('/') + 1);
+    private static void log(final boolean warning, final int key, final URL url, final Object ext) {
+        final Level level = warning ? Level.WARNING : Level.CONFIG;
         final LogRecord record;
-        if (ext != null) {
-            record = Loggings.format(Level.CONFIG, key, path, ext);
+        if (url != null) {
+            String path = url.getPath();
+            path = path.substring(path.lastIndexOf('/') + 1);
+            if (ext != null) {
+                record = Loggings.format(level, key, path, ext);
+            } else {
+                record = Loggings.format(level, key, path);
+            }
         } else {
-            record = Loggings.format(Level.WARNING, key, path);
+            record = Loggings.format(level, key, ext);
         }
         record.setSourceClassName(PropertyAuthorityFactory.class.getName());
         record.setSourceMethodName("load");
