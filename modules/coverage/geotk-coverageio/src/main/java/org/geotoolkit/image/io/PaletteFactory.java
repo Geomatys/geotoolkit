@@ -64,18 +64,18 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * <p>
  * The {@linkplain #getDefault() default instance} provides the following color palettes:
  * <p>
- * <table>
- *   <tr><th>Name</th>          <th>&nbsp;&nbsp;Overview</th>                                 <th>Typical usage</th></tr>
- *   <tr><td>grayscale</td>     <td>&nbsp;&nbsp;<img src="doc-files/grayscale.png"></td>      <td></td></tr>
- *   <tr><td>red-blue</td>      <td>&nbsp;&nbsp;<img src="doc-files/red-blue.png"></td>       <td></td></tr>
- *   <tr><td>blue-red</td>      <td>&nbsp;&nbsp;<img src="doc-files/blue-red.png"></td>       <td></td></tr>
- *   <tr><td>white-cyan-red</td><td>&nbsp;&nbsp;<img src="doc-files/white-cyan-red.png"></td> <td></td></tr>
- *   <tr><td>bell</td>          <td>&nbsp;&nbsp;<img src="doc-files/bell.png"></td>           <td></td></tr>
- *   <tr><td>rainbow</td>       <td>&nbsp;&nbsp;<img src="doc-files/rainbow.png"></td>        <td></td></tr>
- *   <tr><td>rainbow-c</td>     <td>&nbsp;&nbsp;<img src="doc-files/rainbow-c.png"></td>      <td>Chlorophyll-a concentration (Nasa)</td></tr>
- *   <tr><td>SeaWiFS</td>       <td>&nbsp;&nbsp;<img src="doc-files/SeaWiFS.png"></td>        <td>Chlorophyll-a concentration (SeaWiFS)</td></tr>
- *   <tr><td>dem</td>           <td>&nbsp;&nbsp;<img src="doc-files/dem.png"></td>            <td>Digital Elevation Model</td></tr>
- * </table>
+ *  <blockquote><table border="1" cellpadding="0" cellspacing="0">
+ *  <tr bgcolor="lightblue"><th>Name</th>                             <th>Overview</th>                                 <th>Typical usage</th></tr>
+ *    <tr><td><code>&nbsp;&nbsp;grayscale&nbsp;&nbsp;</code></td>     <td><img src="doc-files/grayscale.png"></td>      <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;red-blue&nbsp;&nbsp;</code></td>      <td><img src="doc-files/red-blue.png"></td>       <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;blue-red&nbsp;&nbsp;</code></td>      <td><img src="doc-files/blue-red.png"></td>       <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;white-cyan-red&nbsp;&nbsp;</code></td><td><img src="doc-files/white-cyan-red.png"></td> <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;bell&nbsp;&nbsp;</code></td>          <td><img src="doc-files/bell.png"></td>           <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;rainbow&nbsp;&nbsp;</code></td>       <td><img src="doc-files/rainbow.png"></td>        <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;rainbow-c&nbsp;&nbsp;</code></td>     <td><img src="doc-files/rainbow-c.png"></td>      <td>&nbsp;&nbsp;Chlorophyll-a concentration (Nasa)</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;SeaWiFS&nbsp;&nbsp;</code></td>       <td><img src="doc-files/SeaWiFS.png"></td>        <td>&nbsp;&nbsp;Chlorophyll-a concentration (SeaWiFS)</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;dem&nbsp;&nbsp;</code></td>           <td><img src="doc-files/dem.png"></td>            <td>&nbsp;&nbsp;Digital Elevation Model</td></tr>
+ *  </table></blockquote>
  *
  * {@section Adding custom palettes}
  * To add custum palettes, create a subclass of {@code PaletteFactory} like below:

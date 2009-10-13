@@ -65,7 +65,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  *
  * The output will looks like the tree below (actual output may vary depending the plugins
  * available on the classpath). The "{@code …⬏}" suffix means that the factory has already
- * been defined in a previous line and its dependencies are not repeated for brievety.
+ * been defined in a previous line and its dependencies are not repeated.
  *
  * {@preformat text
  * DefaultAuthorityFactory["All"]
@@ -90,7 +90,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * }
  *
  * For example if an {@value org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory#FILENAME}
- * file is provided on the classpath, then the above code snippet is useful for verifying if
+ * file is provided on the classpath, then the above code snippet is useful for verifying that
  * {@code PropertyEpsgFactory} appears as expected. It should be visible below
  * {@code ThreadedEpsgFactory} in a fallback chain.
  * <p>

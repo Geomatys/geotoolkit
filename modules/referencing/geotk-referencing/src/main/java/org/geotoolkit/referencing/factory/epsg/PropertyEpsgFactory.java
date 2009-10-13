@@ -89,7 +89,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * <ul>
  *   <li><p>Print the list of every registered factories using the code snippet documented
- *       in the {@link org.geotoolkit.referencing.factory.FactoryDependencies} and verify
+ *       in the {@link org.geotoolkit.referencing.factory.FactoryDependencies} class and verify
  *       that {@code PropertyEpsgFactory} is presents.</p></li>
  *
  *   <li><p>Set the logging level for the {@code org.geotoolkit} loggers to {@code CONFIG}.
@@ -97,11 +97,11 @@ import org.geotoolkit.lang.ThreadSafe;
  *       Logging Overview</a> for the standard way, or use the following Geotk convenience method:
  *
  *       {@preformat java
- *         Logging.forceMonolineConsoleOutput(Level.CONFIG);
+ *         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(Level.CONFIG);
  *       }
  *       </p></li>
  *
- *   <li><p>Forces the system to ignore any factory other than {@code PropertyEpsgFactory}:
+ *   <li><p>Force the system to ignore any factory other than {@code PropertyEpsgFactory}:
  *
  *       {@preformat java
  *         Hints.putSystemDefault(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class);
