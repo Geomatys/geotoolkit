@@ -46,7 +46,14 @@ import org.geotoolkit.lang.ThreadSafe;
  * strings from a property file. This gives some of the benificts of using the
  * {@linkplain org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory EPSG database}
  * in a portable property file.
- * <p>
+ *
+ * {@section Declaring more than one authority}
+ * There is usually only one authority for a given instance of {@code PropertyAuthorityFactory},
+ * but more authorities can be given to the constructor if the CRS objects to create should have
+ * more than one {@linkplain CoordinateReferenceSystem#getIdentifiers identifier}, each with the
+ * same code but different namespace. See {@link WKTParsingAuthorityFactory} for more details.
+ *
+ * {@section Caching of CRS objects}
  * This factory doesn't cache any result. Any call to a {@code createFoo} method
  * will trig a new WKT parsing. For adding caching service, this factory should
  * be wrapped in {@link CachingAuthorityFactory}.
@@ -75,12 +82,8 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory {
      * Creates a factory for the specified authorities using the definitions declared in the given
      * property file. There is usually only one authority, but more can be given when the objects
      * to create should have more than one {@linkplain CoordinateReferenceSystem#getIdentifiers
-     * identifier}, each with the same code but different namespace. For example a
-     * {@linkplain org.geotoolkit.referencing.factory.epsg.EsriExtension factory for CRS defined
-     * by ESRI} uses the {@code "ESRI"} namespace, but also the {@code "EPSG"} namespace because
-     * those CRS are used as extension of the EPSG database. Consequently the same CRS can be
-     * identified as {@code "ESRI:53001"} and {@code "EPSG:53001"}, where {@code "53001"} is a
-     * unused code in the official EPSG database.
+     * identifier}, each with the same code but different namespace.
+     * See {@link WKTParsingAuthorityFactory} for more details.
      *
      * @param userHints
      *          An optional set of hints, or {@code null} for the default ones.

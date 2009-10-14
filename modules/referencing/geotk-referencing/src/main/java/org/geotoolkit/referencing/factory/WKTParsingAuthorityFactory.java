@@ -56,11 +56,23 @@ import org.geotoolkit.lang.ThreadSafe;
  * (WKT) strings. The strings may be loaded from property files or be queried in a database (for
  * example the {@code "spatial_ref_sys"} table in a PostGIS database).
  * <p>
- * This base implementation expects a map of (<var>code</var>, <var>WKT</var>) entries, when the
+ * This base implementation expects a map of (<var>code</var>, <var>WKT</var>) entries, where the
  * authority codes are the keys and WKT strings are the values. If the map is backed by a store
  * which may throw checked exceptions (for example a connection to a PostGIS database), then it
  * shall wrap the checked exceptions in {@link BackingStoreException}s.
- * <p>
+ *
+ * {@section Declaring more than one authority}
+ * There is usually only one authority for a given instance of {@code WKTParsingAuthorityFactory},
+ * but more authorities can be given to the constructor if the CRS objects to create should have
+ * more than one {@linkplain CoordinateReferenceSystem#getIdentifiers identifier}, each with the
+ * same code but different namespace. For example a
+ * {@linkplain org.geotoolkit.referencing.factory.epsg.EsriExtension factory for CRS defined
+ * by ESRI} uses the {@code "ESRI"} namespace, but also the {@code "EPSG"} namespace because
+ * those CRS are used as extension of the EPSG database. Consequently the same CRS can be
+ * identified as both {@code "ESRI:53001"} and {@code "EPSG:53001"}, where {@code "53001"}
+ * is a unused code in the official EPSG database.
+ *
+ * {@section Caching of CRS objects}
  * This factory doesn't cache any result. Any call to a {@code createFoo} method
  * will trig a new WKT parsing. For adding caching service, this factory should
  * be wrapped in {@link CachingAuthorityFactory}.
@@ -116,12 +128,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
      * Creates a factory for the specified authorities using the definitions in the given map.
      * There is usually only one authority, but more can be given when the objects to create
      * should have more than one {@linkplain CoordinateReferenceSystem#getIdentifiers identifier},
-     * each with the same code but different namespace. For example a
-     * {@linkplain org.geotoolkit.referencing.factory.epsg.EsriExtension factory for CRS defined
-     * by ESRI} uses the {@code "ESRI"} namespace, but also the {@code "EPSG"} namespace because
-     * those CRS are used as extension of the EPSG database. Consequently the same CRS can be
-     * identified as {@code "ESRI:53001"} and {@code "EPSG:53001"}, where {@code "53001"} is a
-     * unused code in the official EPSG database.
+     * each with the same code but different namespace. See the class javadoc for more details.
      *
      * @param userHints
      *          An optional set of hints, or {@code null} for the default ones.
@@ -220,8 +227,9 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
     }
 
     /**
-     * Returns the set of authority codes of the given type. The type argument specify the base
-     * class. For example if this factory is an instance of {@link CRSAuthorityFactory}, then:
+     * Returns the set of authority codes of the given type. The {@code type} argument specifies
+     * the base class. For example if this factory is an instance of {@link CRSAuthorityFactory},
+     * then:
      * <p>
      * <ul>
      *  <li>{@code CoordinateReferenceSystem.class} asks for all authority codes accepted by
@@ -229,7 +237,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
      *      {@link #createProjectedCRS  createProjectedCRS},
      *      {@link #createVerticalCRS   createVerticalCRS},
      *      {@link #createTemporalCRS   createTemporalCRS}
-     *      and their friends.</li>
+     *       and any other method returning a sub-type of {@code CoordinateReferenceSystem}.</li>
      *  <li>{@code ProjectedCRS.class} asks only for authority codes accepted by
      *      {@link #createProjectedCRS createProjectedCRS}.</li>
      * </ul>
@@ -237,7 +245,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
      * The default implementation filters the set of codes based on the
      * {@code "PROJCS"} and {@code "GEOGCS"} at the start of the WKT strings.
      *
-     * @param  type The spatial reference objects type (may be {@code Object.class}).
+     * @param  type The spatial reference objects type (can be {@code IdentifiedObject.class}).
      * @return The set of authority codes for spatial reference objects of the given type.
      *         If this factory doesn't contains any object of the given type, then this method
      *         returns an empty set.
