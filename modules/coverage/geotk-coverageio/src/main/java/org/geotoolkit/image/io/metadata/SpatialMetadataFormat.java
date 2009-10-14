@@ -31,10 +31,21 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.Obligation;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.content.Band;
-import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.ImageDescription;
+
+// We use a lot of different metadata interfaces in this class.
+// It is a bit too tedious to declare all of them.
+import org.opengis.metadata.*;
+import org.opengis.metadata.extent.*;
+import org.opengis.metadata.spatial.*;
+import org.opengis.metadata.quality.*;
+import org.opengis.metadata.content.*;
+import org.opengis.metadata.citation.*;
+import org.opengis.metadata.constraint.*;
+import org.opengis.metadata.maintenance.*;
+import org.opengis.metadata.distribution.*;
+import org.opengis.metadata.identification.*;
+import org.opengis.metadata.identification.Identification; // Override the package class.
+import org.opengis.metadata.content.Band; // Override the package class.
 
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
@@ -113,7 +124,7 @@ geotk-coverageio
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
@@ -132,9 +143,39 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     private static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
-     * The default spatial metadata format instance.
+     * The default instance for <cite>stream</cite> metadata format. This is the
+     * metadata format that apply to file as a whole, which may contain more than
+     * one image.
+     *
+     * @see #addTreeForStream()
+     *
+     * @since 3.05
      */
-    public static final SpatialMetadataFormat INSTANCE = new SpatialMetadataFormat(FORMAT_NAME);
+    public static final SpatialMetadataFormat STREAM = new SpatialMetadataFormat(MetadataStandard.ISO_19115, FORMAT_NAME);
+    static {
+        STREAM.addTreeForStream();
+    }
+
+    /**
+     * The default instance for <cite>image</cite> metadata format. This
+     * is the metadata format that apply to a particular image in a file.
+     *
+     * @see #addTreeForImage()
+     *
+     * @since 3.05
+     */
+    public static final SpatialMetadataFormat IMAGE = new SpatialMetadataFormat(MetadataStandard.ISO_19115, FORMAT_NAME);
+    static {
+        IMAGE.addTreeForImage();
+    }
+
+    /**
+     * The default spatial metadata format instance.
+     *
+     * @deprecated Renamed as {@link #IMAGE}.
+     */
+    @Deprecated
+    public static final SpatialMetadataFormat INSTANCE = IMAGE;
 
     /**
      * The metadata standard represented by this format.
@@ -149,13 +190,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * {@link #SpatialMetadataFormat(MetadataStandard, String)} constructor instead.
      *
      * @param rootName the name of the root element.
+     *
+     * @deprecated Invoke {@link #addTreeForStream} or {@link #addTreeForImage}
+     *             after construction instead.
      */
+    @Deprecated
     protected SpatialMetadataFormat(final String rootName) {
         this(MetadataStandard.ISO_19115, rootName);
-        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(4);
-        substitution.put(Citation.class, null);
-        substitution.put(RangeDimension.class, Band.class);
-        addTree(ImageDescription.class, substitution);
+        addTreeForImage();
     }
 
     /**
@@ -170,6 +212,85 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     protected SpatialMetadataFormat(final MetadataStandard standard, final String rootName) {
         super(rootName, CHILD_POLICY_SOME);
         this.standard = standard;
+    }
+
+    /**
+     * Adds an {@link MetaData} node at the root of the tree.
+     * This is used for <cite>stream</cite> metadata.
+     *
+     * @see #STREAM
+     *
+     * @since 3.05
+     */
+    protected void addTreeForStream() {
+        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(20);
+        /*
+         * Metadata excluded because they are redundant with standard API.
+         *
+         * - The Locale is specified in ImageReader.
+         * - The CharacterSet is fixed to Unicode (at least for String objects) by Java.
+         * - The Format is redundant with ImageReaderWriterSpi.
+         */
+        substitution.put(Format.class,       null);
+        substitution.put(Locale.class,       null);
+        substitution.put(CharacterSet.class, null);
+        /*
+         * Metadata excluded because we are not interrested in (at this time):
+         *
+         * - The ContentInformation is provided in image metadata.
+         * - SpatialRepresentationType is fixed to "grid" for Image I/O, so is useless.
+         * - The Citation is repeated in too many places with large dependencies tree.
+         * - The ResponsibleParty is repeated in too many places.
+         */
+        substitution.put(Citation.class,                     null);
+        substitution.put(ResponsibleParty.class,             null);
+        substitution.put(Distribution.class,                 null);
+        substitution.put(Constraints.class,                  null);
+        substitution.put(MaintenanceInformation.class,       null);
+        substitution.put(PortrayalCatalogueReference.class,  null);
+        substitution.put(ApplicationSchemaInformation.class, null);
+        substitution.put(MetadataExtensionInformation.class, null);
+        substitution.put(SpatialRepresentationType.class,    null);
+        substitution.put(ContentInformation.class,           null);
+        /*
+         * Metadata excluded because not yet implemented.
+         */
+        substitution.put(TemporalExtent.class, null);
+        /*
+         * Collections replaced by singletons, because only one
+         * instance is enough for the purpose of stream metadata.
+         */
+        substitution.put(Extent[].class,           Extent.class);
+        substitution.put(VerticalExtent[].class,   VerticalExtent.class);
+        substitution.put(GeographicExtent[].class, GeographicExtent.class);
+        substitution.put(Identification[].class,   Identification.class);
+        /*
+         * Since this set of metadata is about gridded data,
+         * replace the generic interfaces by specialized ones.
+         */
+        substitution.put(Identification.class,        DataIdentification.class);
+        substitution.put(SpatialRepresentation.class, GridSpatialRepresentation.class);
+        substitution.put(GeographicExtent.class,      GeographicBoundingBox.class);
+        substitution.put(Result.class,                CoverageResult.class);
+        /*
+         * Build the tree.
+         */
+        addTree(MetaData.class, substitution);
+    }
+
+    /**
+     * Adds an {@link ImageDescription} node at the root of the tree.
+     * This is used for <cite>image</cite> metadata.
+     *
+     * @see #IMAGE
+     *
+     * @since 3.05
+     */
+    protected void addTreeForImage() {
+        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(4);
+        substitution.put(Citation.class, null);
+        substitution.put(RangeDimension.class, Band.class);
+        addTree(ImageDescription.class, substitution);
     }
 
     /**
@@ -193,13 +314,31 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * <p>
      * This method can be given an optional <cite>substitution map</cite>. If this map is non
      * null, then every occurence of a class in the set of keys is replaced by the associated
-     * class in the set of values. This is useful mostly for replacing a base class by some
-     * specialized subclass, for example {@link RangeDimension} by {@link Band}. This substitution
-     * applies only to childs (if any), not to the type given directly to this method.
-     * <p>
-     * Values in the substitution map can also be null, which has the effect to exclude the
-     * type in the key. This is used typically for excluding {@code Citation.class}, because
-     * introducing this metadata type brings a large tree of dependencies.
+     * class in the set of values. The purpose of this map is to:
+     *
+     * <ul>
+     *   <li><p>Replace a base class by some specialized subclass. Since {@code IIOMetadata} are
+     *   about grided data (not generic {@code Feature}s), the exact subtype is often known and
+     *   we want the additional attributes to be declared inconditionnaly. Example:</p>
+     *
+     * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class)</pre></blockquote></li>
+     *
+     *   <li><p>Exclude a particular class. This is conceptually equivalent to setting the target
+     *   type to {@code null}. This is used typically for excluding {@code Citation.class}, because
+     *   introducing this metadata type brings a large tree of dependencies. Example:</p>
+     *
+     * <blockquote><pre>substitution.put({@linkplain Citation}.class, null)</pre></blockquote></li>
+     *
+     *   <li><p>Replace a collection by a singleton. This is conceptually equivalent to setting the
+     *   source type to an array, and the target type to the element of that array. This is useful
+     *   when a collection seems an overkill for the specific case of stream or image metadata.
+     *   Example:</p>
+     *
+     * <blockquote><pre>substitution.put({@linkplain Identification}[].class, {@linkplain Identification}.class)</pre></blockquote></li>
+     * </ul>
+     *
+     * The substitution map applies only to childs (if any), not to the type given directly to this
+     * method.
      *
      * @param type          The type of the element or attribute to be added.
      * @param elementName   The name of the element or attribute node to be added.
@@ -387,9 +526,18 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 childType = elementTypes.get(childName);
             }
             if (substitution != null) {
-                final Class<?> sub = substitution.get(childType);
-                if (sub != null) {
-                    childType = sub;
+                Class<?> replacement = null;
+                if (max != 1) {
+                    // Check if the user provided a special case for arrays.
+                    replacement = substitution.get(Classes.changeArrayDimension(childType, 1));
+                    if (replacement != null) {
+                        childType = replacement;
+                        max = 1;
+                    }
+                }
+                replacement = substitution.get(childType);
+                if (replacement != null) {
+                    childType = replacement;
                 }
             }
             if (exclude.add(childType)) {

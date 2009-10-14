@@ -210,7 +210,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     /**
      * Returns the type of user object that can be associated to the element or attribute.
      * {@link java.util.Collection} types are converted to array type. If the node is not
-     * allowed to store any object, then this method returns {@link Void#TYPE}.
+     * allowed to store any object, then this method returns {@code null}.
      */
     @SuppressWarnings("fallthrough")
     public Class<?> getValueType() {
@@ -242,7 +242,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
             }
             valueType = type;
         }
-        return type;
+        return Void.TYPE.equals(type) ? null : type;
     }
 
     /**
@@ -343,7 +343,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     private Object convert(Object value) {
         if (value != null) {
             final Class<?> target = getValueType();
-            if (target != null && !target.equals(Void.TYPE)) {
+            if (target != null) {
                 value = tree.converters.tryConvert(value, target);
             }
         }
@@ -381,6 +381,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * @return The most specific superclass of legal values in the queried column.
      */
     @Override
+    @SuppressWarnings("fallthrough")
     public Class<?> getColumnClass(final int column) {
         switch (canonical(column)) {
             case 0:  return String.class;       // The label.
@@ -388,7 +389,13 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
             case 3:  return NumberRange.class;  // The range of occurences
             case 4:  return ValidValues.class;  // The restrictions on valid values.
             case 5:                             // The default value.
-            case 1:  return getValueType();     // The actual value.
+            case 1: {                           // The actual value.
+                final Class<?> type = getValueType();
+                if (type != null) {
+                    return type;
+                }
+                // fallthrough
+            }
             default: return Object.class;
         }
     }
