@@ -39,9 +39,19 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 /**
  * A coordinate reference system that is defined by its coordinate conversion from another
- * coordinate reference system but is not a projected coordinate reference system. This
- * category includes coordinate reference systems derived from a projected coordinate
- * reference system.
+ * CRS but is not a projected CRS. This category includes coordinate reference systems derived
+ * from a projected CRS, for example in order to use a {@link org.opengis.referencing.cs.PolarCS}.
+ *
+ * {@section Note on the inclined case (two-dimensional)}
+ * Some methods like {@link org.geotoolkit.referencing.CRS#isHorizontalCRS(CoordinateReferenceSystem)}
+ * assume that the axes of the two-dimensional derived CRS are coplanar with the axes of the base CRS.
+ * This is not always the case; for example it is possible to define a {@code DerivedCRS} on a plane
+ * which is inclined relative to the base CRS. ISO 19111 does not specify how to handle such cases.
+ * In Geotk we suggest a slight departure from the ISO standard: assign to inclined {@code DerivedCRS}
+ * a datum different than the base datum, which is not a {@link org.opengis.referencing.datum.GeodeticDatum}.
+ *
+ * @todo Provides an API for specifying the datum at construction time which is different
+ *       than the datum of the base CRS.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00

@@ -46,8 +46,8 @@ import org.geotoolkit.lang.Immutable;
 
 
 /**
- * A coordinate reference system that is defined by its coordinate {@linkplain Conversion
- * conversion} from another coordinate reference system (not by a {@linkplain Datum datum}).
+ * A coordinate reference system that is defined by its coordinate
+ * {@linkplain Conversion conversion} from another CRS (not by a {@linkplain Datum datum}).
  * <p>
  * This class is conceptually <cite>abstract</cite>, even if it is technically possible to
  * instantiate it. Typical applications should create instances of the most specific subclass with

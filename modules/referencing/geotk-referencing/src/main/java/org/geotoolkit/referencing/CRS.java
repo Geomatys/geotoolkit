@@ -78,7 +78,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.01
+ * @version 3.05
  *
  * @since 2.1
  * @module
@@ -565,9 +565,64 @@ public final class CRS {
     }
 
     /**
+     * Returns {@code true} if the given CRS is horizontal. This method is provided because there is
+     * a direct way to determine if a CRS is vertical or temporal, but no direct way to determine if
+     * it is horizontal. So this method complements the check for spatio-temporal components as below:
+     * <p>
+     * <ul>
+     *   <li>{@code if (crs instanceof TemporalCRS)} determines if the CRS is for the temporal component.</li>
+     *   <li>{@code if (crs instanceof VerticalCRS)} determines if the CRS is for the vertical component.</li>
+     *   <li>{@code if (CRS.isHorizontalCRS(crs))} determines if the CRS is for the horizontal component.</li>
+     * </ul>
+     * <p>
+     * This method considers a CRS as horizontal if it is two-dimensional and comply
+     * with one of the following conditions:
+     * <p>
+     * <ul>
+     *   <li>It is an instance of {@link GeographicCRS}.</li>
+     *   <li>It is an instance of {@link ProjectedCRS}. Actually this is not explicitly
+     *       checked, since this condition is a special case of the condition below.</li>
+     *   <li>It is an instance of {@link GeneralDerivedCRS} based on a horizontal CRS
+     *       and using a {@link GeodeticDatum}.</li>
+     * </ul>
+     * <p>
+     * The last condition ({@code GeneralDerivedCRS} based on a horizontal CRS) allows for example
+     * to express the coordinates of a projected CRS (which use a cartesian coordinate system) in
+     * a {@linkplain org.opengis.referencing.cs.PolarCS polar coordinate system} and still consider
+     * the result as horizontal. However this assumes that the axes of the derived CRS are coplanar
+     * with the axes of the base CRS. This is not always true since a derived CRS could be created
+     * for an inclined plane, for example a plane fitting the slope of a mountain. ISO 19111 does
+     * not specify how to handle this case. In the Geotk implementation, we suggest to define a new
+     * {@linkplain Datum datum} for inclined plane which is not a geodetic datum.
+     *
+     * @param  crs The coordinate reference system, or {@code null}.
+     * @return {@code true} if the given CRS is non-null and comply with one of the above
+     *         conditions, or {@code false} otherwise.
+     *
+     * @since 3.05
+     */
+    public static boolean isHorizontalCRS(CoordinateReferenceSystem crs) {
+        if (crs instanceof SingleCRS) {
+            final int dimension = crs.getCoordinateSystem().getDimension();
+            if (dimension == 2) {
+                final Datum datum = ((SingleCRS) crs).getDatum();
+                if (datum instanceof GeodeticDatum) {
+                    while (crs instanceof GeneralDerivedCRS) {
+                        crs = ((GeneralDerivedCRS) crs).getBaseCRS();
+                    }
+                    return (crs instanceof GeographicCRS);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns the first horizontal coordinate reference system found in the given CRS,
      * or {@code null} if there is none. A horizontal CRS is usually a two-dimensional
      * {@linkplain GeographicCRS geographic} or {@linkplain ProjectedCRS projected} CRS.
+     * See the {@link #isHorizontalCRS(CoordinateReferenceSystem) isHorizontalCRS} method for
+     * a more accurate description about the conditions for a CRS to be considered horizontal.
      *
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The horizontal CRS, or {@code null} if none.
@@ -582,15 +637,18 @@ public final class CRS {
                 /*
                  * For two-dimensional CRS, returns the CRS directly if it is either a
                  * GeographicCRS, or any kind of derived CRS having a GeographicCRS as
-                 * its base.
+                 * its base and a geodetic datum.
                  */
-                CoordinateReferenceSystem base = crs;
-                while (base instanceof GeneralDerivedCRS) {
-                    base = ((GeneralDerivedCRS) base).getBaseCRS();
-                }
-                // No need to test for ProjectedCRS, since the code above unwrap it.
-                if (base instanceof GeographicCRS) {
-                    return (SingleCRS) crs; // Really returns 'crs', not 'base'.
+                final Datum datum = ((SingleCRS) crs).getDatum();
+                if (datum instanceof GeodeticDatum) {
+                    CoordinateReferenceSystem base = crs;
+                    while (base instanceof GeneralDerivedCRS) {
+                        base = ((GeneralDerivedCRS) base).getBaseCRS();
+                    }
+                    // No need to test for ProjectedCRS, since the code above unwrap it.
+                    if (base instanceof GeographicCRS) {
+                        return (SingleCRS) crs; // Really returns 'crs', not 'base'.
+                    }
                 }
             } else if (dimension >= 3 && crs instanceof GeographicCRS) {
                 /*
