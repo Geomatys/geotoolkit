@@ -31,16 +31,6 @@
   <!--     Developers and Contributors                             -->
   <!-- =========================================================== -->
   <developers>
-    <developer>
-      <name>Justin Deoliveira</name>
-      <id>jdeolive</id>
-      <email>jdeolive@users.sourceforge.net</email>
-      <organization>TOPP</organization>
-      <roles>
-        <role>Module Maintainer</role>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
   </developers>
 
 
