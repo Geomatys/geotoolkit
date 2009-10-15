@@ -580,8 +580,8 @@ public final class CRS {
      * <p>
      * <ul>
      *   <li>It is an instance of {@link GeographicCRS}.</li>
-     *   <li>It is an instance of {@link ProjectedCRS}. Actually this is not explicitly
-     *       checked, since this condition is a special case of the condition below.</li>
+     *   <li>It is an instance of {@link ProjectedCRS} (actually this is not explicitly
+     *       checked, since this condition is a special case of the condition below).</li>
      *   <li>It is an instance of {@link GeneralDerivedCRS} based on a horizontal CRS
      *       and using a {@link GeodeticDatum}.</li>
      * </ul>
@@ -647,6 +647,7 @@ public final class CRS {
                     }
                     // No need to test for ProjectedCRS, since the code above unwrap it.
                     if (base instanceof GeographicCRS) {
+                        assert isHorizontalCRS(crs) : crs;
                         return (SingleCRS) crs; // Really returns 'crs', not 'base'.
                     }
                 }
@@ -687,6 +688,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
                         Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
                         horizontalCRS = new DefaultGeographicCRS(properties, datum, horizontalCS);
                     }
+                    assert isHorizontalCRS(horizontalCRS) : horizontalCRS;
                     return horizontalCRS;
                 }
             }
@@ -696,6 +698,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             for (final CoordinateReferenceSystem c : cp.getComponents()) {
                 final SingleCRS candidate = getHorizontalCRS(c);
                 if (candidate != null) {
+                    assert isHorizontalCRS(candidate) : candidate;
                     return candidate;
                 }
             }

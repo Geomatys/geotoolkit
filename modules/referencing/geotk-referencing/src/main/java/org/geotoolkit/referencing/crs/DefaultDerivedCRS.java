@@ -47,8 +47,9 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
  * assume that the axes of the two-dimensional derived CRS are coplanar with the axes of the base CRS.
  * This is not always the case; for example it is possible to define a {@code DerivedCRS} on a plane
  * which is inclined relative to the base CRS. ISO 19111 does not specify how to handle such cases.
- * In Geotk we suggest a slight departure from the ISO standard: assign to inclined {@code DerivedCRS}
- * a datum different than the base datum, which is not a {@link org.opengis.referencing.datum.GeodeticDatum}.
+ * In Geotk we suggest a slight departure from the ISO standard: assign to the inclined {@code DerivedCRS}
+ * a datum which is different than the base datum and which is not a
+ * {@link org.opengis.referencing.datum.GeodeticDatum}.
  *
  * @todo Provides an API for specifying the datum at construction time which is different
  *       than the datum of the base CRS.

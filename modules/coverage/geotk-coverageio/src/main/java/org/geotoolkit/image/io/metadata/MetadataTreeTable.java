@@ -32,7 +32,7 @@ import org.geotoolkit.util.converter.AnyConverter;
 /**
  * A view of an {@link IIOMetadata} instance as a tree table. The tree structure is determined by
  * a {@link IIOMetadataFormat}, which must be provided to the constructor. After the construction,
- * different instance of {@code IIOMetadata} can be given to this {@code MetadataTreeTable} in
+ * different instances of {@code IIOMetadata} can be given to this {@code MetadataTreeTable} in
  * order to generate tables with different values. If no {@code IIOMetadata} instance is given,
  * then this object represents only the structure of the format with its restrictions (expected
  * type, range of values, <cite>etc.</cite>) but no values.
@@ -52,7 +52,9 @@ import org.geotoolkit.util.converter.AnyConverter;
  * it doesn't need to be the specialized implementations defined in Geotk.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.05
+ *
+ * @see org.geotoolkit.gui.swing.image.IIOMetadataPanel
  *
  * @since 3.04
  * @module

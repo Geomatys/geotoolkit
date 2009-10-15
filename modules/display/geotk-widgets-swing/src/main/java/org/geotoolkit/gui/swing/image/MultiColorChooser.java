@@ -41,7 +41,7 @@ import javax.swing.colorchooser.ColorSelectionModel;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.internal.SwingUtilities;
-import org.geotoolkit.internal.swing.LabeledTableCellRenderer;
+import org.geotoolkit.internal.swing.table.LabeledRenderer;
 import org.geotoolkit.util.collection.IntegerList;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -86,7 +86,7 @@ public class MultiColorChooser extends JPanel implements Dialog {
         this.colors = colors;
         final JTable colorsTable = new JTable(colors);
         colorsTable.setDefaultRenderer(Color.class, new CellRenderer());
-        colorsTable.setDefaultRenderer(Integer.class, new LabeledTableCellRenderer.Numeric(locale, true));
+        colorsTable.setDefaultRenderer(Integer.class, new LabeledRenderer.Numeric(locale, true));
         colorsTable.getColumnModel().getColumn(0).setPreferredWidth(30);
         final JScrollPane scroll = new JScrollPane(colorsTable);
         final JLabel  title      = new JLabel (resources.getString(Vocabulary.Keys.SELECTED_COLORS), JLabel.CENTER);

@@ -56,7 +56,7 @@ import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.swing.FileField;
 import org.geotoolkit.internal.swing.SizeFields;
-import org.geotoolkit.internal.swing.LabeledTableCellRenderer;
+import org.geotoolkit.internal.swing.table.LabeledRenderer;
 
 import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_FORMAT;
 import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
@@ -226,7 +226,7 @@ public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGrap
         subsamplingTable = new Subsamplings(resources);
         subsamplingTable.setElements(subsamplings);
         final JTable subsamplingTable = new JTable(this.subsamplingTable);
-        subsamplingTable.setDefaultRenderer(Integer.class, new LabeledTableCellRenderer.Numeric(locale, true));
+        subsamplingTable.setDefaultRenderer(Integer.class, new LabeledRenderer.Numeric(locale, true));
         final JButton removeButton = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
         removeButton.setEnabled(false);
         JPanel subsamplingPane = new JPanel(new BorderLayout());

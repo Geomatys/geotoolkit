@@ -41,6 +41,7 @@ import org.opengis.metadata.quality.*;
 import org.opengis.metadata.content.*;
 import org.opengis.metadata.citation.*;
 import org.opengis.metadata.constraint.*;
+import org.opengis.metadata.acquisition.*;
 import org.opengis.metadata.maintenance.*;
 import org.opengis.metadata.distribution.*;
 import org.opengis.metadata.identification.*;
@@ -76,12 +77,65 @@ import org.geotoolkit.gui.swing.tree.Trees;
  *       {@linkplain java.util.TimeZone timezone}.</li>
  * </ul>
  *
- * {@section Default format}
- * The default {@link #INSTANCE} is inferred from the {@link ImageDescription} metadata,
- * which is defined in ISO 19115-2. Its tree structure is as below:
+ * {@section Default formats}
+ * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
+ * {@link MetaData} and {@link ImageDescription} interfaces, respectively. Consequently those
+ * instances can be considered as profiles of ISO 19115-2. The tree structures are as below:
  *
- * {@preformat text
-geotk-coverageio
+<blockquote><table border="1" cellpadding="12">
+<tr bgcolor="lightblue"><th>Stream metadata</th><th>Image metadata</th></tr>
+<tr><td nowrap valign="top" width="50%">
+<pre>geotk-coverageio_3.05
+└───MetaData
+    ├───dateStamp
+    ├───hierarchyLevels
+    ├───hierarchyLevelNames
+    ├───parentIdentifier
+    ├───dataSetUri
+    ├───fileIdentifier
+    ├───metadataStandardName
+    ├───metadataStandardVersion
+    ├───referenceSystemInfo
+    ├───identificationInfo
+    │   ├───abstract
+    │   ├───topicCategories
+    │   ├───credits
+    │   ├───environmentDescription
+    │   ├───purpose
+    │   ├───status
+    │   ├───supplementalInformation
+    │   ├───extent
+    │   │   ├───description
+    │   │   ├───geographicElement
+    │   │   │   ├───eastBoundLongitude
+    │   │   │   ├───northBoundLatitude
+    │   │   │   ├───southBoundLatitude
+    │   │   │   ├───westBoundLongitude
+    │   │   │   └───inclusion
+    │   │   └───verticalElement
+    │   │       ├───maximumValue
+    │   │       ├───minimumValue
+    │   │       └───verticalCRS
+    │   ├───descriptiveKeywords
+    │   │   └───descriptiveKeywords element
+    │   │       ├───keywords
+    │   │       └───type
+    │   └───spatialResolution
+    │       ├───distance
+    │       └───equivalentScale
+    │           ├───doubleValue
+    │           └───denominator
+    └───spatialRepresentationInfo
+        ├───cellGeometry
+        ├───numberOfDimensions
+        ├───transformationParameterAvailable
+        └───axisDimensionProperties
+            └───axisDimensionProperties element
+                ├───dimensionName
+                ├───dimensionSize
+                └───resolution</pre>
+</td><td nowrap valign="top" width="50%">
+<pre>geotk-coverageio_3.05
 └───ImageDescription
     ├───attributeDescription
     ├───contentType
@@ -120,8 +174,8 @@ geotk-coverageio
         └───rangeElementDescription
             ├───name
             ├───definition
-            └───rangeElements
- * }
+            └───rangeElements</pre>
+</tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
@@ -131,9 +185,12 @@ geotk-coverageio
  */
 public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     /**
-     * The metadata format name, which is {@value}.
+     * The metadata format name, which is {@value}. The {@link javax.imageio.metadata} package
+     * description requires that we provide a version number as part of the format name. The
+     * version number provided in this constant is set to the last Geotk version when this
+     * format has been modified, and may change in any future version.
      */
-    public static final String FORMAT_NAME = "geotk-coverageio";
+    public static final String FORMAT_NAME = "geotk-coverageio_3.05";
 
     /**
      * The policy for the names of the nodes to be inferred from the ISO objects.
@@ -230,10 +287,12 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * - The Locale is specified in ImageReader.
          * - The CharacterSet is fixed to Unicode (at least for String objects) by Java.
          * - The Format is redundant with ImageReaderWriterSpi.
+         * - The BrowseGraphic is redundant with Image I/O Thumbnails
          */
-        substitution.put(Format.class,       null);
-        substitution.put(Locale.class,       null);
-        substitution.put(CharacterSet.class, null);
+        substitution.put(Format.class,        null);
+        substitution.put(Locale.class,        null);
+        substitution.put(CharacterSet.class,  null);
+        substitution.put(BrowseGraphic.class, null);
         /*
          * Metadata excluded because we are not interrested in (at this time):
          *
@@ -241,7 +300,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * - SpatialRepresentationType is fixed to "grid" for Image I/O, so is useless.
          * - The Citation is repeated in too many places with large dependencies tree.
          * - The ResponsibleParty is repeated in too many places.
+         * - The DataQuality branch is very large and we have not yet determined what to keep.
          */
+        substitution.put(Usage.class,                        null);
         substitution.put(Citation.class,                     null);
         substitution.put(ResponsibleParty.class,             null);
         substitution.put(Distribution.class,                 null);
@@ -252,6 +313,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         substitution.put(MetadataExtensionInformation.class, null);
         substitution.put(SpatialRepresentationType.class,    null);
         substitution.put(ContentInformation.class,           null);
+        substitution.put(AggregateInformation.class,         null);
+        substitution.put(AcquisitionInformation.class,       null);
+        substitution.put(RepresentativeFraction.class,       null);
+        substitution.put(DataQuality.class,                  null);
         /*
          * Metadata excluded because not yet implemented.
          */
@@ -260,10 +325,12 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * Collections replaced by singletons, because only one
          * instance is enough for the purpose of stream metadata.
          */
-        substitution.put(Extent[].class,           Extent.class);
-        substitution.put(VerticalExtent[].class,   VerticalExtent.class);
-        substitution.put(GeographicExtent[].class, GeographicExtent.class);
-        substitution.put(Identification[].class,   Identification.class);
+        substitution.put(Resolution[].class,            Resolution.class);
+        substitution.put(Extent[].class,                Extent.class);
+        substitution.put(VerticalExtent[].class,        VerticalExtent.class);
+        substitution.put(GeographicExtent[].class,      GeographicExtent.class);
+        substitution.put(SpatialRepresentation[].class, SpatialRepresentation.class);
+        substitution.put(Identification[].class,        Identification.class);
         /*
          * Since this set of metadata is about gridded data,
          * replace the generic interfaces by specialized ones.
@@ -321,20 +388,20 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *   about grided data (not generic {@code Feature}s), the exact subtype is often known and
      *   we want the additional attributes to be declared inconditionnaly. Example:</p>
      *
-     * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class)</pre></blockquote></li>
+     * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class);</pre></blockquote></li>
      *
      *   <li><p>Exclude a particular class. This is conceptually equivalent to setting the target
      *   type to {@code null}. This is used typically for excluding {@code Citation.class}, because
      *   introducing this metadata type brings a large tree of dependencies. Example:</p>
      *
-     * <blockquote><pre>substitution.put({@linkplain Citation}.class, null)</pre></blockquote></li>
+     * <blockquote><pre>substitution.put({@linkplain Citation}.class, null);</pre></blockquote></li>
      *
      *   <li><p>Replace a collection by a singleton. This is conceptually equivalent to setting the
      *   source type to an array, and the target type to the element of that array. This is useful
      *   when a collection seems an overkill for the specific case of stream or image metadata.
      *   Example:</p>
      *
-     * <blockquote><pre>substitution.put({@linkplain Identification}[].class, {@linkplain Identification}.class)</pre></blockquote></li>
+     * <blockquote><pre>substitution.put({@linkplain Identification}[].class, {@linkplain Identification}.class);</pre></blockquote></li>
      * </ul>
      *
      * The substitution map applies only to childs (if any), not to the type given directly to this
@@ -435,6 +502,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         }
         /*
          * Collection of Metadata    ⇒    Element CHILD_POLICY_EMPTY
+         *
+         * The 'elementName' is inferred from the method name and is typically in plural
+         * form (at least in GeoAPI interfaces).  We add a node for 'elementName', which
+         * can contain many occurences of the actual metadata structure. The new node is
+         * set as the parent of the actual metadata structure. The name of that metadata
+         * structure is set to the UML identifier, which is typically the same name than
+         * 'elementName' except that it is in singular form.
          */
         if (maxOccurence != 1) {
             addElement(elementName, parentName, minOccurence, maxOccurence);
@@ -502,12 +576,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             default:          childPolicy = CHILD_POLICY_SOME;   break;
         }
         /*
-         * Adds the child elements. The loop below invokes this method recursively.
+         * At this point we have determined the child policy to apply to the new node.
+         * Now add the child elements. The loop below invokes this method recursively
+         * for each attribute of the metadata object that we are adding.
          */
         addElement(elementName, parentName, childPolicy);
         addObjectValue(elementName, type, false, null);
         for (final Map.Entry<String,Class<?>> entry : propertyTypes.entrySet()) {
-            final String childName = entry.getKey();
+            String childName = entry.getKey();
             final ValueRestriction vr = restrictions.get(childName);
             int min = 0, max = 1;
             if (vr != null && vr.obligation != null) {
@@ -518,20 +594,26 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             }
             Class<?> childType = entry.getValue();
             if (Collection.class.isAssignableFrom(childType)) {
-                /*
-                 * Found a collection. Set the maximum number of occurence,
-                 * then get the type of elements in that collection.
-                 */
-                max = Integer.MAX_VALUE;
+                // Replace the collection type by the type of elements in that collection.
                 childType = elementTypes.get(childName);
+                max = Integer.MAX_VALUE;
             }
+            /*
+             * If the caller specified a substitution map, then we perform two checks:
+             *
+             * 1) If we have a collection (max > 1), then check if the caller wants to
+             *    replace the collection (identified by an array type) by a singleton.
+             *
+             * 2) Then check if we want to replace the element type by an other element
+             *    type. No array type is allowed at this stage.
+             */
             if (substitution != null) {
                 Class<?> replacement = null;
-                if (max != 1) {
-                    // Check if the user provided a special case for arrays.
+                if (max > 1) { // Collection case.
                     replacement = substitution.get(Classes.changeArrayDimension(childType, 1));
                     if (replacement != null) {
-                        childType = replacement;
+                        childType = replacement;    // Typically, the replacement type is the same.
+                        childName = identifiers.get(childName); // Replace plural by singular form.
                         max = 1;
                     }
                 }
@@ -540,6 +622,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                     childType = replacement;
                 }
             }
+            /*
+             * We now have all the properties for the child that we want to add. Invoke this method
+             * recursively for proceding to the addition, with guard against infinite recursivity.
+             */
             if (exclude.add(childType)) {
                 addTree(childType, identifiers.get(childName), childName, elementName,
                         min, max, vr, exclude, substitution);
@@ -558,7 +644,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param  type The class for which the {@code DATATYPE_*} constant is desired.
      * @return The {@code DATATYPE_*} constant for the given class.
      */
-    private static int typeOf(final Class<?> type) {
+    private static int typeOf(Class<?> type) {
+        type = Classes.primitiveToWrapper(type);
         if (Number.class.isAssignableFrom(type)) {
             if (Classes.isInteger(type)) {
                 return IIOMetadataFormat.DATATYPE_INTEGER;

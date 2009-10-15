@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.swing;
+package org.geotoolkit.internal.swing.table;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -40,7 +40,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @since 3.00
  * @module
  */
-public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
+public class LabeledRenderer extends DefaultTableCellRenderer {
     /**
      * For cross-version compatibility.
      */
@@ -75,7 +75,7 @@ public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
      *
      * @param locale The locale of the widget which will contain this renderer.
      */
-    public LabeledTableCellRenderer(final Locale locale) {
+    public LabeledRenderer(final Locale locale) {
         headerBackground = UIManager.getColor("Label.background", locale);
         headerForeground = UIManager.getColor("Label.foreground", locale);
     }
@@ -109,7 +109,7 @@ public class LabeledTableCellRenderer extends DefaultTableCellRenderer {
      * @since 3.00
      * @module
      */
-    public static class Numeric extends LabeledTableCellRenderer {
+    public static class Numeric extends LabeledRenderer {
         /**
          * For cross-version compatibility.
          */
