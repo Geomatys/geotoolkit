@@ -41,7 +41,9 @@ import org.geotoolkit.util.converter.AnyConverter;
  * {@value #COLUMN_COUNT} columns, described below:
  * <ul>
  *   <li>A human-readeable name of the nodes</li>
- *   <li>The node value (this column is omitted if the tree represents only the format)</li>
+ *   <li>A description of the node, or the above name if none.</li>
+ *   <li>The node value (this column is omitted if the tree is for
+ *       {@link IIOMetadataFormat} instead than {@link IIOMetadata})</li>
  *   <li>The simple class names of value types</li>
  *   <li>The range of occurences (how many time the node can be repeated)</li>
  *   <li>A description of valid values (either as a range or as an enumeration)</li>
@@ -66,7 +68,15 @@ public class MetadataTreeTable {
      * a {@link IIOMetadataFormat} without any {@link IIOMetadata} instance for providing
      * the actual values.
      */
-    public static final int COLUMN_COUNT = 6;
+    public static final int COLUMN_COUNT = 7;
+
+    /**
+     * The column which contains the values. This is the column which is ommited if this
+     * table is for {@link IIOMetadataFormat} instead than {@link IIOMetadata}.
+     *
+     * @since 3.05
+     */
+    public static final int VALUE_COLUMN = 2;
 
     /**
      * The expected format of {@code IIOMetadata} instances.
@@ -138,6 +148,17 @@ public class MetadataTreeTable {
         ensureNonNull("locale", locale);
         tree = null; // Will force new calculation.
         this.locale = locale;
+    }
+
+    /**
+     * Returns the metadata format specified at construction time.
+     *
+     * @return The metadata format.
+     *
+     * @since 3.05
+     */
+    public IIOMetadataFormat getMetadataFormat() {
+        return format;
     }
 
     /**

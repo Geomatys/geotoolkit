@@ -28,6 +28,7 @@ import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.COLUMN_COUNT;
+import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
 
 
 /**
@@ -40,13 +41,17 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.COLUMN_COUNT;
  * defined in this class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  * @module
  */
-@SuppressWarnings("serial")
 final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = 3458235875074371134L;
+
     /**
      * The tree which is the owner of this node.
      */
@@ -68,6 +73,11 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * The label to show in the first column.
      */
     private transient String label;
+
+    /**
+     * The description. Will be fetched only when first needed.
+     */
+    private transient String description;
 
     /**
      * The base type of values, or {@code null} if not yet determined. If the value type is a
@@ -137,29 +147,45 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     /**
      * Returns the display label. It will be constructed from the programmatic name
      * (usually the UML identifier) when first needed and cached for future reuse.
+     *
+     * @return The label inferred from the programmatic node name.
      */
     public String getLabel() {
         if (label == null) {
-            final Locale locale = tree.getLocale();
-            final IIOMetadataFormat format = tree.format;
-            if (attribute == null){
-                label = format.getElementDescription(element, locale);
-            } else {
-                label = format.getAttributeDescription(element, attribute, locale);
+            final StringBuilder buffer = StringUtilities.separateWords(toString());
+            if (buffer.length() != 0) {
+                buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
             }
-            if (label == null) {
-                final StringBuilder buffer = StringUtilities.separateWords(toString());
-                if (buffer.length() != 0) {
-                    buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
-                }
-                label = buffer.toString();
-            }
+            label = buffer.toString();
         }
         return label;
     }
 
     /**
+     * Returns the description.
+     *
+     * @return The description, or the label if there is no explicit description.
+     */
+    public String getDescription() {
+        if (description == null) {
+            final Locale locale = tree.getLocale();
+            final IIOMetadataFormat format = tree.format;
+            if (attribute == null){
+                description = format.getElementDescription(element, locale);
+            } else {
+                description = format.getAttributeDescription(element, attribute, locale);
+            }
+            if (description == null) {
+                description = getLabel();
+            }
+        }
+        return description;
+    }
+
+    /**
      * Returns the range of occurences that are valid for this node.
+     *
+     * @return The range of occurences.
      */
     public NumberRange<Integer> getOccurences() {
         if (occurences == null) {
@@ -211,6 +237,8 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * Returns the type of user object that can be associated to the element or attribute.
      * {@link java.util.Collection} types are converted to array type. If the node is not
      * allowed to store any object, then this method returns {@code null}.
+     *
+     * @return The type of user object, or {@code null} if none.
      */
     @SuppressWarnings("fallthrough")
     public Class<?> getValueType() {
@@ -248,6 +276,8 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     /**
      * Returns the range or the enumeration of valid values. If there is no restriction
      * on the valid values, then this method returns null.
+     *
+     * @return A description of the valid values.
      */
     public ValidValues getValidValues() {
         ValidValues valids = validValues;
@@ -297,6 +327,8 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     /**
      * The default value, or {@code null} if not yet determined. If there is no default
      * value, then this method returns {@code null}.
+     *
+     * @return The default value, or {@code null} if none.
      */
     public Object getDefaultValue() {
         Object value = defaultValue;
@@ -357,7 +389,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * @return The column number to use in {@code switch} statements.
      */
     private int canonical(int column) {
-        if (column != 0 && tree.getRootIIO() == null) {
+        if (column >= VALUE_COLUMN && tree.getRootIIO() == null) {
             column++; // Skip the "value" column if it doesn't exist.
         }
         return column;
@@ -371,7 +403,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      */
     @Override
     public int getColumnCount() {
-        return tree.getRootIIO() != null ? COLUMN_COUNT : COLUMN_COUNT-1;
+        return (tree.getRootIIO() != null) ? COLUMN_COUNT : COLUMN_COUNT-1;
     }
 
     /**
@@ -384,12 +416,13 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     @SuppressWarnings("fallthrough")
     public Class<?> getColumnClass(final int column) {
         switch (canonical(column)) {
-            case 0:  return String.class;       // The label.
-            case 2:  return Class.class;        // The base type of values.
-            case 3:  return NumberRange.class;  // The range of occurences
-            case 4:  return ValidValues.class;  // The restrictions on valid values.
-            case 5:                             // The default value.
-            case 1: {                           // The actual value.
+            case 0:                             // The label.
+            case 1:  return String.class;       // The description.
+            case 3:  return Class.class;        // The base type of values.
+            case 4:  return NumberRange.class;  // The range of occurences
+            case 5:  return ValidValues.class;  // The restrictions on valid values.
+            case 6:                             // The default value.
+            case 2: {                           // The actual value.
                 final Class<?> type = getValueType();
                 if (type != null) {
                     return type;
@@ -414,11 +447,12 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     public Object getValueAt(final int column) {
         switch (canonical(column)) {
             case 0: return getLabel();
-            case 1: return getUserObject();
-            case 2: return getValueType();
-            case 3: return getOccurences();
-            case 4: return getValidValues();
-            case 5: return getDefaultValue();
+            case 1: return getDescription();
+            case 2: return getUserObject();
+            case 3: return getValueType();
+            case 4: return getOccurences();
+            case 5: return getValidValues();
+            case 6: return getDefaultValue();
             case COLUMN_COUNT:
             // The later is added only for making sure at compile-time that
             // we are not declaring more columns than the expected number.
