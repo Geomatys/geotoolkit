@@ -53,10 +53,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
@@ -106,24 +108,11 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class DefaultEditionDecoration extends AbstractGeometryDecoration {
+public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     private static final Logger LOGGER = Logging.getLogger(DefaultEditionDecoration.class);
-
-    private enum ACTION{
-        NONE,
-        EDIT,
-        CREATE_POINT,
-        CREATE_LINE,
-        CREATE_POLYGON,
-        CREATE_MULTIPOINT,
-        CREATE_MULTILINE,
-        CREATE_MULTIPOLYGON
-    }
-
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-
-    protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
     private static final Icon ICON_EDIT = IconBundle.getInstance().getIcon("16_edit_geom");
@@ -136,11 +125,7 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     private static final Color MAIN_COLOR = Color.RED;
 
-    private final MouseListen mouseListener = new MouseListen();
-
-    private final ButtonGroup group = new ButtonGroup();
-    private final JComboBox guiLayers = new JComboBox();
-    private final JButton guiStart = new JButton(new AbstractAction("Start") {
+    private final Action startAction = new AbstractAction("Start") {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             final Object candidate = guiLayers.getSelectedItem();
@@ -150,104 +135,110 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
                 if(fs instanceof FeatureStore){
                     final Class c = fs.getSchema().getGeometryDescriptor().getType().getBinding();
                     guiLayers.setEnabled(false);
-                    guiStart.setEnabled(false);
+                    startAction.setEnabled(false);
                     guiEnd.setEnabled(true);
-                    guiEdit.setEnabled(true);
+                    editAction.setEnabled(true);
                     if(c == Point.class){
-                        guiSinglePoint.setEnabled(true);
+                        pointAction.setEnabled(true);
                     }else if(c == LineString.class){
-                        guiSingleLine.setEnabled(true);
+                        lineAction.setEnabled(true);
                     }else if(c == Polygon.class){
-                        guiSinglePolygon.setEnabled(true);
+                        polygonAction.setEnabled(true);
                     }else if(c == MultiPoint.class){
-                        guiMultiPoint.setEnabled(true);
+                        multiPointAction.setEnabled(true);
                     }else if(c == MultiLineString.class){
-                        guiMultiLine.setEnabled(true);
+                        multiLineAction.setEnabled(true);
                     }else if(c == MultiPolygon.class){
-                        guiMultiPolygon.setEnabled(true);
+                        multiPolygonAction.setEnabled(true);
                     }else if(c == Geometry.class){
-                        guiSinglePoint.setEnabled(true);
-                        guiSingleLine.setEnabled(true);
-                        guiSinglePolygon.setEnabled(true);
-                        guiMultiPoint.setEnabled(true);
-                        guiMultiLine.setEnabled(true);
-                        guiMultiPolygon.setEnabled(true);
+                        pointAction.setEnabled(true);
+                        lineAction.setEnabled(true);
+                        polygonAction.setEnabled(true);
+                        multiPointAction.setEnabled(true);
+                        multiLineAction.setEnabled(true);
+                        multiPolygonAction.setEnabled(true);
                     }
                 }
             }
 
         }
-    });
-    private final JToggleButton guiEdit = new JToggleButton(new AbstractAction("", ICON_EDIT) {
+    };
+    private final Action editAction = new AbstractAction("", ICON_EDIT) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             final ModificationDelegate delegate = new ModificationDelegate(DefaultEditionDecoration.this);
-            mouseListener.delegate = delegate;
-            currentAction = ACTION.EDIT;
-            resetDetails();
+            eventProxy.delegate = delegate;
+            setToolsPane(null);
             delegate.prepare(panDetail);
         }
-    });
-    private final JToggleButton guiSinglePoint = new JToggleButton(new AbstractAction("", ICON_SINGLE_POINT) {
+    };
+    private final Action pointAction = new AbstractAction("", ICON_SINGLE_POINT) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            mouseListener.delegate = new PointDelegate(DefaultEditionDecoration.this);
-            currentAction = ACTION.CREATE_POINT;
-            resetDetails();
+            eventProxy.delegate = new PointDelegate(DefaultEditionDecoration.this);
+            setToolsPane(null);
         }
-    });
-    private final JToggleButton guiSingleLine = new JToggleButton(new AbstractAction("", ICON_SINGLE_LINE) {
+    };
+    private final Action lineAction = new AbstractAction("", ICON_SINGLE_LINE) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            mouseListener.delegate = new LineDelegate(DefaultEditionDecoration.this);
-            currentAction = ACTION.CREATE_LINE;
-            resetDetails();
+            eventProxy.delegate = new LineDelegate(DefaultEditionDecoration.this);
+            setToolsPane(null);
         }
-    });
-    private final JToggleButton guiSinglePolygon = new JToggleButton(new AbstractAction("", ICON_SINGLE_POLYGON) {
+    };
+    private final Action polygonAction = new AbstractAction("", ICON_SINGLE_POLYGON) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            mouseListener.delegate = new PolygonDelegate(DefaultEditionDecoration.this);
-            currentAction = ACTION.CREATE_POLYGON;
-            resetDetails();
+            eventProxy.delegate = new PolygonDelegate(DefaultEditionDecoration.this);
+            setToolsPane(null);
         }
-    });
-    private final JToggleButton guiMultiPoint = new JToggleButton(new AbstractAction("", ICON_MULTI_POINT) {
+    };
+    private final Action multiPointAction = new AbstractAction("", ICON_MULTI_POINT) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            mouseListener.delegate = new MultiPointDelegate(DefaultEditionDecoration.this);
-            currentAction = ACTION.CREATE_MULTIPOINT;
-            resetDetails();
+            eventProxy.delegate = new MultiPointDelegate(DefaultEditionDecoration.this);
+            setToolsPane(null);
         }
-    });
-    private final JToggleButton guiMultiLine = new JToggleButton(new AbstractAction("", ICON_MULTI_LINE) {
+    };
+    private final Action multiLineAction = new AbstractAction("", ICON_MULTI_LINE) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            mouseListener.delegate = new MultiLineDelegate(DefaultEditionDecoration.this);
-            currentAction = ACTION.CREATE_MULTILINE;
-            resetDetails();
+            eventProxy.delegate = new MultiLineDelegate(DefaultEditionDecoration.this);
+            setToolsPane(null);
         }
-    });
-    private final JToggleButton guiMultiPolygon = new JToggleButton(new AbstractAction("", ICON_MULTI_POLYGON) {
+    };
+    private final Action multiPolygonAction = new AbstractAction("", ICON_MULTI_POLYGON) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            mouseListener.delegate = new MultiPolygonDelegate(DefaultEditionDecoration.this);
-            currentAction = ACTION.CREATE_MULTIPOLYGON;
-            resetDetails();
+            eventProxy.delegate = new MultiPolygonDelegate(DefaultEditionDecoration.this);
+            setToolsPane(null);
         }
-    });
-    private final JButton guiEnd = new JButton(new AbstractAction("End") {
+    };
+    private final Action endAction = new AbstractAction("End") {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             reset();
         }
-    });
+    };
 
-    private ACTION currentAction = ACTION.NONE;
+    private final UIEventProxy eventProxy = new UIEventProxy();
+    private final ButtonGroup group = new ButtonGroup();
+    private final JComboBox guiLayers = new JComboBox();
+    
+    private final JButton guiStart = new JButton(startAction);
+    private final JButton guiEnd = new JButton(endAction);
 
-    private final JPanel panDetail = new JPanel();
+    private final JPanel panDetail = new JPanel(new BorderLayout());
 
     DefaultEditionDecoration() {
+        final JToggleButton guiEdit = new JToggleButton(editAction);
+        final JToggleButton guiSinglePoint = new JToggleButton(pointAction);
+        final JToggleButton guiSingleLine = new JToggleButton(lineAction);
+        final JToggleButton guiSinglePolygon = new JToggleButton(polygonAction);
+        final JToggleButton guiMultiPoint = new JToggleButton(multiPointAction);
+        final JToggleButton guiMultiLine = new JToggleButton(multiLineAction);
+        final JToggleButton guiMultiPolygon = new JToggleButton(multiPolygonAction);
+
         group.add(guiEdit);
         group.add(guiSingleLine);
         group.add(guiSinglePoint);
@@ -276,9 +267,9 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
         setLayout(new BorderLayout());
 
-        JPanel panNorth = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JPanel panNorth = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panNorth.setOpaque(false);
-        JPanel panTools = new JPanel();
+        final JPanel panTools = new JPanel();
         panTools.setLayout(new FlowLayout());
         panTools.setOpaque(false);
         panTools.setBorder(new RoundedBorder());
@@ -298,43 +289,42 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         panTools.add(guiEnd);
         panNorth.add(panTools);
 
-        JPanel panEast = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        final JPanel panEast = new JPanel(new FlowLayout(FlowLayout.LEADING));
         panEast.setOpaque(false);
-        
-        panDetail.setVisible(false);
-        panDetail.setOpaque(false);
-        panDetail.setBorder(new RoundedBorder());
         panEast.add(panDetail);
+        setToolsPane(null);
 
         add(BorderLayout.NORTH, panNorth);
         add(BorderLayout.EAST, panEast);
     }
 
     public void reset(){
-        currentAction = ACTION.NONE;
         setMap2D(map);
         guiStart.setEnabled(false);
-        guiEdit.setEnabled(false);
-        guiSingleLine.setEnabled(false);
-        guiSinglePoint.setEnabled(false);
-        guiSinglePolygon.setEnabled(false);
-        guiMultiLine.setEnabled(false);
-        guiMultiPoint.setEnabled(false);
-        guiMultiPolygon.setEnabled(false);
+        editAction.setEnabled(false);
+        lineAction.setEnabled(false);
+        pointAction.setEnabled(false);
+        polygonAction.setEnabled(false);
+        multiLineAction.setEnabled(false);
+        multiPointAction.setEnabled(false);
+        multiPolygonAction.setEnabled(false);
         guiEnd.setEnabled(false);
-
-        mouseListener.delegate = new AbstractMouseDelegate(this) {
-            @Override
-            public void fireStateChange() {
-            }
-        };
-        resetDetails();
+        eventProxy.delegate = null;
+        setToolsPane(null);
     }
 
-    public void resetDetails(){
+    public void setToolsPane(JComponent comp){
         panDetail.removeAll();
         panDetail.revalidate();
         panDetail.setVisible(false);
+        panDetail.setOpaque(false);
+        panDetail.setBorder(new RoundedBorder());
+
+        if(comp != null){
+            panDetail.add(comp);
+            panDetail.revalidate();
+            panDetail.setVisible(true);
+        }
     }
 
     @Override
@@ -359,8 +349,8 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
         guiLayers.setSelectedIndex(0);
     }
 
-    public MouseListen getMouseListener() {
-        return mouseListener;
+    public UIEventProxy getUIEventProxy() {
+        return eventProxy;
     }
     
     @Override
@@ -711,9 +701,9 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     //---------------------PRIVATE CLASSES--------------------------------------
 
-    public class MouseListen implements MouseInputListener,KeyListener, MouseWheelListener {
+    public final class UIEventProxy implements MouseInputListener,KeyListener, MouseWheelListener {
 
-       AbstractMouseDelegate delegate;
+        private AbstractMouseDelegate delegate;
 
         public void install(Component component){
             component.addMouseListener(this);
@@ -728,7 +718,6 @@ public class DefaultEditionDecoration extends AbstractGeometryDecoration {
             component.removeMouseWheelListener(this);
             component.removeKeyListener(this);
         }
-
 
         @Override
         public void mouseClicked(MouseEvent arg0) {

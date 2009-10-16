@@ -42,16 +42,16 @@ public class PointDelegate extends AbstractMouseDelegate {
         hasGeometryChanged = false;
         editedFeatureID = null;
         editedNodes.clear();
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Geometry geo = handler.toJTS(e.getX(), e.getY());
-        handler.editAddGeometry(new Geometry[]{geo});
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        Geometry geo = editionDecoration.toJTS(e.getX(), e.getY());
+        editionDecoration.editAddGeometry(new Geometry[]{geo});
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
                 
     }
     

@@ -41,8 +41,8 @@ public class PolygonDelegate extends AbstractMouseDelegate {
         hasGeometryChanged = false;
         editedFeatureID = null;
         editedNodes.clear();
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 
     @Override
@@ -50,19 +50,19 @@ public class PolygonDelegate extends AbstractMouseDelegate {
         final int button = e.getButton();
 
         if (button == MouseEvent.BUTTON1) {
-            coords.add(handler.toCoord(e.getX(), e.getY()));
+            coords.add(editionDecoration.toCoord(e.getX(), e.getY()));
             updateCreationGeoms();
         } else if (button == MouseEvent.BUTTON3) {
             inCreation = false;
             if (coords.size() > 2) {
                 Geometry geo = EditionHelper.createPolygon(coords);
-                handler.editAddGeometry(new Geometry[]{geo});
+                editionDecoration.editAddGeometry(new Geometry[]{geo});
                 geoms.clear();
             }
             coords.clear();
         }
         
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 }

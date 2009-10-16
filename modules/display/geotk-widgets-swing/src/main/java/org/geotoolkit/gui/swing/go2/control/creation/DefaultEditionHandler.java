@@ -51,7 +51,7 @@ public class DefaultEditionHandler implements CanvasHandler {
     @Override
     public void install(Component component) {
         deco.reset();
-        deco.getMouseListener().install(component);
+        deco.getUIEventProxy().install(component);
         map.addDecoration(0,deco);
     }
 
@@ -60,7 +60,7 @@ public class DefaultEditionHandler implements CanvasHandler {
      */
     @Override
     public void uninstall(Component component) {
-        deco.getMouseListener().uninstall(component);
+        deco.getUIEventProxy().uninstall(component);
         map.removeDecoration(deco);
     }
 

@@ -30,6 +30,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 
 /**
+ * Listener to handle mouse drag, move zoom.
  *
  * @author Johann Sorel (Puzzle-GIS)
  */

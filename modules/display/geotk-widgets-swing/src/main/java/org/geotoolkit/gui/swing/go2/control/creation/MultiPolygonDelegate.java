@@ -41,8 +41,8 @@ public class MultiPolygonDelegate extends AbstractMouseDelegate {
         hasGeometryChanged = false;
         editedFeatureID = null;
         editedNodes.clear();
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MultiPolygonDelegate extends AbstractMouseDelegate {
 
         if (button == MouseEvent.BUTTON1) {
             nbRightClick = 0;
-            coords.add(handler.toCoord(e.getX(), e.getY()));
+            coords.add(editionDecoration.toCoord(e.getX(), e.getY()));
             updateCreationGeoms();
         } else if (button == MouseEvent.BUTTON3) {
             nbRightClick++;
@@ -71,7 +71,7 @@ public class MultiPolygonDelegate extends AbstractMouseDelegate {
             } else {
                 if (geoms.size() > 0) {
                     Geometry geo = EditionHelper.createMultiPolygon(geoms);
-                    handler.editAddGeometry(new Geometry[]{geo});
+                    editionDecoration.editAddGeometry(new Geometry[]{geo});
                     nbRightClick = 0;
                     geoms.clear();
                 }
@@ -79,7 +79,7 @@ public class MultiPolygonDelegate extends AbstractMouseDelegate {
             coords.clear();
         }
 
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 }

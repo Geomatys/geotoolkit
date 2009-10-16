@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.creation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -52,7 +53,8 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public abstract class AbstractMouseDelegate extends MouseNavigatonListener implements MouseInputListener,KeyListener {
 
-    protected final DefaultEditionDecoration handler;
+    protected final DefaultEditionDecoration editionDecoration;
+    
     protected final List<Coordinate> coords = new ArrayList<Coordinate>();
     protected final List<Geometry> geoms = new ArrayList<Geometry>();
     protected int nbRightClick = 0;
@@ -64,7 +66,7 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
 
     public AbstractMouseDelegate(DefaultEditionDecoration handler) {
         super(null);
-        this.handler = handler;
+        this.editionDecoration = handler;
     }
 
     protected void updateCreationGeoms() {
@@ -93,13 +95,13 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
     }
 
     protected void grabGeometry(int mx, int my) {
-        final FeatureMapLayer layer = handler.getEditedLayer();
+        final FeatureMapLayer layer = editionDecoration.getEditedLayer();
 
         if(layer == null) return;
 
         try {
-            final Polygon geo = handler.mousePositionToGeometry(mx, my);
-            final Filter flt = handler.toFilter(geo, layer);
+            final Polygon geo = editionDecoration.mousePositionToGeometry(mx, my);
+            final Filter flt = editionDecoration.toFilter(geo, layer);
             final FeatureCollection<SimpleFeatureType, SimpleFeature> editgeoms = layer.getFeatureSource().getFeatures(flt);
         
             if (editgeoms != null) {
@@ -115,7 +117,7 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
 
                             MathTransform trs = CRS.findMathTransform(
                                     layer.getFeatureSource().getSchema().getCoordinateReferenceSystem(),
-                                    handler.getMap2D().getCanvas().getObjectiveCRS(),
+                                    editionDecoration.getMap2D().getCanvas().getObjectiveCRS(),
                                     true);
 
                             geom = JTS.transform(geom, trs);
@@ -136,25 +138,29 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
     protected void grabGeometryNode(int mx, int my) {
         editedNodes.clear();
 
-        Geometry geo = geoms.get(0);
+        final Geometry geo = geoms.get(0);
 
         try{
-            Geometry mouseGeo = handler.mousePositionToGeometry(mx, my);
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = editionDecoration.mousePositionToGeometry(mx, my);
 
-            for (int i = 0, n = geo.getNumGeometries(); i < n; i++) {
-                Geometry subgeo = geo.getGeometryN(i);
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                final Geometry subgeo = geo.getGeometryN(i);
 
                 if (subgeo.intersects(mouseGeo)) {
-                    Coordinate[] coos = subgeo.getCoordinates();
+                    //this geometry intersect the mouse
+                    final Coordinate[] coos = subgeo.getCoordinates();
 
-                    for (int j = 0, m = coos.length; j < m; j++) {
-                        Coordinate coo = coos[j];
-                        Point p = EditionHelper.createPoint(coo);
+                    for (int j=0,m=coos.length; j<m; j++) {
+                        final Coordinate coo = coos[j];
+                        final Point p = EditionHelper.createPoint(coo);
                         if (p.intersects(mouseGeo)) {
 
-                            if ((j == 0 || j == m - 1) && (geo instanceof Polygon || geo instanceof MultiPolygon)) {
+                            if ((j==0 || j==m-1) && (geo instanceof Polygon || geo instanceof MultiPolygon)) {
+                                //first and last coordinate index are the same point
                                 editedNodes.put(subgeo, new Integer[]{0, m - 1});
                             } else {
+                                //coordinate is in the middle of the geometry
                                 editedNodes.put(subgeo, new Integer[]{j});
                             }
                         }
@@ -169,10 +175,10 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
     }
 
     protected void dragGeometryNode(int mx, int my) {
-        Coordinate mouseCoord = handler.toCoord(mx, my);
+        final Coordinate mouseCoord = editionDecoration.toCoord(mx, my);
 
-        for (Geometry subgeo : editedNodes.keySet()) {
-            Integer[] nodeIndexes = editedNodes.get(subgeo);
+        for (final Geometry subgeo : editedNodes.keySet()) {
+            final Integer[] nodeIndexes = editedNodes.get(subgeo);
 
             for (int index : nodeIndexes) {
                 subgeo.getCoordinates()[index].x = mouseCoord.x;
@@ -182,13 +188,40 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
             subgeo.geometryChanged();
         }
 
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
+    }
+
+    protected void removeGemetryNode(){
+
+        for (final Geometry subgeo : editedNodes.keySet()) {
+            final Integer[] nodeIndexes = editedNodes.get(subgeo);
+
+            if(subgeo instanceof Point){
+                
+            }else if(subgeo instanceof LineString){
+
+            }else if(subgeo instanceof Polygon){
+
+            }
+
+//            for (int index : nodeIndexes) {
+//                subgeo.getCoordinates()[index].x = mouseCoord.x;
+//                subgeo.getCoordinates()[index].y = mouseCoord.y;
+//            }
+
+            subgeo.geometryChanged();
+        }
+
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
+
+
     }
 
     protected void validateGeometryEdit() {
         if (!geoms.isEmpty() && hasGeometryChanged) {
-            handler.validateModifiedGeometry(geoms.get(0), editedFeatureID);
+            editionDecoration.validateModifiedGeometry(geoms.get(0), editedFeatureID);
         }
         hasEditionGeometry = false;
         hasGeometryChanged = false;
@@ -199,7 +232,7 @@ public abstract class AbstractMouseDelegate extends MouseNavigatonListener imple
 
     protected void removeGeometryEdit() {
         if (!geoms.isEmpty() ) {
-            handler.removeSelectedGeometry(editedFeatureID);
+            editionDecoration.removeSelectedGeometry(editedFeatureID);
         }
         hasEditionGeometry = false;
         hasGeometryChanged = false;

@@ -41,8 +41,8 @@ public class MultiPointDelegate extends AbstractMouseDelegate {
         hasGeometryChanged = false;
         editedFeatureID = null;
         editedNodes.clear();
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 
     @Override
@@ -50,19 +50,19 @@ public class MultiPointDelegate extends AbstractMouseDelegate {
         final int button = e.getButton();
 
         if (button == MouseEvent.BUTTON1) {
-            Geometry geo = EditionHelper.createPoint(handler.toCoord(e.getX(), e.getY()));
+            Geometry geo = EditionHelper.createPoint(editionDecoration.toCoord(e.getX(), e.getY()));
             geoms.add(geo);
             updateCreationGeoms();
 
         } else if (button == MouseEvent.BUTTON3) {
             if (geoms.size() > 0) {
                 Geometry geo = EditionHelper.createMultiPoint(geoms);
-                handler.editAddGeometry(new Geometry[]{geo});
+                editionDecoration.editAddGeometry(new Geometry[]{geo});
                 geoms.clear();
             }
             coords.clear();
         }
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 }

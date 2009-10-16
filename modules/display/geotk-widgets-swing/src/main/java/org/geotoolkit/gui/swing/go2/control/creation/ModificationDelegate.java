@@ -82,8 +82,8 @@ public class ModificationDelegate extends AbstractMouseDelegate {
             if(hasEditionGeometry){
                 removeGeometryEdit();
                 geoms.clear();
-                handler.clearMemoryLayer();
-                handler.setMemoryLayerGeometry(geoms);
+                editionDecoration.clearMemoryLayer();
+                editionDecoration.setMemoryLayerGeometry(geoms);
             }
         }
     };
@@ -211,8 +211,8 @@ public class ModificationDelegate extends AbstractMouseDelegate {
         hasGeometryChanged = false;
         editedFeatureID = null;
         editedNodes.clear();
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 
     @Override
@@ -228,8 +228,8 @@ public class ModificationDelegate extends AbstractMouseDelegate {
             geoms.clear();
             coords.clear();
         }
-        handler.clearMemoryLayer();
-        handler.setMemoryLayerGeometry(geoms);
+        editionDecoration.clearMemoryLayer();
+        editionDecoration.setMemoryLayerGeometry(geoms);
     }
 
     @Override
