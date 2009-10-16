@@ -24,5 +24,5 @@ import org.geotoolkit.util.Versioned;
  * @author Guilhem Legal
  */
 public interface DescribeCoverage extends Versioned {
-    public String toKvp();
+    String toKvp();
 }

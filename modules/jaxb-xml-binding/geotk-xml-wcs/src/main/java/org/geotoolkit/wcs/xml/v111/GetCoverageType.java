@@ -304,4 +304,12 @@ public class GetCoverageType implements GetCoverage {
         }
         return kvp;
     }
+
+    /**
+     * @todo IMPLEMENT ME
+     */
+    @Override
+    public List<Double> getResolutions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

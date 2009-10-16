@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wcs.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,7 +49,8 @@ import org.geotoolkit.gml.xml.v311.CodeType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputType", propOrder = {
     "crs",
-    "format"
+    "format",
+    "resolutions"
 })
 public class OutputType {
 
@@ -56,19 +58,27 @@ public class OutputType {
     @XmlElement(required = true)
     private CodeType format;
 
+    private List<Double> resolutions;
+
     /**
      * An empty constructor used by JAXB
      */
-    OutputType(){
-        
-    }
+    OutputType(){}
     
     /**
      * Build a new Output Type with the specified format and response CRS
      */
     public OutputType(String format, String crs) {
+        this(format, crs, null);
+    }
+
+    /**
+     * Build a new Output Type with the specified format and response CRS
+     */
+    public OutputType(String format, String crs, List<Double> resolutions) {
         this.format = new CodeType(format);
         this.crs = new CodeType(crs);
+        this.resolutions = resolutions;
     }
     
     /**
@@ -83,5 +93,12 @@ public class OutputType {
      */
     public CodeType getFormat() {
         return format;
+    }
+
+    /**
+     * Gets the resolutions for the output image.
+     */
+    public List<Double> getResolutions() {
+        return resolutions;
     }
 }

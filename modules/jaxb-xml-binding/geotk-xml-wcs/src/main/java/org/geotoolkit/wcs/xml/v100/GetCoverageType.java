@@ -253,6 +253,17 @@ public class GetCoverageType implements GetCoverage {
      * {@inheritDoc}
      */
     @Override
+    public List<Double> getResolutions() {
+        if (output == null) {
+            return null;
+        }
+        return output.getResolutions();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public CoordinateReferenceSystem getResponseCRS() throws FactoryException {
         if (output == null || output.getCrs() == null || output.getCrs().getValue() == null) {
             return null;
@@ -286,6 +297,9 @@ public class GetCoverageType implements GetCoverage {
             return null;
         }
         final GridEnvelopeType gridEnv = domainSubset.getSpatialSubSet().getGrid().getLimits().getGridEnvelope();
+        if (gridEnv.getHigh().size() < 2) {
+            return null;
+        }
         final int width  = gridEnv.getHigh().get(0).intValue();
         final int height = gridEnv.getHigh().get(1).intValue();
         return new Dimension(width, height);

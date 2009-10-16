@@ -17,6 +17,7 @@
 package org.geotoolkit.wcs.xml;
 
 import java.awt.Dimension;
+import java.util.List;
 import org.geotoolkit.util.Versioned;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -37,24 +38,24 @@ public interface GetCoverage extends Versioned {
      *
      * @throws FactoryException if the generation of the {@link CoordinateReferenceSystem} fails.
      */
-    public CoordinateReferenceSystem getCRS() throws FactoryException;
+    CoordinateReferenceSystem getCRS() throws FactoryException;
 
     /**
      * Returns the coverage name of the request, or {@code null} if none.
      */
-    public String getCoverage();
+    String getCoverage();
 
     /**
      * Returns the {@link Envelope} of the request, or {@code null} if none.
      *
      * @throws FactoryException if the generation of the {@link Envelope} fails.
      */
-    public Envelope getEnvelope() throws FactoryException;
+    Envelope getEnvelope() throws FactoryException;
 
     /**
      * Returns the output format of the request, or {@code null} if none.
      */
-    public String getFormat();
+    String getFormat();
 
     /**
      * Returns the {@linkplain CoordinateReferenceSystem response CRS} of the request,
@@ -62,17 +63,22 @@ public interface GetCoverage extends Versioned {
      *
      * @throws FactoryException if the generation of the {@link CoordinateReferenceSystem} fails.
      */
-    public CoordinateReferenceSystem getResponseCRS() throws FactoryException;
+    CoordinateReferenceSystem getResponseCRS() throws FactoryException;
 
     /**
      * Returns the output size of the request, or {@code null} if none.
      */
-    public Dimension getSize();
+    Dimension getSize();
+
+    /**
+     * Returns the output resolutions, or {@code null} if none.
+     */
+    List<Double> getResolutions();
 
     /**
      * Returns the time of the request, or {@code null} if none.
      */
-    public String getTime();
+    String getTime();
 
-    public String toKvp();
+    String toKvp();
 }
