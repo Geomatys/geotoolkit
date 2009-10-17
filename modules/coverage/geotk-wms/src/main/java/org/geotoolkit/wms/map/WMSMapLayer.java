@@ -54,8 +54,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
 
     private final WebMapServer server;
-    private final String[] layers;
     private final Map<String,String> dims = new HashMap<String, String>();
+    private String[] layers;
     private String styles = null;
     private String sld = null;
     private String sldBody = null;
@@ -65,6 +65,10 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         super(new DefaultStyleFactory().style());
         this.server = server;
         this.layers = layers;
+    }
+
+    public WebMapServer getServer(){
+        return server;
     }
 
     /**
@@ -161,6 +165,25 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             g.rotate(-rotation);
             g.translate(-dim.width/2, -dim.height/2);
         }
+    }
+
+    public void setLayerNames(String ... names){
+        this.layers = names;
+    }
+
+    public String[] getLayerNames(){
+        return layers.clone();
+    }
+
+    public String getCombinedLayerNames(){
+        StringBuilder sb = new StringBuilder();
+        for(String str : layers){
+            sb.append(str).append(',');
+        }
+        if(sb.toString().endsWith(",")){
+            sb.deleteCharAt(sb.length()-1);
+        }
+        return sb.toString();
     }
 
     public void setStyles(String styles) {

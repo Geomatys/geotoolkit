@@ -19,6 +19,8 @@ package org.geotoolkit.wms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,6 +87,15 @@ public class WebMapServer {
         this.version = version;
         this.serverURL = serverURL;
         this.capabilities = capabilities;
+    }
+
+    public URI getURI(){
+        try {
+            return serverURL.toURI();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public AbstractWMSCapabilities getCapabilities() {

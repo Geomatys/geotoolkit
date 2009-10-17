@@ -317,7 +317,7 @@ public class JContextTree extends JScrollPane {
 
                         Point componentPoint = SwingUtilities.convertPoint(tree, new Point(releaseEvent.getX(), releaseEvent.getY()), editor.panel);
                         Component destination = SwingUtilities.getDeepestComponentAt(editor.panel, componentPoint.x, componentPoint.y);
-                        if (destination != null) {
+                        if (destination != null && pressedEvent != null) {
                             destination.dispatchEvent(SwingUtilities.convertMouseEvent(tree, pressedEvent, destination));
                             destination.dispatchEvent(SwingUtilities.convertMouseEvent(tree, releaseEvent, destination));
                         }
