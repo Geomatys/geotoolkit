@@ -22,12 +22,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.tree.TreePath;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.jdesktop.swingx.JXTreeTable;
 
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.image.io.metadata.MetadataTreeNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
@@ -62,8 +68,6 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
  *
  * @since 3.05
  * @module
- *
- * @todo The properties panel in the bottom is disabled for now.
  */
 @SuppressWarnings("serial")
 public class IIOMetadataPanel extends JPanel {
@@ -77,7 +81,7 @@ public class IIOMetadataPanel extends JPanel {
     /**
      * The properties of the currently selected metadata node.
      */
-    private final JLabel description, type, validValues, defaultValue;
+    private final JLabel description, validValues;
 
     /**
      * Creates a panel with no initial metadata. One of the {@code addXXXMetadata} or
@@ -106,17 +110,13 @@ public class IIOMetadataPanel extends JPanel {
         if (true) {
             final JPanel properties = new JPanel(new GridBagLayout());
             final GridBagConstraints c = new GridBagConstraints();
-            c.weightx=1; c.anchor=GridBagConstraints.WEST;
-            c.gridx=1; properties.add(description  = new JLabel(), c);
-            c.gridy++; properties.add(type         = new JLabel(), c);
-            c.gridy++; properties.add(validValues  = new JLabel(), c);
-            c.gridy++; properties.add(defaultValue = new JLabel(), c);
+            c.gridy=0; c.weightx=1; c.anchor=GridBagConstraints.WEST;
+            c.gridx=1; properties.add(description = new JLabel(), c);
+            c.gridy++; properties.add(validValues = new JLabel(), c);
             c.gridx=0; c.weightx=0; c.insets.right=9;
-            c.gridy=0; properties.add(label(resources, Vocabulary.Keys.DESCRIPTION,   description),  c);
-            c.gridy++; properties.add(label(resources, Vocabulary.Keys.TYPE,          type),         c);
-            c.gridy++; properties.add(label(resources, Vocabulary.Keys.VALID_VALUES,  validValues),  c);
-            c.gridy++; properties.add(label(resources, Vocabulary.Keys.DEFAULT_VALUE, defaultValue), c);
-// TODO     add(properties, BorderLayout.SOUTH);
+            c.gridy=0; properties.add(label(resources, Vocabulary.Keys.DESCRIPTION,  description), c);
+            c.gridy++; properties.add(label(resources, Vocabulary.Keys.VALID_VALUES, validValues), c);
+            add(properties, BorderLayout.SOUTH);
         }
         /*
          * Plug the listeners.
@@ -145,7 +145,7 @@ public class IIOMetadataPanel extends JPanel {
      * @since 3.05
      * @module
      */
-    private static final class Controller implements ActionListener {
+    private final class Controller implements ActionListener, TreeSelectionListener {
         /**
          * The component which hold every tables. This is the component that appear in the center of
          * this {@code IIOMetadataPanel}. Its layout manager must be an instance of {@link CardLayout}.
@@ -155,7 +155,12 @@ public class IIOMetadataPanel extends JPanel {
         /**
          * The selected format, or {@code null} if none.
          */
-        private IIOMetadataChoice selected;
+        private IIOMetadataChoice selectedFormat;
+
+        /**
+         * The table which is currently visible, or {@code null} if none.
+         */
+        private IIOMetadataTreeTable visibleTable;
 
         /**
          * Creates a new instance.
@@ -178,11 +183,77 @@ public class IIOMetadataPanel extends JPanel {
                  * which have the effect of unselecting it. We want the current format to stay
                  * selected.
                  */
-                formatChoices.setSelectedItem(selected);
-            } else if (f != selected) {
-                selected = f;
-                f.show(tables, -1);
+                formatChoices.setSelectedItem(selectedFormat);
+            } else if (f != selectedFormat) {
+                selectedFormat = f;
+                visibleTable = f.show(tables, -1, this);
+                showProperties(visibleTable.selectedNode);
             }
+        }
+
+        /**
+         * Invoked when a node has been selected.
+         */
+        @Override
+        public void valueChanged(final TreeSelectionEvent event) {
+            final TreePath path = event.getNewLeadSelectionPath();
+            if (path != null) {
+                final MetadataTreeNode node = (MetadataTreeNode) path.getLastPathComponent();
+                visibleTable.selectedNode = node;
+                showProperties(node);
+            }
+        }
+    }
+
+    /**
+     * Fills the "properties" section in the bottom of this {@code IIOMetadataPanel}
+     * using the information provided by the given node. If the given node is null,
+     * then this method does nothing.
+     *
+     * @param node The selected node, for which to display the information in the bottom
+     *        of this panel.
+     */
+    final void showProperties(final MetadataTreeNode node) {
+        if (node != null) {
+            /*
+             * Get the description of the given node. If no description is found for that node,
+             * search for the parent until a description is found. We do that way mostly because
+             * when an element contains only one attribute, some format don't provide a description
+             * for that attribute since it is redundant with the element description.
+             */
+            MetadataTreeNode parent = node;
+            String text;
+            do text = parent.getDescription();
+            while (text == null && (parent = parent.getParent()) != null);
+            if (text == null) {
+                text = node.getLabel();
+            }
+            description.setText(text);
+            /*
+             * Now get the description of valid values. If there is none, we will build
+             * one from the data type.
+             */
+            Object restriction = node.getValueRestriction();
+            if (restriction == null) {
+                Class<?> type = node.getValueType();
+                if (type != null) {
+                    if (type.isArray()) {
+                        type = type.getComponentType();
+                    }
+                    StringBuilder buffer = new StringBuilder(Classes.getShortName(type));
+                    final NumberRange<Integer> occurences = node.getOccurences();
+                    if (occurences != null) {
+                        final String s = occurences.toString();
+                        if (s.startsWith("[")) {
+                            buffer.append(s);
+                        } else {
+                            buffer.append('[').append(s).append(']');
+                        }
+                    }
+                    restriction = buffer;
+                }
+            }
+            validValues.setText(restriction != null ? restriction.toString() : null);
         }
     }
 

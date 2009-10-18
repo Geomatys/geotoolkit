@@ -39,16 +39,16 @@ import org.geotoolkit.util.converter.AnyConverter;
  * <p>
  * The root of the tree is obtained by {@link #getRootNode()}. The table contains at most
  * {@value #COLUMN_COUNT} columns, described below:
- * <ul>
+ * <ol>
  *   <li>A human-readeable name of the nodes</li>
- *   <li>A description of the node, or the above name if none.</li>
+ *   <li>A description of the node.</li>
  *   <li>The node value (this column is omitted if the tree is for
  *       {@link IIOMetadataFormat} instead than {@link IIOMetadata})</li>
  *   <li>The simple class names of value types</li>
  *   <li>The range of occurences (how many time the node can be repeated)</li>
  *   <li>A description of valid values (either as a range or as an enumeration)</li>
  *   <li>The default value</li>
- * </ul>
+ * </ol>
  * <p>
  * This class works with arbitrary implementations of {@code IIOMetadata};
  * it doesn't need to be the specialized implementations defined in Geotk.

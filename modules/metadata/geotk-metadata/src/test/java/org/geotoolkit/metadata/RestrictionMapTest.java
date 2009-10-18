@@ -93,7 +93,7 @@ public final class RestrictionMapTest {
         record.setAverageAirTemperature(20.0);
         record.setMaxRelativeHumidity(50.0);
         assertEquals("Missing mandatory values should be reported as violations.", 2, map.size());
-        final ValueRestriction mandatory = ValueRestriction.create(Obligation.MANDATORY, null);
+        final ValueRestriction mandatory = ValueRestriction.create(Obligation.MANDATORY, null, null);
         final Map<String,ValueRestriction> expected = new HashMap<String,ValueRestriction>();
         assertNull(expected.put("meteorologicalConditions", mandatory));
         assertNull(expected.put("maxAltitude", mandatory));
@@ -103,7 +103,7 @@ public final class RestrictionMapTest {
          */
         record.setMaxRelativeHumidity(-5.0);
         assertEquals("Value out of range should be reported.", 3, map.size());
-        final ValueRestriction range = ValueRestriction.create(null, NumberRange.create(0.0, 100.0));
+        final ValueRestriction range = ValueRestriction.create(null, NumberRange.create(0.0, 100.0), null);
         assertNull(expected.put("maxRelativeHumidity", range));
         assertEquals(expected, map);
         /*
@@ -130,13 +130,13 @@ public final class RestrictionMapTest {
          */
         final Map<String,ValueRestriction> expected = new HashMap<String,ValueRestriction>();
         assertNull(expected.put("averageAirTemperature",
-                ValueRestriction.create(Obligation.MANDATORY, null)));
+                ValueRestriction.create(Obligation.MANDATORY, null, null)));
         assertNull(expected.put("maxRelativeHumidity",
-                ValueRestriction.create(Obligation.MANDATORY, NumberRange.create(0.0, 100.0))));
+                ValueRestriction.create(Obligation.MANDATORY, NumberRange.create(0.0, 100.0), null)));
         assertNull(expected.put("maxAltitude",
-                ValueRestriction.create(Obligation.MANDATORY, null)));
+                ValueRestriction.create(Obligation.MANDATORY, null, null)));
         assertNull(expected.put("meteorologicalConditions",
-                ValueRestriction.create(Obligation.MANDATORY, null)));
+                ValueRestriction.create(Obligation.MANDATORY, null, null)));
         /*
          * Compares with the map calculated.
          */

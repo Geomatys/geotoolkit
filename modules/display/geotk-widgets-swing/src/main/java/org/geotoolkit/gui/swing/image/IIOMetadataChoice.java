@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.awt.CardLayout;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.event.TreeSelectionListener;
 import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
@@ -88,9 +89,14 @@ final class IIOMetadataChoice extends MetadataTreeTable {
      *
      * @param  tables The component which contain the set of table.
      * @param  image The index of the image for which metadata are wanted, or -1 for stream metadata.
+     * @param  The tree selection listener to be registered to the {@code TreeTable} if a new one is
+     *         created. Otherwise ignored.
+     * @return The table which is now visible.
      * @throws IndexOutOfBoundsException If the given image index is positive but out of bounds.
      */
-    final void show(final JComponent tables, final int image) throws IndexOutOfBoundsException {
+    final IIOMetadataTreeTable show(final JComponent tables, final int image,
+            final TreeSelectionListener listener) throws IndexOutOfBoundsException
+    {
         IIOMetadataTreeTable table = (image >= 0) ? imageTables[image] : streamTable;
         if (table == null) {
             final MetadataTreeTable metadata = (image >= 0) ? imageMetadata[image] : this;
@@ -105,8 +111,10 @@ final class IIOMetadataChoice extends MetadataTreeTable {
                 streamTable = table;
             }
             tables.add(new JScrollPane(table), identifier);
+            table.getTreeSelectionModel().addTreeSelectionListener(listener);
         }
         ((CardLayout) tables.getLayout()).show(tables, table.identifier);
+        return table;
     }
 
     /**

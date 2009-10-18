@@ -26,7 +26,7 @@ import org.geotoolkit.lang.Static;
  * A set of utilities for {@link java.util.Collection}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -37,6 +37,23 @@ public final class CollectionUtilities {
      * Do not allow instantiation of this class.
      */
     private CollectionUtilities() {
+    }
+
+    /**
+     * Returns a copy of the given array as an unmodifiable set.
+     *
+     * @param  <T> The type of elements.
+     * @param  elements The elements to copy in a set.
+     * @return An unmodifiable set which contains all the given elements.
+     *
+     * @todo Consider caching the set in a {@code WeakHashSet}, given that this method
+     *       is often invoked for set of code list, which are typically shared by many
+     *       callers.
+     *
+     * @since 3.05
+     */
+    public static <T> Set<T> unmodifiableSet(final T[] elements) {
+        return Collections.unmodifiableSet(new LinkedHashSet<T>(Arrays.asList(elements)));
     }
 
     /**

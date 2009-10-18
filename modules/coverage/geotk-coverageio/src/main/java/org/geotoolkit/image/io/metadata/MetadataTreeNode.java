@@ -17,28 +17,41 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Set;
 import java.util.Locale;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import org.w3c.dom.Node;
 
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
+import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.COLUMN_COUNT;
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
 
 
 /**
- * A node in the tree produced by {@link MetadataTreeTable}. The value returned by
- * {@link #toString()} is the programmatic name of the element or attribute, but this
- * is used only for debugging purpose. The columns of this node to be displayed in
- * {@code TreeTable} widget are documented in {@link MetadataTreeTable} javadoc.
+ * A node in the tree produced by {@link MetadataTreeTable}. The value returned by the
+ * {@link #toString()} methods is the programmatic name of the element or attribute represented
+ * by this node. The values returned by the {@link #getValueAt(int)} method are the values for
+ * the columns documented in the {@link MetadataTreeTable} javadoc. Those values are also
+ * accessible by specific getter methods:
  * <p>
- * All those information can be accessed programmatically with the getter methods
- * defined in this class.
+ * <ol>
+ *   <li>{@link #getLabel()}</li>
+ *   <li>{@link #getDescription()}</li>
+ *   <li>{@link #getUserObject()} (this column may be omitted - see {@link MetadataTreeTable})</li>
+ *   <li>{@link #getValueType()}</li>
+ *   <li>{@link #getOccurences()}</li>
+ *   <li>{@link #getValueRestriction()}</li>
+ *   <li>{@link #getDefaultValue()}</li>
+ * </ol>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
@@ -46,7 +59,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * @since 3.04
  * @module
  */
-final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
+public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     /**
      * For cross-version compatibility.
      */
@@ -54,6 +67,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
 
     /**
      * The tree which is the owner of this node.
+     * This is not allowed to be null.
      */
     private final MetadataTreeTable tree;
 
@@ -97,7 +111,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * determined. If we have determined that there is no list of valid values, then this
      * will be set to {@link ValidValues#UNRESTRICTED}.
      */
-    private transient ValidValues validValues;
+    private transient ValueRestriction validValues;
 
     /**
      * The default value, or {@code null} if not yet determined. If we have determined
@@ -148,7 +162,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * Returns the display label. It will be constructed from the programmatic name
      * (usually the UML identifier) when first needed and cached for future reuse.
      *
-     * @return The label inferred from the programmatic node name.
+     * @return The label inferred from the programmatic node name (never null).
      */
     public String getLabel() {
         if (label == null) {
@@ -164,9 +178,11 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     /**
      * Returns the description.
      *
-     * @return The description, or the label if there is no explicit description.
+     * @return The description, or the {@linkplain #getLabel label}
+     *         if there is no explicit description.
      */
     public String getDescription() {
+        String description = this.description;
         if (description == null) {
             final Locale locale = tree.getLocale();
             final IIOMetadataFormat format = tree.format;
@@ -176,16 +192,19 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
                 description = format.getAttributeDescription(element, attribute, locale);
             }
             if (description == null) {
-                description = getLabel();
+                description = "";
             }
+            this.description = description;
         }
-        return description;
+        return description.equals("") ? null : description;
     }
 
     /**
-     * Returns the range of occurences that are valid for this node.
+     * Returns the range of occurences that are valid for this node. This method never returns
+     * {@code null} since the {@linkplain NumberRange#getMinValue() minimum value} of occurences
+     * is at least 0.
      *
-     * @return The range of occurences.
+     * @return The range of occurences (never null).
      */
     public NumberRange<Integer> getOccurences() {
         if (occurences == null) {
@@ -235,10 +254,10 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
 
     /**
      * Returns the type of user object that can be associated to the element or attribute.
-     * {@link java.util.Collection} types are converted to array type. If the node is not
+     * {@link java.util.Collection} types are converted to array types. If the node is not
      * allowed to store any object, then this method returns {@code null}.
      *
-     * @return The type of user object, or {@code null} if none.
+     * @return The type of user object, or {@code null} if this node does not allow value.
      */
     @SuppressWarnings("fallthrough")
     public Class<?> getValueType() {
@@ -275,12 +294,12 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
 
     /**
      * Returns the range or the enumeration of valid values. If there is no restriction
-     * on the valid values, then this method returns null.
+     * on the valid values, then this method returns {@code null}.
      *
-     * @return A description of the valid values.
+     * @return A description of the valid values, or {@code null} if none.
      */
-    public ValidValues getValidValues() {
-        ValidValues valids = validValues;
+    public ValueRestriction getValueRestriction() {
+        ValueRestriction valids = validValues;
         if (valids == null) {
             valids = ValidValues.UNRESTRICTED; // Will be the default.
             final IIOMetadataFormat format = tree.format;
@@ -290,14 +309,14 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
                                  IIOMetadataFormat.VALUE_RANGE_MAX_INCLUSIVE_MASK))
                 {
                     case IIOMetadataFormat.VALUE_RANGE: {
-                        valids = new ValidValues.Range(type,
+                        final Class<?> datatype = format.getObjectClass(element);
+                        valids = ValidValues.range(datatype, type,
                                 format.getObjectMinValue(element),
                                 format.getObjectMaxValue(element));
                         break;
                     }
                     case IIOMetadataFormat.VALUE_ENUMERATION: {
-                        valids = new ValidValues.Enumeration(
-                                format.getObjectEnumerations(element));
+                        valids = new ValidValues(format.getObjectEnumerations(element));
                         break;
                     }
                 }
@@ -307,14 +326,14 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
                                  IIOMetadataFormat.VALUE_RANGE_MAX_INCLUSIVE_MASK))
                 {
                     case IIOMetadataFormat.VALUE_RANGE: {
-                        valids = new ValidValues.Range(type,
+                        final int datatype = format.getAttributeDataType(element, attribute);
+                        valids = ValidValues.range(datatype, type,
                                 format.getAttributeMinValue(element, attribute),
                                 format.getAttributeMaxValue(element, attribute));
                         break;
                     }
                     case IIOMetadataFormat.VALUE_ENUMERATION: {
-                        valids = new ValidValues.Enumeration(
-                                format.getAttributeEnumerations(element, attribute));
+                        valids = new ValidValues(format.getAttributeEnumerations(element, attribute));
                         break;
                     }
                 }
@@ -325,8 +344,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     }
 
     /**
-     * The default value, or {@code null} if not yet determined. If there is no default
-     * value, then this method returns {@code null}.
+     * Returns the default value, or {@code null} if none.
      *
      * @return The default value, or {@code null} if none.
      */
@@ -361,11 +379,60 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
         if (value == null) {
             Node node = tree.getRootIIO();
             if (node != null) {
-                // TODO
+                value = ""; // TODO
             }
             super.setUserObject(value);
         }
         return value.equals("") ? null : value;
+    }
+
+    /**
+     * Sets the value of this node. The given value must be compliant with the restrictions
+     * specified by {@link #getValueType()} and {@link #getValueRestriction()}.
+     *
+     * @param  value The value to give to this node (can be null).
+     * @throws IllegalArgumentException if the given value is not an instance of the
+     *         {@linkplain #getValueType expected type} or violates a
+     *         {@linkplain #getValueRestriction() value restriction}.
+     *
+     * @see #setValueAt(Object, int)
+     */
+    @Override
+    public void setUserObject(Object value) throws IllegalArgumentException {
+        final Class<?> type = getValueType();
+        if (type == null) {
+            throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_$2, value));
+        }
+        if (value != null) {
+            if (!type.isInstance(value)) {
+                throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_TYPE_$2, value.getClass()));
+            }
+            final ValueRestriction r = getValueRestriction();
+            if (r != null) {
+                final Set<?> validValues = r.validValues;
+                if (validValues != null && !validValues.contains(value)) {
+                    throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_$2, value));
+                }
+                final NumberRange<?> range = r.range;
+                // We know we can cast to Comparable since 'value' is an instance of 'type'.
+                if (range != null && !range.contains((Comparable<?>) value)) {
+                    throw new IllegalArgumentException(Errors.getResources(tree.getLocale())
+                            .getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+                            value, range.getMinimum(true), range.getMaximum(true)));
+                }
+            }
+        } else {
+            value = ""; // Sentinal value meaning "evaluated to null".
+        }
+        super.setUserObject(value);
+    }
+
+    /**
+     * Formats a localized error message. This method is used only for the error messages
+     * where the first argument is the parameter name.
+     */
+    private String error(final int key, final Object argument) {
+        return Errors.getResources(tree.getLocale()).getString(key, getLabel(), argument);
     }
 
     /**
@@ -416,13 +483,13 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     @SuppressWarnings("fallthrough")
     public Class<?> getColumnClass(final int column) {
         switch (canonical(column)) {
-            case 0:                             // The label.
-            case 1:  return String.class;       // The description.
-            case 3:  return Class.class;        // The base type of values.
-            case 4:  return NumberRange.class;  // The range of occurences
-            case 5:  return ValidValues.class;  // The restrictions on valid values.
-            case 6:                             // The default value.
-            case 2: {                           // The actual value.
+            case 0:                                 // The label.
+            case 1:  return String.class;           // The description.
+            case 3:  return Class.class;            // The base type of values.
+            case 4:  return NumberRange.class;      // The range of occurences
+            case 5:  return ValueRestriction.class; // The restrictions on valid values.
+            case 6:                                 // The default value.
+            case 2: {                               // The actual value.
                 final Class<?> type = getValueType();
                 if (type != null) {
                     return type;
@@ -437,7 +504,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
      * Gets the value for this node that corresponds to a particular tabular column.
      * Same values are calculated when first requested and cached for future reuse.
      *
-     * {@note If the behavior of this method is changed, then <code>IIOMetadatapanel</code>
+     * {@note If the behavior of this method is changed, then <code>IIOMetadataPanel</code>
      *        implementation needs to be modified accordingly.}
      *
      * @param  column The column to query.
@@ -451,7 +518,7 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
             case 2: return getUserObject();
             case 3: return getValueType();
             case 4: return getOccurences();
-            case 5: return getValidValues();
+            case 5: return getValueRestriction();
             case 6: return getDefaultValue();
             case COLUMN_COUNT:
             // The later is added only for making sure at compile-time that
@@ -461,24 +528,52 @@ final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
     }
 
     /**
-     * Sets the value for the given column.
+     * Sets the value for the given column. This method {@linkplain #setUserObject(Object) set
+     * the user object} to the given value only if the all the following conditions are meet:
+     * <p>
+     * <ul>
+     *   <li>The given column is the {@link #VALUE_COLUMN} and that column exists (i.e. an
+     *       instance of {@link IIOMetadata} has been specified to {@link MetadataTreeTable}).</li>
+     *   <li>This node accepts values (i.e. the value type is not {@link IIOMetadataFormat#VALUE_NONE}).</li>
+     *   <li>The given value is an instance of the {@linkplain #getValueType() expected type}.</li>
+     *   <li>The given value, if non-null, is compliant with the {@linkplain #getValueRestriction()
+     *       value restrictions}.</li>
+     * </ul>
+     * <p>
+     * Otherwise this method does nothing.
      *
      * @param value The value to set.
      * @param column The column to set the value on.
      */
     @Override
-    public void setValueAt(Object value, int column) {
+    public void setValueAt(final Object value, final int column) {
+        if (column == VALUE_COLUMN && tree.getRootIIO() != null) {
+            try {
+                setUserObject(value);
+            } catch (IllegalArgumentException e) {
+                /*
+                 * Ignoring the exception is conform to the specification of this method. This
+                 * is typically a consequence of the user having edited a cell in a JTable with
+                 * an invalid value. The JTable behavior is to discart the user edition and restore
+                 * the previous value. If we want a more sophesticated behavior with a warning that
+                 * the user provided an invalid value, then we need a custom TableCellEditor.
+                 */
+                Logging.recoverableException(MetadataTreeNode.class, "setValueAt", e);
+            }
+        }
     }
 
     /**
-     * Determines whether the specified column is editable.
-     * By default there is no editable column.
+     * Determines whether the specified column is editable. By default only the
+     * {@link #VALUE_COLUMN} is editable, and only if that column exists. This
+     * column does not exist if no {@link IIOMetadata} instance was specified
+     * to {@link MetadataTreeTable}.
      *
      * @param  column The column to query.
      * @return {@code true} if the column is editable, false otherwise.
      */
     @Override
-    public boolean isEditable(int column) {
-        return false;
+    public boolean isEditable(final int column) {
+        return column == VALUE_COLUMN && tree.getRootIIO() != null;
     }
 }

@@ -31,6 +31,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
+import org.geotoolkit.image.io.metadata.MetadataTreeNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.internal.swing.table.BooleanRenderer;
 
@@ -56,6 +57,13 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
      * shall have an unique identifier.
      */
     final String identifier;
+
+    /**
+     * The currently selected tree node. This is read and set by {@link IIMetadataPanel} in
+     * order to remember the selected item of that particular view when we switch between
+     * different metadata views.
+     */
+    MetadataTreeNode selectedNode;
 
     /**
      * The renderer for boolean values.
