@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.image;
 import java.awt.Color;
 import static java.awt.Color.*;
 
-import org.geotoolkit.gui.swing.WidgetTestCase;
+import org.geotoolkit.gui.test.SwingBase;
 import org.geotoolkit.internal.image.ColorUtilities;
 
 
@@ -32,13 +32,12 @@ import org.geotoolkit.internal.image.ColorUtilities;
  *
  * @since 2.0
  */
-public final class ColorRampTest extends WidgetTestCase<ColorRamp> {
+public final class ColorRampTest extends SwingBase<ColorRamp> {
     /**
      * Constructs the test case.
      */
     public ColorRampTest() {
         super(ColorRamp.class);
-        displayEnabled = false;
     }
 
     /**

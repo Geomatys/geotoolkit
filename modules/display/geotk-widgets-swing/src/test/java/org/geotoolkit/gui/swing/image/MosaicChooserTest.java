@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.gui.swing.WidgetTestCase;
+import org.geotoolkit.gui.test.SwingBase;
 
 
 /**
@@ -28,13 +28,12 @@ import org.geotoolkit.gui.swing.WidgetTestCase;
  *
  * @since 3.00
  */
-public final class MosaicChooserTest extends WidgetTestCase<MosaicChooser> {
+public final class MosaicChooserTest extends SwingBase<MosaicChooser> {
     /**
      * Constructs the test case.
      */
     public MosaicChooserTest() {
         super(MosaicChooser.class);
-        displayEnabled = false;
     }
 
     /**

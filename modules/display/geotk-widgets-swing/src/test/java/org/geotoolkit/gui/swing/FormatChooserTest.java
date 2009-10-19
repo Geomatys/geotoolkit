@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing;
 
+import org.geotoolkit.gui.test.SwingBase;
 import org.geotoolkit.measure.AngleFormat;
 
 
@@ -28,13 +29,12 @@ import org.geotoolkit.measure.AngleFormat;
  *
  * @since 2.0
  */
-public final class FormatChooserTest extends WidgetTestCase<FormatChooser> {
+public final class FormatChooserTest extends SwingBase<FormatChooser> {
     /**
      * Constructs the test case.
      */
     public FormatChooserTest() {
         super(FormatChooser.class);
-        displayEnabled = false;
     }
 
     /**

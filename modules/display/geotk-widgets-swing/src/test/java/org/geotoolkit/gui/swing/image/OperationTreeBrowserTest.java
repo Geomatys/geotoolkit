@@ -23,7 +23,7 @@ import javax.media.jai.operator.ConstantDescriptor;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
 import javax.media.jai.operator.MultiplyConstDescriptor;
 
-import org.geotoolkit.gui.swing.WidgetTestCase;
+import org.geotoolkit.gui.test.SwingBase;
 
 
 /**
@@ -34,13 +34,12 @@ import org.geotoolkit.gui.swing.WidgetTestCase;
  *
  * @since 2.3
  */
-public final class OperationTreeBrowserTest extends WidgetTestCase<OperationTreeBrowser> {
+public final class OperationTreeBrowserTest extends SwingBase<OperationTreeBrowser> {
     /**
      * Constructs the test case.
      */
     public OperationTreeBrowserTest() {
         super(OperationTreeBrowser.class);
-        displayEnabled = false;
     }
 
     /**

@@ -18,8 +18,10 @@
 package org.geotoolkit.gui.swing;
 
 import java.util.Random;
-import java.awt.Component;
+import javax.swing.JComponent;
 import org.geotoolkit.test.Depend;
+
+import org.geotoolkit.gui.test.SwingBase;
 
 
 /**
@@ -31,20 +33,19 @@ import org.geotoolkit.test.Depend;
  * @since 2.0
  */
 @Depend(ZoomPaneTest.class)
-public final class Plot2DTest extends WidgetTestCase<Plot2D> {
+public final class Plot2DTest extends SwingBase<Plot2D> {
     /**
      * Constructs the test case.
      */
     public Plot2DTest() {
         super(Plot2D.class);
-        displayEnabled = false;
     }
 
     /**
      * Creates the widget.
      */
     @Override
-    protected Component create() {
+    protected JComponent create() {
         final Random random = new Random();
         Plot2D test = new Plot2D(true, false);
         test.addXAxis("Some x values");

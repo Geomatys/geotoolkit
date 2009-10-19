@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.gui.swing.WidgetTestCase;
+import org.geotoolkit.gui.test.SwingBase;
 
 
 /**
@@ -28,13 +28,12 @@ import org.geotoolkit.gui.swing.WidgetTestCase;
  *
  * @since 2.3
  */
-public final class KernelEditorTest extends WidgetTestCase<KernelEditor> {
+public final class KernelEditorTest extends SwingBase<KernelEditor> {
     /**
      * Constructs the test case.
      */
     public KernelEditorTest() {
         super(KernelEditor.class);
-        displayEnabled = false;
     }
 
     /**

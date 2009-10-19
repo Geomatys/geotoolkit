@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.gui.swing.WidgetTestCase;
+import org.geotoolkit.gui.test.SwingBase;
 
 
 /**
@@ -28,13 +28,12 @@ import org.geotoolkit.gui.swing.WidgetTestCase;
  *
  * @since 3.00
  */
-public final class ImageFileChooserTest extends WidgetTestCase<ImageFileChooser> {
+public final class ImageFileChooserTest extends SwingBase<ImageFileChooser> {
     /**
      * Constructs the test case.
      */
     public ImageFileChooserTest() {
         super(ImageFileChooser.class);
-        displayEnabled = false;
     }
 
     /**

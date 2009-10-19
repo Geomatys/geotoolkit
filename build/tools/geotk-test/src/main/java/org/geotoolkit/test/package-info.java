@@ -25,4 +25,3 @@
  * @since 3.00
  */
 package org.geotoolkit.test;
-

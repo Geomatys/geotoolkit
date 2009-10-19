@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.referencing;
 
 import org.opengis.referencing.FactoryException;
 
-import org.geotoolkit.gui.swing.WidgetTestCase;
+import org.geotoolkit.gui.test.SwingBase;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
@@ -32,13 +32,12 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  *
  * @since 3.02
  */
-public final class AuthorityCodesComboBoxTest extends WidgetTestCase<AuthorityCodesComboBox> {
+public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesComboBox> {
     /**
      * Constructs the test case.
      */
     public AuthorityCodesComboBoxTest() {
         super(AuthorityCodesComboBox.class);
-        displayEnabled = false;
     }
 
     /**

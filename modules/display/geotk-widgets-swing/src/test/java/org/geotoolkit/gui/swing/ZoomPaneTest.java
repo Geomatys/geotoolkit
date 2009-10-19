@@ -23,6 +23,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import static java.awt.Color.*;
 
+import org.geotoolkit.gui.test.SwingBase;
+
 
 /**
  * Tests the {@link ZoomPane}.
@@ -32,13 +34,12 @@ import static java.awt.Color.*;
  *
  * @since 2.0
  */
-public final class ZoomPaneTest extends WidgetTestCase<ZoomPane> {
+public final class ZoomPaneTest extends SwingBase<ZoomPane> {
     /**
      * Constructs the test case.
      */
     public ZoomPaneTest() {
         super(ZoomPane.class);
-        displayEnabled = false;
     }
 
     /**

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing;
 
+import org.geotoolkit.gui.test.SwingBase;
+
 
 /**
  * Tests the {@link About} dialog.
@@ -26,13 +28,12 @@ package org.geotoolkit.gui.swing;
  *
  * @since 2.0
  */
-public final class AboutTest extends WidgetTestCase<About> {
+public final class AboutTest extends SwingBase<About> {
     /**
      * Constructs the test case.
      */
     public AboutTest() {
         super(About.class);
-        displayEnabled = false;
     }
 
     /**

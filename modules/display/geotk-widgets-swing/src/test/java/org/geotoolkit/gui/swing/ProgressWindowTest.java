@@ -35,7 +35,7 @@ public final class ProgressWindowTest {
     /**
      * Set to {@code true} if windows should be visible.
      */
-    protected boolean displayEnabled;
+    private static final boolean displayEnabled = false;
 
     /**
      * Creates the widget. If {@link #displayEnabled} is {@code true}, then the widget is shown.

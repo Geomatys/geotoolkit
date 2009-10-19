@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.gui.test.SwingBase;
 import org.geotoolkit.util.logging.Logging;
 
 import org.junit.*;
@@ -35,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.01
  */
-public final class LoggingPanelTest extends WidgetTestCase<LoggingPanel> {
+public final class LoggingPanelTest extends SwingBase<LoggingPanel> {
     /**
      * The logger to use for the test.
      */
@@ -47,8 +48,7 @@ public final class LoggingPanelTest extends WidgetTestCase<LoggingPanel> {
     public LoggingPanelTest() {
         super(LoggingPanel.class);
         logger = Logging.getLogger(LoggingPanelTest.class);
-        displayEnabled = false; // Edit this value if you want to perform a visual test.
-        if (displayEnabled) {
+        if (isDisplayEnabled()) {
             logger.setLevel(Level.ALL);
         }
     }
@@ -97,7 +97,7 @@ public final class LoggingPanelTest extends WidgetTestCase<LoggingPanel> {
     @Override
     public void display() throws Exception {
         super.display();
-        if (!displayEnabled) {
+        if (!isDisplayEnabled()) {
             return;
         }
         // Increase the 20 value to 200 if you want to test buffer rolling.

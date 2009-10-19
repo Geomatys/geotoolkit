@@ -19,6 +19,8 @@ package org.geotoolkit.gui.swing;
 
 import java.util.Locale;
 
+import org.geotoolkit.gui.test.SwingBase;
+
 
 /**
  * Tests the {@link DisjointLists}.
@@ -28,13 +30,12 @@ import java.util.Locale;
  *
  * @since 2.0
  */
-public final class DisjointListsTest extends WidgetTestCase<DisjointLists> {
+public final class DisjointListsTest extends SwingBase<DisjointLists> {
     /**
      * Constructs the test case.
      */
     public DisjointListsTest() {
         super(DisjointLists.class);
-        displayEnabled = false;
     }
 
     /**

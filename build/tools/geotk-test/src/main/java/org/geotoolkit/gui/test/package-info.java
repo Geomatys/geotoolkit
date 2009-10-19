@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2008-2009, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -15,32 +15,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.image;
-
-import org.geotoolkit.gui.test.SwingBase;
-
 
 /**
- * Tests the {@link MultiColorChooserTest}.
+ * Tools for Geotk test suites on widgets. The base class provided in this package
+ * manage a {@link javax.swing.JDesktopPane} with menu for a few actions like taking
+ * a screenshot of the active internal frame.
+ * <p>
+ * By default the tests display nothing; it merely checks that no exception is thrown during
+ * widget construction. However if the "{@code org.geotoolkit.showWidgetTests}" system property
+ * is set to "{@code true}", then the widgets will be shown as an internal frame in the desktop.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.05
  *
- * @since 3.01
+ * @since 3.05
  */
-public class MultiColorChooserTest extends SwingBase<MultiColorChooser> {
-    /**
-     * Constructs the test case.
-     */
-    public MultiColorChooserTest() {
-        super(MultiColorChooser.class);
-    }
-
-    /**
-     * Creates the widget.
-     */
-    @Override
-    protected MultiColorChooser create() {
-        return new MultiColorChooser();
-    }
-}
+package org.geotoolkit.gui.test;
