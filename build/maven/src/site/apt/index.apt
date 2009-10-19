@@ -1,0 +1,16 @@
+Maven plugins for Geotk
+
+  This directory contains Maven plugin created for the specific needs of the Geotoolkit.org project.
+  Some of those plugins can be used for external projects, but creating general-purpose plugins is
+  out of their scope.
+
+  For more general build instructions, see the {{{../index.html}building Geotoolkit.org}} page.
+
+  The main Maven plugins are:
+
+  * {{{geotk-resource-compiler/index.jar}Resources compiler}} for creating the binary files used for
+    internationalization in Geotk.
+
+  * {{{geotk-javadoc/index.jar}JAR collector}} for custom taglets.
+
+  * {{{geotk-jar-collector/index.jar}JAR collector}}, which can also create PACK200 files.

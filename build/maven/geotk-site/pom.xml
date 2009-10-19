@@ -26,7 +26,8 @@
   <packaging>maven-plugin</packaging>
   <name>Site customization</name>
   <description>
-    Customize the site created by Maven, including the JavaDoc.
+    Post-processing on the web site created by Maven. This plugin adds the picture on
+    the home page and the Google analytics scripts.
   </description>
 
 

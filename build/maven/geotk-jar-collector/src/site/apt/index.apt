@@ -29,11 +29,18 @@ JAR collector
 ------------------------------------------------------------------------
 
   To merges the binaries produced by the above step and compress them using Pack200,
-  invoke the following from the command line:
+  invoke the following from the command line. Do not forget the <<<--non-recursive>>>
+  option, otherwise the Mojo will waste CPU by executing itself many time.
 
 ------------------------------------------------------------------------
   mvn org.geotoolkit.project:geotk-jar-collector:pack --non-recursive
 ------------------------------------------------------------------------
 
-  Do not forget the <<<--non-recursive>>> option, otherwise the Mojo will waste CPU
-  by executing itself many time.
+  The above command packs everything found in the <<<target/binaries>>> directory.
+  In the specific case of a Geotoolkit.org build and in order to generate the same
+  pack files than the one distributed on the web site, use the <<<pack-specific>>>
+  goal:
+
+------------------------------------------------------------------------------
+  mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
+------------------------------------------------------------------------------
