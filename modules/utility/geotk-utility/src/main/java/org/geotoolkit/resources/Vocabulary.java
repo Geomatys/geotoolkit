@@ -720,6 +720,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int IMAGES = 132;
 
         /**
+         * Image {0}
+         */
+        public static final int IMAGE_$1 = 305;
+
+        /**
          * Image of class "{0}"
          */
         public static final int IMAGE_CLASS_$1 = 133;
@@ -1098,6 +1103,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Parameter {0}
          */
         public static final int PARAMETER_$1 = 206;
+
+        /**
+         * Part
+         */
+        public static final int PART = 306;
 
         /**
          * Password

@@ -56,7 +56,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
  *
- * @since 3.04
+ * @since 3.05
  * @module
  */
 public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNode {
@@ -463,8 +463,9 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     }
 
     /**
-     * Returns the number of columns supported by this {@code TreeTableNode}.
-     * The number of columns shall include the column used for displaying the node itself.
+     * Returns the number of columns supported by this {@code TreeTableNode}. This method returns
+     * {@value org.geotoolkit.image.io.metadata.MetadataTreeTable#COLUMN_COUNT} if the tree table
+     * contains the data of a {@link IIOMetadata} object, or the above value minus one otherwise.
      *
      * @return The number of columns this node supports.
      */
@@ -475,6 +476,8 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
 
     /**
      * Returns the most specific superclass of values that can be stored in the given column.
+     * The columns are numbered from 0 inclusive to {@link #getColumnCount()} exclusive. They
+     * are the same numbers than the ones used for the {@link #getValueAt(int)} method.
      *
      * @param  column The column to query.
      * @return The most specific superclass of legal values in the queried column.
@@ -502,7 +505,22 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
 
     /**
      * Gets the value for this node that corresponds to a particular tabular column.
-     * Same values are calculated when first requested and cached for future reuse.
+     * The columns are numbered from 0 inclusive to {@link #getColumnCount()} exclusive.
+     * Each column maps to a getter methods of this class, in this order:
+     * <p>
+     * <ol>
+     *   <li>{@link #getLabel()}</li>
+     *   <li>{@link #getDescription()}</li>
+     *   <li>{@link #getUserObject()} (this column may be omitted - see below)</li>
+     *   <li>{@link #getValueType()}</li>
+     *   <li>{@link #getOccurences()}</li>
+     *   <li>{@link #getValueRestriction()}</li>
+     *   <li>{@link #getDefaultValue()}</li>
+     * </ol>
+     * <p>
+     * Note that if the tree table does not map a {@link IIOMetadata} object, then there is
+     * no column for {@code getUserObject()} and the number of all following columns are
+     * shifted by one.
      *
      * {@note If the behavior of this method is changed, then <code>IIOMetadataPanel</code>
      *        implementation needs to be modified accordingly.}
@@ -565,8 +583,8 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
 
     /**
      * Determines whether the specified column is editable. By default only the
-     * {@link #VALUE_COLUMN} is editable, and only if that column exists. This
-     * column does not exist if no {@link IIOMetadata} instance was specified
+     * {@link MetadataTreeTable#VALUE_COLUMN} is editable, and only if that column exists.
+     * This column does not exist if no {@link IIOMetadata} instance was specified
      * to {@link MetadataTreeTable}.
      *
      * @param  column The column to query.

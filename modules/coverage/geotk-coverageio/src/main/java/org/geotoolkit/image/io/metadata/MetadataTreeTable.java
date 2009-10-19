@@ -24,7 +24,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.w3c.dom.Node;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.AnyConverter;
 
@@ -63,10 +62,10 @@ import org.geotoolkit.util.converter.AnyConverter;
  */
 public class MetadataTreeTable {
     /**
-     * The number of columns in the table, when every columns are present. Note that the
-     * <cite>value</cite> column is omitted if this {@code MetadataTreeTable} is given only
-     * a {@link IIOMetadataFormat} without any {@link IIOMetadata} instance for providing
-     * the actual values.
+     * The number of columns in the table ({@value}), when every columns are present. Note that
+     * the {@linkplain #VALUE_COLUMN value column} is omitted if this {@code MetadataTreeTable}
+     * is given only a {@link IIOMetadataFormat} without any {@link IIOMetadata} instance for
+     * providing the actual values.
      */
     public static final int COLUMN_COUNT = 7;
 
@@ -96,7 +95,7 @@ public class MetadataTreeTable {
     /**
      * The root of the tree table. Will be created only when first needed.
      */
-    private transient TreeTableNode tree;
+    private transient MetadataTreeNode tree;
 
     /**
      * The Locale for which localization will be attempted.
@@ -201,7 +200,7 @@ public class MetadataTreeTable {
      *
      * @return The root of a tree representation of the metadata.
      */
-    public TreeTableNode getRootNode() {
+    public MetadataTreeNode getRootNode() {
         if (tree == null) {
             final MetadataTreeNode root = new MetadataTreeNode(this, format.getRootName());
             addChilds(root);

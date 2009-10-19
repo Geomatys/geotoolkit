@@ -27,7 +27,6 @@ import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
@@ -85,19 +84,30 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
         this.identifier = identifier;
         setRootVisible(false);
         setColumnControlVisible(true);
-        setHighlighters(HighlighterFactory.createSimpleStriping());
         setDefaultRenderer(Class.class, new DefaultTableRenderer(this));
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         booleanRenderer = new BooleanRenderer();
         /*
-         * Hide the "default value" column. This column is empty most of the time.
-         * The only non-null values are usually "false" for the boolean type. The
-         * user can still show this column if he ask explicitly.
+         * Hide every columns except the one for the names and only one additional column:
+         *
+         *   - For IIOMetadataFormat, the type
+         *   - For IIOMetadata, the value.
+         *
+         * Note that the "default value" column is empty most of the time anyway. The only
+         * non-null values are usually "false" for the boolean type. The user can select
+         * columns to be made visible with the icon in the upper-right corner.
          */
         final TableColumnModel columns = getColumnModel();
-        final int c = columns.getColumnCount();
-        ((TableColumnExt) columns.getColumn(c-1)).setVisible(false); // "Default value" column.
-        ((TableColumnExt) columns.getColumn(c-4)).setVisible(false); // "Value type" column.
+        int c = columns.getColumnCount();
+        final int keep = (c == COLUMN_COUNT) ? VALUE_COLUMN : 2;
+        while (--c >= 1) {
+            if (c != keep) {
+                ((TableColumnExt) columns.getColumn(c)).setVisible(false);
+            }
+        }
+        // If the preferred colum width below is modified, consider
+        // updating the preferred widget width in IIOMetadataPanel.
+        columns.getColumn(0).setPreferredWidth(240);
     }
 
     /**
@@ -138,7 +148,7 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
                 // Skip the "values" column if it doesn't exist.
             }
             switch (column) {
-                case 0:  key = Vocabulary.Keys.METADATA;     break;
+                case 0:  key = Vocabulary.Keys.NAME;         break;
                 case 1:  key = Vocabulary.Keys.DESCRIPTION;  break;
                 case 2:  key = Vocabulary.Keys.VALUE;        break;
                 case 3:  key = Vocabulary.Keys.TYPE;         break;
