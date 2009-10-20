@@ -228,6 +228,8 @@ final class DesktopPane extends JDesktopPane {
                 JOptionPane.showInternalMessageDialog(active, e.getLocalizedMessage(),
                         e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            JOptionPane.showInternalMessageDialog(this, "No active window.", "Screenshot", JOptionPane.WARNING_MESSAGE);
         }
     }
 }

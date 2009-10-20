@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 
 import javax.media.jai.JAI;
 
+import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
@@ -72,10 +73,8 @@ import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
  * an optional {@code Implementation-Date} entry. This entry can contains the product date
  * in the <code>"yyyy-MM-dd HH:mm:ss"</code> pattern. If presents, this date will be localized
  * according user's locale and appended to the version number.
- *
- * <p>&nbsp;</p>
- * <p align="center"><img src="doc-files/About.png"></p>
- * <p>&nbsp;</p>
+ * <p>
+ * If none of the above information is available, then {@link Version#GEOTOOLKIT} is used.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -194,6 +193,12 @@ public class About extends JPanel implements Dialog {
              * the "About" dialog box will just not includes the implementation date.
              */
             Logging.unexpectedException(About.class, "<init>", exception);
+        }
+        if (application == null) {
+            application = "<html><h2>Geotoolkit.org</h2></html>";
+            if (version == null) {
+                version = Version.GEOTOOLKIT.toString();
+            }
         }
         /*
          * If the user supplied a logo, load it and display it in the dialog's upper part (NORTH).

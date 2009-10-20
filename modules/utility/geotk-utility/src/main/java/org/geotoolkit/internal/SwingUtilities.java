@@ -171,6 +171,7 @@ public final class SwingUtilities {
         while (component != null) {
             if (component instanceof JInternalFrame) {
                 ((JInternalFrame) component).setTitle(title);
+                return;
             }
             if (component instanceof Frame) {
                 ((Frame) component).setTitle(title);
@@ -180,6 +181,7 @@ public final class SwingUtilities {
                 ((Dialog) component).setTitle(title);
                 return;
             }
+            component = component.getParent();
         }
     }
 
