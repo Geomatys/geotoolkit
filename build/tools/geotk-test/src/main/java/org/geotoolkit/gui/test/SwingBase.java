@@ -19,6 +19,7 @@ package org.geotoolkit.gui.test;
 
 import javax.swing.JComponent;
 import java.awt.HeadlessException;
+import java.beans.PropertyVetoException;
 
 import org.junit.*;
 
@@ -48,14 +49,9 @@ public abstract class SwingBase<T extends JComponent> {
     private static DesktopPane desktop;
 
     /**
-     * The widget being tested. The {@link #display()} method initializes this field to
-     * the value returned by {@link #create()}.
-     *
-     * {@note The type is <code>JComponent</code> instead than <code>T</code> because some
-     *        subclasses test their widgets wrapped in a <code>JScrollPane</code>, or some
-     *        other wrapper component.}
+     * The type of the widget being tested.
      */
-    private JComponent component;
+    final Class<T> testing;
 
     /**
      * Creates a new instance of {@code SwingBase}.
@@ -64,6 +60,7 @@ public abstract class SwingBase<T extends JComponent> {
      */
     protected SwingBase(final Class<T> testing) {
         assertTrue(testing.desiredAssertionStatus());
+        this.testing = testing;
     }
 
     /**
@@ -113,10 +110,25 @@ public abstract class SwingBase<T extends JComponent> {
      */
     @Test
     public void display() throws Exception {
-        component = create();
+        final JComponent component = create();
         assumeNotNull(component);
-        synchronized (SwingBase.class) {
-            if (desktop != null) {
+        show(this, component);
+    }
+
+    /**
+     * Show the given component, if the test is allowed to display widgets and
+     * the given component is not null.
+     *
+     * @param  testCase The test case for which the component is added.
+     * @param  component The component to show, or {@code null} if none.
+     * @throws PropertyVetoException Should not happen.
+     */
+    static synchronized void show(final SwingBase<?> testCase, final JComponent component)
+            throws PropertyVetoException
+    {
+        if (desktop != null) {
+            desktop.addTestCase(testCase);
+            if (component != null) {
                 desktop.show(component);
             }
         }

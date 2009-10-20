@@ -22,12 +22,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.AbstractAction;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameAdapter;
 import java.util.concurrent.CountDownLatch;
+import java.beans.PropertyVetoException;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
@@ -41,7 +43,7 @@ import java.util.prefs.Preferences;
 
 
 /**
- * The desktop pane when to put the widgets to be tested.
+ * The desktop pane where to put the widgets to be tested.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
@@ -54,6 +56,11 @@ final class DesktopPane extends JDesktopPane {
      * The key for screenshot directory in the user preferences.
      */
     private static final String SCREENSHOT_DIRECTORY_PREFS = "Screenshots";
+
+    /**
+     * The menu for creating new windows.
+     */
+    private final JMenu newMenu;
 
     /**
      * A lock used for waiting that the {@linkplain #desktop} has been closed.
@@ -69,16 +76,36 @@ final class DesktopPane extends JDesktopPane {
      * Creates the desktop.
      */
     DesktopPane() {
+        newMenu = new JMenu("New");
         lock = new CountDownLatch(1);
     }
 
     /**
-     * Creates the frame for this desktop.
+     * Adds a test case to be show in the "New" menu.
+     * A {@code null} argument cause the addition of a separator.
+     */
+    final void addTestCase(final SwingBase<?> testCase) {
+        if (testCase != null) {
+            newMenu.add(new AbstractAction(getTitle(testCase.testing)) {
+                @Override public void actionPerformed(final ActionEvent event) {
+                    show(testCase);
+                }
+            });
+        } else {
+            newMenu.addSeparator();
+        }
+    }
+
+    /**
+     * Creates the frame for this desktop. This frame is initially invisible;
+     * the {@link JFrame#setVisible(boolean)} method must be invoked by the caller.
+     * This method shall be invoked only once.
      *
-     * @return The frame in which the desktop is shown.
+     * @return A new frame in which the desktop will be shown.
      */
     final JFrame createFrame() {
         final JMenuBar menuBar = new JMenuBar();
+        menuBar.add(newMenu);
         final JMenu menu = new JMenu("Tools");
         menu.add(new AbstractAction("Screenshot") {
             @Override public void actionPerformed(final ActionEvent event) {
@@ -108,7 +135,11 @@ final class DesktopPane extends JDesktopPane {
     }
 
     /**
-     * Returns the title to use for a widget of the given type.
+     * Returns the title to use for the widget frame.
+     * This is also the filename of the screenshot.
+     *
+     * @param  type The widget class.
+     * @return The frame title, or screenshot filename (without extension).
      */
     private static String getTitle(Class<?> type) {
         while (type.isAnonymousClass()) {
@@ -118,35 +149,62 @@ final class DesktopPane extends JDesktopPane {
     }
 
     /**
+     * Shows the widget created by the given test case.
+     */
+    private void show(final SwingBase<?> testCase) {
+        try {
+            show(testCase.create());
+        } catch (Exception e) {
+            JOptionPane.showInternalMessageDialog(this, e.getLocalizedMessage(),
+                    e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
      * Shows the given component in a frame.
      *
      * @param  component The component to show.
+     * @throws PropertyVetoException Should not happen.
      */
-    final void show(final JComponent component) {
+    final void show(final JComponent component) throws PropertyVetoException {
         final String title = getTitle(component.getClass());
         final JInternalFrame frame = new JInternalFrame(title, true, true, true, true);
         frame.addInternalFrameListener(new InternalFrameAdapter() {
             @Override public void internalFrameActivated(final InternalFrameEvent event) {
                 active = component;
             }
+
+            @Override public void internalFrameClosed(final InternalFrameEvent event) {
+                if (active == component) {
+                    active = null;
+                }
+            }
         });
         frame.add(component);
         frame.pack();
+        frame.setLocation((getWidth() - frame.getWidth()) / 2, (getHeight() - frame.getHeight()) / 2);
         frame.setVisible(true);
         add(frame);
-        if (active == null) {
-            active = component;
-        }
+        frame.setSelected(true);
         System.out.println("Showing " + title);
     }
 
     /**
-     * Popup a dialog box for setting the preferences.
+     * Popups a dialog box for setting the preferences.
      */
     private void preferences() {
-        final String directory = JOptionPane.showInternalInputDialog(this, "Screenshot directory");
-        if (directory != null) {
-            Preferences.userNodeForPackage(DesktopPane.class).put(SCREENSHOT_DIRECTORY_PREFS, directory);
+        final Preferences prefs = Preferences.userNodeForPackage(DesktopPane.class);
+        final JFileChooser chooser = new JFileChooser(prefs.get(SCREENSHOT_DIRECTORY_PREFS, null));
+        chooser.setDialogTitle("Output directory for screenshots");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        switch (chooser.showOpenDialog(this)) {
+            case JFileChooser.APPROVE_OPTION: {
+                final File directory = chooser.getSelectedFile();
+                if (directory != null) {
+                    prefs.put(SCREENSHOT_DIRECTORY_PREFS, directory.getPath());
+                }
+                break;
+            }
         }
     }
 
