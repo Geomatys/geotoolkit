@@ -465,7 +465,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     /**
      * Returns the number of columns supported by this {@code TreeTableNode}. This method returns
      * {@value org.geotoolkit.image.io.metadata.MetadataTreeTable#COLUMN_COUNT} if the tree table
-     * contains the data of a {@link IIOMetadata} object, or the above value minus one otherwise.
+     * contains the data of an {@link IIOMetadata} object, or the above value minus one otherwise.
      *
      * @return The number of columns this node supports.
      */
@@ -550,8 +550,9 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      * the user object} to the given value only if the all the following conditions are meet:
      * <p>
      * <ul>
-     *   <li>The given column is the {@link #VALUE_COLUMN} and that column exists (i.e. an
-     *       instance of {@link IIOMetadata} has been specified to {@link MetadataTreeTable}).</li>
+     *   <li>The given column is the {@link MetadataTreeTable#VALUE_COLUMN VALUE_COLUMN} and
+     *       that column exists (i.e. an instance of {@link IIOMetadata} has been specified
+     *       to {@link MetadataTreeTable}).</li>
      *   <li>This node accepts values (i.e. the value type is not {@link IIOMetadataFormat#VALUE_NONE}).</li>
      *   <li>The given value is an instance of the {@linkplain #getValueType() expected type}.</li>
      *   <li>The given value, if non-null, is compliant with the {@linkplain #getValueRestriction()

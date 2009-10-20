@@ -48,8 +48,8 @@ import org.geotoolkit.util.logging.Logging;
  *       internal frames instead of frames.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.02
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @since 2.0
  * @module
@@ -375,7 +375,7 @@ public final class SwingUtilities {
      * Setups the given table for usage as row-header. This method setups the background color to
      * the same one than the column headers.
      *
-     * {@note In a previous version, we were assigning to the row headers same cell renderer than
+     * {@note In a previous version, we were assigning to the row headers the same cell renderer than
      *        the one created by <cite>Swing</cite> for the column headers. But it produced strange
      *        effects when the L&F uses a vertical grandiant instead than a uniform color.}
      *
@@ -387,8 +387,14 @@ public final class SwingUtilities {
         Color background = header.getBackground();
         Color foreground = header.getForeground();
         if (background == null || background.equals(table.getBackground())) {
-            background = SystemColor.control;
-            foreground = SystemColor.controlText;
+            if (!SystemColor.control.equals(background)) {
+                background = SystemColor.control;
+                foreground = SystemColor.controlText;
+            } else {
+                final Locale locale = table.getLocale();
+                background = UIManager.getColor("Label.background", locale);
+                foreground = UIManager.getColor("Label.foreground", locale);
+            }
         }
         final DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setBackground(background);

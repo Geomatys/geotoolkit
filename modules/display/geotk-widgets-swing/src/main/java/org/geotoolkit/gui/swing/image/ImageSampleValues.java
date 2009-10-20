@@ -54,6 +54,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * @version 3.00
  *
  * @see ImageTableModel
+ * @see ImageProperties
  *
  * @since 2.3
  * @module

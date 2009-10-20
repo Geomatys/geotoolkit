@@ -17,7 +17,12 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import javax.media.jai.operator.AddDescriptor;
 import javax.media.jai.operator.AddConstDescriptor;
 import javax.media.jai.operator.ConstantDescriptor;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
@@ -29,12 +34,22 @@ import org.geotoolkit.gui.test.SwingBase;
 /**
  * Tests the {@link OperationTreeBrowser}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @since 2.3
  */
 public final class OperationTreeBrowserTest extends SwingBase<OperationTreeBrowser> {
+    /**
+     * The image width and height.
+     */
+    private static final int WIDTH = 200, HEIGHT = 250;
+
+    /**
+     * The value to put in the image of constant pixel values.
+     */
+    private static final byte VALUE = 40;
+
     /**
      * Constructs the test case.
      */
@@ -48,12 +63,25 @@ public final class OperationTreeBrowserTest extends SwingBase<OperationTreeBrows
     @Override
     protected OperationTreeBrowser create() {
         RenderedImage image;
-        final Float size = new Float(200);
-        final Byte value = new Byte((byte)10);
-        image = ConstantDescriptor.create(size,size, new Byte[]{value}, null);
-        image = MultiplyConstDescriptor.create(image, new double[] {2}, null);
+        image = ConstantDescriptor.create(Float.valueOf(WIDTH), Float.valueOf(HEIGHT), new Byte[] {VALUE}, null);
+        image = AddDescriptor.create(createPictures(), image, null);
+        image = MultiplyConstDescriptor.create(image, new double[] {1.5}, null);
         image = GradientMagnitudeDescriptor.create(image, null, null, null);
         image = AddConstDescriptor.create(image, new double[] {35}, null);
         return new OperationTreeBrowser(image);
+    }
+
+    /**
+     * Returns an image which contains some arbitrary geometric shapes.
+     */
+    private static RenderedImage createPictures() {
+        final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
+        final Graphics2D gr = image.createGraphics();
+        gr.setColor(Color.GRAY);
+        gr.fill(new Ellipse2D.Float(120, 140, 80, 100));
+        gr.setColor(Color.DARK_GRAY);
+        gr.fill3DRect(40, 50, 100, 120, true);
+        gr.dispose();
+        return image;
     }
 }

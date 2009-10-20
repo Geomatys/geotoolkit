@@ -725,7 +725,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int IMAGE_$1 = 305;
 
         /**
-         * Image of class "{0}"
+         * Image of class {0}
          */
         public static final int IMAGE_CLASS_$1 = 133;
 
@@ -1035,7 +1035,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int OPERATIONS = 192;
 
         /**
-         * "{0}" operation
+         * {0} operation
          */
         public static final int OPERATION_$1 = 193;
 

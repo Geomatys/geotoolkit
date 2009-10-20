@@ -33,6 +33,9 @@ import javax.swing.table.DefaultTableCellRenderer;
  * different than setting the row header in the usual Swing way (through
  * {@link javax.swing.JScrollPane#setRowHeaderView}) in that the column
  * can be masked by a horizontal scrolling.
+ * <p>
+ * Applications wanting a real row header with label colors should use
+ * {@link org.geotoolkit.internal.SwingUtilities#setupAsRowHeader} instead.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
@@ -47,12 +50,12 @@ public class LabeledRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = -6578459385224136885L;
 
     /**
-     * The color for the row header.
+     * The background color for the row header.
      */
     private final Color headerBackground;
 
     /**
-     * The color for the row header.
+     * The foreground color for the row header.
      */
     private final Color headerForeground;
 

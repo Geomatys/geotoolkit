@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.StringTokenizer;
 import java.lang.reflect.Array;
-import java.text.ParseException;
 import java.text.NumberFormat;
 import java.text.DateFormat;
 import java.text.Format;
@@ -54,6 +53,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
 import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.image.Adapters;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
@@ -712,32 +712,10 @@ public class ParameterEditor extends JPanel {
                 }
             }
             if (range != null) {
-                final StringBuilder buffer = new StringBuilder();
-                buffer.append(range.isMinIncluded() ? '[' : ']')
-                      .append(format(range.getMinValue(), false))
-                      .append(" \u2026 ")
-                      .append(format(range.getMaxValue(), true))
-                      .append(range.isMaxIncluded() ? ']' : '[');
-                rtxt = buffer.toString();
+                rtxt = Adapters.convert(range).toString();
             }
             this.type .setText(type);
             this.range.setText(rtxt);
-        }
-
-        /**
-         * Formats the given value.
-         */
-        private String format(final Comparable<?> value, final boolean upper) {
-            if (value == null) {
-                return upper ? "\u221E" : "\u2212\u221E";
-            }
-            if (field instanceof JFormattedTextField) try {
-                return ((JFormattedTextField) field).getFormatter().valueToString(value);
-            } catch (ParseException exception) {
-                // Value can't be formatted. Fall back on the 'toString()' method, which
-                // is okay since this string is used for informative purpose only.
-            }
-            return value.toString();
         }
     }
 

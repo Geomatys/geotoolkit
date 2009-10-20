@@ -64,7 +64,7 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
 
 /**
  * Configures a {@link MosaicBuilder} according the input provided by a user. The caller can
- * invoke one of the no-argument constructors (optional but recommanded) in order to initialize
+ * invoke one of the one-argument constructors (optional but recommanded) in order to initialize
  * the widgets with a set of default values. After the widget has been displayed, the caller can
  * invoke {@link #getTileManager()} in order to get the user's choices in an object ready for use.
  * <p>

@@ -48,8 +48,11 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A file chooser for images. The list of {@linkplain FileFilter file filters} is determined
- * automatically from the image formats known to {@link IIORegistry}.
+ * A file chooser for images. The main service provided by this class compared to the standard
+ * {@code JFileChooser} is that the list of {@linkplain FileFilter file filters} is determined
+ * automatically from the image formats known to {@link IIORegistry}. It also provides an
+ * additional and optional format called "<cite>List of files</cite>", which allow the user to
+ * specify a text file listing the paths to the image files to select.
  * <p>
  * This class should typically be used as below (replace "{@code showOpenDialog}" by
  * "{@code showSaveDialog"} for saving an image instead than loading it):
@@ -63,6 +66,8 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
+ *
+ * @see ImageProperties
  *
  * @since 3.00
  * @module
@@ -97,9 +102,9 @@ public class ImageFileChooser extends JFileChooser {
     private final Map<FileFilter,ImageReaderWriterSpi> providers;
 
     /**
-     * Creates a new file chooser pointing to the user's default directory. This default depends
-     * on the operating system. It is typically the "My Documents" folder on Windows, and the
-     * user's home directory on Unix.
+     * Creates a new file chooser having the user's default directory as the initial directory.
+     * This default depends on the operating system. It is typically the "My Documents" folder
+     * on Windows, and the user's home directory on Unix.
      * <p>
      * {@link #setDialogType} will be invoked implicitly by {@link #showOpenDialog showOpenDialog}
      * and {@link #showSaveDialog showSaveDialog} methods. If those methods are not going to be
@@ -150,7 +155,7 @@ public class ImageFileChooser extends JFileChooser {
     }
 
     /**
-     * Resets the choosable file filter list to its starting state.
+     * Resets the choosable {@linkplain FileFilter file filter} list to its starting state.
      */
     @Override
     public void resetChoosableFileFilters() {

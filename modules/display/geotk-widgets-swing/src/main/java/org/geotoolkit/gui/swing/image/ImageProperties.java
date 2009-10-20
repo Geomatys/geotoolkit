@@ -57,21 +57,32 @@ import static java.awt.GridBagConstraints.*;
 
 
 /**
- * A panel showing the properties of an image. An image can actually be any instance of
- * {@link PropertySource}, {@link RenderedImage} or {@link RenderableImage} interfaces.
- * The method {@link PropertySource#getProperty(String)} will be invoked only when a property
+ * A panel showing the properties of an image. The panel contains the following tabs
+ * (some of them may be disabled depending on the image type):
+ * <p>
+ * <ul>
+ *   <li>A summary with informations about the {@linkplain ColorModel color model},
+ *       {@linkplain SampleModel sample model}, image size, tile size, <i>etc.</i></li>
+ *   <li>A table of (<var>key</var>, <var>value</var>) pairs which are the
+ *       {@linkplain RenderedImage#getPropertyNames() properties} associated with the image.
+ *       The properties include for example the minimal and maximal pixel values computed by
+ *       JAI.</li>
+ *   <li>The numerical value of each band in a table, as provided by {@link ImageSampleValues}.</li>
+ *   <li>An overview of the image, as provided by {@link ImagePane}.</li>
+ * </ul>
+ * <p>
+ * While this pane works primarily with instances of the {@link RenderedImage} interface, it
+ * accepts also instances of {@link RenderableImage} or {@link PropertySource} interfaces.
+ * The {@link PropertySource#getProperty(String)} method will be invoked only when a property
  * is first required, in order to avoid the computation of deferred properties before
  * needed. If the source implements also the {@link PropertyChangeEmitter} interface,
  * then this widget will register a listener for property changes. The changes can be
- * emitted from any thread, which may or may not be the <cite>Swing</cite> thread.
- * <p>
- * If the image is an instance of {@link RenderedImage}, then this panel will also show
- * informations about the {@linkplain ColorModel color model}, {@linkplain SampleModel
- * sample model}, image size, tile size, etc.
+ * emitted from any thread - it doesn't need to be the <cite>Swing</cite> thread.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
- * @see org.geotoolkit.gui.swing.ParameterEditor
+ * @see ImageFileProperties
  * @see OperationTreeBrowser
  *
  * @since 2.3
@@ -80,55 +91,46 @@ import static java.awt.GridBagConstraints.*;
 @SuppressWarnings("serial")
 public class ImageProperties extends JPanel {
     /**
-     * The operation name, or the image class name if the image is not an instance of
-     * {@link OperationNode}.
+     * The operation name, version and description. If the image is not an instance of
+     * {@link OperationNode}, then the class name is used. If this panel is an instance
+     * of {@link ImageFileProperties}, then this will rather be the file name.
      */
-    private final JLabel operationName = new JLabel(" ");
-
-    /**
-     * The operation description.
-     */
-    private final JLabel operationDescription = new JLabel(" ");
-
-    /**
-     * The operation vendor and version.
-     */
-    private final JLabel operationVersion = new JLabel(" ");
+    private final JLabel description;
 
     /**
      * The text area for image size.
      */
-    private final JLabel imageSize = new JLabel();
+    private final JLabel imageSize;
 
     /**
      * The text area for tile size.
      */
-    private final JLabel tileSize = new JLabel();
+    private final JLabel tileSize;
 
     /**
      * The text area for sample type (e.g. "8 bits unsigned integer".
      */
-    private final JLabel dataType = new JLabel();
+    private final JLabel dataType;
 
     /**
      * The text area for the sample model.
      */
-    private final JLabel sampleModel = new JLabel();
+    private final JLabel sampleModel;
 
     /**
      * The text area for the color model.
      */
-    private final JLabel colorModel = new JLabel();
+    private final JLabel colorModel;
 
     /**
      * The text area for the color space.
      */
-    private final JLabel colorSpace = new JLabel();
+    private final JLabel colorSpace;
 
     /**
      * The color bar for {@link IndexColorModel}.
      */
-    private final ColorRamp colorRamp = new ColorRamp();
+    private final ColorRamp colorRamp;
 
     /**
      * The table model for image's properties.
@@ -146,12 +148,30 @@ public class ImageProperties extends JPanel {
     private final ImagePane viewer;
 
     /**
-     * Create a new instance of {@code ImageProperties} with no image.
-     * One of {@link #setImage(PropertySource) setImage(...)} methods must
-     * be invoked in order to set the property source.
+     * Creates a new instance of {@code ImageProperties} with no image.
+     * One of {@link #setImage(RenderedImage) setImage(...)} methods must
+     * be invoked in order to set the properties source.
      */
     public ImageProperties() {
+        this(false);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param file {@code true} if and only if this constructor is invoked from
+     *        {@link ImageFileProperties}.
+     */
+    ImageProperties(final boolean file) {
         super(new BorderLayout());
+        description = new JLabel(" ");
+        imageSize   = new JLabel();
+        tileSize    = new JLabel();
+        dataType    = new JLabel();
+        sampleModel = new JLabel();
+        colorModel  = new JLabel();
+        colorSpace  = new JLabel();
+        colorRamp   = new ColorRamp();
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         final JTabbedPane     tabs = new JTabbedPane();
         final GridBagConstraints c = new GridBagConstraints();
@@ -161,13 +181,11 @@ public class ImageProperties extends JPanel {
         if (true) {
             final JPanel panel = new JPanel(new GridBagLayout());
             c.anchor=WEST; c.fill=HORIZONTAL; c.insets.left=9;
-            c.gridx=0; c.gridwidth=2; c.weightx=1;
-            c.gridy=0; panel.add(operationName,        c);
-            c.gridy++; panel.add(operationDescription, c); c.insets.bottom=15;
-            c.gridy++; panel.add(operationVersion,     c);
+            c.gridx=0; c.gridwidth=2; c.weightx=1; c.insets.bottom=15;
+            c.gridy=0; panel.add(description, c);
 
             final int ytop = c.gridy;
-            c.gridwidth=1; c.weightx=0; c.insets.bottom=0;
+            c.gridwidth=1; c.weightx=0; c.insets.bottom=0; c.insets.left=40;
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.IMAGE_SIZE,   resources), c);
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.TILES_SIZE,   resources), c);
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.DATA_TYPE,    resources), c);
@@ -176,7 +194,7 @@ public class ImageProperties extends JPanel {
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLOR_SPACE,  resources), c);
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLORS,       resources), c);
 
-            c.gridx=1; c.gridy=ytop; c.weightx=1;
+            c.gridx=1; c.gridy=ytop; c.weightx=1; c.insets.left=9;
             c.gridy++; panel.add(imageSize,   c);
             c.gridy++; panel.add(tileSize,    c);
             c.gridy++; panel.add(dataType,    c);
@@ -191,17 +209,22 @@ public class ImageProperties extends JPanel {
         /*
          * Build the image's properties tab.
          */
-        if (true) {
+        if (!file) {
             properties = new Table(resources);
             final JTable table = new JTable(properties);
+            table.setAutoCreateRowSorter(true);
             tabs.addTab(resources.getString(Vocabulary.Keys.PROPERTIES), new JScrollPane(table));
+        } else {
+            properties = null;
         }
         /*
          * Build the image sample value tab.
          */
-        if (true) {
+        if (!file) {
             samples = new ImageSampleValues();
             tabs.addTab(resources.getString(Vocabulary.Keys.PIXELS), samples);
+        } else {
+            samples = null;
         }
         /*
          * Build the image preview tab.
@@ -212,7 +235,7 @@ public class ImageProperties extends JPanel {
             tabs.addTab(resources.getString(Vocabulary.Keys.PREVIEW), viewer.createScrollPane());
         }
         add(tabs, BorderLayout.CENTER);
-        setPreferredSize(new Dimension(400,250));
+        setPreferredSize(new Dimension(600, 400));
     }
 
     /**
@@ -236,7 +259,7 @@ public class ImageProperties extends JPanel {
     }
 
     /**
-     * Set the operation name, description and version for the given image. If the image is
+     * Sets the operation name, description and version for the given image. If the image is
      * an instance of {@link OperationNode}, then a description of the operation will be fetch
      * from its resources bundle.
      *
@@ -261,17 +284,23 @@ public class ImageProperties extends JPanel {
                 name        = bundle   .getString("LocalName");
                 description = bundle   .getString("Description");
                 version     = resources.getString(Vocabulary.Keys.VERSION_$1,
-                              bundle   .getString("Version")) + ", " +
-                              bundle   .getString("Vendor");
+                              bundle   .getString("Version")) + " (" +
+                              bundle   .getString("Vendor") + ')';
                 name = resources.getString(Vocabulary.Keys.OPERATION_$1, name);
             }
         } else if (image != null) {
             name = Classes.getShortClassName(image);
             name = resources.getString(Vocabulary.Keys.IMAGE_CLASS_$1, name);
         }
-        operationName       .setText(name       );
-        operationDescription.setText(description);
-        operationVersion    .setText(version    );
+        final StringBuilder html = new StringBuilder("<html>");
+        html.append("<h2>").append(name).append("</h2>");
+        if (version != null) {
+            html.append("<p>").append(version).append("</p>");
+        }
+        if (description != null) {
+            html.append("<p><cite>").append(description).append("</cite></p>");
+        }
+        this.description.setText(html.append("</html>").toString());
     }
 
     /**
@@ -306,9 +335,11 @@ public class ImageProperties extends JPanel {
         }
         clear();
         setDescription(image);
-        properties.setSource(image);
-        viewer    .setImage((RenderedImage) null);
-        samples   .setImage((RenderedImage) null);
+        if (properties != null) {
+            properties.setSource(image);
+            viewer    .setImage((RenderedImage) null);
+            samples   .setImage((RenderedImage) null);
+        }
     }
 
     /**
@@ -324,9 +355,11 @@ public class ImageProperties extends JPanel {
                     image.getWidth(), image.getHeight()));
         }
         setDescription(image);
-        properties.setSource(image);
-        viewer    .setImage (image);
-        samples   .setImage ((RenderedImage) null);
+        if (properties != null) {
+            properties.setSource(image);
+            viewer    .setImage (image);
+            samples   .setImage ((RenderedImage) null);
+        }
     }
 
     /**
@@ -338,27 +371,39 @@ public class ImageProperties extends JPanel {
         if (image == null) {
             clear();
         } else {
-            final Vocabulary resources = Vocabulary.getResources(getLocale());
-            final  ColorModel cm = image.getColorModel();
-            final SampleModel sm = image.getSampleModel();
-            imageSize.setText(resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3,
-                    image.getWidth(), image.getHeight(), sm.getNumBands()));
-            tileSize.setText(resources.getString(Vocabulary.Keys.TILE_SIZE_$4,
-                    image.getNumXTiles(), image.getNumYTiles(), image.getTileWidth(), image.getTileHeight()));
-            dataType   .setText(getDataType(sm.getDataType(), cm, resources));
-            sampleModel.setText(formatClassName(sm, resources));
-            colorModel .setText(formatClassName(cm, resources));
-            colorSpace .setText(getColorSpace  (cm, resources));
-            if (cm instanceof IndexColorModel) {
-                colorRamp.setColors((IndexColorModel) cm);
-            } else {
-                colorRamp.setColors((IndexColorModel) null);
-            }
+            setDescription(image.getColorModel(), image.getSampleModel(),
+                    image.getWidth(),     image.getHeight(),
+                    image.getTileWidth(), image.getTileHeight(),
+                    image.getNumXTiles(), image.getNumYTiles());
         }
         setDescription(image);
-        properties.setSource(image);
-        viewer    .setImage (image);
-        samples   .setImage (image);
+        if (properties != null) {
+            properties.setSource(image);
+            viewer    .setImage (image);
+            samples   .setImage (image);
+        }
+    }
+
+    /**
+     * Sets the content of the description panel, not including the part which
+     * is specific to the image operations.
+     */
+    final void setDescription(final ColorModel cm, final SampleModel sm,
+            final int width, final int height, final int tileWidth, final int tileHeight,
+            final int numXTiles, final int numYTiles)
+    {
+        final Vocabulary resources = Vocabulary.getResources(getLocale());
+        imageSize  .setText(resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height, sm.getNumBands()));
+        tileSize   .setText(resources.getString(Vocabulary.Keys.TILE_SIZE_$4, numXTiles, numYTiles, tileWidth, tileHeight));
+        dataType   .setText(getDataType(sm.getDataType(), cm, resources));
+        sampleModel.setText(formatClassName(sm, resources));
+        colorModel .setText(formatClassName(cm, resources));
+        colorSpace .setText(getColorSpace  (cm, resources));
+        if (cm instanceof IndexColorModel) {
+            colorRamp.setColors((IndexColorModel) cm);
+        } else {
+            colorRamp.setColors((IndexColorModel) null);
+        }
     }
 
     /**

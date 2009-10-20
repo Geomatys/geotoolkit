@@ -41,6 +41,8 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
+ * @see ImageProperties
+ *
  * @since 2.3
  * @module
  */
