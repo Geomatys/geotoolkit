@@ -168,6 +168,12 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     private final double[] resolution = new double[2];
 
+    /**
+     * Precalculated geographic scale, avoid graphics to recalculate it.
+     */
+    private double geoScale = 1;
+
+
     private Shape              paintingDisplayShape   = null;
     private Rectangle          paintingDisplaybounds  = null;
     private Shape              paintingObjectiveShape = null;
@@ -233,6 +239,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
         this.paintingObjectiveBBox = new Envelope2D(objectiveCRS,paintingObjectiveBounds);
 
+        geoScale = canvas.getController().getGeographicScale();
     }
 
     public void initGraphic(final Graphics2D graphics){
@@ -470,6 +477,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public double getScale() {
         return canvas.getController().getScale();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public double getGeographicScale() {
+        return geoScale;
     }
 
     // Informations about the currently painted area ---------------------------

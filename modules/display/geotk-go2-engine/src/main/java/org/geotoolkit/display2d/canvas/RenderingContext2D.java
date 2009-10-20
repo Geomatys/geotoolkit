@@ -122,6 +122,12 @@ public interface RenderingContext2D extends RenderingContext{
     double getScale();
 
     /**
+     * Returns the geographic scale, like we can see in scalebar legends '1 : 200 000'
+     * This is mainly used in style rules to check the minimum and maximum scales.
+     */
+    double getGeographicScale();
+
+    /**
      * @return affine transform from objective CRS to display CRS.
      */
     AffineTransform2D getObjectiveToDisplay();
